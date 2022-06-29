@@ -45,6 +45,7 @@ import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
+import com.arangodb.serde.DataType;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
@@ -66,7 +67,7 @@ public class VPackDeserializers {
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static final VPackDeserializer<Response> RESPONSE = (parent, vpack, context) -> {
-        final Response response = new Response();
+        final Response response = new Response(DataType.VPACK);
         response.setVersion(vpack.get(0).getAsInt());
         response.setType(vpack.get(1).getAsInt());
         response.setResponseCode(vpack.get(2).getAsInt());

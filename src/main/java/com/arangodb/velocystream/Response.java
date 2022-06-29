@@ -20,9 +20,11 @@
 
 package com.arangodb.velocystream;
 
+import com.arangodb.serde.DataType;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +40,11 @@ public class Response {
     @Expose(deserialize = false)
     private VPackSlice body = null;
 
-    public Response() {
+    private final DataType dataType;
+
+    public Response(final DataType dataType) {
         super();
+        this.dataType = dataType;
         meta = new HashMap<>();
     }
 
@@ -81,6 +86,18 @@ public class Response {
 
     public void setBody(final VPackSlice body) {
         this.body = body;
+    }
+
+    public byte[] getBodyBytes() {
+        if (body == null) {
+            return new byte[0];
+        } else if (dataType == DataType.JSON) {
+            return body.toString().getBytes(StandardCharsets.UTF_8);
+        } else if (dataType == DataType.VPACK) {
+            return body.toByteArray();
+        } else {
+            throw new IllegalStateException("Unexpected value: " + dataType);
+        }
     }
 
 }

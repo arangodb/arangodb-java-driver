@@ -33,7 +33,7 @@ public class UserAccessOptions {
         super();
     }
 
-    protected Permissions getGrant() {
+    public Permissions getGrant() {
         return grant;
     }
 

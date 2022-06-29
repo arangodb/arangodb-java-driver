@@ -27,6 +27,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
+import com.arangodb.serde.DataType;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer.Options;
 import com.arangodb.velocypack.VPackSlice;
@@ -173,6 +174,7 @@ public class HttpConnection implements Connection {
     private final ArangoSerialization util;
     private final Boolean useSsl;
     private final Protocol contentType;
+    private final DataType dataType;
     private final HostDescription host;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
@@ -185,6 +187,7 @@ public class HttpConnection implements Connection {
         this.useSsl = useSsl;
         this.util = util;
         this.contentType = contentType;
+        dataType = contentType == Protocol.HTTP_JSON ? DataType.JSON : DataType.VPACK;
         final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
                 .create();
         if (Boolean.TRUE == useSsl) {
@@ -355,7 +358,7 @@ public class HttpConnection implements Connection {
 
     public Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {
-        final Response response = new Response();
+        final Response response = new Response(dataType);
         response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
         final HttpEntity entity = httpResponse.getEntity();
         if (entity != null && entity.getContent() != null) {

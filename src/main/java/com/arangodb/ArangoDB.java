@@ -38,6 +38,9 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.DataType;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
@@ -362,8 +365,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
                     : new ArangoSerializerImpl(vpacker, vpackerNull, vpackParser);
             final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
                     : new ArangoDeserializerImpl(vpackerNull, vpackParser);
+            final InternalSerde internalSerde = protocol == Protocol.HTTP_JSON ? InternalSerde.of(DataType.JSON)
+                    : InternalSerde.of(DataType.VPACK);
             final DefaultArangoSerialization internal = new DefaultArangoSerialization(serializerTemp,
-                    deserializerTemp);
+                    deserializerTemp, internalSerde);
             final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 

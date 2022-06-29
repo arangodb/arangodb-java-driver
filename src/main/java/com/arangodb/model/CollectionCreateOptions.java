@@ -53,7 +53,7 @@ public class CollectionCreateOptions {
         replicationFactor = new ReplicationFactor();
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
