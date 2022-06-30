@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
     InternalSerdeImpl(DataType dataType, ObjectMapper mapper) {
         super(dataType, mapper);
         mapper.registerModule(InternalModule.INSTANCE.get());
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Override

@@ -21,6 +21,8 @@
 package com.arangodb.entity.arangosearch.analyzer;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,9 +59,14 @@ public class StopwordsAnalyzerProperties {
     private final List<String> stopwords;
     private final boolean hex;
 
+    public List<String> getStopwords() {
+        return stopwords;
+    }
+
     /**
      * @return list of verbatim strings that describe the tokens to be discarded.
      */
+    @JsonIgnore
     public List<String> getStopwordsAsStringList() {
         if (hex) {
             return stopwords.stream()
@@ -73,6 +80,7 @@ public class StopwordsAnalyzerProperties {
     /**
      * @return list of hex-encoded strings that describe the tokens to be discarded.
      */
+    @JsonIgnore
     public List<String> getStopwordsAsHexList() {
         if (hex) {
             return stopwords;

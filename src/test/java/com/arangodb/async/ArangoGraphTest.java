@@ -85,7 +85,7 @@ class ArangoGraphTest extends BaseTest {
     @Test
     void create() throws InterruptedException, ExecutionException {
         try {
-            final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(Collections.emptyList()).get();
+            final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(null).get();
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo(GRAPH_NAME + "_1");
         } finally {
@@ -169,7 +169,7 @@ class ArangoGraphTest extends BaseTest {
         String v1Name = "vertex-" + rnd();
 
         ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
-        g.createGraph(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.createGraph(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
         g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name)).get();
 
         Collection<String> vertexCollections = g.getVertexCollections().get();
@@ -229,7 +229,7 @@ class ArangoGraphTest extends BaseTest {
         EdgeDefinition ed = new EdgeDefinition().collection(eName).from(v1Name).to(v2Name).satellites(v1Name);
 
         ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
-        g.createGraph(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.createGraph(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
         g.addEdgeDefinition(ed).get();
         final GraphEntity ge = g.getInfo().get();
         assertThat(ge).isNotNull();

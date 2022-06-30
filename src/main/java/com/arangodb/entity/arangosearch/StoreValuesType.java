@@ -20,6 +20,8 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  */
@@ -28,11 +30,13 @@ public enum StoreValuesType {
     /**
      * Do not track values by the view
      */
+    @JsonProperty("none")
     NONE,
 
     /**
      * Track only value presence, to allow use of the EXISTS() function.
      */
+    @JsonProperty("id")
     ID
 
 }

@@ -21,12 +21,14 @@
 package com.arangodb.entity;
 
 import com.arangodb.velocypack.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Mark Vollmary
  */
 public class VertexUpdateEntity extends DocumentEntity {
 
+    @JsonProperty("_oldRev")
     @SerializedName("_oldRev")
     private String oldRev;
 

@@ -20,11 +20,14 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  */
 public enum ViewType {
 
+    @JsonProperty("arangosearch")
     ARANGO_SEARCH
 
 }

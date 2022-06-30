@@ -165,7 +165,7 @@ class ArangoGraphTest extends BaseJunit5 {
         String v1Name = "vertex-" + rnd();
 
         ArangoGraph g = db.graph(GRAPH_NAME + rnd());
-        g.create(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
+        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
         g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name));
 
         Collection<String> vertexCollections = g.getVertexCollections();
@@ -229,7 +229,7 @@ class ArangoGraphTest extends BaseJunit5 {
         EdgeDefinition ed = new EdgeDefinition().collection(eName).from(v1Name).to(v2Name).satellites(v1Name);
 
         ArangoGraph g = db.graph(GRAPH_NAME + rnd());
-        g.create(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
+        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
         g.addEdgeDefinition(ed);
         final GraphEntity ge = g.getInfo();
         assertThat(ge).isNotNull();

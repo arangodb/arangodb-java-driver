@@ -26,7 +26,6 @@ import com.arangodb.entity.ReplicationFactor;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -66,7 +65,6 @@ public class GraphCreateOptions {
      * @return options
      */
     protected GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
-        Objects.requireNonNull(edgeDefinitions);
         this.edgeDefinitions = edgeDefinitions;
         return this;
     }
