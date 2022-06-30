@@ -53,6 +53,10 @@ public class LogLevelEntity implements Entity {
         super();
     }
 
+    public LogLevel getAll() {
+        return all;
+    }
+
     public void setAll(final LogLevel all) {
         this.all = all;
     }

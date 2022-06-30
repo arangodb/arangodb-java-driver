@@ -46,4 +46,12 @@ public class ViewCreateOptions {
         return this;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public ViewType getType() {
+        return type;
+    }
+
 }
