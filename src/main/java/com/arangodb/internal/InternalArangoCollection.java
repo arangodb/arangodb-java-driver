@@ -28,6 +28,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -180,7 +181,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request importDocumentsRequest(final String values, final DocumentImportOptions options) {
-        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(util().serialize(util().parseJson(values)));
+        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(util().serialize(SerdeUtils.INSTANCE.parseJson(values)));
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
