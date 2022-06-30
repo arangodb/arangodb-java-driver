@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 
@@ -51,7 +52,7 @@ class ArangoVertexCollectionTest extends BaseTest {
             db.createCollection(COLLECTION_NAME, null).get();
         }
         final GraphCreateOptions options = new GraphCreateOptions().orphanCollections(COLLECTION_NAME);
-        db.createGraph(GRAPH_NAME, null, options).get();
+        db.createGraph(GRAPH_NAME, Collections.emptyList(), options).get();
     }
 
     @AfterEach
