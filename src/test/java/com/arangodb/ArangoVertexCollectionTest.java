@@ -58,7 +58,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
         initGraph(
                 GRAPH_NAME,
-                Collections.emptyList(),
+                null,
                 new GraphCreateOptions().orphanCollections(COLLECTION_NAME)
         );
     }

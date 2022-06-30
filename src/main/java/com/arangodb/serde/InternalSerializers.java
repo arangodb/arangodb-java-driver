@@ -1,6 +1,9 @@
 package com.arangodb.serde;
 
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -9,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 public final class InternalSerializers {
 
@@ -19,6 +22,28 @@ public final class InternalSerializers {
         @Override
         public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeTree(jsonMapper.readTree(value));
+        }
+    }
+
+    public static class FieldLinksSerializer extends JsonSerializer<Collection<FieldLink>> {
+        @Override
+        public void serialize(Collection<FieldLink> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            Map<String, FieldLink> mapLikeValue = new HashMap<>();
+            for (FieldLink fl : value) {
+                mapLikeValue.put(fl.getName(), fl);
+            }
+            gen.writeObject(mapLikeValue);
+        }
+    }
+
+    public static class CollectionLinksSerializer extends JsonSerializer<Collection<CollectionLink>> {
+        @Override
+        public void serialize(Collection<CollectionLink> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            Map<String, CollectionLink> mapLikeValue = new HashMap<>();
+            for (CollectionLink cl : value) {
+                mapLikeValue.put(cl.getName(), cl);
+            }
+            gen.writeObject(mapLikeValue);
         }
     }
 

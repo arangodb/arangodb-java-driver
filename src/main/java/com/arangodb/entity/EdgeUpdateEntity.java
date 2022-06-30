@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import com.arangodb.velocypack.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Mark Vollmary
@@ -28,6 +29,7 @@ import com.arangodb.velocypack.annotations.SerializedName;
  */
 public class EdgeUpdateEntity extends DocumentEntity {
 
+    @JsonProperty("_oldRev")
     @SerializedName("_oldRev")
     private String oldRev;
 

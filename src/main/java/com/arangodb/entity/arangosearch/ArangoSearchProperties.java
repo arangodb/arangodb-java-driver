@@ -20,6 +20,9 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,6 +83,7 @@ public class ArangoSearchProperties {
         this.consolidationPolicy = consolidationPolicy;
     }
 
+    @JsonSerialize(using = InternalSerializers.CollectionLinksSerializer.class)
     public Collection<CollectionLink> getLinks() {
         return links;
     }

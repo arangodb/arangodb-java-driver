@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @param <T>
@@ -31,6 +32,7 @@ import com.arangodb.velocypack.annotations.SerializedName;
  */
 public class DocumentUpdateEntity<T> extends DocumentEntity {
 
+    @JsonProperty("_oldRev")
     @SerializedName("_oldRev")
     private String oldRev;
     @Expose(deserialize = false)

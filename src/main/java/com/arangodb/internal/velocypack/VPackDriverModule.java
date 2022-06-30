@@ -75,7 +75,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
         context.registerSerializer(ReplicationFactor.class, VPackSerializers.REPLICATION_FACTOR);
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
-        context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);

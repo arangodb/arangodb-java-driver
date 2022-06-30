@@ -22,6 +22,7 @@ package com.arangodb.entity.arangosearch.analyzer;
 
 
 import com.arangodb.velocypack.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -31,9 +32,11 @@ import java.util.Objects;
  */
 public class SegmentationAnalyzerProperties {
 
+    @JsonProperty("break")
     @SerializedName("break")
     private BreakMode breakMode;
 
+    @JsonProperty("case")
     @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 

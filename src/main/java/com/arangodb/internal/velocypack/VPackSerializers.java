@@ -27,7 +27,6 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
-import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
@@ -117,12 +116,6 @@ public class VPackSerializers {
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
         final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
         builder.add(attribute, type);
-    };
-
-    public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = (builder, attribute, value, context) -> {
-        builder.add(ValueType.OBJECT);
-        context.serialize(builder, attribute, value.getProperties());
-        builder.close();
     };
 
     public static final VPackSerializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (builder, attribute, value, context) -> {

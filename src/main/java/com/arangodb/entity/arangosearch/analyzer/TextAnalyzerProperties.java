@@ -22,6 +22,7 @@ package com.arangodb.entity.arangosearch.analyzer;
 
 
 import com.arangodb.velocypack.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,7 @@ public class TextAnalyzerProperties {
 
     private boolean accent;
 
+    @JsonProperty("case")
     @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 

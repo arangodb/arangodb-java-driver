@@ -20,6 +20,10 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -100,6 +104,7 @@ public class CollectionLink {
         return this;
     }
 
+    @JsonIgnore
     public String getName() {
         return name;
     }
@@ -120,6 +125,7 @@ public class CollectionLink {
         return storeValues;
     }
 
+    @JsonSerialize(using = InternalSerializers.FieldLinksSerializer.class)
     public Collection<FieldLink> getFields() {
         return fields;
     }

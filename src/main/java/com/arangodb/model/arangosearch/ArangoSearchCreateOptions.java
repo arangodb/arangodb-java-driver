@@ -22,6 +22,11 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
+import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary
@@ -32,12 +37,18 @@ public class ArangoSearchCreateOptions {
     private String name;
     @SuppressWarnings("unused")
     private final ViewType type;
-    private final ArangoSearchProperties properties;
+    private Long consolidationIntervalMsec;
+    private Long commitIntervalMsec;
+    private Long cleanupIntervalStep;
+    private ConsolidationPolicy consolidationPolicy;
+    private Collection<CollectionLink> links;
+    private Collection<PrimarySort> primarySorts;
+    private ArangoSearchCompression primarySortCompression;
+    private Collection<StoredValue> storedValues;
 
     public ArangoSearchCreateOptions() {
         super();
         type = ViewType.ARANGO_SEARCH;
-        properties = new ArangoSearchProperties();
     }
 
     protected ArangoSearchCreateOptions name(final String name) {
@@ -54,7 +65,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
-        properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
+        this.consolidationIntervalMsec = consolidationIntervalMsec;
         return this;
     }
 
@@ -73,7 +84,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions commitIntervalMsec(final Long commitIntervalMsec) {
-        properties.setCommitIntervalMsec(commitIntervalMsec);
+        this.commitIntervalMsec = commitIntervalMsec;
         return this;
     }
 
@@ -86,7 +97,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
-        properties.setCleanupIntervalStep(cleanupIntervalStep);
+        this.cleanupIntervalStep = cleanupIntervalStep;
         return this;
     }
 
@@ -95,7 +106,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
-        properties.setConsolidationPolicy(consolidationPolicy);
+        this.consolidationPolicy = consolidationPolicy;
         return this;
     }
 
@@ -104,7 +115,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions link(final CollectionLink... links) {
-        properties.addLink(links);
+        this.links = Arrays.asList(links);
         return this;
     }
 
@@ -113,7 +124,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions primarySort(final PrimarySort... primarySorts) {
-        properties.addPrimarySort(primarySorts);
+        this.primarySorts = Arrays.asList(primarySorts);
         return this;
     }
 
@@ -122,7 +133,7 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions primarySortCompression(final ArangoSearchCompression primarySortCompression) {
-        properties.setPrimarySortCompression(primarySortCompression);
+        this.primarySortCompression = primarySortCompression;
         return this;
     }
 
@@ -130,8 +141,49 @@ public class ArangoSearchCreateOptions {
      * @return options
      */
     public ArangoSearchCreateOptions storedValues(final StoredValue... storedValues) {
-        properties.addStoredValues(storedValues);
+        this.storedValues = Arrays.asList(storedValues);
         return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ViewType getType() {
+        return type;
+    }
+
+    public Long getConsolidationIntervalMsec() {
+        return consolidationIntervalMsec;
+    }
+
+    public Long getCommitIntervalMsec() {
+        return commitIntervalMsec;
+    }
+
+    public Long getCleanupIntervalStep() {
+        return cleanupIntervalStep;
+    }
+
+    public ConsolidationPolicy getConsolidationPolicy() {
+        return consolidationPolicy;
+    }
+
+    @JsonSerialize(using = InternalSerializers.CollectionLinksSerializer.class)
+    public Collection<CollectionLink> getLinks() {
+        return links;
+    }
+
+    public Collection<PrimarySort> getPrimarySorts() {
+        return primarySorts;
+    }
+
+    public ArangoSearchCompression getPrimarySortCompression() {
+        return primarySortCompression;
+    }
+
+    public Collection<StoredValue> getStoredValues() {
+        return storedValues;
     }
 
 }
