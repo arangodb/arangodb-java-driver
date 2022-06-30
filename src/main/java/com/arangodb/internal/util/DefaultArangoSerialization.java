@@ -73,8 +73,4 @@ public class DefaultArangoSerialization implements ArangoSerialization {
         return deserializer.deserialize(vpack, type);
     }
 
-    @Override
-    public JsonNode parseJson(String json) {
-        return serde.parseJson(json);
-    }
 }

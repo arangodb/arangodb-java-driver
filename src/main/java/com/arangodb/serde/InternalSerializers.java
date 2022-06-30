@@ -3,25 +3,23 @@ package com.arangodb.serde;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class InternalSerializers {
-
-    private static final ObjectMapper jsonMapper = new ObjectMapper();
 
     public static class CollectionSchemaRuleSerializer extends JsonSerializer<String> {
         @Override
         public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeTree(jsonMapper.readTree(value));
+            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value));
         }
     }
 

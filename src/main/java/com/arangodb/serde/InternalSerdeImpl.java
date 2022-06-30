@@ -2,7 +2,6 @@ package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
-    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     InternalSerdeImpl(DataType dataType, ObjectMapper mapper) {
         super(dataType, mapper);
@@ -26,7 +24,7 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
             case VPACK:
                 try {
                     JsonNode tree = mapper.readTree(content);
-                    return jsonMapper.writeValueAsString(tree);
+                    return SerdeUtils.INSTANCE.writeJson(tree);
                 } catch (IOException e) {
                     throw new ArangoDBException(e);
                 }
@@ -41,15 +39,6 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
             JsonNode target = mapper.readTree(content).at(jsonPointer);
             return mapper.writeValueAsBytes(target);
         } catch (IOException e) {
-            throw new ArangoDBException(e);
-        }
-    }
-
-    @Override
-    public JsonNode parseJson(final String json) {
-        try {
-            return jsonMapper.readTree(json);
-        } catch (JsonProcessingException e) {
             throw new ArangoDBException(e);
         }
     }
