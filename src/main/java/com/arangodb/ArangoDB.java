@@ -378,7 +378,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
                     ? new VstConnectionFactorySync(host, timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
-                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, custom,
+                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, internal,
                     protocol, connectionTtl, httpCookieSpec, httpRequestRetryHandler);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);

@@ -93,22 +93,4 @@ public class VPackDeserializers {
         }
     };
 
-    public static final JsonDeserializer<BaseDocument> BASE_DOCUMENT = new JsonDeserializer<BaseDocument>() {
-        @SuppressWarnings("unchecked")
-        @Override
-        public BaseDocument deserialize(final JsonParser p, final DeserializationContext ctxt)
-                throws IOException, JsonProcessingException {
-            return new BaseDocument(p.readValueAs(Map.class));
-        }
-    };
-
-    public static final JsonDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = new JsonDeserializer<BaseEdgeDocument>() {
-        @SuppressWarnings("unchecked")
-        @Override
-        public BaseEdgeDocument deserialize(final JsonParser p, final DeserializationContext ctxt)
-                throws IOException, JsonProcessingException {
-            return new BaseEdgeDocument(p.readValueAs(Map.class));
-        }
-    };
-
 }
