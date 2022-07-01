@@ -39,7 +39,7 @@ public class ExampleBase {
 
     @BeforeAll
     static void setUp() {
-        arangoDB = new ArangoDB.Builder().useProtocol(Protocol.VST).serializer(new ArangoJack()).build();
+        arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         DbName dbName = DbName.of(DB_NAME);
         if (arangoDB.db(dbName).exists())
             arangoDB.db(dbName).drop();
