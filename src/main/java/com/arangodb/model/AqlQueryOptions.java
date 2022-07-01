@@ -151,7 +151,7 @@ public class AqlQueryOptions implements Serializable {
         return this;
     }
 
-    protected VPackSlice getBindVars() {
+    public VPackSlice getBindVars() {
         return bindVars;
     }
 
@@ -172,7 +172,7 @@ public class AqlQueryOptions implements Serializable {
      * @param query the query which you want parse
      * @return options
      */
-    protected AqlQueryOptions query(final String query) {
+    public AqlQueryOptions query(final String query) {
         this.query = query;
         return this;
     }
