@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 
 class JacksonSerdeImpl implements JacksonSerde {
 
@@ -39,6 +40,11 @@ class JacksonSerdeImpl implements JacksonSerde {
         } catch (IOException e) {
             throw new ArangoDBException(e);
         }
+    }
+
+    @Override
+    public void configure(Consumer<ObjectMapper> configureFunction) {
+        configureFunction.accept(mapper);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 
 /**
  * Contract for serialization/deserialization of user data, based on Jackson Databind.
@@ -39,6 +40,12 @@ public interface JacksonSerde extends ArangoSerde {
     static JacksonSerde of(final DataType dataType, final ObjectMapper mapper) {
         return new JacksonSerdeImpl(dataType, mapper);
     }
+
+    /**
+     * Allows configuring the underlying Jackson ObjectMapper
+     * @param configureFunction function to configure the Jackson ObjectMapper
+     */
+    void configure(final Consumer<ObjectMapper> configureFunction);
 
     /**
      * Deserializes the parsed json node and binds it to the target data type.

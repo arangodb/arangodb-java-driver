@@ -26,6 +26,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.util.ArangoSerialization;

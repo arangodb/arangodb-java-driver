@@ -92,29 +92,26 @@ public class ArangoJack implements ArangoSerialization {
     }
 
     public ArangoJack() {
-        this(createDefaultMapper(), JacksonSerde.of(DataType.VPACK, configureDefaultMapper(new VPackMapper())));
-    }
-
-    public ArangoJack(final JacksonSerde jacksonSerde) {
-        this(createDefaultMapper(), jacksonSerde);
+        this(createDefaultMapper());
     }
 
     /**
      * @param mapper configured VPackMapper to use. A defensive copy is created and used.
      */
-    public ArangoJack(final VPackMapper mapper, final JacksonSerde jacksonSerde) {
+    public ArangoJack(final VPackMapper mapper) {
         super();
         vpackMapper = mapper.copy().setSerializationInclusion(Include.NON_NULL);
         vpackMapperNull = mapper.copy().setSerializationInclusion(Include.ALWAYS);
         jsonMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
         vpackParser = new VPackParser.Builder().build();
-        this.serde = jacksonSerde;
+        serde =  JacksonSerde.of(DataType.VPACK, configureDefaultMapper(new VPackMapper()));
     }
 
     public void configure(final ArangoJack.ConfigureFunction f) {
         f.configure(vpackMapper);
         f.configure(vpackMapperNull);
         f.configure(jsonMapper);
+        serde.configure(f::configure);
     }
 
     @Override
