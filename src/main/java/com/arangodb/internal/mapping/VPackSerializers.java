@@ -21,9 +21,6 @@
 
 package com.arangodb.internal.mapping;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.internal.DocumentFields;
 import com.arangodb.jackson.dataformat.velocypack.internal.VPackGenerator;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.internal.util.DateUtil;
@@ -35,8 +32,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -76,36 +71,6 @@ public class VPackSerializers {
         public void serialize(final Timestamp value, final JsonGenerator gen, final SerializerProvider serializers)
                 throws IOException, JsonProcessingException {
             gen.writeString(DateUtil.format(value));
-        }
-    };
-
-    public static final JsonSerializer<BaseDocument> BASE_DOCUMENT = new JsonSerializer<BaseDocument>() {
-        @Override
-        public void serialize(final BaseDocument value, final JsonGenerator gen, final SerializerProvider serializers)
-                throws IOException {
-            final Map<String, Object> doc = new HashMap<>();
-            doc.putAll(value.getProperties());
-            doc.put(DocumentFields.ID, value.getId());
-            doc.put(DocumentFields.KEY, value.getKey());
-            doc.put(DocumentFields.REV, value.getRevision());
-            gen.writeObject(doc);
-        }
-    };
-
-    public static final JsonSerializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = new JsonSerializer<BaseEdgeDocument>() {
-        @Override
-        public void serialize(
-                final BaseEdgeDocument value,
-                final JsonGenerator gen,
-                final SerializerProvider serializers) throws IOException {
-            final Map<String, Object> doc = new HashMap<>();
-            doc.putAll(value.getProperties());
-            doc.put(DocumentFields.ID, value.getId());
-            doc.put(DocumentFields.KEY, value.getKey());
-            doc.put(DocumentFields.REV, value.getRevision());
-            doc.put(DocumentFields.FROM, value.getFrom());
-            doc.put(DocumentFields.TO, value.getTo());
-            gen.writeObject(doc);
         }
     };
 

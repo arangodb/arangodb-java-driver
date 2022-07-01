@@ -17,6 +17,9 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
     }
 
     @Override
+    // FIXME: refactor to:
+    // return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
+    // afterwards dataType should not be needed anymore
     public String toJsonString(final byte[] content) {
         switch (dataType) {
             case JSON:

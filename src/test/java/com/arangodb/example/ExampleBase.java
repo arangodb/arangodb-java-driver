@@ -20,10 +20,7 @@
 
 package com.arangodb.example;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
+import com.arangodb.*;
 import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,7 +39,7 @@ public class ExampleBase {
 
     @BeforeAll
     static void setUp() {
-        arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+        arangoDB = new ArangoDB.Builder().useProtocol(Protocol.VST).serializer(new ArangoJack()).build();
         DbName dbName = DbName.of(DB_NAME);
         if (arangoDB.db(dbName).exists())
             arangoDB.db(dbName).drop();

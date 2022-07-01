@@ -92,7 +92,13 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 
-        request.setBody(util(Serializer.CUSTOM).serialize(value));
+        VPackSlice body;
+        if (value instanceof String) {
+            body = util().serialize(SerdeUtils.INSTANCE.parseJson((String) value));
+        } else {
+            body = util(Serializer.CUSTOM).serialize(value);
+        }
+        request.setBody(body);
 
         return request;
     }

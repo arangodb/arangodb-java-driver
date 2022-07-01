@@ -28,7 +28,6 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 

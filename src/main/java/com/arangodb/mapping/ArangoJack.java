@@ -21,20 +21,18 @@
 package com.arangodb.mapping;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.internal.mapping.ArangoAnnotationIntrospector;
 import com.arangodb.internal.mapping.VPackDeserializers;
 import com.arangodb.internal.mapping.VPackSerializers;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
+import com.arangodb.serde.DataType;
+import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +42,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * @author Mark Vollmary
@@ -60,6 +57,8 @@ public class ArangoJack implements ArangoSerialization {
     private final ObjectMapper jsonMapper;
     private final VPackParser vpackParser;
 
+    private final JacksonSerde serde;
+
     private static final class ArangoModule extends SimpleModule {
         @Override
         public void setupModule(SetupContext context) {
@@ -73,39 +72,43 @@ public class ArangoJack implements ArangoSerialization {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        return configureDefaultMapper(mapper);
+    }
 
+    static VPackMapper configureDefaultMapper(final VPackMapper mapper) {
         final SimpleModule module = new ArangoJack.ArangoModule();
         module.addSerializer(VPackSlice.class, VPackSerializers.VPACK);
         module.addSerializer(java.util.Date.class, VPackSerializers.UTIL_DATE);
         module.addSerializer(java.sql.Date.class, VPackSerializers.SQL_DATE);
         module.addSerializer(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
-        module.addSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
-        module.addSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
 
         module.addDeserializer(VPackSlice.class, VPackDeserializers.VPACK);
         module.addDeserializer(java.util.Date.class, VPackDeserializers.UTIL_DATE);
         module.addDeserializer(java.sql.Date.class, VPackDeserializers.SQL_DATE);
         module.addDeserializer(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
-        module.addDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
-        module.addDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
 
         mapper.registerModule(module);
         return mapper;
     }
 
     public ArangoJack() {
-        this(createDefaultMapper());
+        this(createDefaultMapper(), JacksonSerde.of(DataType.VPACK, configureDefaultMapper(new VPackMapper())));
+    }
+
+    public ArangoJack(final JacksonSerde jacksonSerde) {
+        this(createDefaultMapper(), jacksonSerde);
     }
 
     /**
      * @param mapper configured VPackMapper to use. A defensive copy is created and used.
      */
-    public ArangoJack(final VPackMapper mapper) {
+    public ArangoJack(final VPackMapper mapper, final JacksonSerde jacksonSerde) {
         super();
         vpackMapper = mapper.copy().setSerializationInclusion(Include.NON_NULL);
         vpackMapperNull = mapper.copy().setSerializationInclusion(Include.ALWAYS);
         jsonMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
         vpackParser = new VPackParser.Builder().build();
+        this.serde = jacksonSerde;
     }
 
     public void configure(final ArangoJack.ConfigureFunction f) {
@@ -116,37 +119,24 @@ public class ArangoJack implements ArangoSerialization {
 
     @Override
     public VPackSlice serialize(final Object entity) throws ArangoDBException {
-        return serialize(entity, new ArangoSerializer.Options());
+        DataType dataType = serde.getDataType();
+        switch (dataType) {
+            case JSON:
+                String json = new String(serde.serialize(entity));
+                VPackParser parser = new VPackParser.Builder().build();
+                return parser.fromJson(json, true);
+            case VPACK:
+                return new VPackSlice(serde.serialize(entity));
+            default:
+                throw new IllegalStateException("Unexpected value: " + dataType);
+        }
+
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
-        if (options.getType() == null) {
-            options.type(entity.getClass());
-        }
-        try {
-            final VPackSlice vpack;
-            final Class<? extends Object> type = entity.getClass();
-            final boolean serializeNullValues = options.isSerializeNullValues();
-            if (String.class.isAssignableFrom(type)) {
-                vpack = vpackParser.fromJson((String) entity, serializeNullValues);
-            } else if (options.isStringAsJson() && Iterable.class.isAssignableFrom(type)) {
-                final Iterator<?> iterator = Iterable.class.cast(entity).iterator();
-                if (iterator.hasNext() && String.class.isAssignableFrom(iterator.next().getClass())) {
-                    vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
-                } else {
-                    final ObjectMapper vp = serializeNullValues ? vpackMapperNull : vpackMapper;
-                    vpack = new VPackSlice(vp.writeValueAsBytes(entity));
-                }
-            } else {
-                final ObjectMapper vp = serializeNullValues ? vpackMapperNull : vpackMapper;
-                vpack = new VPackSlice(vp.writeValueAsBytes(entity));
-            }
-            return vpack;
-        } catch (final JsonProcessingException e) {
-            throw new ArangoDBException(e);
-        }
+        return serialize(entity);
     }
 
     @SuppressWarnings("unchecked")
