@@ -402,7 +402,7 @@ public class AqlQueryOptions implements Serializable {
         return this;
     }
 
-    private Options getOptions() {
+    public Options getOptions() {
         if (options == null) {
             options = new Options();
         }
@@ -429,6 +429,58 @@ public class AqlQueryOptions implements Serializable {
         private Double maxRuntime;
         private Boolean fillBlockCache;
 
+        public Boolean getFailOnWarning() {
+            return failOnWarning;
+        }
+
+        public Boolean getProfile() {
+            return profile;
+        }
+
+        public Long getMaxTransactionSize() {
+            return maxTransactionSize;
+        }
+
+        public Long getMaxWarningCount() {
+            return maxWarningCount;
+        }
+
+        public Long getIntermediateCommitCount() {
+            return intermediateCommitCount;
+        }
+
+        public Long getIntermediateCommitSize() {
+            return intermediateCommitSize;
+        }
+
+        public Double getSatelliteSyncWait() {
+            return satelliteSyncWait;
+        }
+
+        public Boolean getSkipInaccessibleCollections() {
+            return skipInaccessibleCollections;
+        }
+
+        public Boolean getFullCount() {
+            return fullCount;
+        }
+
+        public Integer getMaxPlans() {
+            return maxPlans;
+        }
+
+        public Boolean getStream() {
+            return stream;
+        }
+
+        public Double getMaxRuntime() {
+            return maxRuntime;
+        }
+
+        public Boolean getFillBlockCache() {
+            return fillBlockCache;
+        }
+
         public Optimizer getOptimizer() {
             if (optimizer == null) {
                 optimizer = new Optimizer();
@@ -447,6 +499,10 @@ public class AqlQueryOptions implements Serializable {
 
     public static class Optimizer {
         private Collection<String> rules;
+
+        public Collection<String> getRules() {
+            return rules;
+        }
     }
 
     /**
