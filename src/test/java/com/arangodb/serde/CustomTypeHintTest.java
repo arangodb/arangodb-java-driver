@@ -25,9 +25,9 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
+import com.arangodb.entity.Key;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ class CustomTypeHintTest {
 
     public static class Zoo {
 
-        @JsonProperty("_key")
+        @Key
         private String key;
 
         private Animal animal;

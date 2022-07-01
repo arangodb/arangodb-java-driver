@@ -39,6 +39,8 @@ import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -161,6 +163,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getRev()).isNotNull();
         assertThat(doc.getNew()).isNotNull();
     }
+
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentOverwriteModeIgnore(ArangoCollection collection) {
@@ -732,6 +735,29 @@ class ArangoCollectionTest extends BaseJunit5 {
     static class TestUpdateEntity {
         @SuppressWarnings("unused")
         private String a, b;
+
+        public String getA() {
+            return a;
+        }
+
+        public String getB() {
+            return b;
+        }
+    }
+
+    static class TestUpdateEntitySerializeNullFalse {
+        @SuppressWarnings("unused")
+        private String a, b;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public String getA() {
+            return a;
+        }
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public String getB() {
+            return b;
+        }
     }
 
     @ParameterizedTest(name = "{index}")
@@ -758,14 +784,14 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentSerializeNullFalse(ArangoCollection collection) {
-        final TestUpdateEntity doc = new TestUpdateEntity();
+        final TestUpdateEntitySerializeNullFalse doc = new TestUpdateEntitySerializeNullFalse();
         doc.a = "foo";
         doc.b = "foo";
-        final DocumentCreateEntity<TestUpdateEntity> createResult = collection.insertDocument(doc);
-        final TestUpdateEntity patchDoc = new TestUpdateEntity();
+        final DocumentCreateEntity<TestUpdateEntitySerializeNullFalse> createResult = collection.insertDocument(doc);
+        final TestUpdateEntitySerializeNullFalse patchDoc = new TestUpdateEntitySerializeNullFalse();
         patchDoc.a = "bar";
-        final DocumentUpdateEntity<TestUpdateEntity> updateResult = collection
-                .updateDocument(createResult.getKey(), patchDoc, new DocumentUpdateOptions().serializeNull(false));
+        final DocumentUpdateEntity<TestUpdateEntitySerializeNullFalse> updateResult = collection
+                .updateDocument(createResult.getKey(), patchDoc);
         assertThat(updateResult).isNotNull();
         assertThat(updateResult.getKey()).isEqualTo(createResult.getKey());
 
@@ -2752,6 +2778,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
+
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void getInfo(ArangoCollection collection) {
