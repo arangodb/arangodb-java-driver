@@ -40,6 +40,10 @@ public class TransactionOptions {
         collections = new TransactionCollectionOptions();
     }
 
+    public TransactionCollectionOptions getCollections() {
+        return collections;
+    }
+
     public String getAction() {
         return action;
     }
