@@ -35,7 +35,7 @@ import java.util.Objects;
 public class CollectionCreateOptions {
 
     private String name;
-    private final ReplicationFactor replicationFactor;
+    private ReplicationFactor replicationFactor;
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
@@ -52,7 +52,6 @@ public class CollectionCreateOptions {
 
     public CollectionCreateOptions() {
         super();
-        replicationFactor = new ReplicationFactor();
     }
 
     public String getName() {
@@ -68,8 +67,8 @@ public class CollectionCreateOptions {
         return this;
     }
 
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
+    public ReplicationFactor getReplicationFactor() {
+        return replicationFactor;
     }
 
     /**
@@ -82,8 +81,18 @@ public class CollectionCreateOptions {
      *                          reported.
      * @return options
      */
-    public CollectionCreateOptions replicationFactor(final Integer replicationFactor) {
-        this.replicationFactor.setReplicationFactor(replicationFactor);
+    public CollectionCreateOptions replicationFactor(final ReplicationFactor replicationFactor) {
+        this.replicationFactor = replicationFactor;
+        return this;
+    }
+
+    public CollectionCreateOptions replicationFactor(int replicationFactor) {
+        this.replicationFactor = ReplicationFactor.of(replicationFactor);
+        return this;
+    }
+
+    public CollectionCreateOptions satellite() {
+        this.replicationFactor = ReplicationFactor.ofSatellite();
         return this;
     }
 
@@ -101,20 +110,6 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions writeConcern(final Integer writeConcern) {
         this.writeConcern = writeConcern;
-        return this;
-    }
-
-    public Boolean getSatellite() {
-        return replicationFactor.getSatellite();
-    }
-
-    /**
-     * @param satellite If the true the collection is created as a satellite collection. In this case
-     *                  {@link #replicationFactor(Integer)} is ignored.
-     * @return options
-     */
-    public CollectionCreateOptions satellite(final Boolean satellite) {
-        this.replicationFactor.setSatellite(satellite);
         return this;
     }
 

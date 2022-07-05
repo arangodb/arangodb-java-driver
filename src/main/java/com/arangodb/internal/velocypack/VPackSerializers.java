@@ -104,15 +104,6 @@ public class VPackSerializers {
 
     public static final VPackSerializer<Permissions> PERMISSIONS = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase(Locale.ENGLISH));
 
-    public static final VPackSerializer<ReplicationFactor> REPLICATION_FACTOR = (builder, attribute, value, context) -> {
-        final Boolean satellite = value.getSatellite();
-        if (Boolean.TRUE == satellite) {
-            builder.add(attribute, "satellite");
-        } else if (value.getReplicationFactor() != null) {
-            builder.add(attribute, value.getReplicationFactor());
-        }
-    };
-
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
         final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
         builder.add(attribute, type);

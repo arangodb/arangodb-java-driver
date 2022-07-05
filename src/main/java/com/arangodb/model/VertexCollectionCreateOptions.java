@@ -48,6 +48,10 @@ public class VertexCollectionCreateOptions {
         return this;
     }
 
+    public Options getOptions() {
+        return options;
+    }
+
     public Collection<String> getSatellites() {
         return options.satellites;
     }

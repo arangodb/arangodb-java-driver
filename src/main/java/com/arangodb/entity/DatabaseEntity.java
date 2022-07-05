@@ -30,13 +30,12 @@ public class DatabaseEntity implements Entity {
     private String name;
     private String path;
     private Boolean isSystem;
-    private final ReplicationFactor replicationFactor;
+    private ReplicationFactor replicationFactor;
     private Integer writeConcern;
     private String sharding;
 
     public DatabaseEntity() {
         super();
-        replicationFactor = new ReplicationFactor();
     }
 
     /**
@@ -71,8 +70,8 @@ public class DatabaseEntity implements Entity {
      * @return the default replication factor for collections in this database
      * @since ArangoDB 3.6.0
      */
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
+    public ReplicationFactor getReplicationFactor() {
+        return replicationFactor;
     }
 
     /**
@@ -85,14 +84,6 @@ public class DatabaseEntity implements Entity {
      */
     public Integer getWriteConcern() {
         return writeConcern;
-    }
-
-    /**
-     * @return whether the collection is a satellite collection. Only in an enterprise cluster setup (else returning null).
-     * @since ArangoDB 3.6.0
-     */
-    public Boolean getSatellite() {
-        return this.replicationFactor.getSatellite();
     }
 
     /**

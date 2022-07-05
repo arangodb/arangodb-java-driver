@@ -141,13 +141,11 @@ public class VPackDeserializers {
     public static final VPackDeserializer<QueryExecutionState> QUERY_EXECUTION_STATE = (parent, vpack, context) -> QueryExecutionState.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH).replaceAll(" ", "_"));
 
     public static final VPackDeserializer<ReplicationFactor> REPLICATION_FACTOR = (parent, vpack, context) -> {
-        final ReplicationFactor replicationFactor = new ReplicationFactor();
         if (vpack.isString() && vpack.getAsString().equals("satellite")) {
-            replicationFactor.setSatellite(true);
+            return ReplicationFactor.ofSatellite();
         } else {
-            replicationFactor.setReplicationFactor(vpack.getAsInt());
+            return ReplicationFactor.of(vpack.getAsInt());
         }
-        return replicationFactor;
     };
 
     public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH

@@ -73,7 +73,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
         context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
         context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
-        context.registerSerializer(ReplicationFactor.class, VPackSerializers.REPLICATION_FACTOR);
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);

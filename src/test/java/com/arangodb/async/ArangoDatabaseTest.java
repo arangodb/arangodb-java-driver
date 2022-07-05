@@ -117,7 +117,7 @@ class ArangoDatabaseTest extends BaseTest {
                 .createCollection(COLLECTION_NAME, new CollectionCreateOptions().replicationFactor(2)).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getReplicationFactor()).isEqualTo(2);
+        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getReplicationFactor().getValue()).isEqualTo(2);
         db.collection(COLLECTION_NAME).drop().get();
     }
 
@@ -130,9 +130,8 @@ class ArangoDatabaseTest extends BaseTest {
                 new CollectionCreateOptions().replicationFactor(2).writeConcern(2)).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getReplicationFactor()).isEqualTo(2);
+        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getReplicationFactor().getValue()).isEqualTo(2);
         assertThat(db.collection(COLLECTION_NAME).getProperties().get().getWriteConcern()).isEqualTo(2);
-        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getSatellite()).isNull();
         db.collection(COLLECTION_NAME).drop();
     }
 
