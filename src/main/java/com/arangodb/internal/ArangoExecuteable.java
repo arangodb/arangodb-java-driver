@@ -20,9 +20,9 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.DbName;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 /**
  * @author Mark Vollmary
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor> {
+public abstract class ArangoExecuteable<E extends ArangoExecutor> implements ArangoSerializationAccessor {
 
     private static final String SLASH = "/";
 
@@ -52,12 +52,14 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> {
         return executor;
     }
 
-    public ArangoSerialization util() {
-        return util.get(Serializer.INTERNAL);
+    @Override
+    public ArangoSerialization getInternalSerialization() {
+        return util.getInternalSerialization();
     }
 
-    public ArangoSerialization util(final Serializer serializer) {
-        return util.get(serializer);
+    @Override
+    public ArangoSerialization getUserSerialization() {
+        return util.getUserSerialization();
     }
 
     protected Request request(final DbName dbName, final RequestType requestType, final String... path) {

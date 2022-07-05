@@ -23,7 +23,6 @@ package com.arangodb.internal;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
@@ -69,14 +68,14 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.setBody(util(Serializer.CUSTOM).serialize(value));
+        request.setBody(getUserSerialization().serialize(value));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
+            final EdgeEntity doc = getInternalSerialization().deserialize(body, EdgeEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.ID, doc.getId());
             values.put(DocumentFields.KEY, doc.getKey());
@@ -100,7 +99,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-        return response -> util(Serializer.CUSTOM).deserialize(response.getBody().get(EDGE), type);
+        return response -> getUserSerialization().deserialize(response.getBody().get(EDGE), type);
     }
 
     protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
@@ -110,14 +109,14 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.setBody(util(Serializer.CUSTOM).serialize(value));
+        request.setBody(getUserSerialization().serialize(value));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(body, EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -135,14 +134,14 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.setBody(
-                util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
+                getUserSerialization().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(body, EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);

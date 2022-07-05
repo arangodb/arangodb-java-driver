@@ -74,7 +74,7 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
             request.putQueryParam(param.getKey(), param.getValue());
         }
         if (body != null) {
-            request.setBody(util().serialize(body));
+            request.setBody(getInternalSerialization().serialize(body));
         }
         return request;
     }

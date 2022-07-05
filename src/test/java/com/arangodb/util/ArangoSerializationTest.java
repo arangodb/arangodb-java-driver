@@ -45,7 +45,7 @@ class ArangoSerializationTest {
     @BeforeAll
     static void setup() {
         final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
-        util = arangoDB.util();
+        util = arangoDB.getInternalSerialization();
     }
 
     @Test

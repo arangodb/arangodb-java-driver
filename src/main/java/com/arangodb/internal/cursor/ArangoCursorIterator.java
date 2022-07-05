@@ -25,7 +25,6 @@ import com.arangodb.ArangoIterator;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.VPackSlice;
 
 import java.util.Iterator;
@@ -76,7 +75,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     }
 
     protected <R> R deserialize(final VPackSlice result, final Class<R> type) {
-        return db.util(Serializer.CUSTOM).deserialize(result, type);
+        return db.getUserSerialization().deserialize(result, type);
     }
 
     @Override

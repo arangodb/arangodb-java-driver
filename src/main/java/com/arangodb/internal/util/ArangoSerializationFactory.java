@@ -27,27 +27,21 @@ import com.arangodb.util.ArangoSerialization;
  */
 public class ArangoSerializationFactory {
 
-    public enum Serializer {
-        INTERNAL, CUSTOM
-    }
+    private final ArangoSerialization internal;
+    private final ArangoSerialization user;
 
-    private final ArangoSerialization interal;
-    private final ArangoSerialization custom;
-
-    public ArangoSerializationFactory(final ArangoSerialization interal, final ArangoSerialization custom) {
+    public ArangoSerializationFactory(final ArangoSerialization internal, final ArangoSerialization user) {
         super();
-        this.interal = interal;
-        this.custom = custom;
+        this.internal = internal;
+        this.user = user;
     }
 
-    public ArangoSerialization get(final Serializer serializer) {
-        switch (serializer) {
-            case CUSTOM:
-                return custom;
-            case INTERNAL:
-            default:
-                return interal;
-        }
+    public ArangoSerialization getInternalSerialization() {
+        return internal;
+    }
+
+    public ArangoSerialization getUserSerialization() {
+        return user;
     }
 
 }

@@ -32,7 +32,6 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
@@ -74,10 +73,10 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final int timeoutMs
     ) {
 
-        super(new ArangoExecutorAsync(asyncCommBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache(),
+        super(new ArangoExecutorAsync(asyncCommBuilder.build(util.getInternalSerialization()), util, new DocumentCache(),
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util, context);
 
-        final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.get(Serializer.INTERNAL));
+        final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.getInternalSerialization());
 
         cp = new VstProtocol(cacheCom);
         this.asyncHostHandler = asyncHostHandler;
@@ -85,8 +84,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
         ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache(),
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs);
-        asyncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
-        syncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
+        asyncHostResolver.init(arangoExecutorSync, util.getInternalSerialization());
+        syncHostResolver.init(arangoExecutorSync, util.getInternalSerialization());
 
     }
 
