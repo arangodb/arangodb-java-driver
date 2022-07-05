@@ -20,7 +20,6 @@
 
 package com.arangodb;
 
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.util.ArangoSerialization;
 
 /**
@@ -29,19 +28,17 @@ import com.arangodb.util.ArangoSerialization;
 public interface ArangoSerializationAccessor {
 
     /**
-     * Returns driver internal serialization API for serializing and deserializing Java POJOs to/from {@link com.arangodb.velocypack.VPackSlice}
+     * Returns driver internal serialization implementation for serializing and deserializing driver's classes.
      *
      * @return ArangoSerialization
      */
-    ArangoSerialization util();
+    ArangoSerialization getInternalSerialization();
 
     /**
-     * Returns serialization API for serializing and deserializing Java POJOs to/from {@link com.arangodb.velocypack.VPackSlice} by the given
-     * type
+     * Returns serialization implementation for serializing and deserializing user's classes.
      *
-     * @param serializer type of serializer
      * @return ArangoSerialization
      */
-    ArangoSerialization util(Serializer serializer);
+    ArangoSerialization getUserSerialization();
 
 }

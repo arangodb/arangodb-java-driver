@@ -84,13 +84,13 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
         }.getType());
     }
 
     protected Request addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
-        request.setBody(util().serialize(OptionsBuilder.build(options, name)));
+        request.setBody(getInternalSerialization().serialize(OptionsBuilder.build(options, name)));
         return request;
     }
 
@@ -103,29 +103,29 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-        return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
         }.getType());
     }
 
     protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
-        request.setBody(util().serialize(definition));
+        request.setBody(getInternalSerialization().serialize(definition));
         return request;
     }
 
     protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
     }
 
     protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
         final Request request = request(db.dbName(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE,
                 definition.getCollection());
-        request.setBody(util().serialize(definition));
+        request.setBody(getInternalSerialization().serialize(definition));
         return request;
     }
 
     protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
     }
 
     protected Request removeEdgeDefinitionRequest(final String definitionName) {
@@ -133,7 +133,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
     }
 
 }

@@ -29,7 +29,6 @@ import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.model.DBCreateOptions;
@@ -64,7 +63,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                         final HostHandler hostHandler, final ArangoContext context, int responseQueueTimeSamples, final int timeoutMs) {
 
         super(new ArangoExecutorSync(
-                        createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
+                        createProtocol(vstBuilder, httpBuilder, util.getInternalSerialization(), protocol),
                         util,
                         new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
@@ -73,11 +72,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
         cp = createProtocol(
                 new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
                 new HttpCommunication.Builder(httpBuilder),
-                util.get(Serializer.INTERNAL),
+                util.getInternalSerialization(),
                 protocol);
         this.hostHandler = hostHandler;
 
-        hostResolver.init(this.executor(), util());
+        hostResolver.init(this.executor(), getInternalSerialization());
 
         LOGGER.debug("ArangoDB Client is ready to use");
 

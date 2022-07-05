@@ -51,7 +51,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static com.arangodb.internal.util.ArangoSerializationFactory.Serializer.CUSTOM;
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
 
@@ -143,7 +142,7 @@ class CustomSerdeTest {
     void manualCustomPersonDeserializer() {
         Person person = new Person();
         person.name = "Joe";
-        ArangoSerialization serialization = arangoDB.util(CUSTOM);
+        ArangoSerialization serialization = arangoDB.getUserSerialization();
         VPackSlice serializedPerson = serialization.serialize(person);
         Person deserializedPerson = serialization.deserialize(serializedPerson, Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
@@ -237,7 +236,7 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.util(CUSTOM).deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        final String json = arangoDB.getUserSerialization().deserialize(new VPackBuilder().add((String) null).slice(), String.class);
         assertThat(json).isNull();
     }
 

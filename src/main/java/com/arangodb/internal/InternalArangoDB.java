@@ -62,17 +62,17 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get("role"), ServerRole.class);
+        return response -> getInternalSerialization().deserialize(response.getBody().get("role"), ServerRole.class);
     }
 
     protected ResponseDeserializer<String> getServerIdResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get("id"), String.class);
+        return response -> getInternalSerialization().deserialize(response.getBody().get("id"), String.class);
     }
 
     protected Request createDatabaseRequest(final DBCreateOptions options) {
         final Request request = request(DbName.SYSTEM, RequestType.POST,
                 InternalArangoDatabase.PATH_API_DATABASE);
-        request.setBody(util().serialize(options));
+        request.setBody(getInternalSerialization().serialize(options));
         return request;
     }
 
@@ -87,7 +87,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
         return response -> {
             final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-            return util().deserialize(result, new Type<Collection<String>>() {
+            return getInternalSerialization().deserialize(result, new Type<Collection<String>>() {
             }.getType());
         };
     }
@@ -116,7 +116,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
         final Request request;
         request = request(dbName, RequestType.POST, PATH_API_USER);
         request.setBody(
-                util().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
+                getInternalSerialization().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
         return request;
     }
 
@@ -135,7 +135,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
         return response -> {
             final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-            return util().deserialize(result, new Type<Collection<UserEntity>>() {
+            return getInternalSerialization().deserialize(result, new Type<Collection<UserEntity>>() {
             }.getType());
         };
     }
@@ -143,25 +143,25 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected Request updateUserRequest(final DbName dbName, final String user, final UserUpdateOptions options) {
         final Request request;
         request = request(dbName, RequestType.PATCH, PATH_API_USER, user);
-        request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
+        request.setBody(getInternalSerialization().serialize(options != null ? options : new UserUpdateOptions()));
         return request;
     }
 
     protected Request replaceUserRequest(final DbName dbName, final String user, final UserUpdateOptions options) {
         final Request request;
         request = request(dbName, RequestType.PUT, PATH_API_USER, user);
-        request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
+        request.setBody(getInternalSerialization().serialize(options != null ? options : new UserUpdateOptions()));
         return request;
     }
 
     protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                "*").setBody(getInternalSerialization().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                "*", "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                "*", "*").setBody(getInternalSerialization().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request getLogEntriesRequest(final LogOptions options) {
@@ -182,7 +182,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected Request setLogLevelRequest(final LogLevelEntity entity) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
-                .setBody(util().serialize(entity));
+                .setBody(getInternalSerialization().serialize(entity));
     }
 
 }

@@ -23,7 +23,6 @@ package com.arangodb.internal;
 import com.arangodb.QueueTimeMetrics;
 import com.arangodb.entity.Entity;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -41,9 +40,9 @@ public abstract class ArangoExecutor {
     protected <T> T createResult(final Type type, final Response response) {
         if (type != Void.class && response.getBody() != null) {
             if (isInternal(type)) {
-                return (T) util.get(Serializer.INTERNAL).deserialize(response.getBody(), type);
+                return (T) util.getInternalSerialization().deserialize(response.getBody(), type);
             } else {
-                return (T) util.get(Serializer.CUSTOM).deserialize(response.getBody(), type);
+                return (T) util.getUserSerialization().deserialize(response.getBody(), type);
             }
         } else {
             return null;
