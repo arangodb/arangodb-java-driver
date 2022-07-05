@@ -115,8 +115,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getReplicationFactor()).isEqualTo(2);
-        assertThat(props.getSatellite()).isNull();
+        assertThat(props.getReplicationFactor().getValue()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -131,9 +130,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getReplicationFactor()).isEqualTo(2);
+        assertThat(props.getReplicationFactor().getValue()).isEqualTo(2);
         assertThat(props.getWriteConcern()).isEqualTo(2);
-        assertThat(props.getSatellite()).isNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -144,13 +142,12 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
         String name = "collection-" + rnd();
         final CollectionEntity result = db
-                .createCollection(name, new CollectionCreateOptions().satellite(true));
+                .createCollection(name, new CollectionCreateOptions().satellite());
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getReplicationFactor()).isNull();
-        assertThat(props.getSatellite()).isTrue();
+        assertThat(props.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1079,14 +1076,14 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
 
         String name = "graph-" + rnd();
-        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().satellite(true));
-        assertThat(result.getSatellite()).isTrue();
+        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().satellite());
+        assertThat(result.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
         GraphEntity info = db.graph(name).getInfo();
-        assertThat(info.getSatellite()).isTrue();
+        assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
         GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().get();
-        assertThat(graph.getSatellite()).isTrue();
+        assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1102,7 +1099,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
             final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-            assertThat(properties.getReplicationFactor()).isEqualTo(2);
+            assertThat(properties.getReplicationFactor().getValue()).isEqualTo(2);
         }
     }
 

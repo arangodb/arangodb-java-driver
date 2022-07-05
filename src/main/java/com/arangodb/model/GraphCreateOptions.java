@@ -110,8 +110,8 @@ public class GraphCreateOptions {
         return this;
     }
 
-    public Integer getReplicationFactor() {
-        return getOptions().replicationFactor.getReplicationFactor();
+    public ReplicationFactor getReplicationFactor() {
+        return getOptions().replicationFactor;
     }
 
     /**
@@ -124,23 +124,18 @@ public class GraphCreateOptions {
      *                          reported.
      * @return options
      */
-    public GraphCreateOptions replicationFactor(final Integer replicationFactor) {
-        getOptions().replicationFactor.setReplicationFactor(replicationFactor);
+    public GraphCreateOptions replicationFactor(final ReplicationFactor replicationFactor) {
+        getOptions().setReplicationFactor(replicationFactor);
         return this;
     }
 
-    public Boolean getSatellite() {
-        return getOptions().replicationFactor.getSatellite();
+    public GraphCreateOptions replicationFactor(int replicationFactor) {
+        getOptions().setReplicationFactor(ReplicationFactor.of(replicationFactor));
+        return this;
     }
 
-    /**
-     * @param satellite If the true the graph is created as a satellite graph. In this case
-     *                  {@link #replicationFactor(Integer)} is ignored.
-     * @return options
-     * @since ArangoDB 3.7
-     */
-    public GraphCreateOptions satellite(final Boolean satellite) {
-        getOptions().replicationFactor.setSatellite(satellite);
+    public GraphCreateOptions satellite() {
+        getOptions().setReplicationFactor(ReplicationFactor.ofSatellite());
         return this;
     }
 
@@ -204,7 +199,7 @@ public class GraphCreateOptions {
         return this;
     }
 
-    private SmartOptions getOptions() {
+    public SmartOptions getOptions() {
         if (options == null) {
             options = new SmartOptions();
         }
@@ -221,23 +216,14 @@ public class GraphCreateOptions {
 
         public SmartOptions() {
             super();
-            replicationFactor = new ReplicationFactor();
         }
 
-        public Integer getReplicationFactor() {
-            return replicationFactor.getReplicationFactor();
+        public ReplicationFactor getReplicationFactor() {
+            return replicationFactor;
         }
 
-        public void setReplicationFactor(final Integer replicationFactor) {
-            this.replicationFactor.setReplicationFactor(replicationFactor);
-        }
-
-        public Boolean getSatellite() {
-            return replicationFactor.getSatellite();
-        }
-
-        public void setSatellite(final Boolean satellite) {
-            replicationFactor.setSatellite(satellite);
+        public void setReplicationFactor(final ReplicationFactor replicationFactor) {
+            this.replicationFactor = replicationFactor;
         }
 
         public Integer getWriteConcern() {

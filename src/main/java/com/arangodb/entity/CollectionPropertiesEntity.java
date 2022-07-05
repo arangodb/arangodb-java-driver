@@ -33,14 +33,13 @@ public class CollectionPropertiesEntity extends CollectionEntity {
     private Long count;
     private Integer numberOfShards;
     private Collection<String> shardKeys;
-    private final ReplicationFactor replicationFactor;
+    private ReplicationFactor replicationFactor;
     private Integer writeConcern;
     private String shardingStrategy; // cluster option
     private String smartJoinAttribute; // enterprise option
 
     public CollectionPropertiesEntity() {
         super();
-        replicationFactor = new ReplicationFactor();
     }
 
     public KeyOptions getKeyOptions() {
@@ -82,12 +81,12 @@ public class CollectionPropertiesEntity extends CollectionEntity {
         this.shardKeys = shardKeys;
     }
 
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
+    public ReplicationFactor getReplicationFactor() {
+        return replicationFactor;
     }
 
-    public void setReplicationFactor(final Integer replicationFactor) {
-        this.replicationFactor.setReplicationFactor(replicationFactor);
+    public void setReplicationFactor(final ReplicationFactor replicationFactor) {
+        this.replicationFactor = replicationFactor;
     }
 
     public Integer getWriteConcern() {
@@ -96,17 +95,6 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 
     public void setWriteConcern(final Integer writeConcern) {
         this.writeConcern = writeConcern;
-    }
-
-    /**
-     * @return whether the collection is a satellite collection. Only in an enterprise cluster setup (else returning null).
-     */
-    public Boolean getSatellite() {
-        return this.replicationFactor.getSatellite();
-    }
-
-    public void setSatellite(final Boolean satellite) {
-        this.replicationFactor.setSatellite(satellite);
     }
 
     public String getShardingStrategy() {

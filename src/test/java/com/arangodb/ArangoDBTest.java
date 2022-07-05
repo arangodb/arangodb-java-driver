@@ -147,10 +147,9 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultCreate).isTrue();
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getReplicationFactor()).isEqualTo(2);
+        assertThat(info.getReplicationFactor().getValue()).isEqualTo(2);
         assertThat(info.getWriteConcern()).isEqualTo(2);
         assertThat(info.getSharding()).isEmpty();
-        assertThat(info.getSatellite()).isNull();
 
         final Boolean resultDelete = arangoDB.db(dbName).drop();
         assertThat(resultDelete).isTrue();
@@ -168,15 +167,14 @@ class ArangoDBTest extends BaseJunit5 {
                 .name(dbName)
                 .options(new DatabaseOptions()
                         .writeConcern(2)
-                        .satellite(true)
+                        .satellite()
                         .sharding("")
                 )
         );
         assertThat(resultCreate).isTrue();
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getReplicationFactor()).isNull();
-        assertThat(info.getSatellite()).isTrue();
+        assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
         assertThat(info.getWriteConcern()).isEqualTo(2);
         assertThat(info.getSharding()).isEmpty();
 

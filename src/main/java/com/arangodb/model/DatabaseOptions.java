@@ -28,25 +28,20 @@ import com.arangodb.entity.ReplicationFactor;
  */
 public class DatabaseOptions {
 
-    private final ReplicationFactor replicationFactor;
+    private ReplicationFactor replicationFactor;
     private Integer writeConcern;
     private String sharding;
 
     public DatabaseOptions() {
         super();
-        replicationFactor = new ReplicationFactor();
     }
 
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
+    public ReplicationFactor getReplicationFactor() {
+        return replicationFactor;
     }
 
     public Integer getWriteConcern() {
         return writeConcern;
-    }
-
-    public Boolean getSatellite() {
-        return this.replicationFactor.getSatellite();
     }
 
     public String getSharding() {
@@ -58,8 +53,18 @@ public class DatabaseOptions {
      * @return options
      * @since ArangoDB 3.6.0
      */
-    public DatabaseOptions replicationFactor(final Integer replicationFactor) {
-        this.replicationFactor.setReplicationFactor(replicationFactor);
+    public DatabaseOptions replicationFactor(final ReplicationFactor replicationFactor) {
+        this.replicationFactor = replicationFactor;
+        return this;
+    }
+
+    public DatabaseOptions replicationFactor(int replicationFactor) {
+        this.replicationFactor = ReplicationFactor.of(replicationFactor);
+        return this;
+    }
+
+    public DatabaseOptions satellite() {
+        this.replicationFactor = ReplicationFactor.ofSatellite();
         return this;
     }
 
@@ -74,17 +79,6 @@ public class DatabaseOptions {
      */
     public DatabaseOptions writeConcern(final Integer writeConcern) {
         this.writeConcern = writeConcern;
-        return this;
-    }
-
-    /**
-     * @param satellite whether the collection is a satellite collection. Only in an enterprise cluster setup (else
-     *                  returning null).
-     * @return options
-     * @since ArangoDB 3.6.0
-     */
-    public DatabaseOptions satellite(final Boolean satellite) {
-        this.replicationFactor.setSatellite(satellite);
         return this;
     }
 

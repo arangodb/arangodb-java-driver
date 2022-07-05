@@ -20,32 +20,41 @@
 
 package com.arangodb.entity;
 
-/**
- * @author Mark Vollmary
- */
-public class ReplicationFactor {
+import com.fasterxml.jackson.annotation.JsonValue;
 
-    private Integer replicationFactor;
-    private Boolean satellite;
+public interface ReplicationFactor {
 
-    public ReplicationFactor() {
-        super();
+    static NumericReplicationFactor of(int value) {
+        return new NumericReplicationFactor(value);
     }
 
-    public Integer getReplicationFactor() {
-        return replicationFactor;
+    static SatelliteReplicationFactor ofSatellite() {
+        return SatelliteReplicationFactor.INSTANCE;
     }
 
-    public void setReplicationFactor(final Integer replicationFactor) {
-        this.replicationFactor = replicationFactor;
+    @JsonValue
+    Object getValue();
+
+    class NumericReplicationFactor implements ReplicationFactor {
+
+        private Integer value;
+
+        public NumericReplicationFactor(Integer value) {
+            this.value = value;
+        }
+
+        @Override
+        public Integer getValue() {
+            return value;
+        }
     }
 
-    public Boolean getSatellite() {
-        return satellite;
-    }
+    enum SatelliteReplicationFactor implements ReplicationFactor {
+        INSTANCE;
 
-    public void setSatellite(final Boolean satellite) {
-        this.satellite = satellite;
+        @Override
+        public String getValue() {
+            return "satellite";
+        }
     }
-
 }

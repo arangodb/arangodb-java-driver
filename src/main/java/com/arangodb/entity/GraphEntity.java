@@ -66,12 +66,8 @@ public class GraphEntity implements Entity {
         return numberOfShards;
     }
 
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
-    }
-
-    public Boolean getSatellite() {
-        return this.replicationFactor.getSatellite();
+    public ReplicationFactor getReplicationFactor() {
+        return replicationFactor;
     }
 
     public Integer getWriteConcern() {
