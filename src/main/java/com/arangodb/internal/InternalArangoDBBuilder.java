@@ -39,7 +39,6 @@ import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -96,7 +95,6 @@ public abstract class InternalArangoDBBuilder {
     protected Integer keepAliveInterval;
     protected final VPack.Builder vpackBuilder;
     protected final VPackParser.Builder vpackParserBuilder;
-    protected ArangoSerializer serializer;
     protected ArangoDeserializer deserializer;
     protected Boolean acquireHostList;
     protected Integer acquireHostListInterval;
@@ -223,10 +221,6 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setResponseQueueTimeSamples(final Integer responseQueueTimeSamples) {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
-    }
-
-    protected void serializer(final ArangoSerializer serializer) {
-        this.serializer = serializer;
     }
 
     protected void deserializer(final ArangoDeserializer deserializer) {

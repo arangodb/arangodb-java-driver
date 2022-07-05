@@ -27,7 +27,6 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.serde.SerdeUtils;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -145,8 +144,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.setBody(
-                getUserSerialization().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
+        request.setBody(getUserSerialization().serialize(value));
         return request;
     }
 
