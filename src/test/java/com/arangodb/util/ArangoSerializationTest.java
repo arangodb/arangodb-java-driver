@@ -40,18 +40,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ArangoSerializationTest {
 
-    private static ArangoSerialization util;
+    private static ArangoSerialization internalSer;
+    private static ArangoSerialization userSer;
 
     @BeforeAll
     static void setup() {
         final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
-        util = arangoDB.getInternalSerialization();
+        internalSer = arangoDB.getInternalSerialization();
+        userSer = arangoDB.getUserSerialization();
     }
 
     @Test
     void deserialize() {
         final VPackBuilder builder = new VPackBuilder().add(ValueType.OBJECT).add("foo", "bar").close();
-        final BaseDocument doc = util.deserialize(builder.slice(), BaseDocument.class);
+        final BaseDocument doc = internalSer.deserialize(builder.slice(), BaseDocument.class);
         assertThat(doc.getAttribute("foo")).isEqualTo("bar");
     }
 
@@ -59,7 +61,7 @@ class ArangoSerializationTest {
     void serialize() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", "bar");
-        final VPackSlice vpack = util.serialize(entity);
+        final VPackSlice vpack = internalSer.serialize(entity);
         assertThat(vpack.get("foo").isString()).isTrue();
         assertThat(vpack.get("foo").getAsString()).isEqualTo("bar");
     }
@@ -68,7 +70,7 @@ class ArangoSerializationTest {
     void serializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", null);
-        final VPackSlice vpack = util.serialize(entity, new ArangoSerializer.Options().serializeNullValues(true));
+        final VPackSlice vpack = userSer.serialize(entity);
         assertThat(vpack.get("foo").isNull()).isTrue();
     }
 
@@ -76,7 +78,7 @@ class ArangoSerializationTest {
     void skipSerializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("bar", null);
-        final VPackSlice vpack = util.serialize(entity);
+        final VPackSlice vpack = internalSer.serialize(entity);
         assertThat(vpack.get("bar").isNone()).isTrue();
     }
 
@@ -86,9 +88,7 @@ class ArangoSerializationTest {
         list.add(new BaseDocument());
         list.add(new BaseDocument());
 
-        final VPackSlice vpack = util.serialize(list,
-                new ArangoSerializer.Options().type(new Type<Collection<BaseDocument>>() {
-                }.getType()));
+        final VPackSlice vpack = internalSer.serialize(list);
         assertThat(vpack.isArray()).isTrue();
         assertThat(vpack.getLength()).isEqualTo(list.size());
     }
@@ -97,13 +97,13 @@ class ArangoSerializationTest {
     void parseJsonIncludeNull() {
         final Map<String, Object> entity = new HashMap<>();
         entity.put("value", new String[]{"test", null});
-        final String json = util.deserialize(util.serialize(entity, new ArangoSerializer.Options()), String.class);
+        final String json = internalSer.deserialize(internalSer.serialize(entity), String.class);
         assertThat(json).isEqualTo("{\"value\":[\"test\",null]}");
     }
 
     @Test
     void parseNullString() {
-        final String json = util.deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        final String json = internalSer.deserialize(new VPackBuilder().add((String) null).slice(), String.class);
         assertThat(json).isNull();
     }
 

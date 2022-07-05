@@ -30,7 +30,6 @@ import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
@@ -43,7 +42,6 @@ import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
@@ -360,14 +358,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
             final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
             final VPackParser vpackParser = vpackParserBuilder.build();
-            final ArangoSerializer serializerTemp = serializer != null ? serializer
-                    : new ArangoSerializerImpl(vpacker, vpackerNull, vpackParser);
             final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
                     : new ArangoDeserializerImpl(vpackerNull, vpackParser);
             final InternalSerde internalSerde = protocol == Protocol.HTTP_JSON ? InternalSerde.of(DataType.JSON)
                     : InternalSerde.of(DataType.VPACK);
-            final DefaultArangoSerialization internal = new DefaultArangoSerialization(serializerTemp,
-                    deserializerTemp, internalSerde);
+            final DefaultArangoSerialization internal = new DefaultArangoSerialization(deserializerTemp, internalSerde);
             final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 

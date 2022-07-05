@@ -20,8 +20,11 @@
 
 package com.arangodb.util;
 
+import com.arangodb.velocypack.VPackSlice;
+
 /**
  * @author Mark Vollmary
  */
-public interface ArangoSerialization extends ArangoSerializer, ArangoDeserializer {
+public interface ArangoSerialization extends ArangoDeserializer {
+    VPackSlice serialize(final Object entity);
 }

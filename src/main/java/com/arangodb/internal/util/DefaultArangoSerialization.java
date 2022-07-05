@@ -25,7 +25,6 @@ import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -36,13 +35,11 @@ import java.lang.reflect.Type;
  */
 public class DefaultArangoSerialization implements ArangoSerialization {
 
-    private final ArangoSerializer serializer;
     private final ArangoDeserializer deserializer;
     private final InternalSerde serde;
 
-    public DefaultArangoSerialization(final ArangoSerializer serializer, final ArangoDeserializer deserializer, final InternalSerde serde) {
+    public DefaultArangoSerialization(final ArangoDeserializer deserializer, final InternalSerde serde) {
         super();
-        this.serializer = serializer;
         this.deserializer = deserializer;
         this.serde = serde;
     }
@@ -60,11 +57,6 @@ public class DefaultArangoSerialization implements ArangoSerialization {
             default:
                 throw new IllegalStateException("Unexpected value: " + dataType);
         }
-    }
-
-    @Override
-    public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
-        return serializer.serialize(entity, options);
     }
 
     @Override

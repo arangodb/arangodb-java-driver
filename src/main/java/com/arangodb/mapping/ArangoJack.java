@@ -132,12 +132,6 @@ public class ArangoJack implements ArangoSerialization {
 
     @SuppressWarnings("unchecked")
     @Override
-    public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
-        return serialize(entity);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
         try {
             final T doc;

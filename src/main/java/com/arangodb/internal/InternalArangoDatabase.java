@@ -24,13 +24,11 @@ import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
@@ -169,7 +167,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR)
                 .setBody(getInternalSerialization().serialize(OptionsBuilder
                         .build(opt, query, bindVars != null ?
-                                getUserSerialization().serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) :
+                                getUserSerialization().serialize(bindVars) :
                                 null)));
         if (opt.getAllowDirtyRead() == Boolean.TRUE) {
             RequestUtils.allowDirtyRead(request);
@@ -224,9 +222,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
                 .setBody(getInternalSerialization().serialize(OptionsBuilder.build(
                         opt,
                         query,
-                        bindVars != null ? getUserSerialization().serialize(
-                                bindVars,
-                                new ArangoSerializer.Options().serializeNullValues(true)) : null)));
+                        bindVars != null ? getUserSerialization().serialize(bindVars) : null)));
     }
 
     protected Request parseQueryRequest(final String query) {

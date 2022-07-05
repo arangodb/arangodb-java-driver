@@ -29,7 +29,7 @@ import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.serde.DataType;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer.Options;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -356,6 +356,9 @@ public class HttpConnection implements Connection {
         }
     }
 
+    // FIXME: remove
+    private final VPackParser parser = new VPackParser.Builder().build();
+
     public Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {
         final Response response = new Response(dataType);
@@ -370,8 +373,7 @@ public class HttpConnection implements Connection {
             } else {
                 final String content = IOUtils.toString(entity.getContent());
                 if (!content.isEmpty()) {
-                    response.setBody(
-                            util.serialize(content, new Options().stringAsJson(true).serializeNullValues(true)));
+                    response.setBody(parser.fromJson(content, true));
                 }
             }
         }
