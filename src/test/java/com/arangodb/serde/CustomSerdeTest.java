@@ -26,7 +26,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.util.ArangoSerialization;
@@ -143,7 +142,7 @@ class CustomSerdeTest {
         Person person = new Person();
         person.name = "Joe";
         ArangoSerialization serialization = arangoDB.getUserSerialization();
-        VPackSlice serializedPerson = serialization.serialize(person);
+        VPackSlice serializedPerson = new VPackSlice(serialization.serialize(person));
         Person deserializedPerson = serialization.deserialize(serializedPerson, Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }

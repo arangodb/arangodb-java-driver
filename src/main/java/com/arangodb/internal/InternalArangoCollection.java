@@ -91,7 +91,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 
-        VPackSlice body;
+        byte[] body;
         if (value instanceof String) {
             body = getInternalSerialization().serialize(SerdeUtils.INSTANCE.parseJson((String) value));
         } else {
@@ -136,7 +136,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 
-        VPackSlice body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
+        byte[] body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
                 : getUserSerialization().serialize(values);
         request.setBody(body);
         return request;
@@ -191,7 +191,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
-        VPackSlice body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
+        byte[] body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
                 : getUserSerialization().serialize(values);
         return importDocumentsRequest(options).putQueryParam("type", ImportType.list).setBody(body);
     }
@@ -306,7 +306,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
 
-        VPackSlice body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
+        byte[] body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
                 : getUserSerialization().serialize(values);
         request.setBody(body);
         return request;
@@ -408,7 +408,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
 
-        VPackSlice body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
+        byte[] body = isStringCollection(values) ? getInternalSerialization().serialize(stringCollectionToJsonArray((Collection<String>) values))
                 : getUserSerialization().serialize(values);
         request.setBody(body);
         return request;

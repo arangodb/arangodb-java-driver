@@ -45,7 +45,7 @@ class ArangoAnnotationsTest {
         e.setFrom("From");
         e.setTo("To");
 
-        VPackSlice slice = mapper.serialize(e);
+        VPackSlice slice = new VPackSlice(mapper.serialize(e));
         System.out.println(slice);
         Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
         assertThat(deserialized)
@@ -67,7 +67,7 @@ class ArangoAnnotationsTest {
         e.setB("B");
         e.setC("C");
 
-        VPackSlice slice = mapper.serialize(e);
+        VPackSlice slice = new VPackSlice(mapper.serialize(e));
         System.out.println(slice);
         Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
         assertThat(deserialized)
@@ -87,7 +87,7 @@ class ArangoAnnotationsTest {
         e.put(SerializedNameParameterEntity.SERIALIZED_NAME_B, "B");
         e.put(SerializedNameParameterEntity.SERIALIZED_NAME_C, "C");
 
-        VPackSlice slice = mapper.serialize(e);
+        VPackSlice slice = new VPackSlice(mapper.serialize(e));
         SerializedNameParameterEntity deserializedEntity = mapper
                 .deserialize(slice, SerializedNameParameterEntity.class);
         assertThat(deserializedEntity).isEqualTo(new SerializedNameParameterEntity("A", "B", "C"));
@@ -101,7 +101,7 @@ class ArangoAnnotationsTest {
         e.setWriteOnly("writeOnly");
         e.setIgnored("ignored");
 
-        VPackSlice serializedEntity = mapper.serialize(e);
+        VPackSlice serializedEntity = new VPackSlice(mapper.serialize(e));
         Map<String, String> deserializedEntity = mapper.deserialize(serializedEntity, Object.class);
         assertThat(deserializedEntity)
                 .containsEntry("readWrite", "readWrite")
@@ -114,7 +114,7 @@ class ArangoAnnotationsTest {
         map.put("writeOnly", "writeOnly");
         map.put("ignored", "ignored");
 
-        VPackSlice serializedMap = mapper.serialize(map);
+        VPackSlice serializedMap = new VPackSlice(mapper.serialize(map));
         ExposeEntity deserializedMap = mapper.deserialize(serializedMap, ExposeEntity.class);
         assertThat(deserializedMap.getIgnored()).isNull();
         assertThat(deserializedMap.getReadOnly()).isNull();

@@ -21,7 +21,6 @@
 package com.arangodb.velocystream;
 
 import com.arangodb.DbName;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class Request {
     private final Map<String, String> queryParam;
     private final Map<String, String> headerParam;
     @Expose(serialize = false)
-    private VPackSlice body;
+    private byte[] body;
 
     public Request(final DbName dbName, final RequestType requestType, final String path) {
         super();
@@ -104,11 +103,11 @@ public class Request {
         return this;
     }
 
-    public VPackSlice getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public Request setBody(final VPackSlice body) {
+    public Request setBody(final byte[] body) {
         this.body = body;
         return this;
     }

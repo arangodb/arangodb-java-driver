@@ -61,7 +61,7 @@ class ArangoSerializationTest {
     void serialize() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", "bar");
-        final VPackSlice vpack = internalSer.serialize(entity);
+        final VPackSlice vpack = new VPackSlice(internalSer.serialize(entity));
         assertThat(vpack.get("foo").isString()).isTrue();
         assertThat(vpack.get("foo").getAsString()).isEqualTo("bar");
     }
@@ -70,7 +70,7 @@ class ArangoSerializationTest {
     void serializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", null);
-        final VPackSlice vpack = userSer.serialize(entity);
+        final VPackSlice vpack = new VPackSlice(userSer.serialize(entity));
         assertThat(vpack.get("foo").isNull()).isTrue();
     }
 
@@ -78,7 +78,7 @@ class ArangoSerializationTest {
     void skipSerializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("bar", null);
-        final VPackSlice vpack = internalSer.serialize(entity);
+        final VPackSlice vpack = new VPackSlice(internalSer.serialize(entity));
         assertThat(vpack.get("bar").isNone()).isTrue();
     }
 
@@ -88,7 +88,7 @@ class ArangoSerializationTest {
         list.add(new BaseDocument());
         list.add(new BaseDocument());
 
-        final VPackSlice vpack = internalSer.serialize(list);
+        final VPackSlice vpack = new VPackSlice(internalSer.serialize(list));
         assertThat(vpack.isArray()).isTrue();
         assertThat(vpack.getLength()).isEqualTo(list.size());
     }
@@ -97,7 +97,7 @@ class ArangoSerializationTest {
     void parseJsonIncludeNull() {
         final Map<String, Object> entity = new HashMap<>();
         entity.put("value", new String[]{"test", null});
-        final String json = internalSer.deserialize(internalSer.serialize(entity), String.class);
+        final String json = internalSer.deserialize(new VPackSlice(internalSer.serialize(entity)), String.class);
         assertThat(json).isEqualTo("{\"value\":[\"test\",null]}");
     }
 
