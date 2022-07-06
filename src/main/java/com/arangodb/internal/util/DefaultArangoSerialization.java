@@ -21,11 +21,9 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 
 import java.lang.reflect.Type;
@@ -45,18 +43,13 @@ public class DefaultArangoSerialization implements ArangoSerialization {
     }
 
     @Override
-    public VPackSlice serialize(final Object entity) throws ArangoDBException {
-        DataType dataType = serde.getDataType();
-        switch (dataType) {
-            case JSON:
-                String json = new String(serde.serialize(entity));
-                VPackParser parser = new VPackParser.Builder().build();
-                return parser.fromJson(json, true);
-            case VPACK:
-                return new VPackSlice(serde.serialize(entity));
-            default:
-                throw new IllegalStateException("Unexpected value: " + dataType);
-        }
+    public byte[] serialize(final Object entity) throws ArangoDBException {
+        return serde.serialize(entity);
+    }
+
+    @Override
+    public String toJsonString(byte[] content) {
+        return serde.toJsonString(content);
     }
 
     @Override

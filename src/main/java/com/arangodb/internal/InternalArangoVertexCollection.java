@@ -73,7 +73,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 
-        VPackSlice body;
+        byte[] body;
         if (value instanceof String) {
             body = getInternalSerialization().serialize(SerdeUtils.INSTANCE.parseJson((String) value));
         } else {

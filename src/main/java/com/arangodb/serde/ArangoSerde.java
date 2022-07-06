@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
  * This interface should not be directly implemented as an adapter to Jackson Databind. A more performant way to provide
  * custom implementations based on Jackson Databind is by extending {@link JacksonSerde}, which exposes additional
  * methods based on Jackson's types.
- * Furthermore, existing implementations {@link JacksonSerde} can be instantiated providing a custom configured Jackson
+ * Furthermore, existing {@link JacksonSerde} implementations can be instantiated providing a custom configured Jackson
  * ObjectMapper, see {@link JacksonSerde#of(DataType, ObjectMapper)}.
  */
 public interface ArangoSerde {

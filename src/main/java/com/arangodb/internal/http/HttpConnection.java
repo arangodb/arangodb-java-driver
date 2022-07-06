@@ -48,7 +48,6 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
@@ -65,7 +64,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -82,9 +80,6 @@ public class HttpConnection implements Connection {
     private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
             "utf-8");
     private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
-
-    // max safe UTF-8 json string length, so that it can be converted to byte array
-    private static final int MAX_JSON_LENGTH = (Integer.MAX_VALUE - 8) / 4;
 
     public static class Builder {
         private String user;
@@ -290,19 +285,12 @@ public class HttpConnection implements Connection {
     }
 
     private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
-        final VPackSlice body = request.getBody();
+        final byte[] body = request.getBody();
         if (body != null) {
             if (contentType == Protocol.HTTP_VPACK) {
-                httpRequest.setEntity(new ByteArrayEntity(
-                        Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize()),
-                        CONTENT_TYPE_VPACK));
+                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_VPACK));
             } else {
-                String json = body.toString();
-                if (json.length() > MAX_JSON_LENGTH) {
-                    LOGGER.warn("Json string length is greater than safe threshold (" + MAX_JSON_LENGTH + "). " +
-                            "This could cause memory allocation errors.");
-                }
-                httpRequest.setEntity(new StringEntity(json, CONTENT_TYPE_APPLICATION_JSON_UTF8));
+                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_APPLICATION_JSON_UTF8));
             }
         }
         return httpRequest;

@@ -45,11 +45,11 @@ public class Message {
         }
     }
 
-    public Message(final long id, final VPackSlice head, final VPackSlice body) {
+    public Message(final long id, final byte[] head, final byte[] body) {
         super();
         this.id = id;
-        this.head = head;
-        this.body = body;
+        this.head = new VPackSlice(head);
+        this.body = body != null ? new VPackSlice(body) : null;
     }
 
     public long getId() {

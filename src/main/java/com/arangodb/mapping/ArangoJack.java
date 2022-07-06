@@ -28,7 +28,6 @@ import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -55,7 +54,6 @@ public class ArangoJack implements ArangoSerialization {
     private final ObjectMapper vpackMapper;
     private final ObjectMapper vpackMapperNull;
     private final ObjectMapper jsonMapper;
-    private final VPackParser vpackParser;
 
     private final JacksonSerde serde;
 
@@ -103,7 +101,6 @@ public class ArangoJack implements ArangoSerialization {
         vpackMapper = mapper.copy().setSerializationInclusion(Include.NON_NULL);
         vpackMapperNull = mapper.copy().setSerializationInclusion(Include.ALWAYS);
         jsonMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
-        vpackParser = new VPackParser.Builder().build();
         serde =  JacksonSerde.of(DataType.VPACK, configureDefaultMapper(new VPackMapper()));
     }
 
@@ -115,19 +112,14 @@ public class ArangoJack implements ArangoSerialization {
     }
 
     @Override
-    public VPackSlice serialize(final Object entity) throws ArangoDBException {
-        DataType dataType = serde.getDataType();
-        switch (dataType) {
-            case JSON:
-                String json = new String(serde.serialize(entity));
-                VPackParser parser = new VPackParser.Builder().build();
-                return parser.fromJson(json, true);
-            case VPACK:
-                return new VPackSlice(serde.serialize(entity));
-            default:
-                throw new IllegalStateException("Unexpected value: " + dataType);
-        }
+    public byte[] serialize(final Object entity) throws ArangoDBException {
+        return serde.serialize(entity);
+    }
 
+    // FIXME: toJsonString should only be required for internal serialization
+    @Override
+    public String toJsonString(byte[] content) {
+        throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("unchecked")

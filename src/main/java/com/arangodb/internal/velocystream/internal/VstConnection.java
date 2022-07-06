@@ -87,7 +87,7 @@ public abstract class VstConnection<T> implements Connection {
 
     private final String connectionName;
 
-    private final VPackSlice keepAliveRequest = new VPackBuilder()
+    private final byte[] keepAliveRequest = new VPackBuilder()
             .add(ValueType.ARRAY)
             .add(1)
             .add(1)
@@ -99,7 +99,8 @@ public abstract class VstConnection<T> implements Connection {
             .add(ValueType.OBJECT)
             .close()
             .close()
-            .slice();
+            .slice()
+            .toByteArray();
 
     protected VstConnection(final HostDescription host,
                             final Integer timeout,
@@ -130,7 +131,7 @@ public abstract class VstConnection<T> implements Connection {
         }
         return write(message, Collections.singleton(new Chunk(
                 id, 0, 1, -1,
-                0, keepAliveRequest.getByteSize()
+                0, keepAliveRequest.length
         )));
     }
 
