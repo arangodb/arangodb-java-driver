@@ -25,6 +25,7 @@ import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,6 +37,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
 @SuppressWarnings("unused")
+@ThreadSafe
 public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
 
     /**

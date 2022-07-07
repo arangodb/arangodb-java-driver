@@ -22,6 +22,8 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for operations on ArangoDB view level.
  *
@@ -30,6 +32,7 @@ import com.arangodb.entity.ViewEntity;
  * @since ArangoDB 3.4.0
  */
 @SuppressWarnings("UnusedReturnValue")
+@ThreadSafe
 public interface ArangoView extends ArangoSerializationAccessor {
 
     /**

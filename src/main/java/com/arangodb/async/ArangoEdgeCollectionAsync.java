@@ -25,6 +25,7 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,6 +35,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
+@ThreadSafe
 public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
 
     /**

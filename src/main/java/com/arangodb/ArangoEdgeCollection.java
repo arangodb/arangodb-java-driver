@@ -24,6 +24,8 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for operations on ArangoDB edge collection level.
  *
@@ -31,6 +33,7 @@ import com.arangodb.model.*;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
+@ThreadSafe
 public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 
     /**
