@@ -20,10 +20,14 @@
 
 package com.arangodb.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * @author Mark Vollmary
  */
 public interface ArangoSerialization extends ArangoDeserializer {
     byte[] serialize(final Object entity);
     String toJsonString(byte[] content);
+    JsonNode parse(byte[] content);
+
 }

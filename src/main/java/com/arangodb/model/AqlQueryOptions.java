@@ -20,10 +20,13 @@
 
 package com.arangodb.model;
 
+import com.arangodb.serde.InternalSerializers;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,9 +37,7 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public class AqlQueryOptions implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class AqlQueryOptions {
 
     private Boolean count;
     private Integer ttl;
@@ -44,6 +45,7 @@ public class AqlQueryOptions implements Serializable {
     private Boolean cache;
     private Long memoryLimit;
     private VPackSlice bindVars;
+    private byte[] bindVarsBytes;
     private String query;
     private Options options;
     @Expose(serialize = false)
@@ -151,8 +153,15 @@ public class AqlQueryOptions implements Serializable {
         return this;
     }
 
+    @JsonIgnore
     public VPackSlice getBindVars() {
         return bindVars;
+    }
+
+    @JsonProperty("bindVars")
+    @JsonSerialize(using = InternalSerializers.AqlParamsSerializer.class)
+    public byte[] getBindVarsBytes() {
+        return bindVarsBytes;
     }
 
     /**
@@ -161,6 +170,15 @@ public class AqlQueryOptions implements Serializable {
      */
     protected AqlQueryOptions bindVars(final VPackSlice bindVars) {
         this.bindVars = bindVars;
+        return this;
+    }
+
+    /**
+     * @param bindVarsBytes serialized bind parameters
+     * @return options
+     */
+    protected AqlQueryOptions bindVars(final byte[] bindVarsBytes) {
+        this.bindVarsBytes = bindVarsBytes;
         return this;
     }
 
@@ -409,9 +427,7 @@ public class AqlQueryOptions implements Serializable {
         return options;
     }
 
-    public static class Options implements Serializable {
-
-        private static final long serialVersionUID = 1L;
+    public static class Options {
 
         private Boolean failOnWarning;
         private Boolean profile;

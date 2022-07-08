@@ -19,6 +19,20 @@
  */
 package com.arangodb.serde;
 
+import com.arangodb.Protocol;
+
 public enum DataType {
-    JSON, VPACK
+    JSON, VPACK;
+
+    public static DataType of(Protocol protocol) {
+        switch (protocol) {
+            case HTTP_JSON:
+                return DataType.JSON;
+            case HTTP_VPACK:
+            case VST:
+                return DataType.VPACK;
+            default:
+                throw new IllegalStateException("Unexpected value: " + protocol);
+        }
+    }
 }

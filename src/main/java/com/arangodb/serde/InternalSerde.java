@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public interface InternalSerde extends JacksonSerde {
@@ -39,4 +40,10 @@ public interface InternalSerde extends JacksonSerde {
      */
     byte[] extract(byte[] content, String jsonPointer);
 
+    /**
+     * TODO
+     * @param content
+     * @return
+     */
+    JsonNode parse(byte[] content);
 }

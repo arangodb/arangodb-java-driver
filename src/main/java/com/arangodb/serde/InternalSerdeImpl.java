@@ -39,8 +39,17 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
     @Override
     public byte[] extract(final byte[] content, final String jsonPointer) {
         try {
-            JsonNode target = mapper.readTree(content).at(jsonPointer);
+            JsonNode target = parse(content).at(jsonPointer);
             return mapper.writeValueAsBytes(target);
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    @Override
+    public JsonNode parse(byte[] content) {
+        try {
+            return mapper.readTree(content);
         } catch (IOException e) {
             throw new ArangoDBException(e);
         }

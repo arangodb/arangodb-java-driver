@@ -1259,11 +1259,15 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .isEqualTo(400);
     }
 
-    static class TransactionTestEntity {
+    public static class TransactionTestEntity {
         private String value;
 
-        TransactionTestEntity() {
+        public TransactionTestEntity() {
             super();
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 

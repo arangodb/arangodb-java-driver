@@ -9,6 +9,7 @@ import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -18,6 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class InternalSerializers {
+
+    public static class AqlParamsSerializer extends JsonSerializer<byte[]> {
+        @Override
+        public void serialize(byte[] value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            // TODO: find a way to append raw bytes directly
+            try (JsonParser parser = gen.getCodec().getFactory().createParser(value)) {
+                gen.writeTree(parser.readValueAsTree());
+            }
+        }
+    }
 
     public static class CollectionSchemaRuleSerializer extends JsonSerializer<String> {
         @Override

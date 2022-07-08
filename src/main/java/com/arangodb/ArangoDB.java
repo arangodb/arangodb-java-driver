@@ -39,6 +39,7 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
+import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
@@ -347,11 +348,6 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @return {@link ArangoDB}
          */
         public synchronized ArangoDB build() {
-            if (customSerializer == null) {
-                logger.warn("Usage of VelocyPack Java serialization is now deprecated for removal. " +
-                        "Future driver versions will only support Jackson serialization (for both JSON and VPACK formats). " +
-                        "Please configure according to: https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html");
-            }
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
@@ -360,10 +356,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             final VPackParser vpackParser = vpackParserBuilder.build();
             final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
                     : new ArangoDeserializerImpl(vpackerNull, vpackParser);
-            final InternalSerde internalSerde = protocol == Protocol.HTTP_JSON ? InternalSerde.of(DataType.JSON)
-                    : InternalSerde.of(DataType.VPACK);
+            final InternalSerde internalSerde =  InternalSerde.of(DataType.of(protocol));
             final DefaultArangoSerialization internal = new DefaultArangoSerialization(deserializerTemp, internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
+            final ArangoSerialization custom = customSerializer != null ? customSerializer : new DefaultArangoSerialization(deserializerTemp, JacksonSerde.of(DataType.of(protocol)));;
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
             int protocolMaxConnections = protocol == Protocol.VST ?
