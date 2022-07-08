@@ -23,7 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.internal.net.*;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -73,7 +73,7 @@ class HostHandlerTest {
         }
 
         @Override
-        public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
+        public void init(ArangoExecutorSync executor, InternalSerialization arangoSerialization) {
 
         }
 
@@ -92,7 +92,7 @@ class HostHandlerTest {
         }
 
         @Override
-        public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
+        public void init(ArangoExecutorSync executor, InternalSerialization arangoSerialization) {
 
         }
 

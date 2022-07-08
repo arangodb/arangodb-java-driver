@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 
 /**
  * @author Mark Vollmary
@@ -32,7 +33,7 @@ public interface ArangoSerializationAccessor {
      *
      * @return ArangoSerialization
      */
-    ArangoSerialization getInternalSerialization();
+    InternalSerialization getInternalSerialization();
 
     /**
      * Returns serialization implementation for serializing and deserializing user's classes.

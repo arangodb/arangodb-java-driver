@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Response;
 
@@ -43,7 +43,7 @@ public final class ResponseUtils {
         super();
     }
 
-    public static void checkError(final ArangoSerialization util, final Response response) throws ArangoDBException {
+    public static void checkError(final InternalSerialization util, final Response response) throws ArangoDBException {
         try {
             final int responseCode = response.getResponseCode();
             if (responseCode >= ERROR_STATUS) {

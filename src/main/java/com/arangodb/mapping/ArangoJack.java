@@ -116,18 +116,6 @@ public class ArangoJack implements ArangoSerialization {
         return serde.serialize(entity);
     }
 
-    // FIXME: only required for internal serialization
-    @Override
-    public String toJsonString(byte[] content) {
-        throw new UnsupportedOperationException();
-    }
-
-    // FIXME: only required for internal serialization
-    @Override
-    public JsonNode parse(byte[] content) {
-        throw new UnsupportedOperationException();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {

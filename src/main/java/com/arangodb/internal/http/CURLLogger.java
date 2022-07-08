@@ -20,7 +20,7 @@
 
 package com.arangodb.internal.http;
 
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.apache.http.auth.Credentials;
@@ -44,7 +44,7 @@ public final class CURLLogger {
             final Request request,
             final Credentials credentials,
             final String jwt,
-            final ArangoSerialization util) {
+            final InternalSerialization util) {
         final RequestType requestType = request.getRequestType();
         final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
                 || requestType == RequestType.PATCH || requestType == RequestType.DELETE) && request.getBody() != null;

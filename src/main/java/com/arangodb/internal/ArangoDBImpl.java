@@ -36,7 +36,7 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -85,7 +85,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static CommunicationProtocol createProtocol(
             final VstCommunicationSync.Builder vstBuilder,
             final HttpCommunication.Builder httpBuilder,
-            final ArangoSerialization util,
+            final InternalSerialization util,
             final Protocol protocol) {
 
         return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
@@ -94,13 +94,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private static CommunicationProtocol createVST(
             final VstCommunicationSync.Builder builder,
-            final ArangoSerialization util) {
+            final InternalSerialization util) {
         return new VstProtocol(builder.build(util));
     }
 
     private static CommunicationProtocol createHTTP(
             final HttpCommunication.Builder builder,
-            final ArangoSerialization util) {
+            final InternalSerialization util) {
         return new HttpProtocol(builder.build(util));
     }
 

@@ -30,7 +30,7 @@ import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -50,7 +50,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
     private VstCommunicationAsync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                  final String password, final String jwt, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                                  final String password, final String jwt, final Boolean useSsl, final SSLContext sslContext, final InternalSerialization util,
                                   final Integer chunksize, final Integer maxConnections, final Long connectionTtl) {
         super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }
@@ -209,7 +209,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
             return this;
         }
 
-        public VstCommunicationAsync build(final ArangoSerialization util) {
+        public VstCommunicationAsync build(final InternalSerialization util) {
             return new VstCommunicationAsync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
                     maxConnections, connectionTtl);
         }

@@ -28,7 +28,7 @@ import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.serde.DataType;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
@@ -84,7 +84,7 @@ public class HttpConnection implements Connection {
     public static class Builder {
         private String user;
         private String password;
-        private ArangoSerialization util;
+        private InternalSerialization util;
         private Boolean useSsl;
         private String httpCookieSpec;
         private Protocol contentType;
@@ -105,7 +105,7 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder serializationUtil(final ArangoSerialization util) {
+        public Builder serializationUtil(final InternalSerialization util) {
             this.util = util;
             return this;
         }
@@ -166,14 +166,14 @@ public class HttpConnection implements Connection {
     private final String user;
     private final String password;
     private volatile String jwt = null;
-    private final ArangoSerialization util;
+    private final InternalSerialization util;
     private final Boolean useSsl;
     private final Protocol contentType;
     private final DataType dataType;
     private final HostDescription host;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final ArangoSerialization util, final Protocol contentType,
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerialization util, final Protocol contentType,
                            final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
         super();
         this.host = host;

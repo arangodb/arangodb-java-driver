@@ -21,10 +21,9 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoDeserializer;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -33,12 +32,12 @@ import java.lang.reflect.Type;
 /**
  * @author Mark Vollmary
  */
-public class DefaultArangoSerialization implements ArangoSerialization {
+public class InternalSerializationImpl implements InternalSerialization {
 
     private final ArangoDeserializer deserializer;
-    private final ArangoSerde serde;
+    private final InternalSerde serde;
 
-    public DefaultArangoSerialization(final ArangoDeserializer deserializer, final ArangoSerde serde) {
+    public InternalSerializationImpl(final ArangoDeserializer deserializer, final InternalSerde serde) {
         super();
         this.deserializer = deserializer;
         this.serde = serde;
@@ -51,12 +50,12 @@ public class DefaultArangoSerialization implements ArangoSerialization {
 
     @Override
     public String toJsonString(byte[] content) {
-        return ((InternalSerde) serde).toJsonString(content);
+        return serde.toJsonString(content);
     }
 
     @Override
     public JsonNode parse(byte[] content) {
-        return ((InternalSerde) serde).parse(content);
+        return serde.parse(content);
     }
 
     @Override

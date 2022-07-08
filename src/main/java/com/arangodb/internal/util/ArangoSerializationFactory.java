@@ -21,22 +21,23 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoSerializationFactory {
 
-    private final ArangoSerialization internal;
+    private final InternalSerialization internal;
     private final ArangoSerialization user;
 
-    public ArangoSerializationFactory(final ArangoSerialization internal, final ArangoSerialization user) {
+    public ArangoSerializationFactory(final InternalSerialization internal, final ArangoSerialization user) {
         super();
         this.internal = internal;
         this.user = user;
     }
 
-    public ArangoSerialization getInternalSerialization() {
+    public InternalSerialization getInternalSerialization() {
         return internal;
     }
 

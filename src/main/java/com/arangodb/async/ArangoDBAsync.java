@@ -33,7 +33,8 @@ import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.DefaultArangoSerialization;
+import com.arangodb.internal.util.ArangoSerializationImpl;
+import com.arangodb.internal.util.InternalSerializationImpl;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -45,7 +46,8 @@ import com.arangodb.serde.InternalSerde;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.*;
+import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -518,8 +520,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
                     : new ArangoDeserializerImpl(vpackerNull, vpackParser);
             final InternalSerde internalSerde = InternalSerde.of(DataType.VPACK);
-            final DefaultArangoSerialization internal = new DefaultArangoSerialization(deserializerTemp, internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new DefaultArangoSerialization(deserializerTemp, JacksonSerde.of(DataType.VPACK));
+            final InternalSerializationImpl internal = new InternalSerializationImpl(deserializerTemp, internalSerde);
+            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new ArangoSerializationImpl(deserializerTemp, JacksonSerde.of(DataType.VPACK));
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
