@@ -29,16 +29,11 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.AfterAll;
@@ -53,7 +48,6 @@ import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -144,7 +138,7 @@ class CustomSerdeTest {
         person.name = "Joe";
         ArangoSerialization serialization = arangoDB.getUserSerialization();
         VPackSlice serializedPerson = new VPackSlice(serialization.serialize(person));
-        Person deserializedPerson = serialization.deserialize(serializedPerson, Person.class);
+        Person deserializedPerson = serialization.deserialize(serializedPerson.toByteArray(), Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
@@ -236,7 +230,7 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.getUserSerialization().deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        final String json = arangoDB.getUserSerialization().deserialize(new VPackBuilder().add((String) null).slice().toByteArray(), String.class);
         assertThat(json).isNull();
     }
 

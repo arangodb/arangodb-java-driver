@@ -1,7 +1,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;

@@ -517,11 +517,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
             final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
             final VPackParser vpackParser = vpackParserBuilder.build();
-            final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
-                    : new ArangoDeserializerImpl(vpackerNull, vpackParser);
             final InternalSerde internalSerde = InternalSerde.of(DataType.VPACK);
-            final InternalSerializationImpl internal = new InternalSerializationImpl(deserializerTemp, internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new ArangoSerializationImpl(deserializerTemp, JacksonSerde.of(DataType.VPACK));
+            final InternalSerializationImpl internal = new InternalSerializationImpl(internalSerde);
+            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new ArangoSerializationImpl(JacksonSerde.of(DataType.VPACK));
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)

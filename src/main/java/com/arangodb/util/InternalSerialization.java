@@ -22,12 +22,26 @@ package com.arangodb.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Mark Vollmary
  */
-public interface InternalSerialization extends ArangoDeserializer {
+public interface InternalSerialization {
     byte[] serialize(final Object entity);
+
+    <T> T deserialize(byte[] content, Type type);
+
+    <T> T deserialize(JsonNode node, Type type);
+
     String toJsonString(byte[] content);
+
     JsonNode parse(byte[] content);
+
+    JsonNode parse(byte[] content, String jsonPointer);
+
+    <T> T deserialize(byte[] content, String jsonPointer, Type type);
+
+    byte[] extract(byte[] content, String jsonPointer);
 
 }

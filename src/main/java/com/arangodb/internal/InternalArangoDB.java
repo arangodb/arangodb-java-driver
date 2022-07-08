@@ -21,19 +21,20 @@
 package com.arangodb.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.entity.*;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.model.*;
 import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 /**
  * @author Mark Vollmary
@@ -62,11 +63,11 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get("role"), ServerRole.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/role", ServerRole.class);
     }
 
     protected ResponseDeserializer<String> getServerIdResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get("id"), String.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/id", String.class);
     }
 
     protected Request createDatabaseRequest(final DBCreateOptions options) {
@@ -77,7 +78,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-        return response -> response.getBody().get(ArangoResponseField.RESULT).getAsBoolean();
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, Boolean.class);
     }
 
     protected Request getDatabasesRequest(final DbName dbName) {
@@ -85,11 +86,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return response -> {
-            final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-            return getInternalSerialization().deserialize(result, new Type<Collection<String>>() {
-            }.getType());
-        };
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<String>>() {
+        }.getType());
     }
 
     protected Request getAccessibleDatabasesForRequest(final DbName dbName, final String user) {
@@ -98,11 +96,10 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
         return response -> {
-            final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+            Iterator<String> names = getInternalSerialization().parse(response.getBody(), ArangoResponseField.RESULT).fieldNames();
             final Collection<String> dbs = new ArrayList<>();
-            for (final Iterator<Entry<String, VPackSlice>> iterator = result.objectIterator(); iterator
-                    .hasNext(); ) {
-                dbs.add(iterator.next().getKey());
+            while (names.hasNext()) {
+                dbs.add(names.next());
             }
             return dbs;
         };
@@ -133,11 +130,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-        return response -> {
-            final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-            return getInternalSerialization().deserialize(result, new Type<Collection<UserEntity>>() {
-            }.getType());
-        };
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<UserEntity>>() {
+        }.getType());
     }
 
     protected Request updateUserRequest(final DbName dbName, final String user, final UserUpdateOptions options) {

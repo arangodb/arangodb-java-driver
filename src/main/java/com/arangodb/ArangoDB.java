@@ -28,7 +28,6 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.*;
-import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationImpl;
 import com.arangodb.internal.util.InternalSerializationImpl;
@@ -42,11 +41,8 @@ import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -353,14 +349,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
-            final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
-            final VPackParser vpackParser = vpackParserBuilder.build();
-            final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
-                    : new ArangoDeserializerImpl(vpackerNull, vpackParser);
             final InternalSerde internalSerde =  InternalSerde.of(DataType.of(protocol));
-            final InternalSerialization internal = new InternalSerializationImpl(deserializerTemp, internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer : new ArangoSerializationImpl(deserializerTemp, JacksonSerde.of(DataType.of(protocol)));
+            final InternalSerialization internal = new InternalSerializationImpl(internalSerde);
+            final ArangoSerialization custom = customSerializer != null ? customSerializer : new ArangoSerializationImpl(JacksonSerde.of(DataType.of(protocol)));
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
             int protocolMaxConnections = protocol == Protocol.VST ?

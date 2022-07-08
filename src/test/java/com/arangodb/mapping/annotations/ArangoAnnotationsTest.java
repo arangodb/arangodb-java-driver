@@ -47,7 +47,7 @@ class ArangoAnnotationsTest {
 
         VPackSlice slice = new VPackSlice(mapper.serialize(e));
         System.out.println(slice);
-        Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
+        Map<String, String> deserialized = mapper.deserialize(slice.toByteArray(), Object.class);
         assertThat(deserialized)
                 .containsEntry("_id", e.getId())
                 .containsEntry("_key", e.getKey())
@@ -56,7 +56,7 @@ class ArangoAnnotationsTest {
                 .containsEntry("_to", e.getTo())
                 .hasSize(5);
 
-        AnnotatedEntity deserializedEntity = mapper.deserialize(slice, AnnotatedEntity.class);
+        AnnotatedEntity deserializedEntity = mapper.deserialize(slice.toByteArray(), AnnotatedEntity.class);
         assertThat(deserializedEntity).isEqualTo(e);
     }
 
@@ -69,14 +69,14 @@ class ArangoAnnotationsTest {
 
         VPackSlice slice = new VPackSlice(mapper.serialize(e));
         System.out.println(slice);
-        Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
+        Map<String, String> deserialized = mapper.deserialize(slice.toByteArray(), Object.class);
         assertThat(deserialized)
                 .containsEntry(SerializedNameEntity.SERIALIZED_NAME_A, e.getA())
                 .containsEntry(SerializedNameEntity.SERIALIZED_NAME_B, e.getB())
                 .containsEntry(SerializedNameEntity.SERIALIZED_NAME_C, e.getC())
                 .hasSize(3);
 
-        SerializedNameEntity deserializedEntity = mapper.deserialize(slice, SerializedNameEntity.class);
+        SerializedNameEntity deserializedEntity = mapper.deserialize(slice.toByteArray(), SerializedNameEntity.class);
         assertThat(deserializedEntity).isEqualTo(e);
     }
 
@@ -89,7 +89,7 @@ class ArangoAnnotationsTest {
 
         VPackSlice slice = new VPackSlice(mapper.serialize(e));
         SerializedNameParameterEntity deserializedEntity = mapper
-                .deserialize(slice, SerializedNameParameterEntity.class);
+                .deserialize(slice.toByteArray(), SerializedNameParameterEntity.class);
         assertThat(deserializedEntity).isEqualTo(new SerializedNameParameterEntity("A", "B", "C"));
     }
 
@@ -102,7 +102,7 @@ class ArangoAnnotationsTest {
         e.setIgnored("ignored");
 
         VPackSlice serializedEntity = new VPackSlice(mapper.serialize(e));
-        Map<String, String> deserializedEntity = mapper.deserialize(serializedEntity, Object.class);
+        Map<String, String> deserializedEntity = mapper.deserialize(serializedEntity.toByteArray(), Object.class);
         assertThat(deserializedEntity)
                 .containsEntry("readWrite", "readWrite")
                 .containsEntry("readOnly", "readOnly")
@@ -115,7 +115,7 @@ class ArangoAnnotationsTest {
         map.put("ignored", "ignored");
 
         VPackSlice serializedMap = new VPackSlice(mapper.serialize(map));
-        ExposeEntity deserializedMap = mapper.deserialize(serializedMap, ExposeEntity.class);
+        ExposeEntity deserializedMap = mapper.deserialize(serializedMap.toByteArray(), ExposeEntity.class);
         assertThat(deserializedMap.getIgnored()).isNull();
         assertThat(deserializedMap.getReadOnly()).isNull();
         assertThat(deserializedMap.getWriteOnly()).isEqualTo("writeOnly");

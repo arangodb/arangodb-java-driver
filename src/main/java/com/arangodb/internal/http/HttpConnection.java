@@ -30,7 +30,6 @@ import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.serde.DataType;
 import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.*;
@@ -349,20 +348,13 @@ public class HttpConnection implements Connection {
 
     public Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {
-        final Response response = new Response(dataType);
+        final Response response = new Response();
         response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
         final HttpEntity entity = httpResponse.getEntity();
         if (entity != null && entity.getContent() != null) {
-            if (contentType == Protocol.HTTP_VPACK) {
-                final byte[] content = IOUtils.toByteArray(entity.getContent());
-                if (content.length > 0) {
-                    response.setBody(new VPackSlice(content));
-                }
-            } else {
-                final String content = IOUtils.toString(entity.getContent());
-                if (!content.isEmpty()) {
-                    response.setBody(parser.fromJson(content, true));
-                }
+            final byte[] content = IOUtils.toByteArray(entity.getContent());
+            if (content.length > 0) {
+                response.setBody(content);
             }
         }
         final Header[] headers = httpResponse.getAllHeaders();

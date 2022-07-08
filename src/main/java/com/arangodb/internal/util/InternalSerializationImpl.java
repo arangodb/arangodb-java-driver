@@ -22,9 +22,7 @@ package com.arangodb.internal.util;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.serde.InternalSerde;
-import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
@@ -34,12 +32,10 @@ import java.lang.reflect.Type;
  */
 public class InternalSerializationImpl implements InternalSerialization {
 
-    private final ArangoDeserializer deserializer;
     private final InternalSerde serde;
 
-    public InternalSerializationImpl(final ArangoDeserializer deserializer, final InternalSerde serde) {
+    public InternalSerializationImpl(final InternalSerde serde) {
         super();
-        this.deserializer = deserializer;
         this.serde = serde;
     }
 
@@ -59,8 +55,28 @@ public class InternalSerializationImpl implements InternalSerialization {
     }
 
     @Override
-    public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
-        return deserializer.deserialize(vpack, type);
+    public <T> T deserialize(byte[] content, Type type) {
+        return serde.deserialize(content, type);
+    }
+
+    @Override
+    public <T> T deserialize(JsonNode node, Type type) {
+        return serde.deserialize(node, type);
+    }
+
+    @Override
+    public JsonNode parse(byte[] content, String jsonPointer) {
+        return serde.parse(content, jsonPointer);
+    }
+
+    @Override
+    public <T> T deserialize(byte[] content, String jsonPointer, Type type) {
+        return serde.deserialize(content, jsonPointer, type);
+    }
+
+    @Override
+    public byte[] extract(byte[] content, String jsonPointer) {
+        return serde.extract(content, jsonPointer);
     }
 
 }

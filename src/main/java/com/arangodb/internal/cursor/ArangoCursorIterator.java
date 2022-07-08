@@ -25,7 +25,7 @@ import com.arangodb.ArangoIterator;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -37,7 +37,7 @@ import java.util.NoSuchElementException;
 public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
     private CursorEntity result;
-    private Iterator<VPackSlice> arrayIterator;
+    private Iterator<JsonNode> arrayIterator;
 
     private final ArangoCursor<T> cursor;
     private final InternalArangoDatabase<?, ?> db;
@@ -50,7 +50,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
         this.execute = execute;
         this.db = db;
         this.result = result;
-        arrayIterator = result.getResult().arrayIterator();
+        arrayIterator = result.getResult().iterator();
     }
 
     public CursorEntity getResult() {
@@ -66,15 +66,15 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     public T next() {
         if (!arrayIterator.hasNext() && result.getHasMore()) {
             result = execute.next(cursor.getId(), result.getMeta());
-            arrayIterator = result.getResult().arrayIterator();
+            arrayIterator = result.getResult().iterator();
         }
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return deserialize(arrayIterator.next(), cursor.getType());
+        return deserialize(db.getInternalSerialization().serialize(arrayIterator.next()), cursor.getType());
     }
 
-    protected <R> R deserialize(final VPackSlice result, final Class<R> type) {
+    protected <R> R deserialize(final byte[] result, final Class<R> type) {
         return db.getUserSerialization().deserialize(result, type);
     }
 

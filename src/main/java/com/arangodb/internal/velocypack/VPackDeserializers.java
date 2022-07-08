@@ -20,32 +20,11 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionStatus;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryExecutionState;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.AnalyzerType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
-import com.arangodb.serde.DataType;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
@@ -67,7 +46,7 @@ public class VPackDeserializers {
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static final VPackDeserializer<Response> RESPONSE = (parent, vpack, context) -> {
-        final Response response = new Response(DataType.VPACK);
+        final Response response = new Response();
         response.setVersion(vpack.get(0).getAsInt());
         response.setType(vpack.get(1).getAsInt());
         response.setResponseCode(vpack.get(2).getAsInt());
