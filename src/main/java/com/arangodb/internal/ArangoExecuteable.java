@@ -25,6 +25,7 @@ import com.arangodb.DbName;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -53,7 +54,7 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     }
 
     @Override
-    public ArangoSerialization getInternalSerialization() {
+    public InternalSerialization getInternalSerialization() {
         return util.getInternalSerialization();
     }
 

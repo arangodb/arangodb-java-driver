@@ -30,7 +30,7 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -116,7 +116,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
             return this;
         }
 
-        public VstCommunication<Response, VstConnectionSync> build(final ArangoSerialization util) {
+        public VstCommunication<Response, VstConnectionSync> build(final InternalSerialization util) {
             return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
                     maxConnections, connectionTtl);
         }
@@ -125,7 +125,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
                                    final String password, final String jwt, final Boolean useSsl,
-                                   final SSLContext sslContext, final ArangoSerialization util,
+                                   final SSLContext sslContext, final InternalSerialization util,
                                    final Integer chunksize, final Integer maxConnections, final Long ttl) {
         super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }

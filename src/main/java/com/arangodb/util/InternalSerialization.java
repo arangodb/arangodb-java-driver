@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2017 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2016 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,33 +18,16 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.util;
 
-import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.util.InternalSerialization;
-
-import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author Mark Vollmary
  */
-public class SimpleHostResolver implements HostResolver {
-
-    private final List<Host> hosts;
-
-    public SimpleHostResolver(final List<Host> hosts) {
-        super();
-        this.hosts = hosts;
-    }
-
-    @Override
-    public void init(ArangoExecutorSync executor, InternalSerialization arangoSerialization) {
-
-    }
-
-    @Override
-    public HostSet resolve(final boolean initial, final boolean closeConnections) {
-        return new HostSet(hosts);
-    }
+public interface InternalSerialization extends ArangoDeserializer {
+    byte[] serialize(final Object entity);
+    String toJsonString(byte[] content);
+    JsonNode parse(byte[] content);
 
 }

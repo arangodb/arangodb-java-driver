@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class HttpCommunication implements Closeable {
             this(builder.hostHandler);
         }
 
-        public HttpCommunication build(final ArangoSerialization util) {
+        public HttpCommunication build(final InternalSerialization util) {
             return new HttpCommunication(hostHandler);
         }
     }

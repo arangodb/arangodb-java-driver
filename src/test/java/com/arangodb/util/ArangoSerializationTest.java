@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ArangoSerializationTest {
 
-    private static ArangoSerialization internalSer;
+    private static InternalSerialization internalSer;
     private static ArangoSerialization userSer;
 
     @BeforeAll

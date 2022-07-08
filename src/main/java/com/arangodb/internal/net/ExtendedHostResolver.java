@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.util.HostUtils;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.InternalSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -54,7 +54,7 @@ public class ExtendedHostResolver implements HostResolver {
     private final Integer acquireHostListInterval;
 
     private ArangoExecutorSync executor;
-    private ArangoSerialization arangoSerialization;
+    private InternalSerialization arangoSerialization;
 
 
     public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
@@ -69,7 +69,7 @@ public class ExtendedHostResolver implements HostResolver {
     }
 
     @Override
-    public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
+    public void init(ArangoExecutorSync executor, InternalSerialization arangoSerialization) {
         this.executor = executor;
         this.arangoSerialization = arangoSerialization;
     }
