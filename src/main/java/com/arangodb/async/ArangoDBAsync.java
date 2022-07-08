@@ -42,6 +42,7 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
+import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.*;
@@ -508,11 +509,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          * @return {@link ArangoDBAsync}
          */
         public synchronized ArangoDBAsync build() {
-            if (customSerializer == null) {
-                logger.warn("Usage of VelocyPack Java serialization is now deprecated for removal. " +
-                        "Future driver versions will only support Jackson serialization (for both JSON and VPACK formats). " +
-                        "Please configure according to: https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html");
-            }
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
@@ -523,7 +519,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     : new ArangoDeserializerImpl(vpackerNull, vpackParser);
             final InternalSerde internalSerde = InternalSerde.of(DataType.VPACK);
             final DefaultArangoSerialization internal = new DefaultArangoSerialization(deserializerTemp, internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
+            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new DefaultArangoSerialization(deserializerTemp, JacksonSerde.of(DataType.VPACK));
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)

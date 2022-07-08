@@ -167,8 +167,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR)
                 .setBody(getInternalSerialization().serialize(OptionsBuilder
                         .build(opt, query, bindVars != null ?
-                                new VPackSlice(getUserSerialization().serialize(bindVars)) :
-                                null)));
+                                getUserSerialization().serialize(bindVars) : null)));
         if (opt.getAllowDirtyRead() == Boolean.TRUE) {
             RequestUtils.allowDirtyRead(request);
         }

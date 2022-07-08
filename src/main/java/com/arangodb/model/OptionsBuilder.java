@@ -83,7 +83,7 @@ public class OptionsBuilder {
         return options.name(name);
     }
 
-    public static AqlQueryOptions build(final AqlQueryOptions options, final String query, final VPackSlice bindVars) {
+    public static AqlQueryOptions build(final AqlQueryOptions options, final String query, final byte[] bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
