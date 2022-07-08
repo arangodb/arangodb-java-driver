@@ -158,9 +158,9 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     }
 
     protected Response createResponse(final Message message) throws VPackParserException {
-        final Response response = util.deserialize(message.getHead(), Response.class);
+        final Response response = util.deserialize(message.getHead().toByteArray(), Response.class);
         if (message.getBody() != null) {
-            response.setBody(message.getBody());
+            response.setBody(message.getBody().toByteArray());
         }
         return response;
     }

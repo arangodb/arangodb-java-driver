@@ -53,7 +53,7 @@ class ArangoSerializationTest {
     @Test
     void deserialize() {
         final VPackBuilder builder = new VPackBuilder().add(ValueType.OBJECT).add("foo", "bar").close();
-        final BaseDocument doc = internalSer.deserialize(builder.slice(), BaseDocument.class);
+        final BaseDocument doc = internalSer.deserialize(builder.slice().toByteArray(), BaseDocument.class);
         assertThat(doc.getAttribute("foo")).isEqualTo("bar");
     }
 
@@ -97,13 +97,13 @@ class ArangoSerializationTest {
     void parseJsonIncludeNull() {
         final Map<String, Object> entity = new HashMap<>();
         entity.put("value", new String[]{"test", null});
-        final String json = internalSer.deserialize(new VPackSlice(internalSer.serialize(entity)), String.class);
+        final String json = internalSer.deserialize(new VPackSlice(internalSer.serialize(entity)).toByteArray(), String.class);
         assertThat(json).isEqualTo("{\"value\":[\"test\",null]}");
     }
 
     @Test
     void parseNullString() {
-        final String json = internalSer.deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        final String json = internalSer.deserialize(new VPackBuilder().add((String) null).slice().toByteArray(), String.class);
         assertThat(json).isNull();
     }
 

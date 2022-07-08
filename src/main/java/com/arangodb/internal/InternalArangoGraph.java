@@ -84,7 +84,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), "collections", new Type<Collection<String>>() {
         }.getType());
     }
 
@@ -103,7 +103,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), "collections", new Type<Collection<String>>() {
         }.getType());
     }
 
@@ -114,7 +114,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 
     protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
@@ -125,7 +125,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 
     protected Request removeEdgeDefinitionRequest(final String definitionName) {
@@ -133,7 +133,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 
 }

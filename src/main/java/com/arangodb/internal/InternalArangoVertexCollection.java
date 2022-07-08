@@ -27,7 +27,6 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.serde.SerdeUtils;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -85,8 +84,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(VERTEX);
-            final VertexEntity doc = getInternalSerialization().deserialize(body, VertexEntity.class);
+            final VertexEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.ID, doc.getId());
             values.put(DocumentFields.KEY, doc.getKey());
@@ -110,7 +108,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(response.getBody().get(VERTEX), type);
+        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), VERTEX), type);
     }
 
     protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
@@ -126,8 +124,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(VERTEX);
-            final VertexUpdateEntity doc = getInternalSerialization().deserialize(body, VertexUpdateEntity.class);
+            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -150,8 +147,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(VERTEX);
-            final VertexUpdateEntity doc = getInternalSerialization().deserialize(body, VertexUpdateEntity.class);
+            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);

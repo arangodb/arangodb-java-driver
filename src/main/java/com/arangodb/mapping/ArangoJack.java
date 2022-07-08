@@ -33,14 +33,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 
 /**
  * @author Mark Vollmary
@@ -116,23 +113,9 @@ public class ArangoJack implements ArangoSerialization {
         return serde.serialize(entity);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
-        try {
-            final T doc;
-            if (type == String.class && !vpack.isString() && !vpack.isNull()) {
-                final JsonNode node = vpackMapper.readTree(
-                        Arrays.copyOfRange(vpack.getBuffer(), vpack.getStart(), vpack.getStart() + vpack.getByteSize()));
-                doc = (T) jsonMapper.writeValueAsString(node);
-            } else {
-                doc = vpackMapper.readValue(vpack.getBuffer(), vpack.getStart(), vpack.getStart() + vpack.getByteSize(),
-                        (Class<T>) type);
-            }
-            return doc;
-        } catch (final IOException e) {
-            throw new ArangoDBException(e);
-        }
+    public <T> T deserialize(byte[] content, Type type) {
+        return serde.deserialize(content, type);
     }
 
 }

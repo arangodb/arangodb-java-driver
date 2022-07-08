@@ -47,7 +47,7 @@ class ArangoRouteTest extends BaseJunit5 {
     @MethodSource("dbs")
     void get(ArangoDatabase db) {
         final Response res = db.route("/_api/version").get();
-        assertThat(res.getBody().get("version").isString()).isTrue();
+        assertThat(db.arango().getInternalSerialization().parse(res.getBody(), "version").isTextual()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")

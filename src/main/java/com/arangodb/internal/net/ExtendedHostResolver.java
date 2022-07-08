@@ -22,10 +22,11 @@ package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
+import com.arangodb.entity.CollectionEntity;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.slf4j.Logger;
@@ -127,16 +128,11 @@ public class ExtendedHostResolver implements HostResolver {
             response = executor.execute(
                     new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
-                        final VPackSlice field = response1.getBody().get("endpoints");
-                        Collection<String> endpoints;
-                        if (field.isNone()) {
-                            endpoints = Collections.emptyList();
-                        } else {
-                            final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(field, Collection.class);
-                            endpoints = new ArrayList<>();
-                            for (final Map<String, String> map : tmp) {
-                                endpoints.add(map.get("endpoint"));
-                            }
+                        final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(), "/endpoints", new Type<Collection<CollectionEntity>>() {
+                        }.getType());
+                        Collection<String> endpoints = new ArrayList<>();
+                        for (final Map<String, String> map : tmp) {
+                            endpoints.add(map.get("endpoint"));
                         }
                         return endpoints;
                     }, null);

@@ -1,8 +1,11 @@
 package com.arangodb.serde;
 
+import com.arangodb.internal.ArangoResponseField;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.lang.reflect.Type;
 
 public interface InternalSerde extends JacksonSerde {
 
@@ -42,8 +45,26 @@ public interface InternalSerde extends JacksonSerde {
 
     /**
      * TODO
-     * @param content
-     * @return
      */
     JsonNode parse(byte[] content);
+
+    /**
+     * TODO
+     */
+    JsonNode parse(byte[] content, String jsonPointer);
+
+    /**
+     * TODO
+     */
+    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz){
+        return deserialize(content, jsonPointer, (Type) clazz);
+    }
+
+    /**
+     * TODO
+     */
+    default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
+        return deserialize(parse(content, jsonPointer), type);
+    }
+
 }

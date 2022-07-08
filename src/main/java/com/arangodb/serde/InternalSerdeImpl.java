@@ -2,10 +2,12 @@ package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
@@ -14,6 +16,7 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
         super(dataType, mapper);
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -50,6 +53,15 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
     public JsonNode parse(byte[] content) {
         try {
             return mapper.readTree(content);
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    @Override
+    public JsonNode parse(byte[] content, String jsonPointer) {
+        try {
+            return mapper.readTree(content).at(jsonPointer);
         } catch (IOException e) {
             throw new ArangoDBException(e);
         }

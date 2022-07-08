@@ -26,7 +26,6 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -73,8 +72,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 
     protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeEntity doc = getInternalSerialization().deserialize(body, EdgeEntity.class);
+            final EdgeEntity doc = getInternalSerialization().deserialize(response.getBody(), EDGE, EdgeEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.ID, doc.getId());
             values.put(DocumentFields.KEY, doc.getKey());
@@ -98,7 +96,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(response.getBody().get(EDGE), type);
+        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), EDGE), type);
     }
 
     protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
@@ -114,8 +112,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(body, EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), EDGE, EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -138,8 +135,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
         return response -> {
-            final VPackSlice body = response.getBody().get(EDGE);
-            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(body, EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), EDGE, EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);

@@ -29,7 +29,6 @@ import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -105,15 +104,15 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(
             final T value, final DocumentCreateOptions options) {
         return response -> {
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             final DocumentCreateEntity<T> doc = getInternalSerialization().deserialize(body, DocumentCreateEntity.class);
-            final VPackSlice newDoc = body.get(NEW);
+            final JsonNode newDoc = body.get(NEW);
             if (newDoc.isObject()) {
-                doc.setNew(getUserSerialization().deserialize(newDoc, value.getClass()));
+                doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), value.getClass()));
             }
-            final VPackSlice oldDoc = body.get(OLD);
+            final JsonNode oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(getUserSerialization().deserialize(oldDoc, value.getClass()));
+                doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
@@ -156,23 +155,23 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             if (body.isArray()) {
-                for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext(); ) {
-                    final VPackSlice next = iterator.next();
-                    if (next.get(ArangoResponseField.ERROR).isTrue()) {
+                for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
+                    final JsonNode next = iterator.next();
+                    if (next.get(ArangoResponseField.ERROR).booleanValue()) {
                         final ErrorEntity error = getInternalSerialization().deserialize(next, ErrorEntity.class);
                         errors.add(error);
                         documentsAndErrors.add(error);
                     } else {
                         final DocumentCreateEntity<T> doc = getInternalSerialization().deserialize(next, DocumentCreateEntity.class);
-                        final VPackSlice newDoc = next.get(NEW);
+                        final JsonNode newDoc = next.get(NEW);
                         if (newDoc.isObject()) {
-                            doc.setNew(getUserSerialization().deserialize(newDoc, type));
+                            doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), type));
                         }
-                        final VPackSlice oldDoc = next.get(OLD);
+                        final JsonNode oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(getUserSerialization().deserialize(oldDoc, type));
+                            doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), type));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);
@@ -238,15 +237,15 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<T> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
-            final VPackSlice body = response.getBody();
-            for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext(); ) {
-                final VPackSlice next = iterator.next();
-                if (next.get(ArangoResponseField.ERROR).isTrue()) {
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
+            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
+                final JsonNode next = iterator.next();
+                if (next.get(ArangoResponseField.ERROR).booleanValue()) {
                     final ErrorEntity error = getInternalSerialization().deserialize(next, ErrorEntity.class);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    final T doc = getUserSerialization().deserialize(next, type);
+                    final T doc = getUserSerialization().deserialize(getInternalSerialization().serialize(next), type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -277,15 +276,15 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(
             final T value, final DocumentReplaceOptions options) {
         return response -> {
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             final DocumentUpdateEntity<T> doc = getInternalSerialization().deserialize(body, DocumentUpdateEntity.class);
-            final VPackSlice newDoc = body.get(NEW);
+            final JsonNode newDoc = body.get(NEW);
             if (newDoc.isObject()) {
-                doc.setNew(getUserSerialization().deserialize(newDoc, value.getClass()));
+                doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), value.getClass()));
             }
-            final VPackSlice oldDoc = body.get(OLD);
+            final JsonNode oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(getUserSerialization().deserialize(oldDoc, value.getClass()));
+                doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
@@ -326,23 +325,23 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             if (body.isArray()) {
-                for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext(); ) {
-                    final VPackSlice next = iterator.next();
-                    if (next.get(ArangoResponseField.ERROR).isTrue()) {
+                for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
+                    final JsonNode next = iterator.next();
+                    if (next.get(ArangoResponseField.ERROR).booleanValue()) {
                         final ErrorEntity error = getInternalSerialization().deserialize(next, ErrorEntity.class);
                         errors.add(error);
                         documentsAndErrors.add(error);
                     } else {
                         final DocumentUpdateEntity<T> doc = getInternalSerialization().deserialize(next, DocumentUpdateEntity.class);
-                        final VPackSlice newDoc = next.get(NEW);
+                        final JsonNode newDoc = next.get(NEW);
                         if (newDoc.isObject()) {
-                            doc.setNew(getUserSerialization().deserialize(newDoc, type));
+                            doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), type));
                         }
-                        final VPackSlice oldDoc = next.get(OLD);
+                        final JsonNode oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(getUserSerialization().deserialize(oldDoc, type));
+                            doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), type));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);
@@ -376,15 +375,15 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T, U> ResponseDeserializer<DocumentUpdateEntity<U>> updateDocumentResponseDeserializer(
             final T value, final DocumentUpdateOptions options, final Class<U> returnType) {
         return response -> {
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             final DocumentUpdateEntity<U> doc = getInternalSerialization().deserialize(body, DocumentUpdateEntity.class);
-            final VPackSlice newDoc = body.get(NEW);
+            final JsonNode newDoc = body.get(NEW);
             if (newDoc.isObject()) {
-                doc.setNew(getUserSerialization().deserialize(newDoc, returnType));
+                doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), returnType));
             }
-            final VPackSlice oldDoc = body.get(OLD);
+            final JsonNode oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(getUserSerialization().deserialize(oldDoc, returnType));
+                doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), returnType));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
@@ -422,23 +421,23 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             if (body.isArray()) {
-                for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext(); ) {
-                    final VPackSlice next = iterator.next();
-                    if (next.get(ArangoResponseField.ERROR).isTrue()) {
+                for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
+                    final JsonNode next = iterator.next();
+                    if (next.get(ArangoResponseField.ERROR).booleanValue()) {
                         final ErrorEntity error = getInternalSerialization().deserialize(next, ErrorEntity.class);
                         errors.add(error);
                         documentsAndErrors.add(error);
                     } else {
                         final DocumentUpdateEntity<T> doc = getInternalSerialization().deserialize(next, DocumentUpdateEntity.class);
-                        final VPackSlice newDoc = next.get(NEW);
+                        final JsonNode newDoc = next.get(NEW);
                         if (newDoc.isObject()) {
-                            doc.setNew(getUserSerialization().deserialize(newDoc, returnType));
+                            doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), returnType));
                         }
-                        final VPackSlice oldDoc = next.get(OLD);
+                        final JsonNode oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(getUserSerialization().deserialize(oldDoc, returnType));
+                            doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), returnType));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);
@@ -467,11 +466,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T> ResponseDeserializer<DocumentDeleteEntity<T>> deleteDocumentResponseDeserializer(
             final Class<T> type) {
         return response -> {
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             final DocumentDeleteEntity<T> doc = getInternalSerialization().deserialize(body, DocumentDeleteEntity.class);
-            final VPackSlice oldDoc = body.get(OLD);
+            final JsonNode oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(getUserSerialization().deserialize(oldDoc, type));
+                doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), type));
             }
             return doc;
         };
@@ -495,19 +494,19 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
-            final VPackSlice body = response.getBody();
+            final JsonNode body = getInternalSerialization().parse(response.getBody());
             if (body.isArray()) {
-                for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext(); ) {
-                    final VPackSlice next = iterator.next();
-                    if (next.get(ArangoResponseField.ERROR).isTrue()) {
+                for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
+                    final JsonNode next = iterator.next();
+                    if (next.get(ArangoResponseField.ERROR).booleanValue()) {
                         final ErrorEntity error = getInternalSerialization().deserialize(next, ErrorEntity.class);
                         errors.add(error);
                         documentsAndErrors.add(error);
                     } else {
                         final DocumentDeleteEntity<T> doc = getInternalSerialization().deserialize(next, DocumentDeleteEntity.class);
-                        final VPackSlice oldDoc = next.get(OLD);
+                        final JsonNode oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(getUserSerialization().deserialize(oldDoc, type));
+                            doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), type));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);
@@ -540,7 +539,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
-        return response -> response.getBody().get("id").getAsString();
+        return response -> getInternalSerialization().deserialize(response.getBody(), "id", String.class);
     }
 
     private String createIndexId(final String id) {
@@ -622,7 +621,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody().get("indexes"), new Type<Collection<IndexEntity>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), "indexes", new Type<Collection<IndexEntity>>() {
         }.getType());
     }
 
@@ -690,16 +689,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> {
-            final VPackSlice body = response.getBody();
-            if (body != null) {
-                final VPackSlice result = body.get(ArangoResponseField.RESULT);
-                if (!result.isNone()) {
-                    return getInternalSerialization().deserialize(result, Permissions.class);
-                }
-            }
-            return null;
-        };
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, Permissions.class);
     }
 
     private boolean isStringCollection(final Collection<?> values) {

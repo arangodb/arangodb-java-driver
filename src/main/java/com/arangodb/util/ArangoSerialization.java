@@ -1,5 +1,8 @@
 package com.arangodb.util;
 
-public interface ArangoSerialization extends ArangoDeserializer {
+import java.lang.reflect.Type;
+
+public interface ArangoSerialization {
     byte[] serialize(final Object entity);
+    <T> T deserialize(byte[] content, Type type);
 }

@@ -29,7 +29,7 @@ public final class ArangoResponseField {
         super();
     }
 
-    public static final String ERROR = "error";
-    public static final String RESULT = "result";
+    public static final String ERROR = "/error";
+    public static final String RESULT = "/result";
 
 }

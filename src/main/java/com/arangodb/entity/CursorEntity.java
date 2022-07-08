@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class CursorEntity implements Entity, MetaAware {
     private Extras extra = new Extras();
     private Boolean cached;
     private Boolean hasMore;
-    private VPackSlice result;
+    private JsonNode result;
 
     private Map<String, String> meta;
 
@@ -83,7 +84,7 @@ public class CursorEntity implements Entity, MetaAware {
     /**
      * @return an vpack-array of result documents (might be empty if query has no results)
      */
-    public VPackSlice getResult() {
+    public JsonNode getResult() {
         return result;
     }
 
