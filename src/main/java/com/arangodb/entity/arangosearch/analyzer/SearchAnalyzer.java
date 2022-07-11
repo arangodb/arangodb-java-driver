@@ -24,6 +24,9 @@ package com.arangodb.entity.arangosearch.analyzer;
 import com.arangodb.entity.Entity;
 import com.arangodb.entity.arangosearch.AnalyzerFeature;
 import com.arangodb.entity.arangosearch.AnalyzerType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,6 +36,22 @@ import java.util.Set;
 /**
  * @author Michele Rastelli
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(name = "identity", value = IdentityAnalyzer.class),
+        @JsonSubTypes.Type(name = "delimiter", value = DelimiterAnalyzer.class),
+        @JsonSubTypes.Type(name = "stem", value = StemAnalyzer.class),
+        @JsonSubTypes.Type(name = "norm", value = NormAnalyzer.class),
+        @JsonSubTypes.Type(name = "ngram", value = NGramAnalyzer.class),
+        @JsonSubTypes.Type(name = "text", value = TextAnalyzer.class),
+        @JsonSubTypes.Type(name = "pipeline", value = PipelineAnalyzer.class),
+        @JsonSubTypes.Type(name = "stopwords", value = StopwordsAnalyzer.class),
+        @JsonSubTypes.Type(name = "aql", value = AQLAnalyzer.class),
+        @JsonSubTypes.Type(name = "geojson", value = GeoJSONAnalyzer.class),
+        @JsonSubTypes.Type(name = "geopoint", value = GeoPointAnalyzer.class),
+        @JsonSubTypes.Type(name = "segmentation", value = SegmentationAnalyzer.class),
+        @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class)
+})
 public abstract class SearchAnalyzer implements Entity {
     private String name;
     private AnalyzerType type;
@@ -52,6 +71,7 @@ public abstract class SearchAnalyzer implements Entity {
     /**
      * @return The Analyzer type.
      */
+    @JsonIgnore
     public AnalyzerType getType() {
         return type;
     }

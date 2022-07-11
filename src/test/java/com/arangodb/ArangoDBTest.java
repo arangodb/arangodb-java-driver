@@ -395,7 +395,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void execute(ArangoDB arangoDB) throws VPackException {
         final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
-        assertThat(arangoDB.getInternalSerialization().parse(response.getBody(), "version").isTextual()).isTrue();
+        assertThat(arangoDB.getInternalSerialization().parse(response.getBody(), "/version").isTextual()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")

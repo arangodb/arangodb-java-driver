@@ -40,7 +40,6 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         extends ArangoExecuteable<E> {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
-    private static final String VERTEX = "vertex";
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
@@ -62,11 +61,11 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected Request dropRequest() {
-        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX, name);
+        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "vertex", name);
     }
 
     protected <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), VERTEX,
+        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), "vertex",
                 name);
         final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -84,7 +83,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
         return response -> {
-            final VertexEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexEntity.class);
+            final VertexEntity doc = getInternalSerialization().deserialize(response.getBody(), "/vertex", VertexEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.ID, doc.getId());
             values.put(DocumentFields.KEY, doc.getKey());
@@ -95,7 +94,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected Request getVertexRequest(final String key, final GraphDocumentReadOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), VERTEX,
+        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), "vertex",
                 DocumentUtil.createDocumentHandle(name, key));
         final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -108,11 +107,11 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), VERTEX), type);
+        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), "/vertex"), type);
     }
 
     protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), VERTEX,
+        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), "vertex",
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -124,7 +123,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
         return response -> {
-            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexUpdateEntity.class);
+            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -134,7 +133,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
         final Request request;
-        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), VERTEX,
+        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), "vertex",
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -147,7 +146,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
         return response -> {
-            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), VERTEX, VertexUpdateEntity.class);
+            final VertexUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -156,7 +155,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX,
+        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "vertex",
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());

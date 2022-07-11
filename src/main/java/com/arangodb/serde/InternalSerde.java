@@ -21,7 +21,7 @@ public interface InternalSerde extends JacksonSerde {
         } else if (dataType == DataType.VPACK) {
             return new InternalSerdeImpl(dataType, new VPackMapper());
         } else {
-            throw new IllegalStateException("Unexpected value: " + dataType);
+            throw new IllegalArgumentException("Unexpected value: " + dataType);
         }
     }
 

@@ -21,7 +21,8 @@
 package com.arangodb.entity.arangosearch;
 
 import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
+import com.arangodb.serde.InternalDeserializers;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
 
@@ -32,24 +33,14 @@ import java.util.Collection;
  */
 public class ArangoSearchPropertiesEntity extends ViewEntity {
 
-    private final ArangoSearchProperties properties;
-
-    public ArangoSearchPropertiesEntity(final String id, final String name, final ViewType type,
-                                        final ArangoSearchProperties properties) {
-        super(id, name, type);
-        this.properties = properties;
-    }
-
-    /**
-     * @return Wait at least this many milliseconds between committing index data changes and making them visible to
-     * queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
-     * lower value, until commit, will cause the index not to account for them and memory usage would continue
-     * to grow. For the case where there are a few inserts/updates, a higher value will impact performance and
-     * waste disk space for each commit call without any added benefits.
-     */
-    public Long getConsolidationIntervalMsec() {
-        return properties.getConsolidationIntervalMsec();
-    }
+    private Long consolidationIntervalMsec;
+    private Long commitIntervalMsec;
+    private Long cleanupIntervalStep;
+    private ConsolidationPolicy consolidationPolicy;
+    private Collection<PrimarySort> primarySort;
+    private Collection<CollectionLink> links;
+    private ArangoSearchCompression primarySortCompression;
+    private Collection<StoredValue> storedValues;
 
     /**
      * @return Wait at least this many milliseconds between committing view data store changes and making documents
@@ -65,7 +56,18 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
      * continue to return a repeatable-read state.
      */
     public Long getCommitIntervalMsec() {
-        return properties.getCommitIntervalMsec();
+        return commitIntervalMsec;
+    }
+
+    /**
+     * @return Wait at least this many milliseconds between committing index data changes and making them visible to
+     * queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
+     * lower value, until commit, will cause the index not to account for them and memory usage would continue
+     * to grow. For the case where there are a few inserts/updates, a higher value will impact performance and
+     * waste disk space for each commit call without any added benefits.
+     */
+    public Long getConsolidationIntervalMsec() {
+        return consolidationIntervalMsec;
     }
 
     /**
@@ -76,25 +78,26 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
      * performance without any added benefits.
      */
     public Long getCleanupIntervalStep() {
-        return properties.getCleanupIntervalStep();
+        return cleanupIntervalStep;
     }
 
     public ConsolidationPolicy getConsolidationPolicy() {
-        return properties.getConsolidationPolicy();
+        return consolidationPolicy;
     }
 
     /**
      * @return A list of linked collections
      */
+    @JsonDeserialize(using = InternalDeserializers.CollectionLinksDeserializer.class)
     public Collection<CollectionLink> getLinks() {
-        return properties.getLinks();
+        return links;
     }
 
     /**
      * @return A list of primary sort objects
      */
     public Collection<PrimarySort> getPrimarySort() {
-        return properties.getPrimarySort();
+        return primarySort;
     }
 
     /**
@@ -103,7 +106,7 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
      * @since ArangoDB 3.7
      */
     public ArangoSearchCompression getPrimarySortCompression() {
-        return properties.getPrimarySortCompression();
+        return primarySortCompression;
     }
 
     /**
@@ -113,7 +116,7 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
      * @since ArangoDB 3.7
      */
     public Collection<StoredValue> getStoredValues() {
-        return properties.getStoredValues();
+        return storedValues;
     }
 
 }

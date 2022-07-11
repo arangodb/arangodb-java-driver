@@ -20,8 +20,12 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.arangodb.serde.InternalDeserializers;
 import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
@@ -53,7 +57,8 @@ public class CollectionLink {
      * @param name Name of a collection
      * @return new instance of {@code CollectionLink}
      */
-    public static CollectionLink on(final String name) {
+    @JsonCreator
+    public static CollectionLink on(@JsonProperty("name") final String name) {
         return new CollectionLink(name);
     }
 
@@ -99,6 +104,7 @@ public class CollectionLink {
      * @param fields A list of linked fields
      * @return link
      */
+    @JsonDeserialize(using = InternalDeserializers.FieldLinksDeserializer.class)
     public CollectionLink fields(final FieldLink... fields) {
         this.fields.addAll(Arrays.asList(fields));
         return this;

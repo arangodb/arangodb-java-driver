@@ -21,6 +21,9 @@
 package com.arangodb.entity.arangosearch;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -33,7 +36,8 @@ public class StoredValue {
     private final List<String> fields;
     private final ArangoSearchCompression compression;
 
-    public StoredValue(List<String> fields, ArangoSearchCompression compression) {
+    @JsonCreator
+    public StoredValue(@JsonProperty("fields") List<String> fields, @JsonProperty("compression") ArangoSearchCompression compression) {
         this.fields = fields;
         this.compression = compression;
     }
