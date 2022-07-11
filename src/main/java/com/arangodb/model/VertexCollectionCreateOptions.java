@@ -29,7 +29,7 @@ import java.util.Collection;
 public class VertexCollectionCreateOptions {
 
     private String collection;
-    private final Options options = new Options();;
+    private final Options options = new Options();
 
     public VertexCollectionCreateOptions() {
         super();

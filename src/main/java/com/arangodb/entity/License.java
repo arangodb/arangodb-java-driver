@@ -20,11 +20,17 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Axel Becker
  */
 public enum License {
 
-    ENTERPRISE, COMMUNITY
+    @JsonProperty("enterprise")
+    ENTERPRISE,
+
+    @JsonProperty("community")
+    COMMUNITY
 
 }

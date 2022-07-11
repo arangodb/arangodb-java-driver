@@ -35,7 +35,7 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
                     throw new ArangoDBException(e);
                 }
             default:
-                throw new IllegalStateException("Unexpected value: " + dataType);
+                throw new IllegalArgumentException("Unexpected value: " + dataType);
         }
     }
 

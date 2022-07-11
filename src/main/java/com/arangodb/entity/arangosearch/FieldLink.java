@@ -1,7 +1,9 @@
 package com.arangodb.entity.arangosearch;
 
 import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
@@ -30,7 +32,8 @@ public class FieldLink {
      * @param name Name of a field
      * @return new instance of {@code FieldLink}
      */
-    public static FieldLink on(final String name) {
+    @JsonCreator
+    public static FieldLink on(@JsonProperty("name") final String name) {
         return new FieldLink(name);
     }
 

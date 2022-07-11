@@ -22,7 +22,6 @@ package com.arangodb.internal.velocypack;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.velocypack.VPack;
@@ -40,9 +39,7 @@ class VPackSerializersTest {
 
     @BeforeEach
     void init() {
-        vpack = new VPack.Builder()
-                .registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES)
-                .build();
+        vpack = new VPack.Builder().build();
     }
 
     @Test

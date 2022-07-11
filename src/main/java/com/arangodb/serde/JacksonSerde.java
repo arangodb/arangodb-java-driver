@@ -26,7 +26,7 @@ public interface JacksonSerde extends ArangoSerde {
         } else if (dataType == DataType.VPACK) {
             return of(dataType, new VPackMapper());
         } else {
-            throw new IllegalStateException("Unexpected value: " + dataType);
+            throw new IllegalArgumentException("Unexpected value: " + dataType);
         }
     }
 

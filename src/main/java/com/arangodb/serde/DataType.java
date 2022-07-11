@@ -32,7 +32,7 @@ public enum DataType {
             case VST:
                 return DataType.VPACK;
             default:
-                throw new IllegalStateException("Unexpected value: " + protocol);
+                throw new IllegalArgumentException("Unexpected value: " + protocol);
         }
     }
 }

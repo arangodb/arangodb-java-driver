@@ -21,8 +21,6 @@
 package com.arangodb.internal.velocypack;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -31,7 +29,6 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
-import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackParserSetupContext;
@@ -74,7 +71,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
         context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
-        context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);
         context.registerSerializer(ZKDIndexOptions.FieldValueTypes.class, VPackSerializers.ZKD_FIELD_VALUE_TYPES);
@@ -92,8 +88,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(QueryExecutionState.class, VPackDeserializers.QUERY_EXECUTION_STATE);
         context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
         context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
-        context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
-        context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
         context.registerDeserializer(ConsolidationPolicy.class, VPackDeserializers.CONSOLIDATE);
         context.registerDeserializer(CollectionSchema.class, VPackDeserializers.COLLECTION_VALIDATION);
         context.registerDeserializer(ZKDIndexOptions.FieldValueTypes.class, VPackDeserializers.ZKD_FIELD_VALUE_TYPES);

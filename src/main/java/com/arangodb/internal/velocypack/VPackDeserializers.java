@@ -130,107 +130,6 @@ public class VPackDeserializers {
     public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
             : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
-    public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (parent, vpack, context) -> {
-        final ArangoSearchProperties properties = new ArangoSearchProperties();
-        final VPackSlice consolidationIntervalMsec = vpack.get("consolidationIntervalMsec");
-        if (consolidationIntervalMsec.isInteger()) {
-            properties.setConsolidationIntervalMsec(consolidationIntervalMsec.getAsLong());
-        }
-
-        final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
-        if (commitIntervalMsec.isInteger()) {
-            properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
-        }
-
-        final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
-        if (cleanupIntervalStep.isInteger()) {
-            properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
-        }
-
-        final VPackSlice consolidationPolicy = vpack.get("consolidationPolicy");
-        if (consolidationPolicy.isObject()) {
-            properties.setConsolidationPolicy(
-                    context.deserialize(consolidationPolicy, ConsolidationPolicy.class));
-        }
-
-        final VPackSlice links = vpack.get("links");
-        if (links.isObject()) {
-            final Iterator<Entry<String, VPackSlice>> collectionIterator = links.objectIterator();
-            for (; collectionIterator.hasNext(); ) {
-                final Entry<String, VPackSlice> entry = collectionIterator.next();
-                final VPackSlice value = entry.getValue();
-                final CollectionLink link = CollectionLink.on(entry.getKey());
-                final VPackSlice analyzers = value.get("analyzers");
-                if (analyzers.isArray()) {
-                    final Iterator<VPackSlice> analyzerIterator = analyzers.arrayIterator();
-                    for (; analyzerIterator.hasNext(); ) {
-                        link.analyzers(analyzerIterator.next().getAsString());
-                    }
-                }
-                final VPackSlice includeAllFields = value.get("includeAllFields");
-                if (includeAllFields.isBoolean()) {
-                    link.includeAllFields(includeAllFields.getAsBoolean());
-                }
-                final VPackSlice trackListPositions = value.get("trackListPositions");
-                if (trackListPositions.isBoolean()) {
-                    link.trackListPositions(trackListPositions.getAsBoolean());
-                }
-                final VPackSlice storeValues = value.get("storeValues");
-                if (storeValues.isString()) {
-                    link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase(Locale.ENGLISH)));
-                }
-                final VPackSlice fields = value.get("fields");
-                if (fields.isObject()) {
-                    final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
-                    for (; fieldsIterator.hasNext(); ) {
-                        link.fields(deserializeField(fieldsIterator.next()));
-                    }
-                }
-                properties.addLink(link);
-            }
-        }
-
-        final VPackSlice primarySorts = vpack.get("primarySort");
-        if (primarySorts.isArray()) {
-            final Iterator<VPackSlice> primarySortsIterator = primarySorts.arrayIterator();
-            for (; primarySortsIterator.hasNext(); ) {
-                final VPackSlice entry = primarySortsIterator.next();
-                if (entry.isObject()) {
-                    if (entry.get("field").isString() && entry.get("asc").isBoolean()) {
-                        final PrimarySort primarySort = PrimarySort.on(entry.get("field").getAsString());
-                        primarySort.ascending(entry.get("asc").getAsBoolean());
-                        properties.addPrimarySort(primarySort);
-                    }
-                }
-            }
-        }
-
-        final VPackSlice primarySortCompression = vpack.get("primarySortCompression");
-        if (primarySortCompression.isString()) {
-            properties.setPrimarySortCompression(ArangoSearchCompression.valueOf(primarySortCompression.getAsString()));
-        }
-
-        final VPackSlice storedValues = vpack.get("storedValues");
-        if (storedValues.isArray()) {
-            final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
-            for (; storedValueIterator.hasNext(); ) {
-                final VPackSlice entry = storedValueIterator.next();
-                if (entry.isObject()) {
-                    VPackSlice fields = entry.get("fields");
-                    VPackSlice compression = entry.get("compression");
-                    if (fields.isArray() && compression.isString()) {
-                        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
-                        List<String> fieldsList = new ArrayList<>();
-                        fieldsIterator.forEachRemaining(it -> fieldsList.add(it.getAsString()));
-                        properties.addStoredValues(new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString())));
-                    }
-                }
-            }
-        }
-
-        return properties;
-    };
-
     protected static FieldLink deserializeField(final Entry<String, VPackSlice> field) {
         final VPackSlice value = field.getValue();
         final FieldLink link = FieldLink.on(field.getKey());
@@ -262,13 +161,6 @@ public class VPackDeserializers {
         }
         return link;
     }
-
-    public static final VPackDeserializer<ArangoSearchPropertiesEntity> ARANGO_SEARCH_PROPERTIES_ENTITY = (parent, vpack, context) -> {
-        final ViewEntity entity = context.deserialize(vpack, ViewEntity.class);
-        final ArangoSearchProperties properties = context.deserialize(vpack, ArangoSearchProperties.class);
-        return new ArangoSearchPropertiesEntity(entity.getId(),
-                entity.getName(), entity.getType(), properties);
-    };
 
     public static final VPackDeserializer<ConsolidationPolicy> CONSOLIDATE = (parent, vpack, context) -> {
         final VPackSlice type = vpack.get("type");

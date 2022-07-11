@@ -2,6 +2,7 @@ package com.arangodb.serde;
 
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.velocypack.VPackSlice;
@@ -28,6 +29,7 @@ enum InternalModule implements Supplier<Module> {
 
         module.addDeserializer(CollectionStatus.class, InternalDeserializers.COLLECTION_STATUS);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
+        module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
         module.addDeserializer(Response.class, InternalDeserializers.RESPONSE);
     }
 
