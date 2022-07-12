@@ -29,6 +29,7 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
@@ -283,7 +284,14 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER), type);
+        return response -> {
+            byte[] userContent = getInternalSerialization().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER);
+            if (String.class.equals(type)) {
+                return (T) SerdeUtils.INSTANCE.writeJson(getInternalSerialization().parse(userContent));
+            } else {
+                return getUserSerialization().deserialize(userContent, type);
+            }
+        };
     }
 
     protected Request beginStreamTransactionRequest(final StreamTransactionOptions options) {

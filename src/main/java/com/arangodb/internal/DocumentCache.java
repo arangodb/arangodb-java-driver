@@ -92,7 +92,7 @@ public class DocumentCache {
 
         for (Annotation annotation : field.getAnnotations()) {
             if (annotation != null && !field.isSynthetic() && !Modifier.isStatic(field.getModifiers())
-                    && String.class.isAssignableFrom(field.getType())) {
+                    && String.class.equals(field.getType())) {
                 String value = null;
                 if (annotation instanceof Id) {
                     value = DocumentFields.ID;
