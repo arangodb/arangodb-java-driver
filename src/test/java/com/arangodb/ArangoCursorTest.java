@@ -21,7 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -46,17 +46,17 @@ class ArangoCursorTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void firstStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final Optional<VPackSlice> first = cursor.stream().findFirst();
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final Optional<JsonNode> first = cursor.stream().findFirst();
         assertThat(first).isPresent();
-        assertThat(first.get().isInteger()).isTrue();
-        assertThat(first.get().getAsLong()).isZero();
+        assertThat(first.get().isInt()).isTrue();
+        assertThat(first.get().asLong()).isZero();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void next(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), VPackSlice.class);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), JsonNode.class);
         while (cursor.hasNext()) {
             cursor.next();
         }
@@ -65,16 +65,16 @@ class ArangoCursorTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void mapFilterCountStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final long count = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).count();
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final long count = cursor.stream().map(JsonNode::asLong).filter(t -> t < 50).count();
         assertThat(count).isEqualTo(50L);
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void mapFilterCollectIntoSetStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final Set<Long> target = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).collect(Collectors.toSet());
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final Set<Long> target = cursor.stream().map(JsonNode::asLong).filter(t -> t < 50).collect(Collectors.toSet());
         assertThat(target)
                 .isNotNull()
                 .hasSize(50);
@@ -84,47 +84,47 @@ class ArangoCursorTest extends BaseJunit5 {
     @MethodSource("dbs")
     void forEach(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        cursor.forEach(t -> assertThat(t.getAsLong()).isEqualTo(i.getAndIncrement()));
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        cursor.forEach(t -> assertThat(t.asLong()).isEqualTo(i.getAndIncrement()));
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void mapForeachStream(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        cursor.stream().map(VPackSlice::getAsLong).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        cursor.stream().map(JsonNode::asLong).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void mapFilterForEachStream(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        cursor.stream().map(JsonNode::asLong).filter(t -> t < 50).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void anyMatchStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final boolean match = cursor.stream().anyMatch(t -> t.getAsLong() == 50L);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final boolean match = cursor.stream().anyMatch(t -> t.asLong() == 50L);
         assertThat(match).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void noneMatchStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final boolean match = cursor.stream().noneMatch(t -> t.getAsLong() == 100L);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final boolean match = cursor.stream().noneMatch(t -> t.asLong() == 100L);
         assertThat(match).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void allMatchStream(ArangoDatabase db) {
-        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-        final boolean match = cursor.stream().allMatch(t -> t.getAsLong() < 100L);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
+        final boolean match = cursor.stream().allMatch(t -> t.asLong() < 100L);
         assertThat(match).isTrue();
     }
 

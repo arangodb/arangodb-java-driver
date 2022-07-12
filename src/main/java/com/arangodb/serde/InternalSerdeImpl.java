@@ -16,7 +16,6 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
         super(dataType, mapper);
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
