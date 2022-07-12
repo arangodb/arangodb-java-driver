@@ -35,7 +35,7 @@ public class TransactionEntity implements Entity {
         return id;
     }
 
-    public StreamTransactionStatus getStatus() {
+    public StreamTransactionStatus getState() {
         return state;
     }
 

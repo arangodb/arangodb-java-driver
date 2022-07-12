@@ -756,7 +756,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         assertThat(gotTxs).hasSameSizeAs(createdIds);
         assertThat(gotTxs.stream()
-                .allMatch(it -> it.getStatus() == StreamTransactionStatus.running)).isTrue();
+                .allMatch(it -> it.getState() == StreamTransactionStatus.running)).isTrue();
 
         db.abortStreamTransaction(tx1.getId());
         db.abortStreamTransaction(tx2.getId());
