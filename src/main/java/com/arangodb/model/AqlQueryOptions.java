@@ -21,10 +21,7 @@
 package com.arangodb.model;
 
 import com.arangodb.serde.InternalSerializers;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
@@ -44,8 +41,7 @@ public class AqlQueryOptions {
     private Integer batchSize;
     private Boolean cache;
     private Long memoryLimit;
-    private VPackSlice bindVars;
-    private byte[] bindVarsBytes;
+    private byte[] bindVars;
     private String query;
     private Options options;
     @Expose(serialize = false)
@@ -153,24 +149,9 @@ public class AqlQueryOptions {
         return this;
     }
 
-    @JsonIgnore
-    public VPackSlice getBindVars() {
-        return bindVars;
-    }
-
-    @JsonProperty("bindVars")
     @JsonSerialize(using = InternalSerializers.AqlParamsSerializer.class)
-    public byte[] getBindVarsBytes() {
-        return bindVarsBytes;
-    }
-
-    /**
-     * @param bindVars key/value pairs representing the bind parameters
-     * @return options
-     */
-    protected AqlQueryOptions bindVars(final VPackSlice bindVars) {
-        this.bindVars = bindVars;
-        return this;
+    public byte[] getBindVars() {
+        return bindVars;
     }
 
     /**
@@ -178,7 +159,7 @@ public class AqlQueryOptions {
      * @return options
      */
     protected AqlQueryOptions bindVars(final byte[] bindVarsBytes) {
-        this.bindVarsBytes = bindVarsBytes;
+        this.bindVars = bindVarsBytes;
         return this;
     }
 

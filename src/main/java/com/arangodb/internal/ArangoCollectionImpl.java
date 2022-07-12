@@ -25,7 +25,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,7 +232,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException {
         try {
-            executor.execute(documentExistsRequest(key, options), VPackSlice.class);
+            executor.execute(documentExistsRequest(key, options), JsonNode.class);
             return true;
         } catch (final ArangoDBException e) {
 

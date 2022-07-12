@@ -21,21 +21,15 @@
 package com.arangodb.mapping;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.mapping.ArangoAnnotationIntrospector;
-import com.arangodb.internal.mapping.VPackDeserializers;
-import com.arangodb.internal.mapping.VPackSerializers;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.lang.reflect.Type;
 
@@ -48,41 +42,13 @@ public class ArangoJack implements ArangoSerialization {
         void configure(ObjectMapper mapper);
     }
 
-    private final ObjectMapper vpackMapper;
-    private final ObjectMapper vpackMapperNull;
-    private final ObjectMapper jsonMapper;
-
     private final JacksonSerde serde;
-
-    private static final class ArangoModule extends SimpleModule {
-        @Override
-        public void setupModule(SetupContext context) {
-            super.setupModule(context);
-            context.insertAnnotationIntrospector(new ArangoAnnotationIntrospector());
-        }
-    }
 
     static VPackMapper createDefaultMapper() {
         final VPackMapper mapper = new VPackMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-        return configureDefaultMapper(mapper);
-    }
-
-    static VPackMapper configureDefaultMapper(final VPackMapper mapper) {
-        final SimpleModule module = new ArangoJack.ArangoModule();
-        module.addSerializer(VPackSlice.class, VPackSerializers.VPACK);
-        module.addSerializer(java.util.Date.class, VPackSerializers.UTIL_DATE);
-        module.addSerializer(java.sql.Date.class, VPackSerializers.SQL_DATE);
-        module.addSerializer(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
-
-        module.addDeserializer(VPackSlice.class, VPackDeserializers.VPACK);
-        module.addDeserializer(java.util.Date.class, VPackDeserializers.UTIL_DATE);
-        module.addDeserializer(java.sql.Date.class, VPackDeserializers.SQL_DATE);
-        module.addDeserializer(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
-
-        mapper.registerModule(module);
         return mapper;
     }
 
@@ -95,16 +61,11 @@ public class ArangoJack implements ArangoSerialization {
      */
     public ArangoJack(final VPackMapper mapper) {
         super();
-        vpackMapper = mapper.copy().setSerializationInclusion(Include.NON_NULL);
-        vpackMapperNull = mapper.copy().setSerializationInclusion(Include.ALWAYS);
-        jsonMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
-        serde =  JacksonSerde.of(DataType.VPACK, configureDefaultMapper(new VPackMapper()));
+        VPackMapper m = mapper != null ? mapper.copy() : new VPackMapper();
+        serde =  JacksonSerde.of(DataType.VPACK, m);
     }
 
     public void configure(final ArangoJack.ConfigureFunction f) {
-        f.configure(vpackMapper);
-        f.configure(vpackMapperNull);
-        f.configure(jsonMapper);
         serde.configure(f::configure);
     }
 

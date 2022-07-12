@@ -31,7 +31,6 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationImpl;
 import com.arangodb.internal.util.InternalSerializationImpl;
@@ -44,10 +43,7 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -514,9 +510,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
-            final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
-            final VPackParser vpackParser = vpackParserBuilder.build();
             final InternalSerde internalSerde = InternalSerde.of(DataType.VPACK);
             final InternalSerializationImpl internal = new InternalSerializationImpl(internalSerde);
             final ArangoSerialization custom = customSerializer != null ? customSerializer :  new ArangoSerializationImpl(JacksonSerde.of(DataType.VPACK));

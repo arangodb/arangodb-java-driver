@@ -20,7 +20,6 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
