@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class EdgeUpdateEntity extends DocumentEntity {
 
     @JsonProperty("_oldRev")
-    @SerializedName("_oldRev")
     private String oldRev;
 
     public EdgeUpdateEntity() {

@@ -22,10 +22,9 @@ package com.arangodb.async.example.document;
 
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.ValueType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
-
 
 import java.util.concurrent.ExecutionException;
 
@@ -54,10 +53,11 @@ class InsertDocumentExampleTest extends ExampleBase {
     }
 
     @Test
-    void insertVPack() throws ExecutionException, InterruptedException {
-        final VPackBuilder builder = new VPackBuilder();
-        builder.add(ValueType.OBJECT).add("foo", "bar").close();
-        collection.insertDocument(builder.slice())
+    void insertJsonNode() throws ExecutionException, InterruptedException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        node.put("foo", "bar");
+        collection.insertDocument(node)
                 .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }

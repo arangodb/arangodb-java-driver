@@ -38,7 +38,6 @@ public class Request {
     private final String request;
     private final Map<String, String> queryParam;
     private final Map<String, String> headerParam;
-    @Expose(serialize = false)
     private byte[] body;
 
     public Request(final DbName dbName, final RequestType requestType, final String path) {

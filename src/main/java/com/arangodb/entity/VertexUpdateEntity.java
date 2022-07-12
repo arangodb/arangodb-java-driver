@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class VertexUpdateEntity extends DocumentEntity {
 
     @JsonProperty("_oldRev")
-    @SerializedName("_oldRev")
     private String oldRev;
 
     public VertexUpdateEntity() {

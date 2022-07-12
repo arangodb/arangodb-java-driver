@@ -33,11 +33,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DocumentUpdateEntity<T> extends DocumentEntity {
 
     @JsonProperty("_oldRev")
-    @SerializedName("_oldRev")
     private String oldRev;
-    @Expose(deserialize = false)
     private T newDocument;
-    @Expose(deserialize = false)
     private T oldDocument;
 
     public DocumentUpdateEntity() {

@@ -42,7 +42,6 @@ public class TextAnalyzerProperties {
     private boolean accent;
 
     @JsonProperty("case")
-    @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 
     private boolean stemming;

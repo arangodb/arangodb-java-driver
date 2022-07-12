@@ -24,6 +24,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -72,11 +73,11 @@ class GetDocumentExampleTest extends ExampleBase {
     }
 
     @Test
-    void getAsVPack() {
-        final VPackSlice doc = collection.getDocument(key, VPackSlice.class);
+    void getAsJsonNode() {
+        final JsonNode doc = collection.getDocument(key, JsonNode.class);
         assertThat(doc).isNotNull();
-        assertThat(doc.get("foo").isString()).isTrue();
-        assertThat(doc.get("foo").getAsString()).isEqualTo("bar");
+        assertThat(doc.get("foo").isTextual()).isTrue();
+        assertThat(doc.get("foo").asText()).isEqualTo("bar");
     }
 
     @Test

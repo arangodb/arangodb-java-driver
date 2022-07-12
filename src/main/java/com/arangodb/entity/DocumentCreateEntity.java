@@ -29,9 +29,7 @@ import com.arangodb.velocypack.annotations.Expose;
  */
 public class DocumentCreateEntity<T> extends DocumentEntity {
 
-    @Expose(deserialize = false)
     private T newDocument;
-    @Expose(deserialize = false)
     private T oldDocument;
 
     public DocumentCreateEntity() {

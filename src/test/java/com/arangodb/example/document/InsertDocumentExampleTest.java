@@ -26,6 +26,9 @@ import com.arangodb.example.ExampleBase;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,10 +54,11 @@ class InsertDocumentExampleTest extends ExampleBase {
     }
 
     @Test
-    void insertVPack() {
-        final VPackBuilder builder = new VPackBuilder();
-        builder.add(ValueType.OBJECT).add("foo", "bar").close();
-        final DocumentCreateEntity<VPackSlice> doc = collection.insertDocument(builder.slice());
+    void insertJsonNode() {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        node.put("foo", "bar");
+        final DocumentCreateEntity<JsonNode> doc = collection.insertDocument(node);
         assertThat(doc.getKey()).isNotNull();
     }
 
