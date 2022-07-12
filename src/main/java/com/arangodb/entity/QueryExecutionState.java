@@ -20,19 +20,43 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  */
 public enum QueryExecutionState {
+    @JsonProperty("initializing")
     INITIALIZING,
+
+    @JsonProperty("parsing")
     PARSING,
+
+    @JsonProperty("optimizing ast")
     OPTIMIZING_AST,
+
+    @JsonProperty("loading collections")
     LOADING_COLLECTIONS,
+
+    @JsonProperty("instantiating plan")
     INSTANTIATING_PLAN,
+
+    @JsonProperty("optimizing plan")
     OPTIMIZING_PLAN,
+
+    @JsonProperty("executing")
     EXECUTING,
+
+    @JsonProperty("finalizing")
     FINALIZING,
+
+    @JsonProperty("finished")
     FINISHED,
+
+    @JsonProperty("killed")
     KILLED,
+
+    @JsonProperty("invalid")
     INVALID
 }
+

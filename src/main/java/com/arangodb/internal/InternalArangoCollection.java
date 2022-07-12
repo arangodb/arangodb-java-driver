@@ -109,7 +109,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final JsonNode newDoc = body.get(NEW);
             Class<?> clazz = value.getClass();
             if (newDoc != null) {
-                if (String.class.isAssignableFrom(clazz)) {
+                if (String.class.equals(clazz)) {
                     doc.setNew((T) SerdeUtils.INSTANCE.writeJson(newDoc));
                 } else {
                     doc.setNew(getUserSerialization().deserialize(getInternalSerialization().serialize(newDoc), clazz));
@@ -117,7 +117,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             }
             final JsonNode oldDoc = body.get(OLD);
             if (oldDoc != null) {
-                if (String.class.isAssignableFrom(clazz)) {
+                if (String.class.equals(clazz)) {
                     doc.setOld((T) SerdeUtils.INSTANCE.writeJson(oldDoc));
                 } else {
                     doc.setOld(getUserSerialization().deserialize(getInternalSerialization().serialize(oldDoc), clazz));
@@ -227,7 +227,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected <T> ResponseDeserializer<T> getDocumentResponseDeserializer(final Class<T> type) {
         return response -> {
-            if (String.class.isAssignableFrom(type)) {
+            if (String.class.equals(type)) {
                 return (T) SerdeUtils.INSTANCE.writeJson(getInternalSerialization().parse(response.getBody()));
             } else {
                 return getUserSerialization().deserialize(response.getBody(), type);

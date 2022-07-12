@@ -876,7 +876,7 @@ class ArangoDatabaseTest extends BaseTest {
     void transactionString() throws InterruptedException, ExecutionException {
         final TransactionOptions options = new TransactionOptions().params("test");
         db.transaction("function (params) {return params;}", String.class, options)
-                .whenComplete((result, ex) -> assertThat(result).isEqualTo("test"))
+                .whenComplete((result, ex) -> assertThat(result).isEqualTo("\"test\""))
                 .get();
     }
 
@@ -901,7 +901,7 @@ class ArangoDatabaseTest extends BaseTest {
 
     @Test
     void transactionEmpty() throws InterruptedException, ExecutionException {
-        db.transaction("function () {}", null, null).get();
+        db.transaction("function () {}", Void.class, null).get();
     }
 
     @Test
@@ -1008,12 +1008,15 @@ class ArangoDatabaseTest extends BaseTest {
         db.reloadRouting().get();
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
-    static class TransactionTestEntity {
+    public static class TransactionTestEntity {
         private String value;
 
-        TransactionTestEntity() {
+        public TransactionTestEntity() {
             super();
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 }

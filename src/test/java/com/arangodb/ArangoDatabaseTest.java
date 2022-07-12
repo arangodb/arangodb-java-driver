@@ -30,6 +30,7 @@ import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -1137,7 +1138,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionString(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params("test");
         final String result = db.transaction("function (params) {return params;}", String.class, options);
-        assertThat(result).isEqualTo("test");
+        assertThat(result).isEqualTo("\"test\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1152,9 +1153,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void transactionVPack(ArangoDatabase db) throws VPackException {
         final TransactionOptions options = new TransactionOptions().params(new VPackBuilder().add("test").slice());
-        final VPackSlice result = db.transaction("function (params) {return params;}", VPackSlice.class, options);
-        assertThat(result.isString()).isTrue();
-        assertThat(result.getAsString()).isEqualTo("test");
+        final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
+        assertThat(result.isTextual()).isTrue();
+        assertThat(result.asText()).isEqualTo("test");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1165,17 +1166,17 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
                 .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", String.class, options);
-        assertThat(result).isEqualTo("hello world");
+        assertThat(result).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionVPackArray(ArangoDatabase db) throws VPackException {
+    void transactionJsonArray(ArangoDatabase db) throws VPackException {
         final VPackSlice params = new VPackBuilder().add(ValueType.ARRAY).add("hello").add("world").close().slice();
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("hello world");
+        assertThat(result).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1185,7 +1186,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
                 .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", String.class, options);
-        assertThat(result).isEqualTo("hello world");
+        assertThat(result).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1195,7 +1196,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("hello world");
+        assertThat(result).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1207,7 +1208,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("hello world");
+        assertThat(result).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1240,7 +1241,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void transactionEmpty(ArangoDatabase db) {
-        db.transaction("function () {}", null, null);
+        db.transaction("function () {}", Void.class, null);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1250,9 +1251,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
                 + "}";
         final TransactionOptions options = new TransactionOptions().readCollections(CNAME1);
-        db.transaction(action, VPackSlice.class, options);
+        db.transaction(action, JsonNode.class, options);
         options.allowImplicit(false);
-        Throwable thrown = catchThrowable(() -> db.transaction(action, VPackSlice.class, options));
+        Throwable thrown = catchThrowable(() -> db.transaction(action, JsonNode.class, options));
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .extracting(it -> ((ArangoDBException) it).getResponseCode())
