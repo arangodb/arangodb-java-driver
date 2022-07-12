@@ -42,7 +42,8 @@ public abstract class ArangoExecutor {
             if (isInternal(type)) {
                 return (T) util.getInternalSerialization().deserialize(response.getBody(), type);
             } else {
-                return (T) util.getUserSerialization().deserialize(response.getBody(), type);
+                throw new RuntimeException("FIXME: this should not never happen");
+//                return (T) util.getUserSerialization().deserialize(response.getBody(), type);
             }
         } else {
             return null;

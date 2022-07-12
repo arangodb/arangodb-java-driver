@@ -31,6 +31,8 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -484,11 +486,9 @@ class AQLActorsAndMoviesExampleTest {
         private String actor;
         private Integer movies;
 
-        public Actor() {
-            super();
-        }
 
-        public Actor(final String actor, final Integer movies) {
+        @JsonCreator
+        public Actor(@JsonProperty("actor") final String actor, @JsonProperty("movies") final Integer movies) {
             super();
             this.actor = actor;
             this.movies = movies;
@@ -531,14 +531,11 @@ class AQLActorsAndMoviesExampleTest {
 
     @SuppressWarnings("WeakerAccess")
     public static class Movie {
-        private String movie;
-        private Integer actors;
+        private final String movie;
+        private final Integer actors;
 
-        public Movie() {
-            super();
-        }
-
-        public Movie(final String movie, final Integer actors) {
+        @JsonCreator
+        public Movie(@JsonProperty("movie") final String movie, @JsonProperty("actors") final Integer actors) {
             super();
             this.movie = movie;
             this.actors = actors;

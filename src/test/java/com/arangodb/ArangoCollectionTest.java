@@ -445,8 +445,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument();
         collection.insertDocument(doc, new DocumentCreateOptions());
         Thread.sleep(2000);
-        final VPackSlice document = collection
-                .getDocument(doc.getKey(), VPackSlice.class, new DocumentReadOptions().allowDirtyRead(true));
+        final String document = collection
+                .getDocument(doc.getKey(), String.class, new DocumentReadOptions().allowDirtyRead(true));
         assertThat(document).isNotNull();
     }
 

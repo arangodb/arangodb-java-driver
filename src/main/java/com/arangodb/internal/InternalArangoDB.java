@@ -78,7 +78,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, Boolean.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Boolean.class);
     }
 
     protected Request getDatabasesRequest(final DbName dbName) {
@@ -86,7 +86,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<String>>() {
         }.getType());
     }
 
@@ -96,7 +96,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
         return response -> {
-            Iterator<String> names = getInternalSerialization().parse(response.getBody(), ArangoResponseField.RESULT).fieldNames();
+            Iterator<String> names = getInternalSerialization().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).fieldNames();
             final Collection<String> dbs = new ArrayList<>();
             while (names.hasNext()) {
                 dbs.add(names.next());
@@ -130,7 +130,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<UserEntity>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<UserEntity>>() {
         }.getType());
     }
 

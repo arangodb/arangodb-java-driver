@@ -6,11 +6,11 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.velocystream.Response;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,7 +31,7 @@ public final class InternalDeserializers {
             Collection<CollectionLink> out = new ArrayList<>();
             ObjectNode tree = p.readValueAsTree();
             Iterator<Map.Entry<String, JsonNode>> it = tree.fields();
-            while (it.hasNext()){
+            while (it.hasNext()) {
                 Map.Entry<String, JsonNode> e = it.next();
                 ObjectNode v = (ObjectNode) e.getValue();
                 v.put("name", e.getKey());
@@ -48,7 +48,7 @@ public final class InternalDeserializers {
             Collection<FieldLink> out = new ArrayList<>();
             ObjectNode tree = p.readValueAsTree();
             Iterator<Map.Entry<String, JsonNode>> it = tree.fields();
-            while (it.hasNext()){
+            while (it.hasNext()) {
                 Map.Entry<String, JsonNode> e = it.next();
                 ObjectNode v = (ObjectNode) e.getValue();
                 v.put("name", e.getKey());
@@ -57,6 +57,14 @@ public final class InternalDeserializers {
             return out.toArray(new FieldLink[0]);
         }
     }
+
+    public static class CollectionSchemaRuleDeserializer extends JsonDeserializer<String> {
+        @Override
+        public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return SerdeUtils.INSTANCE.writeJson(p.readValueAsTree());
+        }
+    }
+
 
     private InternalDeserializers() {
     }
