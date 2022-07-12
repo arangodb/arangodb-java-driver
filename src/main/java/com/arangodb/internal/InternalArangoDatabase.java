@@ -111,7 +111,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(getInternalSerialization().parse(response.getBody(), ArangoResponseField.RESULT), new Type<Collection<CollectionEntity>>() {
+        return response -> getInternalSerialization().deserialize(getInternalSerialization().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER), new Type<Collection<CollectionEntity>>() {
         }.getType());
     }
 
@@ -120,7 +120,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, Boolean.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Boolean.class);
     }
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
@@ -140,7 +140,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, Permissions.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Permissions.class);
     }
 
     protected Request queryRequest(final String query, final Map<String, Object> bindVars, final AqlQueryOptions options) {
@@ -257,7 +257,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<AqlFunctionEntity>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<AqlFunctionEntity>>() {
         }.getType());
     }
 
@@ -283,7 +283,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), ArangoResponseField.RESULT), type);
+        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER), type);
     }
 
     protected Request beginStreamTransactionRequest(final StreamTransactionOptions options) {
@@ -312,7 +312,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, StreamTransactionEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, StreamTransactionEntity.class);
     }
 
     protected Request getInfoRequest() {
@@ -320,7 +320,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, DatabaseEntity.class);
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, DatabaseEntity.class);
     }
 
     protected Request reloadRoutingRequest() {
@@ -332,7 +332,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Collection<ViewEntity>> getViewsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<ViewEntity>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<ViewEntity>>() {
         }.getType());
     }
 
@@ -353,7 +353,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT, new Type<Collection<SearchAnalyzer>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<SearchAnalyzer>>() {
         }.getType());
     }
 

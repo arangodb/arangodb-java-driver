@@ -22,8 +22,10 @@
 package com.arangodb.model;
 
 
+import com.arangodb.serde.InternalDeserializers;
 import com.arangodb.serde.InternalSerializers;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
@@ -53,6 +55,7 @@ public class CollectionSchema {
         return rule;
     }
 
+    @JsonDeserialize(using = InternalDeserializers.CollectionSchemaRuleDeserializer.class)
     public CollectionSchema setRule(String rule) {
         this.rule = rule;
         return this;

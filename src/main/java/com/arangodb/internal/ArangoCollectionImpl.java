@@ -102,7 +102,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
             throws ArangoDBException {
         DocumentUtil.validateDocumentKey(key);
         try {
-            return executor.execute(getDocumentRequest(key, options), type);
+            return executor.execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(e.getMessage(), e);

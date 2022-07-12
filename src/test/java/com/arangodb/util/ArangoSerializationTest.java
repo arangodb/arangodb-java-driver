@@ -97,8 +97,10 @@ class ArangoSerializationTest {
     void parseJsonIncludeNull() {
         final Map<String, Object> entity = new HashMap<>();
         entity.put("value", new String[]{"test", null});
-        final String json = internalSer.deserialize(new VPackSlice(internalSer.serialize(entity)).toByteArray(), String.class);
-        assertThat(json).isEqualTo("{\"value\":[\"test\",null]}");
+        final Map<String, Object> res = userSer.deserialize(new VPackSlice(userSer.serialize(entity)).toByteArray(), Map.class);
+        assertThat(res.get("value"))
+                .asList()
+                .containsExactly("test", null);
     }
 
     @Test

@@ -106,14 +106,13 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> getDocument(
             final String key,
             final Class<T> type,
             final DocumentReadOptions options) throws ArangoDBException {
         DocumentUtil.validateDocumentKey(key);
         boolean isCatchException = options != null ? options.isCatchException() : new DocumentReadOptions().isCatchException();
-        return (CompletableFuture<T>) executor.execute(getDocumentRequest(key, options), type)
+        return executor.execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
                 .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
     }
 

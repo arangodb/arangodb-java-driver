@@ -38,7 +38,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
         extends ArangoExecuteable<E> {
 
     protected static final String PATH_API_GHARIAL = "/_api/gharial";
-    private static final String GRAPH = "graph";
+    private static final String GRAPH = "/graph";
     private static final String VERTEX = "vertex";
     private static final String EDGE = "edge";
 
@@ -84,7 +84,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), "collections", new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections", new Type<Collection<String>>() {
         }.getType());
     }
 
@@ -103,7 +103,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), "collections", new Type<Collection<String>>() {
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections", new Type<Collection<String>>() {
         }.getType());
     }
 
