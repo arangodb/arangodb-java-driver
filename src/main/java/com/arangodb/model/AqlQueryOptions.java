@@ -44,7 +44,6 @@ public class AqlQueryOptions {
     private byte[] bindVars;
     private String query;
     private Options options;
-    @Expose(serialize = false)
     private Boolean allowDirtyRead;
     private String streamTransactionId;
 

@@ -23,7 +23,8 @@ package com.arangodb.async.example.document;
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -55,29 +56,29 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     }
 
     @Test
-    void aqlWithLimitQueryAsVPackObject() throws InterruptedException, ExecutionException {
+    void aqlWithLimitQueryAsJsonObject() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
         final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
-        db.query(query, bindVars, null, VPackSlice.class)
-                .whenComplete((cursor, ex) -> cursor.forEachRemaining(vpack -> {
-                    assertThat(vpack.get("name").getAsString()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-                    assertThat(vpack.get("gender").getAsString()).isEqualTo(Gender.FEMALE.name());
-                    assertThat(vpack.get("age").getAsInt()).isIn(21, 23, 25, 27, 29);
+        db.query(query, bindVars, null, ObjectNode.class)
+                .whenComplete((cursor, ex) -> cursor.forEachRemaining(node -> {
+                    assertThat(node.get("name").asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(node.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
+                    assertThat(node.get("age").asInt()).isIn(21, 23, 25, 27, 29);
                 }))
                 .get();
     }
 
     @Test
-    void aqlWithLimitQueryAsVPackArray() throws InterruptedException, ExecutionException {
+    void aqlWithLimitQueryAsArrayNode() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
         final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
-        db.query(query, bindVars, null, VPackSlice.class)
-                .whenComplete((cursor, ex) -> cursor.forEachRemaining(vpack -> {
-                    assertThat(vpack.get(0).getAsString()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-                    assertThat(vpack.get(1).getAsString()).isEqualTo(Gender.FEMALE.name());
-                    assertThat(vpack.get(2).getAsInt()).isIn(21, 23, 25, 27, 29);
+        db.query(query, bindVars, null, ArrayNode.class)
+                .whenComplete((cursor, ex) -> cursor.forEachRemaining(arrNode -> {
+                    assertThat(arrNode.get(0).asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(arrNode.get(1).asText()).isEqualTo(Gender.FEMALE.name());
+                    assertThat(arrNode.get(2).asInt()).isIn(21, 23, 25, 27, 29);
                 }))
                 .get();
     }

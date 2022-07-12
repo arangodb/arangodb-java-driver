@@ -36,7 +36,6 @@ public class NormAnalyzerProperties {
     private boolean accent;
 
     @JsonProperty("case")
-    @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 
     /**

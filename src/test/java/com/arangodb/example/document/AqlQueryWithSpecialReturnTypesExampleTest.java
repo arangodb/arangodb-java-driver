@@ -24,7 +24,8 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -59,34 +60,34 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     }
 
     @Test
-    void aqlWithLimitQueryAsVPackObject() {
+    void aqlWithLimitQueryAsJsonObject() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
         final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
-        final ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<ObjectNode> cursor = db.query(query, bindVars, null, ObjectNode.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
-            final VPackSlice vpack = cursor.next();
-            assertThat(vpack.get("name").getAsString())
+            final ObjectNode vpack = cursor.next();
+            assertThat(vpack.get("name").asText())
                     .isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-            assertThat(vpack.get("gender").getAsString()).isEqualTo(Gender.FEMALE.name());
-            assertThat(vpack.get("age").getAsInt()).isIn(21, 23, 25, 27, 29);
+            assertThat(vpack.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
+            assertThat(vpack.get("age").asInt()).isIn(21, 23, 25, 27, 29);
         }
     }
 
     @Test
-    void aqlWithLimitQueryAsVPackArray() {
+    void aqlWithLimitQueryAsJsonArray() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
         final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
-        final ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<ArrayNode> cursor = db.query(query, bindVars, null, ArrayNode.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
-            final VPackSlice vpack = cursor.next();
-            assertThat(vpack.get(0).getAsString())
+            final ArrayNode arrNode = cursor.next();
+            assertThat(arrNode.get(0).asText())
                     .isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-            assertThat(vpack.get(1).getAsString()).isEqualTo(Gender.FEMALE.name());
-            assertThat(vpack.get(2).getAsInt()).isIn(21, 23, 25, 27, 29);
+            assertThat(arrNode.get(1).asText()).isEqualTo(Gender.FEMALE.name());
+            assertThat(arrNode.get(2).asInt()).isIn(21, 23, 25, 27, 29);
         }
     }
 

@@ -34,7 +34,6 @@ public class Response {
     private int type = 2;
     private int responseCode;
     private Map<String, String> meta;
-    @Expose(deserialize = false)
     private byte[] body = null;
 
     public Response() {

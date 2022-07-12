@@ -29,7 +29,6 @@ import com.arangodb.velocypack.annotations.Expose;
  */
 public class DocumentDeleteEntity<T> extends DocumentEntity {
 
-    @Expose(deserialize = false)
     private T oldDocument;
 
     public DocumentDeleteEntity() {

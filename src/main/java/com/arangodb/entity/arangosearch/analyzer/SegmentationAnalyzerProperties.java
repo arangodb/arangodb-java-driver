@@ -33,11 +33,9 @@ import java.util.Objects;
 public class SegmentationAnalyzerProperties {
 
     @JsonProperty("break")
-    @SerializedName("break")
     private BreakMode breakMode;
 
     @JsonProperty("case")
-    @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 
     public BreakMode getBreakMode() {

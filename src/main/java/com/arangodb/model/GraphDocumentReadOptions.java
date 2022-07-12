@@ -30,7 +30,6 @@ public class GraphDocumentReadOptions {
     private String ifNoneMatch;
     private String ifMatch;
     private boolean catchException;
-    @Expose(serialize = false)
     private Boolean allowDirtyRead;
     private String streamTransactionId;
 

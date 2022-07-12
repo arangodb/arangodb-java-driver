@@ -30,6 +30,7 @@ import com.arangodb.model.*;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -889,12 +890,12 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    void transactionVPack() throws VPackException, InterruptedException, ExecutionException {
+    void transactionJsonNode() throws VPackException, InterruptedException, ExecutionException {
         final TransactionOptions options = new TransactionOptions().params(new VPackBuilder().add("test").slice());
-        db.transaction("function (params) {return params;}", VPackSlice.class, options)
+        db.transaction("function (params) {return params;}", JsonNode.class, options)
                 .whenComplete((result, ex) -> {
-                    assertThat(result.isString()).isEqualTo(true);
-                    assertThat(result.getAsString()).isEqualTo("test");
+                    assertThat(result.isTextual()).isEqualTo(true);
+                    assertThat(result.asText()).isEqualTo("test");
                 })
                 .get();
     }

@@ -33,7 +33,6 @@ public class DocumentReadOptions {
     private String ifNoneMatch;
     private String ifMatch;
     private boolean catchException;
-    @Expose(serialize = false)
     private Boolean allowDirtyRead;
     private String streamTransactionId;
 
