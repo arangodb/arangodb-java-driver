@@ -25,8 +25,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
-import com.arangodb.internal.velocypack.VPackDriverModule;
-import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
@@ -82,9 +80,6 @@ public abstract class InternalArangoDBBuilder {
     protected Integer maxConnections;
     protected Long connectionTtl;
     protected Integer keepAliveInterval;
-    protected final VPack.Builder vpackBuilder;
-    protected final VPackParser.Builder vpackParserBuilder;
-    protected ArangoDeserializer deserializer;
     protected Boolean acquireHostList;
     protected Integer acquireHostListInterval;
     protected LoadBalancingStrategy loadBalancingStrategy;
@@ -94,10 +89,6 @@ public abstract class InternalArangoDBBuilder {
 
     public InternalArangoDBBuilder() {
         super();
-        vpackBuilder = new VPack.Builder();
-        vpackParserBuilder = new VPackParser.Builder();
-        vpackBuilder.registerModule(new VPackDriverModule());
-        vpackParserBuilder.registerModule(new VPackDriverModule());
         host = new HostDescription(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
         hosts = new ArrayList<>();
         user = ArangoDefaults.DEFAULT_USER;
@@ -210,10 +201,6 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setResponseQueueTimeSamples(final Integer responseQueueTimeSamples) {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
-    }
-
-    protected void deserializer(final ArangoDeserializer deserializer) {
-        this.deserializer = deserializer;
     }
 
     protected void setSerializer(final ArangoSerialization serializer) {
