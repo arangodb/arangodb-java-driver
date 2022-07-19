@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import com.arangodb.velocypack.annotations.Expose;
-
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli

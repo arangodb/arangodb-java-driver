@@ -25,7 +25,7 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
-import com.arangodb.velocypack.Type;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -84,8 +84,8 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections", new Type<Collection<String>>() {
-        }.getType());
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections",
+                SerdeUtils.INSTANCE.constructListType(String.class));
     }
 
     protected Request addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
@@ -103,8 +103,8 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections", new Type<Collection<String>>() {
-        }.getType());
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/collections",
+                SerdeUtils.INSTANCE.constructListType(String.class));
     }
 
     protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {

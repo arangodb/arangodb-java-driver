@@ -28,7 +28,6 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.serde.SerdeUtils;
-import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -637,8 +636,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), "/indexes", new Type<Collection<IndexEntity>>() {
-        }.getType());
+        return response -> getInternalSerialization().deserialize(response.getBody(), "/indexes",
+                SerdeUtils.INSTANCE.constructListType(IndexEntity.class));
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {

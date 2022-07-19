@@ -25,7 +25,6 @@ import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Response;
 
 import java.util.concurrent.TimeoutException;
@@ -44,25 +43,21 @@ public final class ResponseUtils {
     }
 
     public static void checkError(final InternalSerialization util, final Response response) throws ArangoDBException {
-        try {
-            final int responseCode = response.getResponseCode();
-            if (responseCode >= ERROR_STATUS) {
-                if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {
-                    throw new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
-                            response.getMeta().get(HEADER_ENDPOINT));
-                } else if (response.getBody() != null) {
-                    final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-                    ArangoDBException e = new ArangoDBException(errorEntity);
-                    if(ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())){
-                        throw new ArangoDBException(new TimeoutException().initCause(e));
-                    }
-                    throw e;
-                } else {
-                    throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
+        final int responseCode = response.getResponseCode();
+        if (responseCode >= ERROR_STATUS) {
+            if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {
+                throw new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
+                        response.getMeta().get(HEADER_ENDPOINT));
+            } else if (response.getBody() != null) {
+                final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
+                ArangoDBException e = new ArangoDBException(errorEntity);
+                if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
+                    throw new ArangoDBException(new TimeoutException().initCause(e));
                 }
+                throw e;
+            } else {
+                throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
             }
-        } catch (final VPackParserException e) {
-            throw new ArangoDBException(e);
         }
     }
 }

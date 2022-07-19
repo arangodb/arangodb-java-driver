@@ -26,8 +26,6 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackParser;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

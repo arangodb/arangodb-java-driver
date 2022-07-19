@@ -31,6 +31,8 @@ import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -891,7 +893,7 @@ class ArangoDatabaseTest extends BaseTest {
 
     @Test
     void transactionJsonNode() throws VPackException, InterruptedException, ExecutionException {
-        final TransactionOptions options = new TransactionOptions().params(new VPackBuilder().add("test").slice());
+        final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         db.transaction("function (params) {return params;}", JsonNode.class, options)
                 .whenComplete((result, ex) -> {
                     assertThat(result.isTextual()).isEqualTo(true);

@@ -20,7 +20,8 @@
 
 package com.arangodb.model;
 
-import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Collection;
 
@@ -31,7 +32,7 @@ import java.util.Collection;
  */
 public class AqlQueryExplainOptions {
 
-    private VPackSlice bindVars;
+    private byte[] bindVars;
     private String query;
     private Options options;
 
@@ -39,7 +40,8 @@ public class AqlQueryExplainOptions {
         super();
     }
 
-    protected VPackSlice getBindVars() {
+    @JsonSerialize(using = InternalSerializers.AqlBindVarsSerializer.class)
+    public byte[] getBindVars() {
         return bindVars;
     }
 
@@ -47,7 +49,7 @@ public class AqlQueryExplainOptions {
      * @param bindVars key/value pairs representing the bind parameters
      * @return options
      */
-    protected AqlQueryExplainOptions bindVars(final VPackSlice bindVars) {
+    protected AqlQueryExplainOptions bindVars(final byte[] bindVars) {
         this.bindVars = bindVars;
         return this;
     }
