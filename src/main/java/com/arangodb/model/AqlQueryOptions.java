@@ -147,7 +147,7 @@ public class AqlQueryOptions {
         return this;
     }
 
-    @JsonSerialize(using = InternalSerializers.AqlParamsSerializer.class)
+    @JsonSerialize(using = InternalSerializers.AqlBindVarsSerializer.class)
     public byte[] getBindVars() {
         return bindVars;
     }

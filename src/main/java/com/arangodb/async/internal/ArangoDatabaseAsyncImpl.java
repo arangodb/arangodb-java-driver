@@ -22,13 +22,7 @@ package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
-import com.arangodb.async.ArangoCollectionAsync;
-import com.arangodb.async.ArangoCursorAsync;
-import com.arangodb.async.ArangoDatabaseAsync;
-import com.arangodb.async.ArangoGraphAsync;
-import com.arangodb.async.ArangoRouteAsync;
-import com.arangodb.async.ArangoSearchAsync;
-import com.arangodb.async.ArangoViewAsync;
+import com.arangodb.async.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
@@ -36,20 +30,10 @@ import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
-import com.arangodb.model.AqlFunctionCreateOptions;
-import com.arangodb.model.AqlFunctionDeleteOptions;
-import com.arangodb.model.AqlFunctionGetOptions;
-import com.arangodb.model.AqlQueryExplainOptions;
-import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionsReadOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.model.StreamTransactionOptions;
-import com.arangodb.model.TransactionOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.velocypack.Type;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -296,14 +280,14 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
 
     @Override
     public CompletableFuture<Collection<QueryEntity>> getCurrentlyRunningQueries() {
-        return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
-        }.getType());
+        return executor.execute(getCurrentlyRunningQueriesRequest(),
+                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
     }
 
     @Override
     public CompletableFuture<Collection<QueryEntity>> getSlowQueries() {
-        return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
-        }.getType());
+        return executor.execute(getSlowQueriesRequest(),
+                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
     }
 
     @Override

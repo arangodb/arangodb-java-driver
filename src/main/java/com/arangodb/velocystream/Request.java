@@ -21,7 +21,6 @@
 package com.arangodb.velocystream;
 
 import com.arangodb.DbName;
-import com.arangodb.velocypack.annotations.Expose;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -21,14 +21,11 @@
 package com.arangodb.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.model.*;
-import com.arangodb.velocypack.Type;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -86,8 +83,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<String>>() {
-        }.getType());
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                SerdeUtils.INSTANCE.constructListType(String.class));
     }
 
     protected Request getAccessibleDatabasesForRequest(final DbName dbName, final String user) {
@@ -130,8 +127,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, new Type<Collection<UserEntity>>() {
-        }.getType());
+        return response -> getInternalSerialization().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                SerdeUtils.INSTANCE.constructListType(UserEntity.class));
     }
 
     protected Request updateUserRequest(final DbName dbName, final String user, final UserUpdateOptions options) {

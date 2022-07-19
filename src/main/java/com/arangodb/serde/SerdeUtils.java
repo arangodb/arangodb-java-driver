@@ -4,11 +4,16 @@ import com.arangodb.ArangoDBException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 public enum SerdeUtils {
     INSTANCE;
 
-    private ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     /**
      * Parse a JSON string.
@@ -34,6 +39,14 @@ public enum SerdeUtils {
         } catch (JsonProcessingException e) {
             throw new ArangoDBException(e);
         }
+    }
+
+    public Type constructListType(Class<?> clazz) {
+        return TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
+    }
+
+    public Type constructMapType(Class<?> keyClazz, Class<?> valueClazz) {
+        return TypeFactory.defaultInstance().constructMapType(Map.class, keyClazz, valueClazz);
     }
 
 }

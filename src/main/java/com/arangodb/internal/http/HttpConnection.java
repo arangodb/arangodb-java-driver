@@ -27,9 +27,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.serde.DataType;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.*;
@@ -168,7 +166,6 @@ public class HttpConnection implements Connection {
     private final InternalSerialization util;
     private final Boolean useSsl;
     private final Protocol contentType;
-    private final DataType dataType;
     private final HostDescription host;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
@@ -181,7 +178,6 @@ public class HttpConnection implements Connection {
         this.useSsl = useSsl;
         this.util = util;
         this.contentType = contentType;
-        dataType = contentType == Protocol.HTTP_JSON ? DataType.JSON : DataType.VPACK;
         final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
                 .create();
         if (Boolean.TRUE == useSsl) {
@@ -342,9 +338,6 @@ public class HttpConnection implements Connection {
             httpRequest.addHeader(header.getKey(), header.getValue());
         }
     }
-
-    // FIXME: remove
-    private final VPackParser parser = new VPackParser.Builder().build();
 
     public Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {

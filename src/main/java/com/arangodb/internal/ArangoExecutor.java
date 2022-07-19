@@ -21,53 +21,22 @@
 package com.arangodb.internal;
 
 import com.arangodb.QueueTimeMetrics;
-import com.arangodb.entity.Entity;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
  */
 public abstract class ArangoExecutor {
 
-    @SuppressWarnings("unchecked")
     protected <T> T createResult(final Type type, final Response response) {
-        if (type != Void.class && response.getBody() != null) {
-            if (isInternal(type)) {
-                return (T) util.getInternalSerialization().deserialize(response.getBody(), type);
-            } else {
-                throw new RuntimeException("FIXME: this should not never happen");
-//                return (T) util.getUserSerialization().deserialize(response.getBody(), type);
-            }
-        } else {
+        if (response.getBody() == null) {
             return null;
         }
-    }
-
-    private boolean isInternal(final Type type) {
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pType = ((ParameterizedType) type);
-            Type rawType = pType.getRawType();
-
-            if (rawType instanceof Class<?> && (
-                    Map.class.isAssignableFrom((Class<?>) rawType) || Iterable.class.isAssignableFrom((Class<?>) rawType)
-            )) {
-                for (Type arg : pType.getActualTypeArguments()) {
-                    if (!isInternal(arg)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-
-        return type instanceof Class<?> && Entity.class.isAssignableFrom((Class<?>) type);
+        return util.getInternalSerialization().deserialize(response.getBody(), type);
     }
 
     private final DocumentCache documentCache;
@@ -89,7 +58,7 @@ public abstract class ArangoExecutor {
     }
 
     public interface ResponseDeserializer<T> {
-        T deserialize(Response response) throws VPackException;
+        T deserialize(Response response);
     }
 
     protected final void interceptResponse(Response response) {

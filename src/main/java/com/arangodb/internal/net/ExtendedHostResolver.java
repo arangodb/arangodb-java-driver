@@ -24,19 +24,14 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.util.HostUtils;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.util.InternalSerialization;
-import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Mark Vollmary
@@ -75,7 +70,6 @@ public class ExtendedHostResolver implements HostResolver {
     }
 
     @Override
-
     public HostSet resolve(boolean initial, boolean closeConnections) {
 
         if (!initial && isExpired()) {
@@ -128,8 +122,7 @@ public class ExtendedHostResolver implements HostResolver {
                     new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
                         final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(), "/endpoints",
-                                new Type<Collection<Map<String, String>>>() {
-                                }.getType());
+                                SerdeUtils.INSTANCE.constructMapType(String.class, String.class));
                         Collection<String> endpoints = new ArrayList<>();
                         for (final Map<String, String> map : tmp) {
                             endpoints.add(map.get("endpoint"));

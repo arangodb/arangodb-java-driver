@@ -25,7 +25,6 @@ import com.arangodb.entity.MetaAware;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -66,22 +65,16 @@ public class ArangoExecutorSync extends ArangoExecutor {
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) throws ArangoDBException {
 
-        try {
+        final Response response = protocol.execute(interceptRequest(request), hostHandle);
+        interceptResponse(response);
+        T deserialize = responseDeserializer.deserialize(response);
 
-            final Response response = protocol.execute(interceptRequest(request), hostHandle);
-            interceptResponse(response);
-            T deserialize = responseDeserializer.deserialize(response);
-
-            if (deserialize instanceof MetaAware) {
-                LOG.debug("Response is MetaAware " + deserialize.getClass().getName());
-                ((MetaAware) deserialize).setMeta(response.getMeta());
-            }
-
-            return deserialize;
-
-        } catch (final VPackException e) {
-            throw new ArangoDBException(e);
+        if (deserialize instanceof MetaAware) {
+            LOG.debug("Response is MetaAware {}", deserialize.getClass().getName());
+            ((MetaAware) deserialize).setMeta(response.getMeta());
         }
+
+        return deserialize;
     }
 
     public void disconnect() {

@@ -29,12 +29,13 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.serde.SerdeUtils;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -262,14 +263,14 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
-        return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
-        }.getType());
+        return executor.execute(getCurrentlyRunningQueriesRequest(),
+                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
     }
 
     @Override
     public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
-        return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
-        }.getType());
+        return executor.execute(getSlowQueriesRequest(),
+                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
     }
 
     @Override

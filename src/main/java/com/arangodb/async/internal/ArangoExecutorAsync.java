@@ -51,11 +51,11 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     }
 
     public <T> CompletableFuture<T> execute(final Request request, final Type type) {
-        return execute(request, (response) -> createResult(type, response));
+        return execute(request, response -> createResult(type, response));
     }
 
     public <T> CompletableFuture<T> execute(final Request request, final Type type, final HostHandle hostHandle) {
-        return execute(request, (response) -> createResult(type, response), hostHandle);
+        return execute(request, response -> createResult(type, response), hostHandle);
     }
 
     public <T> CompletableFuture<T> execute(final Request request, final ResponseDeserializer<T> responseDeserializer) {
@@ -68,7 +68,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
             final HostHandle hostHandle) {
 
         return CompletableFuture.completedFuture(null)
-                .thenComposeAsync((it) -> communication.execute(interceptRequest(request), hostHandle), outgoingExecutor)
+                .thenComposeAsync(it -> communication.execute(interceptRequest(request), hostHandle), outgoingExecutor)
                 .thenApplyAsync(response -> {
                     interceptResponse(response);
                     return responseDeserializer.deserialize(response);

@@ -5,8 +5,6 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
-import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -20,10 +18,11 @@ import java.util.Map;
 
 public final class InternalSerializers {
 
-    public static class AqlParamsSerializer extends JsonSerializer<byte[]> {
+    public static class AqlBindVarsSerializer extends JsonSerializer<byte[]> {
         @Override
         public void serialize(byte[] value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             // TODO: find a way to append raw bytes directly
+            // see https://github.com/FasterXML/jackson-dataformats-binary/issues/331
             try (JsonParser parser = gen.getCodec().getFactory().createParser(value)) {
                 gen.writeTree(parser.readValueAsTree());
             }
@@ -59,17 +58,8 @@ public final class InternalSerializers {
         }
     }
 
-    private static final VPackMapper vPackMapper = new VPackMapper();
-
     private InternalSerializers() {
     }
-
-    static final JsonSerializer<VPackSlice> VPACK_SLICE_JSON_SERIALIZER = new JsonSerializer<VPackSlice>() {
-        @Override
-        public void serialize(VPackSlice value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeObject(vPackMapper.readTree(value.toByteArray()));
-        }
-    };
 
     static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST = new JsonSerializer<AuthenticationRequest>() {
         @Override

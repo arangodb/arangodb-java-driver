@@ -23,7 +23,6 @@ package com.arangodb.model;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ViewType;
-import com.arangodb.velocypack.VPackSlice;
 
 import java.util.Collection;
 
@@ -90,7 +89,7 @@ public class OptionsBuilder {
     public static AqlQueryExplainOptions build(
             final AqlQueryExplainOptions options,
             final String query,
-            final VPackSlice bindVars) {
+            final byte[] bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
