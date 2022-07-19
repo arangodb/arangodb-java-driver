@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Mark Vollmary

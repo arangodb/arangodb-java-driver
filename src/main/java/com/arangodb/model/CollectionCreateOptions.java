@@ -25,8 +25,6 @@ import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
 import com.arangodb.entity.ReplicationFactor;
 
-import java.util.Objects;
-
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
@@ -163,7 +161,6 @@ public class CollectionCreateOptions {
      * @return options
      */
     public CollectionCreateOptions shardKeys(final String... shardKeys) {
-        Objects.requireNonNull(shardKeys);
         this.shardKeys = shardKeys;
         return this;
     }

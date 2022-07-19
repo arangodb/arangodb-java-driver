@@ -21,7 +21,6 @@
 package com.arangodb.model;
 
 import com.arangodb.serde.InternalSerializers;
-import com.arangodb.velocypack.annotations.Expose;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
