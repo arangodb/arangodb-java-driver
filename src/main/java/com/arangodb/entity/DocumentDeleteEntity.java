@@ -20,8 +20,6 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.velocypack.annotations.Expose;
-
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API

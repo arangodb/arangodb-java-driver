@@ -20,7 +20,6 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.velocypack.annotations.SerializedName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

@@ -59,4 +59,3 @@ public enum QueryExecutionState {
     @JsonProperty("invalid")
     INVALID
 }
-
