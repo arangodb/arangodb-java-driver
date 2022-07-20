@@ -23,7 +23,6 @@ package com.arangodb.example.document;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

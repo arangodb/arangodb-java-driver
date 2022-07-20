@@ -20,9 +20,11 @@
 
 package com.arangodb.mapping.annotations;
 
-import com.arangodb.mapping.ArangoJack;
-import com.arangodb.velocypack.VPackSlice;
-import org.junit.jupiter.api.Test;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.DataType;
+import com.arangodb.serde.JacksonSerde;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Map;
 
@@ -33,10 +35,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ArangoAnnotationsTest {
 
-    private final ArangoJack mapper = new ArangoJack();
+    @ParameterizedTest
+    @EnumSource(DataType.class)
+    void documentFieldAnnotations(DataType dataType) {
+         ArangoSerde mapper = JacksonSerde.of(dataType);
 
-    @Test
-    void documentFieldAnnotations() {
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");
         e.setKey("Key");
@@ -44,9 +47,8 @@ class ArangoAnnotationsTest {
         e.setFrom("From");
         e.setTo("To");
 
-        VPackSlice slice = new VPackSlice(mapper.serialize(e));
-        System.out.println(slice);
-        Map<String, String> deserialized = mapper.deserialize(slice.toByteArray(), Object.class);
+        byte[] serialized = mapper.serialize(e);
+        Map<String, String> deserialized = mapper.deserialize(serialized, Map.class);
         assertThat(deserialized)
                 .containsEntry("_id", e.getId())
                 .containsEntry("_key", e.getKey())
@@ -55,7 +57,7 @@ class ArangoAnnotationsTest {
                 .containsEntry("_to", e.getTo())
                 .hasSize(5);
 
-        AnnotatedEntity deserializedEntity = mapper.deserialize(slice.toByteArray(), AnnotatedEntity.class);
+        AnnotatedEntity deserializedEntity = mapper.deserialize(serialized, AnnotatedEntity.class);
         assertThat(deserializedEntity).isEqualTo(e);
     }
 

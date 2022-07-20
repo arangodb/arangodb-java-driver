@@ -25,7 +25,6 @@ import com.arangodb.entity.*;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.*;
 import com.arangodb.util.TestUtils;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.junit.jupiter.api.Disabled;
@@ -436,7 +435,7 @@ class ArangoDBTest {
     }
 
     @Test
-    void execute() throws VPackException, InterruptedException, ExecutionException {
+    void execute() throws  InterruptedException, ExecutionException {
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
@@ -447,7 +446,7 @@ class ArangoDBTest {
     }
 
     @Test
-    void execute_acquireHostList_enabled() throws VPackException, InterruptedException, ExecutionException {
+    void execute_acquireHostList_enabled() throws  InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).serializer(new ArangoJack()).build();
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))

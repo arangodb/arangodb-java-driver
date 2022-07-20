@@ -26,10 +26,6 @@ import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
-import com.arangodb.velocypack.exception.VPackException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -843,9 +839,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryStream(ArangoDatabase db) {
         if (isAtLeastVersion(3, 4)) {
-            final ArangoCursor<VPackSlice> cursor = db
+            final ArangoCursor<Void> cursor = db
                     .query("FOR i IN 1..2 RETURN i", null, new AqlQueryOptions().stream(true).count(true),
-                            VPackSlice.class);
+                            Void.class);
             assertThat((Object) cursor).isNotNull();
             assertThat(cursor.getCount()).isNull();
         }
@@ -1170,7 +1166,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionVPack(ArangoDatabase db) throws VPackException {
+    void transactionVPack(ArangoDatabase db)  {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
         assertThat(result.isTextual()).isTrue();
@@ -1179,7 +1175,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionJsonObject(ArangoDatabase db) throws VPackException {
+    void transactionJsonObject(ArangoDatabase db)  {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
@@ -1189,7 +1185,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionJsonArray(ArangoDatabase db) throws VPackException {
+    void transactionJsonArray(ArangoDatabase db)  {
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final String result = db
@@ -1335,7 +1331,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
         try {
-            db.transaction(action, VPackSlice.class, null);
+            db.transaction(action, Void.class, null);
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getErrorMessage()).isEqualTo(exceptionMessage);
