@@ -21,7 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class SimpleHostResolver implements HostResolver {
     }
 
     @Override
-    public void init(ArangoExecutorSync executor, InternalSerialization arangoSerialization) {
+    public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {
 
     }
 

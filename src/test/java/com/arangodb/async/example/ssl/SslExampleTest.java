@@ -22,7 +22,6 @@ package com.arangodb.async.example.ssl;
 
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -69,7 +68,7 @@ class SslExampleTest {
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
                 .loadProperties(SslExampleTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
-                .sslContext(sc).serializer(new ArangoJack()).build();
+                .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();
         assertThat(version).isNotNull();
     }

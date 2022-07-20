@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -71,7 +70,7 @@ class ArangoSslTest {
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
-                .sslContext(sc).serializer(new ArangoJack()).build();
+                .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
@@ -80,7 +79,7 @@ class ArangoSslTest {
     void connectWithoutValidSslContext() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
-                .serializer(new ArangoJack()).build();
+                .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException ex = (ArangoDBException) thrown;

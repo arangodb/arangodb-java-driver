@@ -28,7 +28,7 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.model.DBCreateOptions;
@@ -36,7 +36,7 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -59,11 +59,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-                        final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
+                        final ArangoSerdeFactory util, final Protocol protocol, final HostResolver hostResolver,
                         final HostHandler hostHandler, final ArangoContext context, int responseQueueTimeSamples, final int timeoutMs) {
 
         super(new ArangoExecutorSync(
-                        createProtocol(vstBuilder, httpBuilder, util.getInternalSerialization(), protocol),
+                        createProtocol(vstBuilder, httpBuilder, util.getInternalSerde(), protocol),
                         util,
                         new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
@@ -72,11 +72,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
         cp = createProtocol(
                 new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
                 new HttpCommunication.Builder(httpBuilder),
-                util.getInternalSerialization(),
+                util.getInternalSerde(),
                 protocol);
         this.hostHandler = hostHandler;
 
-        hostResolver.init(this.executor(), getInternalSerialization());
+        hostResolver.init(this.executor(), getInternalSerde());
 
         LOGGER.debug("ArangoDB Client is ready to use");
 
@@ -85,7 +85,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static CommunicationProtocol createProtocol(
             final VstCommunicationSync.Builder vstBuilder,
             final HttpCommunication.Builder httpBuilder,
-            final InternalSerialization util,
+            final InternalSerde util,
             final Protocol protocol) {
 
         return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
@@ -94,13 +94,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private static CommunicationProtocol createVST(
             final VstCommunicationSync.Builder builder,
-            final InternalSerialization util) {
+            final InternalSerde util) {
         return new VstProtocol(builder.build(util));
     }
 
     private static CommunicationProtocol createHTTP(
             final HttpCommunication.Builder builder,
-            final InternalSerialization util) {
+            final InternalSerde util) {
         return new HttpProtocol(builder.build(util));
     }
 

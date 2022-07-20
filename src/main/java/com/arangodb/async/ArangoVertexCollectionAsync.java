@@ -20,7 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
-public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor {
+public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the named graph the edge collection is within

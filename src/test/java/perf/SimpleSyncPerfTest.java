@@ -22,7 +22,6 @@ package perf;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
-import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -45,7 +44,7 @@ class SimpleSyncPerfTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersion(Protocol protocol) throws InterruptedException {
-        ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(protocol).serializer(new ArangoJack()).build();
+        ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(protocol).build();
         // warmup
         doGetVersion(arangoDB);
 

@@ -20,7 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.ViewEntity;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
  * @since ArangoDB 3.4.0
  */
 @SuppressWarnings("unused")
-public interface ArangoViewAsync extends ArangoSerializationAccessor {
+public interface ArangoViewAsync extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the database the collection is within

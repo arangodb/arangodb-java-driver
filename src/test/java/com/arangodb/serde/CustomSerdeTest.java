@@ -26,9 +26,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.util.ArangoSerialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
@@ -92,15 +90,15 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        ArangoJack arangoJack = new ArangoJack();
-        arangoJack.configure((mapper) -> {
+        JacksonSerde serde = JacksonSerde.of(DataType.VPACK);
+        serde.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
             SimpleModule module = new SimpleModule("PersonModule");
             module.addDeserializer(Person.class, new PersonDeserializer());
             mapper.registerModule(module);
         });
-        arangoDB = new ArangoDB.Builder().serializer(arangoJack).build();
+        arangoDB = new ArangoDB.Builder().serializer(serde).build();
 
         db = arangoDB.db(DbName.of("custom-serde-test"));
         if (!db.exists()) {
@@ -134,7 +132,7 @@ class CustomSerdeTest {
     void manualCustomPersonDeserializer() {
         Person person = new Person();
         person.name = "Joe";
-        ArangoSerialization serialization = arangoDB.getUserSerialization();
+        ArangoSerde serialization = arangoDB.getUserSerde();
         byte[] serialized = serialization.serialize(person);
         Person deserializedPerson = serialization.deserialize(serialized, Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
@@ -228,7 +226,7 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.getUserSerialization().deserialize(arangoDB.getUserSerialization().serialize(null), String.class);
+        final String json = arangoDB.getUserSerde().deserialize(arangoDB.getUserSerde().serialize(null), String.class);
         assertThat(json).isNull();
     }
 

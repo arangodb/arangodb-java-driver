@@ -30,7 +30,7 @@ import com.arangodb.entity.ViewEntity;
  * @since ArangoDB 3.4.0
  */
 @SuppressWarnings("UnusedReturnValue")
-public interface ArangoView extends ArangoSerializationAccessor {
+public interface ArangoView extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the database the collection is within

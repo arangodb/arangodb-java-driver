@@ -26,8 +26,9 @@ import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.serde.DataType;
+import com.arangodb.serde.JacksonSerde;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,12 +57,12 @@ class CustomSerdeTest {
 
     @BeforeEach
     void init() throws ExecutionException, InterruptedException {
-        ArangoJack arangoJack = new ArangoJack();
-        arangoJack.configure((mapper) -> {
+        JacksonSerde serde = JacksonSerde.of(DataType.VPACK);
+        serde.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
         });
-        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(arangoJack).build();
+        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(serde).build();
 
         DbName TEST_DB = DbName.of("custom-serde-test");
         db = arangoDB.db(TEST_DB);

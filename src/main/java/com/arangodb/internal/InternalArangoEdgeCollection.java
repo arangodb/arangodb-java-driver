@@ -65,13 +65,13 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.setBody(getUserSerialization().serialize(value));
+        request.setBody(getUserSerde().serialize(value));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
         return response -> {
-            final EdgeEntity doc = getInternalSerialization().deserialize(response.getBody(), "/edge", EdgeEntity.class);
+            final EdgeEntity doc = getInternalSerde().deserialize(response.getBody(), "/edge", EdgeEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.ID, doc.getId());
             values.put(DocumentFields.KEY, doc.getKey());
@@ -95,7 +95,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-        return response -> getUserSerialization().deserialize(getInternalSerialization().extract(response.getBody(), "/edge"), type);
+        return response -> getUserSerde().deserialize(getInternalSerde().extract(response.getBody(), "/edge"), type);
     }
 
     protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
@@ -105,13 +105,13 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.setBody(getUserSerialization().serialize(value));
+        request.setBody(getUserSerde().serialize(value));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
         return response -> {
-            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
@@ -128,13 +128,13 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.setBody(getUserSerialization().serialize(value));
+        request.setBody(getUserSerde().serialize(value));
         return request;
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
         return response -> {
-            final EdgeUpdateEntity doc = getInternalSerialization().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
+            final EdgeUpdateEntity doc = getInternalSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
             final Map<String, String> values = new HashMap<>();
             values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);

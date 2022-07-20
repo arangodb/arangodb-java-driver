@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  */
-public interface ArangoGraph extends ArangoSerializationAccessor {
+public interface ArangoGraph extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the database the named graph is within

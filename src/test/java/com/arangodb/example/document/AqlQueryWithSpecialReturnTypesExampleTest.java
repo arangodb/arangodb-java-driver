@@ -23,12 +23,12 @@ package com.arangodb.example.document;
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.example.ExampleBase;
-import com.arangodb.util.MapBuilder;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +63,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsJsonObject() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         final ArangoCursor<ObjectNode> cursor = db.query(query, bindVars, null, ObjectNode.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
@@ -79,7 +79,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsJsonArray() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         final ArangoCursor<ArrayNode> cursor = db.query(query, bindVars, null, ArrayNode.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
@@ -96,7 +96,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsMap() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         final ArangoCursor<Map> cursor = db.query(query, bindVars, null, Map.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
@@ -116,7 +116,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsList() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         final ArangoCursor<List> cursor = db.query(query, bindVars, null, List.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {

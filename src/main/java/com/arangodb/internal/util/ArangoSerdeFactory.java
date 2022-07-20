@@ -20,28 +20,28 @@
 
 package com.arangodb.internal.util;
 
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.InternalSerde;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoSerializationFactory {
+public class ArangoSerdeFactory {
 
-    private final InternalSerialization internal;
-    private final ArangoSerialization user;
+    private final InternalSerde internal;
+    private final ArangoSerde user;
 
-    public ArangoSerializationFactory(final InternalSerialization internal, final ArangoSerialization user) {
+    public ArangoSerdeFactory(final InternalSerde internal, final ArangoSerde user) {
         super();
         this.internal = internal;
         this.user = user;
     }
 
-    public InternalSerialization getInternalSerialization() {
+    public InternalSerde getInternalSerde() {
         return internal;
     }
 
-    public ArangoSerialization getUserSerialization() {
+    public ArangoSerde getUserSerialization() {
         return user;
     }
 

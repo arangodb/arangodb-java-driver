@@ -20,7 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
-public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
+public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the named graph the edge collection is within

@@ -31,9 +31,7 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationImpl;
-import com.arangodb.internal.util.InternalSerializationImpl;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -43,7 +41,7 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.serde.ArangoSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -68,7 +66,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Mark Vollmary
  */
-public interface ArangoDBAsync extends ArangoSerializationAccessor {
+public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
     void shutdown() throws ArangoDBException;
 
@@ -496,7 +494,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          * @param serialization custom serializer/deserializer
          * @return {@link ArangoDBAsync.Builder}
          */
-        public Builder serializer(final ArangoSerialization serialization) {
+        public Builder serializer(final ArangoSerde serialization) {
             setSerializer(serialization);
             return this;
         }
@@ -510,10 +508,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final InternalSerde internalSerde = InternalSerde.of(DataType.VPACK);
-            final InternalSerializationImpl internal = new InternalSerializationImpl(internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer :  new ArangoSerializationImpl(JacksonSerde.of(DataType.VPACK));
-            final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
+            final InternalSerde internal = InternalSerde.of(DataType.VPACK);
+            final ArangoSerde custom = customSerializer != null ? customSerializer :  JacksonSerde.of(DataType.VPACK);
+            final ArangoSerdeFactory util = new ArangoSerdeFactory(internal, custom);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
