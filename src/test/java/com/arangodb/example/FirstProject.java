@@ -5,7 +5,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Map;
 
@@ -55,13 +55,13 @@ public class FirstProject {
             System.err.println("Failed to get document: myKey; " + e.getMessage());
         }
 
-        // read a document as VPack
+        // read a document as JsonNode
         try {
-            final VPackSlice myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
-                    VPackSlice.class);
-            System.out.println("Key: " + myDocument.get("_key").getAsString());
-            System.out.println("Attribute a: " + myDocument.get("a").getAsString());
-            System.out.println("Attribute b: " + myDocument.get("b").getAsInt());
+            final JsonNode myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
+                    JsonNode.class);
+            System.out.println("Key: " + myDocument.get("_key").textValue());
+            System.out.println("Attribute a: " + myDocument.get("a").textValue());
+            System.out.println("Attribute b: " + myDocument.get("b").textValue());
         } catch (final ArangoDBException e) {
             System.err.println("Failed to get document: myKey; " + e.getMessage());
         }

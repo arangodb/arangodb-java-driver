@@ -25,7 +25,6 @@ import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.TestUtils;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -393,7 +392,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
-    void execute(ArangoDB arangoDB) throws VPackException {
+    void execute(ArangoDB arangoDB)  {
         final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
         assertThat(arangoDB.getInternalSerialization().parse(response.getBody(), "/version").isTextual()).isTrue();
     }

@@ -29,8 +29,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
@@ -137,8 +135,8 @@ class CustomSerdeTest {
         Person person = new Person();
         person.name = "Joe";
         ArangoSerialization serialization = arangoDB.getUserSerialization();
-        VPackSlice serializedPerson = new VPackSlice(serialization.serialize(person));
-        Person deserializedPerson = serialization.deserialize(serializedPerson.toByteArray(), Person.class);
+        byte[] serialized = serialization.serialize(person);
+        Person deserializedPerson = serialization.deserialize(serialized, Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
@@ -230,7 +228,7 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.getUserSerialization().deserialize(new VPackBuilder().add((String) null).slice().toByteArray(), String.class);
+        final String json = arangoDB.getUserSerialization().deserialize(arangoDB.getUserSerialization().serialize(null), String.class);
         assertThat(json).isNull();
     }
 

@@ -27,12 +27,8 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -892,7 +888,7 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    void transactionJsonNode() throws VPackException, InterruptedException, ExecutionException {
+    void transactionJsonNode() throws  InterruptedException, ExecutionException {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         db.transaction("function (params) {return params;}", JsonNode.class, options)
                 .whenComplete((result, ex) -> {
@@ -908,7 +904,7 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    void transactionallowImplicit() throws InterruptedException, ExecutionException {
+    void transactionAllowImplicit() throws InterruptedException, ExecutionException {
         try {
             db.createCollection("someCollection", null).get();
             db.createCollection("someOtherCollection", null).get();
@@ -916,10 +912,10 @@ class ArangoDatabaseTest extends BaseTest {
                     + "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
                     + "}";
             final TransactionOptions options = new TransactionOptions().readCollections("someCollection");
-            db.transaction(action, VPackSlice.class, options).get();
+            db.transaction(action, Void.class, options).get();
             try {
                 options.allowImplicit(false);
-                db.transaction(action, VPackSlice.class, options).get();
+                db.transaction(action, Void.class, options).get();
                 fail();
             } catch (final ExecutionException e) {
                 assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
@@ -988,7 +984,7 @@ class ArangoDatabaseTest extends BaseTest {
         final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
         try {
-            db.transaction(action, VPackSlice.class, null).get();
+            db.transaction(action, Void.class, null).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);

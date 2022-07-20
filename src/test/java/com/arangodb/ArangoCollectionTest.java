@@ -38,7 +38,6 @@ import com.arangodb.entity.ShardEntity;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
