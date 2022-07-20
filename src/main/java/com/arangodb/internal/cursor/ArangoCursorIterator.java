@@ -71,11 +71,11 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return deserialize(db.getInternalSerialization().serialize(arrayIterator.next()), cursor.getType());
+        return deserialize(db.getInternalSerde().serialize(arrayIterator.next()), cursor.getType());
     }
 
     protected <R> R deserialize(final byte[] result, final Class<R> type) {
-        return db.getUserSerialization().deserialize(result, type);
+        return db.getUserSerde().deserialize(result, type);
     }
 
     @Override

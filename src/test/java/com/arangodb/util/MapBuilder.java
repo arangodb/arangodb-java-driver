@@ -20,28 +20,27 @@
 
 package com.arangodb.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.lang.reflect.Type;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
  */
-public interface InternalSerialization {
-    byte[] serialize(final Object entity);
+public class MapBuilder {
 
-    <T> T deserialize(byte[] content, Type type);
+    private final Map<String, Object> map;
 
-    <T> T deserialize(JsonNode node, Type type);
+    public MapBuilder() {
+        super();
+        map = new LinkedHashMap<>();
+    }
 
-    String toJsonString(byte[] content);
+    public MapBuilder put(final String key, final Object value) {
+        map.put(key, value);
+        return this;
+    }
 
-    JsonNode parse(byte[] content);
-
-    JsonNode parse(byte[] content, String jsonPointer);
-
-    <T> T deserialize(byte[] content, String jsonPointer, Type type);
-
-    byte[] extract(byte[] content, String jsonPointer);
-
+    public Map<String, Object> get() {
+        return map;
+    }
 }

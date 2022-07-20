@@ -31,7 +31,7 @@ import com.arangodb.model.*;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
-public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
+public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the named graph the edge collection is within

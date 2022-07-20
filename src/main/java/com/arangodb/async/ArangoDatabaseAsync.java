@@ -21,7 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -41,7 +41,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html">Query API Documentation</a>
  */
 @SuppressWarnings("unused")
-public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
+public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**
      * Return the main entry point for the ArangoDB driver

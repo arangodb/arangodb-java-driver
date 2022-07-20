@@ -30,7 +30,7 @@ import com.arangodb.model.*;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
-public interface ArangoVertexCollection extends ArangoSerializationAccessor {
+public interface ArangoVertexCollection extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the named graph the edge collection is within

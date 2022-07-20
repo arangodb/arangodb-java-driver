@@ -20,26 +20,26 @@
 
 package com.arangodb;
 
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.InternalSerde;
 
 /**
  * @author Mark Vollmary
  */
-public interface ArangoSerializationAccessor {
+public interface ArangoSerdeAccessor {
 
     /**
      * Returns driver internal serialization implementation for serializing and deserializing driver's classes.
      *
-     * @return ArangoSerialization
+     * @return ArangoSerde
      */
-    InternalSerialization getInternalSerialization();
+    InternalSerde getInternalSerde();
 
     /**
      * Returns serialization implementation for serializing and deserializing user's classes.
      *
-     * @return ArangoSerialization
+     * @return ArangoSerde
      */
-    ArangoSerialization getUserSerialization();
+    ArangoSerde getUserSerde();
 
 }

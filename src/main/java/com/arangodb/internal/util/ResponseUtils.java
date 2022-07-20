@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Response;
 
 import java.util.concurrent.TimeoutException;
@@ -42,7 +42,7 @@ public final class ResponseUtils {
         super();
     }
 
-    public static void checkError(final InternalSerialization util, final Response response) throws ArangoDBException {
+    public static void checkError(final InternalSerde util, final Response response) throws ArangoDBException {
         final int responseCode = response.getResponseCode();
         if (responseCode >= ERROR_STATUS) {
             if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {

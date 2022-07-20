@@ -21,7 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
 @SuppressWarnings("unused")
-public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
+public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the database the collection is within

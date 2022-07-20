@@ -58,7 +58,7 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
 
     protected Request renameRequest(final String newName) {
         final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "rename");
-        request.setBody(getInternalSerialization().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
+        request.setBody(getInternalSerde().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
         return request;
     }
 

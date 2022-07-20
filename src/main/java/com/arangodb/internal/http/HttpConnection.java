@@ -27,7 +27,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.*;
@@ -81,7 +81,7 @@ public class HttpConnection implements Connection {
     public static class Builder {
         private String user;
         private String password;
-        private InternalSerialization util;
+        private InternalSerde util;
         private Boolean useSsl;
         private String httpCookieSpec;
         private Protocol contentType;
@@ -102,7 +102,7 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder serializationUtil(final InternalSerialization util) {
+        public Builder serializationUtil(final InternalSerde util) {
             this.util = util;
             return this;
         }
@@ -163,13 +163,13 @@ public class HttpConnection implements Connection {
     private final String user;
     private final String password;
     private volatile String jwt = null;
-    private final InternalSerialization util;
+    private final InternalSerde util;
     private final Boolean useSsl;
     private final Protocol contentType;
     private final HostDescription host;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerialization util, final Protocol contentType,
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerde util, final Protocol contentType,
                            final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
         super();
         this.host = host;

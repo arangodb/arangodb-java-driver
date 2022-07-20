@@ -20,7 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.velocystream.Response;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  */
 @SuppressWarnings("unused")
-public interface ArangoRouteAsync extends ArangoSerializationAccessor {
+public interface ArangoRouteAsync extends ArangoSerdeAccessor {
 
     /**
      * Returns a new {@link ArangoRouteAsync} instance for the given path (relative to the current route) that can be

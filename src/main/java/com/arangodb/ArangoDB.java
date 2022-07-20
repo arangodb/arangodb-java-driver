@@ -28,9 +28,7 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.*;
-import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationImpl;
-import com.arangodb.internal.util.InternalSerializationImpl;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -41,8 +39,8 @@ import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -72,7 +70,7 @@ import java.util.Properties;
  * @author Michele Rastelli
  */
 @SuppressWarnings("UnusedReturnValue")
-public interface ArangoDB extends ArangoSerializationAccessor {
+public interface ArangoDB extends ArangoSerdeAccessor {
 
     /**
      * Builder class to build an instance of {@link ArangoDB}.
@@ -335,7 +333,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param serialization custom serializer/deserializer
          * @return {@link ArangoDB.Builder}
          */
-        public Builder serializer(final ArangoSerialization serialization) {
+        public Builder serializer(final ArangoSerde serialization) {
             setSerializer(serialization);
             return this;
         }
@@ -349,10 +347,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final InternalSerde internalSerde =  InternalSerde.of(DataType.of(protocol));
-            final InternalSerialization internal = new InternalSerializationImpl(internalSerde);
-            final ArangoSerialization custom = customSerializer != null ? customSerializer : new ArangoSerializationImpl(JacksonSerde.of(DataType.of(protocol)));
-            final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
+            final InternalSerde internal =  InternalSerde.of(DataType.of(protocol));
+            final ArangoSerde custom = customSerializer != null ? customSerializer : JacksonSerde.of(DataType.of(protocol));
+            final ArangoSerdeFactory util = new ArangoSerdeFactory(internal, custom);
 
             int protocolMaxConnections = protocol == Protocol.VST ?
                     ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :

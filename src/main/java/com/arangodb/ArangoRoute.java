@@ -27,7 +27,7 @@ import com.arangodb.velocystream.Response;
  *
  * @author Mark Vollmary
  */
-public interface ArangoRoute extends ArangoSerializationAccessor {
+public interface ArangoRoute extends ArangoSerdeAccessor {
 
     /**
      * Returns a new {@link ArangoRoute} instance for the given path (relative to the current route) that can be used to

@@ -22,7 +22,6 @@ package com.arangodb.async;
 
 import com.arangodb.*;
 import com.arangodb.entity.*;
-import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.*;
 import com.arangodb.util.TestUtils;
 import com.arangodb.velocystream.Request;
@@ -55,8 +54,8 @@ class ArangoDBTest {
     private static final String PW = "machts der hund";
     private static Boolean extendedNames;
 
-    private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
-    private final ArangoDB arangoDBSync = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+    private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+    private final ArangoDB arangoDBSync = new ArangoDB.Builder().build();
 
     private boolean isEnterprise() {
         return arangoDBSync.getVersion().getLicense() == License.ENTERPRISE;
@@ -75,7 +74,7 @@ class ArangoDBTest {
     }
 
     private boolean supportsExtendedNames() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
         if (extendedNames == null) {
             try {
                 ArangoDatabase testDb = arangoDB.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
@@ -414,7 +413,7 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailPassword() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").jwt(null).serializer(new ArangoJack()).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -425,7 +424,7 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailUser() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").jwt(null).serializer(new ArangoJack()).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -440,19 +439,19 @@ class ArangoDBTest {
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getInternalSerialization().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(arangoDB.getInternalSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
                 })
                 .get();
     }
 
     @Test
     void execute_acquireHostList_enabled() throws  InterruptedException, ExecutionException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).serializer(new ArangoJack()).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).build();
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getInternalSerialization().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(arangoDB.getInternalSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
                 })
                 .get();
     }

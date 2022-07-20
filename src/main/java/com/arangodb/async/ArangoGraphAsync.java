@@ -20,7 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
-public interface ArangoGraphAsync extends ArangoSerializationAccessor {
+public interface ArangoGraphAsync extends ArangoSerdeAccessor {
 
     /**
      * The the handler of the database the named graph is within

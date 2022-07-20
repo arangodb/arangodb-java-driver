@@ -21,14 +21,14 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 
 /**
  * @author Mark Vollmary
  */
 public interface HostResolver {
 
-    void init(ArangoExecutorSync executorSync, InternalSerialization arangoSerialization);
+    void init(ArangoExecutorSync executorSync, InternalSerde arangoSerialization);
 
     HostSet resolve(boolean initial, boolean closeConnections);
 

@@ -20,12 +20,12 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
-import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -34,15 +34,15 @@ import java.util.Map.Entry;
 /**
  * @author Mark Vollmary
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor> implements ArangoSerializationAccessor {
+public abstract class ArangoExecuteable<E extends ArangoExecutor> implements ArangoSerdeAccessor {
 
     private static final String SLASH = "/";
 
     protected final E executor;
-    protected final ArangoSerializationFactory util;
+    protected final ArangoSerdeFactory util;
     protected final ArangoContext context;
 
-    protected ArangoExecuteable(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
+    protected ArangoExecuteable(final E executor, final ArangoSerdeFactory util, final ArangoContext context) {
         super();
         this.executor = executor;
         this.util = util;
@@ -54,12 +54,12 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     }
 
     @Override
-    public InternalSerialization getInternalSerialization() {
-        return util.getInternalSerialization();
+    public InternalSerde getInternalSerde() {
+        return util.getInternalSerde();
     }
 
     @Override
-    public ArangoSerialization getUserSerialization() {
+    public ArangoSerde getUserSerde() {
         return util.getUserSerialization();
     }
 

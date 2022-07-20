@@ -21,7 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.QueueTimeMetrics;
-import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -36,15 +36,15 @@ public abstract class ArangoExecutor {
         if (response.getBody() == null) {
             return null;
         }
-        return util.getInternalSerialization().deserialize(response.getBody(), type);
+        return util.getInternalSerde().deserialize(response.getBody(), type);
     }
 
     private final DocumentCache documentCache;
     private final QueueTimeMetricsImpl qtMetrics;
-    private final ArangoSerializationFactory util;
+    private final ArangoSerdeFactory util;
     private final String timeoutS;
 
-    protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache,
+    protected ArangoExecutor(final ArangoSerdeFactory util, final DocumentCache documentCache,
                              final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super();
         this.documentCache = documentCache;

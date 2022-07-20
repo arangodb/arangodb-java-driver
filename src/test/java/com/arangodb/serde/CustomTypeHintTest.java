@@ -23,7 +23,6 @@ package com.arangodb.serde;
 
 import com.arangodb.*;
 import com.arangodb.entity.Key;
-import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.AfterEach;
@@ -87,9 +86,7 @@ class CustomTypeHintTest {
 
     @BeforeEach
     void init() {
-        ArangoDB arangoDB = new ArangoDB.Builder()
-                .serializer(new ArangoJack())
-                .build();
+        ArangoDB arangoDB = new ArangoDB.Builder().build();
 
         db = arangoDB.db(DbName.of("custom-serde-test"));
         if (!db.exists()) {

@@ -31,7 +31,7 @@ import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.util.InternalSerialization;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -56,7 +56,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
     protected static final AtomicLong mId = new AtomicLong(0L);
-    protected final InternalSerialization util;
+    protected final InternalSerde util;
 
     protected final String user;
     protected final String password;
@@ -66,7 +66,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     protected final HostHandler hostHandler;
 
     protected VstCommunication(final Integer timeout, final String user, final String password, final String jwt,
-                               final Boolean useSsl, final SSLContext sslContext, final InternalSerialization util,
+                               final Boolean useSsl, final SSLContext sslContext, final InternalSerde util,
                                final Integer chunksize, final HostHandler hostHandler) {
         this.user = user;
         this.password = password;

@@ -21,8 +21,6 @@ class BaseJunit5 {
     private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
             .map(p -> new ArangoDB.Builder()
                     .useProtocol(p)
-                    // FIXME
-//                    .serializer(new ArangoJack())
                     .build())
             .collect(Collectors.toList());
 

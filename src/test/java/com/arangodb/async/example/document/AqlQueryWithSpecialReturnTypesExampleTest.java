@@ -22,12 +22,12 @@ package com.arangodb.async.example.document;
 
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.util.MapBuilder;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -59,7 +59,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsJsonObject() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, ObjectNode.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(node -> {
                     assertThat(node.get("name").asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
@@ -73,7 +73,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsArrayNode() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, ArrayNode.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(arrNode -> {
                     assertThat(arrNode.get(0).asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
@@ -87,7 +87,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsMap() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, Map.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(map -> {
                     assertThat(map.get("name")).isNotNull();
@@ -104,7 +104,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     void aqlWithLimitQueryAsList() throws InterruptedException, ExecutionException {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
-        final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
+        final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, List.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(list -> {
                     assertThat(list.get(0)).isNotNull();

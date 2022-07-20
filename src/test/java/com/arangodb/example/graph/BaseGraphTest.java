@@ -26,7 +26,6 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
-import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -48,7 +47,7 @@ abstract class BaseGraphTest {
     @BeforeAll
     static void init() {
         if (arangoDB == null) {
-            arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+            arangoDB = new ArangoDB.Builder().build();
         }
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

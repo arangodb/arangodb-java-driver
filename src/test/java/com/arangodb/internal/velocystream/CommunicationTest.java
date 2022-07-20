@@ -23,7 +23,6 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -42,14 +41,14 @@ class CommunicationTest {
 
     @Test
     void chunkSizeSmall() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().chunksize(20).serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().chunksize(20).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
 
     @Test
     void multiThread() throws Exception {
-        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
@@ -75,7 +74,7 @@ class CommunicationTest {
 
     @Test
     void multiThreadSameDatabases() throws Exception {
-        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final ArangoDatabase db = arangoDB.db();
@@ -98,14 +97,14 @@ class CommunicationTest {
 
     @Test
     void minOneConnection() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(0).serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(0).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
 
     @Test
     void defaultMaxConnection() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(null).serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(null).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }

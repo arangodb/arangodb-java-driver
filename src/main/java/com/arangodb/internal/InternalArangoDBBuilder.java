@@ -25,7 +25,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.serde.ArangoSerde;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public abstract class InternalArangoDBBuilder {
     protected Boolean acquireHostList;
     protected Integer acquireHostListInterval;
     protected LoadBalancingStrategy loadBalancingStrategy;
-    protected ArangoSerialization customSerializer;
+    protected ArangoSerde customSerializer;
     protected Integer responseQueueTimeSamples;
 
 
@@ -201,7 +201,7 @@ public abstract class InternalArangoDBBuilder {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
     }
 
-    protected void setSerializer(final ArangoSerialization serializer) {
+    protected void setSerializer(final ArangoSerde serializer) {
         this.customSerializer = serializer;
     }
 

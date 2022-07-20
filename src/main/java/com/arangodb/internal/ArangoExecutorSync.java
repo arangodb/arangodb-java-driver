@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.MetaAware;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
     private final CommunicationProtocol protocol;
 
-    public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
+    public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerdeFactory util,
                               final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super(util, documentCache, qtMetrics, timeoutMs);
         this.protocol = protocol;

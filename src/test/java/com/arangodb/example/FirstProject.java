@@ -3,16 +3,15 @@ package com.arangodb.example;
 import com.arangodb.*;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.mapping.ArangoJack;
-import com.arangodb.util.MapBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class FirstProject {
 
     public static void main(final String[] args) {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("root").serializer(new ArangoJack()).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().user("root").build();
 
         // create database
         final DbName dbName = DbName.of("mydb");
@@ -105,7 +104,7 @@ public class FirstProject {
         // execute AQL queries
         try {
             final String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
-            final Map<String, Object> bindVars = new MapBuilder().put("name", "Homer").get();
+            final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
             final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
                     BaseDocument.class);
             for (; cursor.hasNext(); ) {
@@ -119,7 +118,7 @@ public class FirstProject {
         try {
             final String query = "FOR t IN firstCollection FILTER t.name == @name "
                     + "REMOVE t IN firstCollection LET removed = OLD RETURN removed";
-            final Map<String, Object> bindVars = new MapBuilder().put("name", "Homer").get();
+            final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
             final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
                     BaseDocument.class);
             for (; cursor.hasNext(); ) {
