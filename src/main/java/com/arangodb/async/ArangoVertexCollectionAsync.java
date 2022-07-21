@@ -63,7 +63,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
     /**
      * Creates a new vertex in the collection
      *
-     * @param value A representation of a single vertex (POJO, VPackSlice or String for Json)
+     * @param value A representation of a single vertex (POJO or String for Json)
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
@@ -72,7 +72,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
     /**
      * Creates a new vertex in the collection
      *
-     * @param value   A representation of a single vertex (POJO, VPackSlice or String for Json)
+     * @param value   A representation of a single vertex (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
@@ -83,7 +83,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * Fetches an existing vertex
      *
      * @param key  The key of the vertex
-     * @param type The type of the vertex-document (POJO class, VPackSlice or String for Json)
+     * @param type The type of the vertex-document (POJO class or String for Json)
      * @return the vertex identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
@@ -93,7 +93,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * Fetches an existing vertex
      *
      * @param key     The key of the vertex
-     * @param type    The type of the vertex-document (POJO class, VPackSlice or String for Json)
+     * @param type    The type of the vertex-document (POJO class or String for Json)
      * @param options Additional options, can be null
      * @return the vertex identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>

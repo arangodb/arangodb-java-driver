@@ -2,12 +2,10 @@ package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
