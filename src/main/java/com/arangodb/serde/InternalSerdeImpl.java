@@ -6,33 +6,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.Type;
 
-class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
+final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
-    InternalSerdeImpl(DataType dataType, ObjectMapper mapper) {
-        super(dataType, mapper);
+    InternalSerdeImpl(ObjectMapper mapper) {
+        super(mapper);
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     @Override
-    // FIXME: refactor to:
-    // return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
-    // afterwards dataType should not be needed anymore
     public String toJsonString(final byte[] content) {
-        switch (dataType) {
-            case JSON:
-                return new String(content, StandardCharsets.UTF_8);
-            case VPACK:
-                try {
-                    JsonNode tree = mapper.readTree(content);
-                    return SerdeUtils.INSTANCE.writeJson(tree);
-                } catch (IOException e) {
-                    throw new ArangoDBException(e);
-                }
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + dataType);
+        try {
+            return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
         }
     }
 
@@ -59,6 +48,15 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
     public JsonNode parse(byte[] content, String jsonPointer) {
         try {
             return mapper.readTree(content).at(jsonPointer);
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    @Override
+    public <T> T deserialize(final JsonNode node, final Type type) {
+        try {
+            return mapper.readerFor(mapper.constructType(type)).readValue(node);
         } catch (IOException e) {
             throw new ArangoDBException(e);
         }

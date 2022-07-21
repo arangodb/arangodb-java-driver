@@ -16,9 +16,9 @@ public interface InternalSerde extends JacksonSerde {
      */
     static InternalSerde of(final DataType dataType) {
         if (dataType == DataType.JSON) {
-            return new InternalSerdeImpl(dataType, new ObjectMapper());
+            return new InternalSerdeImpl(new ObjectMapper());
         } else if (dataType == DataType.VPACK) {
-            return new InternalSerdeImpl(dataType, new VPackMapper());
+            return new InternalSerdeImpl(new VPackMapper());
         } else {
             throw new IllegalArgumentException("Unexpected value: " + dataType);
         }
@@ -37,30 +37,69 @@ public interface InternalSerde extends JacksonSerde {
      * Used for extracting nested user data.
      *
      * @param content     byte array
-     * @param jsonPointer location of user data
+     * @param jsonPointer location of data to be extracted
      * @return byte array
      */
     byte[] extract(byte[] content, String jsonPointer);
 
     /**
-     * TODO
+     * Deserializes the parsed json node and binds it to the target data type.
+     *
+     * @param node  parsed json node
+     * @param clazz class of target data type
+     * @return deserialized object
+     */
+    default <T> T deserialize(JsonNode node, Class<T> clazz) {
+        return deserialize(node, (Type) clazz);
+    }
+
+    /**
+     * Deserializes the parsed json node and binds it to the target data type.
+     *
+     * @param node parsed json node
+     * @param type target data type
+     * @return deserialized object
+     */
+    <T> T deserialize(JsonNode node, Type type);
+
+    /**
+     * Parses the content.
+     *
+     * @param content VPack or byte encoded JSON string
+     * @return root of the parsed tree
      */
     JsonNode parse(byte[] content);
 
     /**
-     * TODO
+     * Parses the content at json pointer.
+     *
+     * @param content     VPack or byte encoded JSON string
+     * @param jsonPointer location of data to be parsed
+     * @return root of the parsed tree
      */
     JsonNode parse(byte[] content, String jsonPointer);
 
     /**
-     * TODO
+     * Deserializes the content at json pointer and binds it to the target data type.
+     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     *
+     * @param content     byte array to deserialize
+     * @param jsonPointer location of data to be deserialized
+     * @param clazz       class of target data type
+     * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz){
+    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz) {
         return deserialize(content, jsonPointer, (Type) clazz);
     }
 
     /**
-     * TODO
+     * Deserializes the content at json pointer and binds it to the target data type.
+     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     *
+     * @param content     byte array to deserialize
+     * @param jsonPointer location of data to be deserialized
+     * @param type        target data type
+     * @return deserialized object
      */
     default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
         return deserialize(parse(content, jsonPointer), type);
