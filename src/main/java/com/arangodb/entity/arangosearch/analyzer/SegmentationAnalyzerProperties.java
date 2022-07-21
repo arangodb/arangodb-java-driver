@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @since ArangoDB 3.9
  */
-public class SegmentationAnalyzerProperties {
+public final class SegmentationAnalyzerProperties {
 
     @JsonProperty("break")
     private BreakMode breakMode;

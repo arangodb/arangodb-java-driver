@@ -23,7 +23,7 @@ package com.arangodb.model.arangosearch;
 /**
  * @author Michele Rastelli
  */
-public class AnalyzerDeleteOptions {
+public final class AnalyzerDeleteOptions {
 
     private Boolean force;
 

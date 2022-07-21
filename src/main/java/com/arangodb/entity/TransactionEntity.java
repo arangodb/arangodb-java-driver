@@ -26,7 +26,7 @@ package com.arangodb.entity;
  * "https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#list-currently-ongoing-transactions</a>
  * @since ArangoDB 3.5.0
  */
-public class TransactionEntity implements Entity {
+public final class TransactionEntity {
 
     private String id;
     private StreamTransactionStatus state;

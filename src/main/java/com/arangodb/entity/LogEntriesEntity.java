@@ -28,7 +28,7 @@ import java.util.List;
  * Documentation</a>
  * @since ArangoDB 3.8
  */
-public class LogEntriesEntity implements Entity {
+public final class LogEntriesEntity {
 
     private Long total;
     private List<Message> messages;
@@ -41,7 +41,7 @@ public class LogEntriesEntity implements Entity {
         return messages;
     }
 
-    public static class Message {
+    public static final class Message {
         Long id;
         String topic;
         String level;

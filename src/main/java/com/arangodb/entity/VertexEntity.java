@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class VertexEntity extends DocumentEntity {
+public final class VertexEntity extends DocumentEntity {
 
     public VertexEntity() {
         super();

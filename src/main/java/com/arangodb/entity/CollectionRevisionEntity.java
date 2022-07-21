@@ -25,7 +25,7 @@ package com.arangodb.entity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-collection-revision-id">API
  * Documentation</a>
  */
-public class CollectionRevisionEntity extends CollectionEntity {
+public final class CollectionRevisionEntity extends CollectionEntity {
 
     private String revision;
 

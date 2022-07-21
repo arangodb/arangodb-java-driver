@@ -27,7 +27,7 @@ import java.util.Collection;
  * @see <a href= "https://www.arangodb.com/docs/stable/http/collection-getting.html#read-properties-of-a-collection">API
  * Documentation</a>
  */
-public class CollectionPropertiesEntity extends CollectionEntity {
+public final class CollectionPropertiesEntity extends CollectionEntity {
 
     private KeyOptions keyOptions;
     private Long count;

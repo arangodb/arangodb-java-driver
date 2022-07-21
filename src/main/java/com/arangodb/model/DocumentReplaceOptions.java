@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
  * Documentation</a>
  */
-public class DocumentReplaceOptions {
+public final class DocumentReplaceOptions {
 
     private Boolean waitForSync;
     private Boolean ignoreRevs;

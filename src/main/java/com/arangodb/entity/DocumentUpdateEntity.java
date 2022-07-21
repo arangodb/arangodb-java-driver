@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
  * Documentation</a>
  */
-public class DocumentUpdateEntity<T> extends DocumentEntity {
+public final class DocumentUpdateEntity<T> extends DocumentEntity {
 
     @JsonProperty("_oldRev")
     private String oldRev;

@@ -25,7 +25,7 @@ package com.arangodb.entity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
  * Documentation</a>
  */
-public class DocumentDeleteEntity<T> extends DocumentEntity {
+public final class DocumentDeleteEntity<T> extends DocumentEntity {
 
     private T oldDocument;
 

@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class EdgeNgram {
+public final class EdgeNgram {
     private long min;
     private long max;
     private boolean preserveOriginal;

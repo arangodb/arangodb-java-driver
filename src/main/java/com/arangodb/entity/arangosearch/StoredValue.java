@@ -31,7 +31,7 @@ import java.util.List;
  * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
-public class StoredValue {
+public final class StoredValue {
 
     private final List<String> fields;
     private final ArangoSearchCompression compression;

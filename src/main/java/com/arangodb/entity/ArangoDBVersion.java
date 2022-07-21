@@ -25,7 +25,7 @@ package com.arangodb.entity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
  * Documentation</a>
  */
-public class ArangoDBVersion implements Entity {
+public final class ArangoDBVersion {
 
     private String server;
     private String version;

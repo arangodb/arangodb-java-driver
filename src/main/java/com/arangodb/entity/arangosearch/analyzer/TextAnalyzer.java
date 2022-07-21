@@ -32,7 +32,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#text">API Documentation</a>
  */
-public class TextAnalyzer extends SearchAnalyzer {
+public final class TextAnalyzer extends SearchAnalyzer {
     public TextAnalyzer() {
         setType(AnalyzerType.text);
     }

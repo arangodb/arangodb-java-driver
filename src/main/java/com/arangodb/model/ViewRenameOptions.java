@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public class ViewRenameOptions {
+public final class ViewRenameOptions {
 
     private String name;
 
@@ -39,7 +39,7 @@ public class ViewRenameOptions {
      * @param name The new name
      * @return options
      */
-    protected ViewRenameOptions name(final String name) {
+    ViewRenameOptions name(final String name) {
         this.name = name;
         return this;
     }

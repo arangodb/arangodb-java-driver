@@ -34,7 +34,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#n-gram">API Documentation</a>
  */
-public class NGramAnalyzerProperties {
+public final class NGramAnalyzerProperties {
 
     private long min;
     private long max;

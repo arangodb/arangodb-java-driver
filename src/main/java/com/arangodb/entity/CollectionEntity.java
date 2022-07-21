@@ -26,7 +26,7 @@ import com.arangodb.model.CollectionSchema;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html">API Documentation</a>
  */
-public class CollectionEntity implements Entity {
+public class CollectionEntity {
 
     private String id;
     private String name;

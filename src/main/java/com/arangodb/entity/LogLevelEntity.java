@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class LogLevelEntity implements Entity {
+public final class LogLevelEntity {
 
     public enum LogLevel {
         FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT

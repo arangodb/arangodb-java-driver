@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Mark Vollmary
  */
-public class VertexUpdateEntity extends DocumentEntity {
+public final class VertexUpdateEntity extends DocumentEntity {
 
     @JsonProperty("_oldRev")
     private String oldRev;

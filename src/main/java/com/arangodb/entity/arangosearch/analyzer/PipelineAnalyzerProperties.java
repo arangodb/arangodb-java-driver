@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class PipelineAnalyzerProperties {
+public final class PipelineAnalyzerProperties {
     private List<SearchAnalyzer> pipeline = new LinkedList<>();
 
     /**

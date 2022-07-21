@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class DelimiterAnalyzerProperties {
+public final class DelimiterAnalyzerProperties {
 
     private String delimiter;
 

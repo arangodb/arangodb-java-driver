@@ -30,7 +30,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class TextAnalyzerProperties {
+public final class TextAnalyzerProperties {
 
     public TextAnalyzerProperties() {
         stopwords = Collections.emptyList();

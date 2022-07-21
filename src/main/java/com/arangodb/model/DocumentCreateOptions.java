@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
  * Documentation</a>
  */
-public class DocumentCreateOptions {
+public final class DocumentCreateOptions {
 
     private Boolean waitForSync;
     private Boolean returnNew;

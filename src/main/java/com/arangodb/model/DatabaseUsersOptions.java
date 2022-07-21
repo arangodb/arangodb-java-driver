@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * @author Michele Rastelli
  */
-public class DatabaseUsersOptions {
+public final class DatabaseUsersOptions {
 
     private String username;
     private Map<String, Object> extra;

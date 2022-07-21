@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stem">API Documentation</a>
  */
-public class StemAnalyzer extends SearchAnalyzer {
+public final class StemAnalyzer extends SearchAnalyzer {
     public StemAnalyzer() {
         setType(AnalyzerType.stem);
     }

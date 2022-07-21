@@ -29,7 +29,7 @@ import com.arangodb.entity.IndexType;
  * persistent index.
  */
 @Deprecated
-public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
+public final class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
 
     private Iterable<String> fields;
     private final IndexType type = IndexType.skiplist;
@@ -43,7 +43,7 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
     }
 
     @Override
-    protected SkiplistIndexOptions getThis() {
+    SkiplistIndexOptions getThis() {
         return this;
     }
 
@@ -55,7 +55,7 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
      * @param fields A list of attribute paths
      * @return options
      */
-    protected SkiplistIndexOptions fields(final Iterable<String> fields) {
+    SkiplistIndexOptions fields(final Iterable<String> fields) {
         this.fields = fields;
         return this;
     }

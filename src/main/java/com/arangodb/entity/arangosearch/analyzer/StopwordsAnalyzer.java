@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
  * @since ArangoDB 3.8
  */
-public class StopwordsAnalyzer extends SearchAnalyzer {
+public final class StopwordsAnalyzer extends SearchAnalyzer {
     public StopwordsAnalyzer() {
         setType(AnalyzerType.stopwords);
     }

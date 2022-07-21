@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API Documentation</a>
  */
-public class VertexReplaceOptions {
+public final class VertexReplaceOptions {
 
     private Boolean waitForSync;
     private String ifMatch;

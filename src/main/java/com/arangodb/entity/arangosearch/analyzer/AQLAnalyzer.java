@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#aql">API Documentation</a>
  * @since ArangoDB 3.8
  */
-public class AQLAnalyzer extends SearchAnalyzer {
+public final class AQLAnalyzer extends SearchAnalyzer {
     public AQLAnalyzer() {
         setType(AnalyzerType.aql);
     }

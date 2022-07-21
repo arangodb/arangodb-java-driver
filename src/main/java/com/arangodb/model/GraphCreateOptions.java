@@ -31,7 +31,7 @@ import java.util.Collections;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API Documentation</a>
  */
-public class GraphCreateOptions {
+public final class GraphCreateOptions {
 
     private String name;
     private Collection<EdgeDefinition> edgeDefinitions = Collections.emptyList();
@@ -51,7 +51,7 @@ public class GraphCreateOptions {
      * @param name Name of the graph
      * @return options
      */
-    protected GraphCreateOptions name(final String name) {
+    GraphCreateOptions name(final String name) {
         this.name = name;
         return this;
     }
@@ -64,7 +64,7 @@ public class GraphCreateOptions {
      * @param edgeDefinitions An array of definitions for the edge
      * @return options
      */
-    protected GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
+    GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
         this.edgeDefinitions = edgeDefinitions;
         return this;
     }
@@ -206,7 +206,7 @@ public class GraphCreateOptions {
         return options;
     }
 
-    public static class SmartOptions {
+    public static final class SmartOptions {
         private ReplicationFactor replicationFactor;
         private Integer writeConcern;
         private Integer numberOfShards;

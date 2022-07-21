@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class FieldLink {
+public final class FieldLink {
 
     private final String name;
     private final Collection<String> analyzers;

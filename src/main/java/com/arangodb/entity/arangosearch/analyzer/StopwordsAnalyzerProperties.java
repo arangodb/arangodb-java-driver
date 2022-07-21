@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * @author Michele Rastelli
  */
-public class StopwordsAnalyzerProperties {
+public final class StopwordsAnalyzerProperties {
 
     private static String stringToHex(String str) {
         final StringBuilder hex = new StringBuilder();

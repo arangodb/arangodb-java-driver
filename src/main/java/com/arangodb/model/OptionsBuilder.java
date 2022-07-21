@@ -30,7 +30,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public class OptionsBuilder {
+public final class OptionsBuilder {
 
     private OptionsBuilder() {
         super();

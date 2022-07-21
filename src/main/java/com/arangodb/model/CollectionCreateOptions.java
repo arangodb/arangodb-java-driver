@@ -30,7 +30,7 @@ import com.arangodb.entity.ReplicationFactor;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
  * Documentation</a>
  */
-public class CollectionCreateOptions {
+public final class CollectionCreateOptions {
 
     private String name;
     private ReplicationFactor replicationFactor;
@@ -60,7 +60,7 @@ public class CollectionCreateOptions {
      * @param name The name of the collection
      * @return options
      */
-    protected CollectionCreateOptions name(final String name) {
+    CollectionCreateOptions name(final String name) {
         this.name = name;
         return this;
     }

@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class AQLAnalyzerProperties {
+public final class AQLAnalyzerProperties {
 
     private String queryString;
     private Boolean collapsePositions;

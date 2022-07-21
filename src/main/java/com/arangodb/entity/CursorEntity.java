@@ -31,7 +31,7 @@ import java.util.Map;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public class CursorEntity implements Entity, MetaAware {
+public final class CursorEntity implements MetaAware {
 
     private String id;
     private Integer count;
@@ -105,7 +105,7 @@ public class CursorEntity implements Entity, MetaAware {
         this.meta = cleanupMeta(meta);
     }
 
-    public static class Warning {
+    public static final class Warning {
 
         private Integer code;
         private String message;
@@ -120,7 +120,7 @@ public class CursorEntity implements Entity, MetaAware {
 
     }
 
-    public static class Extras {
+    public static final class Extras {
         private Stats stats;
         private Collection<Warning> warnings = Collections.emptyList();
 
@@ -134,7 +134,7 @@ public class CursorEntity implements Entity, MetaAware {
 
     }
 
-    public static class Stats {
+    public static final class Stats {
         private Long writesExecuted;
         private Long writesIgnored;
         private Long scannedFull;

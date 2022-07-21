@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @see <a href="https://www.arangodb.com/docs/stable/data-modeling-documents-schema-validation.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
-public class CollectionSchema {
+public final class CollectionSchema {
 
     /**
      * Value to unset the collection schema on properties update {@link com.arangodb.ArangoCollection#changeProperties(CollectionPropertiesOptions)}.

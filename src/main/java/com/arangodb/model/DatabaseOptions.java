@@ -26,7 +26,7 @@ import com.arangodb.entity.ReplicationFactor;
  * @author Michele Rastelli
  * @since ArangoDB 3.6.0
  */
-public class DatabaseOptions {
+public final class DatabaseOptions {
 
     private ReplicationFactor replicationFactor;
     private Integer writeConcern;

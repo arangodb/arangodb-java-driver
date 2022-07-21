@@ -25,7 +25,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
  * Documentation</a>
  */
-public class CollectionPropertiesOptions {
+public final class CollectionPropertiesOptions {
 
     private Boolean waitForSync;
     private CollectionSchema schema;

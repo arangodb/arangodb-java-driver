@@ -27,7 +27,7 @@ import com.arangodb.entity.IndexType;
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
  * Documentation</a>
  */
-public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
+public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
 
     private Iterable<String> fields;
     private final IndexType type = IndexType.persistent;
@@ -41,7 +41,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     }
 
     @Override
-    protected PersistentIndexOptions getThis() {
+    PersistentIndexOptions getThis() {
         return this;
     }
 
@@ -53,7 +53,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
      * @param fields A list of attribute paths
      * @return options
      */
-    protected PersistentIndexOptions fields(final Iterable<String> fields) {
+    PersistentIndexOptions fields(final Iterable<String> fields) {
         this.fields = fields;
         return this;
     }

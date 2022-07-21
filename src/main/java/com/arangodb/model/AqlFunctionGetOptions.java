@@ -26,7 +26,7 @@ package com.arangodb.model;
  * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
  * Documentation</a>
  */
-public class AqlFunctionGetOptions {
+public final class AqlFunctionGetOptions {
 
     private String namespace;
 

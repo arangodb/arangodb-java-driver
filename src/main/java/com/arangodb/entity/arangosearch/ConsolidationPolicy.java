@@ -23,7 +23,7 @@ package com.arangodb.entity.arangosearch;
 /**
  * @author Mark Vollmary
  */
-public class ConsolidationPolicy {
+public final class ConsolidationPolicy {
 
     private ConsolidationType type;
     private Double threshold;

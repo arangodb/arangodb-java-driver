@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
  */
-public class VertexCreateOptions {
+public final class VertexCreateOptions {
 
     private Boolean waitForSync;
     private String streamTransactionId;

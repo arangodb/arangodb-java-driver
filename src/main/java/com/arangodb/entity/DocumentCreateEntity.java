@@ -25,7 +25,7 @@ package com.arangodb.entity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
  * Documentation</a>
  */
-public class DocumentCreateEntity<T> extends DocumentEntity {
+public final class DocumentCreateEntity<T> extends DocumentEntity {
 
     private T newDocument;
     private T oldDocument;

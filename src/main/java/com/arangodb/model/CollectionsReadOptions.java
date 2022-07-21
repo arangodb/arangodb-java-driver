@@ -25,7 +25,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
  * Documentation</a>
  */
-public class CollectionsReadOptions {
+public final class CollectionsReadOptions {
 
     private Boolean excludeSystem;
 

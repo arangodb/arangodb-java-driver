@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class EdgeEntity extends DocumentEntity {
+public final class EdgeEntity extends DocumentEntity {
 
     public EdgeEntity() {
         super();

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
  */
-public class EdgeUpdateEntity extends DocumentEntity {
+public final class EdgeUpdateEntity extends DocumentEntity {
 
     @JsonProperty("_oldRev")
     private String oldRev;

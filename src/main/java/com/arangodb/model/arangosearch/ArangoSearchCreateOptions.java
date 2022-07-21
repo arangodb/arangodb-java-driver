@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class ArangoSearchCreateOptions {
+public final class ArangoSearchCreateOptions {
 
     @SuppressWarnings("unused")
     private String name;
@@ -51,7 +51,7 @@ public class ArangoSearchCreateOptions {
         type = ViewType.ARANGO_SEARCH;
     }
 
-    protected ArangoSearchCreateOptions name(final String name) {
+    ArangoSearchCreateOptions name(final String name) {
         this.name = name;
         return this;
     }

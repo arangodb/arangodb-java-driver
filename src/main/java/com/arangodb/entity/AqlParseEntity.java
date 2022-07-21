@@ -26,9 +26,9 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API Documentation</a>
  */
-public class AqlParseEntity implements Entity {
+public final class AqlParseEntity {
 
-    public static class AstNode {
+    public static final class AstNode {
         private String type;
         private Collection<AstNode> subNodes;
         private String name;

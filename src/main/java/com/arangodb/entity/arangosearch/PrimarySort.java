@@ -23,7 +23,7 @@ package com.arangodb.entity.arangosearch;
 /**
  * @author Heiko Kernbach
  */
-public class PrimarySort {
+public final class PrimarySort {
 
     private final String fieldName;
     private Boolean ascending;

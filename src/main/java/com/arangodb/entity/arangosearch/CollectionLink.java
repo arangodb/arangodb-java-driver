@@ -35,7 +35,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class CollectionLink {
+public final class CollectionLink {
 
     private final String name;
     private final Collection<String> analyzers;
