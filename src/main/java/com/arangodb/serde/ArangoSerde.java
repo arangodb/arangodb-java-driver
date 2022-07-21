@@ -1,28 +1,22 @@
 package com.arangodb.serde;
 
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 
 /**
  * Contract for serialization/deserialization of user data.
  * Implementations of this interface could be used for customizing serialization/deserialization of user related data
- * using serialization/deserialization libraries other than Jackson Databind, like:
+ * using serialization/deserialization libraries like:
  * - serialization libraries for specific JVM languages (e.g. Scala, Kotlin, ...)
  * - serialization libraries already in use in frameworks (e.g. JSON-B, Micronaut Serialization, ...)
- * - high performance serialization libraries (e.g. supporting compile-time databinding code generation)
- * - lower level libraries without support to data binding
+ * - high performance serialization libraries (e.g. supporting compile-time data binding code generation)
+ * - low-level libraries without support to data binding
  * <p>
- * This interface should not be directly implemented as an adapter to Jackson Databind. A more performant way to provide
- * custom implementations based on Jackson Databind is by extending {@link JacksonSerde}, which exposes additional
- * methods based on Jackson's types.
- * Furthermore, existing {@link JacksonSerde} implementations can be instantiated providing a custom configured Jackson
- * ObjectMapper, see {@link JacksonSerde#of(DataType, com.fasterxml.jackson.databind.ObjectMapper)}.
+ * To create a custom serde based on Jackson, existing {@link JacksonSerde} can be reused and instantiated providing a
+ * custom configured ObjectMapper ({@link JacksonSerde#of(com.fasterxml.jackson.databind.ObjectMapper)}) or configured
+ * after creation through {@link JacksonSerde#configure(Consumer)}.
  */
 public interface ArangoSerde {
-
-    /**
-     * @return the data type supported by this implementation
-     */
-    DataType getDataType();
 
     /**
      * Serializes the object into the target data type. For data type {@link DataType#JSON}, the serialized JSON string
