@@ -1,6 +1,5 @@
 package com.arangodb.serde;
 
-import com.arangodb.internal.ArangoResponseField;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -57,7 +57,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
     ArangoRoute withQueryParam(String key, Object value);
 
     /**
-     * The response body. The body will be serialized to {@link com.arangodb.velocypack.VPackSlice}.
+     * The response body.
      *
      * @param body The request body
      * @return {@link ArangoRoute}

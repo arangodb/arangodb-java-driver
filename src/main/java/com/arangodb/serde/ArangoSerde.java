@@ -1,7 +1,5 @@
 package com.arangodb.serde;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.lang.reflect.Type;
 
 /**
@@ -17,7 +15,7 @@ import java.lang.reflect.Type;
  * custom implementations based on Jackson Databind is by extending {@link JacksonSerde}, which exposes additional
  * methods based on Jackson's types.
  * Furthermore, existing {@link JacksonSerde} implementations can be instantiated providing a custom configured Jackson
- * ObjectMapper, see {@link JacksonSerde#of(DataType, ObjectMapper)}.
+ * ObjectMapper, see {@link JacksonSerde#of(DataType, com.fasterxml.jackson.databind.ObjectMapper)}.
  */
 public interface ArangoSerde {
 

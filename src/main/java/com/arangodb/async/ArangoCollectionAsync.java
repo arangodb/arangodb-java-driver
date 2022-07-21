@@ -56,7 +56,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param value A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value A representation of a single document (POJO or String for Json)
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
@@ -67,7 +67,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value   A representation of a single document (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -79,7 +79,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param values A List of documents (POJO, VPackSlice or String for Json)
+     * @param values A List of documents (POJO or String for Json)
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
@@ -90,7 +90,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param values  A List of documents (POJO, VPackSlice or String for Json)
+     * @param values  A List of documents (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -140,7 +140,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param key  The key of the document
-     * @param type The type of the document (POJO class, VPackSlice or String for Json)
+     * @param type The type of the document (POJO class or String for Json)
      * @return the document identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
@@ -151,7 +151,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param key     The key of the document
-     * @param type    The type of the document (POJO class, VPackSlice or String for Json)
+     * @param type    The type of the document (POJO class or String for Json)
      * @param options Additional options, can be null
      * @return the document identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
@@ -164,7 +164,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Reads multiple documents
      *
      * @param keys The keys of the documents
-     * @param type The type of the documents (POJO class, VPackSlice or String for Json)
+     * @param type The type of the documents (POJO class or String for Json)
      * @return the documents and possible errors
      */
     <T> CompletableFuture<MultiDocumentEntity<T>> getDocuments(final Collection<String> keys, final Class<T> type);
@@ -173,7 +173,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Reads multiple documents
      *
      * @param keys    The keys of the documents
-     * @param type    The type of the documents (POJO class, VPackSlice or String for Json)
+     * @param type    The type of the documents (POJO class or String for Json)
      * @param options Additional options, can be null
      * @return the documents and possible errors
      */
@@ -187,7 +187,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * violated
      *
      * @param key   The key of the document
-     * @param value A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value A representation of a single document (POJO or String for Json)
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
@@ -199,7 +199,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * violated
      *
      * @param key     The key of the document
-     * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value   A representation of a single document (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
@@ -214,7 +214,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
-     * @param values A List of documents (POJO, VPackSlice or String for Json)
+     * @param values A List of documents (POJO or String for Json)
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
@@ -225,7 +225,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
-     * @param values  A List of documents (POJO, VPackSlice or String for Json)
+     * @param values  A List of documents (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
@@ -241,7 +241,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key   The key of the document
-     * @param value A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value A representation of a single document (POJO or String for Json)
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
@@ -254,7 +254,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key     The key of the document
-     * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value   A representation of a single document (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
@@ -271,7 +271,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key        The key of the document
-     * @param value      A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param value      A representation of a single document (POJO or String for Json)
      * @param options    Additional options, can be null
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
@@ -290,7 +290,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values A list of documents (POJO, VPackSlice or String for Json)
+     * @param values A list of documents (POJO or String for Json)
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
@@ -303,7 +303,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values  A list of documents (POJO, VPackSlice or String for Json)
+     * @param values  A list of documents (POJO or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
@@ -319,7 +319,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values     A list of documents (POJO, VPackSlice or String for Json)
+     * @param values     A list of documents (POJO or String for Json)
      * @param options    Additional options, can be null
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the documents
@@ -345,7 +345,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Removes a document
      *
      * @param key     The key of the document
-     * @param type    The type of the document (POJO class, VPackSlice or String for Json). Only necessary if
+     * @param type    The type of the document (POJO class or String for Json). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
      * @return information about the document
@@ -372,7 +372,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Removes multiple document
      *
      * @param values  The keys of the documents or the documents themselves
-     * @param type    The type of the documents (POJO class, VPackSlice or String for Json). Only necessary if
+     * @param type    The type of the documents (POJO class or String for Json). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
      * @return information about the documents

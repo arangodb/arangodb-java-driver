@@ -6,8 +6,6 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.velocystream.Response;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;

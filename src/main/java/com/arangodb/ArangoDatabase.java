@@ -260,7 +260,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param query    An AQL query string
      * @param bindVars key/value pairs defining the variables to bind the query to
      * @param options  Additional options that will be passed to the query API, can be null
-     * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param type     The type of the result (POJO class, String for JSON, or Collection/List/Map)
      * @return cursor of the results
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -275,7 +275,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param query   An AQL query string
      * @param options Additional options that will be passed to the query API, can be null
-     * @param type    The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param type    The type of the result (POJO class, String for JSON, or Collection/List/Map)
      * @return cursor of the results
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -289,7 +289,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param query    An AQL query string
      * @param bindVars key/value pairs defining the variables to bind the query to
-     * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param type     The type of the result (POJO class, String for JSON, or Collection/List/Map)
      * @return cursor of the results
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -302,7 +302,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * result list.
      *
      * @param query An AQL query string
-     * @param type  The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param type  The type of the result (POJO class, String for JSON, or Collection/List/Map)
      * @return cursor of the results
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -314,7 +314,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Return an cursor from the given cursor-ID if still existing
      *
      * @param cursorId The ID of the cursor
-     * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param type     The type of the result (POJO class, String for JSON, or Collection/List/Map)
      * @return cursor of the results
      * @throws ArangoDBException
      * @see <a href=
@@ -536,7 +536,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Performs a server-side transaction and returns its return value.
      *
      * @param action  A String evaluating to a JavaScript function to be executed on the server.
-     * @param type    The type of the result (POJO class, VPackSlice or String for JSON)
+     * @param type    The type of the result (POJO class or String for JSON)
      * @param options Additional options, can be null
      * @return the result of the transaction if it succeeded
      * @throws ArangoDBException
@@ -615,7 +615,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id   The id of the document
-     * @param type The type of the document (POJO class, VPackSlice or String for JSON)
+     * @param type The type of the document (POJO class or String for JSON)
      * @return the document identified by the id
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
@@ -627,7 +627,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id      The id of the document
-     * @param type    The type of the document (POJO class, VPackSlice or String for JSON)
+     * @param type    The type of the document (POJO class or String for JSON)
      * @param options Additional options, can be null
      * @return the document identified by the id
      * @throws ArangoDBException
