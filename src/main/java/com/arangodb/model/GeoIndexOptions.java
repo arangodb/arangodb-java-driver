@@ -26,7 +26,7 @@ import com.arangodb.entity.IndexType;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API Documentation</a>
  */
-public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
+public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
 
     private Iterable<String> fields;
     private final IndexType type = IndexType.geo;
@@ -37,7 +37,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
     }
 
     @Override
-    protected GeoIndexOptions getThis() {
+    GeoIndexOptions getThis() {
         return this;
     }
 
@@ -49,7 +49,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
      * @param fields A list of attribute paths
      * @return options
      */
-    protected GeoIndexOptions fields(final Iterable<String> fields) {
+    GeoIndexOptions fields(final Iterable<String> fields) {
         this.fields = fields;
         return this;
     }

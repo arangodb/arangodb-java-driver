@@ -33,7 +33,7 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public class AqlQueryOptions {
+public final class AqlQueryOptions {
 
     private Boolean count;
     private Integer ttl;
@@ -156,7 +156,7 @@ public class AqlQueryOptions {
      * @param bindVarsBytes serialized bind parameters
      * @return options
      */
-    protected AqlQueryOptions bindVars(final byte[] bindVarsBytes) {
+    AqlQueryOptions bindVars(final byte[] bindVarsBytes) {
         this.bindVars = bindVarsBytes;
         return this;
     }
@@ -406,7 +406,7 @@ public class AqlQueryOptions {
         return options;
     }
 
-    public static class Options {
+    public static final class Options {
 
         private Boolean failOnWarning;
         private Boolean profile;
@@ -492,7 +492,7 @@ public class AqlQueryOptions {
 
     }
 
-    public static class Optimizer {
+    public static final class Optimizer {
         private Collection<String> rules;
 
         public Collection<String> getRules() {

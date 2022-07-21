@@ -27,7 +27,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class DBCreateOptions {
+public final class DBCreateOptions {
 
     private Collection<DatabaseUsersOptions> users;
     private String name;

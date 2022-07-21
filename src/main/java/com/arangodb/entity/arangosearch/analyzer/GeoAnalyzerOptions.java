@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class GeoAnalyzerOptions {
+public final class GeoAnalyzerOptions {
 
     private Integer maxCells;
     private Integer minLevel;

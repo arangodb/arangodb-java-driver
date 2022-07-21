@@ -21,7 +21,6 @@
 package com.arangodb.entity.arangosearch.analyzer;
 
 
-import com.arangodb.entity.Entity;
 import com.arangodb.entity.arangosearch.AnalyzerFeature;
 import com.arangodb.entity.arangosearch.AnalyzerType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,7 +51,7 @@ import java.util.Set;
         @JsonSubTypes.Type(name = "segmentation", value = SegmentationAnalyzer.class),
         @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class)
 })
-public abstract class SearchAnalyzer implements Entity {
+public abstract class SearchAnalyzer {
     private String name;
     private AnalyzerType type;
     private Collection<AnalyzerFeature> features;

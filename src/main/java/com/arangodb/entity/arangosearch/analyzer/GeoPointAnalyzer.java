@@ -33,7 +33,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#geopoint">API Documentation</a>
  * @since ArangoDB 3.8
  */
-public class GeoPointAnalyzer extends SearchAnalyzer {
+public final class GeoPointAnalyzer extends SearchAnalyzer {
     public GeoPointAnalyzer() {
         setType(AnalyzerType.geopoint);
     }

@@ -26,7 +26,7 @@ package com.arangodb.model;
  * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#remove-existing-aql-user-function">API
  * Documentation</a>
  */
-public class AqlFunctionDeleteOptions {
+public final class AqlFunctionDeleteOptions {
 
     private Boolean group;
 

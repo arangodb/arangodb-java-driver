@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
  * Documentation</a>
  */
-public class TransactionOptions {
+public final class TransactionOptions {
 
     private String action;
     private Object params;
@@ -52,7 +52,7 @@ public class TransactionOptions {
      * @param action the actual transaction operations to be executed, in the form of stringified JavaScript code
      * @return options
      */
-    protected TransactionOptions action(final String action) {
+    TransactionOptions action(final String action) {
         this.action = action;
         return this;
     }

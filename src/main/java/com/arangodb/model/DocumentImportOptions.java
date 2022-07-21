@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public class DocumentImportOptions {
+public final class DocumentImportOptions {
 
     public enum OnDuplicate {
         error, update, replace, ignore

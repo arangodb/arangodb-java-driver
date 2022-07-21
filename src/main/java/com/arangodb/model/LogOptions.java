@@ -28,7 +28,7 @@ import com.arangodb.entity.LogLevel;
  * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
  * Documentation</a>
  */
-public class LogOptions {
+public final class LogOptions {
 
     public static final String PROPERTY_UPTO = "upto";
     public static final String PROPERTY_LEVEL = "level";

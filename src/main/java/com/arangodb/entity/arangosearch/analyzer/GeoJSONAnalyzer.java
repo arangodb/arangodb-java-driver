@@ -33,7 +33,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#geojson">API Documentation</a>
  * @since ArangoDB 3.8
  */
-public class GeoJSONAnalyzer extends SearchAnalyzer {
+public final class GeoJSONAnalyzer extends SearchAnalyzer {
     public GeoJSONAnalyzer() {
         setType(AnalyzerType.geojson);
     }

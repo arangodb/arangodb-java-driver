@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#replace-user">API Documentation</a>
  */
-public class UserUpdateOptions {
+public final class UserUpdateOptions {
 
     private String passwd;
     private Boolean active;

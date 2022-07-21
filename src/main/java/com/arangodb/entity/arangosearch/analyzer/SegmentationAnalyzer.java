@@ -35,7 +35,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#segmentation">API Documentation</a>
  * @since ArangoDB 3.9
  */
-public class SegmentationAnalyzer extends SearchAnalyzer {
+public final class SegmentationAnalyzer extends SearchAnalyzer {
     public SegmentationAnalyzer() {
         setType(AnalyzerType.segmentation);
     }

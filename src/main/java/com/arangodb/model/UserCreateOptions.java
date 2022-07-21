@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
  */
-public class UserCreateOptions {
+public final class UserCreateOptions {
 
     private String user;
     private String passwd;
@@ -45,7 +45,7 @@ public class UserCreateOptions {
      * @param user The name of the user
      * @return options
      */
-    protected UserCreateOptions user(final String user) {
+    UserCreateOptions user(final String user) {
         this.user = user;
         return this;
     }
@@ -58,7 +58,7 @@ public class UserCreateOptions {
      * @param passwd The user password
      * @return options
      */
-    protected UserCreateOptions passwd(final String passwd) {
+    UserCreateOptions passwd(final String passwd) {
         this.passwd = passwd;
         return this;
     }

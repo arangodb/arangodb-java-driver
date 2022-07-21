@@ -10,7 +10,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/general.html#overload-control">API Documentation</a>
  */
-public class QueueTimeSample {
+public final class QueueTimeSample {
     /**
      * Unix-timestamp in milliseconds, recorded at client side.
      */

@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  */
-public class QueryEntity implements Entity {
+public final class QueryEntity {
 
     public static final String PROPERTY_STARTED = "started";
 

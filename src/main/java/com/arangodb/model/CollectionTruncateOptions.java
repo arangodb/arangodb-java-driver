@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Michele Rastelli
  */
-public class CollectionTruncateOptions {
+public final class CollectionTruncateOptions {
 
     private String streamTransactionId;
 

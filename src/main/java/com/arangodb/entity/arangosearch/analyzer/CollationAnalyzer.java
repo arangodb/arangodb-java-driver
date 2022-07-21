@@ -33,7 +33,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#collation">API Documentation</a>
  * @since ArangoDB 3.9
  */
-public class CollationAnalyzer extends SearchAnalyzer {
+public final class CollationAnalyzer extends SearchAnalyzer {
     public CollationAnalyzer() {
         setType(AnalyzerType.collation);
     }

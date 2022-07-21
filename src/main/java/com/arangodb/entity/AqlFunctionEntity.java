@@ -26,7 +26,7 @@ package com.arangodb.entity;
  * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
  * Documentation</a>
  */
-public class AqlFunctionEntity implements Entity {
+public final class AqlFunctionEntity {
 
     private String name;
     private String code;

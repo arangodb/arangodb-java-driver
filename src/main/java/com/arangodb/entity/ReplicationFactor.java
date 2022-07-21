@@ -35,7 +35,7 @@ public interface ReplicationFactor {
     @JsonValue
     Object getValue();
 
-    class NumericReplicationFactor implements ReplicationFactor {
+    final class NumericReplicationFactor implements ReplicationFactor {
 
         private Integer value;
 

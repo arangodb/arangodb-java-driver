@@ -28,10 +28,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
  * @since ArangoDB 3.9
  */
-public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
+public final class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
 
     private Iterable<String> fields;
-    protected final IndexType type = IndexType.zkd;
+    final IndexType type = IndexType.zkd;
     private Boolean unique;
     private FieldValueTypes fieldValueTypes;
 
@@ -40,7 +40,7 @@ public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
     }
 
     @Override
-    protected ZKDIndexOptions getThis() {
+    ZKDIndexOptions getThis() {
         return this;
     }
 
@@ -52,7 +52,7 @@ public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
      * @param fields A list of attribute paths
      * @return options
      */
-    protected ZKDIndexOptions fields(final Iterable<String> fields) {
+    ZKDIndexOptions fields(final Iterable<String> fields) {
         this.fields = fields;
         return this;
     }

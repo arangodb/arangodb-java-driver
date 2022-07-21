@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API Documentation</a>
  */
-public class AqlQueryParseOptions {
+public final class AqlQueryParseOptions {
 
     private String query;
 
@@ -40,7 +40,7 @@ public class AqlQueryParseOptions {
      * @param query the query which you want parse
      * @return options
      */
-    protected AqlQueryParseOptions query(final String query) {
+    AqlQueryParseOptions query(final String query) {
         this.query = query;
         return this;
     }

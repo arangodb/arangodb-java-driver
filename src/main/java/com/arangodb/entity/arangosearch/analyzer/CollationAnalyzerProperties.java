@@ -27,7 +27,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @since ArangoDB 3.9
  */
-public class CollationAnalyzerProperties {
+public final class CollationAnalyzerProperties {
 
     private String locale;
 

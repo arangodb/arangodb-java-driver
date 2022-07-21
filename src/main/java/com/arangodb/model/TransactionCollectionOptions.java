@@ -28,7 +28,7 @@ import java.util.Collections;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public class TransactionCollectionOptions {
+public final class TransactionCollectionOptions {
 
     private Collection<String> read = Collections.emptyList();
     private Collection<String> write = Collections.emptyList();

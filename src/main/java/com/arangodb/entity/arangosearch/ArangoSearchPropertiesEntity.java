@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  */
-public class ArangoSearchPropertiesEntity extends ViewEntity {
+public final class ArangoSearchPropertiesEntity extends ViewEntity {
 
     private Long consolidationIntervalMsec;
     private Long commitIntervalMsec;

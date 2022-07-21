@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  */
-public class BaseEdgeDocument extends BaseDocument {
+public final class BaseEdgeDocument extends BaseDocument {
 
     private static final long serialVersionUID = 6904923804449368783L;
 

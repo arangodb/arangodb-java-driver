@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class DocumentEntity implements Entity {
+public class DocumentEntity {
 
     @Key
     private String key;

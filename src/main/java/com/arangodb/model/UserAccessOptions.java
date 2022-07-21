@@ -25,7 +25,7 @@ import com.arangodb.entity.Permissions;
 /**
  * @author Mark Vollmary
  */
-public class UserAccessOptions {
+public final class UserAccessOptions {
 
     private Permissions grant;
 
@@ -37,7 +37,7 @@ public class UserAccessOptions {
         return grant;
     }
 
-    protected UserAccessOptions grant(final Permissions grant) {
+    UserAccessOptions grant(final Permissions grant) {
         this.grant = grant;
         return this;
     }

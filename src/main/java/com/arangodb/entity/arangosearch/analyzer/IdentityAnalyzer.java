@@ -29,7 +29,7 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#identity">API Documentation</a>
  */
-public class IdentityAnalyzer extends SearchAnalyzer {
+public final class IdentityAnalyzer extends SearchAnalyzer {
     public IdentityAnalyzer() {
         setType(AnalyzerType.identity);
     }

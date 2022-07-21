@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class GeoPointAnalyzerProperties {
+public final class GeoPointAnalyzerProperties {
 
     private String[] latitude;
     private String[] longitude;

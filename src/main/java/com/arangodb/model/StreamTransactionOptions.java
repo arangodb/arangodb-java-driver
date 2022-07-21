@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html">API Documentation</a>
  * @since ArangoDB 3.5.0
  */
-public class StreamTransactionOptions {
+public final class StreamTransactionOptions {
 
     private final TransactionCollectionOptions collections;
     private Integer lockTimeout;

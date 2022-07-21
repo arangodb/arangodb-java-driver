@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Michele Rastelli
  */
-public class ShardEntity implements Entity {
+public final class ShardEntity {
 
     private String shardId;
 

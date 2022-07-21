@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public class GraphDocumentReadOptions {
+public final class GraphDocumentReadOptions {
 
     private String ifNoneMatch;
     private String ifMatch;

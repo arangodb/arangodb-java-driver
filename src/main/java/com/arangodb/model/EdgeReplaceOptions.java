@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
  */
-public class EdgeReplaceOptions {
+public final class EdgeReplaceOptions {
 
     private Boolean waitForSync;
     private String ifMatch;

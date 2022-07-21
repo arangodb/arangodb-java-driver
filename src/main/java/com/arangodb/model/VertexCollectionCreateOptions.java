@@ -26,7 +26,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class VertexCollectionCreateOptions {
+public final class VertexCollectionCreateOptions {
 
     private String collection;
     private final Options options = new Options();
@@ -43,7 +43,7 @@ public class VertexCollectionCreateOptions {
      * @param collection The name of the collection
      * @return options
      */
-    protected VertexCollectionCreateOptions collection(final String collection) {
+    VertexCollectionCreateOptions collection(final String collection) {
         this.collection = collection;
         return this;
     }
@@ -68,7 +68,7 @@ public class VertexCollectionCreateOptions {
         return this;
     }
 
-    public static class Options {
+    public static final class Options {
         private Collection<String> satellites;
 
         public Collection<String> getSatellites() {

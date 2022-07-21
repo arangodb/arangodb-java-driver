@@ -32,7 +32,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class ArangoSearchPropertiesOptions {
+public final class ArangoSearchPropertiesOptions {
 
     private Long consolidationIntervalMsec;
     private Long cleanupIntervalStep;

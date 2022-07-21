@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class NormAnalyzerProperties {
+public final class NormAnalyzerProperties {
 
     private String locale;
 

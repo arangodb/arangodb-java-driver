@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class KeyOptions {
+public final class KeyOptions {
 
     private Boolean allowUserKeys;
     private KeyType type;

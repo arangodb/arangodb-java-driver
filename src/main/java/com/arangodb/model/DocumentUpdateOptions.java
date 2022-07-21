@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
  * Documentation</a>
  */
-public class DocumentUpdateOptions {
+public final class DocumentUpdateOptions {
 
     private Boolean keepNull;
     private Boolean mergeObjects;

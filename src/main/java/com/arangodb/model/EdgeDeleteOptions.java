@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
  */
-public class EdgeDeleteOptions {
+public final class EdgeDeleteOptions {
 
     private Boolean waitForSync;
     private String ifMatch;

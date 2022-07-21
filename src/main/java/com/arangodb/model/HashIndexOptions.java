@@ -29,7 +29,7 @@ import com.arangodb.entity.IndexType;
  * index.
  */
 @Deprecated
-public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
+public final class HashIndexOptions extends IndexOptions<HashIndexOptions> {
 
     private Iterable<String> fields;
     private final IndexType type = IndexType.hash;
@@ -43,7 +43,7 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
     }
 
     @Override
-    protected HashIndexOptions getThis() {
+    HashIndexOptions getThis() {
         return this;
     }
 
@@ -55,7 +55,7 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
      * @param fields A list of attribute paths
      * @return options
      */
-    protected HashIndexOptions fields(final Iterable<String> fields) {
+    HashIndexOptions fields(final Iterable<String> fields) {
         this.fields = fields;
         return this;
     }

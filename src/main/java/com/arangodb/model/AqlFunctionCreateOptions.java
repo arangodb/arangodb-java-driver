@@ -25,7 +25,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
  * Documentation</a>
  */
-public class AqlFunctionCreateOptions {
+public final class AqlFunctionCreateOptions {
 
     private String name;
     private String code;
@@ -39,7 +39,7 @@ public class AqlFunctionCreateOptions {
      * @param name the fully qualified name of the user functions
      * @return options
      */
-    protected AqlFunctionCreateOptions name(final String name) {
+    AqlFunctionCreateOptions name(final String name) {
         this.name = name;
         return this;
     }
@@ -52,7 +52,7 @@ public class AqlFunctionCreateOptions {
      * @param code a string representation of the function body
      * @return options
      */
-    protected AqlFunctionCreateOptions code(final String code) {
+    AqlFunctionCreateOptions code(final String code) {
         this.code = code;
         return this;
     }

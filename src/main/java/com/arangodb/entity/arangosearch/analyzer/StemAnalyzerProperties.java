@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class StemAnalyzerProperties {
+public final class StemAnalyzerProperties {
 
     private String locale;
 

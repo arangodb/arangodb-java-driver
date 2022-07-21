@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Heiko Kernbach
  * <p>
- * This class is used for all index similarities
+ * This final class is used for all index similarities
  */
 public abstract class IndexOptions<T extends IndexOptions> {
 
@@ -34,7 +34,7 @@ public abstract class IndexOptions<T extends IndexOptions> {
         super();
     }
 
-    protected abstract T getThis();
+    abstract T getThis();
 
     /**
      * @param inBackground create the the index in the background

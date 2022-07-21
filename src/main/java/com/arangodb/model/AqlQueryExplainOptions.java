@@ -30,7 +30,7 @@ import java.util.Collection;
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API Documentation</a>
  */
-public class AqlQueryExplainOptions {
+public final class AqlQueryExplainOptions {
 
     private byte[] bindVars;
     private String query;
@@ -49,7 +49,7 @@ public class AqlQueryExplainOptions {
      * @param bindVars key/value pairs representing the bind parameters
      * @return options
      */
-    protected AqlQueryExplainOptions bindVars(final byte[] bindVars) {
+    AqlQueryExplainOptions bindVars(final byte[] bindVars) {
         this.bindVars = bindVars;
         return this;
     }
@@ -62,7 +62,7 @@ public class AqlQueryExplainOptions {
      * @param query the query which you want explained
      * @return options
      */
-    protected AqlQueryExplainOptions query(final String query) {
+    AqlQueryExplainOptions query(final String query) {
         this.query = query;
         return this;
     }
@@ -116,7 +116,7 @@ public class AqlQueryExplainOptions {
         return options;
     }
 
-    public static class Options {
+    public static final class Options {
         private Optimizer optimizer;
         private Integer maxNumberOfPlans;
         private Boolean allPlans;
@@ -129,7 +129,7 @@ public class AqlQueryExplainOptions {
         }
     }
 
-    public static class Optimizer {
+    public static final class Optimizer {
         private Collection<String> rules;
     }
 }

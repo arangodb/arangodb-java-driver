@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class GeoJSONAnalyzerProperties {
+public final class GeoJSONAnalyzerProperties {
 
     public enum GeoJSONAnalyzerType {
 

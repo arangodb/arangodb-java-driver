@@ -25,7 +25,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class IndexEntity implements Entity {
+public final class IndexEntity {
 
     private String id;
     private String name;

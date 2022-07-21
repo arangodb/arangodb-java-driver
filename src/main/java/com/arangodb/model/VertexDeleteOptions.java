@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
  */
-public class VertexDeleteOptions {
+public final class VertexDeleteOptions {
 
     private Boolean waitForSync;
     private String ifMatch;

@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href= "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
  * Documentation</a>
  */
-public class DocumentExistsOptions {
+public final class DocumentExistsOptions {
 
     private String ifNoneMatch;
     private String ifMatch;

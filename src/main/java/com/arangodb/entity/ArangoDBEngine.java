@@ -25,7 +25,7 @@ package com.arangodb.entity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
  * Documentation</a>
  */
-public class ArangoDBEngine implements Entity {
+public final class ArangoDBEngine {
 
     public enum StorageEngineName {
         mmfiles, rocksdb

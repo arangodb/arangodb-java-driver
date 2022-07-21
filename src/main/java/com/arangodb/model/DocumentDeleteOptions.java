@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
  * Documentation</a>
  */
-public class DocumentDeleteOptions {
+public final class DocumentDeleteOptions {
 
     private Boolean waitForSync;
     private String ifMatch;

@@ -28,7 +28,7 @@ import java.util.Collections;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API Documentation</a>
  */
-public class EdgeDefinition {
+public final class EdgeDefinition {
 
     private String collection;
     private Collection<String> from;
@@ -82,7 +82,7 @@ public class EdgeDefinition {
         return this;
     }
 
-    public static class Options {
+    public static final class Options {
         private Collection<String> satellites = Collections.emptyList();
 
         public Collection<String> getSatellites() {

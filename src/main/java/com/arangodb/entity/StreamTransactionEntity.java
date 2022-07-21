@@ -26,7 +26,7 @@ package com.arangodb.entity;
  * "https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html">API Documentation</a>
  * @since ArangoDB 3.5.0
  */
-public class StreamTransactionEntity implements Entity {
+public final class StreamTransactionEntity {
 
     private String id;
     private StreamTransactionStatus status;

@@ -26,9 +26,9 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API Documentation</a>
  */
-public class AqlExecutionExplainEntity implements Entity {
+public final class AqlExecutionExplainEntity {
 
-    public static class ExecutionPlan {
+    public static final class ExecutionPlan {
         private Collection<ExecutionNode> nodes;
         private Collection<String> rules;
         private Collection<ExecutionCollection> collections;
@@ -61,7 +61,7 @@ public class AqlExecutionExplainEntity implements Entity {
         }
     }
 
-    public static class ExecutionNode {
+    public static final class ExecutionNode {
         private String type;
         private Collection<Long> dependencies;
         private Long id;
@@ -179,7 +179,7 @@ public class AqlExecutionExplainEntity implements Entity {
         }
     }
 
-    public static class ExecutionVariable {
+    public static final class ExecutionVariable {
         private Long id;
         private String name;
 
@@ -192,7 +192,7 @@ public class AqlExecutionExplainEntity implements Entity {
         }
     }
 
-    public static class ExecutionExpression {
+    public static final class ExecutionExpression {
         private String type;
         private String name;
         private Long id;
@@ -235,7 +235,7 @@ public class AqlExecutionExplainEntity implements Entity {
         }
     }
 
-    public static class ExecutionCollection {
+    public static final class ExecutionCollection {
         private String name;
         private String type;
 
@@ -248,7 +248,7 @@ public class AqlExecutionExplainEntity implements Entity {
         }
     }
 
-    public static class ExecutionStats {
+    public static final class ExecutionStats {
         private Integer rulesExecuted;
         private Integer rulesSkipped;
         private Integer plansCreated;

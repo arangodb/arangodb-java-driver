@@ -25,7 +25,7 @@ import com.arangodb.entity.ViewType;
 /**
  * @author Mark Vollmary
  */
-public class ViewCreateOptions {
+public final class ViewCreateOptions {
 
     @SuppressWarnings("unused")
     private String name;
@@ -36,12 +36,12 @@ public class ViewCreateOptions {
         super();
     }
 
-    protected ViewCreateOptions name(final String name) {
+    ViewCreateOptions name(final String name) {
         this.name = name;
         return this;
     }
 
-    protected ViewCreateOptions type(final ViewType type) {
+    ViewCreateOptions type(final ViewType type) {
         this.type = type;
         return this;
     }

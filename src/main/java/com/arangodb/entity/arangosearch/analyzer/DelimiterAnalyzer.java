@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#delimiter">API Documentation</a>
  */
-public class DelimiterAnalyzer extends SearchAnalyzer {
+public final class DelimiterAnalyzer extends SearchAnalyzer {
     public DelimiterAnalyzer() {
         setType(AnalyzerType.delimiter);
     }

@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
-public class QueryTrackingPropertiesEntity implements Entity {
+public final class QueryTrackingPropertiesEntity {
 
     private Boolean enabled;
     private Boolean trackSlowQueries;

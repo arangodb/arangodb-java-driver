@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Michele Rastelli
  */
-public class CollectionCountOptions {
+public final class CollectionCountOptions {
 
     private String streamTransactionId;
 

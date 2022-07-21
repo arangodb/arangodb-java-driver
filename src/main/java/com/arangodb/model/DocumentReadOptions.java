@@ -26,7 +26,7 @@ package com.arangodb.model;
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
  * Documentation</a>
  */
-public class DocumentReadOptions {
+public final class DocumentReadOptions {
 
     private String ifNoneMatch;
     private String ifMatch;
