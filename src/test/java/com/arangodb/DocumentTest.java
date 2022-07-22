@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -59,7 +60,7 @@ class DocumentTest extends BaseJunit5 {
     @MethodSource("cols")
     void insertAsJson(ArangoCollection collection) {
         //@formatter:off
-        final String json =
+        final RawJson json = RawJson.of(
                 "{"
                         + "\"article\": {"
                         + "\"artist\": \"PREGARDIEN/RHEINISCHE KANTOREI/DAS\","
@@ -79,9 +80,10 @@ class DocumentTest extends BaseJunit5 {
                         + "\"status\": \"RMV\","
                         + "\"lastUpdate\": \"2016-11-01 00:00\""
                         + "}"
-                        + "}";
+                        + "}"
+        );
         //@formatter:on
-        final DocumentCreateEntity<String> createResult = collection.insertDocument(json);
+        final DocumentCreateEntity<RawJson> createResult = collection.insertDocument(json);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
         assertThat(doc).isNotNull();
         final Object article = doc.getAttribute("article");

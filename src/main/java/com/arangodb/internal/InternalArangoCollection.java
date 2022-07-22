@@ -88,15 +88,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-
-        byte[] body;
-        if (value instanceof String) {
-            body = getSerde().serialize(SerdeUtils.INSTANCE.parseJson((String) value));
-        } else {
-            body = getSerde().serializeUserData(value);
-        }
-        request.setBody(body);
-
+        request.setBody(getSerde().serializeUserData(value));
         return request;
     }
 
@@ -108,19 +100,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final JsonNode newDoc = body.get(NEW);
             Class<T> clazz = (Class<T>) value.getClass();
             if (newDoc != null) {
-                if (String.class.equals(clazz)) {
-                    doc.setNew((T) SerdeUtils.INSTANCE.writeJson(newDoc));
-                } else {
-                    doc.setNew(getSerde().deserializeUserData(getSerde().serialize(newDoc), clazz));
-                }
+                doc.setNew(getSerde().deserializeUserData(newDoc, clazz));
             }
             final JsonNode oldDoc = body.get(OLD);
             if (oldDoc != null) {
-                if (String.class.equals(clazz)) {
-                    doc.setOld((T) SerdeUtils.INSTANCE.writeJson(oldDoc));
-                } else {
-                    doc.setOld(getSerde().deserializeUserData(getSerde().serialize(oldDoc), clazz));
-                }
+                doc.setOld(getSerde().deserializeUserData(oldDoc, clazz));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
@@ -225,13 +209,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> ResponseDeserializer<T> getDocumentResponseDeserializer(final Class<T> type) {
-        return response -> {
-            if (String.class.equals(type)) {
-                return (T) SerdeUtils.INSTANCE.writeJson(getSerde().parse(response.getBody()));
-            } else {
-                return getSerde().deserializeUserData(response.getBody(), type);
-            }
-        };
+        return response -> getSerde().deserializeUserData(response.getBody(), type);
     }
 
     protected Request getDocumentsRequest(final Collection<String> keys, final DocumentReadOptions options) {

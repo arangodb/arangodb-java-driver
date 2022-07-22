@@ -50,7 +50,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
     /**
      * Creates a new edge in the collection
      *
-     * @param value A representation of a single edge (POJO or String for JSON)
+     * @param value A representation of a single edge (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the edge
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
@@ -60,7 +60,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
     /**
      * Creates a new edge in the collection
      *
-     * @param value   A representation of a single edge (POJO or String for JSON)
+     * @param value   A representation of a single edge (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the edge
      * @throws ArangoDBException
@@ -72,7 +72,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * Fetches an existing edge
      *
      * @param key  The key of the edge
-     * @param type The type of the edge-document (POJO class or String for JSON)
+     * @param type The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the edge identified by the key
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
@@ -83,7 +83,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * Fetches an existing edge
      *
      * @param key     The key of the edge
-     * @param type    The type of the edge-document (POJO class or String for JSON)
+     * @param type    The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the edge identified by the key
      * @throws ArangoDBException
@@ -96,7 +96,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key The key of the edge
-     * @param <T> The type of the edge-document (POJO class or String for JSON)
+     * @param <T> The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the edge
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
@@ -108,7 +108,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key     The key of the edge
-     * @param <T>     The type of the edge-document (POJO class or String for JSON)
+     * @param <T>     The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the edge
      * @throws ArangoDBException
@@ -122,7 +122,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key The key of the edge
-     * @param <T> The type of the edge-document (POJO class or String for JSON)
+     * @param <T> The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the edge
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
@@ -135,7 +135,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key     The key of the edge
-     * @param <T>     The type of the edge-document (POJO class or String for JSON)
+     * @param <T>     The type of the edge-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the edge
      * @throws ArangoDBException

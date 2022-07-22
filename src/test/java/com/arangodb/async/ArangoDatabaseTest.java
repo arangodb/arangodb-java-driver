@@ -27,6 +27,7 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.Disabled;
@@ -874,8 +875,8 @@ class ArangoDatabaseTest extends BaseTest {
     @Test
     void transactionString() throws InterruptedException, ExecutionException {
         final TransactionOptions options = new TransactionOptions().params("test");
-        db.transaction("function (params) {return params;}", String.class, options)
-                .whenComplete((result, ex) -> assertThat(result).isEqualTo("\"test\""))
+        db.transaction("function (params) {return params;}", RawJson.class, options)
+                .whenComplete((result, ex) -> assertThat(result.getValue()).isEqualTo("\"test\""))
                 .get();
     }
 

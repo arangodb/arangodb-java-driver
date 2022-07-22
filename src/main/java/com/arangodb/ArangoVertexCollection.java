@@ -59,7 +59,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     /**
      * Creates a new vertex in the collection
      *
-     * @param value A representation of a single vertex (POJO or String for JSON)
+     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
@@ -69,7 +69,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     /**
      * Creates a new vertex in the collection
      *
-     * @param value   A representation of a single vertex (POJO or String for JSON)
+     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
      * @throws ArangoDBException
@@ -81,7 +81,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Retrieves the vertex document with the given {@code key} from the collection.
      *
      * @param key  The key of the vertex
-     * @param type The type of the vertex-document (POJO class or String for JSON)
+     * @param type The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the vertex identified by the key
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
@@ -92,7 +92,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Retrieves the vertex document with the given {@code key} from the collection.
      *
      * @param key     The key of the vertex
-     * @param type    The type of the vertex-document (POJO class or String for JSON)
+     * @param type    The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the vertex identified by the key
      * @throws ArangoDBException
@@ -105,7 +105,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key   The key of the vertex
-     * @param value A representation of a single vertex (POJO or String for JSON)
+     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
@@ -118,7 +118,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key     The key of the vertex
-     * @param value   A representation of a single vertex (POJO or String for JSON)
+     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
      * @throws ArangoDBException
@@ -133,7 +133,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key The key of the vertex
-     * @param <T> The type of the vertex-document (POJO class or String for JSON)
+     * @param <T> The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
@@ -146,7 +146,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key     The key of the vertex
-     * @param <T>     The type of the vertex-document (POJO class or String for JSON)
+     * @param <T>     The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
      * @throws ArangoDBException

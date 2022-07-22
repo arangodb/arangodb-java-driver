@@ -134,6 +134,26 @@ public interface InternalSerde extends JacksonSerde {
     <T> T deserializeUserData(byte[] content, Type type);
 
     /**
+     * Deserializes the parsed json node and binds it to the target data type, using the user serde.
+     *
+     * @param node  parsed json node
+     * @param clazz class of target data type
+     * @return deserialized object
+     */
+    default <T> T deserializeUserData(JsonNode node, Class<T> clazz) {
+        return deserializeUserData(node, (Type) clazz);
+    }
+
+    /**
+     * Deserializes the parsed json node and binds it to the target data type, using the user serde.
+     *
+     * @param node parsed json node
+     * @param type target data type
+     * @return deserialized object
+     */
+    <T> T deserializeUserData(JsonNode node, Type type);
+
+    /**
      * @return the user serde
      */
     ArangoSerde getUserSerde();
