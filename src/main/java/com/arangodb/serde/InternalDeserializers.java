@@ -5,7 +5,10 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.util.RawBytes;
+import com.arangodb.util.RawJson;
 import com.arangodb.velocystream.Response;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +70,26 @@ public final class InternalDeserializers {
 
     private InternalDeserializers() {
     }
+
+    static final JsonDeserializer<RawJson> RAW_JSON_DESERIALIZER = new JsonDeserializer<RawJson>() {
+        @Override
+        public RawJson deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            // TODO: find a way to access raw bytes directly
+            return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
+        }
+    };
+
+    static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
+        @Override
+        public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            // TODO: find a way to access raw bytes directly
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            try (JsonGenerator g = p.getCodec().getFactory().createGenerator(os)) {
+                g.writeTree(p.readValueAsTree());
+            }
+            return RawBytes.of(os.toByteArray());
+        }
+    };
 
     static final JsonDeserializer<CollectionStatus> COLLECTION_STATUS = new JsonDeserializer<CollectionStatus>() {
         @Override
