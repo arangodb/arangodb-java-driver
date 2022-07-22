@@ -1,6 +1,8 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.util.RawBytes;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,8 +12,11 @@ import java.lang.reflect.Type;
 
 final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
-    InternalSerdeImpl(ObjectMapper mapper) {
+    private final ArangoSerde userSerde;
+
+    InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
         super(mapper);
+        this.userSerde = userSerde;
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
@@ -54,12 +59,43 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
     }
 
     @Override
+    public byte[] serializeUserData(Object value) {
+        if (RawJson.class.equals(value.getClass()) || RawBytes.class.equals(value.getClass())) {
+            return serialize(value);
+        } else {
+            return userSerde.serialize(value);
+        }
+    }
+
+    @Override
+    public <T> T deserializeUserData(byte[] content, Type type) {
+        if (RawJson.class.equals(type) || RawBytes.class.equals(type)) {
+            return deserialize(content, type);
+        } else {
+            return userSerde.deserialize(content, type);
+        }
+    }
+
+    @Override
+    public ArangoSerde getUserSerde() {
+        return userSerde;
+    }
+
+    @Override
     public <T> T deserialize(final JsonNode node, final Type type) {
         try {
             return mapper.readerFor(mapper.constructType(type)).readValue(node);
         } catch (IOException e) {
             throw new ArangoDBException(e);
         }
+    }
+
+    @Override
+    public <T> T deserialize(final byte[] content, final Type type) {
+        if (content == null) {
+            return null;
+        }
+        return super.deserialize(content, type);
     }
 
 }

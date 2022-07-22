@@ -40,13 +40,13 @@ public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends Inter
 
     protected Request replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
         final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "properties");
-        request.setBody(getInternalSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
+        request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }
 
     protected Request updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
         final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, "properties");
-        request.setBody(getInternalSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
+        request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }
 

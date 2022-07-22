@@ -89,7 +89,7 @@ class JwtAuthTest {
     }
 
     private static String getJwt(ArangoDB arangoDB) {
-        InternalSerde serde = arangoDB.getInternalSerde();
+        InternalSerde serde = arangoDB.getSerde();
         Map<String, String> reqBody = new HashMap<>();
         reqBody.put("username", "root");
         reqBody.put("password", "test");

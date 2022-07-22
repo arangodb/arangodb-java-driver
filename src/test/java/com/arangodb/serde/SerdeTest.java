@@ -16,7 +16,7 @@ class SerdeTest {
     @ParameterizedTest
     @EnumSource(DataType.class)
     void rawJsonSerde(DataType type) {
-        InternalSerde s = InternalSerde.of(type);
+        InternalSerde s = InternalSerde.of(type, null);
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
         byte[] serialized = s.serialize(raw);
@@ -27,7 +27,7 @@ class SerdeTest {
     @ParameterizedTest
     @EnumSource(DataType.class)
     void rawBytesSerde(DataType type) {
-        InternalSerde s = InternalSerde.of(type);
+        InternalSerde s = InternalSerde.of(type, null);
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
         byte[] serialized = s.serialize(raw);

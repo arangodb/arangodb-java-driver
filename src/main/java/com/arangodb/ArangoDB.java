@@ -28,7 +28,7 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.*;
-import com.arangodb.internal.util.ArangoSerdeFactory;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -347,9 +347,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final InternalSerde internal =  InternalSerde.of(DataType.of(protocol));
-            final ArangoSerde custom = customSerializer != null ? customSerializer : JacksonSerde.of(DataType.of(protocol));
-            final ArangoSerdeFactory util = new ArangoSerdeFactory(internal, custom);
+            final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(DataType.of(protocol));
+            final InternalSerde serde =  InternalSerde.of(DataType.of(protocol), userSerde);
 
             int protocolMaxConnections = protocol == Protocol.VST ?
                     ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :
@@ -358,7 +357,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
                     ? new VstConnectionFactorySync(host, timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
-                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, internal,
+                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, serde,
                     protocol, connectionTtl, httpCookieSpec, httpRequestRetryHandler);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
@@ -371,7 +370,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                             .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
                             .maxConnections(maxConnections).connectionTtl(connectionTtl),
                     new HttpCommunication.Builder(hostHandler),
-                    util,
+                    serde,
                     protocol,
                     hostResolver,
                     hostHandler,

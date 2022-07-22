@@ -41,7 +41,7 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
     protected Object body;
 
     protected InternalArangoRoute(final D db, final String path, final Map<String, String> headerParam) {
-        super(db.executor, db.util, db.context);
+        super(db.executor, db.serde, db.context);
         this.db = db;
         this.path = path;
         this.queryParam = new HashMap<>();
@@ -74,7 +74,7 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
             request.putQueryParam(param.getKey(), param.getValue());
         }
         if (body != null) {
-            request.setBody(getInternalSerde().serialize(body));
+            request.setBody(getSerde().serialize(body));
         }
         return request;
     }

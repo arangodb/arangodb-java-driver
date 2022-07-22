@@ -31,7 +31,7 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoSerdeFactory;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -508,9 +508,8 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final InternalSerde internal = InternalSerde.of(DataType.VPACK);
-            final ArangoSerde custom = customSerializer != null ? customSerializer :  JacksonSerde.of(DataType.VPACK);
-            final ArangoSerdeFactory util = new ArangoSerdeFactory(internal, custom);
+            final ArangoSerde userSerde = customSerializer != null ? customSerializer :  JacksonSerde.of(DataType.VPACK);
+            final InternalSerde serde = InternalSerde.of(DataType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
@@ -526,7 +525,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
             return new ArangoDBAsyncImpl(
                     asyncBuilder(asyncHostHandler),
-                    util,
+                    serde,
                     syncBuilder(syncHostHandler),
                     asyncHostResolver,
                     syncHostResolver,

@@ -439,7 +439,7 @@ class ArangoDBTest {
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getInternalSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
                 })
                 .get();
     }
@@ -451,7 +451,7 @@ class ArangoDBTest {
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getInternalSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
                 })
                 .get();
     }
