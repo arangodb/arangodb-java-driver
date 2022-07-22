@@ -25,6 +25,7 @@ import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -1151,8 +1152,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void transactionString(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params("test");
-        final String result = db.transaction("function (params) {return params;}", String.class, options);
-        assertThat(result).isEqualTo("\"test\"");
+        final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"test\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1177,9 +1178,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionJsonObject(ArangoDatabase db)  {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
-        final String result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", String.class, options);
-        assertThat(result).isEqualTo("\"hello world\"");
+        final RawJson result = db
+                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1187,9 +1188,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionJsonArray(ArangoDatabase db)  {
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
-        final String result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("\"hello world\"");
+        final RawJson result = db
+                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1197,9 +1198,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionMap(ArangoDatabase db) {
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
         final TransactionOptions options = new TransactionOptions().params(params);
-        final String result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", String.class, options);
-        assertThat(result).isEqualTo("\"hello world\"");
+        final RawJson result = db
+                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1207,9 +1208,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionArray(ArangoDatabase db) {
         final String[] params = new String[]{"hello", "world"};
         final TransactionOptions options = new TransactionOptions().params(params);
-        final String result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("\"hello world\"");
+        final RawJson result = db
+                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1219,9 +1220,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
         params.add("hello");
         params.add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
-        final String result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", String.class, options);
-        assertThat(result).isEqualTo("\"hello world\"");
+        final RawJson result = db
+                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
+        assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1234,7 +1235,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 + "var db = require('internal').db;"
                 + "db." + CNAME1 + ".save(JSON.parse(params));"
                 + "}", Void.class, options);
-        assertThat(db.collection(CNAME1).getDocument(key, String.class)).isNotNull();
+        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1248,7 +1249,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 + "var db = require('internal').db;"
                 + "db." + CNAME1 + ".save(JSON.parse(params));"
                 + "}", Void.class, options);
-        assertThat(db.collection(CNAME1).getDocument(key, String.class)).isNotNull();
+        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")

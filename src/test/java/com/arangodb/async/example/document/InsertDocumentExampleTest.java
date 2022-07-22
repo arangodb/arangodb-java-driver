@@ -22,6 +22,7 @@ package com.arangodb.async.example.document;
 
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
     void insertJson() throws ExecutionException, InterruptedException {
-        collection.insertDocument("{\"foo\":\"bar\"}")
+        collection.insertDocument(RawJson.of("{\"foo\":\"bar\"}"))
                 .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }

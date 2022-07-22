@@ -23,6 +23,7 @@ package com.arangodb.example.document;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -61,7 +62,7 @@ class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
     void insertJson() {
-        final DocumentCreateEntity<String> doc = collection.insertDocument("{\"foo\":\"bar\"}");
+        final DocumentCreateEntity<RawJson> doc = collection.insertDocument(RawJson.of("{\"foo\":\"bar\"}"));
         assertThat(doc.getKey()).isNotNull();
     }
 

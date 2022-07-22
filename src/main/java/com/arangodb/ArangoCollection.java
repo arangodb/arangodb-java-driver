@@ -55,7 +55,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param value A representation of a single document (POJO or String for JSON)
+     * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -67,7 +67,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param value   A representation of a single document (POJO or String for JSON)
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the document
      * @throws ArangoDBException
@@ -83,7 +83,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Limitations:
      * - the fields having {@code null} value are always removed during serialization
      *
-     * @param values A List of documents (POJO or String for JSON)
+     * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -98,7 +98,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Limitations:
      * - the fields having {@code null} value are always removed during serialization
      *
-     * @param values  A List of documents (POJO or String for JSON)
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the documents
      * @throws ArangoDBException
@@ -162,7 +162,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieves the document with the given {@code key} from the collection.
      *
      * @param key  The key of the document
-     * @param type The type of the document (POJO class or String for JSON)
+     * @param type The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the document identified by the key
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
@@ -174,7 +174,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieves the document with the given {@code key} from the collection.
      *
      * @param key     The key of the document
-     * @param type    The type of the document (POJO class or String for JSON)
+     * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the document identified by the key
      * @throws ArangoDBException
@@ -187,7 +187,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieves multiple documents with the given {@code _key} from the collection.
      *
      * @param keys The keys of the documents
-     * @param type The type of the documents (POJO class or String for JSON)
+     * @param type The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the documents and possible errors
      * @throws ArangoDBException
      */
@@ -197,7 +197,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieves multiple documents with the given {@code _key} from the collection.
      *
      * @param keys    The keys of the documents
-     * @param type    The type of the documents (POJO class or String for JSON)
+     * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the documents and possible errors
      * @throws ArangoDBException
@@ -210,7 +210,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * precondition is violated
      *
      * @param key   The key of the document
-     * @param value A representation of a single document (POJO or String for JSON)
+     * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
@@ -223,7 +223,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * precondition is violated
      *
      * @param key     The key of the document
-     * @param value   A representation of a single document (POJO or String for JSON)
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the document
      * @throws ArangoDBException
@@ -240,7 +240,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Limitations:
      * - the fields having {@code null} value are always removed during serialization
      *
-     * @param values A List of documents (POJO or String for JSON)
+     * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
@@ -255,7 +255,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Limitations:
      * - the fields having {@code null} value are always removed during serialization
      *
-     * @param values  A List of documents (POJO or String for JSON)
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the documents
      * @throws ArangoDBException
@@ -271,7 +271,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key   The key of the document
-     * @param value A representation of a single document (POJO or String for JSON)
+     * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
@@ -285,7 +285,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key     The key of the document
-     * @param value   A representation of a single document (POJO or String for JSON)
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the document
      * @throws ArangoDBException
@@ -301,7 +301,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key        The key of the document
-     * @param value      A representation of a single document (POJO or String for JSON)
+     * @param value      A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options    Additional options, can be null
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
@@ -318,7 +318,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values A list of documents (POJO or String for JSON)
+     * @param values A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
@@ -332,7 +332,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values  A list of documents (POJO or String for JSON)
+     * @param values  A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the documents
      * @throws ArangoDBException
@@ -348,7 +348,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values     A list of documents (POJO or String for JSON)
+     * @param values     A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options    Additional options, can be null
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the documents
@@ -374,7 +374,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes the document with the given {@code key} from the collection.
      *
      * @param key     The key of the document
-     * @param type    The type of the document (POJO class or String for JSON). Only necessary if
+     * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
      * @return information about the document
@@ -401,7 +401,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes multiple documents from the collection.
      *
      * @param values  The keys of the documents or the documents themselves
-     * @param type    The type of the documents (POJO class or String for JSON). Only necessary if
+     * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
      * @return information about the documents

@@ -23,6 +23,7 @@ package com.arangodb.async.example.document;
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -82,11 +83,12 @@ class GetDocumentExampleTest extends ExampleBase {
 
     @Test
     void getAsJson() throws InterruptedException, ExecutionException {
-        collection.getDocument(key, String.class)
+        collection.getDocument(key, RawJson.class)
                 .whenComplete((doc, ex) -> {
-                    assertThat(doc).isNotNull();
-                    assertThat(doc.contains("foo")).isEqualTo(true);
-                    assertThat(doc.contains("bar")).isEqualTo(true);
+                    assertThat(doc.getValue())
+                            .isNotNull()
+                            .contains("foo")
+                            .contains("bar");
                 })
                 .get();
     }

@@ -285,11 +285,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
         return response -> {
             byte[] userContent = getSerde().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER);
-            if (String.class.equals(type)) {
-                return (T) SerdeUtils.INSTANCE.writeJson(getSerde().parse(userContent));
-            } else {
-                return getSerde().deserializeUserData(userContent, type);
-            }
+            return getSerde().deserializeUserData(userContent, type);
         };
     }
 

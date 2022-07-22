@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
+import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -120,7 +121,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void insertDocumentAsJson() throws InterruptedException, ExecutionException {
         db.collection(COLLECTION_NAME)
-                .insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null)
+                .insertDocument(RawJson.of("{\"_key\":\"docRaw\",\"a\":\"test\"}"), null)
                 .whenComplete((doc, ex) -> {
                     assertThat(doc).isNotNull();
                     assertThat(doc.getId()).isNotNull();
@@ -195,11 +196,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void getDocumentAsJson() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).get();
-        db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null)
+        db.collection(COLLECTION_NAME).insertDocument(RawJson.of("{\"_key\":\"docRaw\",\"a\":\"test\"}")).get();
+        db.collection(COLLECTION_NAME).getDocument("docRaw", RawJson.class)
                 .whenComplete((readResult, ex) -> {
-                    assertThat(readResult.contains("\"_key\":\"docRaw\"")).isEqualTo(true);
-                    assertThat(readResult.contains("\"_id\":\"db_collection_test/docRaw\"")).isEqualTo(true);
+                    assertThat(readResult.getValue().contains("\"_key\":\"docRaw\"")).isEqualTo(true);
+                    assertThat(readResult.getValue().contains("\"_id\":\"db_collection_test/docRaw\"")).isEqualTo(true);
                 })
                 .get();
     }
@@ -1250,7 +1251,7 @@ class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
 
-        db.collection(COLLECTION_NAME).insertDocument("{}", null).get();
+        db.collection(COLLECTION_NAME).insertDocument(RawJson.of("{}"), null).get();
 
         db.collection(COLLECTION_NAME).count()
                 .whenComplete((count, ex) -> assertThat(count.getCount()).isEqualTo(1L))
@@ -1263,7 +1264,7 @@ class ArangoCollectionTest extends BaseTest {
                 .whenComplete((existsNot, ex) -> assertThat(existsNot).isEqualTo(false))
                 .get();
 
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        db.collection(COLLECTION_NAME).insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
 
         db.collection(COLLECTION_NAME).documentExists("abc", null)
                 .whenComplete((exists, ex) -> assertThat(exists).isEqualTo(true))
@@ -1272,8 +1273,8 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfMatch() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<String> createResult = db.collection(COLLECTION_NAME)
-                .insertDocument("{\"_key\":\"abc\"}", null).get();
+        final DocumentCreateEntity<RawJson> createResult = db.collection(COLLECTION_NAME)
+                .insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch(createResult.getRev());
         db.collection(COLLECTION_NAME).documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists).isEqualTo(true))
@@ -1282,7 +1283,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfMatchFail() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        db.collection(COLLECTION_NAME).insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch("no");
         db.collection(COLLECTION_NAME).documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists).isEqualTo(false))
@@ -1291,7 +1292,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfNoneMatch() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        db.collection(COLLECTION_NAME).insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch("no");
         db.collection(COLLECTION_NAME).documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists).isEqualTo(true))
@@ -1300,8 +1301,8 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfNoneMatchFail() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<String> createResult = db.collection(COLLECTION_NAME)
-                .insertDocument("{\"_key\":\"abc\"}", null).get();
+        final DocumentCreateEntity<RawJson> createResult = db.collection(COLLECTION_NAME)
+                .insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
         db.collection(COLLECTION_NAME).documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists).isEqualTo(false))

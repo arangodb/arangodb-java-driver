@@ -77,6 +77,11 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
     }
 
     @Override
+    public <T> T deserializeUserData(JsonNode node, Type type) {
+        return deserializeUserData(serialize(node), type);
+    }
+
+    @Override
     public ArangoSerde getUserSerde() {
         return userSerde;
     }

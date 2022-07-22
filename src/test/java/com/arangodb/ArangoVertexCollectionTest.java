@@ -24,6 +24,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
+import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -95,10 +96,10 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         collection
                 .ensureSkiplistIndex(Collections.singletonList("field"), new SkiplistIndexOptions().unique(true).sparse(true));
 
-        VertexEntity inserted = vertices.insertVertex("{\"field\": 99}", null);
+        VertexEntity inserted = vertices.insertVertex(RawJson.of("{\"field\": 99}"));
 
         try {
-            vertices.insertVertex("{\"field\": 99}", null);
+            vertices.insertVertex(RawJson.of("{\"field\": 99}"));
         } catch (ArangoDBException e) {
             assertThat(e.getResponseCode()).isEqualTo(409);
             assertThat(e.getErrorNum()).isEqualTo(1210);

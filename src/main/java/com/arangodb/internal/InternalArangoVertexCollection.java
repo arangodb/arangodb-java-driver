@@ -70,14 +70,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-
-        byte[] body;
-        if (value instanceof String) {
-            body = getSerde().serialize(SerdeUtils.INSTANCE.parseJson((String) value));
-        } else {
-            body = getSerde().serializeUserData(value);
-        }
-        request.setBody(body);
+        request.setBody(getSerde().serializeUserData(value));
         return request;
     }
 
