@@ -18,8 +18,11 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.entity;
+package com.arangodb.internal.cursor;
 
+import com.arangodb.entity.CursorStats;
+import com.arangodb.entity.CursorWarning;
+import com.arangodb.entity.MetaAware;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
@@ -31,7 +34,7 @@ import java.util.Map;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public final class CursorEntity implements MetaAware {
+public final class InternalCursorEntity implements MetaAware {
 
     private String id;
     private Integer count;
@@ -81,7 +84,7 @@ public final class CursorEntity implements MetaAware {
     }
 
     /**
-     * @return an vpack-array of result documents (might be empty if query has no results)
+     * @return an array of result documents (might be empty if query has no results)
      */
     public JsonNode getResult() {
         return result;
@@ -105,75 +108,19 @@ public final class CursorEntity implements MetaAware {
         this.meta = cleanupMeta(meta);
     }
 
-    public static final class Warning {
-
-        private Integer code;
-        private String message;
-
-        public Integer getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-    }
-
     public static final class Extras {
-        private Stats stats;
-        private Collection<Warning> warnings = Collections.emptyList();
+        private CursorStats stats;
+        private Collection<CursorWarning> warnings = Collections.emptyList();
 
-        public Stats getStats() {
+        public CursorStats getStats() {
             return stats;
         }
 
-        public Collection<Warning> getWarnings() {
+        public Collection<CursorWarning> getWarnings() {
             return warnings;
         }
 
     }
 
-    public static final class Stats {
-        private Long writesExecuted;
-        private Long writesIgnored;
-        private Long scannedFull;
-        private Long scannedIndex;
-        private Long filtered;
-        private Long fullCount;
-        private Double executionTime;
-        private Long peakMemoryUsage;
-
-        public Long getWritesExecuted() {
-            return writesExecuted;
-        }
-
-        public Long getWritesIgnored() {
-            return writesIgnored;
-        }
-
-        public Long getScannedFull() {
-            return scannedFull;
-        }
-
-        public Long getScannedIndex() {
-            return scannedIndex;
-        }
-
-        public Long getFiltered() {
-            return filtered;
-        }
-
-        public Long getFullCount() {
-            return fullCount;
-        }
-
-        public Double getExecutionTime() {
-            return executionTime;
-        }
-
-        public Long getPeakMemoryUsage() {
-            return peakMemoryUsage;
-        }
-    }
 }
+

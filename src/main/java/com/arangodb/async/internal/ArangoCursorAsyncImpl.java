@@ -21,7 +21,7 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.async.ArangoCursorAsync;
-import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.cursor.InternalCursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
@@ -37,7 +37,7 @@ import java.util.stream.StreamSupport;
 public class ArangoCursorAsyncImpl<T> extends ArangoCursorImpl<T> implements ArangoCursorAsync<T> {
 
     ArangoCursorAsyncImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
-                          final Class<T> type, final CursorEntity result) {
+                          final Class<T> type, final InternalCursorEntity result) {
         super(db, execute, type, result);
     }
 

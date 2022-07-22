@@ -22,7 +22,6 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
-import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
@@ -751,7 +750,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursorWithWarnings.getWarnings()).hasSize(1);
         final ArangoCursor<String> cursorWithLimitedWarnings = db
                 .query("RETURN 1 / 0", null, new AqlQueryOptions().maxWarningCount(0L), String.class);
-        final Collection<Warning> warnings = cursorWithLimitedWarnings.getWarnings();
+        final Collection<CursorWarning> warnings = cursorWithLimitedWarnings.getWarnings();
         assertThat(warnings).isNullOrEmpty();
     }
 
