@@ -28,7 +28,7 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoSerdeFactory;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.model.DBCreateOptions;
@@ -59,11 +59,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-                        final ArangoSerdeFactory util, final Protocol protocol, final HostResolver hostResolver,
+                        final InternalSerde util, final Protocol protocol, final HostResolver hostResolver,
                         final HostHandler hostHandler, final ArangoContext context, int responseQueueTimeSamples, final int timeoutMs) {
 
         super(new ArangoExecutorSync(
-                        createProtocol(vstBuilder, httpBuilder, util.getInternalSerde(), protocol),
+                        createProtocol(vstBuilder, httpBuilder, util, protocol),
                         util,
                         new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
@@ -72,11 +72,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
         cp = createProtocol(
                 new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
                 new HttpCommunication.Builder(httpBuilder),
-                util.getInternalSerde(),
+                util,
                 protocol);
         this.hostHandler = hostHandler;
 
-        hostResolver.init(this.executor(), getInternalSerde());
+        hostResolver.init(this.executor(), getSerde());
 
         LOGGER.debug("ArangoDB Client is ready to use");
 

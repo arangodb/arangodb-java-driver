@@ -31,7 +31,7 @@ import com.arangodb.internal.*;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.util.ArangoSerdeFactory;
+import com.arangodb.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
@@ -62,7 +62,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     public ArangoDBAsyncImpl(
             final VstCommunicationAsync.Builder asyncCommBuilder,
-            final ArangoSerdeFactory util,
+            final InternalSerde util,
             final VstCommunicationSync.Builder syncCommBuilder,
             final HostResolver asyncHostResolver,
             final HostResolver syncHostResolver,
@@ -73,10 +73,10 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final int timeoutMs
     ) {
 
-        super(new ArangoExecutorAsync(asyncCommBuilder.build(util.getInternalSerde()), util, new DocumentCache(),
+        super(new ArangoExecutorAsync(asyncCommBuilder.build(util), util, new DocumentCache(),
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util, context);
 
-        final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.getInternalSerde());
+        final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util);
 
         cp = new VstProtocol(cacheCom);
         this.asyncHostHandler = asyncHostHandler;
@@ -84,8 +84,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
         ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache(),
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs);
-        asyncHostResolver.init(arangoExecutorSync, util.getInternalSerde());
-        syncHostResolver.init(arangoExecutorSync, util.getInternalSerde());
+        asyncHostResolver.init(arangoExecutorSync, util);
+        syncHostResolver.init(arangoExecutorSync, util);
 
     }
 

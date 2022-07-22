@@ -39,7 +39,7 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
     protected volatile String name;
 
     protected InternalArangoView(final D db, final String name) {
-        super(db.executor, db.util, db.context);
+        super(db.executor, db.serde, db.context);
         this.db = db;
         this.name = name;
     }
@@ -58,7 +58,7 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
 
     protected Request renameRequest(final String newName) {
         final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "rename");
-        request.setBody(getInternalSerde().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
+        request.setBody(getSerde().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
         return request;
     }
 

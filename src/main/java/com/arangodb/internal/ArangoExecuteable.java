@@ -22,7 +22,6 @@ package com.arangodb.internal;
 
 import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
-import com.arangodb.internal.util.ArangoSerdeFactory;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.InternalSerde;
@@ -39,13 +38,13 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     private static final String SLASH = "/";
 
     protected final E executor;
-    protected final ArangoSerdeFactory util;
+    protected final InternalSerde serde;
     protected final ArangoContext context;
 
-    protected ArangoExecuteable(final E executor, final ArangoSerdeFactory util, final ArangoContext context) {
+    protected ArangoExecuteable(final E executor, final InternalSerde serde, final ArangoContext context) {
         super();
         this.executor = executor;
-        this.util = util;
+        this.serde = serde;
         this.context = context;
     }
 
@@ -54,13 +53,13 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     }
 
     @Override
-    public InternalSerde getInternalSerde() {
-        return util.getInternalSerde();
+    public InternalSerde getSerde() {
+        return serde;
     }
 
     @Override
     public ArangoSerde getUserSerde() {
-        return util.getUserSerialization();
+        return serde.getUserSerde();
     }
 
     protected Request request(final DbName dbName, final RequestType requestType, final String... path) {

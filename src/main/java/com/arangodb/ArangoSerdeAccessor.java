@@ -33,7 +33,7 @@ public interface ArangoSerdeAccessor {
      *
      * @return ArangoSerde
      */
-    InternalSerde getInternalSerde();
+    InternalSerde getSerde();
 
     /**
      * Returns serialization implementation for serializing and deserializing user's classes.

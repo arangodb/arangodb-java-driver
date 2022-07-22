@@ -393,7 +393,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void execute(ArangoDB arangoDB)  {
         final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
-        assertThat(arangoDB.getInternalSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+        assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")

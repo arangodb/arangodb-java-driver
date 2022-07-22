@@ -14,11 +14,11 @@ public interface InternalSerde extends JacksonSerde {
      * @param dataType serialization target data type
      * @return the created InternalSerde
      */
-    static InternalSerde of(final DataType dataType) {
+    static InternalSerde of(final DataType dataType, ArangoSerde userSerde) {
         if (dataType == DataType.JSON) {
-            return new InternalSerdeImpl(new ObjectMapper());
+            return new InternalSerdeImpl(new ObjectMapper(), userSerde);
         } else if (dataType == DataType.VPACK) {
-            return new InternalSerdeImpl(new VPackMapper());
+            return new InternalSerdeImpl(new VPackMapper(), userSerde);
         } else {
             throw new IllegalArgumentException("Unexpected value: " + dataType);
         }
@@ -105,4 +105,36 @@ public interface InternalSerde extends JacksonSerde {
         return deserialize(parse(content, jsonPointer), type);
     }
 
+    /**
+     * Serializes the object into the target data type, using the user serde.
+     *
+     * @param value object to serialize
+     * @return serialized byte array
+     */
+    byte[] serializeUserData(Object value);
+
+    /**
+     * Deserializes the content and binds it to the target data type, using the user serde.
+     *
+     * @param content byte array to deserialize
+     * @param clazz   class of target data type
+     * @return deserialized object
+     */
+    default <T> T deserializeUserData(byte[] content, Class<T> clazz) {
+        return deserializeUserData(content, (Type) clazz);
+    }
+
+    /**
+     * Deserializes the content and binds it to the target data type, using the user serde.
+     *
+     * @param content byte array to deserialize
+     * @param type    target data type
+     * @return deserialized object
+     */
+    <T> T deserializeUserData(byte[] content, Type type);
+
+    /**
+     * @return the user serde
+     */
+    ArangoSerde getUserSerde();
 }
