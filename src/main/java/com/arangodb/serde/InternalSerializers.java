@@ -5,6 +5,8 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
+import com.arangodb.util.RawBytes;
+import com.arangodb.util.RawJson;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -60,6 +62,24 @@ public final class InternalSerializers {
 
     private InternalSerializers() {
     }
+
+    static final JsonSerializer<RawJson> RAW_JSON_SERIALIZER = new JsonSerializer<RawJson>() {
+        @Override
+        public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value.getValue()));
+        }
+    };
+
+    static final JsonSerializer<RawBytes> RAW_BYTES_SERIALIZER = new JsonSerializer<RawBytes>() {
+        @Override
+        public void serialize(RawBytes value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            // TODO: find a way to append raw bytes directly
+            // see https://github.com/FasterXML/jackson-dataformats-binary/issues/331
+            try (JsonParser parser = gen.getCodec().getFactory().createParser(value.getValue())) {
+                gen.writeTree(parser.readValueAsTree());
+            }
+        }
+    };
 
     static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST = new JsonSerializer<AuthenticationRequest>() {
         @Override
