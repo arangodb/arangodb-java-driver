@@ -22,7 +22,6 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,7 +35,7 @@ import java.util.NoSuchElementException;
  */
 public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
-    private CursorEntity result;
+    private InternalCursorEntity result;
     private Iterator<JsonNode> arrayIterator;
 
     private final ArangoCursor<T> cursor;
@@ -44,7 +43,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     private final ArangoCursorExecute execute;
 
     protected ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
-                                   final InternalArangoDatabase<?, ?> db, final CursorEntity result) {
+                                   final InternalArangoDatabase<?, ?> db, final InternalCursorEntity result) {
         super();
         this.cursor = cursor;
         this.execute = execute;
@@ -53,7 +52,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
         arrayIterator = result.getResult().iterator();
     }
 
-    public CursorEntity getResult() {
+    public InternalCursorEntity getResult() {
         return result;
     }
 

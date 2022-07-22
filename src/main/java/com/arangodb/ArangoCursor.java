@@ -20,8 +20,8 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.CursorEntity.Stats;
-import com.arangodb.entity.CursorEntity.Warning;
+import com.arangodb.entity.CursorStats;
+import com.arangodb.entity.CursorWarning;
 
 import java.io.Closeable;
 import java.util.Collection;
@@ -53,12 +53,12 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
      * number of modified documents and the number of documents that could not be modified due to an error (if
      * ignoreErrors query option is specified)
      */
-    Stats getStats();
+    CursorStats getStats();
 
     /**
      * @return warnings which the query could have been produced
      */
-    Collection<Warning> getWarnings();
+    Collection<CursorWarning> getWarnings();
 
     /**
      * @return indicating whether the query result was served from the query cache or not

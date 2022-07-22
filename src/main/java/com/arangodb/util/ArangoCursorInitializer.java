@@ -21,7 +21,7 @@
 package com.arangodb.util;
 
 import com.arangodb.ArangoCursor;
-import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.cursor.InternalCursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 
@@ -34,6 +34,6 @@ public interface ArangoCursorInitializer {
             final InternalArangoDatabase<?, ?> db,
             final ArangoCursorExecute execute,
             final Class<T> type,
-            final CursorEntity result);
+            final InternalCursorEntity result);
 
 }

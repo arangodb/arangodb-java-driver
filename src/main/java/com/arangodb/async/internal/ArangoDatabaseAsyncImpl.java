@@ -28,6 +28,7 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.cursor.InternalCursorEntity;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
@@ -178,7 +179,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
             final Class<T> type) {
         final Request request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final CompletableFuture<CursorEntity> execution = executor.execute(request, CursorEntity.class, hostHandle);
+        final CompletableFuture<InternalCursorEntity> execution = executor.execute(request, InternalCursorEntity.class, hostHandle);
         return execution.thenApply(result -> createCursor(result, type, options, hostHandle));
     }
 
@@ -206,20 +207,20 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type) {
         final HostHandle hostHandle = new HostHandle();
-        final CompletableFuture<CursorEntity> execution = executor.execute(queryNextRequest(cursorId, null, null), CursorEntity.class, hostHandle);
+        final CompletableFuture<InternalCursorEntity> execution = executor.execute(queryNextRequest(cursorId, null, null), InternalCursorEntity.class, hostHandle);
         return execution.thenApply(result -> createCursor(result, type, null, hostHandle));
     }
 
     private <T> ArangoCursorAsync<T> createCursor(
-            final CursorEntity result,
+            final InternalCursorEntity result,
             final Class<T> type,
             final AqlQueryOptions options,
             final HostHandle hostHandle) {
         return new ArangoCursorAsyncImpl<>(this, new ArangoCursorExecute() {
             @Override
-            public CursorEntity next(final String id, Map<String, String> meta) {
-                final CompletableFuture<CursorEntity> result = executor.execute(queryNextRequest(id, options, meta),
-                        CursorEntity.class, hostHandle);
+            public InternalCursorEntity next(final String id, Map<String, String> meta) {
+                final CompletableFuture<InternalCursorEntity> result = executor.execute(queryNextRequest(id, options, meta),
+                        InternalCursorEntity.class, hostHandle);
                 try {
                     return result.get();
                 } catch (InterruptedException | ExecutionException e) {

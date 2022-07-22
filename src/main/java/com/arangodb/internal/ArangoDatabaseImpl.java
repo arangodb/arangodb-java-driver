@@ -24,6 +24,7 @@ import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
+import com.arangodb.internal.cursor.InternalCursorEntity;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
@@ -35,7 +36,6 @@ import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -168,7 +168,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
         final Request request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
+        final InternalCursorEntity result = executor.execute(request, InternalCursorEntity.class, hostHandle);
 
         return createCursor(result, type, options, hostHandle);
 
@@ -194,21 +194,21 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
         final HostHandle hostHandle = new HostHandle();
-        final CursorEntity result = executor
-                .execute(queryNextRequest(cursorId, null, null), CursorEntity.class, hostHandle);
+        final InternalCursorEntity result = executor
+                .execute(queryNextRequest(cursorId, null, null), InternalCursorEntity.class, hostHandle);
         return createCursor(result, type, null, hostHandle);
     }
 
     private <T> ArangoCursor<T> createCursor(
-            final CursorEntity result,
+            final InternalCursorEntity result,
             final Class<T> type,
             final AqlQueryOptions options,
             final HostHandle hostHandle) {
 
         final ArangoCursorExecute execute = new ArangoCursorExecute() {
             @Override
-            public CursorEntity next(final String id, Map<String, String> meta) {
-                return executor.execute(queryNextRequest(id, options, meta), CursorEntity.class, hostHandle);
+            public InternalCursorEntity next(final String id, Map<String, String> meta) {
+                return executor.execute(queryNextRequest(id, options, meta), InternalCursorEntity.class, hostHandle);
             }
 
             @Override

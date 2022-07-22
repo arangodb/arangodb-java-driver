@@ -22,10 +22,9 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
-import com.arangodb.entity.CursorEntity;
-import com.arangodb.entity.CursorEntity.Extras;
-import com.arangodb.entity.CursorEntity.Stats;
-import com.arangodb.entity.CursorEntity.Warning;
+import com.arangodb.entity.CursorStats;
+import com.arangodb.entity.CursorWarning;
+import com.arangodb.internal.cursor.InternalCursorEntity.Extras;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 
@@ -44,7 +43,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     private final ArangoCursorExecute execute;
 
     public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
-                            final Class<T> type, final CursorEntity result) {
+                            final Class<T> type, final InternalCursorEntity result) {
         super();
         this.execute = execute;
         this.type = type;
@@ -56,7 +55,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
             final ArangoCursor<T> cursor,
             final InternalArangoDatabase<?, ?> db,
             final ArangoCursorExecute execute,
-            final CursorEntity result) {
+            final InternalCursorEntity result) {
         return new ArangoCursorIterator<>(cursor, execute, db, result);
     }
 
@@ -76,13 +75,13 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     }
 
     @Override
-    public Stats getStats() {
+    public CursorStats getStats() {
         final Extras extra = iterator.getResult().getExtra();
         return extra != null ? extra.getStats() : null;
     }
 
     @Override
-    public Collection<Warning> getWarnings() {
+    public Collection<CursorWarning> getWarnings() {
         final Extras extra = iterator.getResult().getExtra();
         return extra != null ? extra.getWarnings() : null;
     }
