@@ -25,6 +25,7 @@ import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
+import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -827,6 +828,19 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void queryWithRawBindVars(ArangoDatabase db) {
+        final Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("foo", RawJson.of("\"fooValue\""));
+        bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
+
+        final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", bindVars, null,JsonNode.class).next();
+
+        assertThat(res.get("foo").textValue()).isEqualTo("fooValue");
+        assertThat(res.get("bar").intValue()).isEqualTo(11);
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void queryWithWarning(ArangoDB arangoDB) {
         final ArangoCursor<String> cursor = arangoDB.db().query("return 1/0", null, null, String.class);
@@ -1166,7 +1180,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionVPack(ArangoDatabase db)  {
+    void transactionVPack(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
         assertThat(result.isTextual()).isTrue();
@@ -1175,7 +1189,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionJsonObject(ArangoDatabase db)  {
+    void transactionJsonObject(ArangoDatabase db) {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1185,7 +1199,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionJsonArray(ArangoDatabase db)  {
+    void transactionJsonArray(ArangoDatabase db) {
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db

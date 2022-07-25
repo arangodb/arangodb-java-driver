@@ -25,6 +25,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ViewType;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -82,14 +83,14 @@ public final class OptionsBuilder {
         return options.name(name);
     }
 
-    public static AqlQueryOptions build(final AqlQueryOptions options, final String query, final byte[] bindVars) {
+    public static AqlQueryOptions build(final AqlQueryOptions options, final String query, final Map<String, Object> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
     public static AqlQueryExplainOptions build(
             final AqlQueryExplainOptions options,
             final String query,
-            final byte[] bindVars) {
+            final Map<String, Object> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 

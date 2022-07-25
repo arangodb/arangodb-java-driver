@@ -1774,11 +1774,11 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentsJson(ArangoCollection collection) {
-        final Collection<String> values = new ArrayList<>();
-        values.add("{}");
-        values.add("{}");
-        values.add("{}");
-        final MultiDocumentEntity<DocumentCreateEntity<String>> docs = collection.insertDocuments(values);
+        final Collection<RawJson> values = new ArrayList<>();
+        values.add(RawJson.of("{}"));
+        values.add(RawJson.of("{}"));
+        values.add(RawJson.of("{}"));
+        final MultiDocumentEntity<DocumentCreateEntity<RawJson>> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(3);
@@ -1867,7 +1867,11 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void importDocumentsJsonList(ArangoCollection collection) {
-        final Collection<String> values = Arrays.asList("{}", "{}", "{}");
+        final Collection<RawJson> values = Arrays.asList(
+                RawJson.of("{}"),
+                RawJson.of("{}"),
+                RawJson.of("{}")
+        );
 
         final DocumentImportEntity docs = collection.importDocuments(values);
         assertThat(docs).isNotNull();
@@ -2443,15 +2447,15 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentsJson(ArangoCollection collection) {
-        final Collection<String> values = new ArrayList<>();
-        values.add("{\"_key\":\"1\"}");
-        values.add("{\"_key\":\"2\"}");
+        final Collection<RawJson> values = new ArrayList<>();
+        values.add(RawJson.of("{\"_key\":\"1\"}"));
+        values.add(RawJson.of("{\"_key\":\"2\"}"));
         collection.insertDocuments(values);
 
-        final Collection<String> updatedValues = new ArrayList<>();
-        updatedValues.add("{\"_key\":\"1\", \"foo\":\"bar\"}");
-        updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
-        final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = collection.updateDocuments(updatedValues);
+        final Collection<RawJson> updatedValues = new ArrayList<>();
+        updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
+        updatedValues.add(RawJson.of("{\"_key\":\"2\", \"foo\":\"bar\"}"));
+        final MultiDocumentEntity<DocumentUpdateEntity<RawJson>> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2525,15 +2529,15 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentsJson(ArangoCollection collection) {
-        final Collection<String> values = new ArrayList<>();
-        values.add("{\"_key\":\"1\"}");
-        values.add("{\"_key\":\"2\"}");
+        final Collection<RawJson> values = new ArrayList<>();
+        values.add(RawJson.of("{\"_key\":\"1\"}"));
+        values.add(RawJson.of("{\"_key\":\"2\"}"));
         collection.insertDocuments(values);
 
-        final Collection<String> updatedValues = new ArrayList<>();
-        updatedValues.add("{\"_key\":\"1\", \"foo\":\"bar\"}");
-        updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
-        final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = collection.replaceDocuments(updatedValues);
+        final Collection<RawJson> updatedValues = new ArrayList<>();
+        updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
+        updatedValues.add(RawJson.of("{\"_key\":\"2\", \"foo\":\"bar\"}"));
+        final MultiDocumentEntity<DocumentUpdateEntity<RawJson>> updateResult = collection.replaceDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }

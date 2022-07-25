@@ -20,10 +20,10 @@
 
 package com.arangodb.model;
 
-import com.arangodb.serde.InternalSerializers;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.arangodb.serde.UserDataInside;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 public final class AqlQueryExplainOptions {
 
-    private byte[] bindVars;
+    private Map<String, Object> bindVars;
     private String query;
     private Options options;
 
@@ -40,8 +40,8 @@ public final class AqlQueryExplainOptions {
         super();
     }
 
-    @JsonSerialize(using = InternalSerializers.AqlBindVarsSerializer.class)
-    public byte[] getBindVars() {
+    @UserDataInside
+    public Map<String, Object> getBindVars() {
         return bindVars;
     }
 
@@ -49,7 +49,7 @@ public final class AqlQueryExplainOptions {
      * @param bindVars key/value pairs representing the bind parameters
      * @return options
      */
-    AqlQueryExplainOptions bindVars(final byte[] bindVars) {
+    AqlQueryExplainOptions bindVars(final Map<String, Object> bindVars) {
         this.bindVars = bindVars;
         return this;
     }

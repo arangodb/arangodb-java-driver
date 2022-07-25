@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 
 public interface InternalSerde extends JacksonSerde {
 
@@ -112,6 +113,14 @@ public interface InternalSerde extends JacksonSerde {
      * @return serialized byte array
      */
     byte[] serializeUserData(Object value);
+
+    /**
+     * Serializes each element in the collection using the user serde.
+     *
+     * @param value objects to serialize
+     * @return serialized byte array
+     */
+    byte[] serializeCollectionUserData(Collection<?> value);
 
     /**
      * Deserializes the content and binds it to the target data type, using the user serde.

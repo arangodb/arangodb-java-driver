@@ -20,12 +20,12 @@
 
 package com.arangodb.model;
 
-import com.arangodb.serde.InternalSerializers;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.arangodb.serde.UserDataInside;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -40,7 +40,7 @@ public final class AqlQueryOptions {
     private Integer batchSize;
     private Boolean cache;
     private Long memoryLimit;
-    private byte[] bindVars;
+    private Map<String, Object> bindVars;
     private String query;
     private Options options;
     private Boolean allowDirtyRead;
@@ -147,8 +147,8 @@ public final class AqlQueryOptions {
         return this;
     }
 
-    @JsonSerialize(using = InternalSerializers.AqlBindVarsSerializer.class)
-    public byte[] getBindVars() {
+    @UserDataInside
+    public Map<String, Object> getBindVars() {
         return bindVars;
     }
 
@@ -156,7 +156,7 @@ public final class AqlQueryOptions {
      * @param bindVarsBytes serialized bind parameters
      * @return options
      */
-    AqlQueryOptions bindVars(final byte[] bindVarsBytes) {
+    AqlQueryOptions bindVars(final Map<String, Object> bindVarsBytes) {
         this.bindVars = bindVarsBytes;
         return this;
     }

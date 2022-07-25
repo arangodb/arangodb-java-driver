@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
@@ -19,6 +22,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
         this.userSerde = userSerde;
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setAnnotationIntrospector(new InternalAnnotationIntrospector(new UserDataSerializer(this)));
     }
 
     @Override
@@ -60,11 +64,20 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
 
     @Override
     public byte[] serializeUserData(Object value) {
-        if (RawJson.class.equals(value.getClass()) || RawBytes.class.equals(value.getClass())) {
+        if (value != null && (RawJson.class.equals(value.getClass()) || RawBytes.class.equals(value.getClass()))) {
             return serialize(value);
         } else {
             return userSerde.serialize(value);
         }
+    }
+
+    @Override
+    public byte[] serializeCollectionUserData(Collection<?> value) {
+        List<JsonNode> jsonNodeCollection = value.stream()
+                .map(this::serializeUserData)
+                .map(this::parse)
+                .collect(Collectors.toList());
+        return serialize(jsonNodeCollection);
     }
 
     @Override
