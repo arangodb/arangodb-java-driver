@@ -144,8 +144,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request queryRequest(final String query, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
-        final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR).setBody(getSerde().serialize(
-                OptionsBuilder.build(opt, query, bindVars != null ? getSerde().serializeUserData(bindVars) : null)));
+        final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR)
+                .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
         if (opt.getAllowDirtyRead() == Boolean.TRUE) {
             RequestUtils.allowDirtyRead(request);
         }
@@ -190,8 +190,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected Request explainQueryRequest(final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
         final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
         return request(dbName, RequestType.POST, PATH_API_EXPLAIN)
-                .setBody(getSerde().serialize(
-                        OptionsBuilder.build(opt, query, bindVars != null ? getSerde().serializeUserData(bindVars) : null)));
+                .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
     }
 
     protected Request parseQueryRequest(final String query) {

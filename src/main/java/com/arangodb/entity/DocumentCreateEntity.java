@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -41,6 +43,7 @@ public final class DocumentCreateEntity<T> extends DocumentEntity {
         return newDocument;
     }
 
+    @JsonIgnore
     public void setNew(final T newDocument) {
         this.newDocument = newDocument;
     }
@@ -53,6 +56,7 @@ public final class DocumentCreateEntity<T> extends DocumentEntity {
         return oldDocument;
     }
 
+    @JsonIgnore
     public void setOld(final T oldDocument) {
         this.oldDocument = oldDocument;
     }

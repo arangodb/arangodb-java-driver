@@ -126,10 +126,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-
-        byte[] body = isStringCollection(values) ? getSerde().serialize(stringCollectionToJsonArray((Collection<String>) values))
-                : getSerde().serializeUserData(values);
-        request.setBody(body);
+        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -181,9 +178,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
-        byte[] body = isStringCollection(values) ? getSerde().serialize(stringCollectionToJsonArray((Collection<String>) values))
-                : getSerde().serializeUserData(values);
-        return importDocumentsRequest(options).putQueryParam("type", ImportType.list).setBody(body);
+        return importDocumentsRequest(options).putQueryParam("type", ImportType.list)
+                .setBody(getSerde().serializeCollectionUserData(values));
     }
 
     protected Request importDocumentsRequest(final DocumentImportOptions options) {
@@ -301,10 +297,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-
-        byte[] body = isStringCollection(values) ? getSerde().serialize(stringCollectionToJsonArray((Collection<String>) values))
-                : getSerde().serializeUserData(values);
-        request.setBody(body);
+        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -402,10 +395,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-
-        byte[] body = isStringCollection(values) ? getSerde().serialize(stringCollectionToJsonArray((Collection<String>) values))
-                : getSerde().serializeUserData(values);
-        request.setBody(body);
+        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -684,14 +674,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Permissions.class);
-    }
-
-    private boolean isStringCollection(final Collection<?> values) {
-        return values.stream().allMatch(String.class::isInstance);
-    }
-
-    private JsonNode stringCollectionToJsonArray(final Collection<String> values) {
-        return SerdeUtils.INSTANCE.parseJson("[" + String.join(",", values) + "]");
     }
 
 }

@@ -20,17 +20,6 @@ import java.util.Map;
 
 public final class InternalSerializers {
 
-    public static class AqlBindVarsSerializer extends JsonSerializer<byte[]> {
-        @Override
-        public void serialize(byte[] value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            // TODO: find a way to append raw bytes directly
-            // see https://github.com/FasterXML/jackson-dataformats-binary/issues/331
-            try (JsonParser parser = gen.getCodec().getFactory().createParser(value)) {
-                gen.writeTree(parser.readValueAsTree());
-            }
-        }
-    }
-
     public static class CollectionSchemaRuleSerializer extends JsonSerializer<String> {
         @Override
         public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
