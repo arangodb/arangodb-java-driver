@@ -96,9 +96,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(
             final T value, final DocumentCreateOptions options) {
         return response -> {
-            final JsonNode body = getSerde().parse(response.getBody());
             Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentCreateEntity.class, value.getClass());
-            final DocumentCreateEntity<T> doc = getSerde().deserialize(body, type);
+            final DocumentCreateEntity<T> doc = getSerde().deserialize(response.getBody(), type);
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
                 values.put(DocumentFields.ID, doc.getId());
@@ -248,9 +247,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(
             final T value, final DocumentReplaceOptions options) {
         return response -> {
-            final JsonNode body = getSerde().parse(response.getBody());
             Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, value.getClass());
-            final DocumentUpdateEntity<T> doc = getSerde().deserialize(body, type);
+            final DocumentUpdateEntity<T> doc = getSerde().deserialize(response.getBody(), type);
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<String, String> values = new HashMap<>();
                 values.put(DocumentFields.REV, doc.getRev());
