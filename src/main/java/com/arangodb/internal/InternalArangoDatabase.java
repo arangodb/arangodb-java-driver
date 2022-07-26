@@ -110,7 +110,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
-        return response -> getSerde().deserialize(getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER),
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
                 SerdeUtils.INSTANCE.constructListType(CollectionEntity.class));
     }
 
