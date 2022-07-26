@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.arangodb.serde.UserData;
 
 /**
  * @author Mark Vollmary
@@ -43,7 +43,7 @@ public final class DocumentDeleteEntity<T> extends DocumentEntity {
         return oldDocument;
     }
 
-    @JsonIgnore
+    @UserData
     public void setOld(final T oldDocument) {
         this.oldDocument = oldDocument;
     }

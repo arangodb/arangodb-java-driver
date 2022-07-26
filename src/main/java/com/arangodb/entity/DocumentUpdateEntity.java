@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.arangodb.serde.UserData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -51,7 +51,7 @@ public final class DocumentUpdateEntity<T> extends DocumentEntity {
         return newDocument;
     }
 
-    @JsonIgnore
+    @UserData
     public void setNew(final T newDocument) {
         this.newDocument = newDocument;
     }
@@ -64,7 +64,7 @@ public final class DocumentUpdateEntity<T> extends DocumentEntity {
         return oldDocument;
     }
 
-    @JsonIgnore
+    @UserData
     public void setOld(final T oldDocument) {
         this.oldDocument = oldDocument;
     }
