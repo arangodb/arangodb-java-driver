@@ -25,7 +25,6 @@ import com.arangodb.entity.ReplicationFactor;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Mark Vollmary
@@ -34,8 +33,8 @@ import java.util.Collections;
 public final class GraphCreateOptions {
 
     private String name;
-    private Collection<EdgeDefinition> edgeDefinitions = Collections.emptyList();
-    private Collection<String> orphanCollections = Collections.emptyList();
+    private Collection<EdgeDefinition> edgeDefinitions;
+    private Collection<String> orphanCollections;
     private Boolean isSmart;
     private SmartOptions options;
 

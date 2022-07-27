@@ -6,24 +6,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 public final class FieldLink {
 
     private final String name;
-    private final Collection<String> analyzers;
+    private Collection<String> analyzers;
     private Boolean includeAllFields;
     private Boolean trackListPositions;
     private StoreValuesType storeValues;
-    private final Collection<FieldLink> fields;
+    private Collection<FieldLink> fields;
 
     private FieldLink(final String name) {
         super();
         this.name = name;
-        fields = new ArrayList<>();
-        analyzers = new ArrayList<>();
     }
 
     /**
@@ -42,7 +39,7 @@ public final class FieldLink {
      * @return link
      */
     public FieldLink analyzers(final String... analyzers) {
-        this.analyzers.addAll(Arrays.asList(analyzers));
+        this.analyzers = Arrays.asList(analyzers);
         return this;
     }
 
@@ -80,7 +77,7 @@ public final class FieldLink {
      * @return link
      */
     public FieldLink fields(final FieldLink... fields) {
-        this.fields.addAll(Arrays.asList(fields));
+        this.fields = Arrays.asList(fields);
         return this;
     }
 

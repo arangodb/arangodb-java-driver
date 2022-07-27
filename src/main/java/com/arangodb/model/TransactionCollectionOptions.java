@@ -22,7 +22,6 @@ package com.arangodb.model;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author Mark Vollmary
@@ -30,9 +29,9 @@ import java.util.Collections;
  */
 public final class TransactionCollectionOptions {
 
-    private Collection<String> read = Collections.emptyList();
-    private Collection<String> write = Collections.emptyList();
-    private Collection<String> exclusive = Collections.emptyList();
+    private Collection<String> read;
+    private Collection<String> write;
+    private Collection<String> exclusive;
     private Boolean allowImplicit;
 
     public Collection<String> getRead() {
