@@ -2582,7 +2582,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
 
         // revert changes
-        CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions().waitForSync(properties.getWaitForSync()).schema(CollectionSchema.NULL_SCHEMA));
+        CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions()
+                .waitForSync(properties.getWaitForSync()).schema(new CollectionSchema()));
         if (isAtLeastVersion(3, 7)) {
             assertThat(revertedProperties.getSchema()).isNull();
         }

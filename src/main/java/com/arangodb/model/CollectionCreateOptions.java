@@ -25,6 +25,9 @@ import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
 import com.arangodb.entity.ReplicationFactor;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
@@ -37,7 +40,7 @@ public final class CollectionCreateOptions {
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
-    private String[] shardKeys = new String[]{};
+    private Collection<String> shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;
     private CollectionType type;
@@ -148,7 +151,7 @@ public final class CollectionCreateOptions {
         return this;
     }
 
-    public String[] getShardKeys() {
+    public Collection<String> getShardKeys() {
         return shardKeys;
     }
 
@@ -161,7 +164,7 @@ public final class CollectionCreateOptions {
      * @return options
      */
     public CollectionCreateOptions shardKeys(final String... shardKeys) {
-        this.shardKeys = shardKeys;
+        this.shardKeys = Arrays.asList(shardKeys);
         return this;
     }
 

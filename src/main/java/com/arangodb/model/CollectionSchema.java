@@ -35,14 +35,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 public final class CollectionSchema {
 
-    /**
-     * Value to unset the collection schema on properties update {@link com.arangodb.ArangoCollection#changeProperties(CollectionPropertiesOptions)}.
-     */
-    public static final CollectionSchema NULL_SCHEMA = new CollectionSchema()
-            .setLevel(null)
-            .setMessage(null)
-            .setRule(null);
-
     private String rule;
     private Level level;
     private String message;

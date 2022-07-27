@@ -22,7 +22,6 @@ package com.arangodb.model;
 
 import com.arangodb.serde.UserDataInside;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -128,7 +127,7 @@ public final class AqlQueryOptions {
     }
 
     public Boolean getFillBlockCache() {
-        return options != null ? options.fillBlockCache : null;
+        return getOptions().fillBlockCache;
     }
 
     /**
@@ -175,7 +174,7 @@ public final class AqlQueryOptions {
     }
 
     public Boolean getFailOnWarning() {
-        return options != null ? options.failOnWarning : null;
+        return getOptions().failOnWarning;
     }
 
     /**
@@ -206,7 +205,7 @@ public final class AqlQueryOptions {
      * profile of the extra return attribute if the query result is not served from the query cache.
      */
     public Boolean getProfile() {
-        return options != null ? options.profile : null;
+        return getOptions().profile;
     }
 
     /**
@@ -220,7 +219,7 @@ public final class AqlQueryOptions {
     }
 
     public Long getMaxTransactionSize() {
-        return options != null ? options.maxTransactionSize : null;
+        return getOptions().maxTransactionSize;
     }
 
     /**
@@ -234,7 +233,7 @@ public final class AqlQueryOptions {
     }
 
     public Long getMaxWarningCount() {
-        return options != null ? options.maxWarningCount : null;
+        return getOptions().maxWarningCount;
     }
 
     /**
@@ -249,7 +248,7 @@ public final class AqlQueryOptions {
     }
 
     public Long getIntermediateCommitCount() {
-        return options != null ? options.intermediateCommitCount : null;
+        return getOptions().intermediateCommitCount;
     }
 
     /**
@@ -264,7 +263,7 @@ public final class AqlQueryOptions {
     }
 
     public Long getIntermediateCommitSize() {
-        return options != null ? options.intermediateCommitSize : null;
+        return getOptions().intermediateCommitSize;
     }
 
     /**
@@ -279,7 +278,7 @@ public final class AqlQueryOptions {
     }
 
     public Double getSatelliteSyncWait() {
-        return options != null ? options.satelliteSyncWait : null;
+        return getOptions().satelliteSyncWait;
     }
 
     /**
@@ -295,7 +294,7 @@ public final class AqlQueryOptions {
     }
 
     public Boolean getSkipInaccessibleCollections() {
-        return options != null ? options.skipInaccessibleCollections : null;
+        return getOptions().skipInaccessibleCollections;
     }
 
     /**
@@ -314,7 +313,7 @@ public final class AqlQueryOptions {
     }
 
     public Boolean getFullCount() {
-        return options != null ? options.fullCount : null;
+        return getOptions().fullCount;
     }
 
     /**
@@ -335,7 +334,7 @@ public final class AqlQueryOptions {
     }
 
     public Integer getMaxPlans() {
-        return options != null ? options.maxPlans : null;
+        return getOptions().maxPlans;
     }
 
     /**
@@ -348,7 +347,7 @@ public final class AqlQueryOptions {
     }
 
     public Collection<String> getRules() {
-        return options != null ? options.optimizer != null ? options.optimizer.rules : null : null;
+        return getOptions().getOptimizer().rules;
     }
 
     /**
@@ -363,7 +362,7 @@ public final class AqlQueryOptions {
     }
 
     public Boolean getStream() {
-        return options != null ? options.stream : null;
+        return getOptions().stream;
     }
 
     /**
@@ -385,7 +384,7 @@ public final class AqlQueryOptions {
     }
 
     public Collection<String> getShardIds() {
-        return options != null ? options.shardIds : null;
+        return getOptions().shardIds;
     }
 
     /**
@@ -395,7 +394,7 @@ public final class AqlQueryOptions {
      * @return options
      */
     public AqlQueryOptions shardIds(final String... shardIds) {
-        getOptions().getShardIds().addAll(Arrays.asList(shardIds));
+        getOptions().shardIds = Arrays.asList(shardIds);
         return this;
     }
 
@@ -484,9 +483,6 @@ public final class AqlQueryOptions {
         }
 
         public Collection<String> getShardIds() {
-            if (shardIds == null) {
-                shardIds = new ArrayList<>();
-            }
             return shardIds;
         }
 

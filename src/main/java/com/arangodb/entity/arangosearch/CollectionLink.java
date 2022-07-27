@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -38,17 +37,15 @@ import java.util.Collection;
 public final class CollectionLink {
 
     private final String name;
-    private final Collection<String> analyzers;
+    private Collection<String> analyzers;
     private Boolean includeAllFields;
     private Boolean trackListPositions;
     private StoreValuesType storeValues;
-    private final Collection<FieldLink> fields;
+    private Collection<FieldLink> fields;
 
     private CollectionLink(final String name) {
         super();
         this.name = name;
-        fields = new ArrayList<>();
-        analyzers = new ArrayList<>();
     }
 
     /**
@@ -67,7 +64,7 @@ public final class CollectionLink {
      * @return link
      */
     public CollectionLink analyzers(final String... analyzers) {
-        this.analyzers.addAll(Arrays.asList(analyzers));
+        this.analyzers = Arrays.asList(analyzers);
         return this;
     }
 
@@ -106,7 +103,7 @@ public final class CollectionLink {
      */
     @JsonDeserialize(using = InternalDeserializers.FieldLinksDeserializer.class)
     public CollectionLink fields(final FieldLink... fields) {
-        this.fields.addAll(Arrays.asList(fields));
+        this.fields = Arrays.asList(fields);
         return this;
     }
 
