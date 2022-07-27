@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.cursor;
+package com.arangodb.internal.cursor.entity;
 
 import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
