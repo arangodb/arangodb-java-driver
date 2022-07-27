@@ -1,19 +1,20 @@
 package helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.reflections.Reflections;
-import org.reflections.scanners.MethodParameterScanner;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Helper scripts to generate GraalVM native image configuration
@@ -30,33 +31,52 @@ public class NativeImageHelper {
         System.out.println("--- reflect-config.json ---");
         System.out.println("---------------------------");
 
-        List<String> packages = Arrays.asList("com.arangodb.entity", "com.arangodb.model");
+        List<String> packages = Arrays.asList(
+                "com.arangodb.entity",
+                "com.arangodb.model",
+                "com.arangodb.internal.cursor.entity"
+        );
 
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
-        ObjectNode noArgConstructor = mapper.createObjectNode();
-        noArgConstructor.put("name", "<init>");
-        noArgConstructor.set("parameterTypes", mapper.createArrayNode());
-        ArrayNode methods = mapper.createArrayNode();
-        methods.add(noArgConstructor);
 
-        packages.stream()
+        String serdePackage = "com.arangodb.serde";
+        Reflections r = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false))
+                .setUrls(ClasspathHelper.forPackage(serdePackage))
+                .filterInputsBy(new FilterBuilder().includePackage(serdePackage)));
+        Stream<String> serializers = r.getSubTypesOf(JsonSerializer.class).stream()
+                .filter(it -> !it.isAnonymousClass())
+                .map(Class::getName);
+        Stream<String> deserializers = r.getSubTypesOf(JsonDeserializer.class).stream()
+                .filter(it -> !it.isAnonymousClass())
+                .map(Class::getName);
+        Stream<String> serdeClasses = Stream.concat(serializers, deserializers)
+                .filter(it -> it.contains("InternalSerializers") || it.contains("InternalDeserializers"));
+
+        Stream<String> entityClasses = packages.stream()
                 .flatMap(p -> {
                     final ConfigurationBuilder config = new ConfigurationBuilder()
-                            .setScanners(new MethodParameterScanner())
+                            .setScanners(new SubTypesScanner(false))
                             .setUrls(ClasspathHelper.forPackage(p))
                             .filterInputsBy(new FilterBuilder().includePackage(p));
 
-                    return new Reflections(config).getConstructorsMatchParams().stream();
-                })
-                .filter((it -> Modifier.isPublic(it.getDeclaringClass().getModifiers())))
-                .filter(it -> Modifier.isPublic(it.getModifiers()))
-                .map(Constructor::getName)
+                    Reflections reflections = new Reflections(config);
+                    return Stream.concat(
+                            reflections.getAllTypes().stream(),
+                            reflections
+                                    .getSubTypesOf(Enum.class)
+                                    .stream()
+                                    .map(Class::getName)
+                    );
+                });
+        Stream.concat(serdeClasses, entityClasses)
                 .map(className -> {
                     ObjectNode entry = mapper.createObjectNode();
                     entry.put("name", className);
                     entry.put("allDeclaredFields", true);
-                    entry.set("methods", methods);
+                    entry.put("allDeclaredMethods", true);
+                    entry.put("allDeclaredConstructors", true);
                     return entry;
                 })
                 .forEach(rootNode::add);

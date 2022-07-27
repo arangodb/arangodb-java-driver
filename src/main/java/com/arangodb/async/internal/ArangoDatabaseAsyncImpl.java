@@ -28,7 +28,7 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.cursor.InternalCursorEntity;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;

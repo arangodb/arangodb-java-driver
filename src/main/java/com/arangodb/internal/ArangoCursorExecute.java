@@ -21,7 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.cursor.InternalCursorEntity;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 
 import java.util.Map;
 

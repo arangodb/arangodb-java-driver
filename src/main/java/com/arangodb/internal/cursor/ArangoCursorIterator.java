@@ -24,6 +24,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Iterator;
