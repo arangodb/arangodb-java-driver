@@ -121,9 +121,7 @@ public interface InternalSerde extends JacksonSerde {
      * @param clazz   class of target data type
      * @return deserialized object
      */
-    default <T> T deserializeUserData(byte[] content, Class<T> clazz) {
-        return deserializeUserData(content, (Type) clazz);
-    }
+    <T> T deserializeUserData(byte[] content, Class<T> clazz);
 
     /**
      * Deserializes the content and binds it to the target data type, using the user serde.
