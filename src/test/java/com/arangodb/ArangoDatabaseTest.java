@@ -538,6 +538,14 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void queryWithNullBindVar(ArangoDatabase db) {
+        final ArangoCursor<Object> cursor = db.query("return @foo", Collections.singletonMap("foo", null), null, Object.class);
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void queryForEach(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
