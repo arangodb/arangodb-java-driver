@@ -129,3 +129,46 @@ jobs:
         run: mvn -version
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
+
+  jackson-test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        jackson-version:
+          - 2.13.3
+          - 2.12.7
+          - 2.11.4
+          - 2.10.5
+        docker-img:
+          - docker.io/arangodb/arangodb:3.9.1
+        topology:
+          - single
+        db-ext-names:
+          - false
+        java-version:
+          - 17
+        user-language:
+          - en
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Info
+        run: mvn -version
+      - name: Test
+        run: mvn --no-transfer-progress test -Djackson.version=${{jackson-version}}

@@ -17,6 +17,10 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
 
     private final ArangoSerde userSerde;
 
+    static {
+        SerdeUtils.INSTANCE.checkSupportedJacksonVersion();
+    }
+
     InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
         super(mapper);
         this.userSerde = userSerde;

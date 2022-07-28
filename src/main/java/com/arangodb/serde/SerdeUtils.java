@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,8 +10,11 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public enum SerdeUtils {
     INSTANCE;
@@ -66,6 +70,20 @@ public enum SerdeUtils {
             args.add(type);
         }
         return constructParametricType(javaType.getRawClass(), args.toArray(new Type[0]));
+    }
+
+    void checkSupportedJacksonVersion() {
+        Arrays.asList(
+                com.fasterxml.jackson.databind.cfg.PackageVersion.VERSION,
+                com.fasterxml.jackson.core.json.PackageVersion.VERSION
+        ).forEach(version -> {
+            int major = version.getMajorVersion();
+            int minor = version.getMinorVersion();
+            if (major != 2 || minor < 10 || minor > 13) {
+                Logger.getLogger(VPackMapper.class.getName())
+                        .log(Level.WARNING, "Unsupported Jackson version: {0}", version);
+            }
+        });
     }
 
 }
