@@ -1,6 +1,5 @@
 package com.arangodb.serde;
 
-import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.function.Consumer;
@@ -17,13 +16,7 @@ public interface JacksonSerde extends ArangoSerde {
      * @return the created JacksonSerde
      */
     static JacksonSerde of(final DataType dataType) {
-        if (dataType == DataType.JSON) {
-            return of(new ObjectMapper());
-        } else if (dataType == DataType.VPACK) {
-            return of(new VPackMapper());
-        } else {
-            throw new IllegalArgumentException("Unexpected value: " + dataType);
-        }
+        return of(MapperProvider.of(dataType));
     }
 
     /**
