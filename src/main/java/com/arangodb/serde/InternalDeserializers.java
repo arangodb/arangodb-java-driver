@@ -11,11 +11,10 @@ import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,6 +24,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 public final class InternalDeserializers {
+
+    private static <T> T readTreeAsValue(JsonParser p, DeserializationContext ctxt, JsonNode n, Class<T> targetType) throws IOException {
+        try (TreeTraversingParser t = new TreeTraversingParser(n, p.getCodec())) {
+            t.nextToken();
+            return ctxt.readValue(t, targetType);
+        }
+    }
 
     public static class CollectionLinksDeserializer extends JsonDeserializer<Collection<CollectionLink>> {
 
@@ -37,7 +43,7 @@ public final class InternalDeserializers {
                 Map.Entry<String, JsonNode> e = it.next();
                 ObjectNode v = (ObjectNode) e.getValue();
                 v.put("name", e.getKey());
-                out.add(ctxt.readTreeAsValue(v, CollectionLink.class));
+                out.add(readTreeAsValue(p, ctxt, v, CollectionLink.class));
             }
             return out;
         }
@@ -54,7 +60,7 @@ public final class InternalDeserializers {
                 Map.Entry<String, JsonNode> e = it.next();
                 ObjectNode v = (ObjectNode) e.getValue();
                 v.put("name", e.getKey());
-                out.add(ctxt.readTreeAsValue(v, FieldLink.class));
+                out.add(readTreeAsValue(p, ctxt, v, FieldLink.class));
             }
             return out.toArray(new FieldLink[0]);
         }
@@ -126,7 +132,7 @@ public final class InternalDeserializers {
             response.setType(it.next().intValue());
             response.setResponseCode(it.next().intValue());
             if (it.hasNext()) {
-                response.setMeta(ctxt.readTreeAsValue(it.next(), Map.class));
+                response.setMeta(readTreeAsValue(p, ctxt, it.next(), Map.class));
             }
             return response;
         }
