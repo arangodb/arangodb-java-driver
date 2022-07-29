@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Consumer;
 
 /**
- * Contract for serialization/deserialization of user data, based on Jackson Databind.
+ * User data serde based on Jackson Databind.
  */
 public interface JacksonSerde extends ArangoSerde {
 
@@ -16,7 +16,7 @@ public interface JacksonSerde extends ArangoSerde {
      * @return the created JacksonSerde
      */
     static JacksonSerde of(final DataType dataType) {
-        return of(MapperProvider.of(dataType));
+        return create(MapperProvider.of(dataType));
     }
 
     /**
@@ -25,7 +25,7 @@ public interface JacksonSerde extends ArangoSerde {
      * @param mapper   Jackson ObjectMapper to use
      * @return the created JacksonSerde
      */
-    static JacksonSerde of(final ObjectMapper mapper) {
+    static JacksonSerde create(final ObjectMapper mapper) {
         return new JacksonSerdeImpl(mapper);
     }
 

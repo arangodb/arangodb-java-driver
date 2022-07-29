@@ -23,6 +23,7 @@ package com.arangodb.entity;
 import com.arangodb.internal.DocumentFields;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -94,6 +95,7 @@ public class BaseDocument implements Serializable {
         this.revision = revision;
     }
 
+    @JsonInclude
     @JsonAnyGetter
     public Map<String, Object> getProperties() {
         return properties;
@@ -103,6 +105,7 @@ public class BaseDocument implements Serializable {
         this.properties = properties;
     }
 
+    @JsonInclude
     @JsonAnySetter
     public void addAttribute(final String key, final Object value) {
         properties.put(key, value);

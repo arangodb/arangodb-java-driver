@@ -1299,12 +1299,12 @@ class ArangoDatabaseTest extends BaseJunit5 {
     public static class TransactionTestEntity {
         private String value;
 
-        public TransactionTestEntity() {
-            super();
-        }
-
         public String getValue() {
             return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
     }
 
