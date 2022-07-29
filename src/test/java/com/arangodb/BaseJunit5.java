@@ -3,6 +3,7 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.serde.JsonbSerde;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,17 +13,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class BaseJunit5 {
     protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
 
-    private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
-            .map(p -> new ArangoDB.Builder()
-                    .useProtocol(p)
-                    .build())
-            .collect(Collectors.toList());
+    private static final List<ArangoDB> adbs = Arrays.asList(
+            new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).serializer(JsonbSerde.create()).build()
+    );
 
     protected static Stream<ArangoDatabase> dbsStream() {
         return adbs.stream().map(adb -> adb.db(TEST_DB));

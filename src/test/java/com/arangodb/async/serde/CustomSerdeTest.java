@@ -25,7 +25,6 @@ import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
@@ -37,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -85,86 +85,90 @@ class CustomSerdeTest {
     void aqlSerialization() throws ExecutionException, InterruptedException {
         String key = "test-" + UUID.randomUUID();
 
-        BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", Collections.singletonList("hello"));
-        doc.addAttribute("int", 10);
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("_key", key);
+        doc.put("arr", Collections.singletonList("hello"));
+        doc.put("int", 10);
 
         HashMap<String, Object> params = new HashMap<>();
         params.put("doc", doc);
         params.put("@collection", COLLECTION_NAME);
 
-        BaseDocument result = db.query(
+        Map<String, Object> result = db.query(
                 "INSERT @doc INTO @@collection RETURN NEW",
                 params,
-                BaseDocument.class
+                Map.class
         ).get().next();
 
-        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
-        assertThat(result.getAttribute("arr")).isEqualTo("hello");
-        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
-        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
+        assertThat(result.get("arr")).isInstanceOf(String.class);
+        assertThat(result.get("arr")).isEqualTo("hello");
+        assertThat(result.get("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.get("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
     void aqlDeserialization() throws ExecutionException, InterruptedException {
         String key = "test-" + UUID.randomUUID();
 
-        BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", Collections.singletonList("hello"));
-        doc.addAttribute("int", 10);
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("_key", key);
+        doc.put("arr", Collections.singletonList("hello"));
+        doc.put("int", 10);
 
         collection.insertDocument(doc, null).get();
 
-        final BaseDocument result = db.query(
+        final Map<String, Object> result = db.query(
                 "RETURN DOCUMENT(@docId)",
                 Collections.singletonMap("docId", COLLECTION_NAME + "/" + key),
-                BaseDocument.class
+                Map.class
         ).get().next();
 
-        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
-        assertThat(result.getAttribute("arr")).isEqualTo("hello");
-        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
-        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
+        assertThat(result.get("arr")).isInstanceOf(String.class);
+        assertThat(result.get("arr")).isEqualTo("hello");
+        assertThat(result.get("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.get("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
     void insertDocument() throws ExecutionException, InterruptedException {
         String key = "test-" + UUID.randomUUID();
 
-        BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", Collections.singletonList("hello"));
-        doc.addAttribute("int", 10);
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("_key", key);
+        doc.put("arr", Collections.singletonList("hello"));
+        doc.put("int", 10);
 
-        BaseDocument result = collection.insertDocument(
+        Map<String, Object> result = collection.insertDocument(
                 doc,
                 new DocumentCreateOptions().returnNew(true)
         ).get().getNew();
 
-        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
-        assertThat(result.getAttribute("arr")).isEqualTo("hello");
-        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
-        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
+        assertThat(result.get("arr")).isInstanceOf(String.class);
+        assertThat(result.get("arr")).isEqualTo("hello");
+        assertThat(result.get("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.get("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
     void getDocument() throws ExecutionException, InterruptedException {
         String key = "test-" + UUID.randomUUID();
 
-        BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", Collections.singletonList("hello"));
-        doc.addAttribute("int", 10);
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("_key", key);
+        doc.put("arr", Collections.singletonList("hello"));
+        doc.put("int", 10);
 
         collection.insertDocument(doc, null).get();
 
-        final BaseDocument result = db.collection(COLLECTION_NAME).getDocument(
+        final Map<String, Object> result = db.collection(COLLECTION_NAME).getDocument(
                 key,
-                BaseDocument.class,
+                Map.class,
                 null).get();
 
-        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
-        assertThat(result.getAttribute("arr")).isEqualTo("hello");
-        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
-        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
+        assertThat(result.get("arr")).isInstanceOf(String.class);
+        assertThat(result.get("arr")).isEqualTo("hello");
+        assertThat(result.get("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.get("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
 }

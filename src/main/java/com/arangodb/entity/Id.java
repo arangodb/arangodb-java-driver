@@ -4,6 +4,8 @@ import com.arangodb.internal.DocumentFields;
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.json.bind.annotation.JsonbAnnotation;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,5 +21,7 @@ import java.lang.annotation.Target;
 @JacksonAnnotationsInside
 @JsonProperty(DocumentFields.ID)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonbAnnotation
+@JsonbProperty("_id")
 public @interface Id {
 }

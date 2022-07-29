@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  * - low-level libraries without support to data binding
  * <p>
  * To create a custom serde based on Jackson, existing {@link JacksonSerde} can be reused and instantiated providing a
- * custom configured ObjectMapper ({@link JacksonSerde#of(com.fasterxml.jackson.databind.ObjectMapper)}) or configured
+ * custom configured ObjectMapper ({@link JacksonSerde#create(com.fasterxml.jackson.databind.ObjectMapper)}) or configured
  * after creation through {@link JacksonSerde#configure(Consumer)}.
  */
 public interface ArangoSerde {
