@@ -29,9 +29,6 @@ import com.arangodb.model.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Mark Vollmary
  */
@@ -70,15 +67,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
-        return response -> {
-            final EdgeEntity doc = getSerde().deserialize(response.getBody(), "/edge", EdgeEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.ID, doc.getId());
-            values.put(DocumentFields.KEY, doc.getKey());
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeEntity.class);
     }
 
     protected Request getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
@@ -110,13 +99,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
-        return response -> {
-            final EdgeUpdateEntity doc = getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
     }
 
     protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
@@ -133,13 +116,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
-        return response -> {
-            final EdgeUpdateEntity doc = getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
     }
 
     protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {

@@ -43,8 +43,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
     private final CommunicationProtocol protocol;
 
     public ArangoExecutorSync(final CommunicationProtocol protocol, final InternalSerde util,
-                              final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
-        super(util, documentCache, qtMetrics, timeoutMs);
+                              final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+        super(util, qtMetrics, timeoutMs);
         this.protocol = protocol;
     }
 

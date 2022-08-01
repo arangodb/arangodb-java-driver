@@ -137,7 +137,8 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     void insertVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity vertex = vertices.insertVertex(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(vertex.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(vertex.getRev()).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -228,10 +229,13 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final VertexUpdateEntity replaceResult = vertices
                 .replaceVertex(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(replaceResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -313,10 +317,13 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(updateResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")

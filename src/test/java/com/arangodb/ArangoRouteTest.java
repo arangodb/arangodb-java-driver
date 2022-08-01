@@ -27,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
@@ -53,10 +55,10 @@ class ArangoRouteTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void withHeader(ArangoDatabase db) {
-        final BaseDocument doc = new BaseDocument();
-        db.collection(COLLECTION_NAME).insertDocument(doc);
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        String rev = db.collection(COLLECTION_NAME).insertDocument(doc).getRev();
         Throwable thrown = catchThrowable(() ->
-                db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision()).get());
+                db.route("/_api/document", COLLECTION_NAME, doc.getKey()).withHeader(ArangoRequestParam.IF_NONE_MATCH, rev).get());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(304);
@@ -65,10 +67,10 @@ class ArangoRouteTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void withParentHeader(ArangoDatabase db) {
-        final BaseDocument doc = new BaseDocument();
-        db.collection(COLLECTION_NAME).insertDocument(doc);
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        String rev = db.collection(COLLECTION_NAME).insertDocument(doc).getRev();
         Throwable thrown = catchThrowable(() ->
-                db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision()).route(doc.getId()).get());
+                db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, rev).route(COLLECTION_NAME, doc.getKey()).get());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(304);

@@ -97,15 +97,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final T value, final DocumentCreateOptions options) {
         return response -> {
             Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentCreateEntity.class, value.getClass());
-            final DocumentCreateEntity<T> doc = getSerde().deserialize(response.getBody(), type);
-            if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<String, String> values = new HashMap<>();
-                values.put(DocumentFields.ID, doc.getId());
-                values.put(DocumentFields.KEY, doc.getKey());
-                values.put(DocumentFields.REV, doc.getRev());
-                executor.documentCache().setValues(value, values);
-            }
-            return doc;
+            return getSerde().deserialize(response.getBody(), type);
         };
     }
 
@@ -131,8 +123,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
-            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
-                final JsonNode next = iterator.next();
+            for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
                     final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
@@ -208,8 +199,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
-            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
-                final JsonNode next = iterator.next();
+            for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
                     final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
@@ -248,13 +238,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final T value, final DocumentReplaceOptions options) {
         return response -> {
             Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, value.getClass());
-            final DocumentUpdateEntity<T> doc = getSerde().deserialize(response.getBody(), type);
-            if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<String, String> values = new HashMap<>();
-                values.put(DocumentFields.REV, doc.getRev());
-                executor.documentCache().setValues(value, values);
-            }
-            return doc;
+            return getSerde().deserialize(response.getBody(), type);
         };
     }
 
@@ -280,8 +264,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
-            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
-                final JsonNode next = iterator.next();
+            for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
                     final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
@@ -322,13 +305,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final T value, final DocumentUpdateOptions options, final Class<U> returnType) {
         return response -> {
             Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, returnType);
-            final DocumentUpdateEntity<U> doc = getSerde().deserialize(response.getBody(), type);
-            if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<String, String> values = new HashMap<>();
-                values.put(DocumentFields.REV, doc.getRev());
-                executor.documentCache().setValues(value, values);
-            }
-            return doc;
+            return getSerde().deserialize(response.getBody(), type);
         };
     }
 
@@ -356,8 +333,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
-            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
-                final JsonNode next = iterator.next();
+            for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
                     final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
@@ -416,8 +392,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
-            for (final Iterator<JsonNode> iterator = body.iterator(); iterator.hasNext(); ) {
-                final JsonNode next = iterator.next();
+            for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
                     final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);

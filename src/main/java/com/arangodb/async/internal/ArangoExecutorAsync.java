@@ -23,7 +23,6 @@ package com.arangodb.async.internal;
 import com.arangodb.ArangoDBException;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
-import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.QueueTimeMetricsImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.serde.InternalSerde;
@@ -45,8 +44,8 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     private final ExecutorService outgoingExecutor = Executors.newSingleThreadExecutor();
 
     public ArangoExecutorAsync(final VstCommunicationAsync communication, final InternalSerde util,
-                               final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
-        super(util, documentCache, qtMetrics, timeoutMs);
+                               final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+        super(util, qtMetrics, timeoutMs);
         this.communication = communication;
     }
 

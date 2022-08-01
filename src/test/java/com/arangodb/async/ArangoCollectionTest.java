@@ -1226,7 +1226,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void truncate() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         db.collection(COLLECTION_NAME).insertDocument(doc, null).get();
         final BaseDocument readResult = db.collection(COLLECTION_NAME)
                 .getDocument(doc.getKey(), BaseDocument.class, null).get();

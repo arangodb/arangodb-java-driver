@@ -21,10 +21,7 @@
 package com.arangodb.serde;
 
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
+import com.arangodb.*;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -98,7 +95,9 @@ class CustomSerdeTest {
             module.addDeserializer(Person.class, new PersonDeserializer());
             mapper.registerModule(module);
         });
-        arangoDB = new ArangoDB.Builder().serializer(serde).build();
+        arangoDB = new ArangoDB.Builder()
+                .useProtocol(Protocol.VST)
+                .serializer(serde).build();
 
         db = arangoDB.db(DbName.of("custom-serde-test"));
         if (!db.exists()) {

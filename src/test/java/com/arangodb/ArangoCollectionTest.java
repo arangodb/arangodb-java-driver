@@ -144,7 +144,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -430,7 +431,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void getDocumentDirtyRead(ArangoCollection collection) throws InterruptedException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         collection.insertDocument(doc, new DocumentCreateOptions());
         Thread.sleep(2000);
         final RawJson document = collection.getDocument(doc.getKey(), RawJson.class, new DocumentReadOptions().allowDirtyRead(true));
@@ -555,9 +556,12 @@ class ArangoCollectionTest extends BaseJunit5 {
     void updateDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(updateResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -909,9 +913,12 @@ class ArangoCollectionTest extends BaseJunit5 {
     void replaceDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(replaceResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1027,11 +1034,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc);
-        final String revision = doc.getRevision();
-        assertThat(revision).isNotNull();
         final DocumentUpdateEntity<BaseDocument> meta = collection.replaceDocument(createResult.getKey(), doc, new DocumentReplaceOptions().silent(true));
         assertThat(meta.getRev()).isNull();
-        assertThat(doc.getRevision()).isEqualTo(revision);
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1645,7 +1651,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void truncate(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         collection.insertDocument(doc, null);
         final BaseDocument readResult = collection.getDocument(doc.getKey(), BaseDocument.class, null);
         assertThat(readResult.getKey()).isEqualTo(doc.getKey());

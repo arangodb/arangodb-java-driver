@@ -26,12 +26,8 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -75,15 +71,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
-        return response -> {
-            final VertexEntity doc = getSerde().deserialize(response.getBody(), "/vertex", VertexEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.ID, doc.getId());
-            values.put(DocumentFields.KEY, doc.getKey());
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexEntity.class);
     }
 
     protected Request getVertexRequest(final String key, final GraphDocumentReadOptions options) {
@@ -115,13 +103,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
-        return response -> {
-            final VertexUpdateEntity doc = getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
     }
 
     protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
@@ -138,13 +120,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
-        return response -> {
-            final VertexUpdateEntity doc = getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
-            final Map<String, String> values = new HashMap<>();
-            values.put(DocumentFields.REV, doc.getRev());
-            executor.documentCache().setValues(value, values);
-            return doc;
-        };
+        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
     }
 
     protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {

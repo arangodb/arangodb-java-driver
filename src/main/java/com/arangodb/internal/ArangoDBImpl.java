@@ -36,7 +36,6 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -64,8 +63,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
         super(new ArangoExecutorSync(
                         createProtocol(vstBuilder, httpBuilder, util, protocol),
-                        util,
-                        new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
+                        util, new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
                 context);
 

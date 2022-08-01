@@ -36,22 +36,15 @@ public abstract class ArangoExecutor {
         return serde.deserialize(response.getBody(), type);
     }
 
-    private final DocumentCache documentCache;
     private final QueueTimeMetricsImpl qtMetrics;
     private final InternalSerde serde;
     private final String timeoutS;
 
-    protected ArangoExecutor(final InternalSerde serde, final DocumentCache documentCache,
-                             final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+    protected ArangoExecutor(final InternalSerde serde, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super();
-        this.documentCache = documentCache;
         this.qtMetrics = qtMetrics;
         this.serde = serde;
         timeoutS = timeoutMs >= 1000 ? Integer.toString(timeoutMs / 1000) : null;
-    }
-
-    public DocumentCache documentCache() {
-        return documentCache;
     }
 
     public interface ResponseDeserializer<T> {

@@ -98,7 +98,8 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
     void insertEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
         final EdgeEntity edge = edges.insertEdge(value);
-        assertThat(value.getRevision()).isEqualTo(edge.getRev());
+        assertThat(value.getRevision()).isNull();
+        assertThat(edge.getRev()).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -206,10 +207,13 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
     void replaceEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         final EdgeEntity createResult = edges.insertEdge(doc);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final EdgeUpdateEntity replaceResult = edges
                 .replaceEdge(createResult.getKey(), doc);
-        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(replaceResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -287,10 +291,13 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
     void updateEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         final EdgeEntity createResult = edges.insertEdge(doc);
-        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final EdgeUpdateEntity updateResult = edges
                 .updateEdge(createResult.getKey(), doc);
-        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(doc.getRevision()).isNull();
+        assertThat(createResult.getRev()).isNotNull();
+        assertThat(updateResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")
