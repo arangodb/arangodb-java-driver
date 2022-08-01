@@ -74,16 +74,16 @@
     ]
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$TestUpdateEntity",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allDeclaredConstructors":true
+    "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$TestUpdateEntitySerializeNullFalse",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allDeclaredConstructors":true
+    "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntitySerializeNullFalse",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
   },
   {
     "name": "com.arangodb.ArangoDatabaseTest$TransactionTestEntity",
@@ -264,9 +264,27 @@
     "allDeclaredConstructors": true
   },
   {
-    "name":"com.arangodb.mapping.annotations.AnnotatedEntity",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allDeclaredConstructors":true
+    "name": "com.arangodb.mapping.annotations.AnnotatedEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.deser.std.DateDeserializers$SqlDateDeserializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.ser.std.SqlDateSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   }
 ]
