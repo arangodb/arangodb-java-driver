@@ -171,4 +171,4 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
-        run: mvn --no-transfer-progress test -Djackson.version=${{jackson-version}}
+        run: mvn --no-transfer-progress test -Djackson.version=${{matrix.jackson-version}}
