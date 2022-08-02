@@ -11,3 +11,4 @@
 
 /docker/data
 /test-results-native/
+.flattened-pom.xml
