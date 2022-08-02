@@ -1,5 +1,14 @@
 [
   {
+    "name": "org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "ch.qos.logback.classic.encoder.PatternLayoutEncoder",
     "allPublicMethods": true,
     "methods": [
