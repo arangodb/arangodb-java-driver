@@ -72,9 +72,12 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
 
     @Override
     public byte[] serializeUserData(Object value) {
+        if (value == null) {
+            return serialize(null);
+        }
         Class<?> clazz = value.getClass();
-        if (    RawJson.class.equals(clazz) ||
-                RawBytes.class.equals(clazz) ||
+        if (RawJson.class.isAssignableFrom(clazz) ||
+                RawBytes.class.isAssignableFrom(clazz) ||
                 JsonNode.class.isAssignableFrom(clazz) ||
                 BaseDocument.class.isAssignableFrom(clazz)
         ) {
@@ -95,7 +98,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
 
     @Override
     public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
-        if (    RawJson.class.isAssignableFrom(clazz) ||
+        if (RawJson.class.isAssignableFrom(clazz) ||
                 RawBytes.class.isAssignableFrom(clazz) ||
                 JsonNode.class.isAssignableFrom(clazz) ||
                 BaseDocument.class.isAssignableFrom(clazz)

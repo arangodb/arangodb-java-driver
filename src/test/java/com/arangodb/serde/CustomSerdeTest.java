@@ -131,9 +131,9 @@ class CustomSerdeTest {
     void manualCustomPersonDeserializer() {
         Person person = new Person();
         person.name = "Joe";
-        ArangoSerde serialization = arangoDB.getUserSerde();
-        byte[] serialized = serialization.serialize(person);
-        Person deserializedPerson = serialization.deserialize(serialized, Person.class);
+        InternalSerde serialization = arangoDB.getSerde();
+        byte[] serialized = serialization.serializeUserData(person);
+        Person deserializedPerson = serialization.deserializeUserData(serialized, Person.class);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
@@ -229,7 +229,7 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.getUserSerde().deserialize(arangoDB.getUserSerde().serialize(null), String.class);
+        final String json = arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null), String.class);
         assertThat(json).isNull();
     }
 

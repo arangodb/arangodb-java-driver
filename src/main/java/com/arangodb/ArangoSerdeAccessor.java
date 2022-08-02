@@ -20,7 +20,6 @@
 
 package com.arangodb;
 
-import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.InternalSerde;
 
 /**
@@ -34,12 +33,5 @@ public interface ArangoSerdeAccessor {
      * @return ArangoSerde
      */
     InternalSerde getSerde();
-
-    /**
-     * Returns serialization implementation for serializing and deserializing user's classes.
-     *
-     * @return ArangoSerde
-     */
-    ArangoSerde getUserSerde();
 
 }

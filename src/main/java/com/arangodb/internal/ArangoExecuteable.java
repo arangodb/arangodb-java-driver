@@ -23,7 +23,6 @@ package com.arangodb.internal;
 import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -55,11 +54,6 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     @Override
     public InternalSerde getSerde() {
         return serde;
-    }
-
-    @Override
-    public ArangoSerde getUserSerde() {
-        return serde.getUserSerde();
     }
 
     protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
