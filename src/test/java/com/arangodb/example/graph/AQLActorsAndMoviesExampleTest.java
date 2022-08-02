@@ -32,6 +32,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -317,7 +319,7 @@ class AQLActorsAndMoviesExampleTest {
             final String title,
             final int released,
             final String tagline) {
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.setKey(key);
         value.addAttribute("title", title);
         value.addAttribute("released", released);
@@ -330,7 +332,7 @@ class AQLActorsAndMoviesExampleTest {
             final String key,
             final String name,
             final int born) {
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.setKey(key);
         value.addAttribute("name", name);
         value.addAttribute("born", born);

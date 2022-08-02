@@ -333,11 +333,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getSchema().getRule()).isEqualTo(rule);
         assertThat(props.getSchema().getMessage()).isEqualTo(message);
 
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("number", 33);
         db.collection(name).insertDocument(doc);
 
-        BaseDocument wrongDoc = new BaseDocument();
+        BaseDocument wrongDoc = new BaseDocument(UUID.randomUUID().toString());
         wrongDoc.addAttribute("number", "notANumber");
         Throwable thrown = catchThrowable(() -> db.collection(name).insertDocument(wrongDoc));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -816,7 +816,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithBindVars(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
-            final BaseDocument baseDocument = new BaseDocument();
+            final BaseDocument baseDocument = new BaseDocument(UUID.randomUUID().toString());
             baseDocument.addAttribute("age", 20 + i);
             db.collection(CNAME1).insertDocument(baseDocument, null);
         }

@@ -109,7 +109,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @SuppressWarnings("unchecked")
     void insertDocumentWithArrayWithNullValues(ArangoCollection collection) {
         List<String> arr = Arrays.asList("a", null);
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("arr", arr);
 
         final DocumentCreateEntity<BaseDocument> insertedDoc = collection.insertDocument(doc, new DocumentCreateOptions().returnNew(true));
@@ -127,7 +127,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     @Disabled
     void insertDocumentWithNullValues(ArangoCollection collection) {
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("null", null);
 
         final DocumentCreateEntity<BaseDocument> insertedDoc = collection.insertDocument(doc, new DocumentCreateOptions().returnNew(true));
@@ -142,7 +142,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentUpdateRev(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         assertThat(doc.getRevision()).isNull();
         assertThat(createResult.getRev()).isNotNull();
@@ -221,7 +221,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
 
@@ -239,7 +239,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         Map<String, String> fieldA = Collections.singletonMap("a", "a");
         doc.addAttribute("foo", fieldA);
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
@@ -311,7 +311,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void insertDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final String key = "testkey-" + UUID.randomUUID();
         doc.setKey(key);
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc, new DocumentCreateOptions().silent(true));
@@ -509,7 +509,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocument(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
@@ -554,7 +554,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentUpdateRev(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(createResult.getKey(), doc, null);
         assertThat(doc.getRevision()).isNull();
@@ -567,7 +567,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentIfMatch(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
@@ -594,7 +594,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentIfMatchFail(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
@@ -610,7 +610,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentReturnNew(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         doc.updateAttribute("a", "test1");
@@ -632,7 +632,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentReturnOld(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         doc.updateAttribute("a", "test1");
@@ -653,7 +653,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentKeepNullTrue(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         doc.updateAttribute("a", null);
@@ -672,7 +672,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentKeepNullFalse(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         doc.updateAttribute("a", null);
@@ -761,7 +761,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentMergeObjectsTrue(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
@@ -788,7 +788,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentMergeObjectsFalse(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
@@ -815,7 +815,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentIgnoreRevsFalse(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         doc.updateAttribute("a", "test1");
@@ -887,10 +887,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocument(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, null);
         assertThat(replaceResult).isNotNull();
@@ -911,7 +911,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentUpdateRev(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, null);
         assertThat(doc.getRevision()).isNull();
@@ -924,10 +924,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentIfMatch(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, options);
@@ -947,10 +947,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentIfMatchFail(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
 
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch("no");
@@ -962,10 +962,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentIgnoreRevsFalse(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         doc.setRevision("no");
 
@@ -977,10 +977,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentReturnNew(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnNew(true);
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, options);
@@ -998,10 +998,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentReturnOld(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnOld(true);
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc, options);
@@ -1032,7 +1032,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void replaceDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc);
         final DocumentUpdateEntity<BaseDocument> meta = collection.replaceDocument(createResult.getKey(), doc, new DocumentReplaceOptions().silent(true));
         assertThat(meta.getRev()).isNull();
@@ -1055,7 +1055,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void deleteDocument(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         collection.deleteDocument(createResult.getKey(), null, null);
         final BaseDocument document = collection.getDocument(createResult.getKey(), BaseDocument.class, null);
@@ -1065,7 +1065,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void deleteDocumentReturnOld(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
@@ -1079,7 +1079,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void deleteDocumentIfMatch(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
         collection.deleteDocument(createResult.getKey(), null, options);
@@ -1090,7 +1090,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void deleteDocumentIfMatchFail(ArangoCollection collection) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
         Throwable thrown = catchThrowable(() -> collection.deleteDocument(createResult.getKey(), null, options));
@@ -1753,11 +1753,11 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentsOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        final BaseDocument doc1 = new BaseDocument();
+        final BaseDocument doc1 = new BaseDocument(UUID.randomUUID().toString());
         doc1.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> meta1 = collection.insertDocument(doc1);
 
-        final BaseDocument doc2 = new BaseDocument();
+        final BaseDocument doc2 = new BaseDocument(UUID.randomUUID().toString());
         doc2.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> meta2 = collection.insertDocument(doc2);
 
@@ -2237,12 +2237,12 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsByKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -2264,12 +2264,12 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsByDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -2288,7 +2288,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsByKeyOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -2309,7 +2309,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsByDocumentOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -2353,12 +2353,12 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsByDocumentsNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -2407,7 +2407,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void updateDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -2489,7 +2489,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void replaceDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }

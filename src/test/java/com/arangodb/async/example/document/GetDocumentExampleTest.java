@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,7 @@ class GetDocumentExampleTest extends ExampleBase {
 
     @BeforeAll
     static void before() throws InterruptedException, ExecutionException {
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value).get();
         key = doc.getKey();

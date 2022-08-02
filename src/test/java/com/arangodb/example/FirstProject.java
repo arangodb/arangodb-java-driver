@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 public class FirstProject {
 
@@ -32,7 +33,7 @@ public class FirstProject {
         }
 
         // creating a document
-        final BaseDocument myObject = new BaseDocument();
+        final BaseDocument myObject = new BaseDocument(UUID.randomUUID().toString());
         myObject.setKey("myKey");
         myObject.addAttribute("a", "Foo");
         myObject.addAttribute("b", 42);
@@ -95,7 +96,7 @@ public class FirstProject {
         // create some documents for the next step
         final ArangoCollection collection = arangoDB.db(dbName).collection(collectionName);
         for (int i = 0; i < 10; i++) {
-            final BaseDocument value = new BaseDocument();
+            final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
             value.setKey(String.valueOf(i));
             value.addAttribute("name", "Homer");
             collection.insertDocument(value);

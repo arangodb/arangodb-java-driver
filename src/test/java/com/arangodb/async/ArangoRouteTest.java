@@ -26,6 +26,7 @@ import com.arangodb.internal.ArangoRequestParam;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 
@@ -50,7 +51,7 @@ class ArangoRouteTest extends BaseTest {
 		final ArangoCollectionAsync collection = db.collection("route-test-col");
 		try {
 			collection.create();
-			final BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
 			collection.insertDocument(doc).get();
 			db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
 					.get().get();
@@ -68,7 +69,7 @@ class ArangoRouteTest extends BaseTest {
         final ArangoCollectionAsync collection = db.collection("route-test-col");
         try {
             collection.create().get();
-            final BaseDocument doc = new BaseDocument();
+            final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
             collection.insertDocument(doc).get();
             db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
                     .route(doc.getId()).get().get();

@@ -118,14 +118,14 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         // #########################################################
 
         UUID uuid = UUID.randomUUID();
-        BaseDocument bd = new BaseDocument();
+        BaseDocument bd = new BaseDocument(UUID.randomUUID().toString());
         bd.setKey(uuid.toString());
         bd.addAttribute("name", "Paul");
 
         vertices.insertVertex(bd);
 
         UUID uuid2 = UUID.randomUUID();
-        BaseDocument bd2 = new BaseDocument();
+        BaseDocument bd2 = new BaseDocument(UUID.randomUUID().toString());
         bd2.setKey(uuid2.toString());
         bd2.addAttribute("name", "Paul");
 
@@ -135,7 +135,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void insertVertexUpdateRev(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity vertex = vertices.insertVertex(doc, null);
         assertThat(doc.getRevision()).isNull();
         assertThat(vertex.getRev()).isNotNull();
@@ -201,11 +201,11 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void replaceVertex(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final VertexUpdateEntity replaceResult = vertices
                 .replaceVertex(createResult.getKey(), doc, null);
@@ -226,7 +226,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void replaceVertexUpdateRev(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         final VertexUpdateEntity replaceResult = vertices
@@ -241,11 +241,11 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void replaceVertexIfMatch(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity replaceResult = vertices
@@ -267,11 +267,11 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void replaceVertexIfMatchFail(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch("no");
         Throwable thrown = catchThrowable(() -> vertices.replaceVertex(createResult.getKey(), doc, options));
@@ -285,7 +285,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertex(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = vertices
@@ -314,7 +314,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertexUpdateRev(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         final VertexUpdateEntity updateResult = vertices
@@ -329,7 +329,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertexIfMatch(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = vertices
@@ -359,7 +359,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertexIfMatchFail(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = vertices
@@ -380,7 +380,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertexKeepNullTrue(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
@@ -396,14 +396,14 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
-        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties().keySet()).hasSize(4);
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void updateVertexKeepNullFalse(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
@@ -427,7 +427,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void deleteVertex(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         vertices.deleteVertex(createResult.getKey(), null);
@@ -439,7 +439,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void deleteVertexIfMatch(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
@@ -452,7 +452,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("vertices")
     void deleteVertexIfMatchFail(ArangoVertexCollection vertices) {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch("no");

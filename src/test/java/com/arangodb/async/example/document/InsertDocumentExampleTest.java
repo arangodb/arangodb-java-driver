@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +47,7 @@ class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
     void insertBaseDocument() throws ExecutionException, InterruptedException {
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
         collection.insertDocument(value)
                 .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())

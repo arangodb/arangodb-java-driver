@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.internal.DocumentFields;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Map;
 
@@ -29,12 +29,7 @@ import java.util.Map;
  */
 public final class BaseEdgeDocument extends BaseDocument {
 
-    private static final long serialVersionUID = 6904923804449368783L;
-
-    @From
-    private String from;
-    @To
-    private String to;
+    private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev", "_from", "_to"};
 
     public BaseEdgeDocument() {
         super();
@@ -42,92 +37,57 @@ public final class BaseEdgeDocument extends BaseDocument {
 
     public BaseEdgeDocument(final String from, final String to) {
         super();
-        this.from = from;
-        this.to = to;
+        setFrom(from);
+        setTo(to);
     }
 
     public BaseEdgeDocument(final String key, final String from, final String to) {
         super(key);
-        this.from = from;
-        this.to = to;
+        setFrom(from);
+        setTo(to);
     }
 
     public BaseEdgeDocument(final Map<String, Object> properties) {
         super(properties);
-        final Object tmpFrom = properties.remove(DocumentFields.FROM);
-        if (tmpFrom != null) {
-            from = tmpFrom.toString();
-        }
-        final Object tmpTo = properties.remove(DocumentFields.TO);
-        if (tmpTo != null) {
-            to = tmpTo.toString();
-        }
     }
 
+    @JsonIgnore
     public String getFrom() {
-        return from;
+        return (String) getAttribute("_from");
     }
 
     public void setFrom(final String from) {
-        this.from = from;
+        addAttribute("_from", from);
     }
 
+    @JsonIgnore
     public String getTo() {
-        return to;
+        return (String) getAttribute("_to");
     }
 
     public void setTo(final String to) {
-        this.to = to;
+        addAttribute("_to", to);
+    }
+
+    @Override
+    protected String[] getMetaProps() {
+        return META_PROPS;
     }
 
     @Override
     public String toString() {
-        return "BaseDocument [documentRevision=" +
-                revision +
-                ", documentHandle=" +
-                id +
-                ", documentKey=" +
-                key +
-                ", from=" +
-                from +
-                ", to=" +
-                to +
-                ", properties=" +
-                properties +
-                "]";
+        return "BaseEdgeDocument{properties=" + getProperties() + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((from == null) ? 0 : from.hashCode());
-        result = prime * result + ((to == null) ? 0 : to.hashCode());
-        return result;
+        return super.hashCode();
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final BaseEdgeDocument other = (BaseEdgeDocument) obj;
-        if (from == null) {
-            if (other.from != null) {
-                return false;
-            }
-        } else if (!from.equals(other.from)) {
-            return false;
-        }
-        if (to == null) {
-            return other.to == null;
-        } else return to.equals(other.to);
-    }
-
 }

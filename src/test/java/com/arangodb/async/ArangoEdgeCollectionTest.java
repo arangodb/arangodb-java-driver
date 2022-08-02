@@ -155,7 +155,7 @@ class ArangoEdgeCollectionTest extends BaseTest {
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final EdgeUpdateEntity replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .replaceEdge(createResult.getKey(), doc, null).get();
@@ -179,7 +179,7 @@ class ArangoEdgeCollectionTest extends BaseTest {
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
@@ -204,7 +204,7 @@ class ArangoEdgeCollectionTest extends BaseTest {
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         try {
             final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch("no");
@@ -311,7 +311,7 @@ class ArangoEdgeCollectionTest extends BaseTest {
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
-        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties().keySet()).hasSize(6);
         assertThat(readResult.getProperties()).containsKey("a");
     }
 

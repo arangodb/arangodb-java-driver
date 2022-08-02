@@ -677,7 +677,7 @@ class ArangoDatabaseTest extends BaseTest {
         try {
             db.createCollection(COLLECTION_NAME, null).get();
             for (int i = 0; i < 10; i++) {
-                final BaseDocument baseDocument = new BaseDocument();
+                final BaseDocument baseDocument = new BaseDocument(UUID.randomUUID().toString());
                 baseDocument.addAttribute("age", 20 + i);
                 db.collection(COLLECTION_NAME).insertDocument(baseDocument, null).get();
             }
@@ -968,7 +968,7 @@ class ArangoDatabaseTest extends BaseTest {
     void getDocument() throws InterruptedException, ExecutionException {
         String collectionName = COLLECTION_NAME + "getDocument";
         db.createCollection(collectionName).get();
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.setKey("123");
         db.collection(collectionName).insertDocument(value).get();
         db.getDocument(collectionName + "/123", BaseDocument.class)

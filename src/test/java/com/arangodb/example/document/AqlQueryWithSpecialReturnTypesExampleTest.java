@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +52,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
 
     private static void createExamples() {
         for (int i = 0; i < 100; i++) {
-            final BaseDocument value = new BaseDocument();
+            final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
             value.addAttribute("name", "TestUser" + i);
             value.addAttribute("gender", (i % 2) == 0 ? Gender.MALE : Gender.FEMALE);
             value.addAttribute("age", i + 10);

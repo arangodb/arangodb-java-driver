@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 
@@ -139,11 +140,11 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void replaceVertex() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .replaceVertex(createResult.getKey(), doc, null).get();
@@ -163,11 +164,11 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void replaceVertexIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
@@ -188,11 +189,11 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void replaceVertexIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         try {
             final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch("no");
@@ -206,7 +207,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void updateVertex() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -234,7 +235,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void updateVertexIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -263,7 +264,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void updateVertexIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -283,7 +284,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void updateVertexKeepNullTrue() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
@@ -299,13 +300,13 @@ class ArangoVertexCollectionTest extends BaseTest {
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
-        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties().keySet()).hasSize(4);
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
     @Test
     void updateVertexKeepNullFalse() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
@@ -328,7 +329,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void deleteVertex() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null).get();
@@ -343,7 +344,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void deleteVertexIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
@@ -359,7 +360,7 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @Test
     void deleteVertexIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch("no");

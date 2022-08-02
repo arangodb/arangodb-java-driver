@@ -254,7 +254,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocument() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
@@ -306,7 +306,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
@@ -339,7 +339,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
@@ -358,7 +358,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentReturnNew() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -383,7 +383,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentReturnOld() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -407,7 +407,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentKeepNullTrue() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -430,7 +430,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentKeepNullFalse() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -456,7 +456,7 @@ class ArangoCollectionTest extends BaseTest {
     @SuppressWarnings("unchecked")
     @Test
     void updateDocumentMergeObjectsTrue() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
@@ -488,7 +488,7 @@ class ArangoCollectionTest extends BaseTest {
     @SuppressWarnings("unchecked")
     @Test
     void updateDocumentMergeObjectsFalse() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
@@ -519,7 +519,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void updateDocumentIgnoreRevsFalse() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -536,11 +536,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocument() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
                 .replaceDocument(createResult.getKey(), doc, null);
@@ -565,11 +565,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocumentIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch(createResult.getRev());
         final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
@@ -593,11 +593,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocumentIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         try {
             final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch("no");
@@ -610,11 +610,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocumentIgnoreRevsFalse() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         doc.setRevision("no");
         try {
@@ -628,11 +628,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocumentReturnNew() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnNew(true);
         db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options)
@@ -652,11 +652,11 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void replaceDocumentReturnOld() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnOld(true);
         db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options)
@@ -676,7 +676,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void deleteDocument() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
         db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, null).get();
@@ -687,7 +687,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void deleteDocumentReturnOld() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
@@ -704,7 +704,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void deleteDocumentIfMatch() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
@@ -716,7 +716,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void deleteDocumentIfMatchFail() throws InterruptedException, ExecutionException {
-        final BaseDocument doc = new BaseDocument();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
@@ -1774,12 +1774,12 @@ class ArangoCollectionTest extends BaseTest {
     void deleteDocumentsByKey() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -1803,12 +1803,12 @@ class ArangoCollectionTest extends BaseTest {
     void deleteDocumentsByDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -1829,7 +1829,7 @@ class ArangoCollectionTest extends BaseTest {
     void deleteDocumentsByKeyOne() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -1852,7 +1852,7 @@ class ArangoCollectionTest extends BaseTest {
     void deleteDocumentsByDocumentOne() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -1903,12 +1903,12 @@ class ArangoCollectionTest extends BaseTest {
     void deleteDocumentsByDocumentsNotExisting() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -1925,12 +1925,12 @@ class ArangoCollectionTest extends BaseTest {
     void updateDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("2");
             values.add(e);
         }
@@ -1983,7 +1983,7 @@ class ArangoCollectionTest extends BaseTest {
     void updateDocumentsOne() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }
@@ -2057,7 +2057,7 @@ class ArangoCollectionTest extends BaseTest {
     void replaceDocumentsOne() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
-            final BaseDocument e = new BaseDocument();
+            final BaseDocument e = new BaseDocument(UUID.randomUUID().toString());
             e.setKey("1");
             values.add(e);
         }

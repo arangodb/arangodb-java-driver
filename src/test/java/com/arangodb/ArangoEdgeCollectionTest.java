@@ -184,7 +184,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = edges.insertEdge(doc);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final EdgeUpdateEntity replaceResult = edges
                 .replaceEdge(createResult.getKey(), doc);
@@ -222,7 +222,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = edges.insertEdge(doc);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity replaceResult = edges
@@ -247,7 +247,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = edges.insertEdge(doc);
-        doc.getProperties().clear();
+        doc.removeAttribute("a");
         doc.addAttribute("b", "test");
         final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch("no");
         Throwable thrown = catchThrowable(() -> edges.replaceEdge(createResult.getKey(), doc, options));
@@ -366,7 +366,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         final BaseEdgeDocument readResult = edges
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class);
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
-        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties().keySet()).hasSize(6);
         assertThat(readResult.getProperties()).containsKey("a");
     }
 

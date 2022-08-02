@@ -20,167 +20,130 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.internal.DocumentFields;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
  */
-public class BaseDocument implements Serializable {
+public class BaseDocument {
 
-    private static final long serialVersionUID = -1824742667228719116L;
-
-    @Id
-    protected String id;
-    @Key
-    protected String key;
-    @Rev
-    protected String revision;
-    protected Map<String, Object> properties;
+    private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev"};
+    private final Map<String, Object> properties;
 
     public BaseDocument() {
-        super();
         properties = new HashMap<>();
     }
 
     public BaseDocument(final String key) {
         this();
-        this.key = key;
+        setKey(key);
     }
 
     public BaseDocument(final Map<String, Object> properties) {
         this();
-        final Object tmpId = properties.remove(DocumentFields.ID);
-        if (tmpId != null) {
-            id = tmpId.toString();
-        }
-        final Object tmpKey = properties.remove(DocumentFields.KEY);
-        if (tmpKey != null) {
-            key = tmpKey.toString();
-        }
-        final Object tmpRev = properties.remove(DocumentFields.REV);
-        if (tmpRev != null) {
-            revision = tmpRev.toString();
-        }
-        this.properties = properties;
+        setProperties(properties);
     }
 
+    @JsonIgnore
     public String getId() {
-        return id;
+        return (String) getAttribute("_id");
     }
 
     public void setId(final String id) {
-        this.id = id;
+        addAttribute("_id", id);
     }
 
+    @JsonIgnore
     public String getKey() {
-        return key;
+        return (String) getAttribute("_key");
     }
 
     public void setKey(final String key) {
-        this.key = key;
+        addAttribute("_key", key);
     }
 
+    @JsonIgnore
     public String getRevision() {
-        return revision;
+        return (String) getAttribute("_rev");
     }
 
-    public void setRevision(final String revision) {
-        this.revision = revision;
+    public void setRevision(final String rev) {
+        addAttribute("_rev", rev);
     }
 
     @JsonInclude
     @JsonAnyGetter
     public Map<String, Object> getProperties() {
-        return properties;
+        return Collections.unmodifiableMap(properties);
     }
 
-    public void setProperties(final Map<String, Object> properties) {
-        this.properties = properties;
-    }
-
-    @JsonInclude
-    @JsonAnySetter
-    public void addAttribute(final String key, final Object value) {
-        properties.put(key, value);
-    }
-
-    public void updateAttribute(final String key, final Object value) {
-        if (properties.containsKey(key)) {
-            properties.put(key, value);
+    public void setProperties(final Map<String, Object> props) {
+        for (String f : getMetaProps()) {
+            requireString(f, props.get(f));
         }
+        this.properties.putAll(props);
     }
 
     public Object getAttribute(final String key) {
         return properties.get(key);
     }
 
+    @JsonInclude
+    @JsonAnySetter
+    public void addAttribute(final String key, final Object value) {
+        for (String f : getMetaProps()) {
+            if (f.equals(key)) {
+                requireString(key, value);
+            }
+        }
+        properties.put(key, value);
+    }
+
+    public void updateAttribute(final String key, final Object value) {
+        if (properties.containsKey(key)) {
+            addAttribute(key, value);
+        }
+    }
+
+    public void removeAttribute(final String key) {
+        properties.remove(key);
+    }
+
+    protected String[] getMetaProps() {
+        return META_PROPS;
+    }
+
+    private void requireString(final String k, final Object v) {
+        if (v != null && !(v instanceof String)) {
+            throw new IllegalArgumentException(k + " must be a String");
+        }
+    }
+
     @Override
     public String toString() {
-        return "BaseDocument [documentRevision=" +
-                revision +
-                ", documentHandle=" +
-                id +
-                ", documentKey=" +
-                key +
-                ", properties=" +
-                properties +
-                "]";
+        return "BaseDocument{" +
+                "properties=" + properties +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseDocument that = (BaseDocument) o;
+        return properties.equals(that.properties);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-        return result;
+        return Objects.hash(properties);
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final BaseDocument other = (BaseDocument) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (key == null) {
-            if (other.key != null) {
-                return false;
-            }
-        } else if (!key.equals(other.key)) {
-            return false;
-        }
-        if (properties == null) {
-            if (other.properties != null) {
-                return false;
-            }
-        } else if (!properties.equals(other.properties)) {
-            return false;
-        }
-        if (revision == null) {
-            return other.revision == null;
-        } else return revision.equals(other.revision);
-    }
-
 }

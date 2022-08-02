@@ -97,9 +97,9 @@ class DocumentTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertAsBaseDocument(ArangoCollection collection) {
-        final BaseDocument document = new BaseDocument();
+        final BaseDocument document = new BaseDocument(UUID.randomUUID().toString());
         {
-            final BaseDocument article = new BaseDocument();
+            final BaseDocument article = new BaseDocument(UUID.randomUUID().toString());
             document.addAttribute("article", article);
             article.addAttribute("artist", "PREGARDIEN/RHEINISCHE KANTOREI/DAS");
             article.addAttribute("releaseDate", "1970-01-01");
@@ -111,7 +111,7 @@ class DocumentTest extends BaseJunit5 {
             article.addAttribute("title", "BACH ST MATTHEW PASSION BWV244");
             article.addAttribute("barcode", new String[]{"4006408600466"});
             article.addAttribute("conductor", "MAX, H.");
-            final BaseDocument stock = new BaseDocument();
+            final BaseDocument stock = new BaseDocument(UUID.randomUUID().toString());
             document.addAttribute("stock", stock);
             stock.addAttribute("status", "RMV");
             stock.addAttribute("lastUpdate", "2016-11-01 00:00");

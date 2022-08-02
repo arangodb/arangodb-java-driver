@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +44,7 @@ class GetDocumentExampleTest extends ExampleBase {
 
     @BeforeAll
     static void before() {
-        final BaseDocument value = new BaseDocument();
+        final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
         key = doc.getKey();

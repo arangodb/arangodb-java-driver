@@ -42,6 +42,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -153,7 +154,7 @@ class StreamTransactionGraphTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
 
         VertexEntity createdVertex = vertexCollection1.insertVertex(doc, null).get();
@@ -164,8 +165,7 @@ class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // replace vertex from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         vertexCollection1.replaceVertex(createdVertex.getKey(), doc,
                 new VertexReplaceOptions().streamTransactionId(tx.getId())).get();
 
@@ -190,7 +190,7 @@ class StreamTransactionGraphTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
 
         VertexEntity createdDoc = vertexCollection1.insertVertex(doc, null).get();
@@ -201,8 +201,7 @@ class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // update vertex from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         vertexCollection1.updateVertex(createdDoc.getKey(), doc, new VertexUpdateOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the vertex has not been updated from outside the tx
@@ -316,8 +315,7 @@ class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // replace edge from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         edgeCollection.replaceEdge(createdEdge.getKey(), doc,
                 new EdgeReplaceOptions().streamTransactionId(tx.getId())).get();
 
@@ -353,8 +351,7 @@ class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // update edge from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         edgeCollection.updateEdge(createdDoc.getKey(), doc, new EdgeUpdateOptions().streamTransactionId(tx.getId()))
                 .get();
 

@@ -375,7 +375,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
@@ -385,8 +385,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
         // replace document from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         collection.replaceDocument(createdDoc.getKey(), doc,
                 new DocumentReplaceOptions().streamTransactionId(tx.getId()));
 
@@ -426,8 +425,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
         List<BaseDocument> modifiedDocs = createdDocs.stream().peek(doc -> {
-            doc.getProperties().clear();
-            doc.addAttribute("test", "bar");
+            doc.updateAttribute("test", "bar");
         }).collect(Collectors.toList());
 
         // replace document from within the tx
@@ -460,7 +458,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        BaseDocument doc = new BaseDocument();
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
@@ -470,8 +468,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
         // update document from within the tx
-        doc.getProperties().clear();
-        doc.addAttribute("test", "bar");
+        doc.updateAttribute("test", "bar");
         collection
                 .updateDocument(createdDoc.getKey(), doc, new DocumentUpdateOptions().streamTransactionId(tx.getId()));
 
@@ -513,8 +510,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
         List<BaseDocument> modifiedDocs = createdDocs.stream().peek(doc -> {
-            doc.getProperties().clear();
-            doc.addAttribute("test", "bar");
+            doc.updateAttribute("test", "bar");
         }).collect(Collectors.toList());
 
         // update documents from within the tx
