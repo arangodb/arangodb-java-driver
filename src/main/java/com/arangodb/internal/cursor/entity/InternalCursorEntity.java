@@ -38,7 +38,7 @@ public final class InternalCursorEntity implements MetaAware {
 
     private String id;
     private Integer count;
-    private Extras extra = new Extras();
+    private final Extras extra = new Extras();
     private Boolean cached;
     private Boolean hasMore;
     private JsonNode result;
@@ -110,7 +110,7 @@ public final class InternalCursorEntity implements MetaAware {
 
     public static final class Extras {
         private CursorStats stats;
-        private Collection<CursorWarning> warnings = Collections.emptyList();
+        private final Collection<CursorWarning> warnings = Collections.emptyList();
 
         public CursorStats getStats() {
             return stats;
