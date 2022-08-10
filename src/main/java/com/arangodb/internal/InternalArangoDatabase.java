@@ -36,6 +36,8 @@ import com.arangodb.velocystream.RequestType;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -111,7 +113,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(CollectionEntity.class));
+                constructListType(CollectionEntity.class));
     }
 
     protected Request dropRequest() {
@@ -257,7 +259,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(AqlFunctionEntity.class));
+                constructListType(AqlFunctionEntity.class));
     }
 
     protected Request createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
@@ -274,7 +276,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), "/graphs",
-                SerdeUtils.INSTANCE.constructListType(GraphEntity.class));
+                constructListType(GraphEntity.class));
     }
 
     protected Request transactionRequest(final String action, final TransactionOptions options) {
@@ -306,7 +308,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<TransactionEntity>> transactionsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), "/transactions",
-                SerdeUtils.INSTANCE.constructListType(TransactionEntity.class));
+                constructListType(TransactionEntity.class));
     }
 
     protected Request commitStreamTransactionRequest(String id) {
@@ -335,7 +337,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<ViewEntity>> getViewsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(ViewEntity.class));
+                constructListType(ViewEntity.class));
     }
 
     protected Request createViewRequest(final String name, final ViewType type) {
@@ -356,7 +358,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(SearchAnalyzer.class));
+                constructListType(SearchAnalyzer.class));
     }
 
     protected Request createAnalyzerRequest(final SearchAnalyzer options) {

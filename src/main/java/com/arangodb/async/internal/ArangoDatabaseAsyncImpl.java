@@ -44,6 +44,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -282,13 +284,13 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public CompletableFuture<Collection<QueryEntity>> getCurrentlyRunningQueries() {
         return executor.execute(getCurrentlyRunningQueriesRequest(),
-                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
+                constructListType(QueryEntity.class));
     }
 
     @Override
     public CompletableFuture<Collection<QueryEntity>> getSlowQueries() {
         return executor.execute(getSlowQueriesRequest(),
-                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
+                constructListType(QueryEntity.class));
     }
 
     @Override

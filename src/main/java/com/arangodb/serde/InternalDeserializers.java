@@ -123,6 +123,7 @@ public final class InternalDeserializers {
         }
     };
 
+    @SuppressWarnings("unchecked")
     static final JsonDeserializer<Response> RESPONSE = new JsonDeserializer<Response>() {
         @Override
         public Response deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {

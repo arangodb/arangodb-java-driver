@@ -35,6 +35,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+import static com.arangodb.serde.SerdeUtils.constructParametricType;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -93,14 +96,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(
-            final T value, final DocumentCreateOptions options) {
-        return response -> {
-            Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentCreateEntity.class, value.getClass());
-            return getSerde().deserialize(response.getBody(), type);
-        };
-    }
-
     protected <T> Request insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions params) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_DOCUMENT, name);
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -130,7 +125,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentCreateEntity.class, userDataClass);
+                    Type type = constructParametricType(DocumentCreateEntity.class, userDataClass);
                     final DocumentCreateEntity<T> doc = getSerde().deserialize(next, type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
@@ -234,14 +229,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(
-            final T value, final DocumentReplaceOptions options) {
-        return response -> {
-            Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, value.getClass());
-            return getSerde().deserialize(response.getBody(), type);
-        };
-    }
-
     protected <T> Request replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions params) {
         final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT, name);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -256,7 +243,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
-            final Collection<T> values, final DocumentReplaceOptions params) {
+            final Collection<T> values) {
         return response -> {
             Class<?> userDataClass = getCollectionContentClass(values);
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
@@ -271,7 +258,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, userDataClass);
+                    Type type = constructParametricType(DocumentUpdateEntity.class, userDataClass);
                     final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
@@ -299,14 +286,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(SILENT, params.getSilent());
         request.setBody(getSerde().serializeUserData(value));
         return request;
-    }
-
-    protected <T, U> ResponseDeserializer<DocumentUpdateEntity<U>> updateDocumentResponseDeserializer(
-            final T value, final DocumentUpdateOptions options, final Class<U> returnType) {
-        return response -> {
-            Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, returnType);
-            return getSerde().deserialize(response.getBody(), type);
-        };
     }
 
     protected <T> Request updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions params) {
@@ -340,7 +319,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentUpdateEntity.class, returnType);
+                    Type type = constructParametricType(DocumentUpdateEntity.class, returnType);
                     final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
@@ -363,14 +342,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         return request;
-    }
-
-    protected <T> ResponseDeserializer<DocumentDeleteEntity<T>> deleteDocumentResponseDeserializer(
-            final Class<T> userDataClass) {
-        return response -> {
-            Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentDeleteEntity.class, userDataClass);
-            return getSerde().deserialize(response.getBody(), type);
-        };
     }
 
     protected <T> Request deleteDocumentsRequest(final Collection<T> keys, final DocumentDeleteOptions options) {
@@ -399,7 +370,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    Type type = SerdeUtils.INSTANCE.constructParametricType(DocumentDeleteEntity.class, userDataClass);
+                    Type type = constructParametricType(DocumentDeleteEntity.class, userDataClass);
                     final DocumentDeleteEntity<T> doc = getSerde().deserialize(next, type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
@@ -514,7 +485,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), "/indexes",
-                SerdeUtils.INSTANCE.constructListType(IndexEntity.class));
+                constructListType(IndexEntity.class));
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {
@@ -584,7 +555,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Permissions.class);
     }
 
-    private Class<?> getCollectionContentClass(Collection<?> c) {
+    protected Class<?> getCollectionContentClass(Collection<?> c) {
         if (c == null || c.isEmpty()) {
             return null;
         }

@@ -31,6 +31,8 @@ import com.arangodb.velocystream.RequestType;
 
 import java.util.Collection;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+
 /**
  * @author Mark Vollmary
  */
@@ -85,7 +87,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), "/collections",
-                SerdeUtils.INSTANCE.constructListType(String.class));
+                constructListType(String.class));
     }
 
     protected Request addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
@@ -104,7 +106,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), "/collections",
-                SerdeUtils.INSTANCE.constructListType(String.class));
+                constructListType(String.class));
     }
 
     protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {

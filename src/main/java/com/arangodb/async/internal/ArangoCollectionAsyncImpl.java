@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+import static com.arangodb.serde.SerdeUtils.constructParametricType;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -47,7 +49,7 @@ public class ArangoCollectionAsyncImpl
     public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value) {
         final DocumentCreateOptions options = new DocumentCreateOptions();
         return executor.execute(insertDocumentRequest(value, options),
-                insertDocumentResponseDeserializer(value, options));
+                constructParametricType(DocumentCreateEntity.class, value.getClass()));
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ArangoCollectionAsyncImpl
             final T value,
             final DocumentCreateOptions options) {
         return executor.execute(insertDocumentRequest(value, options),
-                insertDocumentResponseDeserializer(value, options));
+                constructParametricType(DocumentCreateEntity.class, value.getClass()));
     }
 
     @Override
@@ -135,7 +137,7 @@ public class ArangoCollectionAsyncImpl
     public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value) {
         final DocumentReplaceOptions options = new DocumentReplaceOptions();
         return executor.execute(replaceDocumentRequest(key, value, options),
-                replaceDocumentResponseDeserializer(value, options));
+                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
     }
 
     @Override
@@ -144,7 +146,7 @@ public class ArangoCollectionAsyncImpl
             final T value,
             final DocumentReplaceOptions options) {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                replaceDocumentResponseDeserializer(value, options));
+                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
     }
 
     @Override
@@ -152,7 +154,7 @@ public class ArangoCollectionAsyncImpl
             final Collection<T> values) {
         final DocumentReplaceOptions params = new DocumentReplaceOptions();
         return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values, params));
+                replaceDocumentsResponseDeserializer(values));
     }
 
     @Override
@@ -161,7 +163,7 @@ public class ArangoCollectionAsyncImpl
             final DocumentReplaceOptions options) {
         final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
         return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values, params));
+                replaceDocumentsResponseDeserializer(values));
     }
 
     @Override
@@ -170,6 +172,7 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(
             final String key,
             final T value,
@@ -184,7 +187,7 @@ public class ArangoCollectionAsyncImpl
             final DocumentUpdateOptions options,
             final Class<U> returnType) {
         return executor.execute(updateDocumentRequest(key, value, options),
-                updateDocumentResponseDeserializer(value, options, returnType));
+                constructParametricType(DocumentUpdateEntity.class, returnType));
     }
 
     @Override
@@ -194,10 +197,11 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Collection<T> values,
             final DocumentUpdateOptions options) {
-        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) values.iterator().next().getClass());
+        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
@@ -213,7 +217,7 @@ public class ArangoCollectionAsyncImpl
     @Override
     public CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(final String key) {
         return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                deleteDocumentResponseDeserializer(Void.class));
+                constructParametricType(DocumentDeleteEntity.class, Void.class));
     }
 
     @Override
@@ -221,7 +225,8 @@ public class ArangoCollectionAsyncImpl
             final String key,
             final Class<T> type,
             final DocumentDeleteOptions options) {
-        return executor.execute(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
+        return executor.execute(deleteDocumentRequest(key, options),
+                constructParametricType(DocumentDeleteEntity.class, type));
     }
 
     @Override

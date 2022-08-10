@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+
 /**
  * @author Mark Vollmary
  * @author Heiko Kernbach
@@ -84,7 +86,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(String.class));
+                constructListType(String.class));
     }
 
     protected Request getAccessibleDatabasesForRequest(final DbName dbName, final String user) {
@@ -128,7 +130,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                SerdeUtils.INSTANCE.constructListType(UserEntity.class));
+                constructListType(UserEntity.class));
     }
 
     protected Request updateUserRequest(final DbName dbName, final String user, final UserUpdateOptions options) {

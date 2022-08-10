@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.arangodb.serde.SerdeUtils.constructListType;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -264,13 +266,13 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
         return executor.execute(getCurrentlyRunningQueriesRequest(),
-                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
+                constructListType(QueryEntity.class));
     }
 
     @Override
     public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
         return executor.execute(getSlowQueriesRequest(),
-                SerdeUtils.INSTANCE.constructListType(QueryEntity.class));
+                constructListType(QueryEntity.class));
     }
 
     @Override

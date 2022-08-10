@@ -14,12 +14,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.arangodb.serde.SerdeUtils.checkSupportedJacksonVersion;
+
 final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
     private final ArangoSerde userSerde;
 
     static {
-        SerdeUtils.INSTANCE.checkSupportedJacksonVersion();
+        checkSupportedJacksonVersion();
     }
 
     InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
@@ -110,6 +112,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T deserializeUserData(byte[] content, Type type) {
         if (type instanceof Class) {
             return deserializeUserData(content, (Class<T>) type);

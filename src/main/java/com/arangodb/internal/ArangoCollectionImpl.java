@@ -25,10 +25,13 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
+import com.arangodb.serde.SerdeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+
+import static com.arangodb.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary
@@ -51,8 +54,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
             throws ArangoDBException {
-        return executor
-                .execute(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value, options));
+        return executor.execute(insertDocumentRequest(value, options),
+                constructParametricType(DocumentCreateEntity.class, value.getClass()));
     }
 
     @Override
@@ -142,7 +145,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     public <T> DocumentUpdateEntity<T> replaceDocument(
             final String key, final T value, final DocumentReplaceOptions options) throws ArangoDBException {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                replaceDocumentResponseDeserializer(value, options));
+                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
     }
 
     @Override
@@ -156,7 +159,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
             final Collection<T> values, final DocumentReplaceOptions options) throws ArangoDBException {
         final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
         return executor
-                .execute(replaceDocumentsRequest(values, params), replaceDocumentsResponseDeserializer(values, params));
+                .execute(replaceDocumentsRequest(values, params), replaceDocumentsResponseDeserializer(values));
     }
 
     @Override
@@ -165,6 +168,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> DocumentUpdateEntity<T> updateDocument(
             final String key, final T value, final DocumentUpdateOptions options) throws ArangoDBException {
         return updateDocument(key, value, options, (Class<T>) value.getClass());
@@ -174,7 +178,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     public <T, U> DocumentUpdateEntity<U> updateDocument(
             final String key, final T value, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
         return executor.execute(updateDocumentRequest(key, value, options),
-                updateDocumentResponseDeserializer(value, options, returnType));
+                constructParametricType(DocumentUpdateEntity.class, returnType));
     }
 
     @Override
@@ -184,9 +188,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
             final Collection<T> values, final DocumentUpdateOptions options) throws ArangoDBException {
-        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) values.iterator().next().getClass());
+        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
@@ -200,13 +205,14 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
         return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                deleteDocumentResponseDeserializer(Void.class));
+                constructParametricType(DocumentDeleteEntity.class, Void.class));
     }
 
     @Override
     public <T> DocumentDeleteEntity<T> deleteDocument(
             final String key, final Class<T> type, final DocumentDeleteOptions options) throws ArangoDBException {
-        return executor.execute(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
+        return executor.execute(deleteDocumentRequest(key, options),
+                constructParametricType(DocumentDeleteEntity.class, type));
     }
 
     @Override

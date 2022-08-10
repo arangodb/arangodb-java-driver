@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static com.arangodb.serde.SerdeUtils.constructParametricType;
+
 /**
  * @author Mark Vollmary
  */
@@ -122,8 +124,8 @@ public class ExtendedHostResolver implements HostResolver {
                     new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
                         final List<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(), "/endpoints",
-                                SerdeUtils.INSTANCE.constructParametricType(List.class,
-                                        SerdeUtils.INSTANCE.constructParametricType(Map.class, String.class, String.class)));
+                                constructParametricType(List.class,
+                                        constructParametricType(Map.class, String.class, String.class)));
                         Collection<String> endpoints = new ArrayList<>();
                         for (final Map<String, String> map : tmp) {
                             endpoints.add(map.get("endpoint"));

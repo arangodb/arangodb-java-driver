@@ -12,7 +12,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,15 +46,11 @@ public enum SerdeUtils {
         }
     }
 
-    public Type constructListType(Class<?> clazz) {
+    public static Type constructListType(Class<?> clazz) {
         return TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
     }
 
-    public Type constructMapType(Class<?> keyClazz, Class<?> valueClazz) {
-        return TypeFactory.defaultInstance().constructMapType(Map.class, keyClazz, valueClazz);
-    }
-
-    public Type constructParametricType(Class<?> rawType, Type... rawArgs) {
+    public static Type constructParametricType(Class<?> rawType, Type... rawArgs) {
         if (rawArgs == null || rawArgs.length == 0 || rawArgs[0] == null) {
             return rawType;
         } else {
@@ -63,7 +58,7 @@ public enum SerdeUtils {
         }
     }
 
-    public Type convertToType(final JavaType javaType) {
+    public static Type convertToType(final JavaType javaType) {
         List<Type> args = new ArrayList<>();
         for (JavaType it : javaType.getBindings().getTypeParameters()) {
             Type type = convertToType(it);
@@ -72,7 +67,7 @@ public enum SerdeUtils {
         return constructParametricType(javaType.getRawClass(), args.toArray(new Type[0]));
     }
 
-    void checkSupportedJacksonVersion() {
+    static void checkSupportedJacksonVersion() {
         Arrays.asList(
                 com.fasterxml.jackson.databind.cfg.PackageVersion.VERSION,
                 com.fasterxml.jackson.core.json.PackageVersion.VERSION

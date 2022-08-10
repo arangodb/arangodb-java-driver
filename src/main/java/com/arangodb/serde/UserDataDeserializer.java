@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import static com.arangodb.serde.SerdeUtils.convertToType;
+
 class UserDataDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
     private final Type targetType;
     private final InternalSerde serde;
@@ -21,7 +23,7 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
     }
 
     private UserDataDeserializer(final JavaType targetType, final InternalSerde serde) {
-        this.targetType = SerdeUtils.INSTANCE.convertToType(targetType);
+        this.targetType = convertToType(targetType);
         this.serde = serde;
     }
 
