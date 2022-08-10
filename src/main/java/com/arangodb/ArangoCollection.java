@@ -61,7 +61,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> DocumentCreateEntity<T> insertDocument(T value) throws ArangoDBException;
+    DocumentCreateEntity<Void> insertDocument(Object value) throws ArangoDBException;
 
     /**
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -75,6 +75,20 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
+
+    /**
+     * Creates a new document from the given document, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no

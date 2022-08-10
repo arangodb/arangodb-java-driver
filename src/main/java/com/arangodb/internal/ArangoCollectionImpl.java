@@ -47,15 +47,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException {
-        return insertDocument(value, new DocumentCreateOptions());
+    public DocumentCreateEntity<Void> insertDocument(final Object value) throws ArangoDBException {
+        return executor.execute(insertDocumentRequest(value, new DocumentCreateOptions()),
+                constructParametricType(DocumentCreateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
             throws ArangoDBException {
+        return insertDocument(value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options, final Class<T> type) throws ArangoDBException {
         return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+                constructParametricType(DocumentCreateEntity.class, type));
     }
 
     @Override

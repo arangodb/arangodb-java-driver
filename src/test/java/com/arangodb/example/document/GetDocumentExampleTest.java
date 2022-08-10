@@ -46,8 +46,7 @@ class GetDocumentExampleTest extends ExampleBase {
     static void before() {
         final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
-        final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
-        key = doc.getKey();
+        key = collection.insertDocument(value).getKey();
     }
 
     @Test

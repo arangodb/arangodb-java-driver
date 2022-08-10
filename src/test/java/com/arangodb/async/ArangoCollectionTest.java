@@ -20,14 +20,19 @@
 
 package com.arangodb.async;
 
+import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
+import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.RawJson;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +52,78 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ArangoCollectionTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_collection_test";
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+    public interface Animal {
+        String getKey();
+
+        String getName();
+    }
+
+    public static class Dog implements Animal {
+
+        @Key
+        private String key;
+        private String name;
+
+        public Dog() {
+        }
+
+        public Dog(String key, String name) {
+            this.key = key;
+            this.name = name;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class Cat implements Animal {
+        @Key
+        private String key;
+        private String name;
+
+        public Cat() {
+        }
+
+        public Cat(String key, String name) {
+            this.key = key;
+            this.name = name;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     ArangoCollectionTest() throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
@@ -102,6 +179,41 @@ class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
     }
+
+
+    @Test
+    void insertDocumentWithTypeOverwriteModeReplace()  throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7));
+        assumeTrue(db.getSerde().getUserSerde() instanceof JacksonSerde, "polymorphic deserialization support required");
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        String key = UUID.randomUUID().toString();
+        Dog dog = new Dog(key, "Teddy");
+        Cat cat = new Cat(key, "Luna");
+
+        final DocumentCreateOptions options = new DocumentCreateOptions()
+                .returnNew(true)
+                .returnOld(true)
+                .overwriteMode(OverwriteMode.replace);
+        collection.insertDocument(dog, options).get();
+        final DocumentCreateEntity<Animal> doc = collection.insertDocument(cat, options, Animal.class).get();
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getKey()).isNotNull().isEqualTo(key);
+        assertThat(doc.getRev()).isNotNull();
+
+        assertThat(doc.getOld())
+                .isNotNull()
+                .isInstanceOf(Dog.class);
+        assertThat(doc.getOld().getKey()).isEqualTo(key);
+        assertThat(doc.getOld().getName()).isEqualTo("Teddy");
+
+        assertThat(doc.getNew())
+                .isNotNull()
+                .isInstanceOf(Cat.class);
+        assertThat(doc.getNew().getKey()).isEqualTo(key);
+        assertThat(doc.getNew().getName()).isEqualTo("Luna");
+    }
+
 
     @Test
     void insertDocumentWaitForSync() throws InterruptedException, ExecutionException {
@@ -1273,7 +1385,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfMatch() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<RawJson> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<?> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch(createResult.getRev());
         db.collection(COLLECTION_NAME).documentExists("abc", options)
@@ -1301,7 +1413,7 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void documentExistsIfNoneMatchFail() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<RawJson> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<?> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(RawJson.of("{\"_key\":\"abc\"}")).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
         db.collection(COLLECTION_NAME).documentExists("abc", options)

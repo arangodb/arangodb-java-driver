@@ -46,18 +46,23 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value) {
-        final DocumentCreateOptions options = new DocumentCreateOptions();
-        return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+    public CompletableFuture<DocumentCreateEntity<Void>> insertDocument(final Object value) {
+        return executor.execute(insertDocumentRequest(value, new DocumentCreateOptions()),
+                constructParametricType(DocumentCreateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(
             final T value,
             final DocumentCreateOptions options) {
+        return insertDocument(value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(T value, DocumentCreateOptions options, Class<T> type) {
         return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+                constructParametricType(DocumentCreateEntity.class, type));
     }
 
     @Override

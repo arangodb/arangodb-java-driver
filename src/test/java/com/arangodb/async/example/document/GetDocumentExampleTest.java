@@ -46,8 +46,7 @@ class GetDocumentExampleTest extends ExampleBase {
     static void before() throws InterruptedException, ExecutionException {
         final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
-        final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value).get();
-        key = doc.getKey();
+        key = collection.insertDocument(value).get().getKey();
     }
 
     @Test

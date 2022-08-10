@@ -24,7 +24,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
     void insertBean() {
-        final DocumentCreateEntity<TestEntity> doc = collection.insertDocument(new TestEntity("bar"));
+        final DocumentCreateEntity<?> doc = collection.insertDocument(new TestEntity("bar"));
         assertThat(doc.getKey()).isNotNull();
     }
 
@@ -49,7 +48,7 @@ class InsertDocumentExampleTest extends ExampleBase {
     void insertBaseDocument() {
         final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
         value.addAttribute("foo", "bar");
-        final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
+        final DocumentCreateEntity<?> doc = collection.insertDocument(value);
         assertThat(doc.getKey()).isNotNull();
     }
 
@@ -58,13 +57,13 @@ class InsertDocumentExampleTest extends ExampleBase {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
         node.put("foo", "bar");
-        final DocumentCreateEntity<JsonNode> doc = collection.insertDocument(node);
+        final DocumentCreateEntity<?> doc = collection.insertDocument(node);
         assertThat(doc.getKey()).isNotNull();
     }
 
     @Test
     void insertJson() {
-        final DocumentCreateEntity<RawJson> doc = collection.insertDocument(RawJson.of("{\"foo\":\"bar\"}"));
+        final DocumentCreateEntity<?> doc = collection.insertDocument(RawJson.of("{\"foo\":\"bar\"}"));
         assertThat(doc.getKey()).isNotNull();
     }
 
