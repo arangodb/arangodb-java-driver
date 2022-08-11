@@ -1208,7 +1208,10 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
-        final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = collection.deleteDocuments(Collections.singletonList(createResult.getKey()), BaseDocument.class, new DocumentDeleteOptions().silent(true));
+        final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = collection.deleteDocuments(
+                Collections.singletonList(createResult.getKey()),
+                new DocumentDeleteOptions().silent(true),
+                BaseDocument.class);
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).isEmpty();
         assertThat(info.getDocumentsAndErrors()).isEmpty();
@@ -2344,10 +2347,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
+        final MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteResult = collection.deleteDocuments(keys);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(2);
-        for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+        for (final DocumentDeleteEntity<Void> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isIn("1", "2");
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2368,10 +2371,10 @@ class ArangoCollectionTest extends BaseJunit5 {
             values.add(e);
         }
         collection.insertDocuments(values);
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(values, null, null);
+        MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteResult = collection.deleteDocuments(values);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(2);
-        for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+        for (final DocumentDeleteEntity<Void> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isIn("1", "2");
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2389,10 +2392,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.insertDocuments(values);
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
+        final MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteResult = collection.deleteDocuments(keys);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(1);
-        for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+        for (final DocumentDeleteEntity<Void> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isEqualTo("1");
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2408,10 +2411,10 @@ class ArangoCollectionTest extends BaseJunit5 {
             values.add(e);
         }
         collection.insertDocuments(values);
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(values, null, null);
+        final MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteResult = collection.deleteDocuments(values);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(1);
-        for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+        for (final DocumentDeleteEntity<Void> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isEqualTo("1");
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2423,7 +2426,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final Collection<BaseDocument> values = new ArrayList<>();
         collection.insertDocuments(values);
         final Collection<String> keys = new ArrayList<>();
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
+        final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).isEmpty();
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2436,7 +2439,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.insertDocuments(values);
         final Collection<String> keys = Arrays.asList(rnd(), rnd());
 
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
+        final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).isEmpty();
         assertThat(deleteResult.getErrors()).hasSize(2);
@@ -2456,7 +2459,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("2");
             values.add(e);
         }
-        final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(values, null, null);
+        final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(values);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).isEmpty();
         assertThat(deleteResult.getErrors()).hasSize(2);

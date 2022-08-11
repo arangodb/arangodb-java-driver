@@ -450,6 +450,20 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes multiple documents from the collection.
      *
      * @param values  The keys of the documents or the documents themselves
+     * @param options Additional options, can be null
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+            Collection<?> values, DocumentDeleteOptions options) throws ArangoDBException;
+
+    /**
+     * Deletes multiple documents from the collection.
+     *
+     * @param values  The keys of the documents or the documents themselves
      * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -460,7 +474,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            Collection<?> values, Class<T> type, DocumentDeleteOptions options) throws ArangoDBException;
+            Collection<?> values, DocumentDeleteOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Checks if the document exists by reading a single document head

@@ -253,15 +253,20 @@ public class ArangoCollectionAsyncImpl
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(
             final Collection<?> values) {
-        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-                deleteDocumentsResponseDeserializer(Void.class));
+        return deleteDocuments(values, new DocumentDeleteOptions(), Void.class);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(Collection<?> values, DocumentDeleteOptions options) {
+        return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
             final Collection<?> values,
-            final Class<T> type,
-            final DocumentDeleteOptions options) {
+            final DocumentDeleteOptions options,
+            final Class<T> type) {
         return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }
 

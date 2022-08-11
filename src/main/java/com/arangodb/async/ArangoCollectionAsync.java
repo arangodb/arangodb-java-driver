@@ -448,6 +448,20 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Removes multiple document
      *
      * @param values  The keys of the documents or the documents themselves
+     * @param options Additional options, can be null
+     * @return information about the documents
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
+            final Collection<?> values,
+            final DocumentDeleteOptions options);
+
+    /**
+     * Removes multiple document
+     *
+     * @param values  The keys of the documents or the documents themselves
      * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -458,8 +472,8 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
             final Collection<?> values,
-            final Class<T> type,
-            final DocumentDeleteOptions options);
+            final DocumentDeleteOptions options,
+            final Class<T> type);
 
     /**
      * Checks if the document exists by reading a single document head

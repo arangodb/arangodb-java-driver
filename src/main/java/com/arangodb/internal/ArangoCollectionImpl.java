@@ -245,13 +245,20 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-                deleteDocumentsResponseDeserializer(Void.class));
+        return deleteDocuments(values, new DocumentDeleteOptions(), Void.class);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+            final Collection<?> values, final DocumentDeleteOptions options)
+            throws ArangoDBException {
+        return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            final Collection<?> values, final Class<T> type, final DocumentDeleteOptions options)
+            final Collection<?> values, final DocumentDeleteOptions options, final Class<T> type)
             throws ArangoDBException {
         return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }

@@ -1899,11 +1899,11 @@ class ArangoCollectionTest extends BaseTest {
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(keys)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(2);
-                    for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+                    for (final DocumentDeleteEntity<?> i : deleteResult.getDocuments()) {
                         assertThat(i.getKey()).isIn("1", "2");
                     }
                     assertThat(deleteResult.getErrors().size()).isEqualTo(0);
@@ -1925,11 +1925,11 @@ class ArangoCollectionTest extends BaseTest {
             values.add(e);
         }
         db.collection(COLLECTION_NAME).insertDocuments(values).get();
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(values)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(2);
-                    for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+                    for (final DocumentDeleteEntity<?> i : deleteResult.getDocuments()) {
                         assertThat(i.getKey()).isIn("1", "2");
                     }
                     assertThat(deleteResult.getErrors().size()).isEqualTo(0);
@@ -1948,11 +1948,11 @@ class ArangoCollectionTest extends BaseTest {
         db.collection(COLLECTION_NAME).insertDocuments(values).get();
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(keys)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(1);
-                    for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+                    for (final DocumentDeleteEntity<?> i : deleteResult.getDocuments()) {
                         assertThat(i.getKey()).isEqualTo("1");
                     }
                     assertThat(deleteResult.getErrors().size()).isEqualTo(0);
@@ -1969,11 +1969,11 @@ class ArangoCollectionTest extends BaseTest {
             values.add(e);
         }
         db.collection(COLLECTION_NAME).insertDocuments(values).get();
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(values)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(1);
-                    for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+                    for (final DocumentDeleteEntity<?> i : deleteResult.getDocuments()) {
                         assertThat(i.getKey()).isEqualTo("1");
                     }
                     assertThat(deleteResult.getErrors().size()).isEqualTo(0);
@@ -1986,7 +1986,7 @@ class ArangoCollectionTest extends BaseTest {
         final Collection<BaseDocument> values = new ArrayList<>();
         db.collection(COLLECTION_NAME).insertDocuments(values).get();
         final Collection<String> keys = new ArrayList<>();
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(keys)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(0);
@@ -2002,7 +2002,7 @@ class ArangoCollectionTest extends BaseTest {
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(keys)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(0);
@@ -2024,7 +2024,7 @@ class ArangoCollectionTest extends BaseTest {
             e.setKey("2");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        db.collection(COLLECTION_NAME).deleteDocuments(values)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult).isNotNull();
                     assertThat(deleteResult.getDocuments().size()).isEqualTo(0);
