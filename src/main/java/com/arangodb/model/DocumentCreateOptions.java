@@ -86,11 +86,6 @@ public final class DocumentCreateOptions {
     }
 
     /**
-     * Limitations:
-     * - {@code keepNull} parameter is not supported
-     * - the fields having {@code null} value are always removed during serialization
-     * Therefore in case of {@link OverwriteMode#update}, existing attributes cannot be removed.
-     *
      * @param overwriteMode This parameter can be set to replace or update. If given it sets implicitly the overwrite
      *                      flag. In case it is set to update, the replace-insert becomes an update-insert. Otherwise
      *                      this option follows the rules of the overwrite parameter.

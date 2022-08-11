@@ -61,7 +61,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value);
+    CompletableFuture<DocumentCreateEntity<Void>> insertDocument(final Object value);
 
     /**
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -76,6 +76,19 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value, final DocumentCreateOptions options);
 
     /**
+     * Creates a new document from the given document, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the document
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value, final DocumentCreateOptions options, Class<T> type);
+
+    /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
@@ -84,7 +97,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(final Collection<?> values);
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -99,6 +112,22 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
             final Collection<T> values,
             final DocumentCreateOptions options);
+
+    /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
+            final Collection<T> values,
+            final DocumentCreateOptions options,
+            final Class<T> type);
 
     /**
      * Imports documents
@@ -192,7 +221,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value);
+    CompletableFuture<DocumentUpdateEntity<Void>> replaceDocument(final String key, final Object value);
 
     /**
      * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
@@ -211,6 +240,24 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
             final DocumentReplaceOptions options);
 
     /**
+     * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
+     * violated
+     *
+     * @param key     The key of the document
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the document
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(
+            final String key,
+            final T value,
+            final DocumentReplaceOptions options,
+            final Class<T> type);
+
+    /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
@@ -219,7 +266,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(final Collection<?> values);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -236,6 +283,22 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
             final DocumentReplaceOptions options);
 
     /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
+            final Collection<T> values,
+            final DocumentReplaceOptions options,
+            final Class<T> type);
+
+    /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
      * to patch (the patch document). All attributes from the patch document will be added to the existing document if
      * they do not yet exist, and overwritten in the existing document if they do exist there.
@@ -246,7 +309,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value);
+    CompletableFuture<DocumentUpdateEntity<Void>> updateDocument(final String key, final Object value);
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -295,7 +358,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(final Collection<?> values);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -345,6 +408,19 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Removes a document
      *
      * @param key     The key of the document
+     * @param options Additional options, can be null
+     * @return information about the document
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
+            final String key,
+            final DocumentDeleteOptions options);
+
+    /**
+     * Removes a document
+     *
+     * @param key     The key of the document
      * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -354,8 +430,8 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      */
     <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
             final String key,
-            final Class<T> type,
-            final DocumentDeleteOptions options);
+            final DocumentDeleteOptions options,
+            final Class<T> type);
 
     /**
      * Removes multiple document
@@ -372,6 +448,20 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Removes multiple document
      *
      * @param values  The keys of the documents or the documents themselves
+     * @param options Additional options, can be null
+     * @return information about the documents
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
+            final Collection<?> values,
+            final DocumentDeleteOptions options);
+
+    /**
+     * Removes multiple document
+     *
+     * @param values  The keys of the documents or the documents themselves
      * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -382,8 +472,8 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
             final Collection<?> values,
-            final Class<T> type,
-            final DocumentDeleteOptions options);
+            final DocumentDeleteOptions options,
+            final Class<T> type);
 
     /**
      * Checks if the document exists by reading a single document head

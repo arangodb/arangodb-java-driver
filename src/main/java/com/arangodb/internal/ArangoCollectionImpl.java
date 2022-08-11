@@ -25,7 +25,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
-import com.arangodb.serde.SerdeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,29 +46,42 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException {
-        return insertDocument(value, new DocumentCreateOptions());
+    public DocumentCreateEntity<Void> insertDocument(final Object value) throws ArangoDBException {
+        return executor.execute(insertDocumentRequest(value, new DocumentCreateOptions()),
+                constructParametricType(DocumentCreateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
             throws ArangoDBException {
+        return insertDocument(value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options, final Class<T> type) throws ArangoDBException {
         return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+                constructParametricType(DocumentCreateEntity.class, type));
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return insertDocuments(values, new DocumentCreateOptions());
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
             final Collection<T> values, final DocumentCreateOptions options) throws ArangoDBException {
-        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
+        return insertDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) throws ArangoDBException {
         return executor
-                .execute(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
+                .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
 
     @Override
@@ -137,34 +149,45 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException {
-        return replaceDocument(key, value, new DocumentReplaceOptions());
+    public DocumentUpdateEntity<Void> replaceDocument(final String key, final Object value) throws ArangoDBException {
+        return executor.execute(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
+                constructParametricType(DocumentUpdateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> DocumentUpdateEntity<T> replaceDocument(
             final String key, final T value, final DocumentReplaceOptions options) throws ArangoDBException {
+        return replaceDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return replaceDocuments(values, new DocumentReplaceOptions());
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
             final Collection<T> values, final DocumentReplaceOptions options) throws ArangoDBException {
-        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-        return executor
-                .execute(replaceDocumentsRequest(values, params), replaceDocumentsResponseDeserializer(values));
+        return replaceDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
-    public <T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException {
-        return updateDocument(key, value, new DocumentUpdateOptions());
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException {
+        return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
+    }
+
+    @Override
+    public DocumentUpdateEntity<Void> updateDocument(final String key, final Object value) throws ArangoDBException {
+        return updateDocument(key, value, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override
@@ -182,35 +205,39 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return updateDocuments(values, new DocumentUpdateOptions());
+        return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
             final Collection<T> values, final DocumentUpdateOptions options) throws ArangoDBException {
-        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) getCollectionContentClass(values));
+        return updateDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T, U> MultiDocumentEntity<DocumentUpdateEntity<U>> updateDocuments(
             final Collection<T> values, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
-        final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
         return executor
-                .execute(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(returnType));
+                .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
 
     @Override
     public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
-        return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                constructParametricType(DocumentDeleteEntity.class, Void.class));
+        return deleteDocument(key, new DocumentDeleteOptions());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options) throws ArangoDBException {
+        return deleteDocument(key, options, (Class<T>) Void.class);
     }
 
     @Override
     public <T> DocumentDeleteEntity<T> deleteDocument(
-            final String key, final Class<T> type, final DocumentDeleteOptions options) throws ArangoDBException {
+            final String key, final DocumentDeleteOptions options, final Class<T> type) throws ArangoDBException {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
     }
@@ -218,13 +245,20 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-                deleteDocumentsResponseDeserializer(Void.class));
+        return deleteDocuments(values, new DocumentDeleteOptions(), Void.class);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+            final Collection<?> values, final DocumentDeleteOptions options)
+            throws ArangoDBException {
+        return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            final Collection<?> values, final Class<T> type, final DocumentDeleteOptions options)
+            final Collection<?> values, final DocumentDeleteOptions options, final Class<T> type)
             throws ArangoDBException {
         return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }

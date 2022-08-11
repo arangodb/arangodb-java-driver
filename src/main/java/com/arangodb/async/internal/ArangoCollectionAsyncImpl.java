@@ -46,35 +46,44 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value) {
-        final DocumentCreateOptions options = new DocumentCreateOptions();
-        return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+    public CompletableFuture<DocumentCreateEntity<Void>> insertDocument(final Object value) {
+        return executor.execute(insertDocumentRequest(value, new DocumentCreateOptions()),
+                constructParametricType(DocumentCreateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(
             final T value,
             final DocumentCreateOptions options) {
+        return insertDocument(value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(T value, DocumentCreateOptions options, Class<T> type) {
         return executor.execute(insertDocumentRequest(value, options),
-                constructParametricType(DocumentCreateEntity.class, value.getClass()));
+                constructParametricType(DocumentCreateEntity.class, type));
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
-            final Collection<T> values) {
-        final DocumentCreateOptions params = new DocumentCreateOptions();
-        return executor.execute(insertDocumentsRequest(values, params),
-                insertDocumentsResponseDeserializer(values, params));
+    public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(
+            final Collection<?> values) {
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
             final Collection<T> values,
             final DocumentCreateOptions options) {
-        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
-        return executor.execute(insertDocumentsRequest(values, params),
-                insertDocumentsResponseDeserializer(values, params));
+        return insertDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) {
+        return executor
+                .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
 
     @Override
@@ -134,41 +143,49 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value) {
+    public CompletableFuture<DocumentUpdateEntity<Void>> replaceDocument(final String key, final Object value) {
         final DocumentReplaceOptions options = new DocumentReplaceOptions();
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(
             final String key,
             final T value,
             final DocumentReplaceOptions options) {
+        return replaceDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
-            final Collection<T> values) {
-        final DocumentReplaceOptions params = new DocumentReplaceOptions();
-        return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values));
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(
+            final Collection<?> values) {
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
             final Collection<T> values,
             final DocumentReplaceOptions options) {
-        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-        return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values));
+        return replaceDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
-    public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value) {
-        return updateDocument(key, value, new DocumentUpdateOptions());
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) {
+        return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
+    }
+
+    @Override
+    public CompletableFuture<DocumentUpdateEntity<Void>> updateDocument(final String key, final Object value) {
+        return updateDocument(key, value, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override
@@ -191,9 +208,9 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
-            final Collection<T> values) {
-        return updateDocuments(values, new DocumentUpdateOptions());
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(
+            final Collection<?> values) {
+        return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override
@@ -201,7 +218,7 @@ public class ArangoCollectionAsyncImpl
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Collection<T> values,
             final DocumentUpdateOptions options) {
-        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) getCollectionContentClass(values));
+        return updateDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
@@ -209,22 +226,26 @@ public class ArangoCollectionAsyncImpl
             final Collection<T> values,
             final DocumentUpdateOptions options,
             final Class<U> returnType) {
-        final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
-        return executor.execute(updateDocumentsRequest(values, params),
-                updateDocumentsResponseDeserializer(returnType));
+        return executor
+                .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
 
     @Override
     public CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(final String key) {
-        return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                constructParametricType(DocumentDeleteEntity.class, Void.class));
+        return deleteDocument(key, new DocumentDeleteOptions());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(String key, DocumentDeleteOptions options) {
+        return deleteDocument(key, options, (Class<T>) Void.class);
     }
 
     @Override
     public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
             final String key,
-            final Class<T> type,
-            final DocumentDeleteOptions options) {
+            final DocumentDeleteOptions options,
+            final Class<T> type) {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
     }
@@ -232,15 +253,20 @@ public class ArangoCollectionAsyncImpl
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(
             final Collection<?> values) {
-        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-                deleteDocumentsResponseDeserializer(Void.class));
+        return deleteDocuments(values, new DocumentDeleteOptions(), Void.class);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(Collection<?> values, DocumentDeleteOptions options) {
+        return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
             final Collection<?> values,
-            final Class<T> type,
-            final DocumentDeleteOptions options) {
+            final DocumentDeleteOptions options,
+            final Class<T> type) {
         return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }
 

@@ -552,7 +552,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         // delete document from within the tx
         collection
-                .deleteDocument(createdDoc.getKey(), null, new DocumentDeleteOptions().streamTransactionId(tx.getId()));
+                .deleteDocument(createdDoc.getKey(), new DocumentDeleteOptions().streamTransactionId(tx.getId()));
 
         // assert that the document has not been deleted from outside the tx
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class, null)).isNotNull();
@@ -576,7 +576,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
         List<String> keys = collection
-                .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()), null)
+                .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()))
                 .getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
 
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -584,7 +584,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         // delete document from within the tx
         collection
-                .deleteDocuments(keys, null, new DocumentDeleteOptions().streamTransactionId(tx.getId()));
+                .deleteDocuments(keys, new DocumentDeleteOptions().streamTransactionId(tx.getId()));
 
         // assert that the documents has not been deleted from outside the tx
         assertThat(collection.getDocuments(keys, BaseDocument.class, null).getDocuments()).hasSize(keys.size());

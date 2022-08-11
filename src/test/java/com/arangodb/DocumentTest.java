@@ -83,7 +83,7 @@ class DocumentTest extends BaseJunit5 {
                         + "}"
         );
         //@formatter:on
-        final DocumentCreateEntity<RawJson> createResult = collection.insertDocument(json);
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(json);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
         assertThat(doc).isNotNull();
         final Object article = doc.getAttribute("article");
@@ -116,7 +116,7 @@ class DocumentTest extends BaseJunit5 {
             stock.addAttribute("status", "RMV");
             stock.addAttribute("lastUpdate", "2016-11-01 00:00");
         }
-        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(document);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
         assertThat(doc).isNotNull();
         final Object article = doc.getAttribute("article");
@@ -131,7 +131,7 @@ class DocumentTest extends BaseJunit5 {
     void documentKeyWithSpecialChars(ArangoCollection collection) {
         final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();
         final BaseDocument document = new BaseDocument(key);
-        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(document);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
         assertThat(doc).isNotNull();
         assertThat(doc.getKey()).isEqualTo(key);

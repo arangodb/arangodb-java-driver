@@ -61,7 +61,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> DocumentCreateEntity<T> insertDocument(T value) throws ArangoDBException;
+    DocumentCreateEntity<Void> insertDocument(Object value) throws ArangoDBException;
 
     /**
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -77,11 +77,22 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
 
     /**
+     * Creates a new document from the given document, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type    Deserialization target type for the returned documents.
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
+
+    /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
@@ -89,14 +100,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
@@ -109,10 +117,22 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
             Collection<T> values, DocumentCreateOptions options) throws ArangoDBException;
 
     /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
+            Collection<T> values, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
+
+    /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values a list of Objects that will be stored as documents
      * @return information about the import
@@ -122,9 +142,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  a list of Objects that will be stored as documents
      * @param options Additional options, can be null
@@ -135,9 +152,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values JSON-encoded array of objects that will be stored as documents
      * @return information about the import
@@ -147,9 +161,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  JSON-encoded array of objects that will be stored as documents
      * @param options Additional options, can be null
@@ -216,7 +227,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
-    <T> DocumentUpdateEntity<T> replaceDocument(String key, T value) throws ArangoDBException;
+    DocumentUpdateEntity<Void> replaceDocument(String key, Object value) throws ArangoDBException;
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -234,11 +245,24 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
             throws ArangoDBException;
 
     /**
+     * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
+     * precondition is violated
+     *
+     * @param key     The key of the document
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type    Deserialization target type for the returned documents.
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
+     * Documentation</a>
+     */
+    <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type)
+            throws ArangoDBException;
+
+    /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
@@ -246,14 +270,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
@@ -264,6 +285,21 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
             Collection<T> values, DocumentReplaceOptions options) throws ArangoDBException;
+
+    /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
+            Collection<T> values, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -277,7 +313,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    <T> DocumentUpdateEntity<T> updateDocument(String key, T value) throws ArangoDBException;
+    DocumentUpdateEntity<Void> updateDocument(String key, Object value) throws ArangoDBException;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -324,7 +360,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -374,6 +410,19 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes the document with the given {@code key} from the collection.
      *
      * @param key     The key of the document
+     * @param options Additional options, can be null
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
+     * Documentation</a>
+     */
+    <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options)
+            throws ArangoDBException;
+
+    /**
+     * Deletes the document with the given {@code key} from the collection.
+     *
+     * @param key     The key of the document
      * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -382,7 +431,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
-    <T> DocumentDeleteEntity<T> deleteDocument(String key, Class<T> type, DocumentDeleteOptions options)
+    <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options, Class<T> type)
             throws ArangoDBException;
 
     /**
@@ -401,6 +450,20 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes multiple documents from the collection.
      *
      * @param values  The keys of the documents or the documents themselves
+     * @param options Additional options, can be null
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+            Collection<?> values, DocumentDeleteOptions options) throws ArangoDBException;
+
+    /**
+     * Deletes multiple documents from the collection.
+     *
+     * @param values  The keys of the documents or the documents themselves
      * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -411,7 +474,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            Collection<?> values, Class<T> type, DocumentDeleteOptions options) throws ArangoDBException;
+            Collection<?> values, DocumentDeleteOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Checks if the document exists by reading a single document head

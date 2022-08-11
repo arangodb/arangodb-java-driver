@@ -115,7 +115,7 @@ class CustomSerdeTest {
         doc.put("arr", Collections.singletonList("hello"));
         doc.put("int", 10);
 
-        collection.insertDocument(doc, null).get();
+        collection.insertDocument(doc).get();
 
         final Map<String, Object> result = db.query(
                 "RETURN DOCUMENT(@docId)",
@@ -158,7 +158,7 @@ class CustomSerdeTest {
         doc.put("arr", Collections.singletonList("hello"));
         doc.put("int", 10);
 
-        collection.insertDocument(doc, null).get();
+        collection.insertDocument(doc).get();
 
         final Map<String, Object> result = db.collection(COLLECTION_NAME).getDocument(
                 key,

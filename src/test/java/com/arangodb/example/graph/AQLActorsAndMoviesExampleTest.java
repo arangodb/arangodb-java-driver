@@ -313,7 +313,7 @@ class AQLActorsAndMoviesExampleTest {
 
     }
 
-    private static DocumentCreateEntity<BaseDocument> saveMovie(
+    private static DocumentCreateEntity<?> saveMovie(
             final ArangoCollection movies,
             final String key,
             final String title,
@@ -327,7 +327,7 @@ class AQLActorsAndMoviesExampleTest {
         return movies.insertDocument(value);
     }
 
-    private static DocumentCreateEntity<BaseDocument> saveActor(
+    private static DocumentCreateEntity<?> saveActor(
             final ArangoCollection actors,
             final String key,
             final String name,

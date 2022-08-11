@@ -72,7 +72,7 @@ class AQLActorsAndMoviesExampleTest {
         arangoDB.shutdown();
     }
 
-    private static DocumentCreateEntity<BaseDocument> saveMovie(
+    private static DocumentCreateEntity<?> saveMovie(
             final ArangoCollectionAsync movies,
             final String key,
             final String title,
@@ -86,7 +86,7 @@ class AQLActorsAndMoviesExampleTest {
         return movies.insertDocument(value).get();
     }
 
-    private static DocumentCreateEntity<BaseDocument> saveActor(
+    private static DocumentCreateEntity<?> saveActor(
             final ArangoCollectionAsync actors,
             final String key,
             final String name,
