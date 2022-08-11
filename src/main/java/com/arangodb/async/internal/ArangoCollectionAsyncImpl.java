@@ -165,20 +165,22 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
-            final Collection<T> values) {
-        final DocumentReplaceOptions params = new DocumentReplaceOptions();
-        return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values));
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(
+            final Collection<?> values) {
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
             final Collection<T> values,
             final DocumentReplaceOptions options) {
-        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-        return executor.execute(replaceDocumentsRequest(values, params),
-                replaceDocumentsResponseDeserializer(values));
+        return replaceDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) {
+        return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
     }
 
     @Override

@@ -266,7 +266,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(final Collection<?> values);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -281,6 +281,22 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
             final Collection<T> values,
             final DocumentReplaceOptions options);
+
+    /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
+            final Collection<T> values,
+            final DocumentReplaceOptions options,
+            final Class<T> type);
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes

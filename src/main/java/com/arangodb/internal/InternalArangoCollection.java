@@ -241,9 +241,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
-            final Collection<T> values) {
+            final Class<T> returnType) {
         return response -> {
-            Class<?> userDataClass = getCollectionContentClass(values);
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
@@ -256,7 +255,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    Type type = constructParametricType(DocumentUpdateEntity.class, userDataClass);
+                    Type type = constructParametricType(DocumentUpdateEntity.class, returnType);
                     final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type);
                     docs.add(doc);
                     documentsAndErrors.add(doc);

@@ -2573,7 +2573,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.replaceDocuments(updatedValues, null);
+        final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2636,7 +2636,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final Collection<RawJson> updatedValues = new ArrayList<>();
         updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
         updatedValues.add(RawJson.of("{\"_key\":\"2\", \"foo\":\"bar\"}"));
-        final MultiDocumentEntity<DocumentUpdateEntity<RawJson>> updateResult = collection.replaceDocuments(updatedValues);
+        final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }

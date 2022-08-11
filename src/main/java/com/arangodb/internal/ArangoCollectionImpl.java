@@ -168,17 +168,21 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return replaceDocuments(values, new DocumentReplaceOptions());
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
             final Collection<T> values, final DocumentReplaceOptions options) throws ArangoDBException {
-        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-        return executor
-                .execute(replaceDocumentsRequest(values, params), replaceDocumentsResponseDeserializer(values));
+        return replaceDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException {
+        return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
     }
 
     @Override

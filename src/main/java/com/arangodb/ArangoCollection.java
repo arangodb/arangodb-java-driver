@@ -93,9 +93,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
@@ -108,9 +105,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
@@ -125,9 +119,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
@@ -142,9 +133,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values a list of Objects that will be stored as documents
      * @return information about the import
@@ -154,9 +142,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  a list of Objects that will be stored as documents
      * @param options Additional options, can be null
@@ -167,9 +152,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values JSON-encoded array of objects that will be stored as documents
      * @return information about the import
@@ -179,9 +161,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Bulk imports the given values into the collection.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  JSON-encoded array of objects that will be stored as documents
      * @param options Additional options, can be null
@@ -284,9 +263,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
@@ -294,14 +270,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
-     * <p>
-     * Limitations:
-     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
@@ -312,6 +285,21 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
             Collection<T> values, DocumentReplaceOptions options) throws ArangoDBException;
+
+    /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
+            Collection<T> values, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes

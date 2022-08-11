@@ -2157,7 +2157,7 @@ class ArangoCollectionTest extends BaseTest {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
-        db.collection(COLLECTION_NAME).replaceDocuments(updatedValues, null)
+        db.collection(COLLECTION_NAME).replaceDocuments(updatedValues)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(2);
                     assertThat(updateResult.getErrors().size()).isEqualTo(0);
