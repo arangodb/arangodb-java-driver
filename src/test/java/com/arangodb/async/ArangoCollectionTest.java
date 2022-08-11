@@ -791,7 +791,7 @@ class ArangoCollectionTest extends BaseTest {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, null).get();
+        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey()).get();
         db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null)
                 .whenComplete((document, ex) -> assertThat(document).isNull())
                 .get();
@@ -804,7 +804,7 @@ class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), BaseDocument.class, options)
+        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), options, BaseDocument.class)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult.getOld()).isNotNull();
                     assertThat(deleteResult.getOld()).isInstanceOf(BaseDocument.class);
@@ -820,7 +820,7 @@ class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options).get();
+        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), options).get();
         db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null)
                 .whenComplete((document, ex) -> assertThat(document).isNull())
                 .get();
@@ -833,7 +833,7 @@ class ArangoCollectionTest extends BaseTest {
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
         try {
-            db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options).get();
+            db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);

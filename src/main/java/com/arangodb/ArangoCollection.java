@@ -422,6 +422,19 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes the document with the given {@code key} from the collection.
      *
      * @param key     The key of the document
+     * @param options Additional options, can be null
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
+     * Documentation</a>
+     */
+    <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options)
+            throws ArangoDBException;
+
+    /**
+     * Deletes the document with the given {@code key} from the collection.
+     *
+     * @param key     The key of the document
      * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes}). Only necessary if
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
@@ -430,7 +443,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
-    <T> DocumentDeleteEntity<T> deleteDocument(String key, Class<T> type, DocumentDeleteOptions options)
+    <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options, Class<T> type)
             throws ArangoDBException;
 
     /**

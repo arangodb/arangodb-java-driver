@@ -223,13 +223,18 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
-        return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                constructParametricType(DocumentDeleteEntity.class, Void.class));
+        return deleteDocument(key, new DocumentDeleteOptions());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options) throws ArangoDBException {
+        return deleteDocument(key, options, (Class<T>) Void.class);
     }
 
     @Override
     public <T> DocumentDeleteEntity<T> deleteDocument(
-            final String key, final Class<T> type, final DocumentDeleteOptions options) throws ArangoDBException {
+            final String key, final DocumentDeleteOptions options, final Class<T> type) throws ArangoDBException {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
     }

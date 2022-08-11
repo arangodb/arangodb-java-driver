@@ -231,15 +231,20 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(final String key) {
-        return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-                constructParametricType(DocumentDeleteEntity.class, Void.class));
+        return deleteDocument(key, new DocumentDeleteOptions());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(String key, DocumentDeleteOptions options) {
+        return deleteDocument(key, options, (Class<T>) Void.class);
     }
 
     @Override
     public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
             final String key,
-            final Class<T> type,
-            final DocumentDeleteOptions options) {
+            final DocumentDeleteOptions options,
+            final Class<T> type) {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
     }

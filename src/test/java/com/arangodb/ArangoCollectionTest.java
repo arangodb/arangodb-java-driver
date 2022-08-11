@@ -1151,7 +1151,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
-        collection.deleteDocument(createResult.getKey(), null, null);
+        collection.deleteDocument(createResult.getKey());
         final BaseDocument document = collection.getDocument(createResult.getKey(), BaseDocument.class, null);
         assertThat(document).isNull();
     }
@@ -1163,7 +1163,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
-        final DocumentDeleteEntity<BaseDocument> deleteResult = collection.deleteDocument(createResult.getKey(), BaseDocument.class, options);
+        final DocumentDeleteEntity<BaseDocument> deleteResult = collection.deleteDocument(createResult.getKey(), options, BaseDocument.class);
         assertThat(deleteResult.getOld()).isNotNull();
         assertThat(deleteResult.getOld()).isInstanceOf(BaseDocument.class);
         assertThat(deleteResult.getOld().getAttribute("a")).isNotNull();
@@ -1176,7 +1176,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
-        collection.deleteDocument(createResult.getKey(), null, options);
+        collection.deleteDocument(createResult.getKey(), options);
         final BaseDocument document = collection.getDocument(createResult.getKey(), BaseDocument.class, null);
         assertThat(document).isNull();
     }
@@ -1185,9 +1185,9 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void deleteDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
-        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
-        Throwable thrown = catchThrowable(() -> collection.deleteDocument(createResult.getKey(), null, options));
+        Throwable thrown = catchThrowable(() -> collection.deleteDocument(createResult.getKey(), options));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
@@ -1196,7 +1196,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void deleteDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
-        final DocumentDeleteEntity<BaseDocument> meta = collection.deleteDocument(createResult.getKey(), BaseDocument.class, new DocumentDeleteOptions().silent(true));
+        final DocumentDeleteEntity<BaseDocument> meta = collection.deleteDocument(createResult.getKey(), new DocumentDeleteOptions().silent(true), BaseDocument.class);
         assertThat(meta).isNotNull();
         assertThat(meta.getId()).isNull();
         assertThat(meta.getKey()).isNull();

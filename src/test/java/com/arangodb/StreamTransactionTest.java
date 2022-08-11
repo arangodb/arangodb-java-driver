@@ -552,7 +552,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         // delete document from within the tx
         collection
-                .deleteDocument(createdDoc.getKey(), null, new DocumentDeleteOptions().streamTransactionId(tx.getId()));
+                .deleteDocument(createdDoc.getKey(), new DocumentDeleteOptions().streamTransactionId(tx.getId()));
 
         // assert that the document has not been deleted from outside the tx
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class, null)).isNotNull();
