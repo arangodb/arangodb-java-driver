@@ -558,7 +558,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         List<BaseDocument> values = IntStream.range(0, 10).mapToObj(String::valueOf).map(key -> new BaseDocument()).peek(it -> it.addAttribute("customField", rnd())).collect(Collectors.toList());
 
-        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> inserted = collection.insertDocuments(values);
+        MultiDocumentEntity<DocumentCreateEntity<Void>> inserted = collection.insertDocuments(values);
         List<String> insertedKeys = inserted.getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
 
         final Collection<BaseDocument> documents = collection.getDocuments(insertedKeys, BaseDocument.class).getDocuments();
@@ -1834,7 +1834,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument());
 
-        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection.insertDocuments(values, null);
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(3);
@@ -1877,7 +1877,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         values.add(RawJson.of("{}"));
         values.add(RawJson.of("{}"));
         values.add(RawJson.of("{}"));
-        final MultiDocumentEntity<DocumentCreateEntity<RawJson>> docs = collection.insertDocuments(values);
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(3);
@@ -1890,7 +1890,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
-        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection.insertDocuments(values, null);
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(1);
@@ -1902,7 +1902,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void insertDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
-        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection.insertDocuments(values, null);
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).isEmpty();
@@ -1939,7 +1939,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         String k2 = rnd();
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(k1), new BaseDocument(k2), new BaseDocument(k2));
 
-        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection.insertDocuments(values);
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(2);
@@ -2340,7 +2340,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("2");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
@@ -2367,7 +2367,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("2");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(values, null, null);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(2);
@@ -2386,7 +2386,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
@@ -2407,7 +2407,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(values, null, null);
         assertThat(deleteResult).isNotNull();
         assertThat(deleteResult.getDocuments()).hasSize(1);
@@ -2421,7 +2421,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void deleteDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<String> keys = new ArrayList<>();
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
         assertThat(deleteResult).isNotNull();
@@ -2433,7 +2433,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void deleteDocumentsByKeyNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<String> keys = Arrays.asList(rnd(), rnd());
 
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection.deleteDocuments(keys, null, null);
@@ -2466,7 +2466,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void updateDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(rnd()), new BaseDocument(rnd()));
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         values.forEach(it -> it.addAttribute("a", "test"));
 
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(values, null);
@@ -2505,7 +2505,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
@@ -2531,7 +2531,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         {
             values.add(new BaseDocument("1"));
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
@@ -2567,7 +2567,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             values.add(new BaseDocument("1"));
             values.add(new BaseDocument("2"));
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
@@ -2587,7 +2587,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
@@ -2613,7 +2613,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         {
             values.add(new BaseDocument("1"));
         }
-        collection.insertDocuments(values, null);
+        collection.insertDocuments(values);
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");

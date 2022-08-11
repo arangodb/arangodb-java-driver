@@ -103,7 +103,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -121,6 +121,24 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
             Collection<T> values, DocumentCreateOptions options) throws ArangoDBException;
+
+    /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     * <p>
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
+            Collection<T> values, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
 
     /**
      * Bulk imports the given values into the collection.

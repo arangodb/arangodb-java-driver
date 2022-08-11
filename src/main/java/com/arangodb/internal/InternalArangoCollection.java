@@ -109,10 +109,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(
-            final Collection<T> values, final DocumentCreateOptions params) {
+    protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(Class<T> userDataClass) {
         return response -> {
-            Class<?> userDataClass = getCollectionContentClass(values);
             final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();

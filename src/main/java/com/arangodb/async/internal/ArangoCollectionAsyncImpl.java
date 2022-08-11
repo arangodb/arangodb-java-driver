@@ -66,20 +66,24 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
-            final Collection<T> values) {
-        final DocumentCreateOptions params = new DocumentCreateOptions();
-        return executor.execute(insertDocumentsRequest(values, params),
-                insertDocumentsResponseDeserializer(values, params));
+    public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(
+            final Collection<?> values) {
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
             final Collection<T> values,
             final DocumentCreateOptions options) {
-        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
-        return executor.execute(insertDocumentsRequest(values, params),
-                insertDocumentsResponseDeserializer(values, params));
+        return insertDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) {
+        return executor
+                .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
 
     @Override

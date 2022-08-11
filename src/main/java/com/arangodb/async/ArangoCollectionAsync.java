@@ -97,7 +97,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(final Collection<?> values);
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -112,6 +112,22 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
             final Collection<T> values,
             final DocumentCreateOptions options);
+
+    /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
+            final Collection<T> values,
+            final DocumentCreateOptions options,
+            final Class<T> type);
 
     /**
      * Imports documents

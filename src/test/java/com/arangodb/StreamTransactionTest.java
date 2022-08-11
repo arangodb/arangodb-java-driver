@@ -576,7 +576,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
         List<String> keys = collection
-                .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()), null)
+                .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()))
                 .getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
 
         StreamTransactionEntity tx = db.beginStreamTransaction(

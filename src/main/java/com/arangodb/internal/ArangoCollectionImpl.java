@@ -65,17 +65,23 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return insertDocuments(values, new DocumentCreateOptions());
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
             final Collection<T> values, final DocumentCreateOptions options) throws ArangoDBException {
-        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
+        return insertDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    }
+
+    @Override
+    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) throws ArangoDBException {
         return executor
-                .execute(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
+                .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
 
     @Override
