@@ -172,8 +172,8 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value) {
-        return updateDocument(key, value, new DocumentUpdateOptions());
+    public CompletableFuture<DocumentUpdateEntity<Void>> updateDocument(final String key, final Object value) {
+        return updateDocument(key, value, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override

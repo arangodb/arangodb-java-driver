@@ -259,7 +259,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value);
+    CompletableFuture<DocumentUpdateEntity<Void>> updateDocument(final String key, final Object value);
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes

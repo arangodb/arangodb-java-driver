@@ -170,8 +170,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException {
-        return updateDocument(key, value, new DocumentUpdateOptions());
+    public DocumentUpdateEntity<Void> updateDocument(final String key, final Object value) throws ArangoDBException {
+        return updateDocument(key, value, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override

@@ -821,7 +821,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
         final TestUpdateEntity patchDoc = new TestUpdateEntity();
         patchDoc.a = "bar";
-        final DocumentUpdateEntity<TestUpdateEntity> updateResult = collection.updateDocument(createResult.getKey(), patchDoc);
+        final DocumentUpdateEntity<?> updateResult = collection.updateDocument(createResult.getKey(), patchDoc);
         assertThat(updateResult).isNotNull();
         assertThat(updateResult.getKey()).isEqualTo(createResult.getKey());
 
@@ -840,7 +840,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
         final TestUpdateEntitySerializeNullFalse patchDoc = new TestUpdateEntitySerializeNullFalse();
         patchDoc.a = "bar";
-        final DocumentUpdateEntity<TestUpdateEntitySerializeNullFalse> updateResult = collection.updateDocument(createResult.getKey(), patchDoc);
+        final DocumentUpdateEntity<?> updateResult = collection.updateDocument(createResult.getKey(), patchDoc);
         assertThat(updateResult).isNotNull();
         assertThat(updateResult.getKey()).isEqualTo(createResult.getKey());
 
