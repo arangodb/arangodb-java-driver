@@ -68,7 +68,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * _key is given, a new unique _key is generated automatically.
      *
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -81,7 +81,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * _key is given, a new unique _key is generated automatically.
      *
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
      * @throws ArangoDBException
@@ -107,7 +107,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * _key is given, a new unique _key is generated automatically.
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -121,7 +121,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * _key is given, a new unique _key is generated automatically.
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @param type  Deserialization target type for the returned documents.
      * @return information about the documents
      * @throws ArangoDBException
@@ -235,7 +235,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the document
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
@@ -250,7 +250,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the document
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
      * @throws ArangoDBException
@@ -277,7 +277,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * specified by the _key attributes in the documents in values.
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
@@ -291,7 +291,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * specified by the _key attributes in the documents in values.
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @param type  Deserialization target type for the returned documents.
      * @return information about the documents
      * @throws ArangoDBException
@@ -322,7 +322,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the document
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
@@ -338,7 +338,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key        The key of the document
      * @param value      A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options    Additional options, can be null
+     * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
      * @throws ArangoDBException
@@ -369,7 +369,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * overwritten in the existing documents if they do exist there.
      *
      * @param values  A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
@@ -385,7 +385,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * overwritten in the existing documents if they do exist there.
      *
      * @param values     A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
-     * @param options    Additional options, can be null
+     * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the documents
      * @throws ArangoDBException
@@ -410,7 +410,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes the document with the given {@code key} from the collection.
      *
      * @param key     The key of the document
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
@@ -424,7 +424,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the document
      * @param type    Deserialization target type for the returned documents.
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
@@ -449,7 +449,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Deletes multiple documents from the collection.
      *
      * @param values  The keys of the documents or the documents themselves
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href=
@@ -464,7 +464,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values  The keys of the documents or the documents themselves
      * @param type    Deserialization target type for the returned documents.
-     * @param options Additional options, can be null
+     * @param options Additional options
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href=
