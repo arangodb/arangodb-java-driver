@@ -25,7 +25,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
-import com.arangodb.serde.SerdeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,15 +143,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException {
-        return replaceDocument(key, value, new DocumentReplaceOptions());
+    public DocumentUpdateEntity<Void> replaceDocument(final String key, final Object value) throws ArangoDBException {
+        return executor.execute(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
+                constructParametricType(DocumentUpdateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> DocumentUpdateEntity<T> replaceDocument(
             final String key, final T value, final DocumentReplaceOptions options) throws ArangoDBException {
+        return replaceDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override

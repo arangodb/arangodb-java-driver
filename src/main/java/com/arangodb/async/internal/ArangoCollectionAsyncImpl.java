@@ -139,19 +139,25 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value) {
+    public CompletableFuture<DocumentUpdateEntity<Void>> replaceDocument(final String key, final Object value) {
         final DocumentReplaceOptions options = new DocumentReplaceOptions();
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(
             final String key,
             final T value,
             final DocumentReplaceOptions options) {
+        return replaceDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) {
         return executor.execute(replaceDocumentRequest(key, value, options),
-                constructParametricType(DocumentUpdateEntity.class, value.getClass()));
+                constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override

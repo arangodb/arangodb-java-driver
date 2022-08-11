@@ -82,7 +82,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the document
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -230,7 +230,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
-    <T> DocumentUpdateEntity<T> replaceDocument(String key, T value) throws ArangoDBException;
+    DocumentUpdateEntity<Void> replaceDocument(String key, Object value) throws ArangoDBException;
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -245,6 +245,22 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options)
+            throws ArangoDBException;
+
+    /**
+     * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
+     * precondition is violated
+     *
+     * @param key     The key of the document
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type    Deserialization target type for the returned documents.
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
+     * Documentation</a>
+     */
+    <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type)
             throws ArangoDBException;
 
     /**

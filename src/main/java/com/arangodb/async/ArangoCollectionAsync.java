@@ -205,7 +205,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value);
+    CompletableFuture<DocumentUpdateEntity<Void>> replaceDocument(final String key, final Object value);
 
     /**
      * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
@@ -222,6 +222,24 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
             final String key,
             final T value,
             final DocumentReplaceOptions options);
+
+    /**
+     * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
+     * violated
+     *
+     * @param key     The key of the document
+     * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param options Additional options, can be null
+     * @param type  Deserialization target type for the returned documents.
+     * @return information about the document
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
+     * Documentation</a>
+     */
+    <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(
+            final String key,
+            final T value,
+            final DocumentReplaceOptions options,
+            final Class<T> type);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
