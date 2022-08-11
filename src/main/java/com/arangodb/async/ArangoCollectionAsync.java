@@ -342,7 +342,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(final Collection<T> values);
+    CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(final Collection<?> values);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on

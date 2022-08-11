@@ -201,24 +201,23 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values)
             throws ArangoDBException {
-        return updateDocuments(values, new DocumentUpdateOptions());
+        return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
             final Collection<T> values, final DocumentUpdateOptions options) throws ArangoDBException {
-        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) getCollectionContentClass(values));
+        return updateDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 
     @Override
     public <T, U> MultiDocumentEntity<DocumentUpdateEntity<U>> updateDocuments(
             final Collection<T> values, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
-        final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
         return executor
-                .execute(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(returnType));
+                .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
 
     @Override

@@ -372,7 +372,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(Collection<T> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on

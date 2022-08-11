@@ -2469,7 +2469,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.insertDocuments(values);
         values.forEach(it -> it.addAttribute("a", "test"));
 
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(values, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(values);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2510,7 +2510,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(updatedValues, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(1);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2519,7 +2519,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void updateDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(values, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(values);
         assertThat(updateResult.getDocuments()).isEmpty();
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2538,7 +2538,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(updatedValues, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(1);
         assertThat(updateResult.getErrors()).hasSize(1);
     }
@@ -2554,7 +2554,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final Collection<RawJson> updatedValues = new ArrayList<>();
         updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
         updatedValues.add(RawJson.of("{\"_key\":\"2\", \"foo\":\"bar\"}"));
-        final MultiDocumentEntity<DocumentUpdateEntity<RawJson>> updateResult = collection.updateDocuments(updatedValues);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2592,7 +2592,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(updatedValues, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(1);
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2601,7 +2601,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void replaceDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(values, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(values);
         assertThat(updateResult.getDocuments()).isEmpty();
         assertThat(updateResult.getErrors()).isEmpty();
     }
@@ -2620,7 +2620,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(updatedValues, null);
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(1);
         assertThat(updateResult.getErrors()).hasSize(1);
     }

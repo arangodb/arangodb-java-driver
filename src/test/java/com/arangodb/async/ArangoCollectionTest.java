@@ -2104,7 +2104,7 @@ class ArangoCollectionTest extends BaseTest {
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        db.collection(COLLECTION_NAME).updateDocuments(updatedValues)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(1);
                     assertThat(updateResult.getErrors().size()).isEqualTo(0);
@@ -2115,7 +2115,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void updateDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).updateDocuments(values, null)
+        db.collection(COLLECTION_NAME).updateDocuments(values)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(0);
                     assertThat(updateResult.getErrors().size()).isEqualTo(0);
@@ -2136,7 +2136,7 @@ class ArangoCollectionTest extends BaseTest {
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        db.collection(COLLECTION_NAME).updateDocuments(updatedValues)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(1);
                     assertThat(updateResult.getErrors().size()).isEqualTo(1);
@@ -2178,7 +2178,7 @@ class ArangoCollectionTest extends BaseTest {
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        db.collection(COLLECTION_NAME).updateDocuments(updatedValues)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(1);
                     assertThat(updateResult.getErrors().size()).isEqualTo(0);
@@ -2189,7 +2189,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void replaceDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).updateDocuments(values, null)
+        db.collection(COLLECTION_NAME).updateDocuments(values)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(0);
                     assertThat(updateResult.getErrors().size()).isEqualTo(0);
@@ -2210,7 +2210,7 @@ class ArangoCollectionTest extends BaseTest {
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        db.collection(COLLECTION_NAME).updateDocuments(updatedValues)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size()).isEqualTo(1);
                     assertThat(updateResult.getErrors().size()).isEqualTo(1);
