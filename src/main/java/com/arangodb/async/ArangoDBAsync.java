@@ -68,7 +68,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
-    void shutdown() throws ArangoDBException;
+    void shutdown() ;
 
     /**
      * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
@@ -310,7 +310,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
         }
 
         @Override
-        public Builder loadProperties(final InputStream in) throws ArangoDBException {
+        public Builder loadProperties(final InputStream in)  {
             super.loadProperties(in);
             return this;
         }

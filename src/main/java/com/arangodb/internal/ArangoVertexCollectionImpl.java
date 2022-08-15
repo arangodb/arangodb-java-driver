@@ -42,23 +42,23 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public void drop() throws ArangoDBException {
+    public void drop()  {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public <T> VertexEntity insertVertex(final T value) throws ArangoDBException {
+    public <T> VertexEntity insertVertex(final T value)  {
         return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
+    public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options)  {
         return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> T getVertex(final String key, final Class<T> type) throws ArangoDBException {
+    public <T> T getVertex(final String key, final Class<T> type)  {
         try {
             return executor.execute(getVertexRequest(key, new GraphDocumentReadOptions()),
                     getVertexResponseDeserializer(type));
@@ -72,7 +72,7 @@ public class ArangoVertexCollectionImpl
 
     @Override
     public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options)
-            throws ArangoDBException {
+             {
         try {
             return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
         } catch (final ArangoDBException e) {
@@ -84,36 +84,36 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public <T> VertexUpdateEntity replaceVertex(final String key, final T value) throws ArangoDBException {
+    public <T> VertexUpdateEntity replaceVertex(final String key, final T value)  {
         return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer(value));
     }
 
     @Override
     public <T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
-            throws ArangoDBException {
+             {
         return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexUpdateEntity updateVertex(final String key, final T value) throws ArangoDBException {
+    public <T> VertexUpdateEntity updateVertex(final String key, final T value)  {
         return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer(value));
     }
 
     @Override
     public <T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
-            throws ArangoDBException {
+             {
         return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
     }
 
     @Override
-    public void deleteVertex(final String key) throws ArangoDBException {
+    public void deleteVertex(final String key)  {
         executor.execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
     }
 
     @Override
-    public void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException {
+    public void deleteVertex(final String key, final VertexDeleteOptions options)  {
         executor.execute(deleteVertexRequest(key, options), Void.class);
     }
 

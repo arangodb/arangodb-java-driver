@@ -35,7 +35,7 @@ public class ArangoViewImpl extends InternalArangoView<ArangoDBImpl, ArangoDatab
     }
 
     @Override
-    public boolean exists() throws ArangoDBException {
+    public boolean exists()  {
         try {
             getInfo();
             return true;
@@ -48,19 +48,19 @@ public class ArangoViewImpl extends InternalArangoView<ArangoDBImpl, ArangoDatab
     }
 
     @Override
-    public void drop() throws ArangoDBException {
+    public void drop()  {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public synchronized ViewEntity rename(final String newName) throws ArangoDBException {
+    public synchronized ViewEntity rename(final String newName)  {
         final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
         name = result.getName();
         return result;
     }
 
     @Override
-    public ViewEntity getInfo() throws ArangoDBException {
+    public ViewEntity getInfo()  {
         return executor.execute(getInfoRequest(), ViewEntity.class);
     }
 

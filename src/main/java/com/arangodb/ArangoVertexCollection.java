@@ -50,21 +50,19 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
      * graph
      *
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
      * Documentation</a>
      */
-    void drop() throws ArangoDBException;
+    void drop() ;
 
     /**
      * Creates a new vertex in the collection
      *
      * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
-    <T> VertexEntity insertVertex(T value) throws ArangoDBException;
+    <T> VertexEntity insertVertex(T value) ;
 
     /**
      * Creates a new vertex in the collection
@@ -72,10 +70,9 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
-    <T> VertexEntity insertVertex(T value, VertexCreateOptions options) throws ArangoDBException;
+    <T> VertexEntity insertVertex(T value, VertexCreateOptions options) ;
 
     /**
      * Retrieves the vertex document with the given {@code key} from the collection.
@@ -83,10 +80,9 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key  The key of the vertex
      * @param type The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the vertex identified by the key
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
-    <T> T getVertex(String key, Class<T> type) throws ArangoDBException;
+    <T> T getVertex(String key, Class<T> type) ;
 
     /**
      * Retrieves the vertex document with the given {@code key} from the collection.
@@ -95,10 +91,9 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param type    The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the vertex identified by the key
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
-    <T> T getVertex(String key, Class<T> type, GraphDocumentReadOptions options) throws ArangoDBException;
+    <T> T getVertex(String key, Class<T> type, GraphDocumentReadOptions options) ;
 
     /**
      * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -107,11 +102,10 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key   The key of the vertex
      * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
-    <T> VertexUpdateEntity replaceVertex(String key, T value) throws ArangoDBException;
+    <T> VertexUpdateEntity replaceVertex(String key, T value) ;
 
     /**
      * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -121,11 +115,10 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
-    <T> VertexUpdateEntity replaceVertex(String key, T value, VertexReplaceOptions options) throws ArangoDBException;
+    <T> VertexUpdateEntity replaceVertex(String key, T value, VertexReplaceOptions options) ;
 
     /**
      * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -135,10 +128,9 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key The key of the vertex
      * @param <T> The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
-    <T> VertexUpdateEntity updateVertex(String key, T value) throws ArangoDBException;
+    <T> VertexUpdateEntity updateVertex(String key, T value) ;
 
     /**
      * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -149,28 +141,25 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param <T>     The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
-    <T> VertexUpdateEntity updateVertex(String key, T value, VertexUpdateOptions options) throws ArangoDBException;
+    <T> VertexUpdateEntity updateVertex(String key, T value, VertexUpdateOptions options) ;
 
     /**
      * Deletes the vertex with the given {@code key} from the collection.
      *
      * @param key The key of the vertex
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
-    void deleteVertex(String key) throws ArangoDBException;
+    void deleteVertex(String key) ;
 
     /**
      * Deletes the vertex with the given {@code key} from the collection.
      *
      * @param key     The key of the vertex
      * @param options Additional options, can be null
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
-    void deleteVertex(String key, VertexDeleteOptions options) throws ArangoDBException;
+    void deleteVertex(String key, VertexDeleteOptions options) ;
 
 }

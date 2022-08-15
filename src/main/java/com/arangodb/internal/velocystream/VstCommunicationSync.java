@@ -131,12 +131,12 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
     }
 
     @Override
-    protected Response execute(final Request request, final VstConnectionSync connection) throws ArangoDBException {
+    protected Response execute(final Request request, final VstConnectionSync connection)  {
         return execute(request, connection, 0);
     }
 
     @Override
-    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount) throws ArangoDBException {
+    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount)  {
         try {
             final Message requestMessage = createMessage(request);
             final Message responseMessage = send(requestMessage, connection);
@@ -156,7 +156,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         }
     }
 
-    private Message send(final Message message, final VstConnectionSync connection) throws ArangoDBException {
+    private Message send(final Message message, final VstConnectionSync connection)  {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
                     message.getBody() != null ? message.getBody() : "{}"));

@@ -90,7 +90,7 @@ public class VstConnectionSync extends VstConnection<Message> {
     }
 
     @Override
-    public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+    public Message write(final Message message, final Collection<Chunk> chunks)  {
         final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
         messageStore.storeMessage(message.getId(), task);
         super.writeIntern(message, chunks);

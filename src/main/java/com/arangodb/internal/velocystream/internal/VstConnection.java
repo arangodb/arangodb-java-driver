@@ -267,7 +267,7 @@ public abstract class VstConnection<T> implements Connection {
     }
 
     protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks)
-            throws ArangoDBException {
+             {
         for (final Chunk chunk : chunks) {
             try {
                 if (LOGGER.isDebugEnabled()) {

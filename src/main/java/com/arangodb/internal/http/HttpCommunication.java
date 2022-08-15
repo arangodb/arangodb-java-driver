@@ -72,11 +72,11 @@ public class HttpCommunication implements Closeable {
         hostHandler.close();
     }
 
-    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+    public Response execute(final Request request, final HostHandle hostHandle)  {
         return execute(request, hostHandle, 0);
     }
 
-    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) throws ArangoDBException {
+    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount)  {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {

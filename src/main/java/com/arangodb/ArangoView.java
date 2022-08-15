@@ -50,36 +50,32 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * Checks whether the view exists.
      *
      * @return true if the view exists, otherwise false
-     * @throws ArangoDBException
      */
-    boolean exists() throws ArangoDBException;
+    boolean exists() ;
 
     /**
      * Deletes the view from the database.
      *
-     * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
      */
-    void drop() throws ArangoDBException;
+    void drop() ;
 
     /**
      * Renames the view.
      *
      * @param newName The new name
      * @return information about the view
-     * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
      */
-    ViewEntity rename(String newName) throws ArangoDBException;
+    ViewEntity rename(String newName) ;
 
     /**
      * Returns information about the view.
      *
      * @return information about the view
-     * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
      * Documentation</a>
      */
-    ViewEntity getInfo() throws ArangoDBException;
+    ViewEntity getInfo() ;
 
 }

@@ -68,32 +68,32 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public Response delete() throws ArangoDBException {
+    public Response delete()  {
         return request(RequestType.DELETE);
     }
 
     @Override
-    public Response get() throws ArangoDBException {
+    public Response get()  {
         return request(RequestType.GET);
     }
 
     @Override
-    public Response head() throws ArangoDBException {
+    public Response head()  {
         return request(RequestType.HEAD);
     }
 
     @Override
-    public Response patch() throws ArangoDBException {
+    public Response patch()  {
         return request(RequestType.PATCH);
     }
 
     @Override
-    public Response post() throws ArangoDBException {
+    public Response post()  {
         return request(RequestType.POST);
     }
 
     @Override
-    public Response put() throws ArangoDBException {
+    public Response put()  {
         return request(RequestType.PUT);
     }
 

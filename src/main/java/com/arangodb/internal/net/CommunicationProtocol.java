@@ -31,7 +31,7 @@ import java.io.Closeable;
  */
 public interface CommunicationProtocol extends Closeable {
 
-    Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
+    Response execute(final Request request, HostHandle hostHandle) ;
 
     void setJwt(String jwt);
 

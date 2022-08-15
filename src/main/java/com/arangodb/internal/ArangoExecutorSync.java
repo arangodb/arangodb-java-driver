@@ -48,22 +48,22 @@ public class ArangoExecutorSync extends ArangoExecutor {
         this.protocol = protocol;
     }
 
-    public <T> T execute(final Request request, final Type type) throws ArangoDBException {
+    public <T> T execute(final Request request, final Type type)  {
         return execute(request, type, null);
     }
 
-    public <T> T execute(final Request request, final Type type, final HostHandle hostHandle) throws ArangoDBException {
+    public <T> T execute(final Request request, final Type type, final HostHandle hostHandle)  {
         return execute(request, response -> createResult(type, response), hostHandle);
     }
 
-    public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) throws ArangoDBException {
+    public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer)  {
         return execute(request, responseDeserializer, null);
     }
 
     public <T> T execute(
             final Request request,
             final ResponseDeserializer<T> responseDeserializer,
-            final HostHandle hostHandle) throws ArangoDBException {
+            final HostHandle hostHandle)  {
 
         final Response response = protocol.execute(interceptRequest(request), hostHandle);
         interceptResponse(response);

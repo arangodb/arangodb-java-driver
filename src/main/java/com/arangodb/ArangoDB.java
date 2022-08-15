@@ -105,7 +105,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         @Override
-        public Builder loadProperties(final InputStream in) throws ArangoDBException {
+        public Builder loadProperties(final InputStream in)  {
             super.loadProperties(in);
             return this;
         }
@@ -383,9 +383,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Releases all connections to the server and clear the connection pool.
      *
-     * @throws ArangoDBException
      */
-    void shutdown() throws ArangoDBException;
+    void shutdown() ;
 
     /**
      * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
@@ -420,94 +419,85 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param dbName Name of the database to create
      * @return true if the database was created successfully.
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      */
-    Boolean createDatabase(DbName dbName) throws ArangoDBException;
+    Boolean createDatabase(DbName dbName) ;
 
     /**
      * Creates a new database with the given name.
      *
      * @param options Creation options
      * @return true if the database was created successfully.
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      * @since ArangoDB 3.6.0
      */
-    Boolean createDatabase(DBCreateOptions options) throws ArangoDBException;
+    Boolean createDatabase(DBCreateOptions options) ;
 
     /**
      * Retrieves a list of all existing databases
      *
      * @return a list of all existing databases
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-databases">API
      * Documentation</a>
      */
-    Collection<String> getDatabases() throws ArangoDBException;
+    Collection<String> getDatabases() ;
 
     /**
      * Retrieves a list of all databases the current user can access
      *
      * @return a list of all databases the current user can access
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
      * Documentation</a>
      */
-    Collection<String> getAccessibleDatabases() throws ArangoDBException;
+    Collection<String> getAccessibleDatabases() ;
 
     /**
      * List available database to the specified user
      *
      * @param user The name of the user for which you want to query the databases
      * @return list of database names which are available for the specified user
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/user-management.html#list-the-accessible-databases-for-a-user">API
      * Documentation</a>
      */
-    Collection<String> getAccessibleDatabasesFor(String user) throws ArangoDBException;
+    Collection<String> getAccessibleDatabasesFor(String user) ;
 
     /**
      * Returns the server name and version number.
      *
      * @return the server version, number
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
      * Documentation</a>
      */
-    ArangoDBVersion getVersion() throws ArangoDBException;
+    ArangoDBVersion getVersion() ;
 
     /**
      * Returns the server storage engine.
      *
      * @return the storage engine name
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
-    ArangoDBEngine getEngine() throws ArangoDBException;
+    ArangoDBEngine getEngine() ;
 
     /**
      * Returns the server role.
      *
      * @return the server role
-     * @throws ArangoDBException
      */
-    ServerRole getRole() throws ArangoDBException;
+    ServerRole getRole() ;
 
     /**
      * Returns the id of a server in a cluster.
      *
      * @return the server id
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
      * Documentation</a>
      */
-    String getServerId() throws ArangoDBException;
+    String getServerId() ;
 
     /**
      * Create a new user. This user will not have access to any database. You need permission to the _system database in
@@ -516,10 +506,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user   The name of the user
      * @param passwd The user password
      * @return information about the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
      */
-    UserEntity createUser(String user, String passwd) throws ArangoDBException;
+    UserEntity createUser(String user, String passwd) ;
 
     /**
      * Create a new user. This user will not have access to any database. You need permission to the _system database in
@@ -529,19 +518,17 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param passwd  The user password
      * @param options Additional options, can be null
      * @return information about the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
      */
-    UserEntity createUser(String user, String passwd, UserCreateOptions options) throws ArangoDBException;
+    UserEntity createUser(String user, String passwd, UserCreateOptions options) ;
 
     /**
      * Removes an existing user, identified by user. You need access to the _system database.
      *
      * @param user The name of the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#remove-user">API Documentation</a>
      */
-    void deleteUser(String user) throws ArangoDBException;
+    void deleteUser(String user) ;
 
     /**
      * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
@@ -549,20 +536,18 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @return information about the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#fetch-user">API Documentation</a>
      */
-    UserEntity getUser(String user) throws ArangoDBException;
+    UserEntity getUser(String user) ;
 
     /**
      * Fetches data about all users. You can only execute this call if you have access to the _system database.
      *
      * @return informations about all users
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#list-available-users">API
      * Documentation</a>
      */
-    Collection<UserEntity> getUsers() throws ArangoDBException;
+    Collection<UserEntity> getUsers() ;
 
     /**
      * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
@@ -571,10 +556,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user    The name of the user
      * @param options Properties of the user to be changed
      * @return information about the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#modify-user">API Documentation</a>
      */
-    UserEntity updateUser(String user, UserUpdateOptions options) throws ArangoDBException;
+    UserEntity updateUser(String user, UserUpdateOptions options) ;
 
     /**
      * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
@@ -583,11 +567,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user    The name of the user
      * @param options Additional properties of the user, can be null
      * @return information about the user
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#replace-user">API
      * Documentation</a>
      */
-    UserEntity replaceUser(String user, UserUpdateOptions options) throws ArangoDBException;
+    UserEntity replaceUser(String user, UserUpdateOptions options) ;
 
     /**
      * Sets the default access level for databases for the user {@code user}. You need permission to the _system
@@ -595,10 +578,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @throws ArangoDBException
      * @since ArangoDB 3.2.0
      */
-    void grantDefaultDatabaseAccess(String user, Permissions permissions) throws ArangoDBException;
+    void grantDefaultDatabaseAccess(String user, Permissions permissions) ;
 
     /**
      * Sets the default access level for collections for the user {@code user}. You need permission to the _system
@@ -606,19 +588,17 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @throws ArangoDBException
      * @since ArangoDB 3.2.0
      */
-    void grantDefaultCollectionAccess(String user, Permissions permissions) throws ArangoDBException;
+    void grantDefaultCollectionAccess(String user, Permissions permissions) ;
 
     /**
      * Generic Execute. Use this method to execute custom FOXX services.
      *
      * @param request VelocyStream request
      * @return VelocyStream response
-     * @throws ArangoDBException
      */
-    Response execute(Request request) throws ArangoDBException;
+    Response execute(Request request) ;
 
     /**
      * Generic Execute. Use this method to execute custom FOXX services.
@@ -626,9 +606,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param request    VelocyStream request
      * @param hostHandle Used to stick to a specific host when using {@link LoadBalancingStrategy#ROUND_ROBIN}
      * @return VelocyStream response
-     * @throws ArangoDBException
      */
-    Response execute(Request request, HostHandle hostHandle) throws ArangoDBException;
+    Response execute(Request request, HostHandle hostHandle) ;
 
     /**
      * Returns the server logs
@@ -639,26 +618,24 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Documentation</a>
      * @since ArangoDB 3.8
      */
-    LogEntriesEntity getLogEntries(LogOptions options) throws ArangoDBException;
+    LogEntriesEntity getLogEntries(LogOptions options) ;
 
     /**
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @throws ArangoDBException
      * @since ArangoDB 3.1.0
      */
-    LogLevelEntity getLogLevel() throws ArangoDBException;
+    LogLevelEntity getLogLevel() ;
 
     /**
      * Modifies and returns the server's current loglevel settings.
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @throws ArangoDBException
      * @since ArangoDB 3.1.0
      */
-    LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
+    LogLevelEntity setLogLevel(LogLevelEntity entity) ;
 
     /**
      * <strong>Attention:</strong> Please do not use!

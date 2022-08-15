@@ -68,53 +68,47 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * Performs a DELETE request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
-    Response delete() throws ArangoDBException;
+    Response delete() ;
 
     /**
      * Performs a GET request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
 
-    Response get() throws ArangoDBException;
+    Response get() ;
 
     /**
      * Performs a HEAD request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
 
-    Response head() throws ArangoDBException;
+    Response head() ;
 
     /**
      * Performs a PATCH request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
 
-    Response patch() throws ArangoDBException;
+    Response patch() ;
 
     /**
      * Performs a POST request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
 
-    Response post() throws ArangoDBException;
+    Response post() ;
 
     /**
      * Performs a PUT request to the given URL and returns the server response.
      *
      * @return server response
-     * @throws ArangoDBException
      */
 
-    Response put() throws ArangoDBException;
+    Response put() ;
 
 }

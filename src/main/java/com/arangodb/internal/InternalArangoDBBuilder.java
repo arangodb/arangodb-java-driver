@@ -93,7 +93,7 @@ public abstract class InternalArangoDBBuilder {
         loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
     }
 
-    public InternalArangoDBBuilder loadProperties(final InputStream in) throws ArangoDBException {
+    public InternalArangoDBBuilder loadProperties(final InputStream in)  {
 
         final Properties properties = new Properties();
 

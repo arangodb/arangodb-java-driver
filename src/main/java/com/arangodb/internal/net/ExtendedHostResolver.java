@@ -114,7 +114,7 @@ public class ExtendedHostResolver implements HostResolver {
         return hosts;
     }
 
-    private Collection<String> resolveFromServer() throws ArangoDBException {
+    private Collection<String> resolveFromServer()  {
 
         Collection<String> response;
 

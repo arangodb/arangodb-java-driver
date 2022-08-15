@@ -387,7 +387,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
-    public <T> CompletableFuture<T> getDocument(final String id, final Class<T> type) throws ArangoDBException {
+    public <T> CompletableFuture<T> getDocument(final String id, final Class<T> type)  {
         DocumentUtil.validateDocumentId(id);
         final String[] split = id.split("/");
         return collection(split[0]).getDocument(split[1], type);
@@ -395,7 +395,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
 
     @Override
     public <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
-            throws ArangoDBException {
+             {
         DocumentUtil.validateDocumentId(id);
         final String[] split = id.split("/");
         return collection(split[0]).getDocument(split[1], type, options);

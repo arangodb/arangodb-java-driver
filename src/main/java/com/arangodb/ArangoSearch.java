@@ -38,55 +38,50 @@ public interface ArangoSearch extends ArangoView {
      * Creates a view, then returns view information from the server.
      *
      * @return information about the view
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
-    ViewEntity create() throws ArangoDBException;
+    ViewEntity create() ;
 
     /**
      * Creates a view with the given {@code options}, then returns view information from the server.
      *
      * @param options Additional options, can be null
      * @return information about the view
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
-    ViewEntity create(ArangoSearchCreateOptions options) throws ArangoDBException;
+    ViewEntity create(ArangoSearchCreateOptions options) ;
 
     /**
      * Reads the properties of the specified view.
      *
      * @return properties of the view
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#read-properties-of-a-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity getProperties() throws ArangoDBException;
+    ArangoSearchPropertiesEntity getProperties() ;
 
     /**
      * Partially changes properties of the view.
      *
      * @param options properties to change
      * @return properties of the view
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#partially-changes-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options) throws ArangoDBException;
+    ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options) ;
 
     /**
      * Changes properties of the view.
      *
      * @param options properties to change
      * @return properties of the view
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#change-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options) throws ArangoDBException;
+    ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options) ;
 
 }

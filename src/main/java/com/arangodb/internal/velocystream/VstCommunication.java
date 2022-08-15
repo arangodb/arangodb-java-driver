@@ -140,20 +140,20 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
         hostHandler.close();
     }
 
-    public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+    public R execute(final Request request, final HostHandle hostHandle)  {
         return execute(request, hostHandle, 0);
     }
 
-    protected R execute(final Request request, final HostHandle hostHandle, final int attemptCount) throws ArangoDBException {
+    protected R execute(final Request request, final HostHandle hostHandle, final int attemptCount)  {
         final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
         return execute(request, connection, attemptCount);
     }
 
-    protected abstract R execute(final Request request, C connection) throws ArangoDBException;
+    protected abstract R execute(final Request request, C connection) ;
 
-    protected abstract R execute(final Request request, C connection, final int attemptCount) throws ArangoDBException;
+    protected abstract R execute(final Request request, C connection, final int attemptCount) ;
 
-    protected void checkError(final Response response) throws ArangoDBException {
+    protected void checkError(final Response response)  {
         ResponseUtils.checkError(util, response);
     }
 

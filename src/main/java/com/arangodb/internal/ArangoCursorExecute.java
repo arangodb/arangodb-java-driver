@@ -30,8 +30,8 @@ import java.util.Map;
  */
 public interface ArangoCursorExecute {
 
-    InternalCursorEntity next(String id, Map<String, String> meta) throws ArangoDBException;
+    InternalCursorEntity next(String id, Map<String, String> meta) ;
 
-    void close(String id, Map<String, String> meta) throws ArangoDBException;
+    void close(String id, Map<String, String> meta) ;
 
 }

@@ -600,7 +600,7 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type) throws ArangoDBException;
+    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type) ;
 
     /**
      * Reads a single document
@@ -613,7 +613,7 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
-            throws ArangoDBException;
+            ;
 
     /**
      * Reload the routing table.
@@ -688,7 +688,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param analyzer SearchAnalyzer
      * @return the created Analyzer
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -699,7 +698,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param name of the Analyzer without database prefix
      * @return information about an Analyzer
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -709,7 +707,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Retrieves all analyzers definitions.
      *
      * @return collection of all analyzers definitions
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -719,7 +716,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Deletes an Analyzer
      *
      * @param name of the Analyzer without database prefix
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -730,7 +726,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param name    of the Analyzer without database prefix
      * @param options AnalyzerDeleteOptions
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */

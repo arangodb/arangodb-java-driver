@@ -38,7 +38,7 @@ public class ArangoSearchImpl extends InternalArangoSearch<ArangoDBImpl, ArangoD
     }
 
     @Override
-    public boolean exists() throws ArangoDBException {
+    public boolean exists()  {
         try {
             getInfo();
             return true;
@@ -51,46 +51,46 @@ public class ArangoSearchImpl extends InternalArangoSearch<ArangoDBImpl, ArangoD
     }
 
     @Override
-    public void drop() throws ArangoDBException {
+    public void drop()  {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public synchronized ViewEntity rename(final String newName) throws ArangoDBException {
+    public synchronized ViewEntity rename(final String newName)  {
         final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
         name = result.getName();
         return result;
     }
 
     @Override
-    public ViewEntity getInfo() throws ArangoDBException {
+    public ViewEntity getInfo()  {
         return executor.execute(getInfoRequest(), ViewEntity.class);
     }
 
     @Override
-    public ViewEntity create() throws ArangoDBException {
+    public ViewEntity create()  {
         return create(new ArangoSearchCreateOptions());
     }
 
     @Override
-    public ViewEntity create(final ArangoSearchCreateOptions options) throws ArangoDBException {
+    public ViewEntity create(final ArangoSearchCreateOptions options)  {
         return db().createArangoSearch(name(), options);
     }
 
     @Override
-    public ArangoSearchPropertiesEntity getProperties() throws ArangoDBException {
+    public ArangoSearchPropertiesEntity getProperties()  {
         return executor.execute(getPropertiesRequest(), ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public ArangoSearchPropertiesEntity updateProperties(final ArangoSearchPropertiesOptions options)
-            throws ArangoDBException {
+             {
         return executor.execute(updatePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public ArangoSearchPropertiesEntity replaceProperties(final ArangoSearchPropertiesOptions options)
-            throws ArangoDBException {
+             {
         return executor.execute(replacePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 

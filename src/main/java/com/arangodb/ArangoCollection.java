@@ -57,11 +57,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    DocumentCreateEntity<Void> insertDocument(Object value) throws ArangoDBException;
+    DocumentCreateEntity<Void> insertDocument(Object value) ;
 
     /**
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -70,11 +69,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
+    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) ;
 
     /**
      * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -84,11 +82,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
+    <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options, Class<T> type) ;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -96,11 +93,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Collection<?> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Collection<?> values) ;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -109,12 +105,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            Collection<T> values, DocumentCreateOptions options) throws ArangoDBException;
+            Collection<T> values, DocumentCreateOptions options) ;
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -124,21 +119,19 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            Collection<T> values, DocumentCreateOptions options, Class<T> type) throws ArangoDBException;
+            Collection<T> values, DocumentCreateOptions options, Class<T> type) ;
 
     /**
      * Bulk imports the given values into the collection.
      *
      * @param values a list of Objects that will be stored as documents
      * @return information about the import
-     * @throws ArangoDBException
      */
-    DocumentImportEntity importDocuments(Collection<?> values) throws ArangoDBException;
+    DocumentImportEntity importDocuments(Collection<?> values) ;
 
     /**
      * Bulk imports the given values into the collection.
@@ -146,18 +139,16 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  a list of Objects that will be stored as documents
      * @param options Additional options, can be null
      * @return information about the import
-     * @throws ArangoDBException
      */
-    DocumentImportEntity importDocuments(Collection<?> values, DocumentImportOptions options) throws ArangoDBException;
+    DocumentImportEntity importDocuments(Collection<?> values, DocumentImportOptions options) ;
 
     /**
      * Bulk imports the given values into the collection.
      *
      * @param values JSON-encoded array of objects that will be stored as documents
      * @return information about the import
-     * @throws ArangoDBException
      */
-    DocumentImportEntity importDocuments(String values) throws ArangoDBException;
+    DocumentImportEntity importDocuments(String values) ;
 
     /**
      * Bulk imports the given values into the collection.
@@ -165,9 +156,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  JSON-encoded array of objects that will be stored as documents
      * @param options Additional options, can be null
      * @return information about the import
-     * @throws ArangoDBException
      */
-    DocumentImportEntity importDocuments(String values, DocumentImportOptions options) throws ArangoDBException;
+    DocumentImportEntity importDocuments(String values, DocumentImportOptions options) ;
 
     /**
      * Retrieves the document with the given {@code key} from the collection.
@@ -175,11 +165,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key  The key of the document
      * @param type The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the document identified by the key
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> T getDocument(String key, Class<T> type) throws ArangoDBException;
+    <T> T getDocument(String key, Class<T> type) ;
 
     /**
      * Retrieves the document with the given {@code key} from the collection.
@@ -188,11 +177,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the document identified by the key
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> T getDocument(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
+    <T> T getDocument(String key, Class<T> type, DocumentReadOptions options) ;
 
     /**
      * Retrieves multiple documents with the given {@code _key} from the collection.
@@ -200,9 +188,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param keys The keys of the documents
      * @param type The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return the documents and possible errors
-     * @throws ArangoDBException
      */
-    <T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type) throws ArangoDBException;
+    <T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type) ;
 
     /**
      * Retrieves multiple documents with the given {@code _key} from the collection.
@@ -211,10 +198,9 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    The type of the documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the documents and possible errors
-     * @throws ArangoDBException
      */
     <T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type, DocumentReadOptions options)
-            throws ArangoDBException;
+            ;
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -223,11 +209,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
-    DocumentUpdateEntity<Void> replaceDocument(String key, Object value) throws ArangoDBException;
+    DocumentUpdateEntity<Void> replaceDocument(String key, Object value) ;
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -237,12 +222,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options)
-            throws ArangoDBException;
+            ;
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -253,12 +237,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type)
-            throws ArangoDBException;
+            ;
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -266,11 +249,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Collection<?> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Collection<?> values) ;
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -279,12 +261,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            Collection<T> values, DocumentReplaceOptions options) throws ArangoDBException;
+            Collection<T> values, DocumentReplaceOptions options) ;
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -294,12 +275,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            Collection<T> values, DocumentReplaceOptions options, Class<T> type) throws ArangoDBException;
+            Collection<T> values, DocumentReplaceOptions options, Class<T> type) ;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -309,11 +289,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    DocumentUpdateEntity<Void> updateDocument(String key, Object value) throws ArangoDBException;
+    DocumentUpdateEntity<Void> updateDocument(String key, Object value) ;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -324,12 +303,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> updateDocument(String key, T value, DocumentUpdateOptions options)
-            throws ArangoDBException;
+            ;
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -341,12 +319,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> updateDocument(String key, Object value, DocumentUpdateOptions options, Class<T> returnType)
-            throws ArangoDBException;
+            ;
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -356,11 +333,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Collection<?> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Collection<?> values) ;
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -371,12 +347,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A list of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            Collection<T> values, DocumentUpdateOptions options) throws ArangoDBException;
+            Collection<T> values, DocumentUpdateOptions options) ;
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -388,23 +363,21 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            Collection<?> values, DocumentUpdateOptions options, Class<T> returnType) throws ArangoDBException;
+            Collection<?> values, DocumentUpdateOptions options, Class<T> returnType) ;
 
     /**
      * Deletes the document with the given {@code key} from the collection.
      *
      * @param key The key of the document
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
-    DocumentDeleteEntity<Void> deleteDocument(String key) throws ArangoDBException;
+    DocumentDeleteEntity<Void> deleteDocument(String key) ;
 
     /**
      * Deletes the document with the given {@code key} from the collection.
@@ -412,12 +385,11 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key     The key of the document
      * @param options Additional options
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
     DocumentDeleteEntity<Void> deleteDocument(String key, DocumentDeleteOptions options)
-            throws ArangoDBException;
+            ;
 
     /**
      * Deletes the document with the given {@code key} from the collection.
@@ -426,24 +398,22 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    Deserialization target type for the returned documents.
      * @param options Additional options
      * @return information about the document
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
     <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options, Class<T> type)
-            throws ArangoDBException;
+            ;
 
     /**
      * Deletes multiple documents from the collection.
      *
      * @param values The keys of the documents or the documents themselves
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Collection<?> values) throws ArangoDBException;
+    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Collection<?> values) ;
 
     /**
      * Deletes multiple documents from the collection.
@@ -451,13 +421,12 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  The keys of the documents or the documents themselves
      * @param options Additional options
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            Collection<?> values, DocumentDeleteOptions options) throws ArangoDBException;
+            Collection<?> values, DocumentDeleteOptions options) ;
 
     /**
      * Deletes multiple documents from the collection.
@@ -466,13 +435,12 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    Deserialization target type for the returned documents.
      * @param options Additional options
      * @return information about the documents
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            Collection<?> values, DocumentDeleteOptions options, Class<T> type) throws ArangoDBException;
+            Collection<?> values, DocumentDeleteOptions options, Class<T> type) ;
 
     /**
      * Checks if the document exists by reading a single document head
@@ -491,32 +459,30 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key     The key of the document
      * @param options Additional options, can be null
      * @return true if the document was found, otherwise false
-     * @throws ArangoDBException only thrown when {@link DocumentExistsOptions#isCatchException()} == false
+     *  only thrown when {@link DocumentExistsOptions#isCatchException()} == false
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
      * Documentation</a>
      */
-    Boolean documentExists(String key, DocumentExistsOptions options) throws ArangoDBException;
+    Boolean documentExists(String key, DocumentExistsOptions options) ;
 
     /**
      * Fetches information about the index with the given {@code id} and returns it.
      *
      * @param id The index-handle
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
-    IndexEntity getIndex(String id) throws ArangoDBException;
+    IndexEntity getIndex(String id) ;
 
     /**
      * Deletes the index with the given {@code id} from the collection.
      *
      * @param id The index-handle
      * @return the id of the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
      */
-    String deleteIndex(String id) throws ArangoDBException;
+    String deleteIndex(String id) ;
 
     /**
      * Creates a hash index for the collection if it does not already exist.
@@ -524,13 +490,12 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
      * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
      * hash index is an alias for a persistent index.
      */
     @Deprecated
-    IndexEntity ensureHashIndex(Iterable<String> fields, HashIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureHashIndex(Iterable<String> fields, HashIndexOptions options) ;
 
     /**
      * Creates a skip-list index for the collection, if it does not already exist.
@@ -538,14 +503,13 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API
      * Documentation</a>
      * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
      * skiplist index is an alias for a persistent index.
      */
     @Deprecated
-    IndexEntity ensureSkiplistIndex(Iterable<String> fields, SkiplistIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureSkiplistIndex(Iterable<String> fields, SkiplistIndexOptions options) ;
 
     /**
      * Creates a persistent index for the collection, if it does not already exist.
@@ -553,11 +517,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
      * Documentation</a>
      */
-    IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) throws ArangoDBException;
+    IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) ;
 
     /**
      * Creates a geo-spatial index for the collection, if it does not already exist.
@@ -565,11 +528,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API
      * Documentation</a>
      */
-    IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) ;
 
     /**
      * Creates a fulltext index for the collection, if it does not already exist.
@@ -577,11 +539,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
      */
-    IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) ;
 
     /**
      * Creates a ttl index for the collection, if it does not already exist.
@@ -589,11 +550,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-ttl.html">API
      * Documentation</a>
      */
-    IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options) ;
 
     /**
      * Creates a ZKD multi-dimensional index for the collection, if it does not already exist.
@@ -602,85 +562,78 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
      * @since ArangoDB 3.9
      */
-    IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options) throws ArangoDBException;
+    IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options) ;
 
     /**
      * Fetches a list of all indexes on this collection.
      *
      * @return information about the indexes
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
      * Documentation</a>
      */
-    Collection<IndexEntity> getIndexes() throws ArangoDBException;
+    Collection<IndexEntity> getIndexes() ;
 
     /**
      * Checks whether the collection exists
      *
      * @return true if the collection exists, otherwise false
      */
-    boolean exists() throws ArangoDBException;
+    boolean exists() ;
 
     /**
      * Removes all documents from the collection, but leaves the indexes intact
      *
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
      * Documentation</a>
      */
-    CollectionEntity truncate() throws ArangoDBException;
+    CollectionEntity truncate() ;
 
     /**
      * Removes all documents from the collection, but leaves the indexes intact
      *
      * @param options
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    CollectionEntity truncate(CollectionTruncateOptions options) throws ArangoDBException;
+    CollectionEntity truncate(CollectionTruncateOptions options) ;
 
     /**
      * Counts the documents in a collection
      *
      * @return information about the collection, including the number of documents
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
      * Documentation</a>
      */
-    CollectionPropertiesEntity count() throws ArangoDBException;
+    CollectionPropertiesEntity count() ;
 
     /**
      * Counts the documents in a collection
      *
      * @param options
      * @return information about the collection, including the number of documents
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    CollectionPropertiesEntity count(CollectionCountOptions options) throws ArangoDBException;
+    CollectionPropertiesEntity count(CollectionCountOptions options) ;
 
     /**
      * Creates a collection for this collection's name, then returns collection information from the server.
      *
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
-    CollectionEntity create() throws ArangoDBException;
+    CollectionEntity create() ;
 
     /**
      * Creates a collection with the given {@code options} for this collection's name, then returns collection
@@ -688,77 +641,70 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
-    CollectionEntity create(CollectionCreateOptions options) throws ArangoDBException;
+    CollectionEntity create(CollectionCreateOptions options) ;
 
     /**
      * Deletes the collection from the database.
      *
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
      * Documentation</a>
      */
-    void drop() throws ArangoDBException;
+    void drop() ;
 
     /**
      * Deletes the collection from the database.
      *
      * @param isSystem Whether or not the collection to drop is a system collection. This parameter must be set to true in
      *                 order to drop a system collection.
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
      * Documentation</a>
      * @since ArangoDB 3.1.0
      */
-    void drop(boolean isSystem) throws ArangoDBException;
+    void drop(boolean isSystem) ;
 
     /**
      * Returns information about the collection
      *
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-information-about-a-collection">API
      * Documentation</a>
      */
-    CollectionEntity getInfo() throws ArangoDBException;
+    CollectionEntity getInfo() ;
 
     /**
      * Reads the properties of the specified collection
      *
      * @return properties of the collection
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/collection-getting.html#read-properties-of-a-collection">API
      * Documentation</a>
      */
-    CollectionPropertiesEntity getProperties() throws ArangoDBException;
+    CollectionPropertiesEntity getProperties() ;
 
     /**
      * Changes the properties of the collection
      *
      * @param options Additional options, can be null
      * @return properties of the collection
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
      * Documentation</a>
      */
-    CollectionPropertiesEntity changeProperties(CollectionPropertiesOptions options) throws ArangoDBException;
+    CollectionPropertiesEntity changeProperties(CollectionPropertiesOptions options) ;
 
     /**
      * Renames the collection
      *
      * @param newName The new name
      * @return information about the collection
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#rename-collection">API
      * Documentation</a>
      */
-    CollectionEntity rename(String newName) throws ArangoDBException;
+    CollectionEntity rename(String newName) ;
 
     /**
      * Returns the responsible shard for the document.
@@ -767,7 +713,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value A projection of the document containing at least the shard key (_key or a custom attribute) for
      *              which the responsible shard should be determined
      * @return information about the responsible shard
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-responsible-shard-for-a-document">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
@@ -778,11 +723,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieve the collections revision
      *
      * @return information about the collection, including the collections revision
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-collection-revision-id">API
      * Documentation</a>
      */
-    CollectionRevisionEntity getRevision() throws ArangoDBException;
+    CollectionRevisionEntity getRevision() ;
 
     /**
      * Grants or revoke access to the collection for user user. You need permission to the _system database in order to
@@ -790,47 +734,43 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      */
-    void grantAccess(String user, Permissions permissions) throws ArangoDBException;
+    void grantAccess(String user, Permissions permissions) ;
 
     /**
      * Revokes access to the collection for user user. You need permission to the _system database in order to execute
      * this call.
      *
      * @param user The name of the user
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      */
-    void revokeAccess(String user) throws ArangoDBException;
+    void revokeAccess(String user) ;
 
     /**
      * Clear the collection access level, revert back to the default access level.
      *
      * @param user The name of the user
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
-    void resetAccess(String user) throws ArangoDBException;
+    void resetAccess(String user) ;
 
     /**
      * Get the collection access level
      *
      * @param user The name of the user
      * @return permissions of the user
-     * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#get-the-specific-collection-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */
-    Permissions getPermissions(String user) throws ArangoDBException;
+    Permissions getPermissions(String user) ;
 
 }

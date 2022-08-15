@@ -42,7 +42,7 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+    public Response execute(final Request request, final HostHandle hostHandle)  {
         return communication.execute(request, hostHandle);
     }
 

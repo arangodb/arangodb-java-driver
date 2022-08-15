@@ -42,7 +42,7 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public boolean exists() throws ArangoDBException {
+    public boolean exists()  {
         try {
             getInfo();
             return true;
@@ -55,43 +55,43 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException {
+    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions)  {
         return db().createGraph(name(), edgeDefinitions);
     }
 
     @Override
     public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
-            throws ArangoDBException {
+             {
         return db().createGraph(name(), edgeDefinitions, options);
     }
 
     @Override
-    public void drop() throws ArangoDBException {
+    public void drop()  {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public void drop(final boolean dropCollections) throws ArangoDBException {
+    public void drop(final boolean dropCollections)  {
         executor.execute(dropRequest(dropCollections), Void.class);
     }
 
     @Override
-    public GraphEntity getInfo() throws ArangoDBException {
+    public GraphEntity getInfo()  {
         return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
     }
 
     @Override
-    public Collection<String> getVertexCollections() throws ArangoDBException {
+    public Collection<String> getVertexCollections()  {
         return executor.execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
     }
 
     @Override
-    public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
+    public GraphEntity addVertexCollection(final String name)  {
         return addVertexCollection(name, new VertexCollectionCreateOptions());
     }
 
     @Override
-    public GraphEntity addVertexCollection(final String name, final VertexCollectionCreateOptions options) throws ArangoDBException {
+    public GraphEntity addVertexCollection(final String name, final VertexCollectionCreateOptions options)  {
         return executor.execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 
@@ -106,22 +106,22 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public Collection<String> getEdgeDefinitions() throws ArangoDBException {
+    public Collection<String> getEdgeDefinitions()  {
         return executor.execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
     }
 
     @Override
-    public GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+    public GraphEntity addEdgeDefinition(final EdgeDefinition definition)  {
         return executor.execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
     }
 
     @Override
-    public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+    public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition)  {
         return executor.execute(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
     }
 
     @Override
-    public GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException {
+    public GraphEntity removeEdgeDefinition(final String definitionName)  {
         return executor.execute(removeEdgeDefinitionRequest(definitionName),
                 removeEdgeDefinitionResponseDeserializer());
     }

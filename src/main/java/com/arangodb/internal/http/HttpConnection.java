@@ -305,7 +305,7 @@ public class HttpConnection implements Connection {
         return paramList;
     }
 
-    public Response execute(final Request request) throws ArangoDBException, IOException {
+    public Response execute(final Request request) throws IOException {
         final String url = buildUrl(buildBaseUrl(host), request);
         final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
         httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
@@ -358,7 +358,7 @@ public class HttpConnection implements Connection {
         return response;
     }
 
-    protected void checkError(final Response response) throws ArangoDBException {
+    protected void checkError(final Response response)  {
         ResponseUtils.checkError(util, response);
     }
 

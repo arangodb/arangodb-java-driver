@@ -108,7 +108,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public void shutdown() throws ArangoDBException {
+    public void shutdown()  {
         try {
             executor.disconnect();
         } finally {
@@ -143,121 +143,121 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public Boolean createDatabase(final DbName dbName) throws ArangoDBException {
+    public Boolean createDatabase(final DbName dbName)  {
         return createDatabase(new DBCreateOptions().name(dbName));
     }
 
     @Override
-    public Boolean createDatabase(DBCreateOptions options) throws ArangoDBException {
+    public Boolean createDatabase(DBCreateOptions options)  {
         return executor.execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
     }
 
     @Override
-    public Collection<String> getDatabases() throws ArangoDBException {
+    public Collection<String> getDatabases()  {
         return executor.execute(getDatabasesRequest(db().dbName()), getDatabaseResponseDeserializer());
     }
 
     @Override
-    public Collection<String> getAccessibleDatabases() throws ArangoDBException {
+    public Collection<String> getAccessibleDatabases()  {
         return db().getAccessibleDatabases();
     }
 
     @Override
-    public Collection<String> getAccessibleDatabasesFor(final String user) throws ArangoDBException {
+    public Collection<String> getAccessibleDatabasesFor(final String user)  {
         return executor.execute(getAccessibleDatabasesForRequest(db().dbName(), user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
     @Override
-    public ArangoDBVersion getVersion() throws ArangoDBException {
+    public ArangoDBVersion getVersion()  {
         return db().getVersion();
     }
 
     @Override
-    public ArangoDBEngine getEngine() throws ArangoDBException {
+    public ArangoDBEngine getEngine()  {
         return db().getEngine();
     }
 
     @Override
-    public ServerRole getRole() throws ArangoDBException {
+    public ServerRole getRole()  {
         return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
     }
 
     @Override
-    public String getServerId() throws ArangoDBException {
+    public String getServerId()  {
         return executor.execute(getServerIdRequest(), getServerIdResponseDeserializer());
     }
 
     @Override
-    public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
+    public UserEntity createUser(final String user, final String passwd)  {
         return executor.execute(createUserRequest(db().dbName(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
     @Override
     public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
-            throws ArangoDBException {
+             {
         return executor.execute(createUserRequest(db().dbName(), user, passwd, options), UserEntity.class);
     }
 
     @Override
-    public void deleteUser(final String user) throws ArangoDBException {
+    public void deleteUser(final String user)  {
         executor.execute(deleteUserRequest(db().dbName(), user), Void.class);
     }
 
     @Override
-    public UserEntity getUser(final String user) throws ArangoDBException {
+    public UserEntity getUser(final String user)  {
         return executor.execute(getUserRequest(db().dbName(), user), UserEntity.class);
     }
 
     @Override
-    public Collection<UserEntity> getUsers() throws ArangoDBException {
+    public Collection<UserEntity> getUsers()  {
         return executor.execute(getUsersRequest(db().dbName()), getUsersResponseDeserializer());
     }
 
     @Override
-    public UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
+    public UserEntity updateUser(final String user, final UserUpdateOptions options)  {
         return executor.execute(updateUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override
-    public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
+    public UserEntity replaceUser(final String user, final UserUpdateOptions options)  {
         return executor.execute(replaceUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override
-    public void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException {
+    public void grantDefaultDatabaseAccess(final String user, final Permissions permissions)  {
         executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
-            throws ArangoDBException {
+             {
         executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
     }
 
     @Override
-    public Response execute(final Request request) throws ArangoDBException {
+    public Response execute(final Request request)  {
         return executor.execute(request, response -> response);
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+    public Response execute(final Request request, final HostHandle hostHandle)  {
         return executor.execute(request, response -> response, hostHandle);
     }
 
     @Override
-    public LogEntriesEntity getLogEntries(final LogOptions options) throws ArangoDBException {
+    public LogEntriesEntity getLogEntries(final LogOptions options)  {
         return executor.execute(getLogEntriesRequest(options), LogEntriesEntity.class);
     }
 
     @Override
-    public LogLevelEntity getLogLevel() throws ArangoDBException {
+    public LogLevelEntity getLogLevel()  {
         return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
     }
 
     @Override
-    public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
+    public LogLevelEntity setLogLevel(final LogLevelEntity entity)  {
         return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
     }
 

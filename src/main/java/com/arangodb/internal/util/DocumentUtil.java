@@ -41,11 +41,11 @@ public final class DocumentUtil {
         validateName("index id", REGEX_ID, id);
     }
 
-    public static void validateDocumentKey(final String key) throws ArangoDBException {
+    public static void validateDocumentKey(final String key)  {
         validateName("document key", REGEX_KEY, key);
     }
 
-    public static void validateDocumentId(final String id) throws ArangoDBException {
+    public static void validateDocumentId(final String id)  {
         validateName("document id", REGEX_ID, id);
     }
 
@@ -55,7 +55,7 @@ public final class DocumentUtil {
     }
 
     private static void validateName(final String type, final String regex, final CharSequence name)
-            throws ArangoDBException {
+             {
         if (!Pattern.matches(regex, name)) {
             throw new ArangoDBException(String.format("%s %s is not valid.", type, name));
         }
