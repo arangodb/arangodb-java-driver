@@ -65,9 +65,8 @@ public class ArangoVertexCollectionAsyncImpl extends
             final String key,
             final Class<T> type,
             final GraphDocumentReadOptions options) {
-        boolean isCatchException = options != null ? options.isCatchException() : new GraphDocumentReadOptions().isCatchException();
         return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type))
-                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions());
     }
 
     @Override

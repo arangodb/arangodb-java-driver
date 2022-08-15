@@ -57,9 +57,8 @@ public class ArangoEdgeCollectionAsyncImpl extends
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        boolean isCatchException = options != null ? options.isCatchException() : new GraphDocumentReadOptions().isCatchException();
         return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
-                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions());
     }
 
     @Override

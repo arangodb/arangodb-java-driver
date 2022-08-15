@@ -114,14 +114,10 @@ class ArangoEdgeCollectionTest extends BaseTest {
     void getEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
-        try {
-            db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
+        BaseEdgeDocument doc = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
+        assertThat(doc).isNull();
     }
 
     @Test
@@ -139,14 +135,10 @@ class ArangoEdgeCollectionTest extends BaseTest {
     void getEdgeIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev()).catchException(false);
-        try {
-            db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev());
+        BaseEdgeDocument doc = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
+        assertThat(doc).isNull();
     }
 
     @Test
@@ -344,13 +336,9 @@ class ArangoEdgeCollectionTest extends BaseTest {
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
         db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), null).get();
-        try {
-            db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        BaseEdgeDocument res = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions()).get();
+        assertThat(res).isNull();
     }
 
     @Test
@@ -360,13 +348,9 @@ class ArangoEdgeCollectionTest extends BaseTest {
                 .get();
         final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch(createResult.getRev());
         db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options).get();
-        try {
-            db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        BaseEdgeDocument res = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions()).get();
+        assertThat(res).isNull();
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.arangodb.async.internal;/*
+/*
  * DISCLAIMER
  *
  * Copyright 2016 ArangoDB GmbH, Cologne, Germany
@@ -18,6 +18,7 @@ package com.arangodb.async.internal;/*
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
+package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
 
@@ -28,7 +29,7 @@ import java.util.function.Function;
  * @author Michele Rastelli
  */
 class ExceptionUtil {
-    static <T> Function<Throwable, T> catchGetDocumentExceptions(Boolean isCatchException) {
+    static <T> Function<Throwable, T> catchGetDocumentExceptions() {
         return throwable -> {
             if (throwable instanceof CompletionException) {
                 if (throwable.getCause() instanceof ArangoDBException) {
@@ -39,8 +40,8 @@ class ExceptionUtil {
                         throw (CompletionException) throwable;
                     }
 
-                    if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
-                            || arangoDBException.getResponseCode() == 412)) && isCatchException) {
+                    if ((arangoDBException.getResponseCode() != null &&
+                            (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304 || arangoDBException.getResponseCode() == 412))) {
                         return null;
                     }
                 }

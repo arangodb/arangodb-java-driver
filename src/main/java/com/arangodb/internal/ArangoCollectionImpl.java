@@ -128,7 +128,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
             }
 
             if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
-                    || e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
+                    || e.getResponseCode() == 412))) {
                 return null;
             }
             throw e;
@@ -279,8 +279,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
                 throw e;
             }
 
-            if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
-                    || e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
+            if ((e.getResponseCode() != null &&
+                    (e.getResponseCode() == 404 || e.getResponseCode() == 304 || e.getResponseCode() == 412))) {
                 return false;
             }
             throw e;

@@ -122,9 +122,8 @@ public class ArangoCollectionAsyncImpl
             final Class<T> type,
             final DocumentReadOptions options) throws ArangoDBException {
         DocumentUtil.validateDocumentKey(key);
-        boolean isCatchException = options != null ? options.isCatchException() : new DocumentReadOptions().isCatchException();
         return executor.execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
-                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions());
     }
 
     @Override
@@ -276,9 +275,8 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options) {
-        boolean isCatchException = options != null ? options.isCatchException() : new DocumentExistsOptions().isCatchException();
         return executor.execute(documentExistsRequest(key, options), response -> response)
-                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException))
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions())
                 .thenApply(Objects::nonNull);
     }
 

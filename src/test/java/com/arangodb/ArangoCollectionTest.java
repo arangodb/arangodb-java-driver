@@ -508,12 +508,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void getDocumentNotFoundThrowException(ArangoCollection collection) {
-        Throwable thrown = catchThrowable(() -> collection.getDocument("no", BaseDocument.class, new DocumentReadOptions().catchException(false)));
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
@@ -1781,12 +1775,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void documentExistsThrowExcpetion(ArangoCollection collection) {
-        Throwable thrown = catchThrowable(() -> collection.documentExists("no", new DocumentExistsOptions().catchException(false)));
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")

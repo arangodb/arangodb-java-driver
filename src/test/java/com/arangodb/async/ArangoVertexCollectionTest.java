@@ -103,14 +103,10 @@ class ArangoVertexCollectionTest extends BaseTest {
     void getVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
-        try {
-            db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(vertex.getKey(), BaseDocument.class, options).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
+        BaseDocument res = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+                .getVertex(vertex.getKey(), BaseDocument.class, options).get();
+        assertThat(res).isNull();
     }
 
     @Test
@@ -128,14 +124,10 @@ class ArangoVertexCollectionTest extends BaseTest {
     void getVertexIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev()).catchException(false);
-        try {
-            db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(vertex.getKey(), BaseDocument.class, options).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev());
+        BaseDocument res = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+                .getVertex(vertex.getKey(), BaseDocument.class, options).get();
+        assertThat(res).isNull();
     }
 
     @Test
@@ -333,13 +325,9 @@ class ArangoVertexCollectionTest extends BaseTest {
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null).get();
-        try {
-            db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        BaseDocument res = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+                .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions()).get();
+        assertThat(res).isNull();
     }
 
     @Test
@@ -349,13 +337,9 @@ class ArangoVertexCollectionTest extends BaseTest {
                 .get();
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options).get();
-        try {
-            db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
-        }
+        BaseDocument res = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+                .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions()).get();
+        assertThat(res).isNull();
     }
 
     @Test

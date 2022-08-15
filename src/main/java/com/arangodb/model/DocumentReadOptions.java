@@ -30,13 +30,11 @@ public final class DocumentReadOptions {
 
     private String ifNoneMatch;
     private String ifMatch;
-    private boolean catchException;
     private Boolean allowDirtyRead;
     private String streamTransactionId;
 
     public DocumentReadOptions() {
         super();
-        catchException = true;
     }
 
     public String getIfNoneMatch() {
@@ -62,19 +60,6 @@ public final class DocumentReadOptions {
      */
     public DocumentReadOptions ifMatch(final String ifMatch) {
         this.ifMatch = ifMatch;
-        return this;
-    }
-
-    public boolean isCatchException() {
-        return catchException;
-    }
-
-    /**
-     * @param catchException whether or not catch possible thrown exceptions
-     * @return options
-     */
-    public DocumentReadOptions catchException(final boolean catchException) {
-        this.catchException = catchException;
         return this;
     }
 
