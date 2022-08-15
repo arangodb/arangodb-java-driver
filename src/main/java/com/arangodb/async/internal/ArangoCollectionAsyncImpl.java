@@ -198,11 +198,11 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T, U> CompletableFuture<DocumentUpdateEntity<U>> updateDocument(
+    public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(
             final String key,
-            final T value,
+            final Object value,
             final DocumentUpdateOptions options,
-            final Class<U> returnType) {
+            final Class<T> returnType) {
         return executor.execute(updateDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, returnType));
     }
@@ -222,10 +222,10 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T, U> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<U>>> updateDocuments(
-            final Collection<T> values,
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
+            final Collection<?> values,
             final DocumentUpdateOptions options,
-            final Class<U> returnType) {
+            final Class<T> returnType) {
         return executor
                 .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
@@ -236,9 +236,8 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(String key, DocumentDeleteOptions options) {
-        return deleteDocument(key, options, (Class<T>) Void.class);
+    public CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(String key, DocumentDeleteOptions options) {
+        return deleteDocument(key, options, Void.class);
     }
 
     @Override

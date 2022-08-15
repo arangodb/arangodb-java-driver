@@ -81,7 +81,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      *
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
@@ -119,7 +119,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
@@ -246,7 +246,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @param key     The key of the document
      * @param value   A representation of a single document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
@@ -288,7 +288,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
@@ -341,11 +341,11 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    <T, U> CompletableFuture<DocumentUpdateEntity<U>> updateDocument(
+    <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(
             final String key,
-            final T value,
+            final Object value,
             final DocumentUpdateOptions options,
-            final Class<U> returnType);
+            final Class<T> returnType);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -389,10 +389,10 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T, U> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<U>>> updateDocuments(
-            final Collection<T> values,
+    <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
+            final Collection<?> values,
             final DocumentUpdateOptions options,
-            final Class<U> returnType);
+            final Class<T> returnType);
 
     /**
      * Removes a document
@@ -413,7 +413,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
+    CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(
             final String key,
             final DocumentDeleteOptions options);
 

@@ -198,8 +198,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T, U> DocumentUpdateEntity<U> updateDocument(
-            final String key, final T value, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
+    public <T> DocumentUpdateEntity<T> updateDocument(
+            final String key, final Object value, final DocumentUpdateOptions options, final Class<T> returnType) throws ArangoDBException {
         return executor.execute(updateDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, returnType));
     }
@@ -218,8 +218,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T, U> MultiDocumentEntity<DocumentUpdateEntity<U>> updateDocuments(
-            final Collection<T> values, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
+            final Collection<?> values, final DocumentUpdateOptions options, final Class<T> returnType) throws ArangoDBException {
         return executor
                 .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
@@ -230,9 +230,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options) throws ArangoDBException {
-        return deleteDocument(key, options, (Class<T>) Void.class);
+    public DocumentDeleteEntity<Void> deleteDocument(String key, DocumentDeleteOptions options) throws ArangoDBException {
+        return deleteDocument(key, options, Void.class);
     }
 
     @Override

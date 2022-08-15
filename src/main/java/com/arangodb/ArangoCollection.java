@@ -122,7 +122,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -292,7 +292,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values  A List of documents (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @param options Additional options
-     * @param type  Deserialization target type for the returned documents.
+     * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
@@ -345,7 +345,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
-    <T, U> DocumentUpdateEntity<U> updateDocument(String key, T value, DocumentUpdateOptions options, Class<U> returnType)
+    <T> DocumentUpdateEntity<T> updateDocument(String key, Object value, DocumentUpdateOptions options, Class<T> returnType)
             throws ArangoDBException;
 
     /**
@@ -392,8 +392,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T, U> MultiDocumentEntity<DocumentUpdateEntity<U>> updateDocuments(
-            Collection<T> values, DocumentUpdateOptions options, Class<U> returnType) throws ArangoDBException;
+    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
+            Collection<?> values, DocumentUpdateOptions options, Class<T> returnType) throws ArangoDBException;
 
     /**
      * Deletes the document with the given {@code key} from the collection.
@@ -416,7 +416,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
-    <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options)
+    DocumentDeleteEntity<Void> deleteDocument(String key, DocumentDeleteOptions options)
             throws ArangoDBException;
 
     /**
