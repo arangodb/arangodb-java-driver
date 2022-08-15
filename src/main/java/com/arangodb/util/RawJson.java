@@ -1,5 +1,7 @@
 package com.arangodb.util;
 
+import com.arangodb.internal.serde.InternalSerde;
+
 import java.util.Objects;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Objects;
  * - in serialization to append a raw JSON node
  * - in deserialization as target wrapper type for the raw JSON string
  * <p>
- * The driver's {@link com.arangodb.serde.InternalSerde} supports serializing and deserializing to and from
+ * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawJson}.
  */
 public class RawJson {

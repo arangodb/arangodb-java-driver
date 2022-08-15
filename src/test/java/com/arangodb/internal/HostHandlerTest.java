@@ -23,7 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.internal.net.*;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

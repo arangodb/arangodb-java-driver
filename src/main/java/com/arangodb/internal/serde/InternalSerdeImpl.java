@@ -1,7 +1,8 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.serde.*;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.arangodb.serde.SerdeUtils.checkSupportedJacksonVersion;
+import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 
 final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 

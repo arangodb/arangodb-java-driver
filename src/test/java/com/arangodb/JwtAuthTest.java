@@ -1,6 +1,6 @@
 package com.arangodb;
 
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.serde.ArangoSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -82,7 +82,7 @@ class JwtAuthTest {
     }
 
     private static String getJwt(ArangoDB arangoDB) {
-        InternalSerde serde = arangoDB.getSerde();
+        ArangoSerde serde = arangoDB.getSerde();
         Map<String, String> reqBody = new HashMap<>();
         reqBody.put("username", "root");
         reqBody.put("password", "test");

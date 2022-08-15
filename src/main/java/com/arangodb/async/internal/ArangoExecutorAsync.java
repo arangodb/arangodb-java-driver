@@ -25,7 +25,7 @@ import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.QueueTimeMetricsImpl;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 
 import java.io.IOException;

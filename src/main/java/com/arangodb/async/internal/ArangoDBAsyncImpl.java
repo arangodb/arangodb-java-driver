@@ -20,7 +20,6 @@
 
 package com.arangodb.async.internal;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoMetrics;
 import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
@@ -31,7 +30,7 @@ import com.arangodb.internal.*;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;

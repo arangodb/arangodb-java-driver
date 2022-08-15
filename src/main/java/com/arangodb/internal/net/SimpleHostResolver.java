@@ -21,7 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 
 import java.util.List;
 

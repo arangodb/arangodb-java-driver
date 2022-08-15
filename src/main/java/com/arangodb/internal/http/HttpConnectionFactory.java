@@ -24,7 +24,7 @@ import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostDescription;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import org.apache.http.client.HttpRequestRetryHandler;
 
 import javax.net.ssl.HostnameVerifier;

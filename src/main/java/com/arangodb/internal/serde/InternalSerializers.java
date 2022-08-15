@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.arangosearch.CollectionLink;

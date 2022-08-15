@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;

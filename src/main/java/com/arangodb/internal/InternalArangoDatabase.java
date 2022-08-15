@@ -29,14 +29,13 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
-import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static com.arangodb.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
  * @author Mark Vollmary

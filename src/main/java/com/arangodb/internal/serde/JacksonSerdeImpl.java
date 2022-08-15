@@ -1,6 +1,7 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.serde.JacksonSerde;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,11 +10,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
-class JacksonSerdeImpl implements JacksonSerde {
+public class JacksonSerdeImpl implements JacksonSerde {
 
     protected final ObjectMapper mapper;
 
-    JacksonSerdeImpl(final ObjectMapper mapper) {
+    public JacksonSerdeImpl(final ObjectMapper mapper) {
         this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }

@@ -21,7 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.QueueTimeMetrics;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 

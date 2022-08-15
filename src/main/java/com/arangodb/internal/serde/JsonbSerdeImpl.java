@@ -1,5 +1,6 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
+import com.arangodb.serde.JsonbSerde;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
@@ -7,15 +8,15 @@ import jakarta.json.bind.JsonbConfig;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
-class JsonbSerdeImpl implements JsonbSerde {
+public class JsonbSerdeImpl implements JsonbSerde {
 
     private final Jsonb jsonb;
 
-    JsonbSerdeImpl() {
+    public JsonbSerdeImpl() {
         jsonb = JsonbBuilder.create();
     }
 
-    JsonbSerdeImpl(final JsonbConfig config) {
+    public JsonbSerdeImpl(final JsonbConfig config) {
         jsonb = JsonbBuilder.create(config);
     }
 

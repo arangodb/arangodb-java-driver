@@ -34,7 +34,6 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -44,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
-import static com.arangodb.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
  * @author Mark Vollmary

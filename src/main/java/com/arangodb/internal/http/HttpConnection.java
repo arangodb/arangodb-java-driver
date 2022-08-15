@@ -27,7 +27,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.*;

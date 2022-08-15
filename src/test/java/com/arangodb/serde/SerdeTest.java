@@ -1,5 +1,7 @@
 package com.arangodb.serde;
 
+import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;

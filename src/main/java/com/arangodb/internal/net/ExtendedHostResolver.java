@@ -24,8 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.util.HostUtils;
-import com.arangodb.serde.SerdeUtils;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static com.arangodb.serde.SerdeUtils.constructParametricType;
+import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary

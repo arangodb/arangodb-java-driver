@@ -27,7 +27,7 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.serde.SerdeUtils;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,8 +35,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static com.arangodb.serde.SerdeUtils.constructListType;
-import static com.arangodb.serde.SerdeUtils.constructParametricType;
+import static com.arangodb.internal.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary

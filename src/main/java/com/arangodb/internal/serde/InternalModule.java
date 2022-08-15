@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;

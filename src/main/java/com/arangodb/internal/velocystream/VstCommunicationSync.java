@@ -30,7 +30,7 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;

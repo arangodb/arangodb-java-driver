@@ -20,7 +20,7 @@
 
 package com.arangodb.internal.http;
 
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.apache.http.auth.Credentials;

@@ -24,8 +24,7 @@ import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.*;
-import com.arangodb.serde.InternalSerde;
-import com.arangodb.serde.SerdeUtils;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.arangodb.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
  * @author Mark Vollmary

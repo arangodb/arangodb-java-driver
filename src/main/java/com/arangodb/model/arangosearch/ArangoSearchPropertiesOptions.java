@@ -23,7 +23,7 @@ package com.arangodb.model.arangosearch;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.serde.InternalSerializers;
+import com.arangodb.internal.serde.InternalSerializers;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;

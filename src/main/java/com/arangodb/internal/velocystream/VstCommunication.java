@@ -31,7 +31,7 @@ import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;

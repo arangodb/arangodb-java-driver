@@ -20,7 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerde;
 
 /**
  * @author Mark Vollmary

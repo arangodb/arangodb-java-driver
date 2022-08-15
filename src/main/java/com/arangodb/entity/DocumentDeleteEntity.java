@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.serde.UserData;
+import com.arangodb.internal.serde.UserData;
 
 /**
  * @author Mark Vollmary

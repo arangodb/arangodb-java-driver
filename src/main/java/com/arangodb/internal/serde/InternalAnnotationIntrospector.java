@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;

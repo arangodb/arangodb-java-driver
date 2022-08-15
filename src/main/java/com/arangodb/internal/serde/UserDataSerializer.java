@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;

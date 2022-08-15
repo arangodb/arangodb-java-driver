@@ -25,13 +25,12 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
-import com.arangodb.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
 import java.util.Collection;
 
-import static com.arangodb.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
  * @author Mark Vollmary

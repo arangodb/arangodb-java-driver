@@ -22,7 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
-import com.arangodb.serde.InternalSerializers;
+import com.arangodb.internal.serde.InternalSerializers;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.internal.serde;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import static com.arangodb.serde.SerdeUtils.convertToType;
+import static com.arangodb.internal.serde.SerdeUtils.convertToType;
 
 class UserDataDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
     private final Type targetType;

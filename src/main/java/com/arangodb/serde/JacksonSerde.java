@@ -1,5 +1,7 @@
 package com.arangodb.serde;
 
+import com.arangodb.internal.serde.JacksonSerdeImpl;
+import com.arangodb.internal.serde.MapperProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.function.Consumer;

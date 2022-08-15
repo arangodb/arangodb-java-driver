@@ -20,7 +20,6 @@
 
 package com.arangodb.async.internal;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.entity.*;
 import com.arangodb.internal.InternalArangoCollection;
@@ -31,7 +30,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import static com.arangodb.serde.SerdeUtils.constructParametricType;
+import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary

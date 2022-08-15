@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-import static com.arangodb.serde.SerdeUtils.constructParametricType;
+import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary

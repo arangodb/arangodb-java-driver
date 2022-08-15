@@ -20,7 +20,7 @@
 
 package com.arangodb.model;
 
-import com.arangodb.serde.UserDataInside;
+import com.arangodb.internal.serde.UserDataInside;
 
 import java.util.Collection;
 import java.util.Map;
