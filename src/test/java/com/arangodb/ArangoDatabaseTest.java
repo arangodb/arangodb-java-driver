@@ -593,7 +593,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat((Iterator<?>) cursor).hasNext();
         }
         assertThat(cursor.getStats()).isNotNull();
-        assertThat(cursor.getStats().getFullCount()).isGreaterThanOrEqualTo(10L);
+        assertThat((Integer) cursor.getStats().get("fullCount"))
+                .isGreaterThanOrEqualTo(10);
     }
 
     @ParameterizedTest(name = "{index}")

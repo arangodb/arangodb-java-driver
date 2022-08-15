@@ -493,7 +493,8 @@ class ArangoDatabaseTest extends BaseTest {
                             assertThat(cursor.hasNext()).isEqualTo(true);
                         }
                         assertThat(cursor.getStats()).isNotNull();
-                        assertThat(cursor.getStats().getFullCount()).isEqualTo(10L);
+                        assertThat((Integer) cursor.getStats().get("fullCount"))
+                                .isGreaterThanOrEqualTo(10);
                     })
                     .get();
         } finally {
@@ -889,7 +890,7 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    void transactionJsonNode() throws  InterruptedException, ExecutionException {
+    void transactionJsonNode() throws InterruptedException, ExecutionException {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         db.transaction("function (params) {return params;}", JsonNode.class, options)
                 .whenComplete((result, ex) -> {
