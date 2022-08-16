@@ -630,41 +630,34 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(i.get()).isGreaterThanOrEqualTo(10);
     }
 
-    // FIXME
-//    /**
-//     * ignored. takes to long
-//     */
-//    @Test
-//    @Ignore
-//     void queryWithTTL() throws InterruptedException {
-//        // set TTL to 1 seconds and get the second batch after 2 seconds!
-//        final int ttl = 1;
-//        final int wait = 2;
-//        try {
-//            db.createCollection(COLLECTION_NAME, null);
-//            for (int i = 0; i < 10; i++) {
-//                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-//            }
-//
-//            final ArangoCursor<String> cursor = db
-//                    .query("for i in db_test return i._id", null, new AqlQueryOptions().batchSize(5).ttl(ttl),
-//                            String.class);
-//
-//            assertThat(cursor).isNotNull();
-//
-//            for (int i = 0; i < 10; i++, cursor.next()) {
-//                assertThat(cursor.hasNext()).isEqualTo(true));
-//                if (i == 1) {
-//                    Thread.sleep(wait * 1000);
-//                }
-//            }
-//            fail("this should fail");
-//        } catch (final ArangoDBException ex) {
-//            assertThat(ex.getMessage()).isEqualTo("Response: 404, Error: 1600 - cursor not found"));
-//        } finally {
-//            db.collection(COLLECTION_NAME).drop();
-//        }
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void queryWithTTL(ArangoDatabase db) throws InterruptedException {
+        // set TTL to 1 seconds and get the second batch after 2 seconds!
+        final int ttl = 1;
+        final int wait = 2;
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).ttl(ttl),
+                        String.class);
+
+        assertThat((Iterable<String>) cursor).isNotNull();
+
+        try {
+            for (int i = 0; i < 10; i++, cursor.next()) {
+                assertThat(cursor.hasNext()).isTrue();
+                if (i == 1) {
+                    Thread.sleep(wait * 1000);
+                }
+            }
+            fail("this should fail");
+        } catch (final ArangoDBException ex) {
+            assertThat(ex.getMessage()).isEqualTo("Response: 404, Error: 1600 - cursor not found");
+        }
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
