@@ -33,7 +33,6 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
-@SuppressWarnings("unused")
 public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
 
     /**
@@ -57,7 +56,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeEntity> insertEdge(final T value);
+    CompletableFuture<EdgeEntity> insertEdge(final Object value);
 
     /**
      * Creates a new edge in the collection
@@ -67,7 +66,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeEntity> insertEdge(final T value, final EdgeCreateOptions options);
+    CompletableFuture<EdgeEntity> insertEdge(final Object value, final EdgeCreateOptions options);
 
     /**
      * Fetches an existing edge
@@ -98,7 +97,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final T value);
+    CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final Object value);
 
     /**
      * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
@@ -109,9 +108,9 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(
+    CompletableFuture<EdgeUpdateEntity> replaceEdge(
             final String key,
-            final T value,
+            final Object value,
             final EdgeReplaceOptions options);
 
     /**
@@ -123,7 +122,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final T value);
+    CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final Object value);
 
     /**
      * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
@@ -135,9 +134,9 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
-    <T> CompletableFuture<EdgeUpdateEntity> updateEdge(
+    CompletableFuture<EdgeUpdateEntity> updateEdge(
             final String key,
-            final T value,
+            final Object value,
             final EdgeUpdateOptions options);
 
     /**

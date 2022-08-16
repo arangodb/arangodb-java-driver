@@ -42,13 +42,13 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
-    public <T> EdgeEntity insertEdge(final T value)  {
+    public EdgeEntity insertEdge(final Object value)  {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options)  {
+    public EdgeEntity insertEdge(final Object value, final EdgeCreateOptions options)  {
         return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
     }
 
@@ -78,25 +78,25 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
-    public <T> EdgeUpdateEntity replaceEdge(final String key, final T value)  {
+    public EdgeUpdateEntity replaceEdge(final String key, final Object value)  {
         return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
                 replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
+    public EdgeUpdateEntity replaceEdge(final String key, final Object value, final EdgeReplaceOptions options)
              {
         return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> EdgeUpdateEntity updateEdge(final String key, final T value)  {
+    public EdgeUpdateEntity updateEdge(final String key, final Object value)  {
         return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
                 updateEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
+    public EdgeUpdateEntity updateEdge(final String key, final Object value, final EdgeUpdateOptions options)
              {
         return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
     }

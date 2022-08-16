@@ -40,13 +40,13 @@ public class ArangoEdgeCollectionAsyncImpl extends
     }
 
     @Override
-    public <T> CompletableFuture<EdgeEntity> insertEdge(final T value) {
+    public CompletableFuture<EdgeEntity> insertEdge(final Object value) {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<EdgeEntity> insertEdge(final T value, final EdgeCreateOptions options) {
+    public CompletableFuture<EdgeEntity> insertEdge(final Object value, final EdgeCreateOptions options) {
         return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
     }
 
@@ -62,29 +62,29 @@ public class ArangoEdgeCollectionAsyncImpl extends
     }
 
     @Override
-    public <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final T value) {
+    public CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final Object value) {
         return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
                 replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(
+    public CompletableFuture<EdgeUpdateEntity> replaceEdge(
             final String key,
-            final T value,
+            final Object value,
             final EdgeReplaceOptions options) {
         return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final T value) {
+    public CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final Object value) {
         return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
                 updateEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<EdgeUpdateEntity> updateEdge(
+    public CompletableFuture<EdgeUpdateEntity> updateEdge(
             final String key,
-            final T value,
+            final Object value,
             final EdgeUpdateOptions options) {
         return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
     }

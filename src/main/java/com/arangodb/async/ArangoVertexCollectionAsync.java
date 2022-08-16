@@ -33,7 +33,6 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
-@SuppressWarnings("unused")
 public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
 
     /**
@@ -67,7 +66,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
-    <T> CompletableFuture<VertexEntity> insertVertex(final T value);
+    CompletableFuture<VertexEntity> insertVertex(final Object value);
 
     /**
      * Creates a new vertex in the collection
@@ -77,7 +76,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
-    <T> CompletableFuture<VertexEntity> insertVertex(final T value, final VertexCreateOptions options);
+    CompletableFuture<VertexEntity> insertVertex(final Object value, final VertexCreateOptions options);
 
     /**
      * Fetches an existing vertex
@@ -109,7 +108,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
-    <T> CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final T value);
+    CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final Object value);
 
     /**
      * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -121,9 +120,9 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
-    <T> CompletableFuture<VertexUpdateEntity> replaceVertex(
+    CompletableFuture<VertexUpdateEntity> replaceVertex(
             final String key,
-            final T value,
+            final Object value,
             final VertexReplaceOptions options);
 
     /**
@@ -135,7 +134,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
-    <T> CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final T value);
+    CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final Object value);
 
     /**
      * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -147,9 +146,9 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
-    <T> CompletableFuture<VertexUpdateEntity> updateVertex(
+    CompletableFuture<VertexUpdateEntity> updateVertex(
             final String key,
-            final T value,
+            final Object value,
             final VertexUpdateOptions options);
 
     /**

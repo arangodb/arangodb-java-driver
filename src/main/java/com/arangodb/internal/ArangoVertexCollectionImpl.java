@@ -47,13 +47,13 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public <T> VertexEntity insertVertex(final T value)  {
+    public VertexEntity insertVertex(final Object value)  {
         return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options)  {
+    public VertexEntity insertVertex(final Object value, final VertexCreateOptions options)  {
         return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
     }
 
@@ -84,25 +84,25 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public <T> VertexUpdateEntity replaceVertex(final String key, final T value)  {
+    public VertexUpdateEntity replaceVertex(final String key, final Object value)  {
         return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
+    public VertexUpdateEntity replaceVertex(final String key, final Object value, final VertexReplaceOptions options)
              {
         return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexUpdateEntity updateVertex(final String key, final T value)  {
+    public VertexUpdateEntity updateVertex(final String key, final Object value)  {
         return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
+    public VertexUpdateEntity updateVertex(final String key, final Object value, final VertexUpdateOptions options)
              {
         return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
     }

@@ -45,13 +45,13 @@ public class ArangoVertexCollectionAsyncImpl extends
     }
 
     @Override
-    public <T> CompletableFuture<VertexEntity> insertVertex(final T value) {
+    public CompletableFuture<VertexEntity> insertVertex(final Object value) {
         return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<VertexEntity> insertVertex(final T value, final VertexCreateOptions options) {
+    public CompletableFuture<VertexEntity> insertVertex(final Object value, final VertexCreateOptions options) {
         return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
     }
 
@@ -70,29 +70,29 @@ public class ArangoVertexCollectionAsyncImpl extends
     }
 
     @Override
-    public <T> CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final T value) {
+    public CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final Object value) {
         return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<VertexUpdateEntity> replaceVertex(
+    public CompletableFuture<VertexUpdateEntity> replaceVertex(
             final String key,
-            final T value,
+            final Object value,
             final VertexReplaceOptions options) {
         return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final T value) {
+    public CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final Object value) {
         return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> CompletableFuture<VertexUpdateEntity> updateVertex(
+    public CompletableFuture<VertexUpdateEntity> updateVertex(
             final String key,
-            final T value,
+            final Object value,
             final VertexUpdateOptions options) {
         return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
     }
