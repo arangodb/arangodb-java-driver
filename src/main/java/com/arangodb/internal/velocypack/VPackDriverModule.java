@@ -81,6 +81,9 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(SearchAliasProperties.class, VPackSerializers.SEARCH_ALIAS_PROPERTIES);
+        context.registerSerializer(SearchAliasIndex.class, VPackSerializers.SEARCH_ALIAS_INDEX);
+        context.registerSerializer(StoredValue.class, VPackSerializers.STORED_VALUE);
+        context.registerSerializer(InvertedIndexPrimarySort.Field.class, VPackSerializers.PRIMARY_SORT_FIELD);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);
         context.registerSerializer(ZKDIndexOptions.FieldValueTypes.class, VPackSerializers.ZKD_FIELD_VALUE_TYPES);

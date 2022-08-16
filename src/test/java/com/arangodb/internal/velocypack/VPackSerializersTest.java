@@ -20,9 +20,7 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.velocypack.VPack;
@@ -41,7 +39,7 @@ class VPackSerializersTest {
     @BeforeEach
     void init() {
         vpack = new VPack.Builder()
-                .registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES)
+                .registerModule(new VPackDriverModule())
                 .build();
     }
 
@@ -54,7 +52,7 @@ class VPackSerializersTest {
 
         assertThat(slice.isObject()).isTrue();
         assertThat(slice.get("type").isString()).isTrue();
-        assertThat(slice.get("type").getAsString()).isEqualTo(ViewType.ARANGO_SEARCH.name());
+        assertThat(slice.get("type").getAsString()).isEqualTo("arangosearch");
         assertThat(slice.get("storedValues")).isNotNull();
         assertThat(slice.get("storedValues").isArray()).isTrue();
         assertThat(slice.get("storedValues").size()).isEqualTo(1);

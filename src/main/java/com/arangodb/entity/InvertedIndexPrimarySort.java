@@ -68,6 +68,14 @@ public class InvertedIndexPrimarySort implements Entity {
             this.direction = direction;
         }
 
+        public String getField() {
+            return field;
+        }
+
+        public Direction getDirection() {
+            return direction;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

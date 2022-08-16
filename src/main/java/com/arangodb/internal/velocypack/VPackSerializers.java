@@ -221,16 +221,7 @@ public class VPackSerializers {
         if (!storedValues.isEmpty()) {
             builder.add("storedValues", ValueType.ARRAY); // open array
             for (final StoredValue storedValue : storedValues) {
-                builder.add(ValueType.OBJECT); // open object
-                builder.add("fields", ValueType.ARRAY);
-                for (final String field : storedValue.getFields()) {
-                    builder.add(field);
-                }
-                builder.close();
-                if (storedValue.getCompression() != null) {
-                    builder.add("compression", storedValue.getCompression().getValue());
-                }
-                builder.close(); // close object
+                context.serialize(builder, null, storedValue);
             }
             builder.close(); // close array
         }
@@ -243,6 +234,34 @@ public class VPackSerializers {
         for (SearchAliasIndex index : indexes) {
             context.serialize(builder, null, index);
         }
+        builder.close();
+    };
+
+    public static final VPackSerializer<SearchAliasIndex> SEARCH_ALIAS_INDEX = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT);
+        builder.add("collection", value.getCollection());
+        builder.add("index", value.getIndex());
+        context.serialize(builder, "operation", value.getOperation());
+        builder.close();
+    };
+
+    public static final VPackSerializer<StoredValue> STORED_VALUE = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT); // open object
+        builder.add("fields", ValueType.ARRAY);
+        for (final String field : value.getFields()) {
+            builder.add(field);
+        }
+        builder.close();
+        if (value.getCompression() != null) {
+            builder.add("compression", value.getCompression().getValue());
+        }
+        builder.close(); // close object
+    };
+
+    public static final VPackSerializer<InvertedIndexPrimarySort.Field> PRIMARY_SORT_FIELD = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT);
+        builder.add("field", value.getField());
+        builder.add("direction", value.getDirection().toString());
         builder.close();
     };
 
