@@ -15,8 +15,7 @@ import java.lang.annotation.Target;
 /**
  * @author Michele Rastelli
  */
-// TODO: in v7 add targets ElementType.METHOD and ElementType.PARAMETER
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotationsInside
 @JsonProperty(DocumentFields.REV)

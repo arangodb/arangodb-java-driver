@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
@@ -778,7 +779,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     }
 
     public static class TestUpdateEntity {
-                private String a, b;
+        private String a, b;
 
         public String getA() {
             return a;
@@ -790,7 +791,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     }
 
     public static class TestUpdateEntitySerializeNullFalse {
-                private String a, b;
+        private String a, b;
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public String getA() {
@@ -2825,6 +2826,51 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void getPermissions(ArangoCollection collection) {
         assertThat(collection.getPermissions("root")).isEqualTo(Permissions.RW);
+    }
+
+    public static class AnnotatedEntity {
+
+        private final String key;
+        private String id;
+        private String rev;
+
+        public AnnotatedEntity(@Key String key) {
+            this.key = key;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Id
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getRev() {
+            return rev;
+        }
+
+        @Rev
+        public void setRev(String rev) {
+            this.rev = rev;
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void annotationsInParamsAndMethods(ArangoCollection collection) {
+        assumeTrue(collection.getSerde().getUserSerde() instanceof JacksonSerde, "JacksonSerde only");
+        AnnotatedEntity entity = new AnnotatedEntity(UUID.randomUUID().toString());
+        AnnotatedEntity doc = collection.insertDocument(entity, new DocumentCreateOptions().returnNew(true)).getNew();
+        assertThat(doc).isNotNull();
+        assertThat(doc.getKey()).isEqualTo(entity.getKey());
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getRev()).isNotNull();
     }
 
 }
