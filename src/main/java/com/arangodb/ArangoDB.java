@@ -604,7 +604,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @return {@link ArangoDB}
          */
-        public synchronized ArangoDB build() {
+        public ArangoDB build() {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }

@@ -90,7 +90,11 @@ public abstract class InternalArangoDBBuilder {
         host = new HostDescription(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
         hosts = new ArrayList<>();
         user = ArangoDefaults.DEFAULT_USER;
-        loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
+        try (InputStream is = ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE)) {
+            loadProperties(is);
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
     }
 
     private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {
