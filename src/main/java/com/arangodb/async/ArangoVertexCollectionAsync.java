@@ -25,6 +25,7 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,6 +35,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
+@ThreadSafe
 public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor {
 
     /**

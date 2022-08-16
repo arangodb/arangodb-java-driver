@@ -23,9 +23,12 @@ package com.arangodb;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.util.ArangoSerialization;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * @author Mark Vollmary
  */
+@ThreadSafe
 public interface ArangoSerializationAccessor {
 
     /**

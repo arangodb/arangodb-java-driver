@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 
 /**
@@ -35,6 +36,7 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
+@ThreadSafe
 public interface ArangoCollection extends ArangoSerializationAccessor {
 
     /**
