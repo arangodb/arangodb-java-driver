@@ -163,10 +163,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getId()).isEqualTo(COLLECTION_NAME + "/" + doc.getKey());
     }
 
-    // FIXME: v7
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
-    @Disabled
     void insertDocumentWithArrayWithNullValues(ArangoCollection collection) {
         List<String> arr = Arrays.asList("a", null);
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -182,10 +180,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat((List<String>) insertedDoc.getNew().getAttribute("arr")).containsAll(Arrays.asList("a", null));
     }
 
-    // FIXME: v7
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
-    @Disabled
     void insertDocumentWithNullValues(ArangoCollection collection) {
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("null", null);
