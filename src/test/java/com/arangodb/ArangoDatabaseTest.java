@@ -209,10 +209,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
             db.createCollection(name, new CollectionCreateOptions().smartJoinAttribute("test123"));
         } catch (ArangoDBException e) {
             assertThat(e.getErrorNum()).isEqualTo(4006);
-            // TODO:
-            //  	at the moment older server versions reply with response code 500, which is a misbehavior
-            //		when the fix has been backported to all the supported db versions uncomment the following:
-            //		assertThat(e.getResponseCode()).isEqualTo(400));
+            assertThat(e.getResponseCode()).isEqualTo(400);
         }
     }
 
@@ -843,7 +840,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 
-        final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", bindVars, null,JsonNode.class).next();
+        final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", bindVars, null, JsonNode.class).next();
 
         assertThat(res.get("foo").textValue()).isEqualTo("fooValue");
         assertThat(res.get("bar").intValue()).isEqualTo(11);
