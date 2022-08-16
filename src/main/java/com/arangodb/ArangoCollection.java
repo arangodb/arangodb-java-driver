@@ -444,7 +444,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key     The key of the document
      * @param options Additional options, can be null
      * @return true if the document was found, otherwise false
-     * only thrown when {@link DocumentExistsOptions#isCatchException()} == false
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
      * Documentation</a>
