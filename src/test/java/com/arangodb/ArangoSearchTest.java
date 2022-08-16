@@ -267,7 +267,6 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
         SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
         assertThat(foundAnalyzer).isEqualTo(analyzer);
@@ -285,7 +284,6 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void identityAnalyzerTyped(ArangoDatabase db) {

@@ -34,7 +34,6 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Collection API Documentation</a>
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
-@SuppressWarnings("UnusedReturnValue")
 public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**

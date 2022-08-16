@@ -239,7 +239,6 @@ class ArangoSearchTest extends BaseTest {
         assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
         SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
         assertThat(foundAnalyzer).isEqualTo(analyzer);

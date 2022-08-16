@@ -25,7 +25,6 @@ import com.arangodb.entity.*;
 /**
  * @author a-brandt
  */
-@SuppressWarnings("unused")
 class CircleEdge {
 
     @Id

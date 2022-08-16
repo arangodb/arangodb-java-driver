@@ -32,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
-@SuppressWarnings("unused")
 public interface ArangoViewAsync extends ArangoSerdeAccessor {
 
     /**

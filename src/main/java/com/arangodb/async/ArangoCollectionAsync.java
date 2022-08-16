@@ -35,7 +35,6 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Collection API Documentation</a>
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
-@SuppressWarnings("unused")
 public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
 
     /**

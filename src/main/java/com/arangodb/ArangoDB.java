@@ -67,7 +67,6 @@ import java.util.Properties;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-@SuppressWarnings("UnusedReturnValue")
 public interface ArangoDB extends ArangoSerdeAccessor {
 
     /**

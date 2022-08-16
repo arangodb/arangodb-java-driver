@@ -27,7 +27,6 @@ import com.arangodb.entity.Rev;
 /**
  * @author a-brandt
  */
-@SuppressWarnings("unused")
 class Circle {
 
     @Id

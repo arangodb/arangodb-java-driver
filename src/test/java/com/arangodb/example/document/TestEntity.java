@@ -23,7 +23,6 @@ package com.arangodb.example.document;
 /**
  * @author Mark Vollmary
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class TestEntity {
 
     private String foo;

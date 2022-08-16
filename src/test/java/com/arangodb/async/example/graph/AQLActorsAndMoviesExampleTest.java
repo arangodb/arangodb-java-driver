@@ -48,7 +48,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @see <a href="https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html">AQL Example Queries on an
  * Actors and Movies Database</a>
  */
-@SuppressWarnings("JavaDoc")
 class AQLActorsAndMoviesExampleTest {
 
     private static final DbName TEST_DB = DbName.of("actors_movies_test_db");
@@ -481,7 +480,6 @@ class AQLActorsAndMoviesExampleTest {
                 new Actor("actors/TomC", 1), new Actor("actors/TomH", 2), new Actor("actors/VictorG", 1))).get();
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Actor {
         private String actor;
         private Integer movies;
@@ -529,7 +527,6 @@ class AQLActorsAndMoviesExampleTest {
 
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Movie {
         private final String movie;
         private final Integer actors;

@@ -37,7 +37,6 @@ import java.util.Map;
  * @see <a href="https://www.arangodb.com/docs/stable/http/database.html">Databases API Documentation</a>
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html">Query API Documentation</a>
  */
-@SuppressWarnings("UnusedReturnValue")
 public interface ArangoDatabase extends ArangoSerdeAccessor {
 
     /**

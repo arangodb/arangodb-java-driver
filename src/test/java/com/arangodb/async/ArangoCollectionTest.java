@@ -565,7 +565,6 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void updateDocumentMergeObjectsTrue() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -597,7 +596,6 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(aMap).containsKey("b");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void updateDocumentMergeObjectsFalse() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());

@@ -30,7 +30,6 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Mark Vollmary
  */
-@SuppressWarnings("unused")
 public interface ArangoRouteAsync extends ArangoSerdeAccessor {
 
     /**

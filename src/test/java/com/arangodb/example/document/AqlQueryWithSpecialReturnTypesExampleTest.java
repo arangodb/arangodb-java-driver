@@ -93,7 +93,6 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
     void aqlWithLimitQueryAsMap() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
@@ -113,7 +112,6 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
     void aqlWithLimitQueryAsList() {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";

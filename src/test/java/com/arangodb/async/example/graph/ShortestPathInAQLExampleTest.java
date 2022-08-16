@@ -77,8 +77,7 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
         return result;
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
-    public static class Pair {
+        public static class Pair {
 
         private String vertex;
         private String edge;

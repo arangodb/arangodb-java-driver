@@ -166,7 +166,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     @Disabled
-    @SuppressWarnings("unchecked")
     void insertDocumentWithArrayWithNullValues(ArangoCollection collection) {
         List<String> arr = Arrays.asList("a", null);
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -779,8 +778,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     }
 
     public static class TestUpdateEntity {
-        @SuppressWarnings("unused")
-        private String a, b;
+                private String a, b;
 
         public String getA() {
             return a;
@@ -792,8 +790,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     }
 
     public static class TestUpdateEntitySerializeNullFalse {
-        @SuppressWarnings("unused")
-        private String a, b;
+                private String a, b;
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         public String getA() {
@@ -845,7 +842,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getAttribute("b")).isEqualTo("foo");
     }
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentMergeObjectsTrue(ArangoCollection collection) {
@@ -872,7 +868,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(aMap).containsKeys("a", "b");
     }
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentMergeObjectsFalse(ArangoCollection collection) {

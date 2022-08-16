@@ -55,7 +55,6 @@ class DocumentTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertAsJson(ArangoCollection collection) {
@@ -93,7 +92,6 @@ class DocumentTest extends BaseJunit5 {
         assertThat(artist.toString()).isEqualTo("PREGARDIEN/RHEINISCHE KANTOREI/DAS");
     }
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertAsBaseDocument(ArangoCollection collection) {

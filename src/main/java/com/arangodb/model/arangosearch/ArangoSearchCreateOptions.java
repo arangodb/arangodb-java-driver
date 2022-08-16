@@ -33,10 +33,8 @@ import java.util.Collection;
  */
 public final class ArangoSearchCreateOptions {
 
-    @SuppressWarnings("unused")
-    private String name;
-    @SuppressWarnings("unused")
-    private final ViewType type;
+        private String name;
+        private final ViewType type;
     private Long consolidationIntervalMsec;
     private Long commitIntervalMsec;
     private Long cleanupIntervalStep;

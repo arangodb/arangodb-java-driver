@@ -64,7 +64,6 @@ class GetDocumentExampleTest extends ExampleBase {
         assertThat(String.valueOf(doc.getAttribute("foo"))).isEqualTo("bar");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void getAsMap() {
         final Map<String, Object> doc = collection.getDocument(key, Map.class);

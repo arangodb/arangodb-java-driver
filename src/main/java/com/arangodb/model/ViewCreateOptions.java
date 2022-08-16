@@ -27,10 +27,8 @@ import com.arangodb.entity.ViewType;
  */
 public final class ViewCreateOptions {
 
-    @SuppressWarnings("unused")
-    private String name;
-    @SuppressWarnings("unused")
-    private ViewType type;
+        private String name;
+        private ViewType type;
 
     public ViewCreateOptions() {
         super();

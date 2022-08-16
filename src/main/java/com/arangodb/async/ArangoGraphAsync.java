@@ -35,7 +35,6 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  */
-@SuppressWarnings("unused")
 public interface ArangoGraphAsync extends ArangoSerdeAccessor {
 
     /**

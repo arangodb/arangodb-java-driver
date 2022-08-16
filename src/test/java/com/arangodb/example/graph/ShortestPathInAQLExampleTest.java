@@ -38,8 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ShortestPathInAQLExampleTest extends BaseGraphTest {
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
-    public static class Pair {
+        public static class Pair {
 
         private String vertex;
         private String edge;

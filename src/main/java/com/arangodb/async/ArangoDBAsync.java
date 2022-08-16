@@ -299,8 +299,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      *
      * @author Mark Vollmary
      */
-    @SuppressWarnings("unused")
-    class Builder extends InternalArangoDBBuilder {
+        class Builder extends InternalArangoDBBuilder {
 
         private static final Logger logger = LoggerFactory.getLogger(Builder.class);
 
