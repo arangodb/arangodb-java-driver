@@ -29,4 +29,8 @@
         <Bug pattern="UWF_UNWRITTEN_FIELD"/>
     </Match>
 
+    <Match>
+        <Class name="com.arangodb.internal.serde.InternalAnnotationIntrospector"/>
+    </Match>
+
 </FindBugsFilter>

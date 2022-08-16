@@ -505,7 +505,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          *
          * @return {@link ArangoDBAsync}
          */
-        public synchronized ArangoDBAsync build() {
+        public ArangoDBAsync build() {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }

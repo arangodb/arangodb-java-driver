@@ -161,7 +161,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        if (params.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(params.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         return request;
@@ -178,7 +178,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 .putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch())
                 .putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch()).setBody(getSerde().serialize(keys))
                 .putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        if (params.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(params.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         return request;

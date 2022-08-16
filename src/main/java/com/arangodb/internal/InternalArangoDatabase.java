@@ -147,7 +147,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
-        if (opt.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());
@@ -164,7 +164,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
 
-        if (opt.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());
@@ -181,7 +181,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
 
-        if (opt.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());

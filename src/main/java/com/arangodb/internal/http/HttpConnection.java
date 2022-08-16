@@ -98,7 +98,7 @@ public class HttpConnection implements Connection {
         this.contentType = contentType;
         final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
                 .create();
-        if (Boolean.TRUE == useSsl) {
+        if (Boolean.TRUE.equals(useSsl)) {
             registryBuilder.register("https", new SSLConnectionSocketFactory(
                     sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
                     hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
@@ -226,7 +226,7 @@ public class HttpConnection implements Connection {
     }
 
     private String buildBaseUrl(final HostDescription host) {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+        return (Boolean.TRUE.equals(useSsl) ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
     }
 
     public Response execute(final Request request) throws IOException {

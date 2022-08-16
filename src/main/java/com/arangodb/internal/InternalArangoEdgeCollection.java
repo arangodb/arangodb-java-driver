@@ -77,7 +77,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        if (params.getAllowDirtyRead() == Boolean.TRUE) {
+        if (Boolean.TRUE.equals(params.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
         return request;
