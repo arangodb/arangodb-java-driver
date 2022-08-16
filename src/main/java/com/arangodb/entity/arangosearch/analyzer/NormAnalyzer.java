@@ -32,11 +32,11 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#norm">API Documentation</a>
  */
 public final class NormAnalyzer extends SearchAnalyzer {
+    private NormAnalyzerProperties properties;
+
     public NormAnalyzer() {
         setType(AnalyzerType.norm);
     }
-
-    private NormAnalyzerProperties properties;
 
     public NormAnalyzerProperties getProperties() {
         return properties;

@@ -73,13 +73,13 @@ public class HostImpl implements Host {
         return markforDeletion;
     }
 
+    public void setMarkforDeletion(boolean markforDeletion) {
+        this.markforDeletion = markforDeletion;
+    }
+
     @Override
     public void setJwt(String jwt) {
         connectionPool.setJwt(jwt);
-    }
-
-    public void setMarkforDeletion(boolean markforDeletion) {
-        this.markforDeletion = markforDeletion;
     }
 
     @Override

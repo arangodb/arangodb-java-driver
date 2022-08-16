@@ -28,8 +28,8 @@ import java.util.Collection;
  */
 public final class VertexCollectionCreateOptions {
 
-    private String collection;
     private final Options options = new Options();
+    private String collection;
 
     public VertexCollectionCreateOptions() {
         super();

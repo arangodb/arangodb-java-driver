@@ -59,10 +59,6 @@ public final class SegmentationAnalyzerProperties {
         this.analyzerCase = analyzerCase;
     }
 
-    public enum BreakMode {
-        all, alpha, graphic
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,5 +70,9 @@ public final class SegmentationAnalyzerProperties {
     @Override
     public int hashCode() {
         return Objects.hash(breakMode, analyzerCase);
+    }
+
+    public enum BreakMode {
+        all, alpha, graphic
     }
 }

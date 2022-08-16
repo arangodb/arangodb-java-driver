@@ -25,12 +25,12 @@ import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -45,6 +45,59 @@ import javax.net.ssl.SSLContext;
 public class VstCommunicationSync extends VstCommunication<Response, VstConnectionSync> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
+
+    protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
+                                   final String password, final String jwt, final Boolean useSsl,
+                                   final SSLContext sslContext, final InternalSerde util,
+                                   final Integer chunksize, final Integer maxConnections, final Long ttl) {
+        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
+    }
+
+    @Override
+    protected Response execute(final Request request, final VstConnectionSync connection) {
+        return execute(request, connection, 0);
+    }
+
+    @Override
+    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount) {
+        try {
+            final Message requestMessage = createMessage(request);
+            final Message responseMessage = send(requestMessage, connection);
+            final Response response = createResponse(responseMessage);
+            checkError(response);
+            return response;
+        } catch (final VPackParserException e) {
+            throw new ArangoDBException(e);
+        } catch (final ArangoDBRedirectException e) {
+            if (attemptCount >= 3) {
+                throw e;
+            }
+            final String location = e.getLocation();
+            final HostDescription redirectHost = HostUtils.createFromLocation(location);
+            hostHandler.failIfNotMatch(redirectHost, e);
+            return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
+        }
+    }
+
+    private Message send(final Message message, final VstConnectionSync connection) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+                    message.getBody() != null ? message.getBody() : "{}"));
+        }
+        return connection.write(message, buildChunks(message));
+    }
+
+    @Override
+    protected void authenticate(final VstConnectionSync connection) {
+        Request authRequest;
+        if (jwt != null) {
+            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        } else {
+            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        }
+        final Response response = execute(authRequest, connection);
+        checkError(response);
+    }
 
     public static class Builder {
 
@@ -121,59 +174,6 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
                     maxConnections, connectionTtl);
         }
 
-    }
-
-    protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                   final String password, final String jwt, final Boolean useSsl,
-                                   final SSLContext sslContext, final InternalSerde util,
-                                   final Integer chunksize, final Integer maxConnections, final Long ttl) {
-        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
-    }
-
-    @Override
-    protected Response execute(final Request request, final VstConnectionSync connection)  {
-        return execute(request, connection, 0);
-    }
-
-    @Override
-    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount)  {
-        try {
-            final Message requestMessage = createMessage(request);
-            final Message responseMessage = send(requestMessage, connection);
-            final Response response = createResponse(responseMessage);
-            checkError(response);
-            return response;
-        } catch (final VPackParserException e) {
-            throw new ArangoDBException(e);
-        } catch (final ArangoDBRedirectException e) {
-            if (attemptCount >= 3) {
-                throw e;
-            }
-            final String location = e.getLocation();
-            final HostDescription redirectHost = HostUtils.createFromLocation(location);
-            hostHandler.failIfNotMatch(redirectHost, e);
-            return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
-        }
-    }
-
-    private Message send(final Message message, final VstConnectionSync connection)  {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-                    message.getBody() != null ? message.getBody() : "{}"));
-        }
-        return connection.write(message, buildChunks(message));
-    }
-
-    @Override
-    protected void authenticate(final VstConnectionSync connection) {
-        Request authRequest;
-        if (jwt != null) {
-            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
-        } else {
-            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
-        }
-        final Response response = execute(authRequest, connection);
-        checkError(response);
     }
 
 }

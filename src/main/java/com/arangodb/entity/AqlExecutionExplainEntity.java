@@ -28,6 +28,32 @@ import java.util.Collection;
  */
 public final class AqlExecutionExplainEntity {
 
+    private ExecutionPlan plan;
+    private Collection<ExecutionPlan> plans;
+    private Collection<String> warnings;
+    private ExecutionStats stats;
+    private Boolean cacheable;
+
+    public ExecutionPlan getPlan() {
+        return plan;
+    }
+
+    public Collection<ExecutionPlan> getPlans() {
+        return plans;
+    }
+
+    public Collection<String> getWarnings() {
+        return warnings;
+    }
+
+    public ExecutionStats getStats() {
+        return stats;
+    }
+
+    public Boolean getCacheable() {
+        return cacheable;
+    }
+
     public static final class ExecutionPlan {
         private Collection<ExecutionNode> nodes;
         private Collection<String> rules;
@@ -265,32 +291,6 @@ public final class AqlExecutionExplainEntity {
             return plansCreated;
         }
 
-    }
-
-    private ExecutionPlan plan;
-    private Collection<ExecutionPlan> plans;
-    private Collection<String> warnings;
-    private ExecutionStats stats;
-    private Boolean cacheable;
-
-    public ExecutionPlan getPlan() {
-        return plan;
-    }
-
-    public Collection<ExecutionPlan> getPlans() {
-        return plans;
-    }
-
-    public Collection<String> getWarnings() {
-        return warnings;
-    }
-
-    public ExecutionStats getStats() {
-        return stats;
-    }
-
-    public Boolean getCacheable() {
-        return cacheable;
     }
 
 }

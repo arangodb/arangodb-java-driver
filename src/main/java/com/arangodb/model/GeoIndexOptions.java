@@ -28,8 +28,8 @@ import com.arangodb.entity.IndexType;
  */
 public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
 
-    private Iterable<String> fields;
     private final IndexType type = IndexType.geo;
+    private Iterable<String> fields;
     private Boolean geoJson;
 
     public GeoIndexOptions() {

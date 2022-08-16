@@ -23,6 +23,10 @@ public final class DbName implements Supplier<String> {
 
     private final String value;
 
+    private DbName(final String value) {
+        this.value = value;
+    }
+
     /**
      * Creates a new {@link DbName} instance with the provided value. If the provided value is not
      * <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">NFC-normalized</a>, throws
@@ -52,10 +56,6 @@ public final class DbName implements Supplier<String> {
      */
     public static DbName normalize(final String value) {
         return new DbName(UnicodeUtils.normalize(value));
-    }
-
-    private DbName(final String value) {
-        this.value = value;
     }
 
     @Override

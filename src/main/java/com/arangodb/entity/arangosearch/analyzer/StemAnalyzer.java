@@ -32,11 +32,11 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stem">API Documentation</a>
  */
 public final class StemAnalyzer extends SearchAnalyzer {
+    private StemAnalyzerProperties properties;
+
     public StemAnalyzer() {
         setType(AnalyzerType.stem);
     }
-
-    private StemAnalyzerProperties properties;
 
     public StemAnalyzerProperties getProperties() {
         return properties;

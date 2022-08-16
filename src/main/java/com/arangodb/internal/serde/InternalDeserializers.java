@@ -25,6 +25,66 @@ import java.util.Map;
 
 public final class InternalDeserializers {
 
+    static final JsonDeserializer<RawJson> RAW_JSON_DESERIALIZER = new JsonDeserializer<RawJson>() {
+        @Override
+        public RawJson deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            // TODO: find a way to access raw bytes directly
+            return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
+        }
+    };
+    static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
+        @Override
+        public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            // TODO: find a way to access raw bytes directly
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            try (JsonGenerator g = p.getCodec().getFactory().createGenerator(os)) {
+                g.writeTree(p.readValueAsTree());
+            }
+            return RawBytes.of(os.toByteArray());
+        }
+    };
+    static final JsonDeserializer<CollectionStatus> COLLECTION_STATUS = new JsonDeserializer<CollectionStatus>() {
+        @Override
+        public CollectionStatus deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            return CollectionStatus.fromStatus(p.getIntValue());
+        }
+    };
+    static final JsonDeserializer<CollectionType> COLLECTION_TYPE = new JsonDeserializer<CollectionType>() {
+        @Override
+        public CollectionType deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            return CollectionType.fromType(p.getIntValue());
+        }
+    };
+    static final JsonDeserializer<ReplicationFactor> REPLICATION_FACTOR = new JsonDeserializer<ReplicationFactor>() {
+        @Override
+        public ReplicationFactor deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            TreeNode node = p.readValueAsTree();
+            if (node instanceof NumericNode) {
+                return ReplicationFactor.of(((NumericNode) node).intValue());
+            } else if (node instanceof TextNode && "satellite".equals(((TextNode) node).textValue())) {
+                return ReplicationFactor.ofSatellite();
+            } else throw new IllegalArgumentException();
+        }
+    };
+    @SuppressWarnings("unchecked")
+    static final JsonDeserializer<Response> RESPONSE = new JsonDeserializer<Response>() {
+        @Override
+        public Response deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            final Response response = new Response();
+            Iterator<JsonNode> it = ((ArrayNode) p.readValueAsTree()).iterator();
+            response.setVersion(it.next().intValue());
+            response.setType(it.next().intValue());
+            response.setResponseCode(it.next().intValue());
+            if (it.hasNext()) {
+                response.setMeta(readTreeAsValue(p, ctxt, it.next(), Map.class));
+            }
+            return response;
+        }
+    };
+
+    private InternalDeserializers() {
+    }
+
     private static <T> T readTreeAsValue(JsonParser p, DeserializationContext ctxt, JsonNode n, Class<T> targetType) throws IOException {
         try (TreeTraversingParser t = new TreeTraversingParser(n, p.getCodec())) {
             t.nextToken();
@@ -72,72 +132,6 @@ public final class InternalDeserializers {
             return SerdeUtils.INSTANCE.writeJson(p.readValueAsTree());
         }
     }
-
-
-    private InternalDeserializers() {
-    }
-
-    static final JsonDeserializer<RawJson> RAW_JSON_DESERIALIZER = new JsonDeserializer<RawJson>() {
-        @Override
-        public RawJson deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            // TODO: find a way to access raw bytes directly
-            return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
-        }
-    };
-
-    static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
-        @Override
-        public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            // TODO: find a way to access raw bytes directly
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            try (JsonGenerator g = p.getCodec().getFactory().createGenerator(os)) {
-                g.writeTree(p.readValueAsTree());
-            }
-            return RawBytes.of(os.toByteArray());
-        }
-    };
-
-    static final JsonDeserializer<CollectionStatus> COLLECTION_STATUS = new JsonDeserializer<CollectionStatus>() {
-        @Override
-        public CollectionStatus deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            return CollectionStatus.fromStatus(p.getIntValue());
-        }
-    };
-
-    static final JsonDeserializer<CollectionType> COLLECTION_TYPE = new JsonDeserializer<CollectionType>() {
-        @Override
-        public CollectionType deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            return CollectionType.fromType(p.getIntValue());
-        }
-    };
-
-    static final JsonDeserializer<ReplicationFactor> REPLICATION_FACTOR = new JsonDeserializer<ReplicationFactor>() {
-        @Override
-        public ReplicationFactor deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            TreeNode node = p.readValueAsTree();
-            if (node instanceof NumericNode) {
-                return ReplicationFactor.of(((NumericNode) node).intValue());
-            } else if (node instanceof TextNode && "satellite".equals(((TextNode) node).textValue())) {
-                return ReplicationFactor.ofSatellite();
-            } else throw new IllegalArgumentException();
-        }
-    };
-
-    @SuppressWarnings("unchecked")
-    static final JsonDeserializer<Response> RESPONSE = new JsonDeserializer<Response>() {
-        @Override
-        public Response deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            final Response response = new Response();
-            Iterator<JsonNode> it = ((ArrayNode) p.readValueAsTree()).iterator();
-            response.setVersion(it.next().intValue());
-            response.setType(it.next().intValue());
-            response.setResponseCode(it.next().intValue());
-            if (it.hasNext()) {
-                response.setMeta(readTreeAsValue(p, ctxt, it.next(), Map.class));
-            }
-            return response;
-        }
-    };
 
 
 }

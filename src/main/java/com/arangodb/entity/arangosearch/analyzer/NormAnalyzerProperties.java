@@ -52,7 +52,7 @@ public final class NormAnalyzerProperties {
 
     /**
      * @return <code>true</code> to preserve accented characters (default)
-     *         <code>false</code> to convert accented characters to their base characters
+     * <code>false</code> to convert accented characters to their base characters
      */
     public boolean isAccent() {
         return accent;

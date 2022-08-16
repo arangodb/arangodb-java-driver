@@ -36,11 +36,11 @@ import java.util.Objects;
  * @since ArangoDB 3.9
  */
 public final class SegmentationAnalyzer extends SearchAnalyzer {
+    private SegmentationAnalyzerProperties properties;
+
     public SegmentationAnalyzer() {
         setType(AnalyzerType.segmentation);
     }
-
-    private SegmentationAnalyzerProperties properties;
 
     public SegmentationAnalyzerProperties getProperties() {
         return properties;

@@ -20,7 +20,10 @@
 
 package com.arangodb.async;
 
-import com.arangodb.*;
+import com.arangodb.ArangoMetrics;
+import com.arangodb.ArangoSerdeAccessor;
+import com.arangodb.DbName;
+import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
@@ -38,9 +41,9 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.serde.ArangoSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -67,7 +70,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
-    void shutdown() ;
+    void shutdown();
 
     /**
      * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
@@ -299,7 +302,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      *
      * @author Mark Vollmary
      */
-        class Builder extends InternalArangoDBBuilder {
+    class Builder extends InternalArangoDBBuilder {
 
         private static final Logger logger = LoggerFactory.getLogger(Builder.class);
 
@@ -308,7 +311,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
         }
 
         @Override
-        public Builder loadProperties(final InputStream in)  {
+        public Builder loadProperties(final InputStream in) {
             super.loadProperties(in);
             return this;
         }
@@ -506,7 +509,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final ArangoSerde userSerde = customSerializer != null ? customSerializer :  JacksonSerde.of(DataType.VPACK);
+            final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(DataType.VPACK);
             final InternalSerde serde = InternalSerde.of(DataType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)

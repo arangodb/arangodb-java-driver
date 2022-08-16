@@ -28,13 +28,8 @@ package com.arangodb.entity;
  */
 public final class QueryCachePropertiesEntity {
 
-    public enum CacheMode {
-        off, on, demand
-    }
-
     private CacheMode mode;
     private Long maxResults;
-
     public QueryCachePropertiesEntity() {
         super();
     }
@@ -65,6 +60,10 @@ public final class QueryCachePropertiesEntity {
      */
     public void setMaxResults(final Long maxResults) {
         this.maxResults = maxResults;
+    }
+
+    public enum CacheMode {
+        off, on, demand
     }
 
 }

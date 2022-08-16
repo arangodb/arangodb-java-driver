@@ -30,13 +30,13 @@ import java.util.Map;
  */
 public class Request {
 
-    private int version = 1;
-    private int type = 1;
     private final DbName dbName;
     private final RequestType requestType;
     private final String request;
     private final Map<String, String> queryParam;
     private final Map<String, String> headerParam;
+    private int version = 1;
+    private int type = 1;
     private byte[] body;
 
     public Request(final DbName dbName, final RequestType requestType, final String path) {

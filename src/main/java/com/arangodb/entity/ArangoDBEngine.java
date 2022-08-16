@@ -27,10 +27,6 @@ package com.arangodb.entity;
  */
 public final class ArangoDBEngine {
 
-    public enum StorageEngineName {
-        mmfiles, rocksdb
-    }
-
     private StorageEngineName name;
 
     public ArangoDBEngine() {
@@ -42,6 +38,10 @@ public final class ArangoDBEngine {
      */
     public StorageEngineName getName() {
         return name;
+    }
+
+    public enum StorageEngineName {
+        mmfiles, rocksdb
     }
 
 }

@@ -25,10 +25,6 @@ package com.arangodb.model;
  */
 public final class DocumentImportOptions {
 
-    public enum OnDuplicate {
-        error, update, replace, ignore
-    }
-
     private String fromPrefix;
     private String toPrefix;
     private Boolean overwrite;
@@ -36,7 +32,6 @@ public final class DocumentImportOptions {
     private OnDuplicate onDuplicate;
     private Boolean complete;
     private Boolean details;
-
     public DocumentImportOptions() {
         super();
     }
@@ -148,6 +143,10 @@ public final class DocumentImportOptions {
     public DocumentImportOptions details(final Boolean details) {
         this.details = details;
         return this;
+    }
+
+    public enum OnDuplicate {
+        error, update, replace, ignore
     }
 
 }

@@ -69,7 +69,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      *
      * @return server response
      */
-    Response delete() ;
+    Response delete();
 
     /**
      * Performs a GET request to the given URL and returns the server response.
@@ -77,7 +77,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    Response get() ;
+    Response get();
 
     /**
      * Performs a HEAD request to the given URL and returns the server response.
@@ -85,7 +85,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    Response head() ;
+    Response head();
 
     /**
      * Performs a PATCH request to the given URL and returns the server response.
@@ -93,7 +93,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    Response patch() ;
+    Response patch();
 
     /**
      * Performs a POST request to the given URL and returns the server response.
@@ -101,7 +101,7 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    Response post() ;
+    Response post();
 
     /**
      * Performs a PUT request to the given URL and returns the server response.
@@ -109,6 +109,6 @@ public interface ArangoRoute extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    Response put() ;
+    Response put();
 
 }

@@ -28,9 +28,9 @@ package com.arangodb.model;
  */
 public final class TransactionOptions {
 
+    private final TransactionCollectionOptions collections;
     private String action;
     private Object params;
-    private final TransactionCollectionOptions collections;
     private Integer lockTimeout;
     private Boolean waitForSync;
     private Long maxTransactionSize;

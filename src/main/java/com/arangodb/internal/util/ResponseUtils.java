@@ -42,7 +42,7 @@ public final class ResponseUtils {
         super();
     }
 
-    public static void checkError(final InternalSerde util, final Response response)  {
+    public static void checkError(final InternalSerde util, final Response response) {
         final int responseCode = response.getResponseCode();
         if (responseCode >= ERROR_STATUS) {
             if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {

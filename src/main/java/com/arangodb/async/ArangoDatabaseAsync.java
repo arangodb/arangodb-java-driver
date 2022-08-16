@@ -20,7 +20,6 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
 import com.arangodb.entity.*;
@@ -599,7 +598,7 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type) ;
+    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type);
 
     /**
      * Reads a single document
@@ -611,9 +610,7 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
-            ;
-
+    <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options);
     /**
      * Reload the routing table.
      *

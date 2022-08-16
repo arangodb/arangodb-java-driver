@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoRoute;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -68,32 +67,32 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public Response delete()  {
+    public Response delete() {
         return request(RequestType.DELETE);
     }
 
     @Override
-    public Response get()  {
+    public Response get() {
         return request(RequestType.GET);
     }
 
     @Override
-    public Response head()  {
+    public Response head() {
         return request(RequestType.HEAD);
     }
 
     @Override
-    public Response patch()  {
+    public Response patch() {
         return request(RequestType.PATCH);
     }
 
     @Override
-    public Response post()  {
+    public Response post() {
         return request(RequestType.POST);
     }
 
     @Override
-    public Response put()  {
+    public Response put() {
         return request(RequestType.PUT);
     }
 

@@ -32,17 +32,18 @@ import java.util.Objects;
  * <b>LIMITATIONS</b>: Analyzers of types {@link GeoPointAnalyzer} and {@link GeoJSONAnalyzer} cannot be used in pipelines and
  * will make the creation fail.
  * <p/>
+ *
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#pipeline">API Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class PipelineAnalyzer extends SearchAnalyzer {
 
+    private PipelineAnalyzerProperties properties;
+
     public PipelineAnalyzer() {
         setType(AnalyzerType.pipeline);
     }
-
-    private PipelineAnalyzerProperties properties;
 
     public PipelineAnalyzerProperties getProperties() {
         return properties;

@@ -27,8 +27,8 @@ import com.arangodb.entity.ViewType;
  */
 public final class ViewCreateOptions {
 
-        private String name;
-        private ViewType type;
+    private String name;
+    private ViewType type;
 
     public ViewCreateOptions() {
         super();

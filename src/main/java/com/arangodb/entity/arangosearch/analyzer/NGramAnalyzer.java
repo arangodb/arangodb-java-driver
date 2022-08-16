@@ -37,11 +37,11 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#n-gram">API Documentation</a>
  */
 public final class NGramAnalyzer extends SearchAnalyzer {
+    private NGramAnalyzerProperties properties;
+
     public NGramAnalyzer() {
         setType(AnalyzerType.ngram);
     }
-
-    private NGramAnalyzerProperties properties;
 
     public NGramAnalyzerProperties getProperties() {
         return properties;

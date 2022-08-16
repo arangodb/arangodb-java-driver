@@ -37,10 +37,6 @@ public final class AQLAnalyzerProperties {
 
     private ReturnType returnType;
 
-    public enum ReturnType {
-        string, number, bool
-    }
-
     /**
      * @return AQL query to be executed
      */
@@ -135,6 +131,10 @@ public final class AQLAnalyzerProperties {
     @Override
     public int hashCode() {
         return Objects.hash(queryString, collapsePositions, keepNull, batchSize, memoryLimit, returnType);
+    }
+
+    public enum ReturnType {
+        string, number, bool
     }
 
 }

@@ -20,7 +20,6 @@
 
 package com.arangodb.internal.http;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.velocystream.Request;
@@ -41,7 +40,7 @@ public class HttpProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle)  {
+    public Response execute(final Request request, final HostHandle hostHandle) {
         return httpCommunitaction.execute(request, hostHandle);
     }
 

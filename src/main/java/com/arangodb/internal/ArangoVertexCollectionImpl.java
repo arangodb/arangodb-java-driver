@@ -42,23 +42,23 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public void drop()  {
+    public void drop() {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public VertexEntity insertVertex(final Object value)  {
+    public VertexEntity insertVertex(final Object value) {
         return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public VertexEntity insertVertex(final Object value, final VertexCreateOptions options)  {
+    public VertexEntity insertVertex(final Object value, final VertexCreateOptions options) {
         return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
     }
 
     @Override
-    public <T> T getVertex(final String key, final Class<T> type)  {
+    public <T> T getVertex(final String key, final Class<T> type) {
         try {
             return executor.execute(getVertexRequest(key, new GraphDocumentReadOptions()),
                     getVertexResponseDeserializer(type));
@@ -71,8 +71,7 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options)
-             {
+    public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
         try {
             return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
         } catch (final ArangoDBException e) {
@@ -84,36 +83,34 @@ public class ArangoVertexCollectionImpl
     }
 
     @Override
-    public VertexUpdateEntity replaceVertex(final String key, final Object value)  {
+    public VertexUpdateEntity replaceVertex(final String key, final Object value) {
         return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public VertexUpdateEntity replaceVertex(final String key, final Object value, final VertexReplaceOptions options)
-             {
+    public VertexUpdateEntity replaceVertex(final String key, final Object value, final VertexReplaceOptions options) {
         return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
     }
 
     @Override
-    public VertexUpdateEntity updateVertex(final String key, final Object value)  {
+    public VertexUpdateEntity updateVertex(final String key, final Object value) {
         return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer(value));
     }
 
     @Override
-    public VertexUpdateEntity updateVertex(final String key, final Object value, final VertexUpdateOptions options)
-             {
+    public VertexUpdateEntity updateVertex(final String key, final Object value, final VertexUpdateOptions options) {
         return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
     }
 
     @Override
-    public void deleteVertex(final String key)  {
+    public void deleteVertex(final String key) {
         executor.execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
     }
 
     @Override
-    public void deleteVertex(final String key, final VertexDeleteOptions options)  {
+    public void deleteVertex(final String key, final VertexDeleteOptions options) {
         executor.execute(deleteVertexRequest(key, options), Void.class);
     }
 

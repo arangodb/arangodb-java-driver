@@ -33,10 +33,6 @@ public enum CollectionType {
         this.type = type;
     }
 
-    public int getType() {
-        return type;
-    }
-
     public static CollectionType fromType(final int type) {
         for (final CollectionType cType : CollectionType.values()) {
             if (cType.type == type) {
@@ -44,5 +40,9 @@ public enum CollectionType {
             }
         }
         return null;
+    }
+
+    public int getType() {
+        return type;
     }
 }

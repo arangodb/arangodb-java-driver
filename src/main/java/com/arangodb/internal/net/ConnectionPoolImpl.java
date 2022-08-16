@@ -39,8 +39,8 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private final HostDescription host;
     private final int maxConnections;
     private final List<Connection> connections;
-    private int current;
     private final ConnectionFactory factory;
+    private int current;
     private volatile String jwt = null;
 
     public ConnectionPoolImpl(final HostDescription host, final Integer maxConnections,

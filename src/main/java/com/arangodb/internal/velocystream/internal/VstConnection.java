@@ -46,12 +46,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -60,33 +55,16 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class VstConnection<T> implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
     private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
-
-    private ExecutorService executor;
-
-    private ScheduledExecutorService keepAliveScheduler;
-    private final AtomicLong keepAliveId = new AtomicLong();
-
     protected final MessageStore messageStore;
-
     protected final Integer timeout;
+    private final AtomicLong keepAliveId = new AtomicLong();
     private final Long ttl;
-
     private final Integer keepAliveInterval;
-    private int keepAliveFailCounter = 0;
-
     private final Boolean useSsl;
     private final SSLContext sslContext;
-
-    private Socket socket;
-    private OutputStream outputStream;
-    private InputStream inputStream;
-
     private final HostDescription host;
-
     private final Map<Long, Long> sendTimestamps = new ConcurrentHashMap<>();
-
     private final String connectionName;
-
     private final byte[] keepAliveRequest = new VPackBuilder()
             .add(ValueType.ARRAY)
             .add(1)
@@ -101,6 +79,12 @@ public abstract class VstConnection<T> implements Connection {
             .close()
             .slice()
             .toByteArray();
+    private ExecutorService executor;
+    private ScheduledExecutorService keepAliveScheduler;
+    private int keepAliveFailCounter = 0;
+    private Socket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
 
     protected VstConnection(final HostDescription host,
                             final Integer timeout,
@@ -266,8 +250,7 @@ public abstract class VstConnection<T> implements Connection {
         outputStream.flush();
     }
 
-    protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks)
-             {
+    protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) {
         for (final Chunk chunk : chunks) {
             try {
                 if (LOGGER.isDebugEnabled()) {

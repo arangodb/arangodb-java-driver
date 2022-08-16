@@ -32,14 +32,9 @@ import java.lang.reflect.Type;
  */
 public abstract class ArangoExecutor {
 
-    protected <T> T createResult(final Type type, final Response response) {
-        return serde.deserialize(response.getBody(), type);
-    }
-
     private final QueueTimeMetricsImpl qtMetrics;
     private final InternalSerde serde;
     private final String timeoutS;
-
     protected ArangoExecutor(final InternalSerde serde, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super();
         this.qtMetrics = qtMetrics;
@@ -47,8 +42,8 @@ public abstract class ArangoExecutor {
         timeoutS = timeoutMs >= 1000 ? Integer.toString(timeoutMs / 1000) : null;
     }
 
-    public interface ResponseDeserializer<T> {
-        T deserialize(Response response);
+    protected <T> T createResult(final Type type, final Response response) {
+        return serde.deserialize(response.getBody(), type);
     }
 
     protected final void interceptResponse(Response response) {
@@ -65,5 +60,9 @@ public abstract class ArangoExecutor {
 
     public QueueTimeMetrics getQueueTimeMetrics() {
         return qtMetrics;
+    }
+
+    public interface ResponseDeserializer<T> {
+        T deserialize(Response response);
     }
 }

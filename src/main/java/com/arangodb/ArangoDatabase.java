@@ -60,7 +60,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
      * Documentation</a>
      */
-    ArangoDBVersion getVersion() ;
+    ArangoDBVersion getVersion();
 
     /**
      * Returns the name of the used storage engine.
@@ -69,14 +69,14 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
-    ArangoDBEngine getEngine() ;
+    ArangoDBEngine getEngine();
 
     /**
      * Checks whether the database exists
      *
      * @return true if the database exists, otherwise false
      */
-    boolean exists() ;
+    boolean exists();
 
     /**
      * Retrieves a list of all databases the current user can access
@@ -86,7 +86,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
      * Documentation</a>
      */
-    Collection<String> getAccessibleDatabases() ;
+    Collection<String> getAccessibleDatabases();
 
     /**
      * Returns a {@code ArangoCollection} instance for the given collection name.
@@ -104,7 +104,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
-    CollectionEntity createCollection(String name) ;
+    CollectionEntity createCollection(String name);
 
     /**
      * Creates a collection with the given {@code options} for this collection's name, then returns collection
@@ -116,7 +116,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
-    CollectionEntity createCollection(String name, CollectionCreateOptions options) ;
+    CollectionEntity createCollection(String name, CollectionCreateOptions options);
 
     /**
      * Fetches all collections from the database and returns an list of collection descriptions.
@@ -125,7 +125,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
      * Documentation</a>
      */
-    Collection<CollectionEntity> getCollections() ;
+    Collection<CollectionEntity> getCollections();
 
     /**
      * Fetches all collections from the database and returns an list of collection descriptions.
@@ -135,7 +135,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
      * Documentation</a>
      */
-    Collection<CollectionEntity> getCollections(CollectionsReadOptions options) ;
+    Collection<CollectionEntity> getCollections(CollectionsReadOptions options);
 
     /**
      * Returns an index
@@ -144,7 +144,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
-    IndexEntity getIndex(String id) ;
+    IndexEntity getIndex(String id);
 
     /**
      * Deletes an index
@@ -153,7 +153,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return the id of the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
      */
-    String deleteIndex(String id) ;
+    String deleteIndex(String id);
 
     /**
      * Creates the database
@@ -162,7 +162,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      */
-    Boolean create() ;
+    Boolean create();
 
     /**
      * Deletes the database from the server.
@@ -171,7 +171,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#drop-database">API
      * Documentation</a>
      */
-    Boolean drop() ;
+    Boolean drop();
 
     /**
      * Grants or revoke access to the database for user {@code user}. You need permission to the _system database in
@@ -182,7 +182,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
-    void grantAccess(String user, Permissions permissions) ;
+    void grantAccess(String user, Permissions permissions);
 
     /**
      * Grants access to the database for user {@code user}. You need permission to the _system database in order to
@@ -192,7 +192,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
-    void grantAccess(String user) ;
+    void grantAccess(String user);
 
     /**
      * Revokes access to the database dbname for user {@code user}. You need permission to the _system database in order
@@ -202,7 +202,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
-    void revokeAccess(String user) ;
+    void revokeAccess(String user);
 
     /**
      * Clear the database access level, revert back to the default access level.
@@ -212,7 +212,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */
-    void resetAccess(String user) ;
+    void resetAccess(String user);
 
     /**
      * Sets the default access level for collections within this database for the user {@code user}. You need permission
@@ -222,7 +222,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param permissions The permissions the user grant
      * @since ArangoDB 3.2.0
      */
-    void grantDefaultCollectionAccess(String user, Permissions permissions) ;
+    void grantDefaultCollectionAccess(String user, Permissions permissions);
 
     /**
      * Get specific database access level
@@ -233,7 +233,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
-    Permissions getPermissions(String user) ;
+    Permissions getPermissions(String user);
 
     /**
      * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
@@ -247,9 +247,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type)
-            ;
-
+    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type);
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
      * result list.
@@ -261,7 +259,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, AqlQueryOptions options, Class<T> type) ;
+    <T> ArangoCursor<T> query(String query, AqlQueryOptions options, Class<T> type);
 
     /**
      * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
@@ -274,7 +272,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type) ;
+    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
@@ -286,7 +284,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Class<T> type) ;
+    <T> ArangoCursor<T> query(String query, Class<T> type);
 
     /**
      * Return an cursor from the given cursor-ID if still existing
@@ -298,7 +296,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#read-next-batch-from-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> cursor(String cursorId, Class<T> type) ;
+    <T> ArangoCursor<T> cursor(String cursorId, Class<T> type);
 
     /**
      * Explain an AQL query and return information about it
@@ -310,9 +308,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API
      * Documentation</a>
      */
-    AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options)
-            ;
-
+    AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
     /**
      * Parse an AQL query and return information about it This method is for query validation only. To actually query
      * the database, see {@link ArangoDatabase#query(String, Map, AqlQueryOptions, Class)}
@@ -322,7 +318,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API
      * Documentation</a>
      */
-    AqlParseEntity parseQuery(String query) ;
+    AqlParseEntity parseQuery(String query);
 
     /**
      * Clears the AQL query cache
@@ -331,7 +327,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#clears-any-results-in-the-aql-query-results-cache">API
      * Documentation</a>
      */
-    void clearQueryCache() ;
+    void clearQueryCache();
 
     /**
      * Returns the global configuration for the AQL query cache
@@ -341,7 +337,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#returns-the-global-properties-for-the-aql-query-results-cache">API
      * Documentation</a>
      */
-    QueryCachePropertiesEntity getQueryCacheProperties() ;
+    QueryCachePropertiesEntity getQueryCacheProperties();
 
     /**
      * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
@@ -353,7 +349,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#globally-adjusts-the-aql-query-results-cache-properties">API
      * Documentation</a>
      */
-    QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties) ;
+    QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties);
 
     /**
      * Returns the configuration for the AQL query tracking
@@ -363,7 +359,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-properties-for-the-aql-query-tracking">API
      * Documentation</a>
      */
-    QueryTrackingPropertiesEntity getQueryTrackingProperties() ;
+    QueryTrackingPropertiesEntity getQueryTrackingProperties();
 
     /**
      * Changes the configuration for the AQL query tracking
@@ -374,9 +370,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query.html#changes-the-properties-for-the-aql-query-tracking">API
      * Documentation</a>
      */
-    QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties)
-            ;
-
+    QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties);
     /**
      * Returns a list of currently running AQL queries
      *
@@ -385,7 +379,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-currently-running-aql-queries">API
      * Documentation</a>
      */
-    Collection<QueryEntity> getCurrentlyRunningQueries() ;
+    Collection<QueryEntity> getCurrentlyRunningQueries();
 
     /**
      * Returns a list of slow running AQL queries
@@ -395,7 +389,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-list-of-slow-aql-queries">API
      * Documentation</a>
      */
-    Collection<QueryEntity> getSlowQueries() ;
+    Collection<QueryEntity> getSlowQueries();
 
     /**
      * Clears the list of slow AQL queries
@@ -404,7 +398,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-query.html#clears-the-list-of-slow-aql-queries">API
      * Documentation</a>
      */
-    void clearSlowQueries() ;
+    void clearSlowQueries();
 
     /**
      * Kills a running query. The query will be terminated at the next cancelation point.
@@ -413,7 +407,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href= "https://www.arangodb.com/docs/stable/http/aql-query.html#kills-a-running-aql-query">API
      * Documentation</a>
      */
-    void killQuery(String id) ;
+    void killQuery(String id);
 
     /**
      * Create a new AQL user function
@@ -424,7 +418,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
      * Documentation</a>
      */
-    void createAqlFunction(String name, String code, AqlFunctionCreateOptions options) ;
+    void createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
 
     /**
      * Deletes the AQL user function with the given name from the database.
@@ -436,7 +430,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#remove-existing-aql-user-function">API
      * Documentation</a>
      */
-    Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options) ;
+    Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
 
     /**
      * Gets all reqistered AQL user functions
@@ -447,7 +441,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
      * Documentation</a>
      */
-    Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options) ;
+    Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options);
 
     /**
      * Returns a {@code ArangoGraph} instance for the given graph name.
@@ -467,7 +461,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions) ;
+    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions);
 
     /**
      * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -480,9 +474,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options)
-            ;
-
+    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
     /**
      * Lists all graphs known to the graph module
      *
@@ -490,7 +482,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-all-graphs">API
      * Documentation</a>
      */
-    Collection<GraphEntity> getGraphs() ;
+    Collection<GraphEntity> getGraphs();
 
     /**
      * Performs a server-side transaction and returns its return value.
@@ -502,7 +494,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
      * Documentation</a>
      */
-    <T> T transaction(String action, Class<T> type, TransactionOptions options) ;
+    <T> T transaction(String action, Class<T> type, TransactionOptions options);
 
     /**
      * Begins a Stream Transaction.
@@ -513,7 +505,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) ;
+    StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options);
 
     /**
      * Aborts a Stream Transaction.
@@ -522,7 +514,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#abort-transaction">API
      * Documentation</a>
      */
-    StreamTransactionEntity abortStreamTransaction(String id) ;
+    StreamTransactionEntity abortStreamTransaction(String id);
 
     /**
      * Gets information about a Stream Transaction.
@@ -532,7 +524,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    StreamTransactionEntity getStreamTransaction(String id) ;
+    StreamTransactionEntity getStreamTransaction(String id);
 
     /**
      * Gets all the currently running Stream Transactions.
@@ -542,7 +534,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    Collection<TransactionEntity> getStreamTransactions() ;
+    Collection<TransactionEntity> getStreamTransactions();
 
     /**
      * Commits a Stream Transaction.
@@ -552,7 +544,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    StreamTransactionEntity commitStreamTransaction(String id) ;
+    StreamTransactionEntity commitStreamTransaction(String id);
 
     /**
      * Retrieves information about the current database
@@ -562,7 +554,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/database-database-management.html#information-of-the-database">API
      * Documentation</a>
      */
-    DatabaseEntity getInfo() ;
+    DatabaseEntity getInfo();
 
     /**
      * Reads a single document
@@ -573,7 +565,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> T getDocument(String id, Class<T> type) ;
+    <T> T getDocument(String id, Class<T> type);
 
     /**
      * Reads a single document
@@ -585,7 +577,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> T getDocument(String id, Class<T> type, DocumentReadOptions options) ;
+    <T> T getDocument(String id, Class<T> type, DocumentReadOptions options);
 
     /**
      * Reload the routing table.
@@ -594,7 +586,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#reloads-the-routing-information">API
      * Documentation</a>
      */
-    void reloadRouting() ;
+    void reloadRouting();
 
     /**
      * Returns a new {@link ArangoRoute} instance for the given path (relative to the database) that can be used to
@@ -612,7 +604,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#list-all-views">API Documentation</a>
      * @since ArangoDB 3.4.0
      */
-    Collection<ViewEntity> getViews() ;
+    Collection<ViewEntity> getViews();
 
     /**
      * Returns a {@code ArangoView} instance for the given view name.
@@ -640,7 +632,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return information about the view
      * @since ArangoDB 3.4.0
      */
-    ViewEntity createView(String name, ViewType type) ;
+    ViewEntity createView(String name, ViewType type);
 
     /**
      * Creates a ArangoSearch view with the given {@code options}, then returns view information from the server.
@@ -652,7 +644,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Documentation</a>
      * @since ArangoDB 3.4.0
      */
-    ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options) ;
+    ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options);
 
     /**
      * Creates an Analyzer
@@ -662,7 +654,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer) ;
+    SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer);
 
     /**
      * Gets information about an Analyzer
@@ -672,7 +664,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    SearchAnalyzer getSearchAnalyzer(String name) ;
+    SearchAnalyzer getSearchAnalyzer(String name);
 
     /**
      * Retrieves all analyzers definitions.
@@ -681,7 +673,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    Collection<SearchAnalyzer> getSearchAnalyzers() ;
+    Collection<SearchAnalyzer> getSearchAnalyzers();
 
     /**
      * Deletes an Analyzer
@@ -690,7 +682,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    void deleteSearchAnalyzer(String name) ;
+    void deleteSearchAnalyzer(String name);
 
     /**
      * Deletes an Analyzer
@@ -700,6 +692,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
-    void deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options) ;
+    void deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options);
 
 }

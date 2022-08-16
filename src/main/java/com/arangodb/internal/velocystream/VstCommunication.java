@@ -26,12 +26,12 @@ import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -53,17 +53,15 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 
     protected static final String ENCRYPTION_PLAIN = "plain";
     protected static final String ENCRYPTION_JWT = "jwt";
-    private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
-
     protected static final AtomicLong mId = new AtomicLong(0L);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
     protected final InternalSerde util;
 
     protected final String user;
     protected final String password;
-    protected volatile String jwt;
-
     protected final Integer chunksize;
     protected final HostHandler hostHandler;
+    protected volatile String jwt;
 
     protected VstCommunication(final Integer timeout, final String user, final String password, final String jwt,
                                final Boolean useSsl, final SSLContext sslContext, final InternalSerde util,
@@ -140,20 +138,20 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
         hostHandler.close();
     }
 
-    public R execute(final Request request, final HostHandle hostHandle)  {
+    public R execute(final Request request, final HostHandle hostHandle) {
         return execute(request, hostHandle, 0);
     }
 
-    protected R execute(final Request request, final HostHandle hostHandle, final int attemptCount)  {
+    protected R execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
         final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
         return execute(request, connection, attemptCount);
     }
 
-    protected abstract R execute(final Request request, C connection) ;
+    protected abstract R execute(final Request request, C connection);
 
-    protected abstract R execute(final Request request, C connection, final int attemptCount) ;
+    protected abstract R execute(final Request request, C connection, final int attemptCount);
 
-    protected void checkError(final Response response)  {
+    protected void checkError(final Response response) {
         ResponseUtils.checkError(util, response);
     }
 

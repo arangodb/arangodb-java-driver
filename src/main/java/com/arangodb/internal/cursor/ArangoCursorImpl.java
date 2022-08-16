@@ -23,10 +23,10 @@ package com.arangodb.internal.cursor;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
 import com.arangodb.entity.CursorWarning;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity.Extras;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity.Extras;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,8 +38,8 @@ import java.util.Map;
  */
 public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements ArangoCursor<T> {
 
-    private final Class<T> type;
     protected final ArangoCursorIterator<T> iterator;
+    private final Class<T> type;
     private final String id;
     private final ArangoCursorExecute execute;
 

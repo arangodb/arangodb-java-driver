@@ -36,12 +36,11 @@ import java.util.NoSuchElementException;
  */
 public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
-    private InternalCursorEntity result;
-    private Iterator<JsonNode> arrayIterator;
-
     private final ArangoCursor<T> cursor;
     private final InternalArangoDatabase<?, ?> db;
     private final ArangoCursorExecute execute;
+    private InternalCursorEntity result;
+    private Iterator<JsonNode> arrayIterator;
 
     protected ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
                                    final InternalArangoDatabase<?, ?> db, final InternalCursorEntity result) {

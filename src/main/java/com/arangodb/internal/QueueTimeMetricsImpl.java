@@ -59,17 +59,14 @@ public class QueueTimeMetricsImpl implements QueueTimeMetrics {
 
     private static class CircularFifoQueue {
         private final QueueTimeSample[] elements;
-
-        /**
-         * Array index of the oldest queue element.
-         */
-        private int start;
-
         /**
          * Capacity of the queue.
          */
         private final int size;
-
+        /**
+         * Array index of the oldest queue element.
+         */
+        private int start;
         /**
          * Amount of elements in the queue.
          */

@@ -63,7 +63,7 @@ public class MessageStore {
         }
     }
 
-    public Message get(final long messageId)  {
+    public Message get(final long messageId) {
         final Message result = response.remove(messageId);
         if (result == null) {
             final Exception e = error.remove(messageId);

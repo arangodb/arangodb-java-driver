@@ -73,7 +73,7 @@ public final class NGramAnalyzerProperties {
 
     /**
      * @return <code>true</code> to include the original value as well
-     *         <code>false</code> to produce the n-grams based on min and max only
+     * <code>false</code> to produce the n-grams based on min and max only
      */
     public boolean isPreserveOriginal() {
         return preserveOriginal;

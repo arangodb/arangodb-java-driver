@@ -28,8 +28,8 @@ import com.arangodb.entity.IndexType;
  */
 public final class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
 
-    private Iterable<String> fields;
     private final IndexType type = IndexType.ttl;
+    private Iterable<String> fields;
     private Integer expireAfter;
 
     public TtlIndexOptions() {

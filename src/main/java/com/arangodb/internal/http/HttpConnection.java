@@ -25,9 +25,9 @@ import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.*;
@@ -77,6 +77,213 @@ public class HttpConnection implements Connection {
     private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
             "utf-8");
     private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
+    private final PoolingHttpClientConnectionManager cm;
+    private final CloseableHttpClient client;
+    private final String user;
+    private final String password;
+    private final InternalSerde util;
+    private final Boolean useSsl;
+    private final Protocol contentType;
+    private final HostDescription host;
+    private volatile String jwt = null;
+    private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerde util, final Protocol contentType,
+                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
+        super();
+        this.host = host;
+        this.user = user;
+        this.password = password;
+        this.useSsl = useSsl;
+        this.util = util;
+        this.contentType = contentType;
+        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
+                .create();
+        if (Boolean.TRUE == useSsl) {
+            registryBuilder.register("https", new SSLConnectionSocketFactory(
+                    sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
+                    hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+            ));
+        } else {
+            registryBuilder.register("http", new PlainConnectionSocketFactory());
+        }
+        cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
+        cm.setDefaultMaxPerRoute(1);
+        cm.setMaxTotal(1);
+        final RequestConfig.Builder requestConfig = RequestConfig.custom();
+        if (timeout != null && timeout >= 0) {
+            requestConfig.setConnectTimeout(timeout);
+            requestConfig.setConnectionRequestTimeout(timeout);
+            requestConfig.setSocketTimeout(timeout);
+        }
+
+        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
+            requestConfig.setCookieSpec(httpCookieSpec);
+        }
+
+        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
+        final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
+                .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
+                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
+        if (ttl != null) {
+            builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
+        }
+        client = builder.build();
+    }
+
+    private static String buildUrl(final String baseUrl, final Request request) {
+        StringBuilder sb = new StringBuilder().append(baseUrl);
+        DbName dbName = request.getDbName();
+        if (dbName != null && !dbName.get().isEmpty()) {
+            sb.append("/_db/").append(dbName.getEncoded());
+        }
+        sb.append(request.getRequest());
+        if (!request.getQueryParam().isEmpty()) {
+            if (request.getRequest().contains("?")) {
+                sb.append("&");
+            } else {
+                sb.append("?");
+            }
+            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
+            sb.append(paramString);
+        }
+        return sb.toString();
+    }
+
+    private static List<NameValuePair> toList(final Map<String, String> parameters) {
+        final ArrayList<NameValuePair> paramList = new ArrayList<>(parameters.size());
+        for (final Entry<String, String> param : parameters.entrySet()) {
+            if (param.getValue() != null) {
+                paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
+            }
+        }
+        return paramList;
+    }
+
+    private static void addHeader(final Request request, final HttpRequestBase httpRequest) {
+        for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
+            httpRequest.addHeader(header.getKey(), header.getValue());
+        }
+    }
+
+    private long getKeepAliveDuration(final HttpResponse response) {
+        final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+        while (it.hasNext()) {
+            final HeaderElement he = it.nextElement();
+            final String param = he.getName();
+            final String value = he.getValue();
+            if (value != null && "timeout".equalsIgnoreCase(param)) {
+                try {
+                    return Long.parseLong(value) * 1000L;
+                } catch (final NumberFormatException ignore) {
+                }
+            }
+        }
+        return 30L * 1000L;
+    }
+
+    @Override
+    public void close() throws IOException {
+        cm.shutdown();
+        client.close();
+    }
+
+    private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
+        final HttpRequestBase httpRequest;
+        switch (request.getRequestType()) {
+            case POST:
+                httpRequest = requestWithBody(new HttpPost(url), request);
+                break;
+            case PUT:
+                httpRequest = requestWithBody(new HttpPut(url), request);
+                break;
+            case PATCH:
+                httpRequest = requestWithBody(new HttpPatch(url), request);
+                break;
+            case DELETE:
+                httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
+                break;
+            case HEAD:
+                httpRequest = new HttpHead(url);
+                break;
+            case GET:
+            default:
+                httpRequest = new HttpGet(url);
+                break;
+        }
+        return httpRequest;
+    }
+
+    private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
+        final byte[] body = request.getBody();
+        if (body != null) {
+            if (contentType == Protocol.HTTP_VPACK) {
+                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_VPACK));
+            } else {
+                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_APPLICATION_JSON_UTF8));
+            }
+        }
+        return httpRequest;
+    }
+
+    private String buildBaseUrl(final HostDescription host) {
+        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+    }
+
+    public Response execute(final Request request) throws IOException {
+        final String url = buildUrl(buildBaseUrl(host), request);
+        final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
+        httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+        if (contentType == Protocol.HTTP_VPACK) {
+            httpRequest.setHeader("Accept", "application/x-velocypack");
+        }
+        addHeader(request, httpRequest);
+        Credentials credentials = null;
+        if (jwt != null) {
+            httpRequest.addHeader(AUTHORIZATION, "Bearer " + jwt);
+        } else if (user != null) {
+            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
+            try {
+                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
+            } catch (final AuthenticationException e) {
+                throw new ArangoDBException(e);
+            }
+        }
+        if (LOGGER.isDebugEnabled()) {
+            CURLLogger.log(url, request, credentials, jwt, util);
+        }
+        Response response;
+        response = buildResponse(client.execute(httpRequest));
+        checkError(response);
+        return response;
+    }
+
+    public Response buildResponse(final CloseableHttpResponse httpResponse)
+            throws UnsupportedOperationException, IOException {
+        final Response response = new Response();
+        response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
+        final HttpEntity entity = httpResponse.getEntity();
+        if (entity != null && entity.getContent() != null) {
+            final byte[] content = IOUtils.toByteArray(entity.getContent());
+            if (content.length > 0) {
+                response.setBody(content);
+            }
+        }
+        final Header[] headers = httpResponse.getAllHeaders();
+        final Map<String, String> meta = response.getMeta();
+        for (final Header header : headers) {
+            meta.put(header.getName(), header.getValue());
+        }
+        return response;
+    }
+
+    protected void checkError(final Response response) {
+        ResponseUtils.checkError(util, response);
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
 
     public static class Builder {
         private String user;
@@ -156,215 +363,6 @@ public class HttpConnection implements Connection {
             return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util,
                     contentType, ttl, httpCookieSpec, httpRequestRetryHandler);
         }
-    }
-
-    private final PoolingHttpClientConnectionManager cm;
-    private final CloseableHttpClient client;
-    private final String user;
-    private final String password;
-    private volatile String jwt = null;
-    private final InternalSerde util;
-    private final Boolean useSsl;
-    private final Protocol contentType;
-    private final HostDescription host;
-
-    private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerde util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
-        super();
-        this.host = host;
-        this.user = user;
-        this.password = password;
-        this.useSsl = useSsl;
-        this.util = util;
-        this.contentType = contentType;
-        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
-                .create();
-        if (Boolean.TRUE == useSsl) {
-            registryBuilder.register("https", new SSLConnectionSocketFactory(
-                    sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
-                    hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
-            ));
-        } else {
-            registryBuilder.register("http", new PlainConnectionSocketFactory());
-        }
-        cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
-        cm.setDefaultMaxPerRoute(1);
-        cm.setMaxTotal(1);
-        final RequestConfig.Builder requestConfig = RequestConfig.custom();
-        if (timeout != null && timeout >= 0) {
-            requestConfig.setConnectTimeout(timeout);
-            requestConfig.setConnectionRequestTimeout(timeout);
-            requestConfig.setSocketTimeout(timeout);
-        }
-
-        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
-            requestConfig.setCookieSpec(httpCookieSpec);
-        }
-
-        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
-        final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
-                .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
-        if (ttl != null) {
-            builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
-        }
-        client = builder.build();
-    }
-
-    private long getKeepAliveDuration(final HttpResponse response) {
-        final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-        while (it.hasNext()) {
-            final HeaderElement he = it.nextElement();
-            final String param = he.getName();
-            final String value = he.getValue();
-            if (value != null && "timeout".equalsIgnoreCase(param)) {
-                try {
-                    return Long.parseLong(value) * 1000L;
-                } catch (final NumberFormatException ignore) {
-                }
-            }
-        }
-        return 30L * 1000L;
-    }
-
-    @Override
-    public void close() throws IOException {
-        cm.shutdown();
-        client.close();
-    }
-
-    private static String buildUrl(final String baseUrl, final Request request) {
-        StringBuilder sb = new StringBuilder().append(baseUrl);
-        DbName dbName = request.getDbName();
-        if (dbName != null && !dbName.get().isEmpty()) {
-            sb.append("/_db/").append(dbName.getEncoded());
-        }
-        sb.append(request.getRequest());
-        if (!request.getQueryParam().isEmpty()) {
-            if (request.getRequest().contains("?")) {
-                sb.append("&");
-            } else {
-                sb.append("?");
-            }
-            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
-            sb.append(paramString);
-        }
-        return sb.toString();
-    }
-
-    private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
-        final HttpRequestBase httpRequest;
-        switch (request.getRequestType()) {
-            case POST:
-                httpRequest = requestWithBody(new HttpPost(url), request);
-                break;
-            case PUT:
-                httpRequest = requestWithBody(new HttpPut(url), request);
-                break;
-            case PATCH:
-                httpRequest = requestWithBody(new HttpPatch(url), request);
-                break;
-            case DELETE:
-                httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
-                break;
-            case HEAD:
-                httpRequest = new HttpHead(url);
-                break;
-            case GET:
-            default:
-                httpRequest = new HttpGet(url);
-                break;
-        }
-        return httpRequest;
-    }
-
-    private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
-        final byte[] body = request.getBody();
-        if (body != null) {
-            if (contentType == Protocol.HTTP_VPACK) {
-                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_VPACK));
-            } else {
-                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_APPLICATION_JSON_UTF8));
-            }
-        }
-        return httpRequest;
-    }
-
-    private String buildBaseUrl(final HostDescription host) {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
-    }
-
-    private static List<NameValuePair> toList(final Map<String, String> parameters) {
-        final ArrayList<NameValuePair> paramList = new ArrayList<>(parameters.size());
-        for (final Entry<String, String> param : parameters.entrySet()) {
-            if (param.getValue() != null) {
-                paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
-            }
-        }
-        return paramList;
-    }
-
-    public Response execute(final Request request) throws IOException {
-        final String url = buildUrl(buildBaseUrl(host), request);
-        final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
-        httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-        if (contentType == Protocol.HTTP_VPACK) {
-            httpRequest.setHeader("Accept", "application/x-velocypack");
-        }
-        addHeader(request, httpRequest);
-        Credentials credentials = null;
-        if (jwt != null) {
-            httpRequest.addHeader(AUTHORIZATION, "Bearer " + jwt);
-        } else if (user != null) {
-            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-            try {
-                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
-            } catch (final AuthenticationException e) {
-                throw new ArangoDBException(e);
-            }
-        }
-        if (LOGGER.isDebugEnabled()) {
-            CURLLogger.log(url, request, credentials, jwt, util);
-        }
-        Response response;
-        response = buildResponse(client.execute(httpRequest));
-        checkError(response);
-        return response;
-    }
-
-    private static void addHeader(final Request request, final HttpRequestBase httpRequest) {
-        for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
-            httpRequest.addHeader(header.getKey(), header.getValue());
-        }
-    }
-
-    public Response buildResponse(final CloseableHttpResponse httpResponse)
-            throws UnsupportedOperationException, IOException {
-        final Response response = new Response();
-        response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
-        final HttpEntity entity = httpResponse.getEntity();
-        if (entity != null && entity.getContent() != null) {
-            final byte[] content = IOUtils.toByteArray(entity.getContent());
-            if (content.length > 0) {
-                response.setBody(content);
-            }
-        }
-        final Header[] headers = httpResponse.getAllHeaders();
-        final Map<String, String> meta = response.getMeta();
-        for (final Header header : headers) {
-            meta.put(header.getName(), header.getValue());
-        }
-        return response;
-    }
-
-    protected void checkError(final Response response)  {
-        ResponseUtils.checkError(util, response);
-    }
-
-    @Override
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
     }
 
 }

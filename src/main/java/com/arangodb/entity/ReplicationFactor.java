@@ -35,6 +35,15 @@ public interface ReplicationFactor {
     @JsonValue
     Object getValue();
 
+    enum SatelliteReplicationFactor implements ReplicationFactor {
+        INSTANCE;
+
+        @Override
+        public String getValue() {
+            return "satellite";
+        }
+    }
+
     final class NumericReplicationFactor implements ReplicationFactor {
 
         private final Integer value;
@@ -46,15 +55,6 @@ public interface ReplicationFactor {
         @Override
         public Integer getValue() {
             return value;
-        }
-    }
-
-    enum SatelliteReplicationFactor implements ReplicationFactor {
-        INSTANCE;
-
-        @Override
-        public String getValue() {
-            return "satellite";
         }
     }
 }

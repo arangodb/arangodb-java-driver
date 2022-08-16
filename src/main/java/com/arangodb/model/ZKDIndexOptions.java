@@ -30,8 +30,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
 
-    private Iterable<String> fields;
     final IndexType type = IndexType.zkd;
+    private Iterable<String> fields;
     private Boolean unique;
     private FieldValueTypes fieldValueTypes;
 
