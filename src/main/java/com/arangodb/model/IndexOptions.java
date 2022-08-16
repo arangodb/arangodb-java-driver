@@ -25,7 +25,7 @@ package com.arangodb.model;
  * <p>
  * This final class is used for all index similarities
  */
-public abstract class IndexOptions<T extends IndexOptions> {
+public abstract class IndexOptions<T extends IndexOptions<T>> {
 
     private Boolean inBackground;
     private String name;

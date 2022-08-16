@@ -39,7 +39,7 @@ public final class AqlFunctionGetOptions {
     }
 
     /**
-     * @param namespace Returns all registered AQL user functions from namespace namespace
+     * @param namespace Returns all registered AQL user functions from namespace
      * @return options
      */
     public AqlFunctionGetOptions namespace(final String namespace) {
