@@ -49,6 +49,7 @@ import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.util.Collection;
@@ -68,6 +69,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author Mark Vollmary
  */
+@ThreadSafe
 public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
     void shutdown();

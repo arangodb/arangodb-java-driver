@@ -25,6 +25,7 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  */
+@ThreadSafe
 public interface ArangoGraph extends ArangoSerdeAccessor {
 
     /**

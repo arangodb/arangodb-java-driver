@@ -22,6 +22,8 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for operations on ArangoDB view level.
  *
@@ -29,6 +31,7 @@ import com.arangodb.entity.ViewEntity;
  * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
+@ThreadSafe
 public interface ArangoView extends ArangoSerdeAccessor {
 
     /**

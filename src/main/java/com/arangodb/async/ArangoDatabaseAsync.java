@@ -28,6 +28,7 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +40,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/database.html">Databases API Documentation</a>
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html">Query API Documentation</a>
  */
+@ThreadSafe
 public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**

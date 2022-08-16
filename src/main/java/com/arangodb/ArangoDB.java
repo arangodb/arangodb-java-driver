@@ -45,6 +45,7 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
@@ -67,6 +68,7 @@ import java.util.Properties;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@ThreadSafe
 public interface ArangoDB extends ArangoSerdeAccessor {
 
     /**

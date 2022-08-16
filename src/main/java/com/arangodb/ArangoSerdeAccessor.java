@@ -22,9 +22,12 @@ package com.arangodb;
 
 import com.arangodb.internal.serde.InternalSerde;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * @author Mark Vollmary
  */
+@ThreadSafe
 public interface ArangoSerdeAccessor {
 
     /**

@@ -25,6 +25,8 @@ import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for operations on ArangoDB view level for ArangoSearch views.
  *
@@ -32,6 +34,7 @@ import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
  * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
+@ThreadSafe
 public interface ArangoSearch extends ArangoView {
 
     /**

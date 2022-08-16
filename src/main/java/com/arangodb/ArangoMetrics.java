@@ -20,12 +20,15 @@
 
 package com.arangodb;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for accessing metrics.
  *
  * @author Michele Rastelli
  * @since ArangoDB 3.9
  */
+@ThreadSafe
 public interface ArangoMetrics {
     /**
      * @return queue time metrics

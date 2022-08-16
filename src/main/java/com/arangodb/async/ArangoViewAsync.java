@@ -23,6 +23,7 @@ package com.arangodb.async;
 import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.ViewEntity;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -32,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
+@ThreadSafe
 public interface ArangoViewAsync extends ArangoSerdeAccessor {
 
     /**

@@ -25,6 +25,7 @@ import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Collection API Documentation</a>
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
+@ThreadSafe
 public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
 
     /**

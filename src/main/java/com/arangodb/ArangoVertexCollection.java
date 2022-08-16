@@ -24,12 +24,15 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for operations on ArangoDB vertex collection level.
  *
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
+@ThreadSafe
 public interface ArangoVertexCollection extends ArangoSerdeAccessor {
 
     /**
