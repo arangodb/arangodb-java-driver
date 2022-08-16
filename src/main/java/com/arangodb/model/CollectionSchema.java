@@ -108,6 +108,10 @@ public final class CollectionSchema {
 
         private final String value;
 
+        Level(String value) {
+            this.value = value;
+        }
+
         public static Level of(String label) {
             for (Level e : values()) {
                 if (e.value.equals(label)) {
@@ -115,10 +119,6 @@ public final class CollectionSchema {
                 }
             }
             return null;
-        }
-
-        Level(String value) {
-            this.value = value;
         }
 
         public String getValue() {

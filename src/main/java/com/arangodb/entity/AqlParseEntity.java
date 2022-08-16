@@ -28,6 +28,22 @@ import java.util.Collection;
  */
 public final class AqlParseEntity {
 
+    private Collection<String> collections;
+    private Collection<String> bindVars;
+    private Collection<AstNode> ast;
+
+    public Collection<String> getCollections() {
+        return collections;
+    }
+
+    public Collection<String> getBindVars() {
+        return bindVars;
+    }
+
+    public Collection<AstNode> getAst() {
+        return ast;
+    }
+
     public static final class AstNode {
         private String type;
         private Collection<AstNode> subNodes;
@@ -55,22 +71,6 @@ public final class AqlParseEntity {
             return value;
         }
 
-    }
-
-    private Collection<String> collections;
-    private Collection<String> bindVars;
-    private Collection<AstNode> ast;
-
-    public Collection<String> getCollections() {
-        return collections;
-    }
-
-    public Collection<String> getBindVars() {
-        return bindVars;
-    }
-
-    public Collection<AstNode> getAst() {
-        return ast;
     }
 
 }

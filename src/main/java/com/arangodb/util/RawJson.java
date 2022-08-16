@@ -16,12 +16,12 @@ import java.util.Objects;
 public class RawJson {
     private final String value;
 
-    public static RawJson of(final String value) {
-        return new RawJson(value);
-    }
-
     protected RawJson(final String value) {
         this.value = value;
+    }
+
+    public static RawJson of(final String value) {
+        return new RawJson(value);
     }
 
     public String getValue() {

@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
  */
 public final class DocumentUtil {
 
-    private static final String SLASH = "/";
     public static final String REGEX_KEY = "[^/]+";
     public static final String REGEX_ID = "[^/]+/[^/]+";
+    private static final String SLASH = "/";
 
     private DocumentUtil() {
         super();
@@ -41,11 +41,11 @@ public final class DocumentUtil {
         validateName("index id", REGEX_ID, id);
     }
 
-    public static void validateDocumentKey(final String key)  {
+    public static void validateDocumentKey(final String key) {
         validateName("document key", REGEX_KEY, key);
     }
 
-    public static void validateDocumentId(final String id)  {
+    public static void validateDocumentId(final String id) {
         validateName("document id", REGEX_ID, id);
     }
 
@@ -54,8 +54,7 @@ public final class DocumentUtil {
         return collection + SLASH + key;
     }
 
-    private static void validateName(final String type, final String regex, final CharSequence name)
-             {
+    private static void validateName(final String type, final String regex, final CharSequence name) {
         if (!Pattern.matches(regex, name)) {
             throw new ArangoDBException(String.format("%s %s is not valid.", type, name));
         }

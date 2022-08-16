@@ -94,7 +94,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     }
 
     @Override
-    public void shutdown()  {
+    public void shutdown() {
         try {
             executor.disconnect();
         } finally {

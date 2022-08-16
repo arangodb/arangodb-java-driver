@@ -20,7 +20,6 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -31,7 +30,7 @@ import java.io.Closeable;
  */
 public interface CommunicationProtocol extends Closeable {
 
-    Response execute(final Request request, HostHandle hostHandle) ;
+    Response execute(final Request request, HostHandle hostHandle);
 
     void setJwt(String jwt);
 

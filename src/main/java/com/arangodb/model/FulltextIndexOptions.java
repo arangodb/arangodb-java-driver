@@ -29,8 +29,8 @@ import com.arangodb.entity.IndexType;
  */
 public final class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {
 
-    private Iterable<String> fields;
     private final IndexType type = IndexType.fulltext;
+    private Iterable<String> fields;
     private Integer minLength;
 
     public FulltextIndexOptions() {

@@ -133,7 +133,7 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      * Adds a vertex collection to the set of collections of the graph. If the collection does not exist, it will be
      * created.
      *
-     * @param name The name of the collection
+     * @param name    The name of the collection
      * @param options additional options
      * @return information about the graph
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API

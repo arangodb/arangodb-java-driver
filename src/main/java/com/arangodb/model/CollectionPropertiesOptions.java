@@ -53,8 +53,8 @@ public final class CollectionPropertiesOptions {
 
     /**
      * @param schema object that specifies the collection level schema for documents
-     * @since ArangoDB 3.7
      * @return options
+     * @since ArangoDB 3.7
      */
     public CollectionPropertiesOptions schema(final CollectionSchema schema) {
         this.schema = schema;

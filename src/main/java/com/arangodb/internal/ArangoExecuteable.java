@@ -22,8 +22,8 @@ package com.arangodb.internal;
 
 import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
-import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -47,23 +47,6 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
         this.context = context;
     }
 
-    protected E executor() {
-        return executor;
-    }
-
-    @Override
-    public InternalSerde getSerde() {
-        return serde;
-    }
-
-    protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
-        final Request request = new Request(dbName, requestType, createPath(path));
-        for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
-            request.putHeaderParam(header.getKey(), header.getValue());
-        }
-        return request;
-    }
-
     protected static String createPath(final String... params) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < params.length; i++) {
@@ -79,6 +62,23 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
             sb.append(param);
         }
         return sb.toString();
+    }
+
+    protected E executor() {
+        return executor;
+    }
+
+    @Override
+    public InternalSerde getSerde() {
+        return serde;
+    }
+
+    protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
+        final Request request = new Request(dbName, requestType, createPath(path));
+        for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
+            request.putHeaderParam(header.getKey(), header.getValue());
+        }
+        return request;
     }
 
 }

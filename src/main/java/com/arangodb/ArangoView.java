@@ -50,14 +50,14 @@ public interface ArangoView extends ArangoSerdeAccessor {
      *
      * @return true if the view exists, otherwise false
      */
-    boolean exists() ;
+    boolean exists();
 
     /**
      * Deletes the view from the database.
      *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
      */
-    void drop() ;
+    void drop();
 
     /**
      * Renames the view.
@@ -66,7 +66,7 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * @return information about the view
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
      */
-    ViewEntity rename(String newName) ;
+    ViewEntity rename(String newName);
 
     /**
      * Returns information about the view.
@@ -75,6 +75,6 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
      * Documentation</a>
      */
-    ViewEntity getInfo() ;
+    ViewEntity getInfo();
 
 }

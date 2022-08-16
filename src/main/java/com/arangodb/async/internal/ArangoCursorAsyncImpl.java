@@ -21,10 +21,10 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.async.ArangoCursorAsync;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 
 import java.util.Spliterator;
 import java.util.Spliterators;

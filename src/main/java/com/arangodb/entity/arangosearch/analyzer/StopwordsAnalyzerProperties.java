@@ -33,6 +33,14 @@ import java.util.stream.Collectors;
  */
 public final class StopwordsAnalyzerProperties {
 
+    private final List<String> stopwords;
+    private final boolean hex;
+
+    public StopwordsAnalyzerProperties() {
+        stopwords = new ArrayList<>();
+        hex = true;
+    }
+
     private static String stringToHex(String str) {
         final StringBuilder hex = new StringBuilder();
         for (final char temp : str.toCharArray()) {
@@ -50,14 +58,6 @@ public final class StopwordsAnalyzerProperties {
         }
         return result.toString();
     }
-
-    public StopwordsAnalyzerProperties() {
-        stopwords = new ArrayList<>();
-        hex = true;
-    }
-
-    private final List<String> stopwords;
-    private final boolean hex;
 
     public List<String> getStopwords() {
         return stopwords;

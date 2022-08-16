@@ -32,24 +32,18 @@ import java.util.Objects;
  */
 public final class TextAnalyzerProperties {
 
+    private String locale;
+    private boolean accent;
+    @JsonProperty("case")
+    private SearchAnalyzerCase analyzerCase;
+    private boolean stemming;
+    private EdgeNgram edgeNgram;
+    private List<String> stopwords;
+    private String stopwordsPath;
+
     public TextAnalyzerProperties() {
         stopwords = Collections.emptyList();
     }
-
-    private String locale;
-
-    private boolean accent;
-
-    @JsonProperty("case")
-    private SearchAnalyzerCase analyzerCase;
-
-    private boolean stemming;
-
-    private EdgeNgram edgeNgram;
-
-    private List<String> stopwords;
-
-    private String stopwordsPath;
 
     /**
      * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),

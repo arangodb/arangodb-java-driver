@@ -20,7 +20,6 @@
 
 package com.arangodb.internal.velocystream;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
@@ -42,7 +41,7 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle)  {
+    public Response execute(final Request request, final HostHandle hostHandle) {
         return communication.execute(request, hostHandle);
     }
 

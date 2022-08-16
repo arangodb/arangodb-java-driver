@@ -34,11 +34,11 @@ import java.util.Objects;
  * @since ArangoDB 3.8
  */
 public final class GeoJSONAnalyzer extends SearchAnalyzer {
+    private GeoJSONAnalyzerProperties properties;
+
     public GeoJSONAnalyzer() {
         setType(AnalyzerType.geojson);
     }
-
-    private GeoJSONAnalyzerProperties properties;
 
     public GeoJSONAnalyzerProperties getProperties() {
         return properties;

@@ -22,7 +22,6 @@ package com.arangodb.internal.cursor.entity;
 
 import com.arangodb.entity.CursorWarning;
 import com.arangodb.entity.MetaAware;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
@@ -36,9 +35,9 @@ import java.util.Map;
  */
 public final class InternalCursorEntity implements MetaAware {
 
+    private final Extras extra = new Extras();
     private String id;
     private Integer count;
-    private final Extras extra = new Extras();
     private Boolean cached;
     private Boolean hasMore;
     private JsonNode result;
@@ -94,6 +93,10 @@ public final class InternalCursorEntity implements MetaAware {
         return meta;
     }
 
+    public void setMeta(Map<String, String> meta) {
+        this.meta = cleanupMeta(meta);
+    }
+
     /**
      * @return remove not allowed (valid storable) meta information
      */
@@ -104,13 +107,9 @@ public final class InternalCursorEntity implements MetaAware {
         return meta;
     }
 
-    public void setMeta(Map<String, String> meta) {
-        this.meta = cleanupMeta(meta);
-    }
-
     public static final class Extras {
-        private Map<String, Object> stats;
         private final Collection<CursorWarning> warnings = Collections.emptyList();
+        private Map<String, Object> stats;
 
         public Map<String, Object> getStats() {
             return stats;

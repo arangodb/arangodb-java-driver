@@ -25,10 +25,6 @@ package com.arangodb.entity;
  */
 public final class LogLevelEntity {
 
-    public enum LogLevel {
-        FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
-    }
-
     private LogLevel all;
     private LogLevel agency;
     private LogLevel agencycomm;
@@ -48,7 +44,6 @@ public final class LogLevelEntity {
     private LogLevel startup;
     private LogLevel threads;
     private LogLevel v8;
-
     public LogLevelEntity() {
         super();
     }
@@ -203,6 +198,10 @@ public final class LogLevelEntity {
 
     public void setV8(final LogLevel v8) {
         this.v8 = v8;
+    }
+
+    public enum LogLevel {
+        FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
     }
 
 }

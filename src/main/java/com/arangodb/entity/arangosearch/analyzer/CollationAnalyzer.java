@@ -34,11 +34,11 @@ import java.util.Objects;
  * @since ArangoDB 3.9
  */
 public final class CollationAnalyzer extends SearchAnalyzer {
+    private CollationAnalyzerProperties properties;
+
     public CollationAnalyzer() {
         setType(AnalyzerType.collation);
     }
-
-    private CollationAnalyzerProperties properties;
 
     public CollationAnalyzerProperties getProperties() {
         return properties;

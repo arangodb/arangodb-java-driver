@@ -405,6 +405,36 @@ public final class AqlQueryOptions {
         return options;
     }
 
+    /**
+     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @return options
+     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
+     * Documentation</a>
+     * @since ArangoDB 3.4.0
+     */
+    public AqlQueryOptions allowDirtyRead(final Boolean allowDirtyRead) {
+        this.allowDirtyRead = allowDirtyRead;
+        return this;
+    }
+
+    public Boolean getAllowDirtyRead() {
+        return allowDirtyRead;
+    }
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public AqlQueryOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
     public static final class Options {
 
         private Boolean failOnWarning;
@@ -494,36 +524,6 @@ public final class AqlQueryOptions {
         public Collection<String> getRules() {
             return rules;
         }
-    }
-
-    /**
-     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
-     * @return options
-     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
-     * Documentation</a>
-     * @since ArangoDB 3.4.0
-     */
-    public AqlQueryOptions allowDirtyRead(final Boolean allowDirtyRead) {
-        this.allowDirtyRead = allowDirtyRead;
-        return this;
-    }
-
-    public Boolean getAllowDirtyRead() {
-        return allowDirtyRead;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public AqlQueryOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
-        return this;
     }
 
 }

@@ -33,10 +33,6 @@ public enum LogLevel {
         this.level = level;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
     public static LogLevel fromLevel(final int level) {
         for (final LogLevel logLevel : LogLevel.values()) {
             if (logLevel.level == level) {
@@ -44,6 +40,10 @@ public enum LogLevel {
             }
         }
         return null;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
 }

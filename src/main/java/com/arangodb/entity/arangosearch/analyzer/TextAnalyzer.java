@@ -33,11 +33,11 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#text">API Documentation</a>
  */
 public final class TextAnalyzer extends SearchAnalyzer {
+    private TextAnalyzerProperties properties;
+
     public TextAnalyzer() {
         setType(AnalyzerType.text);
     }
-
-    private TextAnalyzerProperties properties;
 
     public TextAnalyzerProperties getProperties() {
         return properties;

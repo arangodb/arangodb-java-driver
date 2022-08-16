@@ -32,10 +32,10 @@ import java.util.List;
 public class FallbackHostHandler implements HostHandler {
 
     private final HostResolver resolver;
+    private final List<Throwable> lastFailExceptions;
     private Host current;
     private Host lastSuccess;
     private int iterations;
-    private final List<Throwable> lastFailExceptions;
     private boolean firstOpened;
     private HostSet hosts;
 

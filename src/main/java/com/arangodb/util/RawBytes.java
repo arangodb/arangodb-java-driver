@@ -22,12 +22,12 @@ import java.util.Arrays;
 public class RawBytes {
     private final byte[] value;
 
-    public static RawBytes of(final byte[] value) {
-        return new RawBytes(value);
-    }
-
     protected RawBytes(final byte[] value) {
         this.value = value;
+    }
+
+    public static RawBytes of(final byte[] value) {
+        return new RawBytes(value);
     }
 
     public byte[] getValue() {

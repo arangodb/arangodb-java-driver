@@ -23,8 +23,8 @@ package com.arangodb.internal.net;
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.slf4j.Logger;
@@ -45,10 +45,8 @@ public class ExtendedHostResolver implements HostResolver {
 
     private final Integer maxConnections;
     private final ConnectionFactory connectionFactory;
-
-    private long lastUpdate;
     private final Integer acquireHostListInterval;
-
+    private long lastUpdate;
     private ArangoExecutorSync executor;
     private InternalSerde arangoSerialization;
 
@@ -113,7 +111,7 @@ public class ExtendedHostResolver implements HostResolver {
         return hosts;
     }
 
-    private Collection<String> resolveFromServer()  {
+    private Collection<String> resolveFromServer() {
 
         Collection<String> response;
 

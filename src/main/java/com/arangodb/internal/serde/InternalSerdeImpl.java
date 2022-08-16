@@ -2,7 +2,7 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.serde.*;
+import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,11 +19,11 @@ import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersio
 
 final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
-    private final ArangoSerde userSerde;
-
     static {
         checkSupportedJacksonVersion();
     }
+
+    private final ArangoSerde userSerde;
 
     InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
         super(mapper);

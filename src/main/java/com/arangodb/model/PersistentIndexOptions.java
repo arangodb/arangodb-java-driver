@@ -29,8 +29,8 @@ import com.arangodb.entity.IndexType;
  */
 public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
 
-    private Iterable<String> fields;
     private final IndexType type = IndexType.persistent;
+    private Iterable<String> fields;
     private Boolean unique;
     private Boolean sparse;
     private Boolean deduplicate;
@@ -80,8 +80,7 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
     }
 
     /**
-     * @param sparse
-     *         if true, then create a sparse index
+     * @param sparse if true, then create a sparse index
      * @return options
      */
     public PersistentIndexOptions sparse(final Boolean sparse) {
@@ -94,8 +93,7 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
     }
 
     /**
-     * @param deduplicate
-     *         if false, the deduplication of array values is turned off. Default: {@code true}
+     * @param deduplicate if false, the deduplication of array values is turned off. Default: {@code true}
      * @return options
      */
     public PersistentIndexOptions deduplicate(final Boolean deduplicate) {
@@ -104,9 +102,8 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
     }
 
     /**
-     * @param estimates
-     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
-     *         true}
+     * @param estimates This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *                  true}
      * @since ArangoDB 3.8
      */
     public PersistentIndexOptions estimates(final Boolean estimates) {

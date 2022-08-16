@@ -53,7 +53,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
-     EdgeEntity insertEdge(Object value) ;
+    EdgeEntity insertEdge(Object value);
 
     /**
      * Creates a new edge in the collection
@@ -63,7 +63,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
-     EdgeEntity insertEdge(Object value, EdgeCreateOptions options) ;
+    EdgeEntity insertEdge(Object value, EdgeCreateOptions options);
 
     /**
      * Fetches an existing edge
@@ -73,7 +73,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return the edge identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
      */
-    <T> T getEdge(String key, Class<T> type) ;
+    <T> T getEdge(String key, Class<T> type);
 
     /**
      * Fetches an existing edge
@@ -84,18 +84,18 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return the edge identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
      */
-    <T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options) ;
+    <T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options);
 
     /**
      * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
      * violated
      *
-     * @param key The key of the edge
+     * @param key   The key of the edge
      * @param value A representation of a single edge (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
-     EdgeUpdateEntity replaceEdge(String key, Object value) ;
+    EdgeUpdateEntity replaceEdge(String key, Object value);
 
     /**
      * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
@@ -107,19 +107,19 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
-     EdgeUpdateEntity replaceEdge(String key, Object value, EdgeReplaceOptions options) ;
+    EdgeUpdateEntity replaceEdge(String key, Object value, EdgeReplaceOptions options);
 
     /**
      * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
      * patch (the patch document). All attributes from the patch document will be added to the existing document if they
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
-     * @param key The key of the edge
+     * @param key   The key of the edge
      * @param value A representation of a single edge (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
-    EdgeUpdateEntity updateEdge(String key, Object value) ;
+    EdgeUpdateEntity updateEdge(String key, Object value);
 
     /**
      * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
@@ -132,7 +132,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @return information about the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
-    EdgeUpdateEntity updateEdge(String key, Object value, EdgeUpdateOptions options) ;
+    EdgeUpdateEntity updateEdge(String key, Object value, EdgeUpdateOptions options);
 
     /**
      * Removes a edge
@@ -140,7 +140,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param key The key of the edge
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
      */
-    void deleteEdge(String key) ;
+    void deleteEdge(String key);
 
     /**
      * Removes a edge
@@ -149,6 +149,6 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
      */
-    void deleteEdge(String key, EdgeDeleteOptions options) ;
+    void deleteEdge(String key, EdgeDeleteOptions options);
 
 }

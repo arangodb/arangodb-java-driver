@@ -42,18 +42,18 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
-    public EdgeEntity insertEdge(final Object value)  {
+    public EdgeEntity insertEdge(final Object value) {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer(value));
     }
 
     @Override
-    public EdgeEntity insertEdge(final Object value, final EdgeCreateOptions options)  {
+    public EdgeEntity insertEdge(final Object value, final EdgeCreateOptions options) {
         return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
     }
 
     @Override
-    public <T> T getEdge(final String key, final Class<T> type)  {
+    public <T> T getEdge(final String key, final Class<T> type) {
         try {
             return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
@@ -65,8 +65,7 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
-    public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options)
-             {
+    public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
         try {
             return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
@@ -78,36 +77,34 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
-    public EdgeUpdateEntity replaceEdge(final String key, final Object value)  {
+    public EdgeUpdateEntity replaceEdge(final String key, final Object value) {
         return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
                 replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public EdgeUpdateEntity replaceEdge(final String key, final Object value, final EdgeReplaceOptions options)
-             {
+    public EdgeUpdateEntity replaceEdge(final String key, final Object value, final EdgeReplaceOptions options) {
         return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
     }
 
     @Override
-    public EdgeUpdateEntity updateEdge(final String key, final Object value)  {
+    public EdgeUpdateEntity updateEdge(final String key, final Object value) {
         return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
                 updateEdgeResponseDeserializer(value));
     }
 
     @Override
-    public EdgeUpdateEntity updateEdge(final String key, final Object value, final EdgeUpdateOptions options)
-             {
+    public EdgeUpdateEntity updateEdge(final String key, final Object value, final EdgeUpdateOptions options) {
         return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
     }
 
     @Override
-    public void deleteEdge(final String key)  {
+    public void deleteEdge(final String key) {
         executor.execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
     }
 
     @Override
-    public void deleteEdge(final String key, final EdgeDeleteOptions options)  {
+    public void deleteEdge(final String key, final EdgeDeleteOptions options) {
         executor.execute(deleteEdgeRequest(key, options), Void.class);
     }
 

@@ -33,11 +33,11 @@ import java.util.Objects;
  * @since ArangoDB 3.8
  */
 public final class StopwordsAnalyzer extends SearchAnalyzer {
+    private StopwordsAnalyzerProperties properties;
+
     public StopwordsAnalyzer() {
         setType(AnalyzerType.stopwords);
     }
-
-    private StopwordsAnalyzerProperties properties;
 
     public StopwordsAnalyzerProperties getProperties() {
         return properties;

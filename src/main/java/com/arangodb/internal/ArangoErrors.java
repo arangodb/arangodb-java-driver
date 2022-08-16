@@ -25,13 +25,12 @@ package com.arangodb.internal;
  */
 public final class ArangoErrors {
 
-    private ArangoErrors() {
-        super();
-    }
-
     public static final Integer ERROR_ARANGO_DATA_SOURCE_NOT_FOUND = 1203;
     public static final Integer ERROR_ARANGO_DATABASE_NOT_FOUND = 1228;
     public static final Integer ERROR_GRAPH_NOT_FOUND = 1924;
     public static final Integer QUEUE_TIME_VIOLATED = 21004;
+    private ArangoErrors() {
+        super();
+    }
 
 }

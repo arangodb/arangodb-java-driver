@@ -93,7 +93,125 @@ public abstract class InternalArangoDBBuilder {
         loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
     }
 
-    public InternalArangoDBBuilder loadProperties(final InputStream in)  {
+    private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {
+        final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
+        if (hostsProp != null) {
+            final String[] hostsSplit = hostsProp.split(",");
+            for (final String host : hostsSplit) {
+                final String[] split = host.split(":");
+                if (split.length != 2 || !split[1].matches("[0-9]+")) {
+                    throw new ArangoDBException(String.format(
+                            "Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
+                            hostsProp));
+                } else {
+                    hosts.add(new HostDescription(split[0], Integer.parseInt(split[1])));
+                }
+            }
+        }
+    }
+
+    private static String loadHost(final Properties properties, final String currentValue) {
+        final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDefaults.DEFAULT_HOST);
+        if (host.contains(":")) {
+            throw new ArangoDBException(String.format(
+                    "Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
+                    host));
+        }
+        return host;
+    }
+
+    private static Integer loadPort(final Properties properties, final int currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDefaults.DEFAULT_PORT));
+    }
+
+    private static Integer loadTimeout(final Properties properties, final Integer currentValue) {
+        return Integer
+                .parseInt(getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDefaults.DEFAULT_TIMEOUT));
+    }
+
+    private static String loadUser(final Properties properties, final String currentValue) {
+        return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDefaults.DEFAULT_USER);
+    }
+
+    private static String loadPassword(final Properties properties, final String currentValue) {
+        return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
+    }
+
+    private static String loadJwt(final Properties properties, final String currentValue) {
+        return getProperty(properties, PROPERTY_KEY_JWT, currentValue, null);
+    }
+
+    private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(
+                getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
+    }
+
+    private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
+        return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
+    }
+
+    private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
+                ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
+    }
+
+    private static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
+                ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT));
+    }
+
+    private static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
+        final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
+                ArangoDefaults.CONNECTION_TTL_VST_DEFAULT);
+        return ttl != null ? Long.parseLong(ttl) : null;
+    }
+
+    private static Integer loadKeepAliveInterval(final Properties properties, final Integer currentValue) {
+        final String keepAliveInterval = getProperty(properties, PROPERTY_KEEP_ALIVE_INTERVAL, currentValue,
+                null);
+        return keepAliveInterval != null ? Integer.parseInt(keepAliveInterval) : null;
+    }
+
+    private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
+                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
+    }
+
+    private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
+                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
+    }
+
+    private static int loadResponseQueueTimeSamples(final Properties properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES, currentValue,
+                ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES));
+    }
+
+    private static LoadBalancingStrategy loadLoadBalancingStrategy(
+            final Properties properties,
+            final LoadBalancingStrategy currentValue) {
+        return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
+                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ENGLISH));
+    }
+
+    protected static <T> String getProperty(
+            final Properties properties,
+            final String key,
+            final T currentValue,
+            final T defaultValue) {
+
+        String overrideDefaultValue = null;
+
+        if (currentValue != null) {
+            overrideDefaultValue = currentValue.toString();
+        } else if (defaultValue != null) {
+            overrideDefaultValue = defaultValue.toString();
+        }
+
+        return properties.getProperty(key, overrideDefaultValue);
+    }
+
+    public InternalArangoDBBuilder loadProperties(final InputStream in) {
 
         final Properties properties = new Properties();
 
@@ -205,23 +323,6 @@ public abstract class InternalArangoDBBuilder {
         this.customSerializer = serializer;
     }
 
-    private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {
-        final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
-        if (hostsProp != null) {
-            final String[] hostsSplit = hostsProp.split(",");
-            for (final String host : hostsSplit) {
-                final String[] split = host.split(":");
-                if (split.length != 2 || !split[1].matches("[0-9]+")) {
-                    throw new ArangoDBException(String.format(
-                            "Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
-                            hostsProp));
-                } else {
-                    hosts.add(new HostDescription(split[0], Integer.parseInt(split[1])));
-                }
-            }
-        }
-    }
-
     protected HostHandler createHostHandler(final HostResolver hostResolver) {
 
         final HostHandler hostHandler;
@@ -258,107 +359,6 @@ public abstract class InternalArangoDBBuilder {
             return new SimpleHostResolver(new ArrayList<>(hosts));
         }
 
-    }
-
-    private static String loadHost(final Properties properties, final String currentValue) {
-        final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDefaults.DEFAULT_HOST);
-        if (host.contains(":")) {
-            throw new ArangoDBException(String.format(
-                    "Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
-                    host));
-        }
-        return host;
-    }
-
-    private static Integer loadPort(final Properties properties, final int currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDefaults.DEFAULT_PORT));
-    }
-
-    private static Integer loadTimeout(final Properties properties, final Integer currentValue) {
-        return Integer
-                .parseInt(getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDefaults.DEFAULT_TIMEOUT));
-    }
-
-    private static String loadUser(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDefaults.DEFAULT_USER);
-    }
-
-    private static String loadPassword(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
-    }
-
-    private static String loadJwt(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_JWT, currentValue, null);
-    }
-
-    private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(
-                getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
-    }
-
-    private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
-    }
-
-    private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
-                ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
-    }
-
-    private static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
-                ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT));
-    }
-
-    private static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
-        final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
-                ArangoDefaults.CONNECTION_TTL_VST_DEFAULT);
-        return ttl != null ? Long.parseLong(ttl) : null;
-    }
-
-    private static Integer loadKeepAliveInterval(final Properties properties, final Integer currentValue) {
-        final String keepAliveInterval = getProperty(properties, PROPERTY_KEEP_ALIVE_INTERVAL, currentValue,
-                null);
-        return keepAliveInterval != null ? Integer.parseInt(keepAliveInterval) : null;
-    }
-
-    private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
-                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
-    }
-
-    private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
-                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
-    }
-
-    private static int loadResponseQueueTimeSamples(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES, currentValue,
-                ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES));
-    }
-
-    private static LoadBalancingStrategy loadLoadBalancingStrategy(
-            final Properties properties,
-            final LoadBalancingStrategy currentValue) {
-        return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ENGLISH));
-    }
-
-    protected static <T> String getProperty(
-            final Properties properties,
-            final String key,
-            final T currentValue,
-            final T defaultValue) {
-
-        String overrideDefaultValue = null;
-
-        if (currentValue != null) {
-            overrideDefaultValue = currentValue.toString();
-        } else if (defaultValue != null) {
-            overrideDefaultValue = defaultValue.toString();
-        }
-
-        return properties.getProperty(key, overrideDefaultValue);
     }
 
     protected <C extends Connection> Collection<Host> createHostList(

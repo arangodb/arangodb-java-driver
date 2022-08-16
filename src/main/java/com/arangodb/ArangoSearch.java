@@ -41,7 +41,7 @@ public interface ArangoSearch extends ArangoView {
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
-    ViewEntity create() ;
+    ViewEntity create();
 
     /**
      * Creates a view with the given {@code options}, then returns view information from the server.
@@ -51,7 +51,7 @@ public interface ArangoSearch extends ArangoView {
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
-    ViewEntity create(ArangoSearchCreateOptions options) ;
+    ViewEntity create(ArangoSearchCreateOptions options);
 
     /**
      * Reads the properties of the specified view.
@@ -60,7 +60,7 @@ public interface ArangoSearch extends ArangoView {
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#read-properties-of-a-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity getProperties() ;
+    ArangoSearchPropertiesEntity getProperties();
 
     /**
      * Partially changes properties of the view.
@@ -71,7 +71,7 @@ public interface ArangoSearch extends ArangoView {
      * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#partially-changes-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options) ;
+    ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options);
 
     /**
      * Changes properties of the view.
@@ -82,6 +82,6 @@ public interface ArangoSearch extends ArangoView {
      * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#change-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options) ;
+    ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options);
 
 }

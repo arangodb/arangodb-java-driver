@@ -111,7 +111,7 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<T> getDocument(final String key, final Class<T> type)  {
+    public <T> CompletableFuture<T> getDocument(final String key, final Class<T> type) {
         return getDocument(key, type, new DocumentReadOptions());
     }
 
@@ -119,7 +119,7 @@ public class ArangoCollectionAsyncImpl
     public <T> CompletableFuture<T> getDocument(
             final String key,
             final Class<T> type,
-            final DocumentReadOptions options)  {
+            final DocumentReadOptions options) {
         DocumentUtil.validateDocumentKey(key);
         return executor.execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
                 .exceptionally(ExceptionUtil.catchGetDocumentExceptions());

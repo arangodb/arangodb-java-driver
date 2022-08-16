@@ -28,24 +28,6 @@ import java.util.Objects;
  */
 public final class GeoJSONAnalyzerProperties {
 
-    public enum GeoJSONAnalyzerType {
-
-        /**
-         * (default): index all GeoJSON geometry types (Point, Polygon etc.)
-         */
-        shape,
-
-        /**
-         * compute and only index the centroid of the input geometry
-         */
-        centroid,
-
-        /**
-         * only index GeoJSON objects of type Point, ignore all other geometry types
-         */
-        point
-    }
-
     private GeoJSONAnalyzerType type;
     private GeoAnalyzerOptions options;
 
@@ -80,5 +62,23 @@ public final class GeoJSONAnalyzerProperties {
     @Override
     public int hashCode() {
         return Objects.hash(type, options);
+    }
+
+    public enum GeoJSONAnalyzerType {
+
+        /**
+         * (default): index all GeoJSON geometry types (Point, Polygon etc.)
+         */
+        shape,
+
+        /**
+         * compute and only index the centroid of the input geometry
+         */
+        centroid,
+
+        /**
+         * only index GeoJSON objects of type Point, ignore all other geometry types
+         */
+        point
     }
 }

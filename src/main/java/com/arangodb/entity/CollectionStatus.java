@@ -25,16 +25,12 @@ package com.arangodb.entity;
  */
 public enum CollectionStatus {
 
-    LOADED(3),DELETED(5);
+    LOADED(3), DELETED(5);
 
     private final int status;
 
     CollectionStatus(final int status) {
         this.status = status;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public static CollectionStatus fromStatus(final int status) {
@@ -44,6 +40,10 @@ public enum CollectionStatus {
             }
         }
         return null;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
 }

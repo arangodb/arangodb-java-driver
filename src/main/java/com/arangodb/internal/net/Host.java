@@ -35,9 +35,9 @@ public interface Host {
 
     void close() throws IOException;
 
-    void setMarkforDeletion(boolean markforDeletion);
-
     boolean isMarkforDeletion();
+
+    void setMarkforDeletion(boolean markforDeletion);
 
     void setJwt(String jwt);
 

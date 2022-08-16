@@ -24,16 +24,17 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
@@ -45,9 +46,8 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
-    private static final String COLLECTION = "collection";
-
     protected static final String PATH_API_COLLECTION = "/_api/collection";
+    private static final String COLLECTION = "collection";
     private static final String PATH_API_DOCUMENT = "/_api/document";
     private static final String PATH_API_INDEX = "/_api/index";
     private static final String PATH_API_IMPORT = "/_api/import";

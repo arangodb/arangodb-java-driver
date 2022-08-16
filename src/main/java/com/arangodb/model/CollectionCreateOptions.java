@@ -259,8 +259,7 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param schema
-     *         object that specifies the collection level schema for documents
+     * @param schema object that specifies the collection level schema for documents
      * @return options
      * @since ArangoDB 3.7
      */

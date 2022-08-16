@@ -25,11 +25,10 @@ package com.arangodb.internal;
  */
 public final class ArangoResponseField {
 
+    public static final String ERROR_FIELD_NAME = "error";
+    public static final String RESULT_JSON_POINTER = "/result";
     private ArangoResponseField() {
         super();
     }
-
-    public static final String ERROR_FIELD_NAME = "error";
-    public static final String RESULT_JSON_POINTER = "/result";
 
 }

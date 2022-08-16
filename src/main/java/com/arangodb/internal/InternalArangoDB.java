@@ -21,10 +21,13 @@
 package com.arangodb.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.entity.*;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.model.*;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.model.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 

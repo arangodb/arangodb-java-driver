@@ -32,9 +32,9 @@ import java.util.List;
 public class RoundRobinHostHandler implements HostHandler {
 
     private final HostResolver resolver;
+    private final List<Exception> lastFailExceptions;
     private long current;
     private int fails;
-    private final List<Exception> lastFailExceptions;
     private Host currentHost;
     private HostSet hosts;
 

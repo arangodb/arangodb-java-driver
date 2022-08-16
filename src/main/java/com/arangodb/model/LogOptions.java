@@ -37,11 +37,6 @@ public final class LogOptions {
     public static final String PROPERTY_OFFSET = "offset";
     public static final String PROPERTY_SEARCH = "search";
     public static final String PROPERTY_SORT = "sort";
-
-    public enum SortOrder {
-        asc, desc
-    }
-
     private LogLevel upto;
     private LogLevel level;
     private Long start;
@@ -49,7 +44,6 @@ public final class LogOptions {
     private Integer offset;
     private String search;
     private SortOrder sort;
-
     public LogOptions() {
         super();
     }
@@ -146,6 +140,10 @@ public final class LogOptions {
     public LogOptions sort(final SortOrder sort) {
         this.sort = sort;
         return this;
+    }
+
+    public enum SortOrder {
+        asc, desc
     }
 
 }

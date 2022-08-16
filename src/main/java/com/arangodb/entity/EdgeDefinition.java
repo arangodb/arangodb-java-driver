@@ -30,10 +30,10 @@ import java.util.Collections;
  */
 public final class EdgeDefinition {
 
+    private final Options options = new Options();
     private String collection;
     private Collection<String> from;
     private Collection<String> to;
-    private final Options options = new Options();
 
     public String getCollection() {
         return collection;

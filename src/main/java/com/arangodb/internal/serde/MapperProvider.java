@@ -1,7 +1,5 @@
 package com.arangodb.internal.serde;
 
-import com.arangodb.internal.serde.JsonMapperProvider;
-import com.arangodb.internal.serde.VPackMapperProvider;
 import com.arangodb.serde.DataType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

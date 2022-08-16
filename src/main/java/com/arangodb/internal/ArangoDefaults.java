@@ -28,13 +28,8 @@ import com.arangodb.entity.LoadBalancingStrategy;
  */
 public final class ArangoDefaults {
 
-    private ArangoDefaults() {
-        super();
-    }
-
     public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
     public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-
     public static final String DEFAULT_HOST = "127.0.0.1";
     public static final Integer DEFAULT_PORT = 8529;
     public static final Integer DEFAULT_TIMEOUT = 0;
@@ -51,5 +46,8 @@ public final class ArangoDefaults {
     public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
     public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
+    private ArangoDefaults() {
+        super();
+    }
 
 }

@@ -22,9 +22,9 @@ package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.*;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -41,25 +41,6 @@ import java.util.concurrent.TimeoutException;
 public class HttpCommunication implements Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
-
-    public static class Builder {
-
-        private final HostHandler hostHandler;
-
-        public Builder(final HostHandler hostHandler) {
-            super();
-            this.hostHandler = hostHandler;
-        }
-
-        public Builder(final Builder builder) {
-            this(builder.hostHandler);
-        }
-
-        public HttpCommunication build(final InternalSerde util) {
-            return new HttpCommunication(hostHandler);
-        }
-    }
-
     private final HostHandler hostHandler;
 
     private HttpCommunication(final HostHandler hostHandler) {
@@ -72,11 +53,11 @@ public class HttpCommunication implements Closeable {
         hostHandler.close();
     }
 
-    public Response execute(final Request request, final HostHandle hostHandle)  {
+    public Response execute(final Request request, final HostHandle hostHandle) {
         return execute(request, hostHandle, 0);
     }
 
-    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount)  {
+    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {
@@ -120,6 +101,24 @@ public class HttpCommunication implements Closeable {
             } else {
                 throw e;
             }
+        }
+    }
+
+    public static class Builder {
+
+        private final HostHandler hostHandler;
+
+        public Builder(final HostHandler hostHandler) {
+            super();
+            this.hostHandler = hostHandler;
+        }
+
+        public Builder(final Builder builder) {
+            this(builder.hostHandler);
+        }
+
+        public HttpCommunication build(final InternalSerde util) {
+            return new HttpCommunication(hostHandler);
         }
     }
 

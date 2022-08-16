@@ -33,11 +33,11 @@ import java.util.Objects;
  * @since ArangoDB 3.8
  */
 public final class AQLAnalyzer extends SearchAnalyzer {
+    private AQLAnalyzerProperties properties;
+
     public AQLAnalyzer() {
         setType(AnalyzerType.aql);
     }
-
-    private AQLAnalyzerProperties properties;
 
     public AQLAnalyzerProperties getProperties() {
         return properties;

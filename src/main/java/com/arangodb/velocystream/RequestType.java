@@ -43,10 +43,6 @@ public enum RequestType {
         this.type = type;
     }
 
-    public int getType() {
-        return type;
-    }
-
     public static RequestType fromType(final int type) {
         for (final RequestType rType : RequestType.values()) {
             if (rType.type == type) {
@@ -54,5 +50,9 @@ public enum RequestType {
             }
         }
         return null;
+    }
+
+    public int getType() {
+        return type;
     }
 }

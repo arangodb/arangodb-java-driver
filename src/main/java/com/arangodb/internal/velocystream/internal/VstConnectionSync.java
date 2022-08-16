@@ -33,6 +33,28 @@ import java.util.concurrent.TimeUnit;
  */
 public class VstConnectionSync extends VstConnection<Message> {
 
+    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+                              final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
+        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
+    }
+
+    @Override
+    public Message write(final Message message, final Collection<Chunk> chunks) {
+        final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
+        messageStore.storeMessage(message.getId(), task);
+        super.writeIntern(message, chunks);
+        try {
+            return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
+        } catch (final Exception e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    @Override
+    protected void doKeepAlive() {
+        sendKeepAlive();
+    }
+
     public static class Builder {
 
         private HostDescription host;
@@ -82,28 +104,6 @@ public class VstConnectionSync extends VstConnection<Message> {
             return new VstConnectionSync(host, timeout, ttl, keepAliveInterval,
                     useSsl, sslContext, messageStore);
         }
-    }
-
-    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
-                              final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
-        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
-    }
-
-    @Override
-    public Message write(final Message message, final Collection<Chunk> chunks)  {
-        final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
-        messageStore.storeMessage(message.getId(), task);
-        super.writeIntern(message, chunks);
-        try {
-            return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (final Exception e) {
-            throw new ArangoDBException(e);
-        }
-    }
-
-    @Override
-    protected void doKeepAlive() {
-        sendKeepAlive();
     }
 
 }

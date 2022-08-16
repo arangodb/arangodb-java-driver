@@ -31,8 +31,8 @@ import com.arangodb.entity.IndexType;
 @Deprecated
 public final class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
 
-    private Iterable<String> fields;
     private final IndexType type = IndexType.skiplist;
+    private Iterable<String> fields;
     private Boolean unique;
     private Boolean sparse;
     private Boolean deduplicate;
@@ -95,8 +95,7 @@ public final class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOption
     }
 
     /**
-     * @param deduplicate
-     *         if false, the deduplication of array values is turned off.
+     * @param deduplicate if false, the deduplication of array values is turned off.
      * @return options
      */
     public SkiplistIndexOptions deduplicate(final Boolean deduplicate) {
@@ -105,9 +104,8 @@ public final class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOption
     }
 
     /**
-     * @param estimates
-     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
-     *         true}
+     * @param estimates This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *                  true}
      * @since ArangoDB 3.8
      */
     public SkiplistIndexOptions estimates(final Boolean estimates) {
