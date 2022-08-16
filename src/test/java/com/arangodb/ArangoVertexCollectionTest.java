@@ -277,8 +277,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         Throwable thrown = catchThrowable(() -> vertices.replaceVertex(createResult.getKey(), doc, options));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getResponseCode()).isEqualTo(412);
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
@@ -372,8 +371,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         Throwable thrown = catchThrowable(() -> vertices.updateVertex(createResult.getKey(), doc, options));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getResponseCode()).isEqualTo(412);
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
@@ -459,8 +457,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         Throwable thrown = catchThrowable(() -> vertices.deleteVertex(createResult.getKey(), options));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getResponseCode()).isEqualTo(412);
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
