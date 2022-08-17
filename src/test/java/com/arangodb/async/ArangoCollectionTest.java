@@ -20,19 +20,19 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.serde.JacksonSerde;
+import com.arangodb.util.RawData;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -1507,6 +1507,40 @@ class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    void insertDocumentsRawData() throws ExecutionException, InterruptedException {
+        final RawData values = RawData.of("[{},{},{}]");
+        final MultiDocumentEntity<?> docs = db.collection(COLLECTION_NAME).insertDocuments(values).get();
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
+    }
+
+    @Test
+    void insertDocumentsRawDataReturnNew() throws ExecutionException, InterruptedException {
+        final RawData values = RawData.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
+        final MultiDocumentEntity<DocumentCreateEntity<RawData>> docs =
+                db.collection(COLLECTION_NAME).insertDocuments(values, new DocumentCreateOptions().returnNew(true)).get();
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
+
+        for (final DocumentCreateEntity<RawData> doc : docs.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("aaa")).isTrue();
+            assertThat(jn.get("aaa").intValue()).isEqualTo(33);
+        }
+    }
+
+    @Test
     void importDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
@@ -1712,7 +1746,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJson() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1728,7 +1762,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateDefaultError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1744,7 +1778,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1760,7 +1794,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateIgnore() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1776,7 +1810,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateReplace() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1792,7 +1826,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateUpdate() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1809,7 +1843,7 @@ class ArangoCollectionTest extends BaseTest {
     void importDocumentsJsonCompleteFail() throws InterruptedException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
         try {
-            db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true)).get();
+            db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().complete(true)).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
@@ -1820,7 +1854,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDetails() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().details(true))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().details(true))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1841,7 +1875,7 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(collection.count().get().getCount()).isEqualTo(1L);
 
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(false)).get();
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(false)).get();
         assertThat(collection.count().get().getCount()).isEqualTo(3L);
     }
 
@@ -1852,7 +1886,7 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(collection.count().get().getCount()).isEqualTo(1L);
 
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(true)).get();
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(true)).get();
         assertThat(collection.count().get().getCount()).isEqualTo(2L);
     }
 
@@ -1865,7 +1899,7 @@ class ArangoCollectionTest extends BaseTest {
             final String values = "[{\"_key\":\"1\",\"_from\":\"from\",\"_to\":\"to\"},{\"_key\":\"2\",\"_from\":\"from\",\"_to\":\"to\"}]";
 
             final DocumentImportEntity importResult = collection
-                    .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
+                    .importDocuments(RawData.of(values), new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
             assertThat(importResult).isNotNull();
             assertThat(importResult.getCreated()).isEqualTo(2);
             for (String key : keys) {
@@ -2032,6 +2066,26 @@ class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    void deleteDocumentsRawDataByKeyReturnOld() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        final RawData values = RawData.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
+        collection.insertDocuments(values).get();
+        final RawData keys = RawData.of("[\"1\",\"2\"]");
+        MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteResult = collection.deleteDocuments(keys,
+                new DocumentDeleteOptions().returnOld(true)).get();
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(2);
+        for (final DocumentDeleteEntity<RawData> i : deleteResult.getDocuments()) {
+            assertThat(i.getKey()).isIn("1", "2");
+            assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).getValue());
+            assertThat(jn.get("_key").asText()).isEqualTo(i.getKey());
+        }
+        assertThat(deleteResult.getErrors()).isEmpty();
+    }
+
+
+    @Test
     void updateDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
@@ -2143,6 +2197,41 @@ class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    void updateDocumentsRawData() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values).get();
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues).get();
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+    }
+
+    @Test
+    void updateDocumentsRawDataReturnNew() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values).get();
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
+                collection.updateDocuments(updatedValues, new DocumentUpdateOptions().returnNew(true)).get();
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+        for (DocumentUpdateEntity<RawData> doc : updateResult.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("foo")).isTrue();
+            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+        }
+    }
+
+    @Test
     void replaceDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
@@ -2215,6 +2304,44 @@ class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
     }
+
+    @Test
+    void replaceDocumentsRawData() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values).get();
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues).get();
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+    }
+
+    @Test
+    void replaceDocumentsRawDataReturnNew() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values).get();
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
+                collection.replaceDocuments(updatedValues, new DocumentReplaceOptions().returnNew(true)).get();
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+        for (DocumentUpdateEntity<RawData> doc : updateResult.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("foo")).isTrue();
+            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+        }
+    }
+
 
     @Test
     void getInfo() throws InterruptedException, ExecutionException {

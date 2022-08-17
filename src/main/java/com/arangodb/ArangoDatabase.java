@@ -245,8 +245,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param query    An AQL query string
      * @param bindVars key/value pairs defining the variables to bind the query to
      * @param options  Additional options that will be passed to the query API, can be null
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -260,8 +259,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param query   An AQL query string
      * @param options Additional options that will be passed to the query API, can be null
-     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -275,8 +273,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param query    An AQL query string
      * @param bindVars key/value pairs defining the variables to bind the query to
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -289,8 +286,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * result list.
      *
      * @param query An AQL query string
-     * @param type  The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type  The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
@@ -302,8 +298,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Return an cursor from the given cursor-ID if still existing
      *
      * @param cursorId The ID of the cursor
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors
@@ -508,8 +503,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Performs a server-side transaction and returns its return value.
      *
      * @param action  A String evaluating to a JavaScript function to be executed on the server.
-     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the result of the transaction if it succeeded
      * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
@@ -586,8 +580,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id   The id of the document
-     * @param type The type of the document (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type The type of the document (POJO or {@link com.arangodb.util.RawData})
      * @return the document identified by the id
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
@@ -598,8 +591,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id      The id of the document
-     * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or
-     * {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the document identified by the id
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API

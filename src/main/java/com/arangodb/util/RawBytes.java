@@ -19,7 +19,7 @@ import java.util.Arrays;
  * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawBytes}.
  */
-public class RawBytes {
+public class RawBytes implements RawData {
     private final byte[] value;
 
     protected RawBytes(final byte[] value) {

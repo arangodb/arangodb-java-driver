@@ -25,6 +25,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(RawData values) {
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                        insertDocumentsResponseDeserializer(Void.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentCreateEntity<RawData>> insertDocuments(RawData values,
+                                                                              DocumentCreateOptions options) {
+        return executor
+                .execute(insertDocumentsRequest(values, options),
+                        insertDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
+    }
+
+    @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values) {
         return executor
                 .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
@@ -97,12 +114,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final String values) {
+    public DocumentImportEntity importDocuments(RawData values) {
         return importDocuments(values, new DocumentImportOptions());
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options) {
+    public DocumentImportEntity importDocuments(RawData values, DocumentImportOptions options) {
         return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
@@ -166,6 +183,20 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(RawData values) {
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+                replaceDocumentsResponseDeserializer(Void.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(RawData values,
+                                                                               DocumentReplaceOptions options) {
+        return executor.execute(replaceDocumentsRequest(values, options),
+                replaceDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
+    }
+
+    @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values) {
         return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
                 replaceDocumentsResponseDeserializer(Void.class));
@@ -205,6 +236,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(RawData values) {
+        return executor
+                .execute(updateDocumentsRequest(values, new DocumentUpdateOptions()),
+                        updateDocumentsResponseDeserializer(Void.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(RawData values,
+                                                                              DocumentUpdateOptions options) {
+        return executor
+                .execute(updateDocumentsRequest(values, options),
+                        updateDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
+    }
+
+    @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values) {
         return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
     }
@@ -238,6 +285,20 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
             final String key, final DocumentDeleteOptions options, final Class<T> type) {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(RawData values) {
+        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
+                deleteDocumentsResponseDeserializer(Void.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(RawData values,
+                                                                              DocumentDeleteOptions options) {
+        return executor.execute(deleteDocumentsRequest(values, options),
+                deleteDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override

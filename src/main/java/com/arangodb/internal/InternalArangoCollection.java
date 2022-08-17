@@ -24,10 +24,10 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -84,22 +84,25 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request insertDocumentRequest(final T value, final DocumentCreateOptions options) {
-        final Request request = request(db.dbName(), RequestType.POST, PATH_API_DOCUMENT, name);
-        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
-        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.putQueryParam(RETURN_NEW, params.getReturnNew());
-        request.putQueryParam(RETURN_OLD, params.getReturnOld());
-        request.putQueryParam(SILENT, params.getSilent());
-        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ?
-                params.getOverwriteMode().getValue() : null);
-        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
-        request.putQueryParam(KEEP_NULL, params.getKeepNull());
-        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
+        final Request request = createInsertDocumentRequest(options);
         request.setBody(getSerde().serializeUserData(value));
         return request;
     }
 
-    protected <T> Request insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions params) {
+    protected Request insertDocumentsRequest(final RawData values, final DocumentCreateOptions options) {
+        Request request = createInsertDocumentRequest(options);
+        request.setBody(getSerde().serialize(values));
+        return request;
+    }
+
+    protected <T> Request insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions options) {
+        Request request = createInsertDocumentRequest(options);
+        request.setBody(getSerde().serializeCollectionUserData(values));
+        return request;
+    }
+
+    private Request createInsertDocumentRequest(final DocumentCreateOptions options) {
+        final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_DOCUMENT, name);
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
@@ -110,7 +113,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putQueryParam(KEEP_NULL, params.getKeepNull());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -141,8 +143,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         };
     }
 
-    protected Request importDocumentsRequest(final String values, final DocumentImportOptions options) {
-        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(getSerde().serialize(SerdeUtils.INSTANCE.parseJson(values)));
+    protected Request importDocumentsRequest(final RawData values, final DocumentImportOptions options) {
+        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(getSerde().serialize(values));
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
@@ -218,22 +220,26 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected <T> Request replaceDocumentRequest(
             final String key, final T value, final DocumentReplaceOptions options) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT,
-                DocumentUtil.createDocumentHandle(name, key));
-        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.putQueryParam(IGNORE_REVS, params.getIgnoreRevs());
-        request.putQueryParam(RETURN_NEW, params.getReturnNew());
-        request.putQueryParam(RETURN_OLD, params.getReturnOld());
-        request.putQueryParam(SILENT, params.getSilent());
+        final Request request = createReplaceDocumentRequest(options, DocumentUtil.createDocumentHandle(name, key));
         request.setBody(getSerde().serializeUserData(value));
         return request;
     }
 
-    protected <T> Request replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions params) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT, name);
+    protected <T> Request replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions options) {
+        final Request request = createReplaceDocumentRequest(options, name);
+        request.setBody(getSerde().serializeCollectionUserData(values));
+        return request;
+    }
+
+    protected Request replaceDocumentsRequest(final RawData values, final DocumentReplaceOptions options) {
+        final Request request = createReplaceDocumentRequest(options, name);
+        request.setBody(getSerde().serialize(values));
+        return request;
+    }
+
+    private Request createReplaceDocumentRequest(final DocumentReplaceOptions options, String path) {
+        final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT, path);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -241,7 +247,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -274,9 +279,26 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request updateDocumentRequest(final String key, final T value, final DocumentUpdateOptions options) {
-        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_DOCUMENT,
-                DocumentUtil.createDocumentHandle(name, key));
+        final Request request = createUpdateDocumentRequest(options, DocumentUtil.createDocumentHandle(name, key));
+        request.setBody(getSerde().serializeUserData(value));
+        return request;
+    }
+
+    protected <T> Request updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions options) {
+        final Request request = createUpdateDocumentRequest(options, name);
+        request.setBody(getSerde().serializeCollectionUserData(values));
+        return request;
+    }
+
+    protected Request updateDocumentsRequest(final RawData values, final DocumentUpdateOptions options) {
+        final Request request = createUpdateDocumentRequest(options, name);
+        request.setBody(getSerde().serialize(values));
+        return request;
+    }
+
+    private Request createUpdateDocumentRequest(final DocumentUpdateOptions options, String path) {
         final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
+        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_DOCUMENT, path);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
@@ -286,23 +308,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.setBody(getSerde().serializeUserData(value));
-        return request;
-    }
-
-    protected <T> Request updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions params) {
-        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_DOCUMENT, name);
-        final Boolean keepNull = params.getKeepNull();
-        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        request.putQueryParam(ArangoRequestParam.KEEP_NULL, keepNull);
-        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
-        request.putQueryParam(IGNORE_REVS, params.getIgnoreRevs());
-        request.putQueryParam(RETURN_NEW, params.getReturnNew());
-        request.putQueryParam(RETURN_OLD, params.getReturnOld());
-        request.putQueryParam(SILENT, params.getSilent());
-        request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
     }
 
@@ -335,25 +340,29 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request deleteDocumentRequest(final String key, final DocumentDeleteOptions options) {
-        final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT,
-                DocumentUtil.createDocumentHandle(name, key));
+        return createDeleteDocumentRequest(options, DocumentUtil.createDocumentHandle(name, key));
+    }
+
+    protected <T> Request deleteDocumentsRequest(final Collection<T> docs, final DocumentDeleteOptions options) {
+        final Request request = createDeleteDocumentRequest(options, name);
+        request.setBody(getSerde().serializeCollectionUserData(docs));
+        return request;
+    }
+
+    protected Request deleteDocumentsRequest(final RawData docs, final DocumentDeleteOptions options) {
+        final Request request = createDeleteDocumentRequest(options, name);
+        request.setBody(getSerde().serialize(docs));
+        return request;
+    }
+
+    private Request createDeleteDocumentRequest(final DocumentDeleteOptions options, String path){
         final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
+        final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT, path);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        return request;
-    }
-
-    protected <T> Request deleteDocumentsRequest(final Collection<T> keys, final DocumentDeleteOptions options) {
-        final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT, name);
-        final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
-        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-        request.putQueryParam(RETURN_OLD, params.getReturnOld());
-        request.putQueryParam(SILENT, params.getSilent());
-        request.setBody(getSerde().serialize(keys));
         return request;
     }
 
