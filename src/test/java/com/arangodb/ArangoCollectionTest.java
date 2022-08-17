@@ -26,6 +26,7 @@ import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.RawBytes;
+import com.arangodb.util.RawData;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -2175,7 +2176,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void importDocumentsJson(ArangoCollection collection) throws JsonProcessingException {
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()), Collections.singletonMap("_key", rnd())));
 
-        final DocumentImportEntity docs = collection.importDocuments(values);
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2193,7 +2194,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(values);
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2211,7 +2212,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error));
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.error));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2228,7 +2229,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         String k2 = rnd();
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
-        final DocumentImportEntity docs = collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2246,7 +2247,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2264,7 +2265,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update));
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.update));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2278,7 +2279,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void importDocumentsJsonCompleteFail(ArangoCollection collection) {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        Throwable thrown = catchThrowable(() -> collection.importDocuments(values, new DocumentImportOptions().complete(true)));
+        Throwable thrown = catchThrowable(() -> collection.importDocuments(RawData.of(values), new DocumentImportOptions().complete(true)));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getErrorNum()).isEqualTo(1210);
@@ -2292,7 +2293,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1), Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(values, new DocumentImportOptions().details(true));
+        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values), new DocumentImportOptions().details(true));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2310,7 +2311,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         Long initialCount = collection.count().getCount();
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()), Collections.singletonMap("_key", rnd())));
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(false));
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(false));
         assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
@@ -2320,7 +2321,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.insertDocument(new BaseDocument());
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()), Collections.singletonMap("_key", rnd())));
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(true));
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(true));
         assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
@@ -2334,7 +2335,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final String values = mapper.writeValueAsString(Arrays.asList(new MapBuilder().put("_key", k1).put("_from", "from").put("_to", "to").get(), new MapBuilder().put("_key", k2).put("_from", "from").put("_to", "to").get()));
 
-        final DocumentImportEntity importResult = edgeCollection.importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
+        final DocumentImportEntity importResult = edgeCollection.importDocuments(RawData.of(values), new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
         assertThat(importResult).isNotNull();
         assertThat(importResult.getCreated()).isEqualTo(2);
         for (String key : keys) {

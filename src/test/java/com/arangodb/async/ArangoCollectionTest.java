@@ -26,6 +26,7 @@ import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.serde.JacksonSerde;
+import com.arangodb.util.RawData;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.AfterEach;
@@ -1712,7 +1713,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJson() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1728,7 +1729,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateDefaultError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1744,7 +1745,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1760,7 +1761,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateIgnore() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1776,7 +1777,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateReplace() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1792,7 +1793,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateUpdate() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1809,7 +1810,7 @@ class ArangoCollectionTest extends BaseTest {
     void importDocumentsJsonCompleteFail() throws InterruptedException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
         try {
-            db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true)).get();
+            db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().complete(true)).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
@@ -1820,7 +1821,7 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDetails() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().details(true))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().details(true))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1841,7 +1842,7 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(collection.count().get().getCount()).isEqualTo(1L);
 
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(false)).get();
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(false)).get();
         assertThat(collection.count().get().getCount()).isEqualTo(3L);
     }
 
@@ -1852,7 +1853,7 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(collection.count().get().getCount()).isEqualTo(1L);
 
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        collection.importDocuments(values, new DocumentImportOptions().overwrite(true)).get();
+        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(true)).get();
         assertThat(collection.count().get().getCount()).isEqualTo(2L);
     }
 
@@ -1865,7 +1866,7 @@ class ArangoCollectionTest extends BaseTest {
             final String values = "[{\"_key\":\"1\",\"_from\":\"from\",\"_to\":\"to\"},{\"_key\":\"2\",\"_from\":\"from\",\"_to\":\"to\"}]";
 
             final DocumentImportEntity importResult = collection
-                    .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
+                    .importDocuments(RawData.of(values), new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
             assertThat(importResult).isNotNull();
             assertThat(importResult.getCreated()).isEqualTo(2);
             for (String key : keys) {
