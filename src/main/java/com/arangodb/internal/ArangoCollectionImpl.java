@@ -25,6 +25,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,17 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentCreateEntity<RawData>> insertDocuments(RawData values,
+                                                                              DocumentCreateOptions options) {
+        return null; // TODO: implement
+    }
+
+    @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values) {
         return executor
                 .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
@@ -97,12 +109,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final String values) {
+    public DocumentImportEntity importDocuments(RawData values) {
         return importDocuments(values, new DocumentImportOptions());
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options) {
+    public DocumentImportEntity importDocuments(RawData values, DocumentImportOptions options) {
         return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
@@ -128,7 +140,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
             if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
                     || e.getResponseCode() == 412))) {
-                return null;
+                return null; // TODO: implement
             }
             throw e;
         }
@@ -163,6 +175,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
                                                        Class<T> type) {
         return executor.execute(replaceDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, type));
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(RawData values, DocumentReplaceOptions options) {
+        return null; // TODO: implement
     }
 
     @Override
@@ -205,6 +227,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(RawData values, DocumentUpdateOptions options) {
+        return null; // TODO: implement
+    }
+
+    @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values) {
         return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
     }
@@ -238,6 +270,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
             final String key, final DocumentDeleteOptions options, final Class<T> type) {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(RawData values, DocumentDeleteOptions options) {
+        return null; // TODO: implement
     }
 
     @Override

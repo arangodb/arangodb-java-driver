@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 
 import java.util.Collection;
 
@@ -90,6 +91,30 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
+     * @param values Raw data representing a collection of documents
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(RawData values);
+
+    /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
+     * @param values Raw data representing a collection of documents
+     * @param options Additional options
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentCreateEntity<RawData>> insertDocuments(
+            RawData values, DocumentCreateOptions options);
+
+    /**
+     * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+     * _key is given, a new unique _key is generated automatically.
+     *
      * @param values A List of documents
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -127,7 +152,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
-     * @param values a list of Objects that will be stored as documents
+     * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the import
      */
     DocumentImportEntity importDocuments(Collection<?> values);
@@ -135,7 +160,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
-     * @param values  a list of Objects that will be stored as documents
+     * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the import
      */
@@ -144,19 +169,19 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
-     * @param values JSON-encoded array of objects that will be stored as documents
+     * @param values Raw data representing a collection of documents
      * @return information about the import
      */
-    DocumentImportEntity importDocuments(String values);
+    DocumentImportEntity importDocuments(RawData values);
 
     /**
      * Bulk imports the given values into the collection.
      *
-     * @param values  JSON-encoded array of objects that will be stored as documents
+     * @param values Raw data representing a collection of documents
      * @param options Additional options, can be null
      * @return information about the import
      */
-    DocumentImportEntity importDocuments(String values, DocumentImportOptions options);
+    DocumentImportEntity importDocuments(RawData values, DocumentImportOptions options);
 
     /**
      * Retrieves the document with the given {@code key} from the collection.
@@ -241,6 +266,32 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type);
+
+    /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values Raw data representing a collection of documents
+     * @return information about the documents
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(RawData values);
+
+    /**
+     * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+     * specified by the _key attributes in the documents in values.
+     *
+     * @param values Raw data representing a collection of documents
+     * @param options Additional options
+     * @return information about the documents
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(
+            RawData values, DocumentReplaceOptions options);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -332,6 +383,36 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
+     * @param values Raw data representing a collection of documents
+     * @return information about the documents
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(RawData values);
+
+    /**
+     * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+     * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+     * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+     * overwritten in the existing documents if they do exist there.
+     *
+     * @param values Raw data representing a collection of documents
+     * @param options Additional options
+     * @return information about the documents
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(
+            RawData values, DocumentUpdateOptions options);
+
+    /**
+     * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+     * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+     * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+     * overwritten in the existing documents if they do exist there.
+     *
      * @param values A list of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the documents
      * @see
@@ -408,6 +489,30 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options, Class<T> type);
+
+    /**
+     * Deletes multiple documents from the collection.
+     *
+     * @param values Raw data representing the keys of the documents or the documents themselves
+     * @return information about the documents
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(RawData values);
+
+    /**
+     * Deletes multiple documents from the collection.
+     *
+     * @param values Raw data representing the keys of the documents or the documents themselves
+     * @param options Additional options
+     * @return information about the documents
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
+     * Documentation</a>
+     */
+    MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(
+            RawData values, DocumentDeleteOptions options);
 
     /**
      * Deletes multiple documents from the collection.

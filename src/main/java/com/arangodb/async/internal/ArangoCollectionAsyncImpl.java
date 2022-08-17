@@ -25,6 +25,7 @@ import com.arangodb.entity.*;
 import com.arangodb.internal.InternalArangoCollection;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -66,6 +67,17 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<RawData>>> insertDocuments(RawData values,
+                                                                                                 DocumentCreateOptions options) {
+        return null; // TODO: implement
+    }
+
+    @Override
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(
             final Collection<?> values) {
         return executor
@@ -101,15 +113,13 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public CompletableFuture<DocumentImportEntity> importDocuments(final String values) {
+    public CompletableFuture<DocumentImportEntity> importDocuments(RawData values) {
         return executor.execute(importDocumentsRequest(values, new DocumentImportOptions()),
                 DocumentImportEntity.class);
     }
 
     @Override
-    public CompletableFuture<DocumentImportEntity> importDocuments(
-            final String values,
-            final DocumentImportOptions options) {
+    public CompletableFuture<DocumentImportEntity> importDocuments(RawData values, DocumentImportOptions options) {
         return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
@@ -168,6 +178,16 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> replaceDocuments(RawData values, DocumentReplaceOptions options) {
+        return null; // TODO: implement
+    }
+
+    @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(
             final Collection<?> values) {
         return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
@@ -213,6 +233,16 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> updateDocuments(RawData values, DocumentUpdateOptions options) {
+        return null; // TODO: implement
+    }
+
+    @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(
             final Collection<?> values) {
         return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
@@ -252,6 +282,16 @@ public class ArangoCollectionAsyncImpl
             final Class<T> type) {
         return executor.execute(deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
+    }
+
+    @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(RawData values) {
+        return null; // TODO: implement
+    }
+
+    @Override
+    public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<RawData>>> deleteDocuments(RawData values, DocumentDeleteOptions options) {
+        return null; // TODO: implement
     }
 
     @Override

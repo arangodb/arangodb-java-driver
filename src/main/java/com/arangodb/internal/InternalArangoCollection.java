@@ -28,6 +28,7 @@ import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
+import com.arangodb.util.RawData;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -141,8 +142,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         };
     }
 
-    protected Request importDocumentsRequest(final String values, final DocumentImportOptions options) {
-        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(getSerde().serialize(SerdeUtils.INSTANCE.parseJson(values)));
+    protected Request importDocumentsRequest(final RawData values, final DocumentImportOptions options) {
+        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(getSerde().serialize(values));
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
