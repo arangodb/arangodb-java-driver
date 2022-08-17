@@ -68,13 +68,18 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                        insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<RawData>>> insertDocuments(RawData values,
                                                                                                  DocumentCreateOptions options) {
-        return null; // TODO: implement
+        return executor
+                .execute(insertDocumentsRequest(values, options),
+                        insertDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -179,12 +184,16 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+                replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> replaceDocuments(RawData values, DocumentReplaceOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> replaceDocuments(RawData values,
+                                                                                                  DocumentReplaceOptions options) {
+        return executor.execute(replaceDocumentsRequest(values, options),
+                replaceDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -234,12 +243,18 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor
+                .execute(updateDocumentsRequest(values, new DocumentUpdateOptions()),
+                        updateDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> updateDocuments(RawData values, DocumentUpdateOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> updateDocuments(RawData values,
+                                                                                                 DocumentUpdateOptions options) {
+        return executor
+                .execute(updateDocumentsRequest(values, options),
+                        updateDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -286,12 +301,16 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
+                deleteDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<RawData>>> deleteDocuments(RawData values, DocumentDeleteOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<RawData>>> deleteDocuments(RawData values,
+                                                                                                 DocumentDeleteOptions options) {
+        return executor.execute(deleteDocumentsRequest(values, options),
+                deleteDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
