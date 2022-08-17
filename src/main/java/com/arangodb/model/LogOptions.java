@@ -44,6 +44,7 @@ public final class LogOptions {
     private Integer offset;
     private String search;
     private SortOrder sort;
+
     public LogOptions() {
         super();
     }
@@ -66,7 +67,8 @@ public final class LogOptions {
     }
 
     /**
-     * @param level Returns all log entries of log level level. Note that the query parameters upto and level are mutually
+     * @param level Returns all log entries of log level level. Note that the query parameters upto and level are
+     *              mutually
      *              exclusive
      * @return options
      */
@@ -80,7 +82,8 @@ public final class LogOptions {
     }
 
     /**
-     * @param start Returns all log entries such that their log entry identifier (lid value) is greater or equal to start
+     * @param start Returns all log entries such that their log entry identifier (lid value) is greater or equal to
+     *              start
      * @return options
      */
     public LogOptions start(final Long start) {

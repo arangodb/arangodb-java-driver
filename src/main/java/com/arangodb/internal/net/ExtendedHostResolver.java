@@ -120,7 +120,8 @@ public class ExtendedHostResolver implements HostResolver {
             response = executor.execute(
                     new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
-                        final List<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(), "/endpoints",
+                        final List<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(),
+                                "/endpoints",
                                 constructParametricType(List.class,
                                         constructParametricType(Map.class, String.class, String.class)));
                         Collection<String> endpoints = new ArrayList<>();

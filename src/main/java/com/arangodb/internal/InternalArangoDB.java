@@ -79,7 +79,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Boolean.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Boolean.class);
     }
 
     protected Request getDatabasesRequest(final DbName dbName) {
@@ -97,7 +98,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 
     protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
         return response -> {
-            Iterator<String> names = getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).fieldNames();
+            Iterator<String> names =
+                    getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).fieldNames();
             final Collection<String> dbs = new ArrayList<>();
             while (names.hasNext()) {
                 dbs.add(names.next());
@@ -114,7 +116,8 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
         final Request request;
         request = request(dbName, RequestType.POST, PATH_API_USER);
         request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
+                getSerde().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user,
+                        passwd)));
         return request;
     }
 

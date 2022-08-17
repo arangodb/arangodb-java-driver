@@ -87,17 +87,20 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      * Delete an existing graph
      *
      * @return void
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
      */
     CompletableFuture<Void> drop();
 
     /**
      * Delete an existing graph including
      *
-     * @param dropCollections Drop collections of this graph as well. Collections will only be dropped if they are not used in other
+     * @param dropCollections Drop collections of this graph as well. Collections will only be dropped if they are
+     *                        not used in other
      *                        graphs.
      * @return void
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
      */
     CompletableFuture<Void> drop(boolean dropCollections);
 
@@ -105,7 +108,8 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      * Get a graph from the graph module
      *
      * @return the definition content of this graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
      */
     CompletableFuture<GraphEntity> getInfo();
 

@@ -73,12 +73,18 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param replicationFactor (The default is 1): in a cluster, this attribute determines how many copies of each shard are kept on
-     *                          different DBServers. The value 1 means that only one copy (no synchronous replication) is kept. A
-     *                          value of k means that k-1 replicas are kept. Any two copies reside on different DBServers. Replication
-     *                          between them is synchronous, that is, every write operation to the "leader" copy will be replicated to
-     *                          all "follower" replicas, before the write operation is reported successful. If a server fails, this is
-     *                          detected automatically and one of the servers holding copies take over, usually without an error being
+     * @param replicationFactor (The default is 1): in a cluster, this attribute determines how many copies of each
+     *                          shard are kept on
+     *                          different DBServers. The value 1 means that only one copy (no synchronous
+     *                          replication) is kept. A
+     *                          value of k means that k-1 replicas are kept. Any two copies reside on different
+     *                          DBServers. Replication
+     *                          between them is synchronous, that is, every write operation to the "leader" copy will
+     *                          be replicated to
+     *                          all "follower" replicas, before the write operation is reported successful. If a
+     *                          server fails, this is
+     *                          detected automatically and one of the servers holding copies take over, usually
+     *                          without an error being
      *                          reported.
      * @return options
      */
@@ -119,13 +125,17 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param allowUserKeys if set to true, then it is allowed to supply own key values in the _key attribute of a document. If
-     *                      set to false, then the key generator will solely be responsible for generating keys and supplying own
+     * @param allowUserKeys if set to true, then it is allowed to supply own key values in the _key attribute of a
+     *                      document. If
+     *                      set to false, then the key generator will solely be responsible for generating keys and
+     *                      supplying own
      *                      key values in the _key attribute of documents is considered an error.
-     * @param type          specifies the type of the key generator. The currently available generators are traditional and
+     * @param type          specifies the type of the key generator. The currently available generators are
+     *                      traditional and
      *                      autoincrement.
      * @param increment     increment value for autoincrement key generator. Not used for other key generator types.
-     * @param offset        Initial offset value for autoincrement key generator. Not used for other key generator types.
+     * @param offset        Initial offset value for autoincrement key generator. Not used for other key generator
+     *                      types.
      * @return options
      */
     public CollectionCreateOptions keyOptions(
@@ -142,7 +152,8 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param waitForSync If true then the data is synchronized to disk before returning from a document create, update, replace
+     * @param waitForSync If true then the data is synchronized to disk before returning from a document create,
+     *                    update, replace
      *                    or removal operation. (default: false)
      * @return options
      */
@@ -156,9 +167,12 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param shardKeys (The default is [ "_key" ]): in a cluster, this attribute determines which document attributes are
-     *                  used to determine the target shard for documents. Documents are sent to shards based on the values of
-     *                  their shard key attributes. The values of all shard key attributes in a document are hashed, and the
+     * @param shardKeys (The default is [ "_key" ]): in a cluster, this attribute determines which document
+     *                  attributes are
+     *                  used to determine the target shard for documents. Documents are sent to shards based on the
+     *                  values of
+     *                  their shard key attributes. The values of all shard key attributes in a document are hashed,
+     *                  and the
      *                  hash value is used to determine the target shard. Note: Values of shard key attributes cannot be
      *                  changed once set. This option is meaningless in a single server setup.
      * @return options
@@ -195,7 +209,8 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param numberOfShards (The default is 1): in a cluster, this value determines the number of shards to create for the
+     * @param numberOfShards (The default is 1): in a cluster, this value determines the number of shards to create
+     *                       for the
      *                       collection. In a single server setup, this option is meaningless.
      * @return options
      */
@@ -213,9 +228,12 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param isSystem If true, create a system collection. In this case collection-name should start with an underscore. End
-     *                 users should normally create non-system collections only. API implementors may be required to create
-     *                 system collections in very special occasions, but normally a regular collection will do. (The default
+     * @param isSystem If true, create a system collection. In this case collection-name should start with an
+     *                 underscore. End
+     *                 users should normally create non-system collections only. API implementors may be required to
+     *                 create
+     *                 system collections in very special occasions, but normally a regular collection will do. (The
+     *                 default
      *                 is false)
      * @return options
      */
@@ -242,10 +260,14 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param distributeShardsLike (The default is ""): in an enterprise cluster, this attribute binds the specifics of sharding for the
-     *                             newly created collection to follow that of a specified existing collection. Note: Using this parameter
-     *                             has consequences for the prototype collection. It can no longer be dropped, before sharding imitating
-     *                             collections are dropped. Equally, backups and restores of imitating collections alone will generate
+     * @param distributeShardsLike (The default is ""): in an enterprise cluster, this attribute binds the specifics
+     *                             of sharding for the
+     *                             newly created collection to follow that of a specified existing collection. Note:
+     *                             Using this parameter
+     *                             has consequences for the prototype collection. It can no longer be dropped, before
+     *                             sharding imitating
+     *                             collections are dropped. Equally, backups and restores of imitating collections
+     *                             alone will generate
      *                             warnings, which can be overridden, about missing sharding prototype.
      * @return options
      */

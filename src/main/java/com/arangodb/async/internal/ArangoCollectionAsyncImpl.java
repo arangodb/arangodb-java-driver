@@ -59,7 +59,8 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(T value, DocumentCreateOptions options, Class<T> type) {
+    public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(T value, DocumentCreateOptions options,
+                                                                         Class<T> type) {
         return executor.execute(insertDocumentRequest(value, options),
                 constructParametricType(DocumentCreateEntity.class, type));
     }
@@ -68,7 +69,8 @@ public class ArangoCollectionAsyncImpl
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(
             final Collection<?> values) {
         return executor
-                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                        insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -80,7 +82,8 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) {
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(Collection<T> values,
+                                                                                               DocumentCreateOptions options, Class<T> type) {
         return executor
                 .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
@@ -157,7 +160,9 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) {
+    public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(String key, T value,
+                                                                          DocumentReplaceOptions options,
+                                                                          Class<T> type) {
         return executor.execute(replaceDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, type));
     }
@@ -165,7 +170,8 @@ public class ArangoCollectionAsyncImpl
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(
             final Collection<?> values) {
-        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+                replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -177,7 +183,8 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) {
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(Collection<T> values,
+                                                                                                DocumentReplaceOptions options, Class<T> type) {
         return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
     }
 
@@ -255,7 +262,8 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(Collection<?> values, DocumentDeleteOptions options) {
+    public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(Collection<?> values,
+                                                                                               DocumentDeleteOptions options) {
         return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
     }
 

@@ -58,19 +58,23 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     /**
      * Creates a new vertex in the collection
      *
-     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
     VertexEntity insertVertex(Object value);
 
     /**
      * Creates a new vertex in the collection
      *
-     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
     VertexEntity insertVertex(Object value, VertexCreateOptions options);
 
@@ -78,7 +82,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Retrieves the vertex document with the given {@code key} from the collection.
      *
      * @param key  The key of the vertex
-     * @param type The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return the vertex identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
@@ -88,7 +93,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Retrieves the vertex document with the given {@code key} from the collection.
      *
      * @param key     The key of the vertex
-     * @param type    The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the vertex-document (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the vertex identified by the key
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
@@ -100,7 +106,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key   The key of the vertex
-     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
@@ -112,7 +119,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * violated
      *
      * @param key     The key of the vertex
-     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
@@ -126,9 +134,11 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key   The key of the vertex
-     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
     VertexUpdateEntity updateVertex(String key, Object value);
 
@@ -138,10 +148,12 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * do not yet exist, and overwritten in the existing document if they do exist there.
      *
      * @param key     The key of the vertex
-     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param value   A representation of a single vertex (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
     VertexUpdateEntity updateVertex(String key, Object value, VertexUpdateOptions options);
 
@@ -149,7 +161,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Deletes the vertex with the given {@code key} from the collection.
      *
      * @param key The key of the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
     void deleteVertex(String key);
 
@@ -158,7 +171,8 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the vertex
      * @param options Additional options, can be null
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
     void deleteVertex(String key, VertexDeleteOptions options);
 

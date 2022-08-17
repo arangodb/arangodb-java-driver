@@ -69,7 +69,8 @@ public final class DocumentDeleteOptions {
     }
 
     /**
-     * @param returnOld Return additionally the complete previous revision of the changed document under the attribute old in
+     * @param returnOld Return additionally the complete previous revision of the changed document under the
+     *                  attribute old in
      *                  the result.
      * @return options
      */

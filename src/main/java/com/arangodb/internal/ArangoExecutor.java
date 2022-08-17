@@ -35,6 +35,7 @@ public abstract class ArangoExecutor {
     private final QueueTimeMetricsImpl qtMetrics;
     private final InternalSerde serde;
     private final String timeoutS;
+
     protected ArangoExecutor(final InternalSerde serde, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super();
         this.qtMetrics = qtMetrics;

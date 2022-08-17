@@ -24,7 +24,8 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API Documentation</a>
+ * @see
+ * <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API Documentation</a>
  */
 public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
 

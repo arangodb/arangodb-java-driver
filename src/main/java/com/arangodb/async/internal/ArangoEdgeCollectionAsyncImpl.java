@@ -32,7 +32,8 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  */
 public class ArangoEdgeCollectionAsyncImpl extends
-        InternalArangoEdgeCollection<ArangoDBAsyncImpl, ArangoDatabaseAsyncImpl, ArangoGraphAsyncImpl, ArangoExecutorAsync>
+        InternalArangoEdgeCollection<ArangoDBAsyncImpl, ArangoDatabaseAsyncImpl, ArangoGraphAsyncImpl,
+                ArangoExecutorAsync>
         implements ArangoEdgeCollectionAsync {
 
     ArangoEdgeCollectionAsyncImpl(final ArangoGraphAsyncImpl graph, final String name) {
@@ -56,7 +57,8 @@ public class ArangoEdgeCollectionAsyncImpl extends
     }
 
     @Override
-    public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
+    public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type,
+                                            final GraphDocumentReadOptions options) {
         return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
                 .exceptionally(ExceptionUtil.catchGetDocumentExceptions());
     }

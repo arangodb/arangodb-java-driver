@@ -276,7 +276,8 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return the log messages
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
@@ -433,7 +434,8 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
         }
 
         /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request every
+         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
+         * every
          * {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the external
          * environment, eg. firewall, intermediate routers, operating system).
          *
@@ -478,7 +480,8 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
          * would be the default.
          *
-         * @param loadBalancingStrategy the load balancing strategy to be used (default: {@link LoadBalancingStrategy#NONE}
+         * @param loadBalancingStrategy the load balancing strategy to be used (default:
+         * {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDBAsync.Builder}
          */
         public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {

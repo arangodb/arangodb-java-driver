@@ -162,7 +162,8 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public <T> ArangoCursor<T> query(
-            final String query, final Map<String, Object> bindVars, final AqlQueryOptions options, final Class<T> type) {
+            final String query, final Map<String, Object> bindVars, final AqlQueryOptions options,
+            final Class<T> type) {
 
         final Request request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();

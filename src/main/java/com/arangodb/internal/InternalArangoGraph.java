@@ -35,7 +35,8 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
+        E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
     protected static final String PATH_API_GHARIAL = "/_api/gharial";

@@ -44,6 +44,7 @@ public final class LogLevelEntity {
     private LogLevel startup;
     private LogLevel threads;
     private LogLevel v8;
+
     public LogLevelEntity() {
         super();
     }

@@ -82,7 +82,8 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
     /**
      * Deletes the graph from the database.
      *
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
      */
     void drop();
 
@@ -101,7 +102,8 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Retrieves general information about the graph.
      *
      * @return the definition content of this graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
      */
     GraphEntity getInfo();
 

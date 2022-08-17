@@ -55,7 +55,8 @@ public interface ArangoView extends ArangoSerdeAccessor {
     /**
      * Deletes the view from the database.
      *
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
      */
     void drop();
 
@@ -64,7 +65,8 @@ public interface ArangoView extends ArangoSerdeAccessor {
      *
      * @param newName The new name
      * @return information about the view
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
      */
     ViewEntity rename(String newName);
 
@@ -72,7 +74,8 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * Returns information about the view.
      *
      * @return information about the view
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
      * Documentation</a>
      */
     ViewEntity getInfo();

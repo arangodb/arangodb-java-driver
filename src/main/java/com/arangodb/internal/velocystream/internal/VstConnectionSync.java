@@ -33,7 +33,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class VstConnectionSync extends VstConnection<Message> {
 
-    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl,
+                              final Integer keepAliveInterval,
                               final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
         super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
     }

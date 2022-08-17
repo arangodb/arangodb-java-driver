@@ -27,7 +27,8 @@ import com.arangodb.velocystream.RequestType;
 /**
  * @author Mark Vollmary
  */
-public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
+        E extends ArangoExecutor>
         extends InternalArangoView<A, D, E> {
 
     protected InternalArangoSearch(final D db, final String name) {

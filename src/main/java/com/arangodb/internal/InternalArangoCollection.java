@@ -43,7 +43,8 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
+        E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
     protected static final String PATH_API_COLLECTION = "/_api/collection";
@@ -89,7 +90,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ?
+                params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putQueryParam(KEEP_NULL, params.getKeepNull());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -103,7 +105,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ?
+                params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putQueryParam(KEEP_NULL, params.getKeepNull());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -430,7 +433,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(), fields)));
+                getSerde().serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(),
+                        fields)));
         return request;
     }
 
@@ -455,7 +459,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
+                getSerde().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(),
+                        fields)));
         return request;
     }
 
@@ -537,7 +542,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.dbName().get(), name).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                db.dbName().get(), name).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(),
+                permissions)));
     }
 
     protected Request resetAccessRequest(final String user) {
@@ -551,7 +557,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Permissions.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Permissions.class);
     }
 
     protected Class<?> getCollectionContentClass(Collection<?> c) {

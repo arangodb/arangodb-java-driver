@@ -68,7 +68,8 @@ public interface ArangoSearch extends ArangoView {
      * @param options properties to change
      * @return properties of the view
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#partially-changes-properties-of-an-arangosearch-view">API
+     * "https://www.arangodb.com/docs/stable/http/views-arangosearch
+     * .html#partially-changes-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
     ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options);

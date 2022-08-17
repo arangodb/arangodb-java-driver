@@ -58,7 +58,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options, final Class<T> type) {
+    public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options,
+                                                      final Class<T> type) {
         return executor.execute(insertDocumentRequest(value, options),
                 constructParametricType(DocumentCreateEntity.class, type));
     }
@@ -66,7 +67,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values) {
         return executor
-                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()), insertDocumentsResponseDeserializer(Void.class));
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                        insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -77,7 +79,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values, DocumentCreateOptions options, Class<T> type) {
+    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values,
+                                                                            DocumentCreateOptions options,
+                                                                            Class<T> type) {
         return executor
                 .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
@@ -155,14 +159,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type) {
+    public <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options,
+                                                       Class<T> type) {
         return executor.execute(replaceDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values) {
-        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()), replaceDocumentsResponseDeserializer(Void.class));
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+                replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -173,7 +179,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values, DocumentReplaceOptions options, Class<T> type) {
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values,
+                                                                             DocumentReplaceOptions options,
+                                                                             Class<T> type) {
         return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
     }
 

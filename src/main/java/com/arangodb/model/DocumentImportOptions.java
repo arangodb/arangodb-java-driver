@@ -32,6 +32,7 @@ public final class DocumentImportOptions {
     private OnDuplicate onDuplicate;
     private Boolean complete;
     private Boolean details;
+
     public DocumentImportOptions() {
         super();
     }
@@ -69,7 +70,8 @@ public final class DocumentImportOptions {
     }
 
     /**
-     * @param overwrite If this parameter has a value of true, then all data in the collection will be removed prior to the
+     * @param overwrite If this parameter has a value of true, then all data in the collection will be removed prior
+     *                  to the
      *                  import. Note that any existing index definitions will be preserved.
      * @return options
      */
@@ -96,18 +98,25 @@ public final class DocumentImportOptions {
     }
 
     /**
-     * @param onDuplicate Controls what action is carried out in case of a unique key constraint violation. Possible values are:
+     * @param onDuplicate Controls what action is carried out in case of a unique key constraint violation. Possible
+     *                    values are:
      *                    <ul>
-     *                    <li>error: this will not import the current document because of the unique key constraint violation.
+     *                    <li>error: this will not import the current document because of the unique key constraint
+     *                    violation.
      *                    This is the default setting.</li>
-     *                    <li>update: this will update an existing document in the database with the data specified in the
+     *                    <li>update: this will update an existing document in the database with the data specified
+     *                    in the
      *                    request. Attributes of the existing document that are not present in the request will be
      *                    preserved.</li>
-     *                    <li>replace: this will replace an existing document in the database with the data specified in the
+     *                    <li>replace: this will replace an existing document in the database with the data specified
+     *                    in the
      *                    request.</li>
-     *                    <li>ignore: this will not update an existing document and simply ignore the error caused by the unique
-     *                    key constraint violation. Note that update, replace and ignore will only work when the import document
-     *                    in the request contains the _key attribute. update and replace may also fail because of secondary
+     *                    <li>ignore: this will not update an existing document and simply ignore the error caused by
+     *                    the unique
+     *                    key constraint violation. Note that update, replace and ignore will only work when the
+     *                    import document
+     *                    in the request contains the _key attribute. update and replace may also fail because of
+     *                    secondary
      *                    unique key constraint violations.</li>
      *                    </ul>
      * @return options
@@ -136,7 +145,8 @@ public final class DocumentImportOptions {
     }
 
     /**
-     * @param details If set to true, the result will include an attribute details with details about documents that could
+     * @param details If set to true, the result will include an attribute details with details about documents that
+     *                could
      *                not be imported.
      * @return options
      */

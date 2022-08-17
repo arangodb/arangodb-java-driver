@@ -180,7 +180,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
             final Class<T> type) {
         final Request request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final CompletableFuture<InternalCursorEntity> execution = executor.execute(request, InternalCursorEntity.class, hostHandle);
+        final CompletableFuture<InternalCursorEntity> execution = executor.execute(request,
+                InternalCursorEntity.class, hostHandle);
         return execution.thenApply(result -> createCursor(result, type, options, hostHandle));
     }
 
@@ -208,7 +209,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type) {
         final HostHandle hostHandle = new HostHandle();
-        final CompletableFuture<InternalCursorEntity> execution = executor.execute(queryNextRequest(cursorId, null, null), InternalCursorEntity.class, hostHandle);
+        final CompletableFuture<InternalCursorEntity> execution = executor.execute(queryNextRequest(cursorId, null,
+                null), InternalCursorEntity.class, hostHandle);
         return execution.thenApply(result -> createCursor(result, type, null, hostHandle));
     }
 
@@ -220,7 +222,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
         return new ArangoCursorAsyncImpl<>(this, new ArangoCursorExecute() {
             @Override
             public InternalCursorEntity next(final String id, Map<String, String> meta) {
-                final CompletableFuture<InternalCursorEntity> result = executor.execute(queryNextRequest(id, options, meta),
+                final CompletableFuture<InternalCursorEntity> result = executor.execute(queryNextRequest(id, options,
+                                meta),
                         InternalCursorEntity.class, hostHandle);
                 try {
                     return result.get();
@@ -393,7 +396,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
-    public <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options) {
+    public <T> CompletableFuture<T> getDocument(final String id, final Class<T> type,
+                                                final DocumentReadOptions options) {
         DocumentUtil.validateDocumentId(id);
         final String[] split = id.split("/");
         return collection(split[0]).getDocument(split[1], type, options);
@@ -430,7 +434,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
-    public CompletableFuture<ViewEntity> createArangoSearch(final String name, final ArangoSearchCreateOptions options) {
+    public CompletableFuture<ViewEntity> createArangoSearch(final String name,
+                                                            final ArangoSearchCreateOptions options) {
         return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
     }
 

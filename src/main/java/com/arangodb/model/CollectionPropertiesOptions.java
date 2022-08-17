@@ -22,7 +22,8 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
+ * @see
+ * <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
  * Documentation</a>
  */
 public final class CollectionPropertiesOptions {
@@ -39,7 +40,8 @@ public final class CollectionPropertiesOptions {
     }
 
     /**
-     * @param waitForSync If true then creating or changing a document will wait until the data has been synchronized to disk.
+     * @param waitForSync If true then creating or changing a document will wait until the data has been synchronized
+     *                   to disk.
      * @return options
      */
     public CollectionPropertiesOptions waitForSync(final Boolean waitForSync) {

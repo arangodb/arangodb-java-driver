@@ -97,7 +97,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
 
-        byte[] body = getSerde().serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name));
+        byte[] body = getSerde().serialize(OptionsBuilder.build(options != null ? options :
+                new CollectionCreateOptions(), name));
 
         return request(dbName, RequestType.POST, InternalArangoCollection.PATH_API_COLLECTION).setBody(body);
     }
@@ -120,19 +121,23 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Boolean.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Boolean.class);
     }
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
-        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get()).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                dbName.get()).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request resetAccessRequest(final String user) {
-        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get());
+        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                dbName.get());
     }
 
     protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get(), "*").setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get()
+                , "*").setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request getPermissionsRequest(final String user) {
@@ -140,10 +145,12 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, Permissions.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Permissions.class);
     }
 
-    protected Request queryRequest(final String query, final Map<String, Object> bindVars, final AqlQueryOptions options) {
+    protected Request queryRequest(final String query, final Map<String, Object> bindVars,
+                                   final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
@@ -188,7 +195,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return request;
     }
 
-    protected Request explainQueryRequest(final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
+    protected Request explainQueryRequest(final String query, final Map<String, Object> bindVars,
+                                          final AqlQueryExplainOptions options) {
         final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
         return request(dbName, RequestType.POST, PATH_API_EXPLAIN)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
@@ -234,7 +242,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return request(dbName, RequestType.DELETE, PATH_API_QUERY, id);
     }
 
-    protected Request createAqlFunctionRequest(final String name, final String code, final AqlFunctionCreateOptions options) {
+    protected Request createAqlFunctionRequest(final String name, final String code,
+                                               final AqlFunctionCreateOptions options) {
         return request(dbName, RequestType.POST, PATH_API_AQLFUNCTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
     }
 
@@ -261,7 +270,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
                 constructListType(AqlFunctionEntity.class));
     }
 
-    protected Request createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
+    protected Request createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions,
+                                         final GraphCreateOptions options) {
         return request(dbName, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name, edgeDefinitions)));
     }
 
@@ -315,7 +325,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, StreamTransactionEntity.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                StreamTransactionEntity.class);
     }
 
     protected Request getInfoRequest() {
@@ -323,7 +334,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER, DatabaseEntity.class);
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                DatabaseEntity.class);
     }
 
     protected Request reloadRoutingRequest() {

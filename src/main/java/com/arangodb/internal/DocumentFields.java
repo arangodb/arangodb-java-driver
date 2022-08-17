@@ -10,6 +10,7 @@ public final class DocumentFields {
     public static final String REV = "_rev";
     public static final String FROM = "_from";
     public static final String TO = "_to";
+
     private DocumentFields() {
     }
 

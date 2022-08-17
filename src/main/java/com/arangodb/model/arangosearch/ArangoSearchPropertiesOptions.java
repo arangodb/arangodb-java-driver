@@ -41,11 +41,16 @@ public final class ArangoSearchPropertiesOptions {
     private Collection<PrimarySort> primarySorts;
 
     /**
-     * @param consolidationIntervalMsec Wait at least this many milliseconds between committing index data changes and making them visible to
-     *                                  queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
-     *                                  lower value, until commit, will cause the index not to account for them and memory usage would
-     *                                  continue to grow. For the case where there are a few inserts/updates, a higher value will impact
-     *                                  performance and waste disk space for each commit call without any added benefits.
+     * @param consolidationIntervalMsec Wait at least this many milliseconds between committing index data changes
+     *                                  and making them visible to
+     *                                  queries (default: 60000, to disable use: 0). For the case where there are a
+     *                                  lot of inserts/updates, a
+     *                                  lower value, until commit, will cause the index not to account for them and
+     *                                  memory usage would
+     *                                  continue to grow. For the case where there are a few inserts/updates, a
+     *                                  higher value will impact
+     *                                  performance and waste disk space for each commit call without any added
+     *                                  benefits.
      * @return options
      */
     public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
@@ -54,10 +59,14 @@ public final class ArangoSearchPropertiesOptions {
     }
 
     /**
-     * @param cleanupIntervalStep Wait at least this many commits between removing unused files in data directory (default: 10, to
-     *                            disable use: 0). For the case where the consolidation policies merge segments often (i.e. a lot of
-     *                            commit+consolidate), a lower value will cause a lot of disk space to be wasted. For the case where the
-     *                            consolidation policies rarely merge segments (i.e. few inserts/deletes), a higher value will impact
+     * @param cleanupIntervalStep Wait at least this many commits between removing unused files in data directory
+     *                            (default: 10, to
+     *                            disable use: 0). For the case where the consolidation policies merge segments often
+     *                            (i.e. a lot of
+     *                            commit+consolidate), a lower value will cause a lot of disk space to be wasted. For
+     *                            the case where the
+     *                            consolidation policies rarely merge segments (i.e. few inserts/deletes), a higher
+     *                            value will impact
      *                            performance without any added benefits.
      * @return options
      */

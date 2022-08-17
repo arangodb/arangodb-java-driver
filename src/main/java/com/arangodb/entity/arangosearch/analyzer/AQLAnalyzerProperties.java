@@ -72,7 +72,8 @@ public final class AQLAnalyzerProperties {
      * true (default): treat null like an empty string
      * </li>
      * <li>
-     * false: discard nulls from View index. Can be used for index filtering (i.e. make your query return null for unwanted data). Note that empty results are always discarded.
+     * false: discard nulls from View index. Can be used for index filtering (i.e. make your query return null for
+     * unwanted data). Note that empty results are always discarded.
      * </li>
      * </ul>
      */
@@ -125,7 +126,9 @@ public final class AQLAnalyzerProperties {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AQLAnalyzerProperties that = (AQLAnalyzerProperties) o;
-        return Objects.equals(queryString, that.queryString) && Objects.equals(collapsePositions, that.collapsePositions) && Objects.equals(keepNull, that.keepNull) && Objects.equals(batchSize, that.batchSize) && Objects.equals(memoryLimit, that.memoryLimit) && returnType == that.returnType;
+        return Objects.equals(queryString, that.queryString) && Objects.equals(collapsePositions,
+                that.collapsePositions) && Objects.equals(keepNull, that.keepNull) && Objects.equals(batchSize,
+                that.batchSize) && Objects.equals(memoryLimit, that.memoryLimit) && returnType == that.returnType;
     }
 
     @Override

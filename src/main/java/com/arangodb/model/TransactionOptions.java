@@ -92,7 +92,8 @@ public final class TransactionOptions {
     }
 
     /**
-     * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk before
+     * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk
+     *                   before
      *                    returning
      * @return options
      */
@@ -120,7 +121,8 @@ public final class TransactionOptions {
     }
 
     /**
-     * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
+     * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for
+     *                  exclusive write
      * @return options
      * @since ArangoDB 3.4.0
      */
@@ -130,10 +132,14 @@ public final class TransactionOptions {
     }
 
     /**
-     * @param allowImplicit Collections that will be written to in the transaction must be declared with the write attribute or it
-     *                      will fail, whereas non-declared collections from which is solely read will be added lazily. The
-     *                      optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
-     *                      collections for reading. Collections for reading should be fully declared if possible, to avoid
+     * @param allowImplicit Collections that will be written to in the transaction must be declared with the write
+     *                      attribute or it
+     *                      will fail, whereas non-declared collections from which is solely read will be added
+     *                      lazily. The
+     *                      optional attribute allowImplicit can be set to false to let transactions fail in case of
+     *                      undeclared
+     *                      collections for reading. Collections for reading should be fully declared if possible, to
+     *                      avoid
      *                      deadlocks.
      * @return options
      */

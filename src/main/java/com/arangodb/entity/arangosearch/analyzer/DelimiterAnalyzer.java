@@ -26,7 +26,8 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * An Analyzer capable of breaking up delimited text into tokens as per RFC 4180 (without starting new records on newlines).
+ * An Analyzer capable of breaking up delimited text into tokens as per RFC 4180 (without starting new records on
+ * newlines).
  *
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#delimiter">API Documentation</a>

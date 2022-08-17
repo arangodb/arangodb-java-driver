@@ -44,7 +44,8 @@ public final class FieldLink {
     }
 
     /**
-     * @param includeAllFields The flag determines whether or not to index all fields on a particular level of depth (default:
+     * @param includeAllFields The flag determines whether or not to index all fields on a particular level of depth
+     *                         (default:
      *                         false).
      * @return link
      */
@@ -54,7 +55,8 @@ public final class FieldLink {
     }
 
     /**
-     * @param trackListPositions The flag determines whether or not values in a lists should be treated separate (default: false).
+     * @param trackListPositions The flag determines whether or not values in a lists should be treated separate
+     *                           (default: false).
      * @return link
      */
     public FieldLink trackListPositions(final Boolean trackListPositions) {
@@ -63,7 +65,8 @@ public final class FieldLink {
     }
 
     /**
-     * @param storeValues How should the view track the attribute values, this setting allows for additional value retrieval
+     * @param storeValues How should the view track the attribute values, this setting allows for additional value
+     *                    retrieval
      *                    optimizations (default "none").
      * @return link
      */

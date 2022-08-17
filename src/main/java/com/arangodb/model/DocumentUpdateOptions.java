@@ -63,8 +63,10 @@ public final class DocumentUpdateOptions {
     }
 
     /**
-     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and the patch
-     *                     document. If set to false, the value in the patch document will overwrite the existing document's
+     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and
+     *                     the patch
+     *                     document. If set to false, the value in the patch document will overwrite the existing
+     *                     document's
      *                     value. If set to true, objects will be merged. The default is true.
      * @return options
      */
@@ -91,8 +93,10 @@ public final class DocumentUpdateOptions {
     }
 
     /**
-     * @param ignoreRevs By default, or if this is set to true, the _rev attributes in the given document is ignored. If this
-     *                   is set to false, then the _rev attribute given in the body document is taken as a precondition. The
+     * @param ignoreRevs By default, or if this is set to true, the _rev attributes in the given document is ignored.
+     *                  If this
+     *                   is set to false, then the _rev attribute given in the body document is taken as a
+     *                   precondition. The
      *                   document is only updated if the current revision is the one specified.
      * @return options
      */
@@ -132,7 +136,8 @@ public final class DocumentUpdateOptions {
     }
 
     /**
-     * @param returnOld Return additionally the complete previous revision of the changed document under the attribute old in
+     * @param returnOld Return additionally the complete previous revision of the changed document under the
+     *                  attribute old in
      *                  the result.
      * @return options
      */

@@ -32,7 +32,8 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  */
 public class ArangoVertexCollectionAsyncImpl extends
-        InternalArangoVertexCollection<ArangoDBAsyncImpl, ArangoDatabaseAsyncImpl, ArangoGraphAsyncImpl, ArangoExecutorAsync>
+        InternalArangoVertexCollection<ArangoDBAsyncImpl, ArangoDatabaseAsyncImpl, ArangoGraphAsyncImpl,
+                ArangoExecutorAsync>
         implements ArangoVertexCollectionAsync {
 
     ArangoVertexCollectionAsyncImpl(final ArangoGraphAsyncImpl graph, final String name) {

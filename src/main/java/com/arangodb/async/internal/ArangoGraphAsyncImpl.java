@@ -87,7 +87,8 @@ public class ArangoGraphAsyncImpl
     }
 
     @Override
-    public CompletableFuture<GraphEntity> addVertexCollection(final String name, final VertexCollectionCreateOptions options) {
+    public CompletableFuture<GraphEntity> addVertexCollection(final String name,
+                                                              final VertexCollectionCreateOptions options) {
         return executor.execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 

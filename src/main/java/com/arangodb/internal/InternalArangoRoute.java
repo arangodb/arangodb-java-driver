@@ -30,7 +30,8 @@ import java.util.Map.Entry;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
+        E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
     protected final D db;

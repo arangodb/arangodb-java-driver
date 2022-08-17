@@ -166,7 +166,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server storage engine.
      *
      * @return the storage engine name
-     * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
     ArangoDBEngine getEngine();
@@ -182,7 +183,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the id of a server in a cluster.
      *
      * @return the server id
-     * @see <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
      * Documentation</a>
      */
     String getServerId();
@@ -302,7 +304,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return the log messages
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
@@ -350,7 +353,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
             return Protocol.valueOf(
-                    getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
+                    getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue,
+                            ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
                             .toUpperCase(Locale.ENGLISH));
         }
 
@@ -521,7 +525,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request every
+         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
+         * every
          * {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the external
          * environment, eg. firewall, intermediate routers, operating system).
          *
@@ -566,7 +571,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
          * would be the default.
          *
-         * @param loadBalancingStrategy the load balancing strategy to be used (default: {@link LoadBalancingStrategy#NONE}
+         * @param loadBalancingStrategy the load balancing strategy to be used (default:
+         * {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDB.Builder}
          */
         public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
@@ -608,7 +614,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
-            final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(DataType.of(protocol));
+            final ArangoSerde userSerde = customSerializer != null ? customSerializer :
+                    JacksonSerde.of(DataType.of(protocol));
             final InternalSerde serde = InternalSerde.of(DataType.of(protocol), userSerde);
 
             int protocolMaxConnections = protocol == Protocol.VST ?

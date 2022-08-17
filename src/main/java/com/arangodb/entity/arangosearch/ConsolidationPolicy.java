@@ -42,7 +42,8 @@ public final class ConsolidationPolicy {
     }
 
     /**
-     * @param threshold Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
+     * @param threshold Select a given segment for "consolidation" if and only if the formula based on type (as
+     *                  defined above)
      *                  evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
      * @return policy
      */

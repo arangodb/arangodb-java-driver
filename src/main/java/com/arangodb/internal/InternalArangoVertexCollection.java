@@ -32,7 +32,8 @@ import com.arangodb.velocystream.RequestType;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, G extends InternalArangoGraph<A, D, E>, E extends ArangoExecutor>
+public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<E>,
+        D extends InternalArangoDatabase<A, E>, G extends InternalArangoGraph<A, D, E>, E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
@@ -124,7 +125,8 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "vertex",
+        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(),
+                "vertex",
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());

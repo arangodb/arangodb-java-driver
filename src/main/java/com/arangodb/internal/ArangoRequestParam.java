@@ -31,6 +31,7 @@ public final class ArangoRequestParam {
     public static final String IF_NONE_MATCH = "If-None-Match";
     public static final String IF_MATCH = "If-Match";
     public static final String KEEP_NULL = "keepNull";
+
     private ArangoRequestParam() {
         super();
     }

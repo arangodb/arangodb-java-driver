@@ -86,9 +86,12 @@ public class HttpConnection implements Connection {
     private final Protocol contentType;
     private final HostDescription host;
     private volatile String jwt = null;
+
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final InternalSerde util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier
+            , final InternalSerde util, final Protocol contentType,
+                           final Long ttl, final String httpCookieSpec,
+                           final HttpRequestRetryHandler httpRequestRetryHandler) {
         super();
         this.host = host;
         this.user = user;
@@ -101,7 +104,8 @@ public class HttpConnection implements Connection {
         if (Boolean.TRUE.equals(useSsl)) {
             registryBuilder.register("https", new SSLConnectionSocketFactory(
                     sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
-                    hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+                    hostnameVerifier != null ? hostnameVerifier :
+                            SSLConnectionSocketFactory.getDefaultHostnameVerifier()
             ));
         } else {
             registryBuilder.register("http", new PlainConnectionSocketFactory());
@@ -120,10 +124,12 @@ public class HttpConnection implements Connection {
             requestConfig.setCookieSpec(httpCookieSpec);
         }
 
-        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
+        final ConnectionKeepAliveStrategy keepAliveStrategy =
+                (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
         final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
                 .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
+                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler :
+                        new DefaultHttpRequestRetryHandler());
         if (ttl != null) {
             builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
         }

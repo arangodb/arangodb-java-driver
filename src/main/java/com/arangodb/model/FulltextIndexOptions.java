@@ -64,7 +64,8 @@ public final class FulltextIndexOptions extends IndexOptions<FulltextIndexOption
     }
 
     /**
-     * @param minLength Minimum character length of words to index. Will default to a server-defined value if unspecified. It
+     * @param minLength Minimum character length of words to index. Will default to a server-defined value if
+     *                  unspecified. It
      *                  is thus recommended to set this value explicitly when creating the index.
      * @return options
      */

@@ -59,7 +59,8 @@ public final class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
     }
 
     /**
-     * @param expireAfter The time (in seconds) after a document’s creation after which the documents count as “expired”.
+     * @param expireAfter The time (in seconds) after a document’s creation after which the documents count as
+     *                    “expired”.
      * @return options
      */
     public TtlIndexOptions expireAfter(final Integer expireAfter) {

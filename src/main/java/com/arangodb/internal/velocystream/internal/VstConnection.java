@@ -110,7 +110,8 @@ public abstract class VstConnection<T> implements Connection {
         long id = keepAliveId.decrementAndGet();
         Message message = new Message(id, keepAliveRequest, null);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("[%s]: Send keepalive probe (id=%s, head=%s, body=%s)", connectionName, message.getId(), message.getHead(),
+            LOGGER.debug(String.format("[%s]: Send keepalive probe (id=%s, head=%s, body=%s)", connectionName,
+                    message.getId(), message.getHead(),
                     message.getBody() != null ? message.getBody() : "{}"));
         }
         return write(message, Collections.singleton(new Chunk(
@@ -158,7 +159,8 @@ public abstract class VstConnection<T> implements Connection {
         } else {
             socket = SocketFactory.getDefault().createSocket();
         }
-        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
+        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout != null ? timeout :
+                ArangoDefaults.DEFAULT_TIMEOUT);
         socket.setKeepAlive(true);
         socket.setTcpNoDelay(true);
         if (LOGGER.isDebugEnabled()) {
@@ -254,7 +256,8 @@ public abstract class VstConnection<T> implements Connection {
         for (final Chunk chunk : chunks) {
             try {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(String.format("[%s]: Send chunk %s:%s from message %s", connectionName, chunk.getChunk(),
+                    LOGGER.debug(String.format("[%s]: Send chunk %s:%s from message %s", connectionName,
+                            chunk.getChunk(),
                             chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
                     sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
                 }
@@ -312,7 +315,8 @@ public abstract class VstConnection<T> implements Connection {
         final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("[%s]: Received chunk %s:%s from message %s", connectionName, chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+            LOGGER.debug(String.format("[%s]: Received chunk %s:%s from message %s", connectionName, chunk.getChunk()
+                    , chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
             LOGGER.debug("[" + connectionName + "]: Responsetime for Message " + chunk.getMessageId() + " is " + (System.currentTimeMillis() - sendTimestamps.get(chunk.getMessageId())));
         }
 

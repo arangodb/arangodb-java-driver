@@ -35,7 +35,8 @@ public final class CollationAnalyzerProperties {
      * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),
      * e.g. `de.utf-8` or `en_US.utf-8`. Only UTF-8 encoding is meaningful in ArangoDB.
      * The locale is forwarded to ICU without checks. An invalid locale does not prevent the creation of the Analyzer.
-     * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
      */
     public String getLocale() {
         return locale;

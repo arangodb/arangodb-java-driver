@@ -50,7 +50,8 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
     private VstCommunicationAsync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                  final String password, final String jwt, final Boolean useSsl, final SSLContext sslContext, final InternalSerde util,
+                                  final String password, final String jwt, final Boolean useSsl,
+                                  final SSLContext sslContext, final InternalSerde util,
                                   final Integer chunksize, final Integer maxConnections, final Long connectionTtl) {
         super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }
@@ -61,7 +62,8 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
     }
 
     @Override
-    protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection, final int attemptCount) {
+    protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection,
+                                                  final int attemptCount) {
         final CompletableFuture<Response> rfuture = new CompletableFuture<>();
         try {
             final Message message = createMessage(request);
@@ -210,7 +212,8 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         }
 
         public VstCommunicationAsync build(final InternalSerde util) {
-            return new VstCommunicationAsync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
+            return new VstCommunicationAsync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util,
+                    chunksize,
                     maxConnections, connectionTtl);
         }
     }

@@ -55,7 +55,8 @@ public class ArangoEdgeCollectionImpl
     @Override
     public <T> T getEdge(final String key, final Class<T> type) {
         try {
-            return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
+            return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
+                    getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(e.getMessage(), e);

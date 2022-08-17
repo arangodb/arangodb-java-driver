@@ -36,7 +36,8 @@ public final class InternalSerializers {
             }
         }
     };
-    static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST = new JsonSerializer<AuthenticationRequest>() {
+    static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST =
+            new JsonSerializer<AuthenticationRequest>() {
         @Override
         public void serialize(AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartArray();
@@ -48,7 +49,8 @@ public final class InternalSerializers {
             gen.writeEndArray();
         }
     };
-    static final JsonSerializer<JwtAuthenticationRequest> JWT_AUTHENTICATION_REQUEST = new JsonSerializer<JwtAuthenticationRequest>() {
+    static final JsonSerializer<JwtAuthenticationRequest> JWT_AUTHENTICATION_REQUEST =
+            new JsonSerializer<JwtAuthenticationRequest>() {
         @Override
         public void serialize(JwtAuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartArray();

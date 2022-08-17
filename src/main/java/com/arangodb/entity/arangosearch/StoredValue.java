@@ -37,7 +37,8 @@ public final class StoredValue {
     private final ArangoSearchCompression compression;
 
     @JsonCreator
-    public StoredValue(@JsonProperty("fields") List<String> fields, @JsonProperty("compression") ArangoSearchCompression compression) {
+    public StoredValue(@JsonProperty("fields") List<String> fields,
+                       @JsonProperty("compression") ArangoSearchCompression compression) {
         this.fields = fields;
         this.compression = compression;
     }

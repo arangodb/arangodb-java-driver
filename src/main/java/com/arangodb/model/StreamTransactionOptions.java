@@ -65,7 +65,8 @@ public final class StreamTransactionOptions {
     }
 
     /**
-     * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk before
+     * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk
+     *                   before
      *                    returning
      * @return options
      */
@@ -93,7 +94,8 @@ public final class StreamTransactionOptions {
     }
 
     /**
-     * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
+     * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for
+     *                  exclusive write
      * @return options
      */
     public StreamTransactionOptions exclusiveCollections(final String... exclusive) {

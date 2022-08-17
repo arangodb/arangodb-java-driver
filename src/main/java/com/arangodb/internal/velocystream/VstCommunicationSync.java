@@ -170,7 +170,8 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         }
 
         public VstCommunication<Response, VstConnectionSync> build(final InternalSerde util) {
-            return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
+            return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util,
+                    chunksize,
                     maxConnections, connectionTtl);
         }
 

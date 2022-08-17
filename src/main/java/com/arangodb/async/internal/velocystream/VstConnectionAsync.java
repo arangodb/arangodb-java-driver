@@ -38,7 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl,
+                               final Integer keepAliveInterval,
                                final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
         super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
     }

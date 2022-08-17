@@ -30,6 +30,7 @@ public final class QueryCachePropertiesEntity {
 
     private CacheMode mode;
     private Long maxResults;
+
     public QueryCachePropertiesEntity() {
         super();
     }

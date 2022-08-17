@@ -68,7 +68,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Returns the name of the used storage engine.
      *
      * @return the storage engine name
-     * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
     CompletableFuture<ArangoDBEngine> getEngine();
@@ -143,7 +144,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
     CompletableFuture<IndexEntity> getIndex(final String id);
 
@@ -152,7 +154,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param id The index handle
      * @return the id of the index
-     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
      */
     CompletableFuture<String> deleteIndex(final String id);
 
@@ -247,9 +250,11 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @param query    contains the query string to be executed
      * @param bindVars key/value pairs representing the bind parameters
      * @param options  Additional options, can be null
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return cursor of the results
-     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -264,9 +269,11 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param query   contains the query string to be executed
      * @param options Additional options, can be null
-     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return cursor of the results
-     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -280,9 +287,11 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param query    contains the query string to be executed
      * @param bindVars key/value pairs representing the bind parameters
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return cursor of the results
-     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -295,9 +304,11 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * result list.
      *
      * @param query contains the query string to be executed
-     * @param type  The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type  The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return cursor of the results
-     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(final String query, final Class<T> type);
@@ -306,10 +317,12 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Return an cursor from the given cursor-ID if still existing
      *
      * @param cursorId The ID of the cursor
-     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type     The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return cursor of the results
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#read-next-batch-from-cursor">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors
+     * .html#read-next-batch-from-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type);
@@ -345,7 +358,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @return void
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#clears-any-results-in-the-aql-query-results-cache">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache
+     * .html#clears-any-results-in-the-aql-query-results-cache">API
      * Documentation</a>
      */
     CompletableFuture<Void> clearQueryCache();
@@ -355,7 +369,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @return configuration for the AQL query cache
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#returns-the-global-properties-for-the-aql-query-results-cache">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache
+     * .html#returns-the-global-properties-for-the-aql-query-results-cache">API
      * Documentation</a>
      */
     CompletableFuture<QueryCachePropertiesEntity> getQueryCacheProperties();
@@ -367,7 +382,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @param properties properties to be set
      * @return current set of properties
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#globally-adjusts-the-aql-query-results-cache-properties">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache
+     * .html#globally-adjusts-the-aql-query-results-cache-properties">API
      * Documentation</a>
      */
     CompletableFuture<QueryCachePropertiesEntity> setQueryCacheProperties(final QueryCachePropertiesEntity properties);
@@ -521,7 +537,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Execute a server-side transaction
      *
      * @param action  the actual transaction operations to be executed, in the form of stringified JavaScript code
-     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the result (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the result of the transaction if it succeeded
      * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
@@ -534,7 +551,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the transaction
-     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#begin-a-transaction">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#begin-a-transaction">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -544,7 +562,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Aborts a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#abort-transaction">API
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#abort-transaction">API
      * Documentation</a>
      */
     CompletableFuture<StreamTransactionEntity> abortStreamTransaction(String id);
@@ -553,7 +572,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Gets information about a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#get-transaction-status">
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#get-transaction-status">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -563,7 +583,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Gets all the currently running Stream Transactions.
      *
      * @return all the currently running Stream Transactions
-     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#list-currently-ongoing-transactions">
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#list-currently-ongoing-transactions">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -573,7 +594,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Commits a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#commit-or-abort-a-transaction">
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#commit-or-abort-a-transaction">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -593,7 +615,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id   The id of the document
-     * @param type The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type The type of the document (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @return the document identified by the id
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
@@ -604,19 +627,22 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Reads a single document
      *
      * @param id      The id of the document
-     * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or {@link com.arangodb.util.RawBytes})
+     * @param type    The type of the document (POJO, {@link com.arangodb.util.RawJson} or
+     * {@link com.arangodb.util.RawBytes})
      * @param options Additional options, can be null
      * @return the document identified by the id
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options);
+
     /**
      * Reload the routing table.
      *
      * @return void
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#reloads-the-routing-information">API
+     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring
+     * .html#reloads-the-routing-information">API
      * Documentation</a>
      */
     CompletableFuture<Void> reloadRouting();
@@ -634,7 +660,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Fetches all views from the database and returns an list of view descriptions.
      *
      * @return list of information about all views
-     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#list-all-views">API Documentation</a>
+     * @see
+     * <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#list-all-views">API Documentation</a>
      * @since ArangoDB 3.4.0
      */
     CompletableFuture<Collection<ViewEntity>> getViews();

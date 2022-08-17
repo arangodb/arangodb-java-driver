@@ -29,7 +29,8 @@ import com.arangodb.velocystream.RequestType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
+        E extends ArangoExecutor>
         extends ArangoExecuteable<E> {
 
     protected static final String PATH_API_VIEW = "/_api/view";

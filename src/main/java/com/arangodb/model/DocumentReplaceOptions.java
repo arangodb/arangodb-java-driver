@@ -58,8 +58,10 @@ public final class DocumentReplaceOptions {
     }
 
     /**
-     * @param ignoreRevs By default, or if this is set to true, the _rev attributes in the given document is ignored. If this
-     *                   is set to false, then the _rev attribute given in the body document is taken as a precondition. The
+     * @param ignoreRevs By default, or if this is set to true, the _rev attributes in the given document is ignored.
+     *                  If this
+     *                   is set to false, then the _rev attribute given in the body document is taken as a
+     *                   precondition. The
      *                   document is only replaced if the current revision is the one specified.
      * @return options
      */
@@ -99,7 +101,8 @@ public final class DocumentReplaceOptions {
     }
 
     /**
-     * @param returnOld Return additionally the complete previous revision of the changed document under the attribute old in
+     * @param returnOld Return additionally the complete previous revision of the changed document under the
+     *                  attribute old in
      *                  the result.
      * @return options
      */

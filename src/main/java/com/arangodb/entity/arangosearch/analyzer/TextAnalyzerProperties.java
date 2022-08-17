@@ -48,7 +48,8 @@ public final class TextAnalyzerProperties {
     /**
      * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),
      * e.g. `de.utf-8` or `en_US.utf-8`. Only UTF-8 encoding is meaningful in ArangoDB.
-     * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
+     * @see
+     * <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
      */
     public String getLocale() {
         return locale;
@@ -124,13 +125,15 @@ public final class TextAnalyzerProperties {
     }
 
     /**
-     * @return path with a language sub-directory (e.g. en for a locale en_US.utf-8) containing files with words to omit.
+     * @return path with a language sub-directory (e.g. en for a locale en_US.utf-8) containing files with words to
+     * omit.
      * Each word has to be on a separate line. Everything after the first whitespace character on a line will be ignored
      * and can be used for comments. The files can be named arbitrarily and have any file extension (or none).
      * <p>
      * Default: if no path is provided then the value of the environment variable IRESEARCH_TEXT_STOPWORD_PATH is used
      * to determine the path, or if it is undefined then the current working directory is assumed. If the stopwords
-     * attribute is provided then no stop-words are loaded from files, unless an explicit stopwordsPath is also provided.
+     * attribute is provided then no stop-words are loaded from files, unless an explicit stopwordsPath is also
+     * provided.
      * <p>
      * Note that if the stopwordsPath can not be accessed, is missing language sub-directories or has no files for a
      * language required by an Analyzer, then the creation of a new Analyzer is refused. If such an issue is discovered

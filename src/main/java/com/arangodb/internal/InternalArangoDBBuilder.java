@@ -118,7 +118,8 @@ public abstract class InternalArangoDBBuilder {
         final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDefaults.DEFAULT_HOST);
         if (host.contains(":")) {
             throw new ArangoDBException(String.format(
-                    "Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
+                    "Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb" +
+                            ".hosts=ip:port ?",
                     host));
         }
         return host;
@@ -353,11 +354,13 @@ public abstract class InternalArangoDBBuilder {
         return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
     }
 
-    protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections, final ConnectionFactory connectionFactory) {
+    protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,
+                                              final ConnectionFactory connectionFactory) {
 
         if (acquireHostList != null && acquireHostList) {
             LOG.debug("acquireHostList -> Use ExtendedHostResolver");
-            return new ExtendedHostResolver(new ArrayList<>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
+            return new ExtendedHostResolver(new ArrayList<>(hosts), maxConnections, connectionFactory,
+                    acquireHostListInterval);
         } else {
             LOG.debug("Use SimpleHostResolver");
             return new SimpleHostResolver(new ArrayList<>(hosts));
