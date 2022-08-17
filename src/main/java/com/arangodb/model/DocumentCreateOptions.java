@@ -35,7 +35,7 @@ public final class DocumentCreateOptions {
     private Boolean silent;
     private String streamTransactionId;
     private Boolean mergeObjects;
-
+    private Boolean keepNull;
 
     public DocumentCreateOptions() {
         super();
@@ -132,14 +132,34 @@ public final class DocumentCreateOptions {
     /**
      * Only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
      *
-     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and the patch
-     *                     document. If set to false, the value in the patch document will overwrite the existing document's
+     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and
+     *                     the patch
+     *                     document. If set to false, the value in the patch document will overwrite the existing
+     *                     document's
      *                     value. If set to true, objects will be merged. The default is true.
      * @return options
      * @since ArangoDB 3.7
      */
     public DocumentCreateOptions mergeObjects(Boolean mergeObjects) {
         this.mergeObjects = mergeObjects;
+        return this;
+    }
+
+    public Boolean getKeepNull() {
+        return keepNull;
+    }
+
+    /**
+     * @param keepNull If the intention is to delete existing attributes with the update-insert command, the URL
+     *                 query parameter keepNull can be used with a value of false. This will modify the behavior of
+     *                 the patch command to remove any attributes from the existing document that are contained in
+     *                 the patch document with an attribute value of null. This option controls the update-insert
+     *                 behavior only.
+     * @return options
+     * @since ArangoDB 3.7
+     */
+    public DocumentCreateOptions keepNull(Boolean keepNull) {
+        this.keepNull = keepNull;
         return this;
     }
 

@@ -345,6 +345,42 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("foo", "bar");
+        collection.insertDocument(doc);
+
+        doc.updateAttribute("foo", null);
+        final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
+                .overwriteMode(OverwriteMode.update)
+                .keepNull(true)
+                .returnNew(true)).getNew();
+
+        assertThat(updated.getProperties()).containsEntry("foo", null);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdateKeepNullFalse(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("foo", "bar");
+        collection.insertDocument(doc);
+
+        doc.updateAttribute("foo", null);
+        final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
+                .overwriteMode(OverwriteMode.update)
+                .keepNull(false)
+                .returnNew(true)).getNew();
+
+        assertThat(updated.getProperties()).doesNotContainKey("foo");
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void insertDocumentWaitForSync(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument(), options);
