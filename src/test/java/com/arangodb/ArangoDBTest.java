@@ -34,14 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -104,7 +97,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createAndDeleteDatabase(ArangoDB arangoDB) {
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames(arangoDB)));
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
+                supportsExtendedNames(arangoDB)));
         final Boolean resultCreate;
         resultCreate = arangoDB.createDatabase(dbName);
         assertThat(resultCreate).isTrue();
@@ -133,7 +127,8 @@ class ArangoDBTest extends BaseJunit5 {
     void createDatabaseWithOptions(ArangoDB arangoDB) {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 6));
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames(arangoDB)));
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
+                supportsExtendedNames(arangoDB)));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -160,7 +155,8 @@ class ArangoDBTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 6));
 
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames(arangoDB)));
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
+                supportsExtendedNames(arangoDB)));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -183,7 +179,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createDatabaseWithUsers(ArangoDB arangoDB) throws InterruptedException {
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames(arangoDB)));
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
+                supportsExtendedNames(arangoDB)));
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
@@ -212,7 +209,7 @@ class ArangoDBTest extends BaseJunit5 {
         Thread.sleep(1_000);
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
-                
+
                 .user("testUser")
                 .password("testPasswd")
                 .build();
@@ -391,7 +388,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
-    void execute(ArangoDB arangoDB)  {
+    void execute(ArangoDB arangoDB) {
         final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
         assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
     }
@@ -563,7 +560,8 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void loadproperties() {
         Throwable thrown = catchThrowable(() ->
-                new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad.properties"))
+                new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad" +
+                        ".properties"))
         );
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
@@ -572,7 +570,8 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void loadproperties2() {
         Throwable thrown = catchThrowable(() ->
-                new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad2.properties"))
+                new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad2" +
+                        ".properties"))
         );
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }

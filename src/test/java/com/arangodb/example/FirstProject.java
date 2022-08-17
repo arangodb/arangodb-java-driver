@@ -108,7 +108,7 @@ public class FirstProject {
             final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
             final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
                     BaseDocument.class);
-            for (; cursor.hasNext(); ) {
+            while (cursor.hasNext()) {
                 System.out.println("Key: " + cursor.next().getKey());
             }
         } catch (final ArangoDBException e) {
@@ -122,7 +122,7 @@ public class FirstProject {
             final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
             final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
                     BaseDocument.class);
-            for (; cursor.hasNext(); ) {
+            while (cursor.hasNext()) {
                 System.out.println("Removed document " + cursor.next().getKey());
             }
         } catch (final ArangoDBException e) {

@@ -43,7 +43,8 @@ public final class TestUtils {
      * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
      * comparing the corresponding version components in lexicographical order.
      */
-    public static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+    public static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor,
+                                           final int otherPatch) {
         return compareVersion(version, otherMajor, otherMinor, otherPatch) >= 0;
     }
 
@@ -52,11 +53,13 @@ public final class TestUtils {
      * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
      * comparing the corresponding version components in lexicographical order.
      */
-    public static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+    public static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor,
+                                            final int otherPatch) {
         return compareVersion(version, otherMajor, otherMinor, otherPatch) < 0;
     }
 
-    private static int compareVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+    private static int compareVersion(final String version, final int otherMajor, final int otherMinor,
+                                      final int otherPatch) {
         String[] parts = version.split("-")[0].split("\\.");
 
         int major = Integer.parseInt(parts[0]);

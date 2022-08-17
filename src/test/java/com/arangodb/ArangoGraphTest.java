@@ -58,8 +58,10 @@ class ArangoGraphTest extends BaseJunit5 {
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;
 
-    private static final EdgeDefinition ed1 = new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2);
-    private static final EdgeDefinition ed2 = new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3);
+    private static final EdgeDefinition ed1 =
+            new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2);
+    private static final EdgeDefinition ed2 =
+            new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3);
 
     private static Stream<Arguments> graphs() {
         return dbsStream()
@@ -93,7 +95,8 @@ class ArangoGraphTest extends BaseJunit5 {
         assumeTrue(isCluster());
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
-        final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).writeConcern(2));
+        final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions,
+                new GraphCreateOptions().isSmart(true).replicationFactor(2).writeConcern(2));
         assertThat(graph).isNotNull();
         assertThat(graph.getName()).isEqualTo(GRAPH_NAME + "_1");
         assertThat(graph.getWriteConcern()).isEqualTo(2);
@@ -296,7 +299,8 @@ class ArangoGraphTest extends BaseJunit5 {
         edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
 
         String graphId = GRAPH_NAME + rnd();
-        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions,
+                new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
 
         assertThat(g).isNotNull();
         assertThat(g.getIsSmart()).isTrue();

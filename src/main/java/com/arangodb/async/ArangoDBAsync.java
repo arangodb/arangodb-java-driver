@@ -481,7 +481,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * would be the default.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
-         * {@link LoadBalancingStrategy#NONE}
+         *                              {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDBAsync.Builder}
          */
         public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {

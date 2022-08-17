@@ -73,7 +73,7 @@ public final class AqlQueryExplainOptions {
 
     /**
      * @param maxNumberOfPlans an optional maximum number of plans that the optimizer is allowed to generate. Setting
-     *                        this attribute
+     *                         this attribute
      *                         to a low value allows to put a cap on the amount of work the optimizer does.
      * @return options
      */

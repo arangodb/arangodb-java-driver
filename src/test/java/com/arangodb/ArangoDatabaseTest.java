@@ -536,7 +536,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithNullBindVar(ArangoDatabase db) {
-        final ArangoCursor<Object> cursor = db.query("return @foo", Collections.singletonMap("foo", null), null, Object.class);
+        final ArangoCursor<Object> cursor = db.query("return @foo", Collections.singletonMap("foo", null), null,
+                Object.class);
         assertThat(cursor.hasNext()).isTrue();
         assertThat(cursor.next()).isNull();
     }
@@ -714,7 +715,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithMemoryLimit(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", null, new AqlQueryOptions().memoryLimit(32 * 1024L), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", null,
+                new AqlQueryOptions().memoryLimit(32 * 1024L), String.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
     }
@@ -722,7 +724,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithFailOnWarningTrue(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(true), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", null,
+                new AqlQueryOptions().failOnWarning(true), String.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
@@ -738,7 +741,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
-        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).next());
+        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", null,
+                new AqlQueryOptions().maxRuntime(0.1), String.class).next());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
     }
@@ -1123,7 +1127,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final String edgeCollection = "edge-" + rnd();
         final String fromCollection = "from-" + rnd();
         final String toCollection = "to-" + rnd();
-        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final Collection<EdgeDefinition> edgeDefinitions =
+                Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db.createGraph(name, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
         assertThat(result).isNotNull();
         for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
@@ -1140,7 +1145,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final String edgeCollection = "edge-" + rnd();
         final String fromCollection = "from-" + rnd();
         final String toCollection = "to-" + rnd();
-        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final Collection<EdgeDefinition> edgeDefinitions =
+                Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db
                 .createGraph(name, edgeDefinitions, new GraphCreateOptions().numberOfShards(2));
         assertThat(result).isNotNull();
@@ -1192,7 +1198,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class, options);
+                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
+                        options);
         assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
@@ -1212,7 +1219,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class, options);
+                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
+                        options);
         assertThat(result.getValue()).isEqualTo("\"hello world\"");
     }
 
@@ -1287,18 +1295,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .isEqualTo(400);
     }
 
-    public static class TransactionTestEntity {
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
-
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void transactionPojoReturn(ArangoDatabase db) {
@@ -1362,5 +1358,17 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void reloadRouting(ArangoDatabase db) {
         db.reloadRouting();
+    }
+
+    public static class TransactionTestEntity {
+        private String value;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }

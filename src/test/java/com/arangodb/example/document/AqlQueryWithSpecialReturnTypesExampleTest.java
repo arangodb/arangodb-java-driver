@@ -46,10 +46,6 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         createExamples();
     }
 
-    enum Gender {
-        MALE, FEMALE
-    }
-
     private static void createExamples() {
         for (int i = 0; i < 100; i++) {
             final BaseDocument value = new BaseDocument(UUID.randomUUID().toString());
@@ -128,5 +124,9 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
             assertThat(list.get(2)).isNotNull();
             assertThat(Long.valueOf(String.valueOf(list.get(2)))).isIn(21L, 23L, 25L, 27L, 29L);
         }
+    }
+
+    enum Gender {
+        MALE, FEMALE
     }
 }

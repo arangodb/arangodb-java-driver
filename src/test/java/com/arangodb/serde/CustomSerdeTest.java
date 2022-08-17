@@ -58,34 +58,6 @@ class CustomSerdeTest {
     private static ArangoDatabase db;
     private static ArangoCollection collection;
 
-    static class PersonSerializer extends JsonSerializer<Person> {
-        @Override
-        public void serialize(Person value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeStartObject();
-            gen.writeFieldName("name");
-            gen.writeString(PERSON_SERIALIZER_ADDED_PREFIX + value.name);
-            gen.writeEndObject();
-        }
-    }
-
-    static class PersonDeserializer extends JsonDeserializer<Person> {
-        @Override
-        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
-            Person person = new Person();
-            JsonNode rootNode = parser.getCodec().readTree(parser);
-            JsonNode nameNode = rootNode.get("name");
-            if (nameNode != null && nameNode.isTextual()) {
-                person.name = PERSON_DESERIALIZER_ADDED_PREFIX + nameNode.asText();
-            }
-            return person;
-        }
-    }
-
-    @JsonSerialize(using = PersonSerializer.class)
-    static class Person {
-        String name;
-    }
-
     @BeforeAll
     static void init() {
         JacksonSerde serde = JacksonSerde.of(DataType.VPACK);
@@ -230,8 +202,37 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null), String.class);
+        final String json = arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null),
+                String.class);
         assertThat(json).isNull();
+    }
+
+    static class PersonSerializer extends JsonSerializer<Person> {
+        @Override
+        public void serialize(Person value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+            gen.writeFieldName("name");
+            gen.writeString(PERSON_SERIALIZER_ADDED_PREFIX + value.name);
+            gen.writeEndObject();
+        }
+    }
+
+    static class PersonDeserializer extends JsonDeserializer<Person> {
+        @Override
+        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
+            Person person = new Person();
+            JsonNode rootNode = parser.getCodec().readTree(parser);
+            JsonNode nameNode = rootNode.get("name");
+            if (nameNode != null && nameNode.isTextual()) {
+                person.name = PERSON_DESERIALIZER_ADDED_PREFIX + nameNode.asText();
+            }
+            return person;
+        }
+    }
+
+    @JsonSerialize(using = PersonSerializer.class)
+    static class Person {
+        String name;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.arangodb.async;
 
 
-
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

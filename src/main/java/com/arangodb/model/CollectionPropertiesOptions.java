@@ -41,7 +41,7 @@ public final class CollectionPropertiesOptions {
 
     /**
      * @param waitForSync If true then creating or changing a document will wait until the data has been synchronized
-     *                   to disk.
+     *                    to disk.
      * @return options
      */
     public CollectionPropertiesOptions waitForSync(final Boolean waitForSync) {

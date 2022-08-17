@@ -21,7 +21,10 @@
 package com.arangodb.serde;
 
 
-import com.arangodb.*;
+import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import com.arangodb.entity.Key;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -37,50 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CustomTypeHintTest {
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
-    public interface Animal {
-        String getName();
-    }
-
-    public static class Gorilla implements Animal {
-        private String name;
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public static class Zoo {
-
-        @Key
-        private String key;
-
-        private Animal animal;
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public Animal getAnimal() {
-            return animal;
-        }
-
-        public void setAnimal(Animal animal) {
-            this.animal = animal;
-        }
-    }
-
     private static final String COLLECTION_NAME = "collection";
-
     private ArangoDatabase db;
     private ArangoCollection collection;
 
@@ -136,5 +96,47 @@ class CustomTypeHintTest {
                 null);
 
         assertThat((readDoc.getAnimal().getName())).isEqualTo("kingKong");
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+    public interface Animal {
+        String getName();
+    }
+
+    public static class Gorilla implements Animal {
+        private String name;
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class Zoo {
+
+        @Key
+        private String key;
+
+        private Animal animal;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public Animal getAnimal() {
+            return animal;
+        }
+
+        public void setAnimal(Animal animal) {
+            this.animal = animal;
+        }
     }
 }

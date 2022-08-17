@@ -23,7 +23,6 @@ package com.arangodb.async.example.graph;
 import com.arangodb.async.ArangoCursorAsync;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
@@ -68,26 +67,30 @@ class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
 
     @Test
     void queryWithFilter() throws InterruptedException, ExecutionException {
-        String queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' RETURN v._key";
+        String queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]" +
+                "._key != 'G' RETURN v._key";
         ArangoCursorAsync<String> cursor = db.query(queryString, null, null, String.class).get();
         Collection<String> result = cursor.asListRemaining();
         assertThat(result).hasSize(5);
         assertThat(result).contains("B", "C", "D", "E", "F");
 
-        queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.edges[0].label != 'right_foo' RETURN v._key";
+        queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.edges[0].label != " +
+                "'right_foo' RETURN v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
         assertThat(result).hasSize(5);
         assertThat(result).contains("B", "C", "D", "E", "F");
 
-        queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' FILTER p.edges[1].label != 'left_blub' return v._key";
+        queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G'" +
+                " FILTER p.edges[1].label != 'left_blub' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
 
         result = cursor.asListRemaining();
         assertThat(result).hasSize(3);
         assertThat(result).contains("B", "C", "D");
 
-        queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' AND    p.edges[1].label != 'left_blub' return v._key";
+        queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G'" +
+                " AND    p.edges[1].label != 'left_blub' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
         assertThat(result).hasSize(3);

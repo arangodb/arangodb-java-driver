@@ -267,7 +267,8 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
-        SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+        SearchAnalyzer foundAnalyzer =
+                db.getSearchAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
         assertThat(foundAnalyzer).isEqualTo(analyzer);
 
@@ -593,7 +594,8 @@ class ArangoSearchTest extends BaseJunit5 {
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
         db.createSearchAnalyzer(analyzer);
-        Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), @aName))",
+        Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), " +
+                        "@aName))",
                 Collections.singletonMap("aName", name), Collection.class).next();
         assertThat(res).containsExactly("fox", "dog", "a", "theater");
         db.deleteSearchAnalyzer(name);

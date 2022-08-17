@@ -281,7 +281,7 @@ public final class AqlQueryOptions {
 
     /**
      * @param intermediateCommitSize Maximum total size of operations after which an intermediate commit is performed
-     *                              automatically.
+     *                               automatically.
      *                               Honored by the RocksDB storage engine only.
      * @return options
      * @since ArangoDB 3.2.0

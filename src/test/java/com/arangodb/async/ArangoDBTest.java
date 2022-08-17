@@ -434,7 +434,7 @@ class ArangoDBTest {
     }
 
     @Test
-    void execute() throws  InterruptedException, ExecutionException {
+    void execute() throws InterruptedException, ExecutionException {
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
@@ -445,7 +445,7 @@ class ArangoDBTest {
     }
 
     @Test
-    void execute_acquireHostList_enabled() throws  InterruptedException, ExecutionException {
+    void execute_acquireHostList_enabled() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).build();
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))

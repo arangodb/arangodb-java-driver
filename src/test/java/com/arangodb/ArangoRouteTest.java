@@ -58,7 +58,8 @@ class ArangoRouteTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         String rev = db.collection(COLLECTION_NAME).insertDocument(doc).getRev();
         Throwable thrown = catchThrowable(() ->
-                db.route("/_api/document", COLLECTION_NAME, doc.getKey()).withHeader(ArangoRequestParam.IF_NONE_MATCH, rev).get());
+                db.route("/_api/document", COLLECTION_NAME, doc.getKey()).withHeader(ArangoRequestParam.IF_NONE_MATCH
+                        , rev).get());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(304);
@@ -70,7 +71,8 @@ class ArangoRouteTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         String rev = db.collection(COLLECTION_NAME).insertDocument(doc).getRev();
         Throwable thrown = catchThrowable(() ->
-                db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, rev).route(COLLECTION_NAME, doc.getKey()).get());
+                db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, rev).route(COLLECTION_NAME,
+                        doc.getKey()).get());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(304);

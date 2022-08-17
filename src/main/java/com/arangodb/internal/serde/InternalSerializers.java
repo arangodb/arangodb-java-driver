@@ -38,29 +38,30 @@ public final class InternalSerializers {
     };
     static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST =
             new JsonSerializer<AuthenticationRequest>() {
-        @Override
-        public void serialize(AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeStartArray();
-            gen.writeNumber(value.getVersion());
-            gen.writeNumber(value.getType());
-            gen.writeString(value.getEncryption());
-            gen.writeString(value.getUser());
-            gen.writeString(value.getPassword());
-            gen.writeEndArray();
-        }
-    };
+                @Override
+                public void serialize(AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                    gen.writeStartArray();
+                    gen.writeNumber(value.getVersion());
+                    gen.writeNumber(value.getType());
+                    gen.writeString(value.getEncryption());
+                    gen.writeString(value.getUser());
+                    gen.writeString(value.getPassword());
+                    gen.writeEndArray();
+                }
+            };
     static final JsonSerializer<JwtAuthenticationRequest> JWT_AUTHENTICATION_REQUEST =
             new JsonSerializer<JwtAuthenticationRequest>() {
-        @Override
-        public void serialize(JwtAuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeStartArray();
-            gen.writeNumber(value.getVersion());
-            gen.writeNumber(value.getType());
-            gen.writeString(value.getEncryption());
-            gen.writeString(value.getToken());
-            gen.writeEndArray();
-        }
-    };
+                @Override
+                public void serialize(JwtAuthenticationRequest value, JsonGenerator gen,
+                                      SerializerProvider serializers) throws IOException {
+                    gen.writeStartArray();
+                    gen.writeNumber(value.getVersion());
+                    gen.writeNumber(value.getType());
+                    gen.writeString(value.getEncryption());
+                    gen.writeString(value.getToken());
+                    gen.writeEndArray();
+                }
+            };
     static final JsonSerializer<Request> REQUEST = new JsonSerializer<Request>() {
         @Override
         public void serialize(Request value, JsonGenerator gen, SerializerProvider serializers) throws IOException {

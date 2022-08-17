@@ -110,7 +110,8 @@ class StreamTransactionTest extends BaseTest {
     }
 
     @Test
-    void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException,
+            InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -171,7 +172,8 @@ class StreamTransactionTest extends BaseTest {
     }
 
     @Test
-    void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException,
+            InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -224,7 +226,8 @@ class StreamTransactionTest extends BaseTest {
     }
 
     @Test
-    void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException,
+            InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));

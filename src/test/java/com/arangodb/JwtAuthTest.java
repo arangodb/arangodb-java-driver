@@ -29,6 +29,20 @@ class JwtAuthTest {
         arangoDB.shutdown();
     }
 
+    private static String getJwt(ArangoDB arangoDB) {
+        ArangoSerde serde = arangoDB.getSerde();
+        Map<String, String> reqBody = new HashMap<>();
+        reqBody.put("username", "root");
+        reqBody.put("password", "test");
+
+        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
+        req.setBody(serde.serialize(reqBody));
+
+        Response resp = arangoDB.execute(req);
+        Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
+        return respBody.get("jwt");
+    }
+
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
@@ -75,23 +89,9 @@ class JwtAuthTest {
     private ArangoDB.Builder getBuilder(Protocol protocol) {
         return new ArangoDB.Builder()
                 .useProtocol(protocol)
-                
+
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file
-    }
-
-    private static String getJwt(ArangoDB arangoDB) {
-        ArangoSerde serde = arangoDB.getSerde();
-        Map<String, String> reqBody = new HashMap<>();
-        reqBody.put("username", "root");
-        reqBody.put("password", "test");
-
-        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
-        req.setBody(serde.serialize(reqBody));
-
-        Response resp = arangoDB.execute(req);
-        Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
-        return respBody.get("jwt");
     }
 }

@@ -94,7 +94,8 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     void insertVertexViolatingUniqueConstraint(ArangoVertexCollection vertices) {
         ArangoCollection collection = vertices.graph().db().collection(vertices.name());
         collection
-                .ensureSkiplistIndex(Collections.singletonList("field"), new SkiplistIndexOptions().unique(true).sparse(true));
+                .ensureSkiplistIndex(Collections.singletonList("field"),
+                        new SkiplistIndexOptions().unique(true).sparse(true));
 
         VertexEntity inserted = vertices.insertVertex(RawJson.of("{\"field\": 99}"));
 

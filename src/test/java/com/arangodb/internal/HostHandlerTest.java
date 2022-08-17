@@ -59,9 +59,6 @@ class HostHandlerTest {
     };
 
     private static final Host HOST_0 = new HostImpl(mockCP, new HostDescription("127.0.0.1", 8529));
-    private static final Host HOST_1 = new HostImpl(mockCP, new HostDescription("127.0.0.2", 8529));
-    private static final Host HOST_2 = new HostImpl(mockCP, new HostDescription("127.0.0.3", 8529));
-
     private static final HostResolver SINGLE_HOST = new HostResolver() {
 
         @Override
@@ -78,7 +75,8 @@ class HostHandlerTest {
         }
 
     };
-
+    private static final Host HOST_1 = new HostImpl(mockCP, new HostDescription("127.0.0.2", 8529));
+    private static final Host HOST_2 = new HostImpl(mockCP, new HostDescription("127.0.0.3", 8529));
     private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
 
         @Override

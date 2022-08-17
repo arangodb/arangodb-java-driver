@@ -572,7 +572,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * would be the default.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
-         * {@link LoadBalancingStrategy#NONE}
+         *                              {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDB.Builder}
          */
         public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {

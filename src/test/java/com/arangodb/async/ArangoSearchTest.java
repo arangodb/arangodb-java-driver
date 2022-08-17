@@ -31,7 +31,10 @@ import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -215,7 +218,8 @@ class ArangoSearchTest extends BaseTest {
         view.create(new ArangoSearchCreateOptions()).get();
         final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
         options.link(
-                CollectionLink.on("view_replace_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")));
+                CollectionLink.on("view_replace_prop_test_collection").fields(FieldLink.on("value").analyzers(
+                        "identity")));
         final ArangoSearchPropertiesEntity properties = view.replaceProperties(options).get();
         assertThat(properties).isNotNull();
         assertThat(properties.getLinks()).hasSize(1);
@@ -225,7 +229,8 @@ class ArangoSearchTest extends BaseTest {
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
-    private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException, InterruptedException {
+    private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException,
+            InterruptedException {
 
         String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
@@ -239,7 +244,8 @@ class ArangoSearchTest extends BaseTest {
         assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
-        SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+        SearchAnalyzer foundAnalyzer =
+                db.getSearchAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
         assertThat(foundAnalyzer).isEqualTo(analyzer);
 

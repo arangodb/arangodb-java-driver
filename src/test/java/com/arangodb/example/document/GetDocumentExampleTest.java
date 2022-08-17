@@ -21,7 +21,6 @@
 package com.arangodb.example.document;
 
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -85,7 +84,7 @@ class GetDocumentExampleTest extends ExampleBase {
         final RawJson doc = collection.getDocument(key, RawJson.class);
         assertThat(doc.getValue()).isNotNull()
                 .contains("foo")
-        .contains("bar");
+                .contains("bar");
     }
 
     @Test

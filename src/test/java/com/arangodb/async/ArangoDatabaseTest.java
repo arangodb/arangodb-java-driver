@@ -911,7 +911,8 @@ class ArangoDatabaseTest extends BaseTest {
             db.createCollection("someCollection", null).get();
             db.createCollection("someOtherCollection", null).get();
             final String action = "function (params) {" + "var db = require('internal').db;"
-                    + "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
+                    + "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()" +
+                    "[0]};"
                     + "}";
             final TransactionOptions options = new TransactionOptions().readCollections("someCollection");
             db.transaction(action, Void.class, options).get();

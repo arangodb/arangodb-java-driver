@@ -103,7 +103,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
-     * @param values Raw data representing a collection of documents
+     * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
@@ -157,7 +157,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     /**
      * Imports documents
      *
-     * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
+     * @param values A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the import
      */
     CompletableFuture<DocumentImportEntity> importDocuments(final Collection<?> values);
@@ -184,7 +184,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     /**
      * Imports documents
      *
-     * @param values Raw data representing a collection of documents
+     * @param values  Raw data representing a collection of documents
      * @param options Additional options, can be null
      * @return information about the import
      */
@@ -300,7 +300,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
-     * @param values Raw data representing a collection of documents
+     * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
      * @see
@@ -424,7 +424,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
      * overwritten in the existing documents if they do exist there.
      *
-     * @param values Raw data representing a collection of documents
+     * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
      * @see
@@ -540,7 +540,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     /**
      * Removes multiple document
      *
-     * @param values Raw data representing the keys of the documents or the documents themselves
+     * @param values  Raw data representing the keys of the documents or the documents themselves
      * @param options Additional options
      * @return information about the documents
      * @see <a href=

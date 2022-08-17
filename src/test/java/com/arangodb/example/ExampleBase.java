@@ -20,7 +20,10 @@
 
 package com.arangodb.example;
 
-import com.arangodb.*;
+import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -29,12 +32,11 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public class ExampleBase {
 
-    private static final String DB_NAME = "json_example_db";
     protected static final String COLLECTION_NAME = "json_example_collection";
-
-    private static ArangoDB arangoDB;
+    private static final String DB_NAME = "json_example_db";
     protected static ArangoDatabase db;
     protected static ArangoCollection collection;
+    private static ArangoDB arangoDB;
 
     @BeforeAll
     static void setUp() {

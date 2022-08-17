@@ -355,7 +355,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    private Request createDeleteDocumentRequest(final DocumentDeleteOptions options, String path){
+    private Request createDeleteDocumentRequest(final DocumentDeleteOptions options, String path) {
         final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
         final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT, path);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());

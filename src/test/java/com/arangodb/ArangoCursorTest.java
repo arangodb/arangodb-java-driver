@@ -26,7 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,8 @@ class ArangoCursorTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void next(ArangoDatabase db) {
-        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), JsonNode.class);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5),
+                JsonNode.class);
         while (cursor.hasNext()) {
             cursor.next();
         }

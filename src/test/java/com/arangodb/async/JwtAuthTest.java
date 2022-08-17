@@ -11,11 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -30,6 +28,20 @@ class JwtAuthTest {
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
+    }
+
+    private static String getJwt(ArangoDB arangoDB) {
+        ArangoSerde serde = arangoDB.getSerde();
+        Map<String, String> reqBody = new HashMap<>();
+        reqBody.put("username", "root");
+        reqBody.put("password", "test");
+
+        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
+        req.setBody(serde.serialize(reqBody));
+
+        Response resp = arangoDB.execute(req);
+        Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
+        return respBody.get("jwt");
     }
 
     @AfterEach
@@ -82,23 +94,9 @@ class JwtAuthTest {
 
     private ArangoDBAsync.Builder getBuilder() {
         return new ArangoDBAsync.Builder()
-                
+
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file
-    }
-
-    private static String getJwt(ArangoDB arangoDB) {
-        ArangoSerde serde = arangoDB.getSerde();
-        Map<String, String> reqBody = new HashMap<>();
-        reqBody.put("username", "root");
-        reqBody.put("password", "test");
-
-        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
-        req.setBody(serde.serialize(reqBody));
-
-        Response resp = arangoDB.execute(req);
-        Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
-        return respBody.get("jwt");
     }
 }

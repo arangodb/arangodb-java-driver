@@ -94,7 +94,7 @@ public final class DocumentUpdateOptions {
 
     /**
      * @param ignoreRevs By default, or if this is set to true, the _rev attributes in the given document is ignored.
-     *                  If this
+     *                   If this
      *                   is set to false, then the _rev attribute given in the body document is taken as a
      *                   precondition. The
      *                   document is only updated if the current revision is the one specified.

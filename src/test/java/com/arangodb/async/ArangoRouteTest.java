@@ -25,10 +25,8 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;

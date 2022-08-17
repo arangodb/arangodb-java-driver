@@ -20,8 +20,8 @@
 
 package com.arangodb.async;
 
-import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.DbName;
+import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.jupiter.api.AfterAll;
@@ -65,9 +65,11 @@ public abstract class BaseTest {
         return UUID.randomUUID().toString();
     }
 
-    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor, final int patch)
+    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor,
+                                              final int patch)
             throws InterruptedException, ExecutionException {
-        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, patch);
+        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor,
+                patch);
     }
 
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
@@ -75,11 +77,13 @@ public abstract class BaseTest {
         return isAtLeastVersion(arangoDB, major, minor, 0);
     }
 
-    protected boolean isAtLeastVersion(final int major, final int minor, final int patch) throws InterruptedException, ExecutionException {
+    protected boolean isAtLeastVersion(final int major, final int minor, final int patch) throws InterruptedException
+            , ExecutionException {
         return isAtLeastVersion(arangoDB, major, minor, patch);
     }
 
-    protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
+    protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException,
+            ExecutionException {
         return isAtLeastVersion(major, minor, 0);
     }
 

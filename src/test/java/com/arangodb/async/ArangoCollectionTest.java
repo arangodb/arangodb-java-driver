@@ -53,78 +53,6 @@ class ArangoCollectionTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_collection_test";
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
-    public interface Animal {
-        String getKey();
-
-        String getName();
-    }
-
-    public static class Dog implements Animal {
-
-        @Key
-        private String key;
-        private String name;
-
-        public Dog() {
-        }
-
-        public Dog(String key, String name) {
-            this.key = key;
-            this.name = name;
-        }
-
-        @Override
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public static class Cat implements Animal {
-        @Key
-        private String key;
-        private String name;
-
-        public Cat() {
-        }
-
-        public Cat(String key, String name) {
-            this.key = key;
-            this.name = name;
-        }
-
-        @Override
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
     ArangoCollectionTest() throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         if (!collection.exists().get()) {
@@ -180,11 +108,11 @@ class ArangoCollectionTest extends BaseTest {
                 .get();
     }
 
-
     @Test
-    void insertDocumentWithTypeOverwriteModeReplace()  throws InterruptedException, ExecutionException {
+    void insertDocumentWithTypeOverwriteModeReplace() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 7));
-        assumeTrue(db.getSerde().getUserSerde() instanceof JacksonSerde, "polymorphic deserialization support required");
+        assumeTrue(db.getSerde().getUserSerde() instanceof JacksonSerde, "polymorphic deserialization support " +
+         "required");
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         String key = UUID.randomUUID().toString();
         Dog dog = new Dog(key, "Teddy");
@@ -213,7 +141,6 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(doc.getNew().getKey()).isEqualTo(key);
         assertThat(doc.getNew().getName()).isEqualTo("Luna");
     }
-
 
     @Test
     void insertDocumentWaitForSync() throws InterruptedException, ExecutionException {
@@ -326,7 +253,8 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void getDocumentWrongKey() {
-        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class));
+        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).getDocument("no/no",
+         BaseDocument.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
@@ -342,7 +270,8 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(documents).isNotNull();
         assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
-            assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3");
+            assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2",
+             COLLECTION_NAME + "/" + "3");
         }
     }
 
@@ -407,7 +336,8 @@ class ArangoCollectionTest extends BaseTest {
         collection.insertDocument(doc).get();
 
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
-                .updateDocument(key, Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
+                .updateDocument(key, Collections.singletonMap("b", "test"),
+                 new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
         assertThat(updateResult).isNotNull();
         assertThat(updateResult.getKey()).isEqualTo(key);
         BaseDocument updated = updateResult.getNew();
@@ -1584,7 +1514,8 @@ class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        db.collection(COLLECTION_NAME).importDocuments(values,
+new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1603,7 +1534,8 @@ class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        db.collection(COLLECTION_NAME).importDocuments(values,
+                    new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1622,7 +1554,8 @@ class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        db.collection(COLLECTION_NAME).importDocuments(values,
+new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1641,7 +1574,8 @@ class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        db.collection(COLLECTION_NAME).importDocuments(values,
+         new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1778,7 +1712,8 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values),
+         new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1794,7 +1729,8 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateIgnore() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values),
+         new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1810,7 +1746,8 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateReplace() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values),
+         new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1826,7 +1763,8 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void importDocumentsJsonDuplicateUpdate() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        db.collection(COLLECTION_NAME).importDocuments(RawData.of(values),
+         new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs).isNotNull();
                     assertThat(docs.getCreated()).isEqualTo(2);
@@ -1843,7 +1781,8 @@ class ArangoCollectionTest extends BaseTest {
     void importDocumentsJsonCompleteFail() throws InterruptedException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
         try {
-            db.collection(COLLECTION_NAME).importDocuments(RawData.of(values), new DocumentImportOptions().complete(true)).get();
+            db.collection(COLLECTION_NAME).importDocuments(RawData.of(values),
+ new DocumentImportOptions().complete(true)).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
@@ -1896,10 +1835,12 @@ class ArangoCollectionTest extends BaseTest {
         final ArangoCollectionAsync collection = db.collection(COLLECTION_NAME + "_edge");
         try {
             final String[] keys = {"1", "2"};
-            final String values = "[{\"_key\":\"1\",\"_from\":\"from\",\"_to\":\"to\"},{\"_key\":\"2\",\"_from\":\"from\",\"_to\":\"to\"}]";
+            final String values = "[{\"_key\":\"1\",\"_from\":\"from\",\"_to\":\"to\"},{\"_key\":\"2\"," +
+ "\"_from\":\"from\",\"_to\":\"to\"}]";
 
             final DocumentImportEntity importResult = collection
-                    .importDocuments(RawData.of(values), new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
+                    .importDocuments(RawData.of(values),
+                    new DocumentImportOptions().fromPrefix("foo").toPrefix("bar")).get();
             assertThat(importResult).isNotNull();
             assertThat(importResult.getCreated()).isEqualTo(2);
             for (String key : keys) {
@@ -2084,7 +2025,6 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-
     @Test
     void updateDocuments() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2115,7 +2055,8 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void updateDocumentsWithDifferentReturnType() throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
-        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).collect(Collectors.toList());
+        List<String> keys =
+    IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).collect(Collectors.toList());
         List<BaseDocument> docs = keys.stream()
                 .map(BaseDocument::new)
                 .peek(it -> it.addAttribute("a", "test"))
@@ -2202,7 +2143,8 @@ class ArangoCollectionTest extends BaseTest {
         final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values).get();
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+         "\"foo\":\"bar\"}]");
         final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues).get();
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
@@ -2214,7 +2156,8 @@ class ArangoCollectionTest extends BaseTest {
         final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values).get();
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+"\"foo\":\"bar\"}]");
         MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
                 collection.updateDocuments(updatedValues, new DocumentUpdateOptions().returnNew(true)).get();
         assertThat(updateResult.getDocuments()).hasSize(2);
@@ -2312,7 +2255,8 @@ class ArangoCollectionTest extends BaseTest {
         final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values).get();
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+"\"foo\":\"bar\"}]");
         final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues).get();
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
@@ -2325,7 +2269,8 @@ class ArangoCollectionTest extends BaseTest {
         final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values).get();
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+                "\"foo\":\"bar\"}]");
         MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
                 collection.replaceDocuments(updatedValues, new DocumentReplaceOptions().returnNew(true)).get();
         assertThat(updateResult.getDocuments()).hasSize(2);
@@ -2341,7 +2286,6 @@ class ArangoCollectionTest extends BaseTest {
             assertThat(jn.get("foo").textValue()).isEqualTo("bar");
         }
     }
-
 
     @Test
     void getInfo() throws InterruptedException, ExecutionException {
@@ -2452,7 +2396,8 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void grantAccessUserNotFound() {
-        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW).get());
+        Throwable thrown =
+         catchThrowable(() -> db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW).get());
         assertThat(thrown).isInstanceOf(ExecutionException.class);
     }
 
@@ -2468,7 +2413,8 @@ class ArangoCollectionTest extends BaseTest {
 
     @Test
     void revokeAccessUserNotFound() {
-        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE).get());
+        Throwable thrown =
+         catchThrowable(() -> db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE).get());
         assertThat(thrown).isInstanceOf(ExecutionException.class);
     }
 
@@ -2491,5 +2437,77 @@ class ArangoCollectionTest extends BaseTest {
     @Test
     void getPermissions() throws InterruptedException, ExecutionException {
         assertThat(db.collection(COLLECTION_NAME).getPermissions("root").get()).isEqualTo(Permissions.RW);
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+    public interface Animal {
+        String getKey();
+
+        String getName();
+    }
+
+    public static class Dog implements Animal {
+
+        @Key
+        private String key;
+        private String name;
+
+        public Dog() {
+        }
+
+        public Dog(String key, String name) {
+            this.key = key;
+            this.name = name;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class Cat implements Animal {
+        @Key
+        private String key;
+        private String name;
+
+        public Cat() {
+        }
+
+        public Cat(String key, String name) {
+            this.key = key;
+            this.name = name;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

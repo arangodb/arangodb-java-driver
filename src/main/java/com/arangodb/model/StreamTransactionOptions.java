@@ -66,7 +66,7 @@ public final class StreamTransactionOptions {
 
     /**
      * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk
-     *                   before
+     *                    before
      *                    returning
      * @return options
      */

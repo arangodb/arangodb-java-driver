@@ -23,7 +23,6 @@ package com.arangodb.async.example.graph;
 import com.arangodb.async.ArangoCursorAsync;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,13 +41,15 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
 
     @Test
     void queryShortestPathFromAToD() throws InterruptedException, ExecutionException {
-        String queryString = "FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' GRAPH 'traversalGraph' RETURN {'vertex': v._key, 'edge': e._key}";
+        String queryString = "FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' GRAPH 'traversalGraph' " +
+                "RETURN {'vertex': v._key, 'edge': e._key}";
         ArangoCursorAsync<Pair> cursor = db.query(queryString, null, null, Pair.class).get();
         final Collection<String> collection = toVertexCollection(cursor);
         assertThat(collection).hasSize(4);
         assertThat(collection).contains("A", "B", "C", "D");
 
-        queryString = "WITH circles FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN {'vertex': v._key, 'edge': e._key}";
+        queryString = "WITH circles FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN " +
+                "{'vertex': v._key, 'edge': e._key}";
         db.query(queryString, null, null, Pair.class).get();
         assertThat(collection).hasSize(4);
         assertThat(collection).contains("A", "B", "C", "D");
@@ -56,13 +57,15 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
 
     @Test
     void queryShortestPathByFilter() throws InterruptedException, ExecutionException {
-        String queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN OUTBOUND SHORTEST_PATH a TO d GRAPH 'traversalGraph' RETURN {'vertex':v._key, 'edge':e._key}";
+        String queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN" +
+                " OUTBOUND SHORTEST_PATH a TO d GRAPH 'traversalGraph' RETURN {'vertex':v._key, 'edge':e._key}";
         ArangoCursorAsync<Pair> cursor = db.query(queryString, null, null, Pair.class).get();
         final Collection<String> collection = toVertexCollection(cursor);
         assertThat(collection).hasSize(4);
         assertThat(collection).contains("A", "B", "C", "D");
 
-        queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN OUTBOUND SHORTEST_PATH a TO d edges RETURN {'vertex': v._key, 'edge': e._key}";
+        queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN " +
+                "OUTBOUND SHORTEST_PATH a TO d edges RETURN {'vertex': v._key, 'edge': e._key}";
         db.query(queryString, null, null, Pair.class).get();
         assertThat(collection).hasSize(4);
         assertThat(collection).contains("A", "B", "C", "D");
@@ -77,7 +80,7 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
         return result;
     }
 
-        public static class Pair {
+    public static class Pair {
 
         private String vertex;
         private String edge;

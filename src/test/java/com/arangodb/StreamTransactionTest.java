@@ -395,7 +395,8 @@ class StreamTransactionTest extends BaseJunit5 {
 
         // assert that the document has been replaced from within the tx
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class,
-                new DocumentReadOptions().streamTransactionId(tx.getId())).getProperties()).containsEntry("test", "bar");
+                new DocumentReadOptions().streamTransactionId(tx.getId())).getProperties()).containsEntry("test",
+                "bar");
 
         db.commitStreamTransaction(tx.getId());
 

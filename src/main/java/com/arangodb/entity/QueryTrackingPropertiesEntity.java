@@ -45,7 +45,7 @@ public final class QueryTrackingPropertiesEntity {
 
     /**
      * @param enabled If set to true, then queries will be tracked. If set to false, neither queries nor slow queries
-     *               will
+     *                will
      *                be tracked
      */
     public void setEnabled(final Boolean enabled) {
@@ -63,7 +63,7 @@ public final class QueryTrackingPropertiesEntity {
 
     /**
      * @param trackSlowQueries If set to true, then slow queries will be tracked in the list of slow queries if their
-     *                        runtime exceeds
+     *                         runtime exceeds
      *                         the value set in slowQueryThreshold. In order for slow queries to be tracked, the
      *                         enabled property
      *                         must also be set to true.

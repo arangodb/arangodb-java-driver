@@ -22,12 +22,10 @@ package com.arangodb.async.example.document;
 
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;

@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UnicodeUtilsTest {
 
+    private static final String encodeFn = "(function encode(x){return encodeURIComponent(x);})";
+    private static final String normalizeFn = "(function normalize(x){return x.normalize('NFC');})";
     private static Context context;
     private static Value jsEncoder;
     private static Value jsNormalizer;
-    private static final String encodeFn = "(function encode(x){return encodeURIComponent(x);})";
-    private static final String normalizeFn = "(function normalize(x){return x.normalize('NFC');})";
 
     @BeforeAll
     static void beforeClass() {

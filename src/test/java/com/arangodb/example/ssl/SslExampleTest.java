@@ -56,7 +56,7 @@ class SslExampleTest {
     @Test
     void connect() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                
+
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
@@ -71,7 +71,7 @@ class SslExampleTest {
     @Test
     void noopHostnameVerifier() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                
+
                 .host("127.0.0.1", 8529)
                 .password("test")
                 .useSsl(true)

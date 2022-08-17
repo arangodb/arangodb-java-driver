@@ -38,7 +38,7 @@ class ArangoAnnotationsTest {
     @ParameterizedTest
     @EnumSource(DataType.class)
     void documentFieldAnnotations(DataType dataType) {
-         ArangoSerde mapper = JacksonSerde.of(dataType);
+        ArangoSerde mapper = JacksonSerde.of(dataType);
 
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");

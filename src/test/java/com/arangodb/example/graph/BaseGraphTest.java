@@ -38,11 +38,11 @@ import java.util.Collection;
 abstract class BaseGraphTest {
 
     private static final DbName TEST_DB = DbName.of("java_driver_graph_test_db");
-    private static ArangoDB arangoDB;
-    static ArangoDatabase db;
     private static final String GRAPH_NAME = "traversalGraph";
     private static final String EDGE_COLLECTION_NAME = "edges";
     private static final String VERTEX_COLLECTION_NAME = "circles";
+    static ArangoDatabase db;
+    private static ArangoDB arangoDB;
 
     @BeforeAll
     static void init() {

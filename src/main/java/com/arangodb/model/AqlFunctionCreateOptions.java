@@ -63,7 +63,7 @@ public final class AqlFunctionCreateOptions {
 
     /**
      * @param isDeterministic an optional boolean value to indicate that the function results are fully deterministic
-     *                       (function
+     *                        (function
      *                        return value solely depends on the input value and return value is the same for
      *                        repeated calls with
      *                        same input)

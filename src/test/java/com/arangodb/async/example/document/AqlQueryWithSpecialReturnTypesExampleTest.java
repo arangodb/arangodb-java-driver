@@ -63,7 +63,8 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, ObjectNode.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(node -> {
-                    assertThat(node.get("name").asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(node.get("name").asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17"
+                            , "TestUser19");
                     assertThat(node.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
                     assertThat(node.get("age").asInt()).isIn(21, 23, 25, 27, 29);
                 }))
@@ -77,7 +78,8 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
         db.query(query, bindVars, null, ArrayNode.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(arrNode -> {
-                    assertThat(arrNode.get(0).asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(arrNode.get(0).asText()).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17",
+                            "TestUser19");
                     assertThat(arrNode.get(1).asText()).isEqualTo(Gender.FEMALE.name());
                     assertThat(arrNode.get(2).asInt()).isIn(21, 23, 25, 27, 29);
                 }))
@@ -92,7 +94,8 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         db.query(query, bindVars, null, Map.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(map -> {
                     assertThat(map.get("name")).isNotNull();
-                    assertThat(String.valueOf(map.get("name"))).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(String.valueOf(map.get("name"))).isIn("TestUser11", "TestUser13", "TestUser15",
+                            "TestUser17", "TestUser19");
                     assertThat(map.get("gender")).isNotNull();
                     assertThat(String.valueOf(map.get("gender"))).isEqualTo(Gender.FEMALE.name());
                     assertThat(map.get("age")).isNotNull();
@@ -109,7 +112,8 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         db.query(query, bindVars, null, List.class)
                 .whenComplete((cursor, ex) -> cursor.forEachRemaining(list -> {
                     assertThat(list.get(0)).isNotNull();
-                    assertThat(String.valueOf(list.get(0))).isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
+                    assertThat(String.valueOf(list.get(0))).isIn("TestUser11", "TestUser13", "TestUser15",
+                            "TestUser17", "TestUser19");
                     assertThat(list.get(1)).isNotNull();
                     assertThat(Gender.valueOf(String.valueOf(list.get(1)))).isEqualTo(Gender.FEMALE);
                     assertThat(list.get(2)).isNotNull();
