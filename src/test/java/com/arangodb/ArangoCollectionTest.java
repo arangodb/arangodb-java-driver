@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.serde.JacksonSerde;
@@ -31,6 +32,7 @@ import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -1907,6 +1909,42 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void insertDocumentsRawData(ArangoCollection collection) {
+        final RawData values = RawData.of("[{},{},{}]");
+        final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsRawDataReturnNew(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
+        final MultiDocumentEntity<DocumentCreateEntity<RawData>> docs =
+                collection.insertDocuments(values, new DocumentCreateOptions().returnNew(true));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
+
+        for (final DocumentCreateEntity<RawData> doc : docs.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("aaa")).isTrue();
+            assertThat(jn.get("aaa").intValue()).isEqualTo(33);
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void insertDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
@@ -2375,6 +2413,25 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void deleteDocumentsRawDataByKeyReturnOld(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
+        collection.insertDocuments(values);
+        final RawData keys = RawData.of("[\"1\",\"2\"]");
+        MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteResult = collection.deleteDocuments(keys,
+                new DocumentDeleteOptions().returnOld(true));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(2);
+        for (final DocumentDeleteEntity<RawData> i : deleteResult.getDocuments()) {
+            assertThat(i.getKey()).isIn("1", "2");
+            assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).getValue());
+            assertThat(jn.get("_key").asText()).isEqualTo(i.getKey());
+        }
+        assertThat(deleteResult.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void deleteDocumentsByDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
@@ -2581,6 +2638,41 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void updateDocumentsRawData(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values);
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsRawDataReturnNew(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values);
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
+                collection.updateDocuments(updatedValues, new DocumentUpdateOptions().returnNew(true));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+        for (DocumentUpdateEntity<RawData> doc : updateResult.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("foo")).isTrue();
+            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void replaceDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
@@ -2659,6 +2751,41 @@ class ArangoCollectionTest extends BaseJunit5 {
         final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsRawData(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values);
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues);
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsRawDataReturnNew(ArangoCollection collection) {
+        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        collection.insertDocuments(values);
+
+        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", \"foo\":\"bar\"}]");
+        MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
+                collection.replaceDocuments(updatedValues, new DocumentReplaceOptions().returnNew(true));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
+        for (DocumentUpdateEntity<RawData> doc : updateResult.getDocuments()) {
+            RawData d = doc.getNew();
+            assertThat(d)
+                    .isNotNull()
+                    .isInstanceOf(RawJson.class);
+
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            assertThat(jn.has("foo")).isTrue();
+            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+        }
     }
 
     @ParameterizedTest(name = "{index}")

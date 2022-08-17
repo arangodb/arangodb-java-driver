@@ -67,13 +67,18 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor
+                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                        insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public MultiDocumentEntity<DocumentCreateEntity<RawData>> insertDocuments(RawData values,
                                                                               DocumentCreateOptions options) {
-        return null; // TODO: implement
+        return executor
+                .execute(insertDocumentsRequest(values, options),
+                        insertDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -140,7 +145,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
             if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
                     || e.getResponseCode() == 412))) {
-                return null; // TODO: implement
+                return null;
             }
             throw e;
         }
@@ -179,12 +184,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+                replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(RawData values, DocumentReplaceOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(RawData values,
+                                                                               DocumentReplaceOptions options) {
+        return executor.execute(replaceDocumentsRequest(values, options),
+                replaceDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -228,12 +237,18 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor
+                .execute(updateDocumentsRequest(values, new DocumentUpdateOptions()),
+                        updateDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(RawData values, DocumentUpdateOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(RawData values,
+                                                                              DocumentUpdateOptions options) {
+        return executor
+                .execute(updateDocumentsRequest(values, options),
+                        updateDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
@@ -274,12 +289,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(RawData values) {
-        return null; // TODO: implement
+        return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
+                deleteDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(RawData values, DocumentDeleteOptions options) {
-        return null; // TODO: implement
+    @SuppressWarnings("unchecked")
+    public MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(RawData values,
+                                                                              DocumentDeleteOptions options) {
+        return executor.execute(deleteDocumentsRequest(values, options),
+                deleteDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
     @Override
