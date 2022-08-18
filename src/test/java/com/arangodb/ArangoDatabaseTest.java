@@ -143,7 +143,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
         String name = "collection-" + rnd();
         final CollectionEntity result = db
-                .createCollection(name, new CollectionCreateOptions().satellite());
+                .createCollection(name, new CollectionCreateOptions().replicationFactor(ReplicationFactor.ofSatellite()));
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
@@ -1109,7 +1109,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
 
         String name = "graph-" + rnd();
-        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().satellite());
+        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().replicationFactor(ReplicationFactor.ofSatellite()));
         assertThat(result.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
         GraphEntity info = db.graph(name).getInfo();

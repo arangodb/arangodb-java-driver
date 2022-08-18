@@ -139,11 +139,6 @@ public final class GraphCreateOptions {
         return this;
     }
 
-    public GraphCreateOptions satellite() {
-        getOptions().setReplicationFactor(ReplicationFactor.ofSatellite());
-        return this;
-    }
-
     public Integer getWriteConcern() {
         return getOptions().getWriteConcern();
     }

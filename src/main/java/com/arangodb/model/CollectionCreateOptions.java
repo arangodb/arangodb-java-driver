@@ -98,11 +98,6 @@ public final class CollectionCreateOptions {
         return this;
     }
 
-    public CollectionCreateOptions satellite() {
-        this.replicationFactor = ReplicationFactor.ofSatellite();
-        return this;
-    }
-
     public Integer getWriteConcern() {
         return writeConcern;
     }

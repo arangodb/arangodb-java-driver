@@ -161,7 +161,7 @@ class ArangoDBTest extends BaseJunit5 {
                 .name(dbName)
                 .options(new DatabaseOptions()
                         .writeConcern(2)
-                        .satellite()
+                        .replicationFactor(ReplicationFactor.ofSatellite())
                         .sharding("")
                 )
         );

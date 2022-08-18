@@ -186,7 +186,7 @@ class ArangoDBTest {
                 .name(dbName)
                 .options(new DatabaseOptions()
                         .writeConcern(2)
-                        .satellite()
+                        .replicationFactor(ReplicationFactor.ofSatellite())
                         .sharding("")
                 )
         ).get();

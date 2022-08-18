@@ -63,11 +63,6 @@ public final class DatabaseOptions {
         return this;
     }
 
-    public DatabaseOptions satellite() {
-        this.replicationFactor = ReplicationFactor.ofSatellite();
-        return this;
-    }
-
     /**
      * Default write concern for new collections created in this database. It determines how many copies of each shard
      * are required to be in sync on the different DBServers. If there are less then these many copies in the cluster a
