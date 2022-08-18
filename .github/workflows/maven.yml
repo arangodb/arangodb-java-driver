@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+      - v7
+      - v6
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
@@ -129,3 +131,55 @@ jobs:
         run: mvn -version
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
+
+  sonar:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/enterprise:3.9.1
+        topology:
+          - cluster
+        db-ext-names:
+          - false
+        java-version:
+          - 11
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Info
+        run: mvn -version
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B --no-transfer-progress -Dgpg.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+
