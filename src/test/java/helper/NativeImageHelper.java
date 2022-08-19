@@ -12,7 +12,10 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,10 +44,14 @@ public class NativeImageHelper {
         ArrayNode rootNode = mapper.createArrayNode();
 
         String serdePackage = "com.arangodb.serde";
+        String internalSerdePackage = "com.arangodb.internal.serde";
+        Collection<URL> serdeUrls = new HashSet<>();
+        serdeUrls.addAll(ClasspathHelper.forPackage(serdePackage));
+        serdeUrls.addAll(ClasspathHelper.forPackage(internalSerdePackage));
         Reflections r = new Reflections(new ConfigurationBuilder()
                 .setScanners(new SubTypesScanner(false))
-                .setUrls(ClasspathHelper.forPackage(serdePackage))
-                .filterInputsBy(new FilterBuilder().includePackage(serdePackage)));
+                .setUrls(serdeUrls)
+                .filterInputsBy(new FilterBuilder().includePackage(serdePackage).includePackage(internalSerdePackage)));
         Stream<String> serializers = r.getSubTypesOf(JsonSerializer.class).stream()
                 .filter(it -> !it.isAnonymousClass())
                 .map(Class::getName);

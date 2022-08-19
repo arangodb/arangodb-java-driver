@@ -84,15 +84,19 @@
   },
   {
     "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
   },
   {
     "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntitySerializeNullFalse",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
   },
   {
     "name": "com.arangodb.ArangoDatabaseTest$TransactionTestEntity",
@@ -295,5 +299,57 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Animal",
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Cat",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Dog",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Animal",
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$AnnotatedEntity",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Cat",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Dog",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
   }
 ]
