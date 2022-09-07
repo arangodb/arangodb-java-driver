@@ -67,6 +67,7 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
+    @Deprecated
     public static FulltextIndexOptions build(final FulltextIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }

@@ -376,6 +376,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
         return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
+    @Deprecated
     @Override
     public IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options) {
         return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);

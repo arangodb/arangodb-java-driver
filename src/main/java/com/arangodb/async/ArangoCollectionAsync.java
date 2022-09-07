@@ -699,7 +699,9 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
+     * @deprecated since ArangoDB 3.10, use ArangoSearch view instead.
      */
+    @Deprecated
     CompletableFuture<IndexEntity> ensureFulltextIndex(
             final Iterable<String> fields,
             final FulltextIndexOptions options);

@@ -384,6 +384,7 @@ public class ArangoCollectionAsyncImpl
         return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
+    @Deprecated
     @Override
     public CompletableFuture<IndexEntity> ensureFulltextIndex(
             final Iterable<String> fields,

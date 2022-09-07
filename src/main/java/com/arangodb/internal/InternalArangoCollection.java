@@ -464,6 +464,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
+    @Deprecated
     protected Request createFulltextIndexRequest(final Iterable<String> fields, final FulltextIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
