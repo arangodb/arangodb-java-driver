@@ -19,12 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.7.17
-          - docker.io/arangodb/arangodb:3.8.6
-          - docker.io/arangodb/arangodb:3.9.1
-          - docker.io/arangodb/enterprise:3.7.17
-          - docker.io/arangodb/enterprise:3.8.6
-          - docker.io/arangodb/enterprise:3.9.1
+          - docker.io/arangodb/arangodb:3.8.7
+          - docker.io/arangodb/arangodb:3.9.3
+          - docker.io/arangodb/arangodb-preview:3.10-nightly
+          - docker.io/arangodb/enterprise:3.8.7
+          - docker.io/arangodb/enterprise:3.9.3
+          - docker.io/arangodb/enterprise-preview:3.10-nightly
         topology:
           - single
           - cluster
@@ -36,12 +36,12 @@ jobs:
         user-language:
           - en
         include:
-          - docker-img: docker.io/arangodb/arangodb:3.9.1
+          - docker-img: docker.io/arangodb/arangodb:3.9.3
             topology: single
             db-ext-names: true
             java-version: 11
             user-language: tr
-          - docker-img: docker.io/arangodb/enterprise:3.9.1
+          - docker-img: docker.io/arangodb/enterprise:3.9.3
             topology: cluster
             db-ext-names: true
             java-version: 17
@@ -91,7 +91,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.9.1
+          - docker.io/arangodb/enterprise:3.9.3
         topology:
           - single
           - cluster
