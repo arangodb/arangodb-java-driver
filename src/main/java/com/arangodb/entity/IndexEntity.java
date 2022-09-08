@@ -42,8 +42,8 @@ public final class IndexEntity {
     private Integer expireAfter;
     private Boolean inBackground;
     private Boolean estimates;
-
     private Boolean cacheEnabled;
+    private Boolean legacyPolygons;
 
     public IndexEntity() {
         super();
@@ -111,6 +111,10 @@ public final class IndexEntity {
 
     public Boolean getCacheEnabled() {
         return cacheEnabled;
+    }
+
+    public Boolean getLegacyPolygons() {
+        return legacyPolygons;
     }
 
 }
