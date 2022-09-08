@@ -301,6 +301,12 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
     CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity);
 
     /**
+     * @return the list of available rules and their respective flags
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules();
+
+    /**
      * Builder class to build an instance of {@link ArangoDBAsync}.
      *
      * @author Mark Vollmary

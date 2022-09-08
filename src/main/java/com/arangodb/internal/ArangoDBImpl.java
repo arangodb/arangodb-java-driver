@@ -29,6 +29,7 @@ import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.model.DBCreateOptions;
@@ -257,6 +258,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public LogLevelEntity setLogLevel(final LogLevelEntity entity) {
         return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+    }
+
+    @Override
+    public Collection<QueryOptimizerRule> getQueryOptimizerRules() throws ArangoDBException {
+        return executor.execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
     @Override

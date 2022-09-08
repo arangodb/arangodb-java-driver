@@ -331,6 +331,13 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     LogLevelEntity setLogLevel(LogLevelEntity entity);
 
     /**
+     * @return the list of available rules and their respective flags
+     * @throws ArangoDBException
+     * @since ArangoDB 3.10
+     */
+    Collection<QueryOptimizerRule> getQueryOptimizerRules();
+
+    /**
      * <strong>Attention:</strong> Please do not use!
      *
      * @param cursorInitializer

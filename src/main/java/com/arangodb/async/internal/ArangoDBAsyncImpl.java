@@ -39,6 +39,7 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -233,4 +234,11 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     public CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity) {
         return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
     }
+
+    @Override
+    public CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules() {
+        return executor.execute(getQueryOptimizerRulesRequest(), new Type<Collection<QueryOptimizerRule>>() {
+        }.getType());
+    }
+
 }
