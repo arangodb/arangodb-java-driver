@@ -1045,6 +1045,13 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
 
     /**
+     * @return the list of available rules and their respective flags
+     * @throws ArangoDBException
+     * @since ArangoDB 3.10
+     */
+    Collection<QueryOptimizerRule> getQueryOptimizerRules() throws ArangoDBException;
+
+    /**
      * <strong>Attention:</strong> Please do not use!
      *
      * @param cursorInitializer

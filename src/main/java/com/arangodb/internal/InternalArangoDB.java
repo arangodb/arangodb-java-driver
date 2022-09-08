@@ -48,6 +48,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     private static final String PATH_API_SERVER_ID = "/_admin/server/id";
     private static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
     private static final String PATH_API_USER = "/_api/user";
+    private static final String PATH_API_QUERY_RULES = "/_api/query/rules";
 
     protected InternalArangoDB(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
         super(executor, util, context);
@@ -195,6 +196,10 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected Request setLogLevelRequest(final LogLevelEntity entity) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
                 .setBody(util().serialize(entity));
+    }
+
+    protected Request getQueryOptimizerRulesRequest() {
+        return request(DbName.SYSTEM, RequestType.GET, PATH_API_QUERY_RULES);
     }
 
 }

@@ -646,6 +646,25 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
+    void getQueryOptimizerRules(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        final Collection<QueryOptimizerRule> rules = arangoDB.getQueryOptimizerRules();
+        assertThat(rules).isNotEmpty();
+        for (QueryOptimizerRule rule : rules) {
+            assertThat(rule).isNotNull();
+            assertThat(rule.getName()).isNotNull();
+            QueryOptimizerRule.Flags flags = rule.getFlags();
+            assertThat(flags.getHidden()).isNotNull();
+            assertThat(flags.getClusterOnly()).isNotNull();
+            assertThat(flags.getCanBeDisabled()).isNotNull();
+            assertThat(flags.getCanCreateAdditionalPlans()).isNotNull();
+            assertThat(flags.getDisabledByDefault()).isNotNull();
+            assertThat(flags.getEnterpriseOnly()).isNotNull();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
     void arangoDBException(ArangoDB arangoDB) {
         Throwable thrown = catchThrowable(() -> arangoDB.db(DbName.of("no")).getInfo());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
