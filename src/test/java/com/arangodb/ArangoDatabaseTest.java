@@ -347,6 +347,42 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void createCollectionWithComputedFields(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String cName = "collection-" + rnd();
+        ComputedValue cv = new ComputedValue()
+                .name("foo")
+                .expression("RETURN 11")
+                .overwrite(false)
+                .computeOn(ComputedValue.ComputeOn.insert)
+                .keepNull(false)
+                .failOnWarning(true);
+
+        final CollectionEntity result = db.createCollection(cName, new CollectionCreateOptions().computedValues(cv));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getComputedValues())
+                .hasSize(1)
+                .contains(cv);
+
+        ComputedValue cv2 = new ComputedValue()
+                .name("bar")
+                .expression("RETURN 22")
+                .overwrite(true)
+                .computeOn(ComputedValue.ComputeOn.update, ComputedValue.ComputeOn.replace)
+                .keepNull(true)
+                .failOnWarning(false);
+
+        db.collection(cName).changeProperties(new CollectionPropertiesOptions().computedValues(cv2));
+
+        CollectionPropertiesEntity props = db.collection(cName).getProperties();
+        assertThat(props.getComputedValues())
+                .hasSize(1)
+                .contains(cv2);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void deleteCollection(ArangoDatabase db) {
         String name = "collection-" + rnd();
         db.createCollection(name, null);

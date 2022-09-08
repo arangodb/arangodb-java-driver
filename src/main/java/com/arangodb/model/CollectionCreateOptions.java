@@ -20,10 +20,11 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.KeyOptions;
-import com.arangodb.entity.KeyType;
-import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +41,7 @@ public final class CollectionCreateOptions {
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
+    private List<ComputedValue> computedValues = new ArrayList<>();
     private Collection<String> shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;
@@ -282,6 +284,16 @@ public final class CollectionCreateOptions {
      */
     public CollectionCreateOptions schema(final CollectionSchema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * @param computedValues An optional list of computed values.
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public CollectionCreateOptions computedValues(final ComputedValue... computedValues) {
+        Collections.addAll(this.computedValues, computedValues);
         return this;
     }
 

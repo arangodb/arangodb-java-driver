@@ -21,6 +21,9 @@
 package com.arangodb.entity;
 
 import com.arangodb.model.CollectionSchema;
+import com.arangodb.model.ComputedValue;
+
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -35,6 +38,7 @@ public class CollectionEntity {
     private CollectionStatus status;
     private CollectionType type;
     private CollectionSchema schema;
+    private List<ComputedValue> computedValues;
 
     public CollectionEntity() {
         super();
@@ -70,6 +74,14 @@ public class CollectionEntity {
      */
     public CollectionSchema getSchema() {
         return schema;
+    }
+
+    /**
+     * @return A list of computed values.
+     * @since ArangoDB 3.10
+     */
+    public List<ComputedValue> getComputedValues() {
+        return computedValues;
     }
 
 }

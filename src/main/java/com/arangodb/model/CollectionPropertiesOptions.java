@@ -20,6 +20,10 @@
 
 package com.arangodb.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Mark Vollmary
  * @see
@@ -30,6 +34,7 @@ public final class CollectionPropertiesOptions {
 
     private Boolean waitForSync;
     private CollectionSchema schema;
+    private List<ComputedValue> computedValues;
 
     public CollectionPropertiesOptions() {
         super();
@@ -60,6 +65,19 @@ public final class CollectionPropertiesOptions {
      */
     public CollectionPropertiesOptions schema(final CollectionSchema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * @param computedValues An optional list of computed values.
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public CollectionPropertiesOptions computedValues(final ComputedValue... computedValues) {
+        if(this.computedValues == null) {
+            this.computedValues = new ArrayList<>();
+        }
+        Collections.addAll(this.computedValues, computedValues);
         return this;
     }
 
