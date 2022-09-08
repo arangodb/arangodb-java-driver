@@ -629,6 +629,34 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void queryStats(ArangoDatabase db) {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursor<Object> cursor = db.query("for i in " + CNAME1 + " return i", Object.class);
+        assertThat((Object) cursor).isNotNull();
+        for (int i = 0; i < 5; i++, cursor.next()) {
+            assertThat((Iterator<?>) cursor).hasNext();
+        }
+        assertThat(cursor.getStats()).isNotNull();
+        assertThat(cursor.getStats().getWritesExecuted()).isNotNull();
+        assertThat(cursor.getStats().getWritesIgnored()).isNotNull();
+        assertThat(cursor.getStats().getScannedFull()).isNotNull();
+        assertThat(cursor.getStats().getScannedIndex()).isNotNull();
+        assertThat(cursor.getStats().getFiltered()).isNotNull();
+        assertThat(cursor.getStats().getExecutionTime()).isNotNull();
+        assertThat(cursor.getStats().getPeakMemoryUsage()).isNotNull();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(cursor.getStats().getCursorsCreated()).isNotNull();
+            assertThat(cursor.getStats().getCursorsRearmed()).isNotNull();
+            assertThat(cursor.getStats().getCacheHits()).isNotNull();
+            assertThat(cursor.getStats().getCacheMisses()).isNotNull();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void queryWithBatchSize(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
