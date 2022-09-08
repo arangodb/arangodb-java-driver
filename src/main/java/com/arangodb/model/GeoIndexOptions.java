@@ -31,6 +31,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
     private Iterable<String> fields;
     private final IndexType type = IndexType.geo;
     private Boolean geoJson;
+    private Boolean legacyPolygons;
 
     public GeoIndexOptions() {
         super();
@@ -72,4 +73,21 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
         return this;
     }
 
+    public Boolean getLegacyPolygons() {
+        return legacyPolygons;
+    }
+
+    /**
+     * @param legacyPolygons If `true` will use the old rules (pre-3.10) for the parsing GeoJSON polygons. This
+     *                       allows you to let old indexes produce the same, potentially wrong results as before an
+     *                       upgrade. A geo index with `legacyPolygons` set to `false` will use the new, correct and
+     *                       consistent method for parsing of GeoJSON polygons.
+     *                       See <a href="https://www.arangodb.com/docs/stable/indexing-geo.html#legacy-polygons">Legacy Polygons</a>.
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public GeoIndexOptions legacyPolygons(final Boolean legacyPolygons) {
+        this.legacyPolygons = legacyPolygons;
+        return this;
+    }
 }

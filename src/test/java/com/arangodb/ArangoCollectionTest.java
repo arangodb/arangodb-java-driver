@@ -1323,6 +1323,9 @@ class ArangoCollectionTest extends BaseJunit5 {
         } else {
             assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
         }
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isFalse();
+        }
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1350,6 +1353,40 @@ class ArangoCollectionTest extends BaseJunit5 {
             assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
         }
         assertThat(indexResult.getName()).isEqualTo(name);
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isFalse();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeoIndexLegacyPolygons(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String name = "geoIndex-" + rnd();
+        final GeoIndexOptions options = new GeoIndexOptions();
+        options.name(name);
+        options.legacyPolygons(true);
+
+        String f1 = "field-" + rnd();
+        final Collection<String> fields = Collections.singletonList(f1);
+        final IndexEntity indexResult = collection.ensureGeoIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
+        if (isAtLeastVersion(3, 4)) {
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
+        } else {
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
+        }
+        assertThat(indexResult.getName()).isEqualTo(name);
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isTrue();
+        }
     }
 
     @ParameterizedTest(name = "{index}")
