@@ -1469,6 +1469,33 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getDeduplicate()).isTrue();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getCacheEnabled()).isFalse();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createPersistentIndexCacheEnabled(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+        final Collection<String> fields = Arrays.asList(f1, f2);
+
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, new PersistentIndexOptions().cacheEnabled(true));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+        assertThat(indexResult.getCacheEnabled()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")

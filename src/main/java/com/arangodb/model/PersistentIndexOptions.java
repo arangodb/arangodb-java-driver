@@ -35,6 +35,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     private Boolean sparse;
     private Boolean deduplicate;
     private Boolean estimates;
+    private Boolean cacheEnabled;
 
     public PersistentIndexOptions() {
         super();
@@ -116,6 +117,19 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
 
     public Boolean getEstimates() {
         return estimates;
+    }
+
+    /**
+     * @param cacheEnabled enables in-memory caching of index entries
+     * @since ArangoDB 3.10
+     */
+    public PersistentIndexOptions cacheEnabled(final Boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+        return this;
+    }
+
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
     }
 
 }
