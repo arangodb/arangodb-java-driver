@@ -89,6 +89,30 @@ public class ComputedValue {
         return this;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public Boolean getOverwrite() {
+        return overwrite;
+    }
+
+    public Set<ComputeOn> getComputeOn() {
+        return computeOn;
+    }
+
+    public Boolean getKeepNull() {
+        return keepNull;
+    }
+
+    public Boolean getFailOnWarning() {
+        return failOnWarning;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -297,4 +297,7 @@ public final class CollectionCreateOptions {
         return this;
     }
 
+    public List<ComputedValue> getComputedValues() {
+        return computedValues;
+    }
 }

@@ -627,7 +627,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat((Iterator<?>) cursor).hasNext();
         }
         assertThat(cursor.getStats()).isNotNull();
-        assertThat((Integer) cursor.getStats().get("fullCount"))
+        assertThat(((Number) cursor.getStats().get("fullCount")).intValue())
                 .isGreaterThanOrEqualTo(10);
     }
 

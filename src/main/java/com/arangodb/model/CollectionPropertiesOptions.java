@@ -81,4 +81,7 @@ public final class CollectionPropertiesOptions {
         return this;
     }
 
+    public List<ComputedValue> getComputedValues() {
+        return computedValues;
+    }
 }

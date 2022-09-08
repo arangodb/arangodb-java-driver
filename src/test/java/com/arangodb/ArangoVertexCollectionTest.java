@@ -317,6 +317,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
+        doc.addAttribute("foo", "bar");
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, null);
         assertThat(doc.getRevision()).isNull();
