@@ -43,6 +43,8 @@ public final class IndexEntity {
     private Boolean inBackground;
     private Boolean estimates;
 
+    private Boolean cacheEnabled;
+
     public IndexEntity() {
         super();
     }
@@ -105,6 +107,10 @@ public final class IndexEntity {
 
     public Boolean getEstimates() {
         return estimates;
+    }
+
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
     }
 
 }
