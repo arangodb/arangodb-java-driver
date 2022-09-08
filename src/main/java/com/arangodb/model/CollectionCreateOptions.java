@@ -20,11 +20,11 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.KeyOptions;
-import com.arangodb.entity.KeyType;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -40,6 +40,8 @@ public class CollectionCreateOptions {
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
+    private List<ComputedValue> computedValues = new ArrayList<>();
+
     /**
      * @deprecated MMFiles only
      */
@@ -411,6 +413,16 @@ public class CollectionCreateOptions {
     @Deprecated
     public CollectionCreateOptions setSchema(final CollectionSchema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * @param computedValues An optional list of computed values.
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public CollectionCreateOptions computedValues(final ComputedValue... computedValues) {
+        Collections.addAll(this.computedValues, computedValues);
         return this;
     }
 

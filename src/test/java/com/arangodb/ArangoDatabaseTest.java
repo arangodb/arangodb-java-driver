@@ -353,6 +353,42 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void createCollectionWithComputedFields(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String cName = "collection-" + rnd();
+        ComputedValue cv = new ComputedValue()
+                .name("foo")
+                .expression("RETURN 11")
+                .overwrite(false)
+                .computeOn(ComputedValue.ComputeOn.insert)
+                .keepNull(false)
+                .failOnWarning(true);
+
+        final CollectionEntity result = db.createCollection(cName, new CollectionCreateOptions().computedValues(cv));
+
+        assertThat(result).isNotNull();
+        assertThat(result.getComputedValues())
+                .hasSize(1)
+                .contains(cv);
+
+        ComputedValue cv2 = new ComputedValue()
+                .name("bar")
+                .expression("RETURN 22")
+                .overwrite(true)
+                .computeOn(ComputedValue.ComputeOn.update, ComputedValue.ComputeOn.replace)
+                .keepNull(true)
+                .failOnWarning(false);
+
+        db.collection(cName).changeProperties(new CollectionPropertiesOptions().computedValues(cv2));
+
+        CollectionPropertiesEntity props = db.collection(cName).getProperties();
+        assertThat(props.getComputedValues())
+                .hasSize(1)
+                .contains(cv2);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void deleteCollection(ArangoDatabase db) {
         String name = "collection-" + rnd();
         db.createCollection(name, null);
@@ -718,7 +754,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithMemoryLimit(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", null, new AqlQueryOptions().memoryLimit(32 * 1024L), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", null,
+                new AqlQueryOptions().memoryLimit(32 * 1024L), String.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
     }
@@ -726,7 +763,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithFailOnWarningTrue(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(true), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", null,
+                new AqlQueryOptions().failOnWarning(true), String.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
@@ -742,7 +780,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
-        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).next());
+        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", null,
+                new AqlQueryOptions().maxRuntime(0.1), String.class).next());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
     }
@@ -1098,7 +1137,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final String edgeCollection = "edge-" + rnd();
         final String fromCollection = "from-" + rnd();
         final String toCollection = "to-" + rnd();
-        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final Collection<EdgeDefinition> edgeDefinitions =
+                Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db.createGraph(name, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
         assertThat(result).isNotNull();
         for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
@@ -1115,7 +1155,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final String edgeCollection = "edge-" + rnd();
         final String fromCollection = "from-" + rnd();
         final String toCollection = "to-" + rnd();
-        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final Collection<EdgeDefinition> edgeDefinitions =
+                Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db
                 .createGraph(name, edgeDefinitions, new GraphCreateOptions().numberOfShards(2));
         assertThat(result).isNotNull();
@@ -1322,8 +1363,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
             db.collection(ENAMES).insertDocument(edge, null);
         }
 
-        final TraversalOptions options = new TraversalOptions().edgeCollection(ENAMES).startVertex(CNAME1 + "/" + k1).direction(Direction.outbound);
-        final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
+        final TraversalOptions options =
+                new TraversalOptions().edgeCollection(ENAMES).startVertex(CNAME1 + "/" + k1).direction(Direction.outbound);
+        final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
+                BaseEdgeDocument.class, options);
         assertThat(traversal).isNotNull();
 
         final Collection<BaseDocument> vertices = traversal.getVertices();
