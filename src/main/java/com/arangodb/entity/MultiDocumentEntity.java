@@ -30,6 +30,7 @@ public class MultiDocumentEntity<E> implements Entity {
     private Collection<E> documents;
     private Collection<ErrorEntity> errors;
     private Collection<Object> documentsAndErrors;
+    private boolean isPotentialDirtyRead = false;
 
     public MultiDocumentEntity() {
         super();
@@ -68,4 +69,11 @@ public class MultiDocumentEntity<E> implements Entity {
         this.documentsAndErrors = documentsAndErrors;
     }
 
+    public Boolean isPotentialDirtyRead() {
+        return isPotentialDirtyRead;
+    }
+
+    public void setPotentialDirtyRead(final Boolean isPotentialDirtyRead) {
+        this.isPotentialDirtyRead = isPotentialDirtyRead;
+    }
 }
