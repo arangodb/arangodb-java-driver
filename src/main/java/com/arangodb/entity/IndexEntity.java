@@ -43,6 +43,7 @@ public class IndexEntity implements Entity {
     private Boolean inBackground;
     private Boolean estimates;
     private Boolean cacheEnabled;
+    private Collection<String> storedValues;
     private Boolean legacyPolygons;
 
     public IndexEntity() {
@@ -111,6 +112,10 @@ public class IndexEntity implements Entity {
 
     public Boolean getCacheEnabled() {
         return cacheEnabled;
+    }
+
+    public Collection<String> getStoredValues() {
+        return storedValues;
     }
 
     public Boolean getLegacyPolygons() {
