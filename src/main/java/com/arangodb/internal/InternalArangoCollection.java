@@ -229,6 +229,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Class<T> type, final DocumentReadOptions options) {
         return response -> {
             final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<>();
+            boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta().get("X-Arango-Potential-Dirty-Read"));
+            multiDocument.setPotentialDirtyRead(potentialDirtyRead);
             final Collection<T> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
