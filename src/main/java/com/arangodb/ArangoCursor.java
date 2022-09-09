@@ -70,4 +70,10 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
      */
     List<T> asListRemaining();
 
+    /**
+     * @return true if the result is a potential dirty read
+     * @since ArangoDB 3.10
+     */
+    boolean isPotentialDirtyRead();
+
 }

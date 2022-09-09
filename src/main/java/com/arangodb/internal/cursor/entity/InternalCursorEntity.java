@@ -90,6 +90,7 @@ public final class InternalCursorEntity implements MetaAware {
     }
 
     public Map<String, String> getMeta() {
+        if (meta == null) return Collections.emptyMap();
         return meta;
     }
 

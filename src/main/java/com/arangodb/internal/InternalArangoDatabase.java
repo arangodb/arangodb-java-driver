@@ -300,7 +300,12 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected Request beginStreamTransactionRequest(final StreamTransactionOptions options) {
-        return request(dbName, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION).setBody(getSerde().serialize(options != null ? options : new StreamTransactionOptions()));
+        StreamTransactionOptions opts = options != null ? options : new StreamTransactionOptions();
+        Request r = request(dbName, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION).setBody(getSerde().serialize(opts));
+        if(Boolean.TRUE.equals(opts.getAllowDirtyRead())) {
+            RequestUtils.allowDirtyRead(r);
+        }
+        return r;
     }
 
     protected Request abortStreamTransactionRequest(String id) {

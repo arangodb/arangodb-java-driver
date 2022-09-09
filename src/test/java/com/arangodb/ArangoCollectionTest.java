@@ -545,6 +545,9 @@ collection.getDocuments(insertedKeys, BaseDocument.class).getDocuments();
         final MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(Arrays.asList("1", "2", "3"),
          BaseDocument.class, new DocumentReadOptions().allowDirtyRead(true));
         assertThat(documents).isNotNull();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(documents.isPotentialDirtyRead()).isTrue();
+        }
         assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
             assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2",
