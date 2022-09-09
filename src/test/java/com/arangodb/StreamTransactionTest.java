@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -788,4 +789,35 @@ class StreamTransactionTest extends BaseJunit5 {
 
         db.abortStreamTransaction(tx.getId());
     }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void transactionDirtyRead(ArangoDatabase db) throws IOException {
+        assumeTrue(isCluster());
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        ArangoCollection collection = db.collection(COLLECTION_NAME);
+        DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument());
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions()
+                        .readCollections(COLLECTION_NAME)
+                        .allowDirtyRead(true));
+
+        MultiDocumentEntity<BaseDocument> readDocs = collection.getDocuments(Collections.singletonList(doc.getKey()),
+                BaseDocument.class,
+                new DocumentReadOptions().streamTransactionId(tx.getId()));
+
+        assertThat(readDocs.isPotentialDirtyRead()).isTrue();
+        assertThat(readDocs.getDocuments()).hasSize(1);
+
+        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i",
+                Collections.singletonMap("@col", COLLECTION_NAME),
+                new AqlQueryOptions().streamTransactionId(tx.getId()), BaseDocument.class);
+            assertThat(cursor.isPotentialDirtyRead()).isTrue();
+            cursor.close();
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
 }

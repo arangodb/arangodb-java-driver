@@ -20,6 +20,8 @@
 
 package com.arangodb.model;
 
+import com.arangodb.velocypack.annotations.Expose;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -33,6 +35,8 @@ public class StreamTransactionOptions {
     private Boolean waitForSync;
     private Long maxTransactionSize;
     private Boolean allowImplicit;
+    @Expose(serialize = false)
+    private Boolean allowDirtyRead;
 
     public StreamTransactionOptions() {
         super();
@@ -120,6 +124,22 @@ public class StreamTransactionOptions {
      */
     public StreamTransactionOptions maxTransactionSize(final Long maxTransactionSize) {
         this.maxTransactionSize = maxTransactionSize;
+        return this;
+    }
+
+    public Boolean getAllowDirtyRead() {
+        return allowDirtyRead;
+    }
+
+    /**
+     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @return options
+     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
+     * Documentation</a>
+     * @since ArangoDB 3.4.0
+     */
+    public StreamTransactionOptions allowDirtyRead(final Boolean allowDirtyRead) {
+        this.allowDirtyRead = allowDirtyRead;
         return this;
     }
 
