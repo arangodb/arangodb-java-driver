@@ -22,6 +22,10 @@ package com.arangodb.model;
 
 import com.arangodb.entity.IndexType;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
@@ -36,6 +40,7 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
     private Boolean deduplicate;
     private Boolean estimates;
     private Boolean cacheEnabled;
+    private Collection<String> storedValues;
 
     public PersistentIndexOptions() {
         super();
@@ -119,6 +124,7 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
 
     /**
      * @param cacheEnabled enables in-memory caching of index entries
+     * @return options
      * @since ArangoDB 3.10
      */
     public PersistentIndexOptions cacheEnabled(final Boolean cacheEnabled) {
@@ -128,6 +134,25 @@ public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOp
 
     public Boolean getCacheEnabled() {
         return cacheEnabled;
+    }
+
+    public Collection<String> getStoredValues() {
+        return storedValues;
+    }
+
+    /**
+     * @param storedValues (optional) array of paths to additional attributes to store in the index. These additional
+     *                     attributes cannot be used for index lookups or for sorting, but they can be used for
+     *                     projections. This allows an index to fully cover more queries and avoid extra document
+     *                     lookups. The maximum number of attributes in `storedValues` is 32.
+     * @return options
+     */
+    public PersistentIndexOptions storedValues(final String... storedValues) {
+        if (this.storedValues == null) {
+            this.storedValues = new HashSet<>();
+        }
+        Collections.addAll(this.storedValues, storedValues);
+        return this;
     }
 
 }
