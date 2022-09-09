@@ -387,6 +387,28 @@ class ArangoGraphTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void enterpriseGraph(ArangoDatabase db) {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        edgeDefinitions.add(new EdgeDefinition().collection("enterpriseGraph-edge-" + rnd()).from("enterpriseGraph-vertex-" + rnd()).to("enterpriseGraph-vertex-" + rnd()));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions().isSmart(true).numberOfShards(2));
+
+        assertThat(g).isNotNull();
+        assertThat(g.getSmartGraphAttribute()).isNull();
+        assertThat(g.getNumberOfShards()).isEqualTo(2);
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(g.getIsSmart()).isTrue();
+        } else {
+            assertThat(g.getIsSmart()).isFalse();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void drop(ArangoDatabase db) {
         final String edgeCollection = "edge_" + rnd();
         final String vertexCollection = "vertex_" + rnd();
