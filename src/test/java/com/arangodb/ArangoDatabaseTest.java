@@ -959,7 +959,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
                 new MapBuilder().put("@col", CNAME1).put("test", null).get(),
                 new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
-        assertThat(cursor.isPotentialDirtyRead()).isTrue();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(cursor.isPotentialDirtyRead()).isTrue();
+        }
         cursor.close();
     }
 

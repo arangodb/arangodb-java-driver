@@ -88,6 +88,7 @@ public class CursorEntity implements Entity, MetaAware {
     }
 
     public Map<String, String> getMeta() {
+        if (meta == null) return Collections.emptyMap();
         return meta;
     }
 

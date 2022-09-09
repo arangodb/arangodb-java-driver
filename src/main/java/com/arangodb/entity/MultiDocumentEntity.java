@@ -69,6 +69,10 @@ public class MultiDocumentEntity<E> implements Entity {
         this.documentsAndErrors = documentsAndErrors;
     }
 
+    /**
+     * @return true if the result is a potential dirty read
+     * @since ArangoDB 3.10
+     */
     public Boolean isPotentialDirtyRead() {
         return isPotentialDirtyRead;
     }
