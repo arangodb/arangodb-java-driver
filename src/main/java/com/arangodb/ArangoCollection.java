@@ -519,7 +519,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
-     * @deprecated since ArangoDB 3.10, use ArangoSearch view instead.
+     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) throws ArangoDBException;
