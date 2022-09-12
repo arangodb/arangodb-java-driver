@@ -50,5 +50,10 @@ public enum IndexType {
 
     ttl,
 
-    zkd
+    zkd,
+
+    /**
+     * @since ArangoDB 3.10
+     */
+    inverted
 }

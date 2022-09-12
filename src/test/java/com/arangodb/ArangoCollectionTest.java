@@ -35,6 +35,9 @@ import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ShardEntity;
+import com.arangodb.entity.arangosearch.*;
+import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.util.MapBuilder;
@@ -47,14 +50,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -1721,6 +1717,82 @@ class ArangoCollectionTest extends BaseJunit5 {
         final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
         assertThat(indexResult).isNotNull();
         assertThat(indexResult.getDeduplicate()).isFalse();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createInvertedIndex(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        DelimiterAnalyzer da = new DelimiterAnalyzer();
+        da.setName("delimiter-" + UUID.randomUUID());
+        da.setFeatures(features);
+        DelimiterAnalyzerProperties props = new DelimiterAnalyzerProperties();
+        props.setDelimiter("-");
+        da.setProperties(props);
+
+        collection.db().createSearchAnalyzer(da);
+
+        final Object indexResult = collection.ensureInvertedIndex(new InvertedIndexOptions()
+                .name("invertedIndex-" + UUID.randomUUID())
+                .inBackground(true)
+                .parallelism(5)
+                .primarySort(new InvertedIndexOptions.PrimarySort()
+                        .fields(
+                                new InvertedIndexOptions.PrimarySort.Field("f1", InvertedIndexOptions.PrimarySort.Field.Direction.asc),
+                                new InvertedIndexOptions.PrimarySort.Field("f2", InvertedIndexOptions.PrimarySort.Field.Direction.desc)
+                        )
+                        .compression(ArangoSearchCompression.lz4)
+                )
+                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none))
+                .analyzer(da.getName())
+                .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
+                .includeAllFields(false)
+                .trackListPositions(true)
+                .searchField(true)
+                .fields(
+                        new InvertedIndexOptions.InvertedIndexField()
+                                .name("foo")
+                                .analyzer(AnalyzerType.identity.toString())
+                                .includeAllFields(true)
+                                .searchField(false)
+                                .trackListPositions(false)
+                                .features(
+                                        AnalyzerFeature.position,
+                                        AnalyzerFeature.frequency,
+                                        AnalyzerFeature.norm,
+                                        AnalyzerFeature.offset
+                                )
+                                .nested(
+                                        new InvertedIndexOptions.InvertedIndexField()
+                                                .name("bar")
+                                                .analyzer(da.getName())
+                                                .searchField(true)
+                                                .features(AnalyzerFeature.position)
+                                                .nested(
+                                                        new InvertedIndexOptions.InvertedIndexField()
+                                                                .name("baz")
+                                                                .analyzer(AnalyzerType.identity.toString())
+                                                                .searchField(false)
+                                                                .features(AnalyzerFeature.frequency)
+                                                )
+                                )
+
+                )
+                .consolidationIntervalMsec(11L)
+                .commitIntervalMsec(22L)
+                .cleanupIntervalStep(33L)
+                .consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(.7))
+                .writebufferIdle(44L)
+                .writebufferActive(55L)
+                .writebufferSizeMax(66L)
+        );
+        assertThat(indexResult).isNotNull();
     }
 
     @ParameterizedTest(name = "{index}")

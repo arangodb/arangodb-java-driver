@@ -499,6 +499,16 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) throws ArangoDBException;
 
     /**
+     * Creates an inverted index for the collection, if it does not already exist.
+     *
+     * @param options index creation options
+     * @return information about the index
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
+     */
+    Object ensureInvertedIndex(InvertedIndexOptions options) throws ArangoDBException;
+
+    /**
      * Creates a geo-spatial index for the collection, if it does not already exist.
      *
      * @param fields  A list of attribute paths
