@@ -350,6 +350,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public InvertedIndexEntity getInvertedIndex(String id) throws ArangoDBException {
+        return executor.execute(getIndexRequest(id), InvertedIndexEntity.class);
+    }
+
+    @Override
     public String deleteIndex(final String id) {
         return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
@@ -369,6 +374,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options) {
         return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
+    public InvertedIndexEntity ensureInvertedIndex(final InvertedIndexOptions options) throws ArangoDBException {
+        return executor.execute(createInvertedIndexRequest(options), InvertedIndexEntity.class);
     }
 
     @Override
@@ -395,6 +405,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public Collection<IndexEntity> getIndexes() {
         return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
+    }
+
+    @Override
+    public Collection<InvertedIndexEntity> getInvertedIndexes() throws ArangoDBException {
+        return executor.execute(getIndexesRequest(), getInvertedIndexesResponseDeserializer());
     }
 
     @Override

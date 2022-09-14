@@ -20,7 +20,7 @@
 
 package com.arangodb.model;
 
-import com.arangodb.velocypack.annotations.Expose;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Mark Vollmary
@@ -35,7 +35,7 @@ public final class StreamTransactionOptions {
     private Boolean waitForSync;
     private Long maxTransactionSize;
     private Boolean allowImplicit;
-    @Expose(serialize = false)
+    @JsonIgnore
     private Boolean allowDirtyRead;
 
     public StreamTransactionOptions() {

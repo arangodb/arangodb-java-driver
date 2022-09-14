@@ -2,6 +2,7 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
@@ -35,6 +36,7 @@ enum InternalModule implements Supplier<Module> {
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
         module.addDeserializer(Response.class, InternalDeserializers.RESPONSE);
+        module.addDeserializer(InvertedIndexPrimarySort.Field.class, InternalDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
     }
 
     @Override

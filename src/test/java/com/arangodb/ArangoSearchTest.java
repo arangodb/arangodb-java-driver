@@ -728,4 +728,24 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void offsetFeature(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+        features.add(AnalyzerFeature.offset);
+
+        IdentityAnalyzer analyzer = new IdentityAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
 }

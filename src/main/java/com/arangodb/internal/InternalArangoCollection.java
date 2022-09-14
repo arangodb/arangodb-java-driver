@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
@@ -458,6 +459,13 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
+    protected Request createInvertedIndexRequest(final InvertedIndexOptions options) {
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
+        request.putQueryParam(COLLECTION, name);
+        request.setBody(getSerde().serialize(options));
+        return request;
+    }
+
     protected Request createGeoIndexRequest(final Iterable<String> fields, final GeoIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
@@ -500,8 +508,31 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/indexes",
-                constructListType(IndexEntity.class));
+        return response -> {
+            Collection<IndexEntity> indexes = new ArrayList<>();
+            final Iterator<JsonNode> it = getSerde().parse(response.getBody(), "/indexes").iterator();
+            while (it.hasNext()) {
+                JsonNode idx = it.next();
+                if (!"inverted".equals(idx.get("type").textValue())) {
+                    indexes.add(getSerde().deserialize(idx, IndexEntity.class));
+                }
+            }
+            return indexes;
+        };
+    }
+
+    protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
+        return response -> {
+            Collection<InvertedIndexEntity> indexes = new ArrayList<>();
+            final Iterator<JsonNode> it = getSerde().parse(response.getBody(), "/indexes").iterator();
+            while (it.hasNext()) {
+                JsonNode idx = it.next();
+                if ("inverted".equals(idx.get("type").textValue())) {
+                    indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class));
+                }
+            }
+            return indexes;
+        };
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {

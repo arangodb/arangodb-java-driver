@@ -31,6 +31,7 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
@@ -39,7 +40,6 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -237,8 +237,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules() {
-        return executor.execute(getQueryOptimizerRulesRequest(), new Type<Collection<QueryOptimizerRule>>() {
-        }.getType());
+        return executor.execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
 }

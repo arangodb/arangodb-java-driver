@@ -579,6 +579,9 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
 
     /**
      * Fetches information about the index with the given {@code id} and returns it.
+     * <br/>
+     * <b>Note:</b> inverted indexes are not returned by this method. Use
+     * {@link ArangoCollection#getInvertedIndex(String)} instead.
      *
      * @param id The index-handle
      * @return information about the index
@@ -586,6 +589,17 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
     IndexEntity getIndex(String id);
+
+    /**
+     * Fetches information about the inverted index with the given {@code id} and returns it.
+     *
+     * @param id The index-handle
+     * @return information about the index
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    InvertedIndexEntity getInvertedIndex(String id) throws ArangoDBException;
 
     /**
      * Deletes the index with the given {@code id} from the collection.
@@ -655,7 +669,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
-     * @deprecated since ArangoDB 3.10, use ArangoSearch view instead.
+     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options);
@@ -684,7 +698,21 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
 
     /**
+     * Creates an inverted index for the collection, if it does not already exist.
+     *
+     * @param options index creation options
+     * @return information about the index
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    InvertedIndexEntity ensureInvertedIndex(InvertedIndexOptions options) throws ArangoDBException;
+
+    /**
      * Fetches a list of all indexes on this collection.
+     * <br/>
+     * <b>Note:</b> inverted indexes are not returned by this method. Use
+     * {@link ArangoCollection#getInvertedIndexes()} instead.
      *
      * @return information about the indexes
      * @see <a href=
@@ -692,6 +720,18 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     Collection<IndexEntity> getIndexes();
+
+    /**
+     * Fetches a list of all inverted indexes on this collection.
+     *
+     * @return information about the indexes
+     * @throws ArangoDBException
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
+     * Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    Collection<InvertedIndexEntity> getInvertedIndexes() throws ArangoDBException;
 
     /**
      * Checks whether the collection exists

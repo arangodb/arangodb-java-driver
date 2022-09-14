@@ -2,6 +2,7 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
@@ -32,6 +33,7 @@ public final class InternalDeserializers {
             return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
         }
     };
+
     static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
         @Override
         public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -43,18 +45,21 @@ public final class InternalDeserializers {
             return RawBytes.of(os.toByteArray());
         }
     };
+
     static final JsonDeserializer<CollectionStatus> COLLECTION_STATUS = new JsonDeserializer<CollectionStatus>() {
         @Override
         public CollectionStatus deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
             return CollectionStatus.fromStatus(p.getIntValue());
         }
     };
+
     static final JsonDeserializer<CollectionType> COLLECTION_TYPE = new JsonDeserializer<CollectionType>() {
         @Override
         public CollectionType deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
             return CollectionType.fromType(p.getIntValue());
         }
     };
+
     static final JsonDeserializer<ReplicationFactor> REPLICATION_FACTOR = new JsonDeserializer<ReplicationFactor>() {
         @Override
         public ReplicationFactor deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
@@ -66,6 +71,7 @@ public final class InternalDeserializers {
             } else throw new IllegalArgumentException();
         }
     };
+
     @SuppressWarnings("unchecked")
     static final JsonDeserializer<Response> RESPONSE = new JsonDeserializer<Response>() {
         @Override
@@ -79,6 +85,17 @@ public final class InternalDeserializers {
                 response.setMeta(readTreeAsValue(p, ctxt, it.next(), Map.class));
             }
             return response;
+        }
+    };
+
+    static final JsonDeserializer<InvertedIndexPrimarySort.Field> INVERTED_INDEX_PRIMARY_SORT_FIELD = new JsonDeserializer<InvertedIndexPrimarySort.Field>() {
+        @Override
+        public InvertedIndexPrimarySort.Field deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            ObjectNode tree = p.readValueAsTree();
+            String field = tree.get("field").textValue();
+            InvertedIndexPrimarySort.Field.Direction direction = tree.get("asc").booleanValue() ?
+                    InvertedIndexPrimarySort.Field.Direction.asc : InvertedIndexPrimarySort.Field.Direction.desc;
+            return new InvertedIndexPrimarySort.Field(field, direction);
         }
     };
 
