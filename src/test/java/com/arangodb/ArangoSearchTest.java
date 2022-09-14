@@ -989,6 +989,30 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void classificationAnalyzer(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isEnterprise());
+
+        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
+        properties.setModelLocation("/foo/bar");
+        properties.setTopK(2);
+        properties.setThreshold(.5);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 10));
