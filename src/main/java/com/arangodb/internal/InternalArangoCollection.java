@@ -624,8 +624,31 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get("indexes"), new Type<Collection<IndexEntity>>() {
-        }.getType());
+        return response -> {
+            Collection<IndexEntity> indexes = new ArrayList<>();
+            Iterator<VPackSlice> it = response.getBody().get("indexes").arrayIterator();
+            while (it.hasNext()) {
+                VPackSlice idx = it.next();
+                if (!"inverted".equals(idx.get("type").getAsString())) {
+                    indexes.add(util().deserialize(idx, IndexEntity.class));
+                }
+            }
+            return indexes;
+        };
+    }
+
+    protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
+        return response -> {
+            Collection<InvertedIndexEntity> indexes = new ArrayList<>();
+            Iterator<VPackSlice> it = response.getBody().get("indexes").arrayIterator();
+            while (it.hasNext()) {
+                VPackSlice idx = it.next();
+                if ("inverted".equals(idx.get("type").getAsString())) {
+                    indexes.add(util().deserialize(idx, InvertedIndexEntity.class));
+                }
+            }
+            return indexes;
+        };
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {

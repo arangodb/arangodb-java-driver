@@ -255,6 +255,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public InvertedIndexEntity getInvertedIndex(String id) throws ArangoDBException {
+        return executor.execute(getIndexRequest(id), InvertedIndexEntity.class);
+    }
+
+    @Override
     public String deleteIndex(final String id) throws ArangoDBException {
         return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
@@ -312,6 +317,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public Collection<IndexEntity> getIndexes() throws ArangoDBException {
         return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
+    }
+
+    @Override
+    public Collection<InvertedIndexEntity> getInvertedIndexes() throws ArangoDBException {
+        return executor.execute(getIndexesRequest(), getInvertedIndexesResponseDeserializer());
     }
 
     @Override
