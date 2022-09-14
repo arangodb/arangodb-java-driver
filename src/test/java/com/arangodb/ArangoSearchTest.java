@@ -987,5 +987,27 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, collationAnalyzer);
     }
 
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void offsetFeature(ArangoDatabase db) {
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String name = "test-" + rnd();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+        features.add(AnalyzerFeature.offset);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.identity);
+        options.setProperties(Collections.emptyMap());
+
+        createGetAndDeleteAnalyzer(db, options);
+    }
 
 }

@@ -22,6 +22,7 @@ package com.arangodb.entity.arangosearch;
 
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Michele Rastelli
@@ -58,4 +59,16 @@ public class StoredValue {
         return compression;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StoredValue that = (StoredValue) o;
+        return Objects.equals(fields, that.fields) && compression == that.compression;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fields, compression);
+    }
 }

@@ -41,7 +41,7 @@ public enum IndexType {
     geo2,
 
     /**
-     * @deprecated since ArangoDB 3.10, use ArangoSearch view instead.
+     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     fulltext,
@@ -50,5 +50,10 @@ public enum IndexType {
 
     ttl,
 
-    zkd
+    zkd,
+
+    /**
+     * @since ArangoDB 3.10
+     */
+    inverted
 }

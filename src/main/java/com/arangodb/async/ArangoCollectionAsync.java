@@ -20,7 +20,6 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
@@ -145,7 +144,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<T> getDocument(final String key, final Class<T> type) throws ArangoDBException;
+    <T> CompletableFuture<T> getDocument(final String key, final Class<T> type);
 
     /**
      * Reads a single document
@@ -157,8 +156,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
-    <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
-            throws ArangoDBException;
+    <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options);
 
     /**
      * Reads multiple documents
@@ -410,12 +408,25 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
 
     /**
      * Returns an index
+     * <br/>
+     * <b>Note:</b> inverted indexes are not returned by this method. Use
+     * {@link ArangoCollectionAsync#getInvertedIndex(String)} instead.
      *
      * @param id The index-handle
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
     CompletableFuture<IndexEntity> getIndex(final String id);
+
+    /**
+     * Returns an inverted index
+     *
+     * @param id The index-handle
+     * @return information about the index
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<InvertedIndexEntity> getInvertedIndex(String id);
 
     /**
      * Deletes an index
@@ -487,7 +498,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
-     * @deprecated since ArangoDB 3.10, use ArangoSearch view instead.
+     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     CompletableFuture<IndexEntity> ensureFulltextIndex(
@@ -518,7 +529,20 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
     CompletableFuture<IndexEntity> ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options);
 
     /**
+     * Creates an inverted index for the collection, if it does not already exist.
+     *
+     * @param options index creation options
+     * @return information about the index
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<InvertedIndexEntity> ensureInvertedIndex(InvertedIndexOptions options);
+
+    /**
      * Returns all indexes of the collection
+     * <br/>
+     * <b>Note:</b> inverted indexes are not returned by this method. Use
+     * {@link ArangoCollectionAsync#getInvertedIndexes()} instead.
      *
      * @return information about the indexes
      * @see <a href=
@@ -526,6 +550,17 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     CompletableFuture<Collection<IndexEntity>> getIndexes();
+
+    /**
+     * Fetches a list of all inverted indexes on this collection.
+     *
+     * @return information about the indexes
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
+     * Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<Collection<InvertedIndexEntity>> getInvertedIndexes();
 
     /**
      * Checks whether the collection exists
