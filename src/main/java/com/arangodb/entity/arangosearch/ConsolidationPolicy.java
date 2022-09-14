@@ -29,7 +29,13 @@ public class ConsolidationPolicy {
 
     private ConsolidationType type;
     private Double threshold;
+    @Deprecated
     private Long segmentThreshold;
+    private Long segmentsMin;
+    private Long segmentsMax;
+    private Long segmentsBytesMax;
+    private Long segmentsBytesFloor;
+
 
     public ConsolidationPolicy() {
     }
@@ -44,9 +50,12 @@ public class ConsolidationPolicy {
     }
 
     /**
-     * @param threshold Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
-     *                  evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
-     * @return policy
+     * @param threshold Defines threshold value of [0.0, 1.0] possible range. Consolidation is performed on segments
+     *                  which accumulated size in bytes is less than all segments’ byte size multiplied by the
+     *                  threshold; i.e. the following formula is applied for each segment:
+     *                  {threshold} > (segment_bytes + sum_of_merge_candidate_segment_bytes) / all_segment_bytes.
+     *                  (default: 0.1)
+     * @return this
      */
     public ConsolidationPolicy threshold(final Double threshold) {
         this.threshold = threshold;
@@ -56,8 +65,10 @@ public class ConsolidationPolicy {
     /**
      * @param segmentThreshold Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} <
      *                         number_of_segments
-     * @return policy
+     * @return this
+     * @deprecated
      */
+    @Deprecated
     public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
         this.segmentThreshold = segmentThreshold;
         return this;
@@ -71,8 +82,61 @@ public class ConsolidationPolicy {
         return threshold;
     }
 
+    @Deprecated
     public Long getSegmentThreshold() {
         return segmentThreshold;
+    }
+
+    public Long getSegmentsMin() {
+        return segmentsMin;
+    }
+
+    /**
+     * @param segmentsMin The minimum number of segments that will be evaluated as candidates for consolidation. (default: 1)
+     * @return this
+     */
+    public ConsolidationPolicy segmentsMin(final Long segmentsMin) {
+        this.segmentsMin = segmentsMin;
+        return this;
+    }
+
+    public Long getSegmentsMax() {
+        return segmentsMax;
+    }
+
+    /**
+     * @param segmentsMax The maximum number of segments that will be evaluated as candidates for consolidation. (default: 10)
+     * @return this
+     */
+    public ConsolidationPolicy segmentsMax(final Long segmentsMax) {
+        this.segmentsMax = segmentsMax;
+        return this;
+    }
+
+    public Long getSegmentsBytesMax() {
+        return segmentsBytesMax;
+    }
+
+    /**
+     * @param segmentsBytesMax Maximum allowed size of all consolidated segments in bytes. (default: 5368709120)
+     * @return this
+     */
+    public ConsolidationPolicy segmentsBytesMax(final Long segmentsBytesMax) {
+        this.segmentsBytesMax = segmentsBytesMax;
+        return this;
+    }
+
+    public Long getSegmentsBytesFloor() {
+        return segmentsBytesFloor;
+    }
+
+    /**
+     * @param segmentsBytesFloor Defines the value (in bytes) to treat all smaller segments as equal for consolidation selection. (default: 2097152)
+     * @return this
+     */
+    public ConsolidationPolicy segmentsBytesFloor(final Long segmentsBytesFloor) {
+        this.segmentsBytesFloor = segmentsBytesFloor;
+        return this;
     }
 
     @Override
@@ -80,11 +144,11 @@ public class ConsolidationPolicy {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConsolidationPolicy that = (ConsolidationPolicy) o;
-        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentThreshold, that.segmentThreshold);
+        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentThreshold, that.segmentThreshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, threshold, segmentThreshold);
+        return Objects.hash(type, threshold, segmentThreshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor);
     }
 }

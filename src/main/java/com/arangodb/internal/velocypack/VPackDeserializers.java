@@ -289,21 +289,17 @@ public class VPackDeserializers {
     };
 
     public static final VPackDeserializer<ConsolidationPolicy> CONSOLIDATE = (parent, vpack, context) -> {
-        final VPackSlice type = vpack.get("type");
-        if (type.isString()) {
-            final ConsolidationPolicy consolidate = ConsolidationPolicy
-                    .of(ConsolidationType.valueOf(type.getAsString().toUpperCase(Locale.ENGLISH)));
-            final VPackSlice threshold = vpack.get("threshold");
-            if (threshold.isNumber()) {
-                consolidate.threshold(threshold.getAsDouble());
-            }
-            final VPackSlice segmentThreshold = vpack.get("segmentThreshold");
-            if (segmentThreshold.isInteger()) {
-                consolidate.segmentThreshold(segmentThreshold.getAsLong());
-            }
-            return consolidate;
+        ConsolidationType type = ConsolidationType.valueOf(vpack.get("type").getAsString().toUpperCase(Locale.ENGLISH));
+        final ConsolidationPolicy consolidate = ConsolidationPolicy.of(type);
+        if (ConsolidationType.BYTES_ACCUM.equals(type)) {
+            consolidate.threshold(vpack.get("threshold").getAsDouble());
+        } else {
+            consolidate.segmentsMin(vpack.get("segmentsMin").getAsLong());
+            consolidate.segmentsMax(vpack.get("segmentsMax").getAsLong());
+            consolidate.segmentsBytesMax(vpack.get("segmentsBytesMax").getAsLong());
+            consolidate.segmentsBytesFloor(vpack.get("segmentsBytesFloor").getAsLong());
         }
-        return null;
+        return consolidate;
     };
 
     public static final VPackDeserializer<CollectionSchema> COLLECTION_VALIDATION = (parent, vpack, context) -> {

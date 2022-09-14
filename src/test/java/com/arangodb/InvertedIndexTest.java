@@ -98,7 +98,12 @@ public class InvertedIndexTest extends BaseJunit5 {
                 .consolidationIntervalMsec(11L)
                 .commitIntervalMsec(22L)
                 .cleanupIntervalStep(33L)
-                .consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.))
+                .consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.TIER)
+                        .segmentsMin(3L)
+                        .segmentsMax(44L)
+                        .segmentsBytesMax(55555L)
+                        .segmentsBytesFloor(666L)
+                )
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
                 .writebufferSizeMax(66L);
