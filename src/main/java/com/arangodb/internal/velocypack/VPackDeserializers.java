@@ -240,11 +240,10 @@ public class VPackDeserializers {
         }
 
         final VPackSlice storedValues = vpack.get("storedValues");
-        if (storedValues.isArray()) {
-            final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
-            while (storedValueIterator.hasNext()) {
-                properties.addStoredValues(context.deserialize(storedValueIterator.next(), StoredValue.class));
-            }
+        final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
+        while (storedValueIterator.hasNext()) {
+            StoredValue sv = context.deserialize(storedValueIterator.next(), StoredValue.class);
+            properties.addStoredValues(sv);
         }
 
         return properties;
