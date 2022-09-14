@@ -20,6 +20,8 @@
 
 package com.arangodb.entity.arangosearch;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -73,4 +75,16 @@ public class ConsolidationPolicy {
         return segmentThreshold;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConsolidationPolicy that = (ConsolidationPolicy) o;
+        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentThreshold, that.segmentThreshold);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, threshold, segmentThreshold);
+    }
 }

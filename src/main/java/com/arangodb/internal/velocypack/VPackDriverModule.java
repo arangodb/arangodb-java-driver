@@ -21,10 +21,7 @@
 package com.arangodb.internal.velocypack;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
@@ -100,11 +97,13 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
         context.registerDeserializer(MinReplicationFactor.class, VPackDeserializers.MIN_REPLICATION_FACTOR);
         context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
+        context.registerDeserializer(StoredValue.class, VPackDeserializers.STORED_VALUE);
         context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
         context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
         context.registerDeserializer(ConsolidationPolicy.class, VPackDeserializers.CONSOLIDATE);
         context.registerDeserializer(CollectionSchema.class, VPackDeserializers.COLLECTION_VALIDATION);
         context.registerDeserializer(ZKDIndexOptions.FieldValueTypes.class, VPackDeserializers.ZKD_FIELD_VALUE_TYPES);
+        context.registerDeserializer(InvertedIndexPrimarySort.Field.class, VPackDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
     }
 
     @Override

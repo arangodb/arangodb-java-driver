@@ -506,7 +506,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
      */
-    Object ensureInvertedIndex(InvertedIndexOptions options) throws ArangoDBException;
+    InvertedIndexEntity ensureInvertedIndex(InvertedIndexOptions options) throws ArangoDBException;
 
     /**
      * Creates a geo-spatial index for the collection, if it does not already exist.

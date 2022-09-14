@@ -280,8 +280,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public Object ensureInvertedIndex(final InvertedIndexOptions options) throws ArangoDBException {
-        return executor.execute(createInvertedIndexRequest(options), Object.class);
+    public InvertedIndexEntity ensureInvertedIndex(final InvertedIndexOptions options) throws ArangoDBException {
+        return executor.execute(createInvertedIndexRequest(options), InvertedIndexEntity.class);
     }
 
     @Override

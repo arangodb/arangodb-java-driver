@@ -20,18 +20,7 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionStatus;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryExecutionState;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
+import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerType;
 import com.arangodb.entity.arangosearch.ArangoSearchCompression;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
@@ -159,6 +148,17 @@ public class VPackDeserializers {
     public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
             : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
+    public static final VPackDeserializer<StoredValue> STORED_VALUE = (parent, vpack, context) -> {
+        VPackSlice fields = vpack.get("fields");
+        VPackSlice compression = vpack.get("compression");
+        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
+        List<String> fieldsList = new ArrayList<>();
+        while (fieldsIterator.hasNext()) {
+            fieldsList.add(fieldsIterator.next().getAsString());
+        }
+        return new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString()));
+    };
+
     public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (parent, vpack, context) -> {
         final ArangoSearchProperties properties = new ArangoSearchProperties();
         final VPackSlice consolidationIntervalMsec = vpack.get("consolidationIntervalMsec");
@@ -242,18 +242,8 @@ public class VPackDeserializers {
         final VPackSlice storedValues = vpack.get("storedValues");
         if (storedValues.isArray()) {
             final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
-            for (; storedValueIterator.hasNext(); ) {
-                final VPackSlice entry = storedValueIterator.next();
-                if (entry.isObject()) {
-                    VPackSlice fields = entry.get("fields");
-                    VPackSlice compression = entry.get("compression");
-                    if (fields.isArray() && compression.isString()) {
-                        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
-                        List<String> fieldsList = new ArrayList<>();
-                        fieldsIterator.forEachRemaining(it -> fieldsList.add(it.getAsString()));
-                        properties.addStoredValues(new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString())));
-                    }
-                }
+            while (storedValueIterator.hasNext()) {
+                properties.addStoredValues(context.deserialize(storedValueIterator.next(), StoredValue.class));
             }
         }
 
@@ -330,4 +320,9 @@ public class VPackDeserializers {
             (parent, vpack, context) -> ZKDIndexOptions.FieldValueTypes.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
 
+    public static final VPackDeserializer<InvertedIndexPrimarySort.Field> INVERTED_INDEX_PRIMARY_SORT_FIELD = (parent, vpack, context) -> {
+        InvertedIndexPrimarySort.Field.Direction dir = vpack.get("asc").getAsBoolean() ?
+                InvertedIndexPrimarySort.Field.Direction.asc : InvertedIndexPrimarySort.Field.Direction.desc;
+        return new InvertedIndexPrimarySort.Field(vpack.get("field").getAsString(), dir);
+    };
 }
