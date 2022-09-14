@@ -1,4 +1,4 @@
-package com.arangodb;
+package com.arangodb.async;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
@@ -6,31 +6,39 @@ import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class InvertedIndexTest extends BaseJunit5 {
+public class InvertedIndexTest extends BaseTest {
 
-    private static final String COLLECTION_NAME = "InvertedIndexTest_collection";
+    private static final String COLLECTION_NAME = "InvertedIndexTestAsync_collection";
 
-    private static Stream<Arguments> cols() {
-        return dbsStream().map(db -> db.collection(COLLECTION_NAME)).map(Arguments::of);
+    InvertedIndexTest() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        if (!collection.exists().get()) {
+            collection.create().get();
+        }
     }
 
     @BeforeAll
-    static void init() {
-        initCollections(COLLECTION_NAME);
+    static void setup() throws InterruptedException, ExecutionException {
+        db.createCollection(COLLECTION_NAME, null).get();
     }
 
-    private void createAnalyzer(String analyzerName, ArangoDatabase db) {
+    @AfterEach
+    void teardown() throws InterruptedException, ExecutionException {
+        db.collection(COLLECTION_NAME).drop().get();
+    }
+
+
+    private void createAnalyzer(String analyzerName, ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
         features.add(AnalyzerFeature.norm);
@@ -43,10 +51,10 @@ public class InvertedIndexTest extends BaseJunit5 {
         props.setDelimiter("-");
         da.setProperties(props);
 
-        db.createSearchAnalyzer(da);
+        db.createSearchAnalyzer(da).get();
     }
 
-    private InvertedIndexOptions createOptions(String analyzerName) {
+    private InvertedIndexOptions createOptions(String analyzerName) throws ExecutionException, InterruptedException {
         InvertedIndexField field = new InvertedIndexField()
                 .name("foo")
                 .analyzer(AnalyzerType.identity.toString())
@@ -132,23 +140,25 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void createAndGetInvertedIndex(ArangoCollection collection) {
+   @Test
+    void createAndGetInvertedIndex() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
+
+       ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
-        InvertedIndexEntity created = collection.ensureInvertedIndex(options);
+        InvertedIndexEntity created = collection.ensureInvertedIndex(options).get();
         assertCorrectIndexEntity(created, options);
-        InvertedIndexEntity loadedIndex = collection.getInvertedIndex(created.getName());
+        InvertedIndexEntity loadedIndex = collection.getInvertedIndex(created.getName()).get();
         assertCorrectIndexEntity(loadedIndex, options);
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void getInvertedIndexesShouldNotReturnOtherIndexTypes(ArangoCollection collection) {
+    @Test
+    void getInvertedIndexesShouldNotReturnOtherIndexTypes() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
+
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
 
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
@@ -157,18 +167,19 @@ public class InvertedIndexTest extends BaseJunit5 {
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
-        InvertedIndexEntity created = collection.ensureInvertedIndex(options);
+        InvertedIndexEntity created = collection.ensureInvertedIndex(options).get();
 
-        Collection<InvertedIndexEntity> loadedIndexes = collection.getInvertedIndexes();
+        Collection<InvertedIndexEntity> loadedIndexes = collection.getInvertedIndexes().get();
         assertThat(loadedIndexes).map(InvertedIndexEntity::getName)
                 .doesNotContain("persistentIndex")
                 .contains(created.getName());
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void getIndexesShouldNotReturnInvertedIndexes(ArangoCollection collection) {
+    @Test
+    void getIndexesShouldNotReturnInvertedIndexes() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
+
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
 
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
@@ -177,9 +188,9 @@ public class InvertedIndexTest extends BaseJunit5 {
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
-        InvertedIndexEntity created = collection.ensureInvertedIndex(options);
+        InvertedIndexEntity created = collection.ensureInvertedIndex(options).get();
 
-        Collection<IndexEntity> loadedIndexes = collection.getIndexes();
+        Collection<IndexEntity> loadedIndexes = collection.getIndexes().get();
         assertThat(loadedIndexes).map(IndexEntity::getName)
                 .doesNotContain(created.getName())
                 .contains("persistentIndex");
