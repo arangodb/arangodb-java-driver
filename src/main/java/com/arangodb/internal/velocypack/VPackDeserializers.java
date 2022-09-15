@@ -102,6 +102,12 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
             case collation:
                 return context.deserialize(vpack, CollationAnalyzer.class);
+            case classification:
+                return context.deserialize(vpack, ClassificationAnalyzer.class);
+            case nearest_neighbors:
+                return context.deserialize(vpack, NearestNeighborsAnalyzer.class);
+            case minhash:
+                return context.deserialize(vpack, MinHashAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }

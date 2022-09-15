@@ -18,7 +18,7 @@ public class InvertedIndexField implements Entity {
     private Boolean searchField;
     private Boolean trackListPositions;
     private final Set<AnalyzerFeature> features = new HashSet<>();
-    private final Collection<InvertedIndexField> nested = new ArrayList<>();
+    private Collection<InvertedIndexField> nested;
 
     public String getName() {
         return name;
@@ -79,6 +79,7 @@ public class InvertedIndexField implements Entity {
     }
 
     public InvertedIndexField nested(InvertedIndexField... nested) {
+        if(this.nested == null) this.nested = new ArrayList<>();
         Collections.addAll(this.nested, nested);
         return this;
     }
