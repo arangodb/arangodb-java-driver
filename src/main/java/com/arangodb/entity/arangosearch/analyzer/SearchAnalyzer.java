@@ -49,7 +49,10 @@ import java.util.Set;
         @JsonSubTypes.Type(name = "geojson", value = GeoJSONAnalyzer.class),
         @JsonSubTypes.Type(name = "geopoint", value = GeoPointAnalyzer.class),
         @JsonSubTypes.Type(name = "segmentation", value = SegmentationAnalyzer.class),
-        @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class)
+        @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class),
+        @JsonSubTypes.Type(name = "classification", value = ClassificationAnalyzer.class),
+        @JsonSubTypes.Type(name = "nearest_neighbors", value = NearestNeighborsAnalyzer.class),
+        @JsonSubTypes.Type(name = "minhash", value = MinHashAnalyzer.class)
 })
 public abstract class SearchAnalyzer {
     private String name;
