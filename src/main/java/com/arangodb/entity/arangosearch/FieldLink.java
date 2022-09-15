@@ -12,11 +12,13 @@ public class FieldLink {
     private Boolean trackListPositions;
     private StoreValuesType storeValues;
     private final Collection<FieldLink> fields;
+    private final Collection<FieldLink> nested;
 
     private FieldLink(final String name) {
         super();
         this.name = name;
         fields = new ArrayList<>();
+        nested = new ArrayList<>();
         analyzers = new ArrayList<>();
     }
 
@@ -77,6 +79,16 @@ public class FieldLink {
         return this;
     }
 
+    /**
+     * @param nested A list of nested fields
+     * @return link
+     * @since ArangoDB 3.10
+     */
+    public FieldLink nested(final FieldLink... nested) {
+        this.nested.addAll(Arrays.asList(nested));
+        return this;
+    }
+
     public String getName() {
         return name;
     }
@@ -101,4 +113,7 @@ public class FieldLink {
         return fields;
     }
 
+    public Collection<FieldLink> getNested() {
+        return nested;
+    }
 }
