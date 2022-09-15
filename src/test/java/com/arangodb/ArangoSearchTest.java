@@ -994,7 +994,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
 
         ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
-        properties.setModelLocation("/foo/bar");
+        properties.setModelLocation("/tmp/foo.bin");
         properties.setTopK(2);
         properties.setThreshold(.5);
 

@@ -102,6 +102,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
             case collation:
                 return context.deserialize(vpack, CollationAnalyzer.class);
+            case classification:
+                return context.deserialize(vpack, ClassificationAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }
