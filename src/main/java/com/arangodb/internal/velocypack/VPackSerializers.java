@@ -183,6 +183,10 @@ public class VPackSerializers {
                 if (storeValues != null) {
                     builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
+                Boolean inBackground = collectionLink.getInBackground();
+                if (inBackground != null) {
+                    builder.add("inBackground", inBackground);
+                }
                 serializeFieldLinks(builder, collectionLink.getFields());
                 serializeNested(builder, collectionLink.getNested());
                 builder.close();
@@ -265,6 +269,10 @@ public class VPackSerializers {
             final StoreValuesType storeValues = fieldLink.getStoreValues();
             if (storeValues != null) {
                 builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
+            }
+            Boolean inBackground = fieldLink.getInBackground();
+            if (inBackground != null) {
+                builder.add("inBackground", inBackground);
             }
             serializeFieldLinks(builder, fieldLink.getFields());
             serializeNested(builder, fieldLink.getNested());

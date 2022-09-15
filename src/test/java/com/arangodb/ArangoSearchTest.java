@@ -754,7 +754,7 @@ class ArangoSearchTest extends BaseJunit5 {
     void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
-        FieldLink field = FieldLink.on("f1");
+        FieldLink field = FieldLink.on("f1").inBackground(true);
         if (isEnterprise()) {
             field.nested(FieldLink.on("f2"));
         }
@@ -763,7 +763,8 @@ class ArangoSearchTest extends BaseJunit5 {
                 .fields(field)
                 .includeAllFields(true)
                 .storeValues(StoreValuesType.ID)
-                .trackListPositions(false);
+                .trackListPositions(false)
+                .inBackground(true);
         if (isEnterprise()) {
             link.nested(FieldLink.on("f3"));
         }
