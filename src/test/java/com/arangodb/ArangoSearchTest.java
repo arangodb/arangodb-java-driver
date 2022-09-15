@@ -754,19 +754,20 @@ class ArangoSearchTest extends BaseJunit5 {
     void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
-        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
-                .link(
-                        CollectionLink.on(COLL_1)
-                                .analyzers("identity")
-                                .fields(
-                                        FieldLink.on("id")
-                                                .analyzers("identity")
-                                )
-                                .includeAllFields(true)
-                                .storeValues(StoreValuesType.ID)
-                                .trackListPositions(false)
-
-                );
+        FieldLink field = FieldLink.on("f1");
+        if (isEnterprise()) {
+            field.nested(FieldLink.on("f2"));
+        }
+        CollectionLink link = CollectionLink.on(COLL_1)
+                .analyzers("identity")
+                .fields(field)
+                .includeAllFields(true)
+                .storeValues(StoreValuesType.ID)
+                .trackListPositions(false);
+        if (isEnterprise()) {
+            link.nested(FieldLink.on("f3"));
+        }
+        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions().link(link);
 
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(options);
@@ -776,13 +777,27 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(properties.getId()).isNotNull();
         assertThat(properties.getName()).isEqualTo(viewName);
         assertThat(properties.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(properties.getLinks()).isNotEmpty();
 
-        CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getAnalyzers()).contains("identity");
-        assertThat(link.getName()).isEqualTo(COLL_1);
-        assertThat(link.getIncludeAllFields()).isTrue();
-        assertThat(link.getStoreValues()).isEqualTo(StoreValuesType.ID);
-        assertThat(link.getTrackListPositions()).isFalse();
+        CollectionLink createdLink = properties.getLinks().iterator().next();
+        assertThat(createdLink.getName()).isEqualTo(COLL_1);
+        assertThat(createdLink.getAnalyzers()).contains("identity");
+        assertThat(createdLink.getIncludeAllFields()).isTrue();
+        assertThat(createdLink.getStoreValues()).isEqualTo(StoreValuesType.ID);
+        assertThat(createdLink.getTrackListPositions()).isFalse();
+        if (isEnterprise() && isAtLeastVersion(3, 10)) {
+            assertThat(createdLink.getNested()).isNotEmpty();
+            FieldLink nested = createdLink.getNested().iterator().next();
+            assertThat(nested.getName()).isEqualTo("f3");
+        }
+
+        FieldLink fieldLink = createdLink.getFields().iterator().next();
+        assertThat(fieldLink.getName()).isEqualTo("f1");
+        if (isEnterprise() && isAtLeastVersion(3, 10)) {
+            assertThat(fieldLink.getNested()).isNotEmpty();
+            FieldLink nested = fieldLink.getNested().iterator().next();
+            assertThat(nested.getName()).isEqualTo("f2");
+        }
     }
 
     @ParameterizedTest(name = "{index}")

@@ -221,6 +221,13 @@ public class VPackDeserializers {
                         link.fields(deserializeField(fieldsIterator.next()));
                     }
                 }
+                final VPackSlice nested = value.get("nested");
+                if (nested.isObject()) {
+                    final Iterator<Entry<String, VPackSlice>> fieldsIterator = nested.objectIterator();
+                    while (fieldsIterator.hasNext()) {
+                        link.nested(deserializeField(fieldsIterator.next()));
+                    }
+                }
                 properties.addLink(link);
             }
         }
@@ -282,6 +289,13 @@ public class VPackDeserializers {
             final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
             for (; fieldsIterator.hasNext(); ) {
                 link.fields(deserializeField(fieldsIterator.next()));
+            }
+        }
+        final VPackSlice nested = value.get("nested");
+        if (nested.isObject()) {
+            final Iterator<Entry<String, VPackSlice>> fieldsIterator = nested.objectIterator();
+            while (fieldsIterator.hasNext()) {
+                link.nested(deserializeField(fieldsIterator.next()));
             }
         }
         return link;

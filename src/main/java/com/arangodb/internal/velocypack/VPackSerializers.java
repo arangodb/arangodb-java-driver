@@ -184,6 +184,7 @@ public class VPackSerializers {
                     builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
                 serializeFieldLinks(builder, collectionLink.getFields());
+                serializeNested(builder, collectionLink.getNested());
                 builder.close();
             }
             builder.close();
@@ -229,31 +230,44 @@ public class VPackSerializers {
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
         if (!links.isEmpty()) {
             builder.add("fields", ValueType.OBJECT);
-            for (final FieldLink fieldLink : links) {
-                builder.add(fieldLink.getName(), ValueType.OBJECT);
-                final Collection<String> analyzers = fieldLink.getAnalyzers();
-                if (!analyzers.isEmpty()) {
-                    builder.add("analyzers", ValueType.ARRAY);
-                    for (final String analyzer : analyzers) {
-                        builder.add(analyzer);
-                    }
-                    builder.close();
+            serializeFields(builder, links);
+            builder.close();
+        }
+    }
+
+    private static void serializeNested(final VPackBuilder builder, final Collection<FieldLink> nested) {
+        if (!nested.isEmpty()) {
+            builder.add("nested", ValueType.OBJECT);
+            serializeFields(builder, nested);
+            builder.close();
+        }
+    }
+
+    private static void serializeFields(final VPackBuilder builder, final Collection<FieldLink> links){
+        for (final FieldLink fieldLink : links) {
+            builder.add(fieldLink.getName(), ValueType.OBJECT);
+            final Collection<String> analyzers = fieldLink.getAnalyzers();
+            if (!analyzers.isEmpty()) {
+                builder.add("analyzers", ValueType.ARRAY);
+                for (final String analyzer : analyzers) {
+                    builder.add(analyzer);
                 }
-                final Boolean includeAllFields = fieldLink.getIncludeAllFields();
-                if (includeAllFields != null) {
-                    builder.add("includeAllFields", includeAllFields);
-                }
-                final Boolean trackListPositions = fieldLink.getTrackListPositions();
-                if (trackListPositions != null) {
-                    builder.add("trackListPositions", trackListPositions);
-                }
-                final StoreValuesType storeValues = fieldLink.getStoreValues();
-                if (storeValues != null) {
-                    builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
-                }
-                serializeFieldLinks(builder, fieldLink.getFields());
                 builder.close();
             }
+            final Boolean includeAllFields = fieldLink.getIncludeAllFields();
+            if (includeAllFields != null) {
+                builder.add("includeAllFields", includeAllFields);
+            }
+            final Boolean trackListPositions = fieldLink.getTrackListPositions();
+            if (trackListPositions != null) {
+                builder.add("trackListPositions", trackListPositions);
+            }
+            final StoreValuesType storeValues = fieldLink.getStoreValues();
+            if (storeValues != null) {
+                builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
+            }
+            serializeFieldLinks(builder, fieldLink.getFields());
+            serializeNested(builder, fieldLink.getNested());
             builder.close();
         }
     }
