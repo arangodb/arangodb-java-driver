@@ -1,9 +1,11 @@
 package com.arangodb.entity.arangosearch;
 
+import com.arangodb.internal.serde.InternalDeserializers;
 import com.arangodb.internal.serde.InternalSerializers;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
@@ -17,6 +19,7 @@ public final class FieldLink {
     private Boolean trackListPositions;
     private StoreValuesType storeValues;
     private Collection<FieldLink> fields;
+    private Collection<FieldLink> nested;
 
     private FieldLink(final String name) {
         super();
@@ -79,8 +82,20 @@ public final class FieldLink {
      * @param fields A list of linked fields
      * @return link
      */
+    @JsonDeserialize(using = InternalDeserializers.FieldLinksDeserializer.class)
     public FieldLink fields(final FieldLink... fields) {
         this.fields = Arrays.asList(fields);
+        return this;
+    }
+
+    /**
+     * @param nested A list of nested fields
+     * @return link
+     * @since ArangoDB 3.10
+     */
+    @JsonDeserialize(using = InternalDeserializers.FieldLinksDeserializer.class)
+    public FieldLink nested(final FieldLink... nested) {
+        this.nested = Arrays.asList(nested);
         return this;
     }
 
@@ -110,4 +125,8 @@ public final class FieldLink {
         return fields;
     }
 
+    @JsonSerialize(using = InternalSerializers.FieldLinksSerializer.class)
+    public Collection<FieldLink> getNested() {
+        return nested;
+    }
 }

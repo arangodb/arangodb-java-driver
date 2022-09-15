@@ -42,6 +42,7 @@ public final class CollectionLink {
     private Boolean trackListPositions;
     private StoreValuesType storeValues;
     private Collection<FieldLink> fields;
+    private Collection<FieldLink> nested;
 
     private CollectionLink(final String name) {
         super();
@@ -110,6 +111,17 @@ public final class CollectionLink {
         return this;
     }
 
+    /**
+     * @param nested A list of nested fields
+     * @return link
+     * @since ArangoDB 3.10
+     */
+    @JsonDeserialize(using = InternalDeserializers.FieldLinksDeserializer.class)
+    public CollectionLink nested(final FieldLink... nested) {
+        this.nested = Arrays.asList(nested);
+        return this;
+    }
+
     @JsonIgnore
     public String getName() {
         return name;
@@ -134,6 +146,11 @@ public final class CollectionLink {
     @JsonSerialize(using = InternalSerializers.FieldLinksSerializer.class)
     public Collection<FieldLink> getFields() {
         return fields;
+    }
+
+    @JsonSerialize(using = InternalSerializers.FieldLinksSerializer.class)
+    public Collection<FieldLink> getNested() {
+        return nested;
     }
 
 }
