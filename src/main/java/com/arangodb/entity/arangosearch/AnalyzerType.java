@@ -38,5 +38,6 @@ public enum AnalyzerType {
     segmentation,
     collation,
     classification,
-    nearest_neighbors
+    nearest_neighbors,
+    minhash
 }

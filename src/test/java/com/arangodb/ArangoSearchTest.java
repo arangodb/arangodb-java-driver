@@ -1036,6 +1036,36 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void MinHashAnalyzer(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isEnterprise());
+
+        SegmentationAnalyzerProperties segProperties = new SegmentationAnalyzerProperties();
+        segProperties.setBreakMode(SegmentationAnalyzerProperties.BreakMode.alpha);
+        segProperties.setAnalyzerCase(SearchAnalyzerCase.lower);
+
+        SegmentationAnalyzer segAnalyzer = new SegmentationAnalyzer();
+        segAnalyzer.setProperties(segProperties);
+
+        MinHashAnalyzerProperties properties = new MinHashAnalyzerProperties();
+        properties.setAnalyzer(segAnalyzer);
+        properties.setNumHashes(2);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        MinHashAnalyzer analyzer = new MinHashAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 10));
