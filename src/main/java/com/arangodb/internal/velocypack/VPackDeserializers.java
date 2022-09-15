@@ -104,6 +104,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, CollationAnalyzer.class);
             case classification:
                 return context.deserialize(vpack, ClassificationAnalyzer.class);
+            case nearest_neighbors:
+                return context.deserialize(vpack, NearestNeighborsAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }

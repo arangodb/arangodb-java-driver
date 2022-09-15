@@ -37,5 +37,6 @@ public enum AnalyzerType {
     geopoint,
     segmentation,
     collation,
-    classification
+    classification,
+    nearest_neighbors
 }

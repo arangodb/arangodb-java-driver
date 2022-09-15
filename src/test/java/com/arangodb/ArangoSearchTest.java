@@ -1013,6 +1013,29 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void nearestNeighborsAnalyzer(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isEnterprise());
+
+        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
+        properties.setModelLocation("/tmp/foo.bin");
+        properties.setTopK(2);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 10));
