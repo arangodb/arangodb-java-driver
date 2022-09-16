@@ -30,6 +30,7 @@ import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
@@ -131,8 +132,13 @@ public class VPackSerializers {
     };
 
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
-        final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
-        builder.add(attribute, type);
+        if (value == ViewType.ARANGO_SEARCH) {
+            builder.add(attribute, "arangosearch");
+        } else if (value == ViewType.SEARCH_ALIAS) {
+            builder.add(attribute, "search-alias");
+        } else {
+            throw new IllegalArgumentException();
+        }
     };
 
     public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = (builder, attribute, value, context) -> {
@@ -183,6 +189,10 @@ public class VPackSerializers {
                 if (storeValues != null) {
                     builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
+                Boolean inBackground = collectionLink.getInBackground();
+                if (inBackground != null) {
+                    builder.add("inBackground", inBackground);
+                }
                 serializeFieldLinks(builder, collectionLink.getFields());
                 serializeNested(builder, collectionLink.getNested());
                 builder.close();
@@ -227,6 +237,15 @@ public class VPackSerializers {
 
     };
 
+    public static final VPackSerializer<SearchAliasProperties> SEARCH_ALIAS_PROPERTIES = (builder, attribute, value, context) -> {
+        Collection<SearchAliasIndex> indexes = value.getIndexes();
+        builder.add("indexes", ValueType.ARRAY);
+        for (SearchAliasIndex index : indexes) {
+            context.serialize(builder, null, index);
+        }
+        builder.close();
+    };
+
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
         if (!links.isEmpty()) {
             builder.add("fields", ValueType.OBJECT);
@@ -265,6 +284,10 @@ public class VPackSerializers {
             final StoreValuesType storeValues = fieldLink.getStoreValues();
             if (storeValues != null) {
                 builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
+            }
+            Boolean inBackground = fieldLink.getInBackground();
+            if (inBackground != null) {
+                builder.add("inBackground", inBackground);
             }
             serializeFieldLinks(builder, fieldLink.getFields());
             serializeNested(builder, fieldLink.getNested());

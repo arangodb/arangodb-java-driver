@@ -18,14 +18,34 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.entity;
+package com.arangodb.model.arangosearch;
+
+import com.arangodb.entity.arangosearch.*;
 
 /**
- * @author Mark Vollmary
+ * @author Michele Rastelli
+ * @since ArangoDB 3.10
  */
-public enum ViewType {
+public class SearchAliasPropertiesOptions {
 
-    ARANGO_SEARCH,
-    SEARCH_ALIAS
+    private final SearchAliasProperties properties;
+
+    public SearchAliasPropertiesOptions() {
+        super();
+        properties = new SearchAliasProperties();
+    }
+
+    public SearchAliasProperties getProperties() {
+        return properties;
+    }
+
+    /**
+     * @param indexes A list of inverted indexes to add to the View.
+     * @return options
+     */
+    public SearchAliasPropertiesOptions indexes(SearchAliasIndex... indexes) {
+        properties.addIndexes(indexes);
+        return this;
+    }
 
 }

@@ -21,17 +21,7 @@
 package com.arangodb.internal.velocypack;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.AnalyzerType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
@@ -151,8 +141,17 @@ public class VPackDeserializers {
         return minReplicationFactor;
     };
 
-    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
-            : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
+    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> {
+        String value = vpack.getAsString();
+        switch (value) {
+            case "arangosearch":
+                return ViewType.ARANGO_SEARCH;
+            case "search-alias":
+                return ViewType.SEARCH_ALIAS;
+            default:
+                throw new IllegalArgumentException("Unknown view type: " + value);
+        }
+    };
 
     public static final VPackDeserializer<StoredValue> STORED_VALUE = (parent, vpack, context) -> {
         VPackSlice fields = vpack.get("fields");
@@ -339,5 +338,19 @@ public class VPackDeserializers {
         InvertedIndexPrimarySort.Field.Direction dir = vpack.get("asc").getAsBoolean() ?
                 InvertedIndexPrimarySort.Field.Direction.asc : InvertedIndexPrimarySort.Field.Direction.desc;
         return new InvertedIndexPrimarySort.Field(vpack.get("field").getAsString(), dir);
+    };
+
+    public static final VPackDeserializer<SearchAliasPropertiesEntity> SEARCH_ALIAS_PROPERTIES_ENTITY = (parent, vpack, context) -> {
+        String id = vpack.get("id").getAsString();
+        String name = vpack.get("name").getAsString();
+        ViewType type = context.deserialize(vpack.get("type"), ViewType.class);
+        SearchAliasProperties properties = context.deserialize(vpack, SearchAliasProperties.class);
+        return new SearchAliasPropertiesEntity(id, name, type, properties);
+    };
+
+    public static final VPackDeserializer<SearchAliasIndex> SEARCH_ALIAS_INDEX = (parent, vpack, context) -> {
+        String collection = vpack.get("collection").getAsString();
+        String index = vpack.get("index").getAsString();
+        return new SearchAliasIndex(collection, index);
     };
 }
