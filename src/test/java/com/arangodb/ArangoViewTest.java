@@ -26,6 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Collection;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -59,6 +61,31 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(info.getId()).isNotNull();
         assertThat(info.getName()).isEqualTo(name);
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getInfoSearchAlias(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String name = "view-" + rnd();
+        db.createView(name, ViewType.SEARCH_ALIAS);
+        final ViewEntity info = db.view(name).getInfo();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getViews(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String name1 = "view-" + rnd();
+        String name2 = "view-" + rnd();
+        db.createView(name1, ViewType.ARANGO_SEARCH);
+        db.createView(name2, ViewType.SEARCH_ALIAS);
+        Collection<ViewEntity> views = db.getViews();
+        assertThat(views).extracting(ViewEntity::getName).contains(name1, name2);
     }
 
     @ParameterizedTest(name = "{index}")

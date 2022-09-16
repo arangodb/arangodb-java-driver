@@ -18,18 +18,18 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.entity;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.arangodb.model.arangosearch;
 
 /**
- * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-public enum ViewType {
+public abstract class SearchAliasOptionsBuilder {
 
-    @JsonProperty("arangosearch")
-    ARANGO_SEARCH,
-    @JsonProperty("search-alias")
-    SEARCH_ALIAS
+    private SearchAliasOptionsBuilder() {
+        super();
+    }
 
+    public static SearchAliasCreateOptions build(final SearchAliasCreateOptions options, final String name) {
+        return options.name(name);
+    }
 }

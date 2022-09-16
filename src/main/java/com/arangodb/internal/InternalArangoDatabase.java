@@ -26,9 +26,7 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
-import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
+import com.arangodb.model.arangosearch.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
@@ -362,6 +360,11 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request createArangoSearchRequest(final String name, final ArangoSearchCreateOptions options) {
         return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
+    }
+
+    protected Request createSearchAliasRequest(final String name, final SearchAliasCreateOptions options) {
+        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(
+                SearchAliasOptionsBuilder.build(options != null ? options : new SearchAliasCreateOptions(), name)));
     }
 
     protected Request getAnalyzerRequest(final String name) {

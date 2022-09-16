@@ -18,18 +18,26 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.entity;
+package com.arangodb.entity.arangosearch;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.arangodb.entity.ViewEntity;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * @author Mark Vollmary
+ * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html">API Documentation</a>
  */
-public enum ViewType {
+public class SearchAliasPropertiesEntity extends ViewEntity {
 
-    @JsonProperty("arangosearch")
-    ARANGO_SEARCH,
-    @JsonProperty("search-alias")
-    SEARCH_ALIAS
+    private final Collection<SearchAliasIndex> indexes = new ArrayList<>();
+
+    /**
+     * @return A list of inverted indexes to add to the View.
+     */
+    public Collection<SearchAliasIndex> getIndexes() {
+        return indexes;
+    }
 
 }

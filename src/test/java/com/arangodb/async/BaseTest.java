@@ -24,6 +24,7 @@ import com.arangodb.DbName;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -85,6 +86,14 @@ public abstract class BaseTest {
     protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException,
             ExecutionException {
         return isAtLeastVersion(major, minor, 0);
+    }
+
+    boolean isLessThanVersion(final int major, final int minor) throws ExecutionException, InterruptedException {
+        return isLessThanVersion(major, minor, 0);
+    }
+
+    boolean isLessThanVersion(final int major, final int minor, final int patch) throws ExecutionException, InterruptedException {
+        return TestUtils.isLessThanVersion(db.getVersion().get().getVersion(), major, minor, patch);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) throws ExecutionException, InterruptedException {

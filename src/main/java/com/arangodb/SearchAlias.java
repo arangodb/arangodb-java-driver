@@ -21,71 +21,72 @@
 package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-
-import javax.annotation.concurrent.ThreadSafe;
+import com.arangodb.entity.arangosearch.SearchAliasPropertiesEntity;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
+import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 
 /**
- * Interface for operations on ArangoDB view level for ArangoSearch views.
+ * Interface for operations on ArangoDB view level for SearchAlias views.
  *
- * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">View API Documentation</a>
- * @since ArangoDB 3.4.0
+ * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html">View API Documentation</a>
+ * @since ArangoDB 3.10
  */
-@ThreadSafe
-public interface ArangoSearch extends ArangoView {
+public interface SearchAlias extends ArangoView {
 
     /**
      * Creates a view, then returns view information from the server.
      *
      * @return information about the view
-     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html#create-a-search-alias-view">API
      * Documentation</a>
      */
-    ViewEntity create();
+    ViewEntity create() throws ArangoDBException;
 
     /**
      * Creates a view with the given {@code options}, then returns view information from the server.
      *
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html#create-a-search-alias-view">API
      * Documentation</a>
      */
-    ViewEntity create(ArangoSearchCreateOptions options);
+    ViewEntity create(SearchAliasCreateOptions options) throws ArangoDBException;
 
     /**
      * Reads the properties of the specified view.
      *
      * @return properties of the view
-     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#read-properties-of-a-view">API
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html#read-properties-of-a-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity getProperties();
+    SearchAliasPropertiesEntity getProperties() throws ArangoDBException;
 
     /**
      * Partially changes properties of the view.
      *
      * @param options properties to change
      * @return properties of the view
+     * @throws ArangoDBException
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/views-arangosearch
-     * .html#partially-changes-properties-of-an-arangosearch-view">API
+     * "https://www.arangodb.com/docs/stable/http/views-search-alias.html#partially-changes-properties-of-a-search-alias-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options);
+    SearchAliasPropertiesEntity updateProperties(SearchAliasPropertiesOptions options) throws ArangoDBException;
 
     /**
      * Changes properties of the view.
      *
      * @param options properties to change
      * @return properties of the view
+     * @throws ArangoDBException
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#change-properties-of-an-arangosearch-view">API
+     * "https://www.arangodb.com/docs/stable/http/views-search-alias.html#changes-properties-of-a-search-alias-view">API
      * Documentation</a>
      */
-    ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options);
+    SearchAliasPropertiesEntity replaceProperties(SearchAliasPropertiesOptions options) throws ArangoDBException;
 
 }

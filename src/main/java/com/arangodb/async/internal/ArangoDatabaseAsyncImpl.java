@@ -34,6 +34,7 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -429,6 +430,11 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
+    public SearchAliasAsync searchAlias(String name) {
+        return new SearchAliasAsyncImpl(this, name);
+    }
+
+    @Override
     public CompletableFuture<ViewEntity> createView(final String name, final ViewType type) {
         return executor.execute(createViewRequest(name, type), ViewEntity.class);
     }
@@ -437,6 +443,11 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     public CompletableFuture<ViewEntity> createArangoSearch(final String name,
                                                             final ArangoSearchCreateOptions options) {
         return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+    }
+
+    @Override
+    public CompletableFuture<ViewEntity> createSearchAlias(String name, SearchAliasCreateOptions options) {
+        return executor.execute(createSearchAliasRequest(name, options), ViewEntity.class);
     }
 
     @Override

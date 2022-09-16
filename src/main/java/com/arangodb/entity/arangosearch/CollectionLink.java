@@ -43,6 +43,7 @@ public final class CollectionLink {
     private StoreValuesType storeValues;
     private Collection<FieldLink> fields;
     private Collection<FieldLink> nested;
+    private Boolean inBackground;
 
     private CollectionLink(final String name) {
         super();
@@ -122,6 +123,18 @@ public final class CollectionLink {
         return this;
     }
 
+    /**
+     * @param inBackground If set to true, then no exclusive lock is used on the source collection during View index
+     *                     creation, so that it remains basically available. inBackground is an option that can be set
+     *                     when adding links. It does not get persisted as it is not a View property, but only a
+     *                     one-off option. (default: false)
+     * @return link
+     */
+    public CollectionLink inBackground(final Boolean inBackground) {
+        this.inBackground = inBackground;
+        return this;
+    }
+
     @JsonIgnore
     public String getName() {
         return name;
@@ -153,4 +166,7 @@ public final class CollectionLink {
         return nested;
     }
 
+    public Boolean getInBackground() {
+        return inBackground;
+    }
 }
