@@ -20,16 +20,21 @@
 
 package com.arangodb.async;
 
+import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.entity.InvertedIndexField;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
-import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
-import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import com.arangodb.model.InvertedIndexOptions;
+import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -45,18 +50,35 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ArangoSearchTest extends BaseTest {
 
     private static final String VIEW_NAME = "view_test";
+    private static final String COLL_1 = "view_update_prop_test_collection";
+    private static final String COLL_2 = "view_replace_prop_test_collection";
 
     @BeforeAll
     static void setup() throws InterruptedException, ExecutionException {
         if (!isAtLeastVersion(arangoDB, 3, 4))
             return;
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions()).get();
+        db.createCollection(COLL_1).get();
+        db.createCollection(COLL_2).get();
+    }
+
+    @BeforeEach
+    void setUp() throws ExecutionException, InterruptedException {
+        assumeTrue(isLessThanVersion(3, 10) || isSingleServer());
     }
 
     @Test
     void exists() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         assertThat(db.arangoSearch(VIEW_NAME).exists().get()).isTrue();
+    }
+
+    @Test
+    void createAndExistsSearchAlias() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        db.createSearchAlias(viewName, new SearchAliasCreateOptions()).get();
+        assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
     @Test
@@ -92,7 +114,7 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void create() throws InterruptedException, ExecutionException {
+    void createArangoSearchView() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_createtest";
         final ViewEntity info = db.arangoSearch(name).create().get();
@@ -104,7 +126,19 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void createWithOptions() throws InterruptedException, ExecutionException {
+    void createSearchAliasView() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        final ViewEntity info = db.searchAlias(viewName).create().get();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(db.searchAlias(viewName).exists().get()).isTrue();
+    }
+
+    @Test
+    void createArangoSearchViewWithOptions() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_createtest_withotpions";
         final ViewEntity info = db.arangoSearch(name).create(new ArangoSearchCreateOptions()).get();
@@ -116,7 +150,7 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void createWithPrimarySort() throws ExecutionException, InterruptedException {
+    void createArangoSearchViewWithPrimarySort() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         final String name = "createWithPrimarySort";
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -135,7 +169,7 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void createWithCommitIntervalMsec() throws ExecutionException, InterruptedException {
+    void createArangoSearchViewWithCommitIntervalMsec() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         final String name = "createWithCommitIntervalMsec";
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -155,7 +189,49 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void getProperties() throws InterruptedException, ExecutionException {
+    void createSearchAliasViewWithOptions() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions();
+        final ViewEntity info = db.searchAlias(viewName).create(options).get();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(db.searchAlias(viewName).exists().get()).isTrue();
+    }
+
+    @Test
+    void createSearchAliasViewWithIndexesAndGetProperties() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollectionAsync col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                        .name(idxName)
+                        .fields(new InvertedIndexField().name("a" + rnd())))
+                .get();
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options).get();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties().get();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName));
+    }
+
+    @Test
+    void getArangoSearchViewProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_getpropertiestest";
         final ArangoSearchAsync view = db.arangoSearch(name);
@@ -174,9 +250,8 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void updateProperties() throws InterruptedException, ExecutionException {
+    void updateArangoSearchViewProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
-        db.createCollection("view_update_prop_test_collection").get();
         final String name = VIEW_NAME + "_updatepropertiestest";
         final ArangoSearchAsync view = db.arangoSearch(name);
         view.create(new ArangoSearchCreateOptions()).get();
@@ -207,9 +282,49 @@ class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    void replaceProperties() throws InterruptedException, ExecutionException {
+    void updateSearchAliasViewWithIndexesAndGetProperties() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollectionAsync col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                        .name(idxName)
+                        .fields(new InvertedIndexField().name("a" + rnd())))
+                .get();
+        ArangoCollectionAsync col2 = db.collection(COLL_2);
+        String idxName2 = "idx-" + rnd();
+        col2.ensureInvertedIndex(new InvertedIndexOptions()
+                        .name(idxName2)
+                        .fields(new InvertedIndexField().name("a" + rnd())))
+                .get();
+
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options).get();
+        db.searchAlias(viewName).updateProperties(new SearchAliasPropertiesOptions()
+                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties().get();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2)
+                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName))
+                .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
+    }
+
+    @Test
+    void replaceArangoSearchViewProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
-        db.createCollection("view_replace_prop_test_collection").get();
         final String name = VIEW_NAME + "_replacepropertiestest";
         final ArangoSearchAsync view = db.arangoSearch(name);
         view.create(new ArangoSearchCreateOptions()).get();
@@ -223,6 +338,46 @@ class ArangoSearchTest extends BaseTest {
         assertThat(link.getName()).isEqualTo("view_replace_prop_test_collection");
         assertThat(link.getFields()).hasSize(1);
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
+    }
+
+    @Test
+    void replaceSearchAliasViewWithIndexesAndGetProperties() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollectionAsync col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                        .name(idxName)
+                        .fields(new InvertedIndexField().name("a" + rnd())))
+                .get();
+        ArangoCollectionAsync col2 = db.collection(COLL_2);
+        String idxName2 = "idx-" + rnd();
+        col2.ensureInvertedIndex(new InvertedIndexOptions()
+                        .name(idxName2)
+                        .fields(new InvertedIndexField().name("a" + rnd())))
+                .get();
+
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options).get();
+        db.searchAlias(viewName).replaceProperties(new SearchAliasPropertiesOptions()
+                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties().get();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1)
+                .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
     }
 
     private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException, InterruptedException {
