@@ -20,13 +20,13 @@
 
 package com.arangodb;
 
+import com.arangodb.entity.InvertedIndexField;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
-import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
-import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import com.arangodb.model.InvertedIndexOptions;
+import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -57,6 +57,15 @@ class ArangoSearchTest extends BaseJunit5 {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createAndExistsSearchAlias(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        db.createSearchAlias(viewName, new SearchAliasCreateOptions());
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
@@ -99,7 +108,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void create(ArangoDatabase db) {
+    void createArangoSearchView(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ViewEntity info = db.arangoSearch(viewName).create();
@@ -112,7 +121,20 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void createWithOptions(ArangoDatabase db) {
+    void createSearchAliasView(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        final ViewEntity info = db.searchAlias(viewName).create();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(db.searchAlias(viewName).exists()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createArangoSearchViewWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -126,7 +148,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void createWithPrimarySort(ArangoDatabase db) {
+    void createArangoSearchViewWithPrimarySort(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -162,7 +184,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void createWithCommitIntervalMsec(ArangoDatabase db) {
+    void createArangoSearchViewWithCommitIntervalMsec(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -183,7 +205,50 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void getProperties(ArangoDatabase db) {
+    void createSearchAliasViewWithOptions(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions();
+        final ViewEntity info = db.searchAlias(viewName).create(options);
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(db.searchAlias(viewName).exists()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollection col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options);
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName));
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
@@ -203,7 +268,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void updateProperties(ArangoDatabase db) {
+    void updateArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
@@ -236,7 +301,47 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void replaceProperties(ArangoDatabase db) {
+    void updateSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollection col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+        ArangoCollection col2 = db.collection(COLL_2);
+        String idxName2 = "idx-" + rnd();
+        col2.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName2)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options);
+        db.searchAlias(viewName).updateProperties(new SearchAliasPropertiesOptions()
+                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2)
+                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName))
+                .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void replaceArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
@@ -251,6 +356,45 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(link.getName()).isEqualTo(COLL_1);
         assertThat(link.getFields()).hasSize(1);
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void replaceSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        ArangoCollection col = db.collection(COLL_1);
+        String idxName = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+        ArangoCollection col2 = db.collection(COLL_2);
+        String idxName2 = "idx-" + rnd();
+        col2.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName2)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+
+        String viewName = "view-" + rnd();
+        final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
+                .indexes(new SearchAliasIndex(COLL_1, idxName));
+        final ViewEntity info = db.searchAlias(viewName).create(options);
+        db.searchAlias(viewName).replaceProperties(new SearchAliasPropertiesOptions()
+                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+
+        final SearchAliasPropertiesEntity properties = db.searchAlias(viewName).getProperties();
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+        assertThat(properties.getIndexes())
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1)
+                .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
     }
 
     private void createGetAndDeleteAnalyzer(ArangoDatabase db, AnalyzerEntity options) {

@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.velocypack;
 
+import com.arangodb.SearchAlias;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -79,6 +80,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
         context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
+        context.registerSerializer(SearchAliasProperties.class, VPackSerializers.SEARCH_ALIAS_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);
         context.registerSerializer(ZKDIndexOptions.FieldValueTypes.class, VPackSerializers.ZKD_FIELD_VALUE_TYPES);
@@ -104,6 +106,8 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(CollectionSchema.class, VPackDeserializers.COLLECTION_VALIDATION);
         context.registerDeserializer(ZKDIndexOptions.FieldValueTypes.class, VPackDeserializers.ZKD_FIELD_VALUE_TYPES);
         context.registerDeserializer(InvertedIndexPrimarySort.Field.class, VPackDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
+        context.registerDeserializer(SearchAliasPropertiesEntity.class, VPackDeserializers.SEARCH_ALIAS_PROPERTIES_ENTITY);
+        context.registerDeserializer(SearchAliasIndex.class, VPackDeserializers.SEARCH_ALIAS_INDEX);
     }
 
     @Override

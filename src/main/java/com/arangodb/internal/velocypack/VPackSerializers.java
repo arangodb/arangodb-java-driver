@@ -30,6 +30,7 @@ import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
@@ -234,6 +235,15 @@ public class VPackSerializers {
             builder.close(); // close array
         }
 
+    };
+
+    public static final VPackSerializer<SearchAliasProperties> SEARCH_ALIAS_PROPERTIES = (builder, attribute, value, context) -> {
+        Collection<SearchAliasIndex> indexes = value.getIndexes();
+        builder.add("indexes", ValueType.ARRAY);
+        for (SearchAliasIndex index : indexes) {
+            context.serialize(builder, null, index);
+        }
+        builder.close();
     };
 
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {

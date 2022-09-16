@@ -416,8 +416,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public SearchAlias searchAlias(String name) {
-        // FIXME: implement
-        throw new UnsupportedOperationException();
+        return new SearchAliasImpl(this, name);
     }
 
     @Override
