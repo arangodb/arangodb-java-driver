@@ -151,8 +151,17 @@ public class VPackDeserializers {
         return minReplicationFactor;
     };
 
-    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
-            : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
+    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> {
+        String value = vpack.getAsString();
+        switch (value) {
+            case "arangosearch":
+                return ViewType.ARANGO_SEARCH;
+            case "search-alias":
+                return ViewType.SEARCH_ALIAS;
+            default:
+                throw new IllegalArgumentException("Unknown view type: " + value);
+        }
+    };
 
     public static final VPackDeserializer<StoredValue> STORED_VALUE = (parent, vpack, context) -> {
         VPackSlice fields = vpack.get("fields");

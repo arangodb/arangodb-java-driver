@@ -131,8 +131,13 @@ public class VPackSerializers {
     };
 
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
-        final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
-        builder.add(attribute, type);
+        if (value == ViewType.ARANGO_SEARCH) {
+            builder.add(attribute, "arangosearch");
+        } else if (value == ViewType.SEARCH_ALIAS) {
+            builder.add(attribute, "search-alias");
+        } else {
+            throw new IllegalArgumentException();
+        }
     };
 
     public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = (builder, attribute, value, context) -> {
