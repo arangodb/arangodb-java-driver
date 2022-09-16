@@ -305,7 +305,7 @@ class ArangoSearchTest extends BaseTest {
                 .indexes(new SearchAliasIndex(COLL_1, idxName));
         final ViewEntity info = db.searchAlias(viewName).create(options).get();
         db.searchAlias(viewName).updateProperties(new SearchAliasPropertiesOptions()
-                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+                .indexes(new SearchAliasIndex(COLL_2, idxName2))).get();
 
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
@@ -365,7 +365,7 @@ class ArangoSearchTest extends BaseTest {
                 .indexes(new SearchAliasIndex(COLL_1, idxName));
         final ViewEntity info = db.searchAlias(viewName).create(options).get();
         db.searchAlias(viewName).replaceProperties(new SearchAliasPropertiesOptions()
-                .indexes(new SearchAliasIndex(COLL_2, idxName2)));
+                .indexes(new SearchAliasIndex(COLL_2, idxName2))).get();
 
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
