@@ -29,6 +29,7 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 
 import java.util.Collection;
 import java.util.Map;
@@ -682,13 +683,22 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
     ArangoViewAsync view(String name);
 
     /**
-     * Returns a {@code ArangoSearchAsync} instance for the given ArangoSearch view name.
+     * Returns a {@link ArangoSearchAsync} instance for the given ArangoSearch view name.
      *
      * @param name Name of the view
      * @return ArangoSearch view handler
      * @since ArangoDB 3.4.0
      */
     ArangoSearchAsync arangoSearch(String name);
+
+    /**
+     * Returns a {@link SearchAliasAsync} instance for the given view name.
+     *
+     * @param name Name of the view
+     * @return SearchAlias view handler
+     * @since ArangoDB 3.10
+     */
+    SearchAliasAsync searchAlias(String name);
 
     /**
      * Creates a view of the given {@code type}, then returns view information from the server.
@@ -711,6 +721,18 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.4.0
      */
     CompletableFuture<ViewEntity> createArangoSearch(String name, ArangoSearchCreateOptions options);
+
+    /**
+     * Creates a SearchAlias view with the given {@code options}, then returns view information from the server.
+     *
+     * @param name    The name of the view
+     * @param options Additional options, can be null
+     * @return information about the view
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html#create-a-search-alias-view">API
+     * Documentation</a>
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<ViewEntity> createSearchAlias(String name, SearchAliasCreateOptions options);
 
     /**
      * Creates an Analyzer
