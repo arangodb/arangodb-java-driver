@@ -30,6 +30,7 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
@@ -414,6 +415,12 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
+    public SearchAlias searchAlias(String name) {
+        // FIXME: implement
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ViewEntity createView(final String name, final ViewType type) throws ArangoDBException {
         return executor.execute(createViewRequest(name, type), ViewEntity.class);
     }
@@ -422,6 +429,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options)
             throws ArangoDBException {
         return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+    }
+
+    @Override
+    public ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options) throws ArangoDBException {
+        return executor.execute(createSearchAliasRequest(name, options), ViewEntity.class);
     }
 
     @Override
