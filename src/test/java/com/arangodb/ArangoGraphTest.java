@@ -92,7 +92,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createWithReplicationAndWriteConcern(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions,
@@ -162,7 +162,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void addSatelliteVertexCollection(ArangoDatabase db) {
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 9));
 
@@ -223,7 +223,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void addSatelliteEdgeDefinition(ArangoDatabase db) {
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 9));
 
@@ -293,7 +293,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void smartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
@@ -312,7 +312,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void hybridSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
         assumeTrue((isAtLeastVersion(3, 9)));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
@@ -340,7 +340,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void disjointSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
         assumeTrue((isAtLeastVersion(3, 7)));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
@@ -361,7 +361,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void hybridDisjointSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
         assumeTrue((isAtLeastVersion(3, 9)));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
@@ -389,7 +389,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void enterpriseGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
-        assumeTrue(isCluster());
+        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection("enterpriseGraph-edge-" + rnd()).from("enterpriseGraph-vertex-" + rnd()).to("enterpriseGraph-vertex-" + rnd()));
