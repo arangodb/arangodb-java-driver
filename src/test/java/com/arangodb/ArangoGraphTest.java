@@ -92,7 +92,7 @@ class ArangoGraphTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createWithReplicationAndWriteConcern(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
+        assumeTrue(isCluster());
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions,
