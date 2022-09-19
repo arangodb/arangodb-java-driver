@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * TODO: add documentation
- *
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
  * @since ArangoDB 3.10

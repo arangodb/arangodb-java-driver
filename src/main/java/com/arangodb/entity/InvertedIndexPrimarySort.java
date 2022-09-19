@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * TODO: add documentation
- *
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
  * @since ArangoDB 3.10
@@ -22,6 +20,10 @@ public class InvertedIndexPrimarySort implements Entity {
         return fields;
     }
 
+    /**
+     * @param fields An array of the fields to sort the index by and the direction to sort each field in.
+     * @return this
+     */
     public InvertedIndexPrimarySort fields(Field... fields) {
         Collections.addAll(this.fields, fields);
         return this;
@@ -31,6 +33,10 @@ public class InvertedIndexPrimarySort implements Entity {
         return compression;
     }
 
+    /**
+     * @param compression Defines how to compress the primary sort data.
+     * @return this
+     */
     public InvertedIndexPrimarySort compression(ArangoSearchCompression compression) {
         this.compression = compression;
         return this;
@@ -53,6 +59,10 @@ public class InvertedIndexPrimarySort implements Entity {
         private final String field;
         private final Direction direction;
 
+        /**
+         * @param field     An attribute path. The . character denotes sub-attributes.
+         * @param direction The sorting direction.
+         */
         public Field(String field, Direction direction) {
             this.field = field;
             this.direction = direction;

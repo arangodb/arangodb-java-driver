@@ -34,6 +34,10 @@ public class StoredValue {
     private final List<String> fields;
     private final ArangoSearchCompression compression;
 
+    /**
+     * @param fields      A list of attribute paths. The . character denotes sub-attributes.
+     * @param compression Defines how to compress the attribute values.
+     */
     public StoredValue(List<String> fields, ArangoSearchCompression compression) {
         this.fields = fields;
         this.compression = compression;
@@ -43,18 +47,10 @@ public class StoredValue {
         this(fields, null);
     }
 
-    /**
-     * @return an array of strings with one or more document attribute paths. The specified attributes are placed into a
-     * single column of the index. A column with all fields that are involved in common search queries is ideal for
-     * performance. The column should not include too many unneeded fields however.
-     */
     public List<String> getFields() {
         return fields;
     }
 
-    /**
-     * @return defines the compression type used for the internal column-store
-     */
     public ArangoSearchCompression getCompression() {
         return compression;
     }
