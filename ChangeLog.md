@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added support for `search-alias` views (ArangoDB 3.10 #461)
+- added support for nested search (ArangoDB 3.10, #460)
+- added support for `classification`, `nearest_neighbors` and `minhash` search analyzers (ArangoDB 3.10, #458)
+- added support for inverted indexes (ArangoDB 3.10, #457)
+- added support for cluster dirty reads (ArangoDB 3.10, #455)
+- added support for index stored values (ArangoDB 3.10)
+- added support for geo index legacy polygons (ArangoDB 3.10)
+- added support for getting query optimizer rules (ArangoDB 3.10)
+- added support for enhanced cursor stats (ArangoDB 3.10)
+- added support for computed values (ArangoDB 3.10)
+- added support for index cache (ArangoDB 3.10)
+- deprecated fulltext indexes (ArangoDB 3.10, #454)
+- fixed `ConsolidationPolicy` API
+- deprecated MMFiles collection attributes (#442)
+- documented thead safe classes (#445)
+
 ## [6.18.0] - 2022-06-07
 
 - deprecated usage of deprecated server API (#440)
