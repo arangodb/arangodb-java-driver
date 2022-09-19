@@ -228,13 +228,23 @@ class ArangoSearchTest extends BaseJunit5 {
     void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
-        String idxName = "idx-" + rnd();
+        String idxName1 = "idx-" + rnd();
         col.ensureInvertedIndex(new InvertedIndexOptions()
-                .name(idxName)
+                .name(idxName1)
                 .fields(new InvertedIndexField().name("a" + rnd())));
+
+        String idxName2 = "idx-" + rnd();
+        col.ensureInvertedIndex(new InvertedIndexOptions()
+                .name(idxName2)
+                .fields(new InvertedIndexField().name("a" + rnd())));
+
         String viewName = "view-" + rnd();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
-                .indexes(new SearchAliasIndex(COLL_1, idxName));
+                .indexes(
+                        new SearchAliasIndex(COLL_1, idxName1, SearchAliasIndex.OperationType.add),
+                        new SearchAliasIndex(COLL_1, idxName2, SearchAliasIndex.OperationType.add),
+                        new SearchAliasIndex(COLL_1, idxName2, SearchAliasIndex.OperationType.del)
+                );
         final ViewEntity info = db.searchAlias(viewName).create(options);
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
@@ -249,7 +259,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(properties.getIndexes())
                 .isNotNull()
                 .isNotEmpty()
-                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName));
+                .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName1));
     }
 
     @ParameterizedTest(name = "{index}")
