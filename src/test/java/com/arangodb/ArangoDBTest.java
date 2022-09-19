@@ -213,7 +213,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(retrievedUser.getExtra()).isEqualTo(extra);
 
         // needed for active-failover tests only
-        Thread.sleep(1_000);
+        Thread.sleep(2_000);
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
                 .serializer(new ArangoJack())
