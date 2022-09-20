@@ -731,7 +731,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 10));
 
         String name = "test-" + UUID.randomUUID();
 
