@@ -624,6 +624,7 @@ Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(tru
     void updateDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
+        doc.addAttribute("foo", "bar");
         final DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(createResult.getKey(), doc,
          null);
         assertThat(doc.getRevision()).isNull();
