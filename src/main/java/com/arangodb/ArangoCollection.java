@@ -595,11 +595,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      * @since ArangoDB 3.10
      */
-    InvertedIndexEntity getInvertedIndex(String id) throws ArangoDBException;
+    InvertedIndexEntity getInvertedIndex(String id);
 
     /**
      * Deletes the index with the given {@code id} from the collection.
@@ -702,11 +701,10 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param options index creation options
      * @return information about the index
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
      * @since ArangoDB 3.10
      */
-    InvertedIndexEntity ensureInvertedIndex(InvertedIndexOptions options) throws ArangoDBException;
+    InvertedIndexEntity ensureInvertedIndex(InvertedIndexOptions options);
 
     /**
      * Fetches a list of all indexes on this collection.
@@ -725,13 +723,12 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Fetches a list of all inverted indexes on this collection.
      *
      * @return information about the indexes
-     * @throws ArangoDBException
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
-    Collection<InvertedIndexEntity> getInvertedIndexes() throws ArangoDBException;
+    Collection<InvertedIndexEntity> getInvertedIndexes();
 
     /**
      * Checks whether the collection exists

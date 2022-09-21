@@ -261,7 +261,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public Collection<QueryOptimizerRule> getQueryOptimizerRules() throws ArangoDBException {
+    public Collection<QueryOptimizerRule> getQueryOptimizerRules() {
         return executor.execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 

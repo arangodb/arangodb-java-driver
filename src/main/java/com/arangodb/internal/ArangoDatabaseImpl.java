@@ -412,7 +412,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
-    public ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options) throws ArangoDBException {
+    public ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options) {
         return executor.execute(createSearchAliasRequest(name, options), ViewEntity.class);
     }
 

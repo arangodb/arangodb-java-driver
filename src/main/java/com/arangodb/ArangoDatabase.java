@@ -686,12 +686,11 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name    The name of the view
      * @param options Additional options, can be null
      * @return information about the view
-     * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html#create-a-search-alias-view">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
-    ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options) throws ArangoDBException;
+    ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options);
 
     /**
      * Creates an Analyzer

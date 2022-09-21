@@ -332,7 +332,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
     /**
      * @return the list of available rules and their respective flags
-     * @throws ArangoDBException
      * @since ArangoDB 3.10
      */
     Collection<QueryOptimizerRule> getQueryOptimizerRules();

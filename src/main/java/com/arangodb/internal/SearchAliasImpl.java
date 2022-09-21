@@ -38,7 +38,7 @@ public class SearchAliasImpl extends InternalSearchAlias<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public boolean exists() throws ArangoDBException {
+    public boolean exists() {
         try {
             getInfo();
             return true;
@@ -51,46 +51,44 @@ public class SearchAliasImpl extends InternalSearchAlias<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public void drop() throws ArangoDBException {
+    public void drop() {
         executor.execute(dropRequest(), Void.class);
     }
 
     @Override
-    public synchronized ViewEntity rename(final String newName) throws ArangoDBException {
+    public synchronized ViewEntity rename(final String newName) {
         final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
         name = result.getName();
         return result;
     }
 
     @Override
-    public ViewEntity getInfo() throws ArangoDBException {
+    public ViewEntity getInfo() {
         return executor.execute(getInfoRequest(), ViewEntity.class);
     }
 
     @Override
-    public ViewEntity create() throws ArangoDBException {
+    public ViewEntity create() {
         return create(new SearchAliasCreateOptions());
     }
 
     @Override
-    public ViewEntity create(final SearchAliasCreateOptions options) throws ArangoDBException {
+    public ViewEntity create(final SearchAliasCreateOptions options) {
         return db().createSearchAlias(name(), options);
     }
 
     @Override
-    public SearchAliasPropertiesEntity getProperties() throws ArangoDBException {
+    public SearchAliasPropertiesEntity getProperties() {
         return executor.execute(getPropertiesRequest(), SearchAliasPropertiesEntity.class);
     }
 
     @Override
-    public SearchAliasPropertiesEntity updateProperties(final SearchAliasPropertiesOptions options)
-            throws ArangoDBException {
+    public SearchAliasPropertiesEntity updateProperties(final SearchAliasPropertiesOptions options) {
         return executor.execute(updatePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 
     @Override
-    public SearchAliasPropertiesEntity replaceProperties(final SearchAliasPropertiesOptions options)
-            throws ArangoDBException {
+    public SearchAliasPropertiesEntity replaceProperties(final SearchAliasPropertiesOptions options) {
         return executor.execute(replacePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 

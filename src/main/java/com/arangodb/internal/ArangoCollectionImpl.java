@@ -350,7 +350,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public InvertedIndexEntity getInvertedIndex(String id) throws ArangoDBException {
+    public InvertedIndexEntity getInvertedIndex(String id) {
         return executor.execute(getIndexRequest(id), InvertedIndexEntity.class);
     }
 
@@ -377,7 +377,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public InvertedIndexEntity ensureInvertedIndex(final InvertedIndexOptions options) throws ArangoDBException {
+    public InvertedIndexEntity ensureInvertedIndex(final InvertedIndexOptions options) {
         return executor.execute(createInvertedIndexRequest(options), InvertedIndexEntity.class);
     }
 
@@ -408,7 +408,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public Collection<InvertedIndexEntity> getInvertedIndexes() throws ArangoDBException {
+    public Collection<InvertedIndexEntity> getInvertedIndexes() {
         return executor.execute(getIndexesRequest(), getInvertedIndexesResponseDeserializer());
     }
 
