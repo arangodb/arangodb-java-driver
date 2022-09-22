@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Michele Rastelli
  * @since ArabgoDB 3.10
  */
-public class SearchAliasIndex {
+public final class SearchAliasIndex {
     private final String collection;
     private final String index;
     private final OperationType operation;

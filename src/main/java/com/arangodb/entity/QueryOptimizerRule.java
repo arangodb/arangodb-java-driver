@@ -3,7 +3,7 @@ package com.arangodb.entity;
 /**
  * @since ArangoDB 3.10
  */
-public class QueryOptimizerRule {
+public final class QueryOptimizerRule {
     private String name;
     private Flags flags;
 

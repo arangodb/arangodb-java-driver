@@ -27,7 +27,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @since ArangoDB 3.10
  */
-public class MinHashAnalyzerProperties {
+public final class MinHashAnalyzerProperties {
 
     private SearchAnalyzer analyzer;
     private Integer numHashes;

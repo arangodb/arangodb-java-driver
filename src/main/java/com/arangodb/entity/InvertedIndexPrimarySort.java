@@ -14,7 +14,7 @@ import java.util.Objects;
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
  * @since ArangoDB 3.10
  */
-public class InvertedIndexPrimarySort {
+public final class InvertedIndexPrimarySort {
     private final List<Field> fields = new ArrayList<>();
     private ArangoSearchCompression compression;
 

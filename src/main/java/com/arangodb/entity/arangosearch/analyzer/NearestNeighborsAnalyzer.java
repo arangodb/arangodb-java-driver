@@ -35,7 +35,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/analyzers.html#nearest_neighbors">API Documentation</a>
  * @since ArangoDB 3.10
  */
-public class NearestNeighborsAnalyzer extends SearchAnalyzer {
+public final class NearestNeighborsAnalyzer extends SearchAnalyzer {
     public NearestNeighborsAnalyzer() {
         setType(AnalyzerType.nearest_neighbors);
     }

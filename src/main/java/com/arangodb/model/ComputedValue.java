@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @since ArangoDB 3.10
  */
-public class ComputedValue {
+public final class ComputedValue {
     private String name;
     private String expression;
     private Boolean overwrite;

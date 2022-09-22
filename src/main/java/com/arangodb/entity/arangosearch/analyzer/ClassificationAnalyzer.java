@@ -33,7 +33,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/analyzers.html#classification">API Documentation</a>
  * @since ArangoDB 3.10
  */
-public class ClassificationAnalyzer extends SearchAnalyzer {
+public final class ClassificationAnalyzer extends SearchAnalyzer {
     public ClassificationAnalyzer() {
         setType(AnalyzerType.classification);
     }

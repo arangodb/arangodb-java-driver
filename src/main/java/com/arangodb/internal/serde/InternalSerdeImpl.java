@@ -2,6 +2,7 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -79,11 +80,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
             return serialize(null);
         }
         Class<?> clazz = value.getClass();
-        if (RawJson.class.isAssignableFrom(clazz) ||
-                RawBytes.class.isAssignableFrom(clazz) ||
-                JsonNode.class.isAssignableFrom(clazz) ||
-                BaseDocument.class.isAssignableFrom(clazz)
-        ) {
+        if (isManagedClass(clazz)) {
             return serialize(value);
         } else {
             return userSerde.serialize(value);
@@ -101,11 +98,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
 
     @Override
     public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
-        if (RawJson.class.isAssignableFrom(clazz) ||
-                RawBytes.class.isAssignableFrom(clazz) ||
-                JsonNode.class.isAssignableFrom(clazz) ||
-                BaseDocument.class.isAssignableFrom(clazz)
-        ) {
+        if (isManagedClass(clazz)) {
             return deserialize(content, clazz);
         } else {
             return userSerde.deserialize(content, clazz);
@@ -149,4 +142,11 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
         return super.deserialize(content, type);
     }
 
+    private boolean isManagedClass(Class<?> clazz) {
+        return JsonNode.class.isAssignableFrom(clazz) ||
+                RawJson.class.equals(clazz) ||
+                RawBytes.class.equals(clazz) ||
+                BaseDocument.class.equals(clazz) ||
+                BaseEdgeDocument.class.equals(clazz);
+    }
 }

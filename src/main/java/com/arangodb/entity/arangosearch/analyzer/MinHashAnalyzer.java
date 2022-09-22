@@ -33,7 +33,7 @@ import java.util.Objects;
  * @see <a href= "https://www.arangodb.com/docs/stable/analyzers.html#minhash">API Documentation</a>
  * @since ArangoDB 3.10
  */
-public class MinHashAnalyzer extends SearchAnalyzer {
+public final class MinHashAnalyzer extends SearchAnalyzer {
     public MinHashAnalyzer() {
         setType(AnalyzerType.minhash);
     }

@@ -32,7 +32,7 @@ import java.util.Set;
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
  * @since ArangoDB 3.10
  */
-public class InvertedIndexEntity {
+public final class InvertedIndexEntity {
 
     private String id;
     private Boolean isNewlyCreated;

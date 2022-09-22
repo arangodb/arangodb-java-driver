@@ -31,7 +31,7 @@ import java.util.Collections;
  * @author Michele Rastelli
  * @since ArangoDB 3.10
  */
-public class SearchAliasCreateOptions {
+public final class SearchAliasCreateOptions {
 
     private String name;
     private final ViewType type;

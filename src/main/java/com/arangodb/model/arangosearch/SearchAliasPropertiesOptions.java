@@ -30,7 +30,7 @@ import java.util.Collections;
  * @author Michele Rastelli
  * @since ArangoDB 3.10
  */
-public class SearchAliasPropertiesOptions {
+public final class SearchAliasPropertiesOptions {
 
     private final Collection<SearchAliasIndex> indexes = new ArrayList<>();
 

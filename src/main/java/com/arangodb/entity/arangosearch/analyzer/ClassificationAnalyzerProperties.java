@@ -29,7 +29,7 @@ import java.util.Objects;
  * @author Michele Rastelli
  * @since ArangoDB 3.10
  */
-public class ClassificationAnalyzerProperties {
+public final class ClassificationAnalyzerProperties {
 
     @JsonProperty("model_location")
     private String modelLocation;

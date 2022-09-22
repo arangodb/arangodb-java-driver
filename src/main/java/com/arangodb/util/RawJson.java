@@ -13,10 +13,10 @@ import java.util.Objects;
  * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawJson}.
  */
-public class RawJson implements RawData {
+public final class RawJson implements RawData {
     private final String value;
 
-    protected RawJson(final String value) {
+    private RawJson(final String value) {
         this.value = value;
     }
 
