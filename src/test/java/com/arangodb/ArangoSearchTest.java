@@ -28,7 +28,6 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -50,11 +49,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @BeforeAll
     static void init() {
         initCollections(COLL_1, COLL_2);
-    }
-
-    @BeforeEach
-    void setUp() {
-        assumeTrue(isLessThanVersion(3, 10) || isSingleServer());
     }
 
     @ParameterizedTest(name = "{index}")

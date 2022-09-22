@@ -20,9 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.InvertedIndexField;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
@@ -31,10 +29,7 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,11 +58,6 @@ class ArangoSearchTest extends BaseTest {
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions()).get();
         db.createCollection(COLL_1).get();
         db.createCollection(COLL_2).get();
-    }
-
-    @BeforeEach
-    void setUp() throws ExecutionException, InterruptedException {
-        assumeTrue(isLessThanVersion(3, 10) || isSingleServer());
     }
 
     @Test
