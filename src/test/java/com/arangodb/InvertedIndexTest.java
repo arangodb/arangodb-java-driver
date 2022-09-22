@@ -66,7 +66,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                             .name("bar")
                             .analyzer(analyzerName)
                             .searchField(true)
-                            .features(AnalyzerFeature.position)
+                            .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
                             .nested(
                                     new InvertedIndexField()
                                             .name("baz")
