@@ -34,7 +34,7 @@ import java.util.*;
  */
 public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
 
-    protected final IndexType type = IndexType.inverted;
+    private final IndexType type = IndexType.inverted;
     private Integer parallelism;
     private InvertedIndexPrimarySort primarySort;
     private final Collection<StoredValue> storedValues = new ArrayList<>();
@@ -57,7 +57,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
     }
 
     @Override
-    protected InvertedIndexOptions getThis() {
+    InvertedIndexOptions getThis() {
         return this;
     }
 

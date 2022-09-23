@@ -43,7 +43,7 @@ public final class SearchAliasCreateOptions {
         type = ViewType.SEARCH_ALIAS;
     }
 
-    protected SearchAliasCreateOptions name(final String name) {
+    SearchAliasCreateOptions name(final String name) {
         this.name = name;
         return this;
     }
