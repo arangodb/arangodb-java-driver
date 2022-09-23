@@ -1,6 +1,5 @@
-package com.arangodb.internal.serde;
+package com.arangodb.serde;
 
-import com.arangodb.serde.JsonbSerde;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
