@@ -1,84 +1,60 @@
 package com.arangodb;
 
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class JwtAuthTest {
+class JwtAuthTest {
 
-    private static String jwt;
-    private final Protocol protocol;
-    private ArangoDB arangoDB;
+    private volatile static String jwt;
 
-    @BeforeClass
-    public static void init() {
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+    @BeforeAll
+    static void init() {
+        ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
     }
 
-    @After
-    public void after() {
-        if (arangoDB != null)
-            arangoDB.shutdown();
-    }
-
-    @Parameterized.Parameters
-    public static List<Protocol> builders() {
-        return Arrays.asList(
-                Protocol.VST,
-                Protocol.HTTP_JSON,
-                Protocol.HTTP_VPACK
-        );
-    }
-
-    public JwtAuthTest(Protocol protocol) {
-        this.protocol = protocol;
-    }
-
-    @Test
-    public void notAuthenticated() {
-        arangoDB = getBuilder().build();
-        try {
-            arangoDB.getVersion();
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(401));
-        }
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void notAuthenticated(Protocol protocol) {
+        ArangoDB arangoDB = getBuilder(protocol).build();
+        Throwable thrown = catchThrowable(arangoDB::getVersion);
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(401);
         arangoDB.shutdown();
     }
 
-    @Test
-    public void authenticated() {
-        arangoDB = getBuilder()
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void authenticated(Protocol protocol) {
+        ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();
         arangoDB.getVersion();
         arangoDB.shutdown();
     }
 
-    @Test
-    public void updateJwt() {
-        arangoDB = getBuilder()
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void updateJwt(Protocol protocol) {
+        ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();
         arangoDB.getVersion();
@@ -86,21 +62,21 @@ public class JwtAuthTest {
             arangoDB.shutdown();
         }
         arangoDB.updateJwt("bla");
-        try {
-            arangoDB.getVersion();
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(401));
-        }
+
+        Throwable thrown = catchThrowable(arangoDB::getVersion);
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(401);
 
         arangoDB.updateJwt(jwt);
         arangoDB.getVersion();
         arangoDB.shutdown();
     }
 
-    private ArangoDB.Builder getBuilder() {
+    private ArangoDB.Builder getBuilder(Protocol protocol) {
         return new ArangoDB.Builder()
                 .useProtocol(protocol)
+                .serializer(new ArangoJack())
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file
@@ -112,7 +88,7 @@ public class JwtAuthTest {
         reqBody.put("username", "root");
         reqBody.put("password", "test");
 
-        Request req = new Request("_system", RequestType.POST, "/_open/auth");
+        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
         req.setBody(serde.serialize(reqBody));
 
         Response resp = arangoDB.execute(req);

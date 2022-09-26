@@ -21,6 +21,9 @@
 package com.arangodb.entity;
 
 import com.arangodb.model.CollectionSchema;
+import com.arangodb.model.ComputedValue;
+
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -31,16 +34,26 @@ public class CollectionEntity implements Entity {
     private String id;
     private String name;
     private Boolean waitForSync;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Boolean isVolatile;
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
     private CollectionSchema schema;
+    private List<ComputedValue> computedValues;
 
     public CollectionEntity() {
         super();
     }
 
+    /**
+     * @deprecated Accessing collections by their internal ID instead of accessing them by name is deprecated and highly
+     * discouraged. This functionality may be removed in future versions of ArangoDB.
+     */
+    @Deprecated
     public String getId() {
         return id;
     }
@@ -53,6 +66,10 @@ public class CollectionEntity implements Entity {
         return waitForSync;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Boolean getIsVolatile() {
         return isVolatile;
     }
@@ -75,6 +92,14 @@ public class CollectionEntity implements Entity {
      */
     public CollectionSchema getSchema() {
         return schema;
+    }
+
+    /**
+     * @return A list of computed values.
+     * @since ArangoDB 3.10
+     */
+    public List<ComputedValue> getComputedValues() {
+        return computedValues;
     }
 
 }

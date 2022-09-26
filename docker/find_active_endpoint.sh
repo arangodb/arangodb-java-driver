@@ -1,6 +1,7 @@
 #!/bin/bash
 
-COORDINATORS=("172.17.0.1:8529" "172.17.0.1:8539" "172.17.0.1:8549")
+GW=172.28.0.1
+COORDINATORS=("$GW:8529" "$GW:8539" "$GW:8549")
 
 for a in ${COORDINATORS[*]} ; do
     if curl -u root:test --silent --fail "http://$a"; then

@@ -25,5 +25,35 @@ package com.arangodb.entity;
  * @author Heiko Kernbach
  */
 public enum IndexType {
-    primary, hash, skiplist, persistent, geo, geo1, geo2, fulltext, edge, ttl, zkd
+
+    primary,
+
+    hash,
+
+    skiplist,
+
+    persistent,
+
+    geo,
+
+    geo1,
+
+    geo2,
+
+    /**
+     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
+     */
+    @Deprecated
+    fulltext,
+
+    edge,
+
+    ttl,
+
+    zkd,
+
+    /**
+     * @since ArangoDB 3.10
+     */
+    inverted
 }

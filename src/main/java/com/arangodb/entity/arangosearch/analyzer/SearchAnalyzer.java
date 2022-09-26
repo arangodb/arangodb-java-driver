@@ -25,6 +25,8 @@ import com.arangodb.entity.Entity;
 import com.arangodb.entity.arangosearch.AnalyzerFeature;
 import com.arangodb.entity.arangosearch.AnalyzerType;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ import java.util.Set;
 public abstract class SearchAnalyzer implements Entity {
     private String name;
     private AnalyzerType type;
-    private Set<AnalyzerFeature> features;
+    private Collection<AnalyzerFeature> features;
 
     /**
      * @return The Analyzer name.
@@ -62,7 +64,7 @@ public abstract class SearchAnalyzer implements Entity {
      * @return The set of features to set on the Analyzer generated fields.
      */
     public Set<AnalyzerFeature> getFeatures() {
-        return features;
+        return features != null ? new HashSet<>(features) : null;
     }
 
     public void setFeatures(Set<AnalyzerFeature> features) {
@@ -73,10 +75,10 @@ public abstract class SearchAnalyzer implements Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SearchAnalyzer analyzer = (SearchAnalyzer) o;
-        return Objects.equals(name, analyzer.name) &&
-                type == analyzer.type &&
-                Objects.equals(features, analyzer.features);
+        SearchAnalyzer that = (SearchAnalyzer) o;
+        return Objects.equals(getName(), that.getName())
+                && getType() == that.getType()
+                && Objects.equals(getFeatures(), that.getFeatures());
     }
 
     @Override

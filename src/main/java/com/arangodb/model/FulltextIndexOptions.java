@@ -26,7 +26,9 @@ import com.arangodb.entity.IndexType;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
  * Documentation</a>
+ * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
  */
+@Deprecated
 public class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {
 
     private Iterable<String> fields;

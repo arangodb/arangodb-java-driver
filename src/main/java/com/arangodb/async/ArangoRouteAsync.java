@@ -21,7 +21,6 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoSerializationAccessor;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +61,7 @@ public interface ArangoRouteAsync extends ArangoSerializationAccessor {
     ArangoRouteAsync withQueryParam(String key, Object value);
 
     /**
-     * The response body. The body will be serialized to {@link VPackSlice}.
+     * The response body. The body will be serialized to {@link com.arangodb.velocypack.VPackSlice}.
      *
      * @param body The response body
      * @return {@link ArangoRouteAsync}

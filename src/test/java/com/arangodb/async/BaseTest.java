@@ -24,8 +24,10 @@ import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.DbName;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import com.arangodb.mapping.ArangoJack;
+import com.arangodb.util.TestUtils;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -40,10 +42,10 @@ public abstract class BaseTest {
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
 
-    @BeforeClass
-    public static void init() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
-            arangoDB = new ArangoDBAsync.Builder().build();
+            arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         }
 
         if (arangoDB.db(TEST_DB).exists().get()) {
@@ -54,8 +56,8 @@ public abstract class BaseTest {
         BaseTest.db = arangoDB.db(TEST_DB);
     }
 
-    @AfterClass
-    public static void shutdown() throws InterruptedException, ExecutionException {
+    @AfterAll
+    static void shutdown() throws InterruptedException, ExecutionException {
         arangoDB.db(TEST_DB).drop().get();
         arangoDB.shutdown();
         arangoDB = null;
@@ -69,6 +71,7 @@ public abstract class BaseTest {
             throws InterruptedException, ExecutionException {
         return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, patch);
     }
+
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
             throws InterruptedException, ExecutionException {
         return isAtLeastVersion(arangoDB, major, minor, 0);
@@ -84,6 +87,14 @@ public abstract class BaseTest {
 
     protected static boolean isMinorVersionAndAtLeastPatch(final int major, final int minor, final int patch) throws ExecutionException, InterruptedException {
         return com.arangodb.util.TestUtils.isMinorVersionAndAtLeastPatch(arangoDB.getVersion().get().getVersion(), major, minor, patch);
+    }
+
+    boolean isLessThanVersion(final int major, final int minor) throws ExecutionException, InterruptedException {
+        return isLessThanVersion(major, minor, 0);
+    }
+
+    boolean isLessThanVersion(final int major, final int minor, final int patch) throws ExecutionException, InterruptedException {
+        return TestUtils.isLessThanVersion(db.getVersion().get().getVersion(), major, minor, patch);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) throws ExecutionException, InterruptedException {

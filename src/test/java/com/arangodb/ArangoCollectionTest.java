@@ -20,147 +20,130 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionPropertiesEntity;
-import com.arangodb.entity.CollectionRevisionEntity;
-import com.arangodb.entity.DocumentCreateEntity;
-import com.arangodb.entity.DocumentDeleteEntity;
-import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentImportEntity;
-import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.IndexType;
-import com.arangodb.entity.MultiDocumentEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ShardEntity;
+import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoCollectionTest extends BaseTest {
+class ArangoCollectionTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "ArangoCollectionTest_collection";
     private static final String EDGE_COLLECTION_NAME = "ArangoCollectionTest_edge_collection";
 
-    private final ArangoCollection collection;
-    private final ArangoCollection edgeCollection;
-
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
-        BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME);
+    private static Stream<Arguments> cols() {
+        return dbsStream().map(db -> db.collection(COLLECTION_NAME)).map(Arguments::of);
     }
 
-    public ArangoCollectionTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-        collection = db.collection(COLLECTION_NAME);
-        edgeCollection = db.collection(EDGE_COLLECTION_NAME);
+    private static Stream<Arguments> edges() {
+        return dbsStream().map(db -> db.collection(EDGE_COLLECTION_NAME)).map(Arguments::of);
     }
 
-    @Test
-    public void insertDocument() {
+    @BeforeAll
+    static void init() {
+        initCollections(COLLECTION_NAME);
+        initEdgeCollections(EDGE_COLLECTION_NAME);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocument(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> doc = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getId(), is(notNullValue()));
-        assertThat(doc.getKey(), is(notNullValue()));
-        assertThat(doc.getRev(), is(notNullValue()));
-        assertThat(doc.getNew(), is(nullValue()));
-        assertThat(doc.getId(), is(COLLECTION_NAME + "/" + doc.getKey()));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getKey()).isNotNull();
+        assertThat(doc.getRev()).isNotNull();
+        assertThat(doc.getNew()).isNull();
+        assertThat(doc.getId()).isEqualTo(COLLECTION_NAME + "/" + doc.getKey());
     }
 
     // FIXME: v7
-    @Test
-    @Ignore
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    @Disabled
     @SuppressWarnings("unchecked")
-    public void insertDocumentWithArrayWithNullValues() {
+    void insertDocumentWithArrayWithNullValues(ArangoCollection collection) {
         List<String> arr = Arrays.asList("a", null);
         BaseDocument doc = new BaseDocument();
         doc.addAttribute("arr", arr);
 
         final DocumentCreateEntity<BaseDocument> insertedDoc = collection
                 .insertDocument(doc, new DocumentCreateOptions().returnNew(true));
-        assertThat(insertedDoc, is(notNullValue()));
-        assertThat(insertedDoc.getId(), is(notNullValue()));
-        assertThat(insertedDoc.getKey(), is(notNullValue()));
-        assertThat(insertedDoc.getRev(), is(notNullValue()));
-        assertThat(insertedDoc.getId(), is(COLLECTION_NAME + "/" + insertedDoc.getKey()));
+        assertThat(insertedDoc).isNotNull();
+        assertThat(insertedDoc.getId()).isNotNull();
+        assertThat(insertedDoc.getKey()).isNotNull();
+        assertThat(insertedDoc.getRev()).isNotNull();
+        assertThat(insertedDoc.getId()).isEqualTo(COLLECTION_NAME + "/" + insertedDoc.getKey());
         //noinspection unchecked
-        assertThat(((List<String>) insertedDoc.getNew().getAttribute("arr")), contains("a", null));
+        assertThat((List<String>) insertedDoc.getNew().getAttribute("arr")).containsAll(Arrays.asList("a", null));
     }
 
     // FIXME: v7
-    @Test
-    @Ignore
-    public void insertDocumentWithNullValues() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    @Disabled
+    void insertDocumentWithNullValues(ArangoCollection collection) {
         BaseDocument doc = new BaseDocument();
         doc.addAttribute("null", null);
 
         final DocumentCreateEntity<BaseDocument> insertedDoc = collection
                 .insertDocument(doc, new DocumentCreateOptions().returnNew(true));
-        assertThat(insertedDoc, is(notNullValue()));
-        assertThat(insertedDoc.getId(), is(notNullValue()));
-        assertThat(insertedDoc.getKey(), is(notNullValue()));
-        assertThat(insertedDoc.getRev(), is(notNullValue()));
-        assertThat(insertedDoc.getId(), is(COLLECTION_NAME + "/" + insertedDoc.getKey()));
-        assertThat(insertedDoc.getNew().getProperties().containsKey("null"), is(true));
+        assertThat(insertedDoc).isNotNull();
+        assertThat(insertedDoc.getId()).isNotNull();
+        assertThat(insertedDoc.getKey()).isNotNull();
+        assertThat(insertedDoc.getRev()).isNotNull();
+        assertThat(insertedDoc.getId()).isEqualTo(COLLECTION_NAME + "/" + insertedDoc.getKey());
+        assertThat(insertedDoc.getNew().getProperties()).containsKey("null");
     }
 
-    @Test
-    public void insertDocumentUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
     }
 
-    @Test
-    public void insertDocumentReturnNew() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentReturnNew(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
         final DocumentCreateEntity<BaseDocument> doc = collection
                 .insertDocument(new BaseDocument(), options);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getId(), is(notNullValue()));
-        assertThat(doc.getKey(), is(notNullValue()));
-        assertThat(doc.getRev(), is(notNullValue()));
-        assertThat(doc.getNew(), is(notNullValue()));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getKey()).isNotNull();
+        assertThat(doc.getRev()).isNotNull();
+        assertThat(doc.getNew()).isNotNull();
     }
 
-    @Test
-    public void insertDocumentOverwriteReturnOld() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteReturnOld(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 4));
         Long initialCount = collection.count().getCount();
 
@@ -172,18 +155,19 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> repsert = collection
                 .insertDocument(doc, new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
 
-        assertThat(repsert, is(notNullValue()));
-        assertThat(repsert.getRev(), is(not(meta.getRev())));
-        assertThat(repsert.getOld().getAttribute("value").toString(), is("a"));
-        assertThat(repsert.getNew().getAttribute("value").toString(), is("b"));
-        assertThat(collection.count().getCount(), is(initialCount + 1L));
+        assertThat(repsert).isNotNull();
+        assertThat(repsert.getRev()).isNotEqualTo(meta.getRev());
+        assertThat(repsert.getOld().getAttribute("value")).isEqualTo("a");
+        assertThat(repsert.getNew().getAttribute("value")).isEqualTo("b");
+        assertThat(collection.count().getCount()).isEqualTo(initialCount + 1L);
     }
 
-    @Test
-    public void insertDocumentOverwriteModeIgnore() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeIgnore(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
@@ -193,34 +177,35 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> insertIgnore = collection
                 .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.ignore));
 
-        assertThat(insertIgnore, is(notNullValue()));
-        assertThat(insertIgnore.getRev(), is(meta.getRev()));
+        assertThat(insertIgnore).isNotNull();
+        assertThat(insertIgnore.getRev()).isEqualTo(meta.getRev());
     }
 
-    @Test
-    public void insertDocumentOverwriteModeConflict() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeConflict(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
-        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+        collection.insertDocument(doc);
 
         final BaseDocument doc2 = new BaseDocument(key);
-        try {
-            collection.insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.conflict));
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(409));
-            assertThat(e.getErrorNum(), is(1210));
-        }
+        Throwable thrown = catchThrowable(() ->
+                collection.insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.conflict)));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @Test
-    public void insertDocumentOverwriteModeReplace() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeReplace(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
@@ -230,14 +215,15 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> repsert = collection
                 .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.replace).returnNew(true));
 
-        assertThat(repsert, is(notNullValue()));
-        assertThat(repsert.getRev(), is(not(meta.getRev())));
-        assertThat(repsert.getNew().getProperties().containsKey("foo"), is(false));
-        assertThat(repsert.getNew().getAttribute("bar").toString(), is("b"));
+        assertThat(repsert).isNotNull();
+        assertThat(repsert.getRev()).isNotEqualTo(meta.getRev());
+        assertThat(repsert.getNew().getProperties().containsKey("foo")).isFalse();
+        assertThat(repsert.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @Test
-    public void insertDocumentOverwriteModeUpdate() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
         final BaseDocument doc = new BaseDocument();
@@ -248,14 +234,15 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> updated = collection
                 .insertDocument(doc, new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
 
-        assertThat(updated, is(notNullValue()));
-        assertThat(updated.getRev(), is(not(meta.getRev())));
-        assertThat(updated.getNew().getAttribute("foo").toString(), is("a"));
-        assertThat(updated.getNew().getAttribute("bar").toString(), is("b"));
+        assertThat(updated).isNotNull();
+        assertThat(updated.getRev()).isNotEqualTo(meta.getRev());
+        assertThat(updated.getNew().getAttribute("foo")).isEqualTo("a");
+        assertThat(updated.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @Test
-    public void insertDocumentOverwriteModeUpdateMergeObjectsFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
         final BaseDocument doc = new BaseDocument();
@@ -271,177 +258,199 @@ public class ArangoCollectionTest extends BaseTest {
                         .mergeObjects(false)
                         .returnNew(true));
 
-        assertThat(updated, is(notNullValue()));
-        assertThat(updated.getRev(), is(not(meta.getRev())));
-        assertThat(updated.getNew().getAttribute("foo"), is(fieldB));
+        assertThat(updated).isNotNull();
+        assertThat(updated.getRev()).isNotEqualTo(meta.getRev());
+        assertThat(updated.getNew().getAttribute("foo")).isEqualTo(fieldB);
     }
 
-    @Test
-    public void insertDocumentWaitForSync() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentWaitForSync(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
         final DocumentCreateEntity<BaseDocument> doc = collection
                 .insertDocument(new BaseDocument(), options);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getId(), is(notNullValue()));
-        assertThat(doc.getKey(), is(notNullValue()));
-        assertThat(doc.getRev(), is(notNullValue()));
-        assertThat(doc.getNew(), is(nullValue()));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getKey()).isNotNull();
+        assertThat(doc.getRev()).isNotNull();
+        assertThat(doc.getNew()).isNull();
     }
 
-    @Test
-    public void insertDocumentAsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentAsJson(ArangoCollection collection) {
+        String key = "doc-" + UUID.randomUUID();
         final DocumentCreateEntity<String> doc = collection
-                .insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getId(), is(notNullValue()));
-        assertThat(doc.getKey(), is(notNullValue()));
-        assertThat(doc.getRev(), is(notNullValue()));
+                .insertDocument("{\"_key\":\"" + key + "\",\"a\":\"test\"}", null);
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isEqualTo(collection.name() + "/" + key);
+        assertThat(doc.getKey()).isEqualTo(key);
+        assertThat(doc.getRev()).isNotNull();
     }
 
-    @Test
-    public void insertDocumentSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> meta = collection
                 .insertDocument(new BaseDocument(), new DocumentCreateOptions().silent(true));
-        assertThat(meta, is(notNullValue()));
-        assertThat(meta.getId(), is(nullValue()));
-        assertThat(meta.getKey(), is(nullValue()));
-        assertThat(meta.getRev(), is(nullValue()));
+        assertThat(meta).isNotNull();
+        assertThat(meta.getId()).isNull();
+        assertThat(meta.getKey()).isNull();
+        assertThat(meta.getRev()).isNull();
     }
 
-    @Test
-    public void insertDocumentSilentDontTouchInstance() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
-        final String key = "testkey";
+        final String key = "testkey-" + UUID.randomUUID();
         doc.setKey(key);
         final DocumentCreateEntity<BaseDocument> meta = collection
                 .insertDocument(doc, new DocumentCreateOptions().silent(true));
-        assertThat(meta, is(notNullValue()));
-        assertThat(meta.getKey(), is(nullValue()));
-        assertThat(doc.getKey(), is(key));
+        assertThat(meta).isNotNull();
+        assertThat(meta.getKey()).isNull();
+        assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @Test
-    public void insertDocumentsSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info = collection
                 .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument()),
                         new DocumentCreateOptions().silent(true));
-        assertThat(info, is(notNullValue()));
-        assertThat(info.getDocuments().isEmpty(), is(true));
-        assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
-        assertThat(info.getErrors().isEmpty(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).isEmpty();
+        assertThat(info.getDocumentsAndErrors()).isEmpty();
+        assertThat(info.getErrors()).isEmpty();
     }
 
-    @Test
-    public void getDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocument(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(createResult.getKey(), is(notNullValue()));
+        assertThat(createResult.getKey()).isNotNull();
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @Test
-    public void getDocumentIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentIfMatch(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(createResult.getKey(), is(notNullValue()));
+        assertThat(createResult.getKey()).isNotNull();
         final DocumentReadOptions options = new DocumentReadOptions().ifMatch(createResult.getRev());
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, options);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @Test
-    public void getDocumentIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentIfMatchFail(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(createResult.getKey(), is(notNullValue()));
+        assertThat(createResult.getKey()).isNotNull();
         final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
         final BaseDocument document = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, options);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void getDocumentIfNoneMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentIfNoneMatch(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(createResult.getKey(), is(notNullValue()));
+        assertThat(createResult.getKey()).isNotNull();
         final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, options);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @Test
-    public void getDocumentIfNoneMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentIfNoneMatchFail(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null);
-        assertThat(createResult.getKey(), is(notNullValue()));
+        assertThat(createResult.getKey()).isNotNull();
         final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(createResult.getRev());
         final BaseDocument document = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, options);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void getDocumentAsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentAsJson(ArangoCollection collection) {
         String key = rnd();
         collection.insertDocument("{\"_key\":\"" + key + "\",\"a\":\"test\"}", null);
         final String readResult = collection.getDocument(key, String.class, null);
-        assertThat(readResult, containsString("\"_key\":\"" + key + "\""));
-        assertThat(readResult, containsString("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\""));
+        assertThat(readResult)
+                .contains("\"_key\":\"" + key + "\"")
+                .contains("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\"");
     }
 
-    @Test
-    public void getDocumentNotFound() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentNotFound(ArangoCollection collection) {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void getDocumentNotFoundOptionsDefault() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentNotFoundOptionsDefault(ArangoCollection collection) {
         final BaseDocument document = collection
                 .getDocument("no", BaseDocument.class, new DocumentReadOptions());
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void getDocumentNotFoundOptionsNull() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentNotFoundOptionsNull(ArangoCollection collection) {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class, null);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void getDocumentNotFoundThrowException() {
-        collection
-                .getDocument("no", BaseDocument.class, new DocumentReadOptions().catchException(false));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentNotFoundThrowException(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() ->
+                collection.getDocument("no", BaseDocument.class, new DocumentReadOptions().catchException(false)));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void getDocumentWrongKey() {
-        collection.getDocument("no/no", BaseDocument.class);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentWrongKey(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() -> collection.getDocument("no/no", BaseDocument.class));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void getDocumentDirtyRead() throws InterruptedException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentDirtyRead(ArangoCollection collection) throws InterruptedException {
         final BaseDocument doc = new BaseDocument();
         collection.insertDocument(doc, new DocumentCreateOptions());
         Thread.sleep(2000);
         final VPackSlice document = collection
                 .getDocument(doc.getKey(), VPackSlice.class, new DocumentReadOptions().allowDirtyRead(true));
-        assertThat(document, is(notNullValue()));
+        assertThat(document).isNotNull();
     }
 
-    @Test
-    public void getDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
@@ -449,17 +458,17 @@ public class ArangoCollectionTest extends BaseTest {
         collection.insertDocuments(values);
         final MultiDocumentEntity<BaseDocument> documents = collection
                 .getDocuments(Arrays.asList("1", "2", "3"), BaseDocument.class);
-        assertThat(documents, is(notNullValue()));
-        assertThat(documents.getDocuments().size(), is(3));
+        assertThat(documents).isNotNull();
+        assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
-            assertThat(document.getId(),
-                    isOneOf(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3"));
+            assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3");
         }
     }
 
-    @Test
-    public void getDocumentsWithCustomShardingKey() {
-        ArangoCollection collection = db.collection("customShardingKeyCollection");
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentsWithCustomShardingKey(ArangoCollection c) {
+        ArangoCollection collection = c.db().collection("customShardingKeyCollection");
         if (collection.exists())
             collection.drop();
 
@@ -479,11 +488,12 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<BaseDocument> documents = collection
                 .getDocuments(insertedKeys, BaseDocument.class).getDocuments();
 
-        assertThat(documents.size(), is(10));
+        assertThat(documents).hasSize(10);
     }
 
-    @Test
-    public void getDocumentsDirtyRead() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentsDirtyRead(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
@@ -492,34 +502,39 @@ public class ArangoCollectionTest extends BaseTest {
         final MultiDocumentEntity<BaseDocument> documents = collection
                 .getDocuments(Arrays.asList("1", "2", "3"), BaseDocument.class,
                         new DocumentReadOptions().allowDirtyRead(true));
-        assertThat(documents, is(notNullValue()));
-        assertThat(documents.getDocuments().size(), is(3));
+        assertThat(documents).isNotNull();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(documents.isPotentialDirtyRead()).isTrue();
+        }
+        assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
-            assertThat(document.getId(),
-                    isOneOf(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3"));
+            assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3");
         }
     }
 
-    @Test
-    public void getDocumentsNotFound() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentsNotFound(ArangoCollection collection) {
         final MultiDocumentEntity<BaseDocument> readResult = collection
                 .getDocuments(Collections.singleton("no"), BaseDocument.class);
-        assertThat(readResult, is(notNullValue()));
-        assertThat(readResult.getDocuments().size(), is(0));
-        assertThat(readResult.getErrors().size(), is(1));
+        assertThat(readResult).isNotNull();
+        assertThat(readResult.getDocuments()).isEmpty();
+        assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @Test
-    public void getDocumentsWrongKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getDocumentsWrongKey(ArangoCollection collection) {
         final MultiDocumentEntity<BaseDocument> readResult = collection
                 .getDocuments(Collections.singleton("no/no"), BaseDocument.class);
-        assertThat(readResult, is(notNullValue()));
-        assertThat(readResult.getDocuments().size(), is(0));
-        assertThat(readResult.getErrors().size(), is(1));
+        assertThat(readResult).isNotNull();
+        assertThat(readResult.getDocuments()).isEmpty();
+        assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @Test
-    public void updateDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -530,54 +545,57 @@ public class ArangoCollectionTest extends BaseTest {
         doc.updateAttribute("c", null);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, null);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getNew(), is(nullValue()));
-        assertThat(updateResult.getOld(), is(nullValue()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getNew()).isNull();
+        assertThat(updateResult.getOld()).isNull();
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test
-    public void updateDocumentWithDifferentReturnType() {
-        final String key = "key-" + UUID.randomUUID().toString();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentWithDifferentReturnType(ArangoCollection collection) {
+        final String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("a", "test");
         collection.insertDocument(doc);
 
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(key, Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getKey(), is(key));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getKey()).isEqualTo(key);
         BaseDocument updated = updateResult.getNew();
-        assertThat(updated, is(notNullValue()));
-        assertThat(updated.getAttribute("a"), is("test"));
-        assertThat(updated.getAttribute("b"), is("test"));
+        assertThat(updated).isNotNull();
+        assertThat(updated.getAttribute("a")).isEqualTo("test");
+        assertThat(updated.getAttribute("b")).isEqualTo("test");
     }
 
-    @Test
-    public void updateDocumentUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(updateResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
     }
 
-    @Test
-    public void updateDocumentIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -589,24 +607,25 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void updateDocumentIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -617,11 +636,13 @@ public class ArangoCollectionTest extends BaseTest {
         doc.updateAttribute("c", null);
 
         final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch("no");
-        collection.updateDocument(createResult.getKey(), doc, options);
+        Throwable thrown = catchThrowable(() -> collection.updateDocument(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void updateDocumentReturnNew() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentReturnNew(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -631,20 +652,21 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().returnNew(true);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
-        assertThat(updateResult.getNew(), is(notNullValue()));
-        assertThat(updateResult.getNew().getKey(), is(createResult.getKey()));
-        assertThat(updateResult.getNew().getRevision(), is(not(createResult.getRev())));
-        assertThat(updateResult.getNew().getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(updateResult.getNew().getAttribute("a")), is("test1"));
-        assertThat(updateResult.getNew().getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(updateResult.getNew().getAttribute("b")), is("test"));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
+        assertThat(updateResult.getNew()).isNotNull();
+        assertThat(updateResult.getNew().getKey()).isEqualTo(createResult.getKey());
+        assertThat(updateResult.getNew().getRevision()).isNotEqualTo(createResult.getRev());
+        assertThat(updateResult.getNew().getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(updateResult.getNew().getAttribute("a"))).isEqualTo("test1");
+        assertThat(updateResult.getNew().getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(updateResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void updateDocumentReturnOld() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -654,19 +676,20 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().returnOld(true);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
-        assertThat(updateResult.getOld(), is(notNullValue()));
-        assertThat(updateResult.getOld().getKey(), is(createResult.getKey()));
-        assertThat(updateResult.getOld().getRevision(), is(createResult.getRev()));
-        assertThat(updateResult.getOld().getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(updateResult.getOld().getAttribute("a")), is("test"));
-        assertThat(updateResult.getOld().getProperties().keySet(), not(hasItem("b")));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
+        assertThat(updateResult.getOld()).isNotNull();
+        assertThat(updateResult.getOld().getKey()).isEqualTo(createResult.getKey());
+        assertThat(updateResult.getOld().getRevision()).isEqualTo(createResult.getRev());
+        assertThat(updateResult.getOld().getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(updateResult.getOld().getAttribute("a"))).isEqualTo("test");
+        assertThat(updateResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @Test
-    public void updateDocumentKeepNullTrue() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentKeepNullTrue(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -675,19 +698,20 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(true);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @Test
-    public void updateDocumentKeepNullFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentKeepNullFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -696,26 +720,27 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(false);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getRevision(), is(notNullValue()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getRevision()).isNotNull();
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    private static class TestUpdateEntity {
+    static class TestUpdateEntity {
         @SuppressWarnings("unused")
         private String a, b;
     }
 
-    @Test
-    public void updateDocumentSerializeNullTrue() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentSerializeNullTrue(ArangoCollection collection) {
         final TestUpdateEntity doc = new TestUpdateEntity();
         doc.a = "foo";
         doc.b = "foo";
@@ -724,18 +749,19 @@ public class ArangoCollectionTest extends BaseTest {
         patchDoc.a = "bar";
         final DocumentUpdateEntity<TestUpdateEntity> updateResult = collection
                 .updateDocument(createResult.getKey(), patchDoc);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getKey(), is(createResult.getKey()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getKey()).isEqualTo(createResult.getKey());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
-        assertThat(readResult.getAttribute("a").toString(), is("bar"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties()).containsKey("a");
+        assertThat(readResult.getAttribute("a")).isEqualTo("bar");
     }
 
-    @Test
-    public void updateDocumentSerializeNullFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentSerializeNullFalse(ArangoCollection collection) {
         final TestUpdateEntity doc = new TestUpdateEntity();
         doc.a = "foo";
         doc.b = "foo";
@@ -744,20 +770,21 @@ public class ArangoCollectionTest extends BaseTest {
         patchDoc.a = "bar";
         final DocumentUpdateEntity<TestUpdateEntity> updateResult = collection
                 .updateDocument(createResult.getKey(), patchDoc, new DocumentUpdateOptions().serializeNull(false));
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getKey(), is(createResult.getKey()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getKey()).isEqualTo(createResult.getKey());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet(), hasItems("a", "b"));
-        assertThat(readResult.getAttribute("a").toString(), is("bar"));
-        assertThat(readResult.getAttribute("b").toString(), is("foo"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties()).containsKeys("a", "b");
+        assertThat(readResult.getAttribute("a")).isEqualTo("bar");
+        assertThat(readResult.getAttribute("b")).isEqualTo("foo");
     }
 
     @SuppressWarnings("unchecked")
-    @Test
-    public void updateDocumentMergeObjectsTrue() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentMergeObjectsTrue(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
@@ -770,24 +797,24 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(true);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
         final Object aResult = readResult.getAttribute("a");
-        assertThat(aResult, instanceOf(Map.class));
+        assertThat(aResult).isInstanceOf(Map.class);
         final Map<String, String> aMap = (Map<String, String>) aResult;
-        assertThat(aMap.keySet(), hasItem("a"));
-        assertThat(aMap.keySet(), hasItem("b"));
+        assertThat(aMap).containsKeys("a", "b");
     }
 
     @SuppressWarnings("unchecked")
-    @Test
-    public void updateDocumentMergeObjectsFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentMergeObjectsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
@@ -800,23 +827,24 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(false);
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
         final Object aResult = readResult.getAttribute("a");
-        assertThat(aResult, instanceOf(Map.class));
+        assertThat(aResult).isInstanceOf(Map.class);
         final Map<String, String> aMap = (Map<String, String>) aResult;
-        assertThat(aMap.keySet(), not(hasItem("a")));
-        assertThat(aMap.keySet(), hasItem("b"));
+        assertThat(aMap.keySet()).doesNotContain("a");
+        assertThat(aMap).containsKey("b");
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void updateDocumentIgnoreRevsFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentIgnoreRevsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -825,53 +853,56 @@ public class ArangoCollectionTest extends BaseTest {
         doc.setRevision("no");
 
         final DocumentUpdateOptions options = new DocumentUpdateOptions().ignoreRevs(false);
-        collection.updateDocument(createResult.getKey(), doc, options);
+        Throwable thrown = catchThrowable(() -> collection.updateDocument(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void updateDocumentSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final DocumentUpdateEntity<BaseDocument> meta = collection
                 .updateDocument(createResult.getKey(), new BaseDocument(), new DocumentUpdateOptions().silent(true));
-        assertThat(meta, is(notNullValue()));
-        assertThat(meta.getId(), is(nullValue()));
-        assertThat(meta.getKey(), is(nullValue()));
-        assertThat(meta.getRev(), is(nullValue()));
+        assertThat(meta).isNotNull();
+        assertThat(meta.getId()).isNull();
+        assertThat(meta.getKey()).isNull();
+        assertThat(meta.getRev()).isNull();
     }
 
-    @Test
-    public void updateDocumentsSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = collection
                 .updateDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
                         new DocumentUpdateOptions().silent(true));
-        assertThat(info, is(notNullValue()));
-        assertThat(info.getDocuments().isEmpty(), is(true));
-        assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
-        assertThat(info.getErrors().isEmpty(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).isEmpty();
+        assertThat(info.getDocumentsAndErrors()).isEmpty();
+        assertThat(info.getErrors()).isEmpty();
     }
 
-    @Test
-    public void updateNonExistingDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateNonExistingDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
 
-        try {
-            collection.updateDocument(doc.getKey(), doc, null);
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(404));
-            assertThat(e.getErrorNum(), is(1202));
-        }
+        Throwable thrown = catchThrowable(() -> collection.updateDocument(doc.getKey(), doc, null));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(404);
+        assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @Test
-    public void updateDocumentPreconditionFailed() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentPreconditionFailed(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -881,19 +912,19 @@ public class ArangoCollectionTest extends BaseTest {
         collection.updateDocument(doc.getKey(), doc, null);
 
         doc.updateAttribute("foo", "c");
-        try {
-            collection.updateDocument(doc.getKey(), doc, new DocumentUpdateOptions().ifMatch(createResult.getRev()));
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
-        }
+        Throwable thrown = catchThrowable(() ->
+                collection.updateDocument(doc.getKey(), doc, new DocumentUpdateOptions().ifMatch(createResult.getRev())));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(412);
+        assertThat(e.getErrorNum()).isEqualTo(1200);
         BaseDocument readDocument = collection.getDocument(doc.getKey(), BaseDocument.class);
-        assertThat(readDocument.getAttribute("foo"), is("b"));
+        assertThat(readDocument.getAttribute("foo")).isEqualTo("b");
     }
 
-    @Test
-    public void replaceDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -902,35 +933,37 @@ public class ArangoCollectionTest extends BaseTest {
         doc.addAttribute("b", "test");
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection
                 .replaceDocument(createResult.getKey(), doc, null);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getNew(), is(nullValue()));
-        assertThat(replaceResult.getOld(), is(nullValue()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getNew()).isNull();
+        assertThat(replaceResult.getOld()).isNull();
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceDocumentUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection
                 .replaceDocument(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(replaceResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
     }
 
-    @Test
-    public void replaceDocumentIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -940,22 +973,23 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch(createResult.getRev());
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection
                 .replaceDocument(createResult.getKey(), doc, options);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void replaceDocumentIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -964,11 +998,14 @@ public class ArangoCollectionTest extends BaseTest {
         doc.addAttribute("b", "test");
 
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch("no");
-        collection.replaceDocument(createResult.getKey(), doc, options);
+        Throwable thrown = catchThrowable(() -> collection.replaceDocument(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void replaceDocumentIgnoreRevsFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentIgnoreRevsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -978,11 +1015,13 @@ public class ArangoCollectionTest extends BaseTest {
         doc.setRevision("no");
 
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ignoreRevs(false);
-        collection.replaceDocument(createResult.getKey(), doc, options);
+        Throwable thrown = catchThrowable(() -> collection.replaceDocument(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void replaceDocumentReturnNew() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentReturnNew(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -992,19 +1031,20 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnNew(true);
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection
                 .replaceDocument(createResult.getKey(), doc, options);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-        assertThat(replaceResult.getNew(), is(notNullValue()));
-        assertThat(replaceResult.getNew().getKey(), is(createResult.getKey()));
-        assertThat(replaceResult.getNew().getRevision(), is(not(createResult.getRev())));
-        assertThat(replaceResult.getNew().getProperties().keySet(), not(hasItem("a")));
-        assertThat(replaceResult.getNew().getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(replaceResult.getNew().getAttribute("b")), is("test"));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
+        assertThat(replaceResult.getNew()).isNotNull();
+        assertThat(replaceResult.getNew().getKey()).isEqualTo(createResult.getKey());
+        assertThat(replaceResult.getNew().getRevision()).isNotEqualTo(createResult.getRev());
+        assertThat(replaceResult.getNew().getProperties().keySet()).doesNotContain("a");
+        assertThat(replaceResult.getNew().getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(replaceResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceDocumentReturnOld() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -1014,70 +1054,75 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnOld(true);
         final DocumentUpdateEntity<BaseDocument> replaceResult = collection
                 .replaceDocument(createResult.getKey(), doc, options);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-        assertThat(replaceResult.getOld(), is(notNullValue()));
-        assertThat(replaceResult.getOld().getKey(), is(createResult.getKey()));
-        assertThat(replaceResult.getOld().getRevision(), is(createResult.getRev()));
-        assertThat(replaceResult.getOld().getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(replaceResult.getOld().getAttribute("a")), is("test"));
-        assertThat(replaceResult.getOld().getProperties().keySet(), not(hasItem("b")));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
+        assertThat(replaceResult.getOld()).isNotNull();
+        assertThat(replaceResult.getOld().getKey()).isEqualTo(createResult.getKey());
+        assertThat(replaceResult.getOld().getRevision()).isEqualTo(createResult.getRev());
+        assertThat(replaceResult.getOld().getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(replaceResult.getOld().getAttribute("a"))).isEqualTo("test");
+        assertThat(replaceResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @Test
-    public void replaceDocumentSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final DocumentUpdateEntity<BaseDocument> meta = collection
                 .replaceDocument(createResult.getKey(), new BaseDocument(), new DocumentReplaceOptions().silent(true));
-        assertThat(meta, is(notNullValue()));
-        assertThat(meta.getId(), is(nullValue()));
-        assertThat(meta.getKey(), is(nullValue()));
-        assertThat(meta.getRev(), is(nullValue()));
+        assertThat(meta).isNotNull();
+        assertThat(meta.getId()).isNull();
+        assertThat(meta.getKey()).isNull();
+        assertThat(meta.getRev()).isNull();
     }
 
-    @Test
-    public void replaceDocumentSilentDontTouchInstance() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc);
         final String revision = doc.getRevision();
-        assertThat(revision, is(notNullValue()));
+        assertThat(revision).isNotNull();
         final DocumentUpdateEntity<BaseDocument> meta = collection
                 .replaceDocument(createResult.getKey(), doc, new DocumentReplaceOptions().silent(true));
-        assertThat(meta.getRev(), is(nullValue()));
-        assertThat(doc.getRevision(), is(revision));
+        assertThat(meta.getRev()).isNull();
+        assertThat(doc.getRevision()).isEqualTo(revision);
     }
 
-    @Test
-    public void replaceDocumentsSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = collection
                 .replaceDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
                         new DocumentReplaceOptions().silent(true));
-        assertThat(info, is(notNullValue()));
-        assertThat(info.getDocuments().isEmpty(), is(true));
-        assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
-        assertThat(info.getErrors().isEmpty(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).isEmpty();
+        assertThat(info.getDocumentsAndErrors()).isEmpty();
+        assertThat(info.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
         collection.deleteDocument(createResult.getKey(), null, null);
         final BaseDocument document = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void deleteDocumentReturnOld() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final DocumentCreateEntity<BaseDocument> createResult = collection
@@ -1085,14 +1130,15 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
         final DocumentDeleteEntity<BaseDocument> deleteResult = collection
                 .deleteDocument(createResult.getKey(), BaseDocument.class, options);
-        assertThat(deleteResult.getOld(), is(notNullValue()));
-        assertThat(deleteResult.getOld(), instanceOf(BaseDocument.class));
-        assertThat(deleteResult.getOld().getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(deleteResult.getOld().getAttribute("a")), is("test"));
+        assertThat(deleteResult.getOld()).isNotNull();
+        assertThat(deleteResult.getOld()).isInstanceOf(BaseDocument.class);
+        assertThat(deleteResult.getOld().getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(deleteResult.getOld().getAttribute("a"))).isEqualTo("test");
     }
 
-    @Test
-    public void deleteDocumentIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
@@ -1100,108 +1146,120 @@ public class ArangoCollectionTest extends BaseTest {
         collection.deleteDocument(createResult.getKey(), null, options);
         final BaseDocument document = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void deleteDocumentIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(doc, null);
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
-        collection.deleteDocument(createResult.getKey(), null, options);
+        Throwable thrown = catchThrowable(() -> collection.deleteDocument(createResult.getKey(), null, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void deleteDocumentSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final DocumentDeleteEntity<BaseDocument> meta = collection
                 .deleteDocument(createResult.getKey(), BaseDocument.class, new DocumentDeleteOptions().silent(true));
-        assertThat(meta, is(notNullValue()));
-        assertThat(meta.getId(), is(nullValue()));
-        assertThat(meta.getKey(), is(nullValue()));
-        assertThat(meta.getRev(), is(nullValue()));
+        assertThat(meta).isNotNull();
+        assertThat(meta.getId()).isNull();
+        assertThat(meta.getKey()).isNull();
+        assertThat(meta.getRev()).isNull();
     }
 
-    @Test
-    public void deleteDocumentsSilent() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = collection
                 .deleteDocuments(Collections.singletonList(createResult.getKey()), BaseDocument.class,
                         new DocumentDeleteOptions().silent(true));
-        assertThat(info, is(notNullValue()));
-        assertThat(info.getDocuments().isEmpty(), is(true));
-        assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
-        assertThat(info.getErrors().isEmpty(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).isEmpty();
+        assertThat(info.getDocumentsAndErrors()).isEmpty();
+        assertThat(info.getErrors()).isEmpty();
     }
 
-    @Test
-    public void getIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         final IndexEntity createResult = collection.ensureHashIndex(fields, null);
         final IndexEntity readResult = collection.getIndex(createResult.getId());
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getType(), is(createResult.getType()));
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @Test
-    public void getIndexByKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         final IndexEntity createResult = collection.ensureHashIndex(fields, null);
         final IndexEntity readResult = collection.getIndex(createResult.getId().split("/")[1]);
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getType(), is(createResult.getType()));
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void deleteIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         final IndexEntity createResult = collection.ensureHashIndex(fields, null);
         final String id = collection.deleteIndex(createResult.getId());
-        assertThat(id, is(createResult.getId()));
-        db.getIndex(id);
+        assertThat(id).isEqualTo(createResult.getId());
+        Throwable thrown = catchThrowable(() -> collection.db().getIndex(id));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void deleteIndexByKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         final IndexEntity createResult = collection.ensureHashIndex(fields, null);
         final String id = collection.deleteIndex(createResult.getId().split("/")[1]);
-        assertThat(id, is(createResult.getId()));
-        db.getIndex(id);
+        assertThat(id).isEqualTo(createResult.getId());
+        Throwable thrown = catchThrowable(() -> collection.db().getIndex(id));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void createHashIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createHashIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensureHashIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
         if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate(), is(greaterThan(0.0)));
+            assertThat(indexResult.getSelectivityEstimate()).isPositive();
         }
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.hash));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
+        assertThat(indexResult.getUnique()).isFalse();
     }
 
-    @Test
-    public void createHashIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createHashIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "hashIndex-" + rnd();
@@ -1213,43 +1271,48 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = Arrays.asList(f1, f2);
 
         final IndexEntity indexResult = collection.ensureHashIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
         if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate(), is(greaterThan(0.0)));
+            assertThat(indexResult.getSelectivityEstimate()).isPositive();
         }
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.hash));
-        assertThat(indexResult.getUnique(), is(false));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @Test
-    public void createGeoIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeoIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         final IndexEntity indexResult = collection.ensureGeoIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
         if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType(), is(IndexType.geo));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         } else {
-            assertThat(indexResult.getType(), is(IndexType.geo1));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
+        }
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isFalse();
         }
     }
 
-    @Test
-    public void createGeoIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeoIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "geoIndex-" + rnd();
@@ -1259,45 +1322,81 @@ public class ArangoCollectionTest extends BaseTest {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         final IndexEntity indexResult = collection.ensureGeoIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
         if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType(), is(IndexType.geo));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         } else {
-            assertThat(indexResult.getType(), is(IndexType.geo1));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
         }
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult.getName()).isEqualTo(name);
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isFalse();
+        }
     }
 
-    @Test
-    public void createGeo2Index() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeoIndexLegacyPolygons(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String name = "geoIndex-" + rnd();
+        final GeoIndexOptions options = new GeoIndexOptions();
+        options.name(name);
+        options.legacyPolygons(true);
+
+        String f1 = "field-" + rnd();
+        final Collection<String> fields = Collections.singletonList(f1);
+        final IndexEntity indexResult = collection.ensureGeoIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
+        if (isAtLeastVersion(3, 4)) {
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
+        } else {
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
+        }
+        assertThat(indexResult.getName()).isEqualTo(name);
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getLegacyPolygons()).isTrue();
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeo2Index(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
 
         final IndexEntity indexResult = collection.ensureGeoIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
         if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType(), is(IndexType.geo));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         } else {
-            assertThat(indexResult.getType(), is(IndexType.geo2));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
         }
     }
 
-    @Test
-    public void createGeo2IndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createGeo2IndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "geoIndex-" + rnd();
@@ -1309,42 +1408,44 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = Arrays.asList(f1, f2);
 
         final IndexEntity indexResult = collection.ensureGeoIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getUnique()).isFalse();
         if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType(), is(IndexType.geo));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         } else {
-            assertThat(indexResult.getType(), is(IndexType.geo2));
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
         }
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @Test
-    public void createSkiplistIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createSkiplistIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensureSkiplistIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.skiplist));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
+        assertThat(indexResult.getUnique()).isFalse();
     }
 
-    @Test
-    public void createSkiplistIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createSkiplistIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "skiplistIndex-" + rnd();
@@ -1355,40 +1456,97 @@ public class ArangoCollectionTest extends BaseTest {
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensureSkiplistIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.skiplist));
-        assertThat(indexResult.getUnique(), is(false));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @Test
-    public void createPersistentIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createPersistentIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
 
         final IndexEntity indexResult = collection.ensurePersistentIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.persistent));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(indexResult.getCacheEnabled()).isFalse();
+        }
     }
 
-    @Test
-    public void createPersistentIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createPersistentIndexCacheEnabled(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+        final Collection<String> fields = Arrays.asList(f1, f2);
+
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, new PersistentIndexOptions().cacheEnabled(true));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+        assertThat(indexResult.getCacheEnabled()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createPersistentIndexStoredValues(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+        final Collection<String> fields = Arrays.asList(f1, f2);
+
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, new PersistentIndexOptions().storedValues("v1", "v2"));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+        assertThat(indexResult.getCacheEnabled()).isFalse();
+        assertThat(indexResult.getStoredValues())
+                .hasSize(2)
+                .contains("v1", "v2");
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createPersistentIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "persistentIndex-" + rnd();
@@ -1400,21 +1558,22 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
-        assertThat(indexResult.getType(), is(IndexType.persistent));
-        assertThat(indexResult.getUnique(), is(false));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getSparse()).isFalse();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @Test
-    public void createZKDIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createZKDIndex(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate();
         String f1 = "field-" + rnd();
@@ -1422,20 +1581,21 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = Arrays.asList(f1, f2);
 
         final IndexEntity indexResult = collection.ensureZKDIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getType(), is(IndexType.zkd));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.zkd);
+        assertThat(indexResult.getUnique()).isFalse();
         collection.deleteIndex(indexResult.getId());
     }
 
-    @Test
-    public void createZKDIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createZKDIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate();
 
@@ -1449,21 +1609,22 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensureZKDIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getFields(), hasItem(f2));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getType(), is(IndexType.zkd));
-        assertThat(indexResult.getUnique(), is(false));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.zkd);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getName()).isEqualTo(name);
         collection.deleteIndex(indexResult.getId());
     }
 
-    @Test
-    public void indexEstimates() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexEstimates(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
@@ -1477,13 +1638,14 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getEstimates(), is(true));
-        assertThat(indexResult.getSelectivityEstimate(), is(notNullValue()));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getEstimates()).isTrue();
+        assertThat(indexResult.getSelectivityEstimate()).isNotNull();
     }
 
-    @Test
-    public void indexEstimatesFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexEstimatesFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
@@ -1497,28 +1659,68 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = Arrays.asList(f1, f2);
         final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getEstimates(), is(false));
-        assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getEstimates()).isFalse();
+        assertThat(indexResult.getSelectivityEstimate()).isNull();
     }
 
-    @Test
-    public void createFulltextIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexDeduplicate(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(true);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexDeduplicateFalse(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(false);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isFalse();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createFulltextIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         final IndexEntity indexResult = collection.ensureFulltextIndex(fields, null);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getType(), is(IndexType.fulltext));
-        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.fulltext);
+        assertThat(indexResult.getUnique()).isFalse();
     }
 
-    @Test
-    public void createFulltextIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createFulltextIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "fulltextIndex-" + rnd();
@@ -1528,34 +1730,35 @@ public class ArangoCollectionTest extends BaseTest {
         String f = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f);
         final IndexEntity indexResult = collection.ensureFulltextIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getConstraint(), is(nullValue()));
-        assertThat(indexResult.getFields(), hasItem(f));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getSparse(), is(true));
-        assertThat(indexResult.getType(), is(IndexType.fulltext));
-        assertThat(indexResult.getUnique(), is(false));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.fulltext);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @Test
-    public void createTtlIndexWithoutOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createTtlIndexWithoutOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        try {
-            collection.ensureTtlIndex(fields, null);
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(400));
-            assertThat(e.getErrorNum(), is(10));
-            assertThat(e.getMessage(), containsString("expireAfter attribute must be a number"));
-        }
+
+        Throwable thrown = catchThrowable(() -> collection.ensureTtlIndex(fields, null));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(400);
+        assertThat(e.getErrorNum()).isEqualTo(10);
+        assertThat(e.getMessage()).contains("expireAfter attribute must be a number");
     }
 
-    @Test
-    public void createTtlIndexWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void createTtlIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String f1 = "field-" + rnd();
@@ -1567,20 +1770,21 @@ public class ArangoCollectionTest extends BaseTest {
         options.expireAfter(3600);
 
         final IndexEntity indexResult = collection.ensureTtlIndex(fields, options);
-        assertThat(indexResult, is(notNullValue()));
-        assertThat(indexResult.getFields(), hasItem(f1));
-        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-        assertThat(indexResult.getIsNewlyCreated(), is(true));
-        assertThat(indexResult.getType(), is(IndexType.ttl));
-        assertThat(indexResult.getExpireAfter(), is(3600));
-        assertThat(indexResult.getName(), is(name));
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.ttl);
+        assertThat(indexResult.getExpireAfter()).isEqualTo(3600);
+        assertThat(indexResult.getName()).isEqualTo(name);
 
         // revert changes
         collection.deleteIndex(indexResult.getId());
     }
 
-    @Test
-    public void getIndexes() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getIndexes(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         collection.ensureHashIndex(fields, null);
@@ -1588,101 +1792,113 @@ public class ArangoCollectionTest extends BaseTest {
                 .filter(i -> i.getType() == IndexType.hash)
                 .filter(i -> i.getFields().contains(f1))
                 .count();
-        assertThat(matchingIndexes, is(1L));
+        assertThat(matchingIndexes).isEqualTo(1L);
     }
 
-    @Test
-    public void getEdgeIndex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("edges")
+    void getEdgeIndex(ArangoCollection edgeCollection) {
         Collection<IndexEntity> indexes = edgeCollection.getIndexes();
         long primaryIndexes = indexes.stream().filter(i -> i.getType() == IndexType.primary).count();
         long edgeIndexes = indexes.stream().filter(i -> i.getType() == IndexType.primary).count();
-        assertThat(primaryIndexes, is(1L));
-        assertThat(edgeIndexes, is(1L));
+        assertThat(primaryIndexes).isEqualTo(1L);
+        assertThat(edgeIndexes).isEqualTo(1L);
     }
 
-    @Test
-    public void exists() {
-        assertThat(collection.exists(), is(true));
-        assertThat(db.collection(COLLECTION_NAME + "no").exists(), is(false));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void exists(ArangoCollection collection) {
+        assertThat(collection.exists()).isTrue();
+        assertThat(collection.db().collection(COLLECTION_NAME + "no").exists()).isFalse();
     }
 
-    @Test
-    public void truncate() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void truncate(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument();
         collection.insertDocument(doc, null);
         final BaseDocument readResult = collection
                 .getDocument(doc.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(doc.getKey()));
+        assertThat(readResult.getKey()).isEqualTo(doc.getKey());
         final CollectionEntity truncateResult = collection.truncate();
-        assertThat(truncateResult, is(notNullValue()));
-        assertThat(truncateResult.getId(), is(notNullValue()));
+        assertThat(truncateResult).isNotNull();
+        assertThat(truncateResult.getId()).isNotNull();
         final BaseDocument document = collection
                 .getDocument(doc.getKey(), BaseDocument.class, null);
-        assertThat(document, is(nullValue()));
+        assertThat(document).isNull();
     }
 
-    @Test
-    public void getCount() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getCount(ArangoCollection collection) {
         Long initialCount = collection.count().getCount();
         collection.insertDocument("{}", null);
         final CollectionPropertiesEntity count = collection.count();
-        assertThat(count.getCount(), is(initialCount + 1L));
+        assertThat(count.getCount()).isEqualTo(initialCount + 1L);
     }
 
-    @Test
-    public void documentExists() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExists(ArangoCollection collection) throws JsonProcessingException {
         final Boolean existsNot = collection.documentExists(rnd(), null);
-        assertThat(existsNot, is(false));
+        assertThat(existsNot).isFalse();
 
         String key = rnd();
         collection.insertDocument(mapper.writeValueAsString(Collections.singletonMap("_key", key)), null);
         final Boolean exists = collection.documentExists(key, null);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void documentExistsThrowExcpetion() {
-        collection.documentExists("no", new DocumentExistsOptions().catchException(false));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExistsThrowExcpetion(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() -> collection.documentExists("no", new DocumentExistsOptions().catchException(false)));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void documentExistsIfMatch() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExistsIfMatch(ArangoCollection collection) throws JsonProcessingException {
         String key = rnd();
         final DocumentCreateEntity<String> createResult = collection.insertDocument(mapper.writeValueAsString(Collections.singletonMap("_key", key)), null);
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch(createResult.getRev());
         final Boolean exists = collection.documentExists(key, options);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
     }
 
-    @Test
-    public void documentExistsIfMatchFail() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExistsIfMatchFail(ArangoCollection collection) throws JsonProcessingException {
         String key = rnd();
         collection.insertDocument(mapper.writeValueAsString(Collections.singletonMap("_key", key)), null);
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch("no");
         final Boolean exists = collection.documentExists(key, options);
-        assertThat(exists, is(false));
+        assertThat(exists).isFalse();
     }
 
-    @Test
-    public void documentExistsIfNoneMatch() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExistsIfNoneMatch(ArangoCollection collection) throws JsonProcessingException {
         String key = rnd();
         collection.insertDocument(mapper.writeValueAsString(Collections.singletonMap("_key", key)), null);
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch("no");
         final Boolean exists = collection.documentExists(key, options);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
     }
 
-    @Test
-    public void documentExistsIfNoneMatchFail() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentExistsIfNoneMatchFail(ArangoCollection collection) throws JsonProcessingException {
         String key = rnd();
         final DocumentCreateEntity<String> createResult = collection.insertDocument(mapper.writeValueAsString(Collections.singletonMap("_key", key)), null);
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
         final Boolean exists = collection.documentExists(key, options);
-        assertThat(exists, is(false));
+        assertThat(exists).isFalse();
     }
 
-    @Test
-    public void insertDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(
                 new BaseDocument(),
                 new BaseDocument(),
@@ -1691,15 +1907,16 @@ public class ArangoCollectionTest extends BaseTest {
 
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection
                 .insertDocuments(values, null);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(3));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(0));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
     }
 
-    @Test
-    public void insertDocumentsOverwrite() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsOverwrite(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 4));
 
         final BaseDocument doc1 = new BaseDocument();
@@ -1716,19 +1933,20 @@ public class ArangoCollectionTest extends BaseTest {
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = collection
                 .insertDocuments(Arrays.asList(doc1, doc2),
                         new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
-        assertThat(repsert, is(notNullValue()));
-        assertThat(repsert.getDocuments().size(), is(2));
-        assertThat(repsert.getErrors().size(), is(0));
+        assertThat(repsert).isNotNull();
+        assertThat(repsert.getDocuments()).hasSize(2);
+        assertThat(repsert.getErrors()).isEmpty();
         for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
-            assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
-            assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
-            assertThat(documentCreateEntity.getOld().getAttribute("value").toString(), is("a"));
-            assertThat(documentCreateEntity.getNew().getAttribute("value").toString(), is("b"));
+            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta1.getRev());
+            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta2.getRev());
+            assertThat(documentCreateEntity.getOld().getAttribute("value")).isEqualTo("a");
+            assertThat(documentCreateEntity.getNew().getAttribute("value")).isEqualTo("b");
         }
     }
 
-    @Test
-    public void insertDocumentsOverwriteModeUpdate() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
         final BaseDocument doc1 = new BaseDocument();
@@ -1745,59 +1963,63 @@ public class ArangoCollectionTest extends BaseTest {
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = collection
                 .insertDocuments(Arrays.asList(doc1, doc2),
                         new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
-        assertThat(repsert, is(notNullValue()));
-        assertThat(repsert.getDocuments().size(), is(2));
-        assertThat(repsert.getErrors().size(), is(0));
+        assertThat(repsert).isNotNull();
+        assertThat(repsert.getDocuments()).hasSize(2);
+        assertThat(repsert.getErrors()).isEmpty();
         for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
-            assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
-            assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
-            assertThat(documentCreateEntity.getNew().getAttribute("foo").toString(), is("a"));
-            assertThat(documentCreateEntity.getNew().getAttribute("bar").toString(), is("b"));
+            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta1.getRev());
+            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta2.getRev());
+            assertThat(documentCreateEntity.getNew().getAttribute("foo")).isEqualTo("a");
+            assertThat(documentCreateEntity.getNew().getAttribute("bar")).isEqualTo("b");
         }
     }
 
-    @Test
-    public void insertDocumentsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsJson(ArangoCollection collection) {
         final Collection<String> values = new ArrayList<>();
         values.add("{}");
         values.add("{}");
         values.add("{}");
         final MultiDocumentEntity<DocumentCreateEntity<String>> docs = collection
                 .insertDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(3));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(0));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
     }
 
-    @Test
-    public void insertDocumentsOne() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection
                 .insertDocuments(values, null);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(1));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(0));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(1);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
     }
 
-    @Test
-    public void insertDocumentsEmpty() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection
                 .insertDocuments(values, null);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(0));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(0));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).isEmpty();
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
     }
 
-    @Test
-    public void insertDocumentsReturnNew() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsReturnNew(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
         values.add(new BaseDocument());
@@ -1805,21 +2027,22 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection
                 .insertDocuments(values, options);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(3));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(0));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(3);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).isEmpty();
         for (final DocumentCreateEntity<BaseDocument> doc : docs.getDocuments()) {
-            assertThat(doc.getNew(), is(notNullValue()));
+            assertThat(doc.getNew()).isNotNull();
             final BaseDocument baseDocument = doc.getNew();
-            assertThat(baseDocument.getKey(), is(notNullValue()));
+            assertThat(baseDocument.getKey()).isNotNull();
         }
 
     }
 
-    @Test
-    public void insertDocumentsFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertDocumentsFail(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
         final Collection<BaseDocument> values = Arrays.asList(
@@ -1830,16 +2053,17 @@ public class ArangoCollectionTest extends BaseTest {
 
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection
                 .insertDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getDocuments(), is(notNullValue()));
-        assertThat(docs.getDocuments().size(), is(2));
-        assertThat(docs.getErrors(), is(notNullValue()));
-        assertThat(docs.getErrors().size(), is(1));
-        assertThat(docs.getErrors().iterator().next().getErrorNum(), is(1210));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getDocuments()).isNotNull();
+        assertThat(docs.getDocuments()).hasSize(2);
+        assertThat(docs.getErrors()).isNotNull();
+        assertThat(docs.getErrors()).hasSize(1);
+        assertThat(docs.getErrors().iterator().next().getErrorNum()).isEqualTo(1210);
     }
 
-    @Test
-    public void importDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(
                 new BaseDocument(),
                 new BaseDocument(),
@@ -1847,17 +2071,18 @@ public class ArangoCollectionTest extends BaseTest {
         );
 
         final DocumentImportEntity docs = collection.importDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(values.size()));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(values.size());
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonList() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonList(ArangoCollection collection) {
         final Collection<String> values = Arrays.asList(
                 "{}",
                 "{}",
@@ -1865,17 +2090,18 @@ public class ArangoCollectionTest extends BaseTest {
         );
 
         final DocumentImportEntity docs = collection.importDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(values.size()));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(values.size());
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsDuplicateDefaultError() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDuplicateDefaultError(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1886,17 +2112,18 @@ public class ArangoCollectionTest extends BaseTest {
         );
 
         final DocumentImportEntity docs = collection.importDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsDuplicateError() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDuplicateError(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1908,17 +2135,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsDuplicateIgnore() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDuplicateIgnore(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1930,17 +2158,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(1));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isEqualTo(1);
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsDuplicateReplace() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDuplicateReplace(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1952,17 +2181,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(1));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isEqualTo(1);
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsDuplicateUpdate() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDuplicateUpdate(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1974,17 +2204,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(1));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isEqualTo(1);
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsCompleteFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsCompleteFail(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -1994,16 +2225,15 @@ public class ArangoCollectionTest extends BaseTest {
                 new BaseDocument(k2)
         );
 
-        try {
-            collection.importDocuments(values, new DocumentImportOptions().complete(true));
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getErrorNum(), is(1210));
-        }
+        Throwable thrown = catchThrowable(() -> collection.importDocuments(values, new DocumentImportOptions().complete(true)));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @Test
-    public void importDocumentsDetails() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsDetails(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2015,18 +2245,19 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().details(true));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails().size(), is(1));
-        assertThat(docs.getDetails().iterator().next(), containsString("unique constraint violated"));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).hasSize(1);
+        assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @Test
-    public void importDocumentsOverwriteFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsOverwriteFalse(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
         Long initialCount = collection.count().getCount();
 
@@ -2034,22 +2265,24 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument());
         values.add(new BaseDocument());
         collection.importDocuments(values, new DocumentImportOptions().overwrite(false));
-        assertThat(collection.count().getCount(), is(initialCount + 2L));
+        assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @Test
-    public void importDocumentsOverwriteTrue() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsOverwriteTrue(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
 
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
         values.add(new BaseDocument());
         collection.importDocuments(values, new DocumentImportOptions().overwrite(true));
-        assertThat(collection.count().getCount(), is(2L));
+        assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
-    @Test
-    public void importDocumentsFromToPrefix() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("edges")
+    void importDocumentsFromToPrefix(ArangoCollection edgeCollection) {
         final Collection<BaseEdgeDocument> values = new ArrayList<>();
         final String[] keys = {
                 rnd(),
@@ -2058,39 +2291,41 @@ public class ArangoCollectionTest extends BaseTest {
         for (String s : keys) {
             values.add(new BaseEdgeDocument(s, "from", "to"));
         }
-        assertThat(values.size(), is(keys.length));
+        assertThat(values).hasSize(keys.length);
 
         final DocumentImportEntity importResult = edgeCollection
                 .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
-        assertThat(importResult, is(notNullValue()));
-        assertThat(importResult.getCreated(), is(values.size()));
+        assertThat(importResult).isNotNull();
+        assertThat(importResult.getCreated()).isEqualTo(values.size());
         for (String key : keys) {
             final BaseEdgeDocument doc = edgeCollection.getDocument(key, BaseEdgeDocument.class);
-            assertThat(doc, is(notNullValue()));
-            assertThat(doc.getFrom(), is("foo/from"));
-            assertThat(doc.getTo(), is("bar/to"));
+            assertThat(doc).isNotNull();
+            assertThat(doc.getFrom()).isEqualTo("foo/from");
+            assertThat(doc.getTo()).isEqualTo("bar/to");
         }
     }
 
-    @Test
-    public void importDocumentsJson() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJson(ArangoCollection collection) throws JsonProcessingException {
         final String values = mapper.writeValueAsString(Arrays.asList(
                 Collections.singletonMap("_key", rnd()),
                 Collections.singletonMap("_key", rnd())
         ));
 
         final DocumentImportEntity docs = collection.importDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonDuplicateDefaultError() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDuplicateDefaultError(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2101,17 +2336,18 @@ public class ArangoCollectionTest extends BaseTest {
         ));
 
         final DocumentImportEntity docs = collection.importDocuments(values);
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonDuplicateError() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDuplicateError(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2123,17 +2359,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonDuplicateIgnore() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDuplicateIgnore(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2144,17 +2381,18 @@ public class ArangoCollectionTest extends BaseTest {
         ));
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(1));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isEqualTo(1);
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonDuplicateReplace() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDuplicateReplace(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2166,17 +2404,18 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(1));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isEqualTo(1);
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonDuplicateUpdate() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDuplicateUpdate(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2188,28 +2427,28 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(0));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(1));
-        assertThat(docs.getDetails(), is(empty()));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isZero();
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isEqualTo(1);
+        assertThat(docs.getDetails()).isEmpty();
     }
 
-    @Test
-    public void importDocumentsJsonCompleteFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonCompleteFail(ArangoCollection collection) {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        try {
-            collection.importDocuments(values, new DocumentImportOptions().complete(true));
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getErrorNum(), is(1210));
-        }
+        Throwable thrown = catchThrowable(() -> collection.importDocuments(values, new DocumentImportOptions().complete(true)));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @Test
-    public void importDocumentsJsonDetails() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonDetails(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2221,18 +2460,19 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity docs = collection
                 .importDocuments(values, new DocumentImportOptions().details(true));
-        assertThat(docs, is(notNullValue()));
-        assertThat(docs.getCreated(), is(2));
-        assertThat(docs.getEmpty(), is(0));
-        assertThat(docs.getErrors(), is(1));
-        assertThat(docs.getIgnored(), is(0));
-        assertThat(docs.getUpdated(), is(0));
-        assertThat(docs.getDetails().size(), is(1));
-        assertThat(docs.getDetails().iterator().next(), containsString("unique constraint violated"));
+        assertThat(docs).isNotNull();
+        assertThat(docs.getCreated()).isEqualTo(2);
+        assertThat(docs.getEmpty()).isZero();
+        assertThat(docs.getErrors()).isEqualTo(1);
+        assertThat(docs.getIgnored()).isZero();
+        assertThat(docs.getUpdated()).isZero();
+        assertThat(docs.getDetails()).hasSize(1);
+        assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @Test
-    public void importDocumentsJsonOverwriteFalse() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonOverwriteFalse(ArangoCollection collection) throws JsonProcessingException {
         collection.insertDocument(new BaseDocument());
         Long initialCount = collection.count().getCount();
 
@@ -2241,11 +2481,12 @@ public class ArangoCollectionTest extends BaseTest {
                 Collections.singletonMap("_key", rnd())
         ));
         collection.importDocuments(values, new DocumentImportOptions().overwrite(false));
-        assertThat(collection.count().getCount(), is(initialCount + 2L));
+        assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @Test
-    public void importDocumentsJsonOverwriteTrue() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void importDocumentsJsonOverwriteTrue(ArangoCollection collection) throws JsonProcessingException {
         collection.insertDocument(new BaseDocument());
 
         final String values = mapper.writeValueAsString(Arrays.asList(
@@ -2253,11 +2494,12 @@ public class ArangoCollectionTest extends BaseTest {
                 Collections.singletonMap("_key", rnd())
         ));
         collection.importDocuments(values, new DocumentImportOptions().overwrite(true));
-        assertThat(collection.count().getCount(), is(2L));
+        assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
-    @Test
-    public void importDocumentsJsonFromToPrefix() throws JsonProcessingException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("edges")
+    void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) throws JsonProcessingException {
         String k1 = UUID.randomUUID().toString();
         String k2 = UUID.randomUUID().toString();
 
@@ -2278,18 +2520,19 @@ public class ArangoCollectionTest extends BaseTest {
 
         final DocumentImportEntity importResult = edgeCollection
                 .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
-        assertThat(importResult, is(notNullValue()));
-        assertThat(importResult.getCreated(), is(2));
+        assertThat(importResult).isNotNull();
+        assertThat(importResult.getCreated()).isEqualTo(2);
         for (String key : keys) {
             final BaseEdgeDocument doc = edgeCollection.getDocument(key, BaseEdgeDocument.class);
-            assertThat(doc, is(notNullValue()));
-            assertThat(doc.getFrom(), is("foo/from"));
-            assertThat(doc.getTo(), is("bar/to"));
+            assertThat(doc).isNotNull();
+            assertThat(doc.getFrom()).isEqualTo("foo/from");
+            assertThat(doc.getTo()).isEqualTo("bar/to");
         }
     }
 
-    @Test
-    public void deleteDocumentsByKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2307,16 +2550,17 @@ public class ArangoCollectionTest extends BaseTest {
         keys.add("2");
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(keys, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(2));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(2);
         for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
-            assertThat(i.getKey(), anyOf(is("1"), is("2")));
+            assertThat(i.getKey()).isIn("1", "2");
         }
-        assertThat(deleteResult.getErrors().size(), is(0));
+        assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocumentsByDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2331,16 +2575,17 @@ public class ArangoCollectionTest extends BaseTest {
         collection.insertDocuments(values, null);
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(values, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(2));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(2);
         for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
-            assertThat(i.getKey(), anyOf(is("1"), is("2")));
+            assertThat(i.getKey()).isIn("1", "2");
         }
-        assertThat(deleteResult.getErrors().size(), is(0));
+        assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocumentsByKeyOne() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByKeyOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2352,16 +2597,17 @@ public class ArangoCollectionTest extends BaseTest {
         keys.add("1");
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(keys, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(1));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(1);
         for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
-            assertThat(i.getKey(), is("1"));
+            assertThat(i.getKey()).isEqualTo("1");
         }
-        assertThat(deleteResult.getErrors().size(), is(0));
+        assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocumentsByDocumentOne() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByDocumentOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2371,28 +2617,30 @@ public class ArangoCollectionTest extends BaseTest {
         collection.insertDocuments(values, null);
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(values, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(1));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).hasSize(1);
         for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
-            assertThat(i.getKey(), is("1"));
+            assertThat(i.getKey()).isEqualTo("1");
         }
-        assertThat(deleteResult.getErrors().size(), is(0));
+        assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocumentsEmpty() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         collection.insertDocuments(values, null);
         final Collection<String> keys = new ArrayList<>();
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(keys, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(0));
-        assertThat(deleteResult.getErrors().size(), is(0));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).isEmpty();
+        assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void deleteDocumentsByKeyNotExisting() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByKeyNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         collection.insertDocuments(values, null);
         final Collection<String> keys = Arrays.asList(
@@ -2402,13 +2650,14 @@ public class ArangoCollectionTest extends BaseTest {
 
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(keys, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(0));
-        assertThat(deleteResult.getErrors().size(), is(2));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).isEmpty();
+        assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @Test
-    public void deleteDocumentsByDocumentsNotExisting() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsByDocumentsNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2422,13 +2671,14 @@ public class ArangoCollectionTest extends BaseTest {
         }
         final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = collection
                 .deleteDocuments(values, null, null);
-        assertThat(deleteResult, is(notNullValue()));
-        assertThat(deleteResult.getDocuments().size(), is(0));
-        assertThat(deleteResult.getErrors().size(), is(2));
+        assertThat(deleteResult).isNotNull();
+        assertThat(deleteResult.getDocuments()).isEmpty();
+        assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @Test
-    public void updateDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(
                 new BaseDocument(rnd()),
                 new BaseDocument(rnd())
@@ -2438,13 +2688,14 @@ public class ArangoCollectionTest extends BaseTest {
 
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(values, null);
-        assertThat(updateResult.getDocuments().size(), is(2));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void updateDocumentsWithDifferentReturnType() {
-        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID().toString()).collect(Collectors.toList());
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsWithDifferentReturnType(ArangoCollection collection) {
+        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).collect(Collectors.toList());
         List<BaseDocument> docs = keys.stream()
                 .map(BaseDocument::new)
                 .peek(it -> it.addAttribute("a", "test"))
@@ -2465,15 +2716,17 @@ public class ArangoCollectionTest extends BaseTest {
 
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(modifiedDocs, new DocumentUpdateOptions().returnNew(true), BaseDocument.class);
-        assertThat(updateResult.getDocuments().size(), is(3));
-        assertThat(updateResult.getErrors().size(), is(0));
-        assertThat(updateResult.getDocuments().stream().map(DocumentUpdateEntity::getNew)
-                        .allMatch(it -> it.getAttribute("a").equals("test") && it.getAttribute("b").equals("test")),
-                is(true));
+        assertThat(updateResult.getDocuments()).hasSize(3);
+        assertThat(updateResult.getErrors()).isEmpty();
+        assertThat(updateResult.getDocuments().stream())
+                .map(DocumentUpdateEntity::getNew)
+                .allMatch(it -> it.getAttribute("a").equals("test"))
+                .allMatch(it -> it.getAttribute("b").equals("test"));
     }
 
-    @Test
-    public void updateDocumentsOne() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2487,21 +2740,23 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add(first);
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(updatedValues, null);
-        assertThat(updateResult.getDocuments().size(), is(1));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(1);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void updateDocumentsEmpty() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(values, null);
-        assertThat(updateResult.getDocuments().size(), is(0));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).isEmpty();
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void updateDocumentsWithoutKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsWithoutKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             values.add(new BaseDocument("1"));
@@ -2515,12 +2770,13 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(updatedValues, null);
-        assertThat(updateResult.getDocuments().size(), is(1));
-        assertThat(updateResult.getErrors().size(), is(1));
+        assertThat(updateResult.getDocuments()).hasSize(1);
+        assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @Test
-    public void updateDocumentsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void updateDocumentsJson(ArangoCollection collection) {
         final Collection<String> values = new ArrayList<>();
         values.add("{\"_key\":\"1\"}");
         values.add("{\"_key\":\"2\"}");
@@ -2531,12 +2787,13 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
         final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = collection
                 .updateDocuments(updatedValues);
-        assertThat(updateResult.getDocuments().size(), is(2));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void replaceDocuments() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             values.add(new BaseDocument("1"));
@@ -2550,12 +2807,13 @@ public class ArangoCollectionTest extends BaseTest {
         }
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .replaceDocuments(updatedValues, null);
-        assertThat(updateResult.getDocuments().size(), is(2));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void replaceDocumentsOne() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             final BaseDocument e = new BaseDocument();
@@ -2569,21 +2827,23 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add(first);
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(updatedValues, null);
-        assertThat(updateResult.getDocuments().size(), is(1));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(1);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void replaceDocumentsEmpty() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(values, null);
-        assertThat(updateResult.getDocuments().size(), is(0));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).isEmpty();
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void replaceDocumentsWithoutKey() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsWithoutKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
         {
             values.add(new BaseDocument("1"));
@@ -2597,12 +2857,13 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
                 .updateDocuments(updatedValues, null);
-        assertThat(updateResult.getDocuments().size(), is(1));
-        assertThat(updateResult.getErrors().size(), is(1));
+        assertThat(updateResult.getDocuments()).hasSize(1);
+        assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @Test
-    public void replaceDocumentsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentsJson(ArangoCollection collection) {
         final Collection<String> values = new ArrayList<>();
         values.add("{\"_key\":\"1\"}");
         values.add("{\"_key\":\"2\"}");
@@ -2613,41 +2874,46 @@ public class ArangoCollectionTest extends BaseTest {
         updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
         final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = collection
                 .replaceDocuments(updatedValues);
-        assertThat(updateResult.getDocuments().size(), is(2));
-        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments()).hasSize(2);
+        assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @Test
-    public void load() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void load(ArangoCollection collection) {
         final CollectionEntity result = collection.load();
-        assertThat(result.getName(), is(COLLECTION_NAME));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
     }
 
-    @Test
-    public void unload() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void unload(ArangoCollection collection) {
         final CollectionEntity result = collection.unload();
-        assertThat(result.getName(), is(COLLECTION_NAME));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
     }
 
-    @Test
-    public void getInfo() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getInfo(ArangoCollection collection) {
         final CollectionEntity result = collection.getInfo();
-        assertThat(result.getName(), is(COLLECTION_NAME));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
     }
 
-    @Test
-    public void getPropeties() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getPropeties(ArangoCollection collection) {
         final CollectionPropertiesEntity result = collection.getProperties();
-        assertThat(result.getName(), is(COLLECTION_NAME));
-        assertThat(result.getCount(), is(nullValue()));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getCount()).isNull();
     }
 
-    @Test
-    public void changeProperties() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void changeProperties(ArangoCollection collection) {
         final CollectionPropertiesEntity properties = collection.getProperties();
-        assertThat(properties.getWaitForSync(), is(notNullValue()));
+        assertThat(properties.getWaitForSync()).isNotNull();
         if (isAtLeastVersion(3, 7)) {
-            assertThat(properties.getSchema(), is(nullValue()));
+            assertThat(properties.getSchema()).isNull();
         }
 
         String schemaRule = ("{  " +
@@ -2669,13 +2935,13 @@ public class ArangoCollectionTest extends BaseTest {
                 );
 
         final CollectionPropertiesEntity changedProperties = collection.changeProperties(updatedOptions);
-        assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
-        assertThat(changedProperties.getWaitForSync(), is(!properties.getWaitForSync()));
+        assertThat(changedProperties.getWaitForSync()).isNotNull();
+        assertThat(changedProperties.getWaitForSync()).isEqualTo(!properties.getWaitForSync());
         if (isAtLeastVersion(3, 7)) {
-            assertThat(changedProperties.getSchema(), is(notNullValue()));
-            assertThat(changedProperties.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
-            assertThat(changedProperties.getSchema().getMessage(), is(schemaMessage));
-            assertThat(changedProperties.getSchema().getRule(), is(schemaRule));
+            assertThat(changedProperties.getSchema()).isNotNull();
+            assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
+            assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
+            assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
         }
 
         // revert changes
@@ -2684,73 +2950,80 @@ public class ArangoCollectionTest extends BaseTest {
                 .schema(CollectionSchema.NULL_SCHEMA)
         );
         if (isAtLeastVersion(3, 7)) {
-            assertThat(revertedProperties.getSchema(), is(nullValue()));
+            assertThat(revertedProperties.getSchema()).isNull();
         }
 
     }
 
-    @Test
-    public void rename() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void rename(ArangoCollection collection) {
         assumeTrue(isSingleServer());
+        ArangoDatabase db = collection.db();
         final CollectionEntity result = collection.rename(COLLECTION_NAME + "1");
-        assertThat(result, is(notNullValue()));
-        assertThat(result.getName(), is(COLLECTION_NAME + "1"));
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME + "1");
         final CollectionEntity info = db.collection(COLLECTION_NAME + "1").getInfo();
-        assertThat(info.getName(), is(COLLECTION_NAME + "1"));
-        try {
-            db.collection(COLLECTION_NAME).getInfo();
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(404));
-        }
+        assertThat(info.getName()).isEqualTo(COLLECTION_NAME + "1");
+        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).getInfo());
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(404);
         db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
     }
 
-    @Test
-    public void responsibleShard() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void responsibleShard(ArangoCollection collection) {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 5));
         ShardEntity shard = collection.getResponsibleShard(new BaseDocument("testKey"));
-        assertThat(shard, is(notNullValue()));
-        assertThat(shard.getShardId(), is(notNullValue()));
+        assertThat(shard).isNotNull();
+        assertThat(shard.getShardId()).isNotNull();
     }
 
-    @Test
-    public void renameDontBreaksCollectionHandler() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void renameDontBreaksCollectionHandler(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         collection.rename(COLLECTION_NAME + "1");
-        assertThat(collection.getInfo(), is(notNullValue()));
-        db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
+        assertThat(collection.getInfo()).isNotNull();
+        collection.db().collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
     }
 
-    @Test
-    public void getRevision() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getRevision(ArangoCollection collection) {
         final CollectionRevisionEntity result = collection.getRevision();
-        assertThat(result, is(notNullValue()));
-        assertThat(result.getName(), is(COLLECTION_NAME));
-        assertThat(result.getRevision(), is(notNullValue()));
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getRevision()).isNotNull();
     }
 
-    @Test
-    public void keyWithSpecialCharacter() {
-        final String key = "myKey_-:.@()+,=;$!*'%";
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void keyWithSpecialCharacter(ArangoCollection collection) {
+        final String key = "myKey_-:.@()+,=;$!*'%-" + UUID.randomUUID();
         collection.insertDocument(new BaseDocument(key));
         final BaseDocument doc = collection.getDocument(key, BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getKey(), is(key));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @Test
-    public void alreadyUrlEncodedkey() {
-        final String key = "http%3A%2F%2Fexample.com%2F";
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void alreadyUrlEncodedkey(ArangoCollection collection) {
+        final String key = "http%3A%2F%2Fexample.com%2F-" + UUID.randomUUID();
         collection.insertDocument(new BaseDocument(key));
         final BaseDocument doc = collection.getDocument(key, BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getKey(), is(key));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @Test
-    public void grantAccessRW() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void grantAccessRW(ArangoCollection collection) {
+        ArangoDB arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null);
             collection.grantAccess("user1", Permissions.RW);
@@ -2759,8 +3032,10 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    @Test
-    public void grantAccessRO() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void grantAccessRO(ArangoCollection collection) {
+        ArangoDB arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null);
             collection.grantAccess("user1", Permissions.RO);
@@ -2769,8 +3044,10 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    @Test
-    public void grantAccessNONE() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void grantAccessNONE(ArangoCollection collection) {
+        ArangoDB arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null);
             collection.grantAccess("user1", Permissions.NONE);
@@ -2779,13 +3056,17 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void grantAccessUserNotFound() {
-        collection.grantAccess("user1", Permissions.RW);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void grantAccessUserNotFound(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.RW));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void revokeAccess() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void revokeAccess(ArangoCollection collection) {
+        ArangoDB arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null);
             collection.grantAccess("user1", Permissions.NONE);
@@ -2794,13 +3075,17 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void revokeAccessUserNotFound() {
-        collection.grantAccess("user1", Permissions.NONE);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void revokeAccessUserNotFound(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.NONE));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void resetAccess() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void resetAccess(ArangoCollection collection) {
+        ArangoDB arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null);
             collection.resetAccess("user1");
@@ -2809,14 +3094,17 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void resetAccessUserNotFound() {
-        collection.resetAccess("user1");
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void resetAccessUserNotFound(ArangoCollection collection) {
+        Throwable thrown = catchThrowable(() -> collection.resetAccess("user1"));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test
-    public void getPermissions() {
-        assertThat(Permissions.RW, is(collection.getPermissions("root")));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void getPermissions(ArangoCollection collection) {
+        assertThat(collection.getPermissions("root")).isEqualTo(Permissions.RW);
     }
 
 }

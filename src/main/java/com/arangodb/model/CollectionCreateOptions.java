@@ -20,11 +20,11 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.KeyOptions;
-import com.arangodb.entity.KeyType;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -37,14 +37,29 @@ public class CollectionCreateOptions {
     private Long journalSize;
     private final ReplicationFactor replicationFactor;
     private final MinReplicationFactor minReplicationFactor;
+    private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
+    private List<ComputedValue> computedValues = new ArrayList<>();
+
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Boolean doCompact;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Boolean isVolatile;
     private String[] shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;
     private CollectionType type;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Integer indexBuckets;
     private String distributeShardsLike;
 
@@ -72,6 +87,10 @@ public class CollectionCreateOptions {
         return this;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Long getJournalSize() {
         return journalSize;
     }
@@ -79,7 +98,9 @@ public class CollectionCreateOptions {
     /**
      * @param journalSize The maximal size of a journal or datafile in bytes. The value must be at least 1048576 (1 MiB).
      * @return options
+     * @deprecated MMFiles only
      */
+    @Deprecated
     public CollectionCreateOptions journalSize(final Long journalSize) {
         this.journalSize = journalSize;
         return this;
@@ -89,6 +110,10 @@ public class CollectionCreateOptions {
         return replicationFactor.getReplicationFactor();
     }
 
+    /**
+     * @deprecated use {@link #getWriteConcern()} instead
+     */
+    @Deprecated
     public Integer getMinReplicationFactor() {
         return minReplicationFactor.getMinReplicationFactor();
     }
@@ -118,9 +143,28 @@ public class CollectionCreateOptions {
      *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
      *                             to allow writes.
      * @return options
+     * @deprecated use {@link #writeConcern(Integer)} instead
      */
+    @Deprecated
     public CollectionCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
         this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
+        return this;
+    }
+
+    public Integer getWriteConcern() {
+        return writeConcern;
+    }
+
+    /**
+     * @param writeConcern write concern for this collection (default: 1).
+     *                     It determines how many copies of each shard are required to be in sync on the different
+     *                     DB-Servers. If there are less then these many copies in the cluster a shard will refuse to
+     *                     write. Writes to shards with enough up-to-date copies will succeed at the same time however.
+     *                     The value of writeConcern can not be larger than replicationFactor. (cluster only)
+     * @return options
+     */
+    public CollectionCreateOptions writeConcern(final Integer writeConcern) {
+        this.writeConcern = writeConcern;
         return this;
     }
 
@@ -175,6 +219,10 @@ public class CollectionCreateOptions {
         return this;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Boolean getDoCompact() {
         return doCompact;
     }
@@ -182,12 +230,18 @@ public class CollectionCreateOptions {
     /**
      * @param doCompact whether or not the collection will be compacted (default is true)
      * @return options
+     * @deprecated MMFiles only
      */
+    @Deprecated
     public CollectionCreateOptions doCompact(final Boolean doCompact) {
         this.doCompact = doCompact;
         return this;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Boolean getIsVolatile() {
         return isVolatile;
     }
@@ -201,7 +255,9 @@ public class CollectionCreateOptions {
      *                   should therefore be used for cache-type collections only, and not for data that cannot be re-created
      *                   otherwise. (The default is false)
      * @return options
+     * @deprecated MMFiles only
      */
+    @Deprecated
     public CollectionCreateOptions isVolatile(final Boolean isVolatile) {
         this.isVolatile = isVolatile;
         return this;
@@ -293,6 +349,10 @@ public class CollectionCreateOptions {
         return this;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Integer getIndexBuckets() {
         return indexBuckets;
     }
@@ -306,7 +366,9 @@ public class CollectionCreateOptions {
      *                     this value, but other index types might follow in future ArangoDB versions. Changes (see below) are
      *                     applied when the collection is loaded the next time.
      * @return options
+     * @deprecated MMFiles only
      */
+    @Deprecated
     public CollectionCreateOptions indexBuckets(final Integer indexBuckets) {
         this.indexBuckets = indexBuckets;
         return this;
@@ -351,6 +413,16 @@ public class CollectionCreateOptions {
     @Deprecated
     public CollectionCreateOptions setSchema(final CollectionSchema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * @param computedValues An optional list of computed values.
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public CollectionCreateOptions computedValues(final ComputedValue... computedValues) {
+        Collections.addAll(this.computedValues, computedValues);
         return this;
     }
 

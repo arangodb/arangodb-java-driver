@@ -41,7 +41,7 @@ public class TestEntity {
         return foo;
     }
 
-    public void setFoo(final String foo) {
+    void setFoo(final String foo) {
         this.foo = foo;
     }
 

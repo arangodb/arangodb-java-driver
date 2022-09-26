@@ -29,9 +29,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
-import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
+import com.arangodb.model.arangosearch.*;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -186,7 +184,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
 
-        final Request request = request(dbName, RequestType.PUT, PATH_API_CURSOR, id);
+        final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR, id);
 
         if (meta != null) {
             request.getHeaderParam().putAll(meta);
@@ -361,8 +359,13 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected Request beginStreamTransactionRequest(final StreamTransactionOptions options) {
-        return request(dbName, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION)
-                .setBody(util().serialize(options != null ? options : new StreamTransactionOptions()));
+        StreamTransactionOptions opts = options != null ? options : new StreamTransactionOptions();
+        Request r = request(dbName, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION)
+                .setBody(util().serialize(opts));
+        if(Boolean.TRUE.equals(opts.getAllowDirtyRead())) {
+            RequestUtils.allowDirtyRead(r);
+        }
+        return r;
     }
 
     protected Request abortStreamTransactionRequest(String id) {
@@ -469,6 +472,11 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected Request createArangoSearchRequest(final String name, final ArangoSearchCreateOptions options) {
         return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(util().serialize(
                 ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
+    }
+
+    protected Request createSearchAliasRequest(final String name, final SearchAliasCreateOptions options) {
+        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(util().serialize(
+                SearchAliasOptionsBuilder.build(options != null ? options : new SearchAliasCreateOptions(), name)));
     }
 
     protected Request getAnalyzerRequest(final String name) {

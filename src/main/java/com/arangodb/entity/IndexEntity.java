@@ -42,6 +42,9 @@ public class IndexEntity implements Entity {
     private Integer expireAfter;
     private Boolean inBackground;
     private Boolean estimates;
+    private Boolean cacheEnabled;
+    private Collection<String> storedValues;
+    private Boolean legacyPolygons;
 
     public IndexEntity() {
         super();
@@ -105,6 +108,18 @@ public class IndexEntity implements Entity {
 
     public Boolean getEstimates() {
         return estimates;
+    }
+
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public Collection<String> getStoredValues() {
+        return storedValues;
+    }
+
+    public Boolean getLegacyPolygons() {
+        return legacyPolygons;
     }
 
 }

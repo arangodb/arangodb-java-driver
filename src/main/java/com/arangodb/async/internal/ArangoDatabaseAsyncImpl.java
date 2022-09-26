@@ -22,13 +22,7 @@ package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
-import com.arangodb.async.ArangoCollectionAsync;
-import com.arangodb.async.ArangoCursorAsync;
-import com.arangodb.async.ArangoDatabaseAsync;
-import com.arangodb.async.ArangoGraphAsync;
-import com.arangodb.async.ArangoRouteAsync;
-import com.arangodb.async.ArangoSearchAsync;
-import com.arangodb.async.ArangoViewAsync;
+import com.arangodb.async.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -51,6 +45,7 @@ import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 
@@ -451,6 +446,11 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
+    public SearchAliasAsync searchAlias(String name) {
+        return new SearchAliasAsyncImpl(this, name);
+    }
+
+    @Override
     public CompletableFuture<ViewEntity> createView(final String name, final ViewType type) {
         return executor.execute(createViewRequest(name, type), ViewEntity.class);
     }
@@ -458,6 +458,11 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public CompletableFuture<ViewEntity> createArangoSearch(final String name, final ArangoSearchCreateOptions options) {
         return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+    }
+
+    @Override
+    public CompletableFuture<ViewEntity> createSearchAlias(String name, SearchAliasCreateOptions options) {
+        return executor.execute(createSearchAliasRequest(name, options), ViewEntity.class);
     }
 
     @Override

@@ -16,6 +16,8 @@ SSL=${SSL:=false}
 DATABASE_EXTENDED_NAMES=${DATABASE_EXTENDED_NAMES:=false}
 
 STARTER_DOCKER_IMAGE=docker.io/arangodb/arangodb-starter:latest
+GW=172.28.0.1
+docker network create arangodb --subnet 172.28.0.0/16
 
 # exit when any command fails
 set -e
@@ -32,10 +34,10 @@ AUTHORIZATION_HEADER=$(cat "$LOCATION"/jwtHeader)
 STARTER_ARGS=
 SCHEME=http
 ARANGOSH_SCHEME=http+tcp
-COORDINATORS=("172.17.0.1:8529" "172.17.0.1:8539" "172.17.0.1:8549")
+COORDINATORS=("$GW:8529" "$GW:8539" "$GW:8549")
 
 if [ "$STARTER_MODE" == "single" ]; then
-  COORDINATORS=("172.17.0.1:8529")
+  COORDINATORS=("$GW:8529")
 fi
 
 if [ "$SSL" == "true" ]; then
@@ -66,7 +68,7 @@ docker run -d \
     $STARTER_ARGS \
     --docker.container=adb \
     --auth.jwt-secret=/jwtSecret \
-    --starter.address=172.17.0.1 \
+    --starter.address="${GW}" \
     --docker.image="${DOCKER_IMAGE}" \
     --starter.local --starter.mode=${STARTER_MODE} --all.log.level=debug --all.log.output=+ --log.verbose
 
@@ -97,6 +99,13 @@ for a in ${COORDINATORS[*]} ; do
     echo ""
     echo "Requesting endpoint version..."
     curl -u root:test --insecure --fail "$SCHEME://$a/_api/version"
+done
+
+echo ""
+echo ""
+echo "Copying test ML models into containers..."
+for c in $(docker ps -a -f name=adb-.* -q) ; do
+    docker cp "$LOCATION"/foo.bin "$c":/tmp
 done
 
 echo ""

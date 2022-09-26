@@ -259,6 +259,11 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<InvertedIndexEntity> getInvertedIndex(String id) {
+        return executor.execute(getIndexRequest(id), InvertedIndexEntity.class);
+    }
+
+    @Override
     public CompletableFuture<String> deleteIndex(final String id) {
         return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
@@ -291,6 +296,7 @@ public class ArangoCollectionAsyncImpl
         return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
+    @Deprecated
     @Override
     public CompletableFuture<IndexEntity> ensureFulltextIndex(
             final Iterable<String> fields,
@@ -311,8 +317,18 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<InvertedIndexEntity> ensureInvertedIndex(InvertedIndexOptions options) {
+        return executor.execute(createInvertedIndexRequest(options), InvertedIndexEntity.class);
+    }
+
+    @Override
     public CompletableFuture<Collection<IndexEntity>> getIndexes() {
         return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
+    }
+
+    @Override
+    public CompletableFuture<Collection<InvertedIndexEntity>> getInvertedIndexes() {
+        return executor.execute(getIndexesRequest(), getInvertedIndexesResponseDeserializer());
     }
 
     @Override

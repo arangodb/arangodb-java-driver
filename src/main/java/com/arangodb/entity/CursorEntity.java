@@ -88,6 +88,7 @@ public class CursorEntity implements Entity, MetaAware {
     }
 
     public Map<String, String> getMeta() {
+        if (meta == null) return Collections.emptyMap();
         return meta;
     }
 
@@ -143,6 +144,10 @@ public class CursorEntity implements Entity, MetaAware {
         private Long fullCount;
         private Double executionTime;
         private Long peakMemoryUsage;
+        private Long cursorsCreated;
+        private Long cursorsRearmed;
+        private Long cacheHits;
+        private Long cacheMisses;
 
         public Long getWritesExecuted() {
             return writesExecuted;
@@ -174,6 +179,34 @@ public class CursorEntity implements Entity, MetaAware {
 
         public Long getPeakMemoryUsage() {
             return peakMemoryUsage;
+        }
+
+        /**
+         * @since ArangoDB 3.10
+         */
+        public Long getCursorsCreated() {
+            return cursorsCreated;
+        }
+
+        /**
+         * @since ArangoDB 3.10
+         */
+        public Long getCursorsRearmed() {
+            return cursorsRearmed;
+        }
+
+        /**
+         * @since ArangoDB 3.10
+         */
+        public Long getCacheHits() {
+            return cacheHits;
+        }
+
+        /**
+         * @since ArangoDB 3.10
+         */
+        public Long getCacheMisses() {
+            return cacheMisses;
         }
     }
 }

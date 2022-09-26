@@ -23,35 +23,33 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.Test;
+import com.arangodb.mapping.ArangoJack;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Mark Vollmary
  */
-public class CommunicationTest {
+class CommunicationTest {
 
     private static final String FAST = "fast";
     private static final String SLOW = "slow";
 
     @Test
-    public void chunkSizeSmall() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().chunksize(20).build();
+    void chunkSizeSmall() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().chunksize(20).serializer(new ArangoJack()).build();
         final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version, is(notNullValue()));
+        assertThat(version).isNotNull();
     }
 
     @Test
-    public void multiThread() throws Exception {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+    void multiThread() throws Exception {
+        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
@@ -69,15 +67,15 @@ public class CommunicationTest {
         slow.join();
         fast.join();
 
-        assertThat(result.size(), is(2));
+        assertThat(result.size()).isEqualTo(2);
         final Iterator<String> iterator = result.iterator();
-        assertThat(iterator.next(), is(FAST));
-        assertThat(iterator.next(), is(SLOW));
+        assertThat(iterator.next()).isEqualTo(FAST);
+        assertThat(iterator.next()).isEqualTo(SLOW);
     }
 
     @Test
-    public void multiThreadSameDatabases() throws Exception {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+    void multiThreadSameDatabases() throws Exception {
+        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final ArangoDatabase db = arangoDB.db();
@@ -95,20 +93,20 @@ public class CommunicationTest {
         t1.start();
         t2.join();
         t1.join();
-        assertThat(result.size(), is(2));
+        assertThat(result.size()).isEqualTo(2);
     }
 
     @Test
-    public void minOneConnection() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(0).build();
+    void minOneConnection() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(0).serializer(new ArangoJack()).build();
         final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version, is(notNullValue()));
+        assertThat(version).isNotNull();
     }
 
     @Test
-    public void defaultMaxConnection() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(null).build();
+    void defaultMaxConnection() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(null).serializer(new ArangoJack()).build();
         final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version, is(notNullValue()));
+        assertThat(version).isNotNull();
     }
 }

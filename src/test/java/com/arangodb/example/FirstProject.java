@@ -6,6 +6,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 public class FirstProject {
 
     public static void main(final String[] args) {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("root").build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().user("root").serializer(new ArangoJack()).build();
 
         // create database
         final String dbName = "mydb";

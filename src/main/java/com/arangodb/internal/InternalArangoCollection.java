@@ -111,10 +111,10 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.ID, doc.getId());
-                values.put(DocumentField.Type.KEY, doc.getKey());
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.ID, doc.getId());
+                values.put(DocumentFields.KEY, doc.getKey());
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;
@@ -229,6 +229,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
             final Class<T> type, final DocumentReadOptions options) {
         return response -> {
             final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<>();
+            boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta().get("X-Arango-Potential-Dirty-Read"));
+            multiDocument.setPotentialDirtyRead(potentialDirtyRead);
             final Collection<T> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
             final Collection<Object> documentsAndErrors = new ArrayList<>();
@@ -282,8 +284,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;
@@ -380,8 +382,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;
@@ -574,6 +576,13 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
+    protected Request createInvertedIndexRequest(final InvertedIndexOptions options) {
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
+        request.putQueryParam(COLLECTION, name);
+        request.setBody(util().serialize(options));
+        return request;
+    }
+
     protected Request createGeoIndexRequest(final Iterable<String> fields, final GeoIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
@@ -582,6 +591,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
+    @Deprecated
     protected Request createFulltextIndexRequest(final Iterable<String> fields, final FulltextIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
@@ -614,8 +624,31 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> util().deserialize(response.getBody().get("indexes"), new Type<Collection<IndexEntity>>() {
-        }.getType());
+        return response -> {
+            Collection<IndexEntity> indexes = new ArrayList<>();
+            Iterator<VPackSlice> it = response.getBody().get("indexes").arrayIterator();
+            while (it.hasNext()) {
+                VPackSlice idx = it.next();
+                if (!"inverted".equals(idx.get("type").getAsString())) {
+                    indexes.add(util().deserialize(idx, IndexEntity.class));
+                }
+            }
+            return indexes;
+        };
+    }
+
+    protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
+        return response -> {
+            Collection<InvertedIndexEntity> indexes = new ArrayList<>();
+            Iterator<VPackSlice> it = response.getBody().get("indexes").arrayIterator();
+            while (it.hasNext()) {
+                VPackSlice idx = it.next();
+                if ("inverted".equals(idx.get("type").getAsString())) {
+                    indexes.add(util().deserialize(idx, InvertedIndexEntity.class));
+                }
+            }
+            return indexes;
+        };
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {

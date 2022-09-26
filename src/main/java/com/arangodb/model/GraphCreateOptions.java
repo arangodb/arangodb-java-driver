@@ -143,6 +143,10 @@ public class GraphCreateOptions {
         return this;
     }
 
+    /**
+     * @deprecated use {@link #getWriteConcern()} instead
+     */
+    @Deprecated
     public Integer getMinReplicationFactor() {
         return getOptions().getMinReplicationFactor();
     }
@@ -157,9 +161,28 @@ public class GraphCreateOptions {
      *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
      *                             to allow writes.
      * @return options
+     * @deprecated use {@link #writeConcern(Integer)} instead
      */
+    @Deprecated
     public GraphCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
         getOptions().setMinReplicationFactor(minReplicationFactor);
+        return this;
+    }
+
+    public Integer getWriteConcern() {
+        return getOptions().getWriteConcern();
+    }
+
+    /**
+     * @param writeConcern Write concern for new collections in the graph.
+     *                     It determines how many copies of each shard are required to be in sync on the different
+     *                     DB-Servers. If there are less then these many copies in the cluster a shard will refuse to
+     *                     write. Writes to shards with enough up-to-date copies will succeed at the same time however.
+     *                     The value of writeConcern can not be larger than replicationFactor. (cluster only)
+     * @return options
+     */
+    public GraphCreateOptions writeConcern(final Integer writeConcern) {
+        getOptions().setWriteConcern(writeConcern);
         return this;
     }
 
@@ -216,6 +239,7 @@ public class GraphCreateOptions {
     public static class SmartOptions {
         private ReplicationFactor replicationFactor;
         private Integer minReplicationFactor;
+        private Integer writeConcern;
         private Integer numberOfShards;
         private String smartGraphAttribute;
         private Boolean isDisjoint;
@@ -242,12 +266,28 @@ public class GraphCreateOptions {
             replicationFactor.setSatellite(satellite);
         }
 
+        /**
+         * @deprecated use {{@link #getWriteConcern()}} instead
+         */
+        @Deprecated
         public Integer getMinReplicationFactor() {
             return minReplicationFactor;
         }
 
+        /**
+         * @deprecated use {{@link #setWriteConcern(Integer)}} instead
+         */
+        @Deprecated
         public void setMinReplicationFactor(final Integer minReplicationFactor) {
             this.minReplicationFactor = minReplicationFactor;
+        }
+
+        public Integer getWriteConcern() {
+            return writeConcern;
+        }
+
+        public void setWriteConcern(final Integer writeConcern) {
+            this.writeConcern = writeConcern;
         }
 
         public Integer getNumberOfShards() {

@@ -25,27 +25,28 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoVertexCollectionTest extends BaseTest {
+class ArangoVertexCollectionTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
     private static final String COLLECTION_NAME = "db_vertex_collection_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setup() throws InterruptedException, ExecutionException {
         if (!db.collection(COLLECTION_NAME).exists().get()) {
             db.createCollection(COLLECTION_NAME, null).get();
         }
@@ -53,52 +54,52 @@ public class ArangoVertexCollectionTest extends BaseTest {
         db.createGraph(GRAPH_NAME, null, options).get();
     }
 
-    @After
-    public void teardown() throws InterruptedException, ExecutionException {
+    @AfterEach
+    void teardown() throws InterruptedException, ExecutionException {
         db.collection(COLLECTION_NAME).truncate().get();
     }
 
     @Test
-    public void dropVertexCollection() throws InterruptedException, ExecutionException {
+    void dropVertexCollection() throws InterruptedException, ExecutionException {
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).drop().get();
         final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections().get();
-        assertThat(vertexCollections, not(hasItem(COLLECTION_NAME)));
+        assertThat(vertexCollections).doesNotContain(COLLECTION_NAME);
     }
 
     @Test
-    public void insertVertex() throws InterruptedException, ExecutionException {
+    void insertVertex() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
-        assertThat(vertex, is(notNullValue()));
+        assertThat(vertex).isNotNull();
         final BaseDocument document = db.collection(COLLECTION_NAME)
                 .getDocument(vertex.getKey(), BaseDocument.class, null).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
     @Test
-    public void getVertex() throws InterruptedException, ExecutionException {
+    void getVertex() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
         final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(vertex.getKey(), BaseDocument.class, null).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
     @Test
-    public void getVertexIfMatch() throws InterruptedException, ExecutionException {
+    void getVertexIfMatch() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(vertex.getRev());
         final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(vertex.getKey(), BaseDocument.class, options).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
     @Test
-    public void getVertexIfMatchFail() throws InterruptedException, ExecutionException {
+    void getVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
@@ -107,23 +108,23 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .getVertex(vertex.getKey(), BaseDocument.class, options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getVertexIfNoneMatch() throws InterruptedException, ExecutionException {
+    void getVertexIfNoneMatch() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
         final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(vertex.getKey(), BaseDocument.class, options).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
     @Test
-    public void getVertexIfNoneMatchFail() throws InterruptedException, ExecutionException {
+    void getVertexIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev()).catchException(false);
@@ -132,12 +133,12 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .getVertex(vertex.getKey(), BaseDocument.class, options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void replaceVertex() throws InterruptedException, ExecutionException {
+    void replaceVertex() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -146,22 +147,22 @@ public class ArangoVertexCollectionTest extends BaseTest {
         doc.addAttribute("b", "test");
         final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .replaceVertex(createResult.getKey(), doc, null).get();
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
     @Test
-    public void replaceVertexIfMatch() throws InterruptedException, ExecutionException {
+    void replaceVertexIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -171,22 +172,22 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .replaceVertex(createResult.getKey(), doc, options).get();
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
     @Test
-    public void replaceVertexIfMatchFail() throws InterruptedException, ExecutionException {
+    void replaceVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -199,12 +200,12 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void updateVertex() throws InterruptedException, ExecutionException {
+    void updateVertex() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -215,24 +216,24 @@ public class ArangoVertexCollectionTest extends BaseTest {
         doc.updateAttribute("c", null);
         final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .updateVertex(createResult.getKey(), doc, null).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
     @Test
-    public void updateVertexIfMatch() throws InterruptedException, ExecutionException {
+    void updateVertexIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -244,24 +245,24 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .updateVertex(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
     @Test
-    public void updateVertexIfMatchFail() throws InterruptedException, ExecutionException {
+    void updateVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -276,12 +277,12 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void updateVertexKeepNullTrue() throws InterruptedException, ExecutionException {
+    void updateVertexKeepNullTrue() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -290,20 +291,20 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(true);
         final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .updateVertex(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet().size(), is(1));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties()).containsKey("a");
     }
 
     @Test
-    public void updateVertexKeepNullFalse() throws InterruptedException, ExecutionException {
+    void updateVertexKeepNullFalse() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
@@ -312,21 +313,21 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(false);
         final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .updateVertex(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .getVertex(createResult.getKey(), BaseDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getRevision(), is(notNullValue()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getRevision()).isNotNull();
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
     @Test
-    public void deleteVertex() throws InterruptedException, ExecutionException {
+    void deleteVertex() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
@@ -336,12 +337,12 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void deleteVertexIfMatch() throws InterruptedException, ExecutionException {
+    void deleteVertexIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
@@ -352,12 +353,12 @@ public class ArangoVertexCollectionTest extends BaseTest {
                     .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void deleteVertexIfMatchFail() throws InterruptedException, ExecutionException {
+    void deleteVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null)
                 .get();
@@ -366,7 +367,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 }

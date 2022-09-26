@@ -21,15 +21,19 @@
 package com.arangodb;
 
 import com.arangodb.internal.util.DocumentUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-public class ArangoDocumentUtilTest {
+class ArangoDocumentUtilTest {
 
     @Test
-    public void validateDocumentKeyValid() {
+    void validateDocumentKeyValid() {
         checkDocumentKey("1test");
         checkDocumentKey("test1");
         checkDocumentKey("test-1");
@@ -37,14 +41,16 @@ public class ArangoDocumentUtilTest {
         checkDocumentKey("_test");
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void validateDocumentKeyInvalidSlash() {
-        checkDocumentKey("test/test");
+    @Test
+    void validateDocumentKeyInvalidSlash() {
+        Throwable thrown = catchThrowable(() -> checkDocumentKey("test/test"));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void validateDocumentKeyEmpty() {
-        checkDocumentKey("");
+    @Test
+    void validateDocumentKeyEmpty() {
+        Throwable thrown = catchThrowable(() -> checkDocumentKey(""));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
     private void checkDocumentKey(final String key) throws ArangoDBException {
@@ -52,7 +58,7 @@ public class ArangoDocumentUtilTest {
     }
 
     @Test
-    public void validateDocumentIdValid() {
+    void validateDocumentIdValid() {
         checkDocumentId("1test/1test");
         checkDocumentId("test1/test1");
         checkDocumentId("test-1/test-1");
@@ -60,14 +66,16 @@ public class ArangoDocumentUtilTest {
         checkDocumentId("_test/_test");
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void validateDocumentIdInvalidWithoutSlash() {
-        checkDocumentId("test");
+    @Test
+    void validateDocumentIdInvalidWithoutSlash() {
+        Throwable thrown = catchThrowable(() -> checkDocumentId("test"));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @Test(expected = ArangoDBException.class)
-    public void validateDocumentIdEmpty() {
-        checkDocumentId("");
+    @Test
+    void validateDocumentIdEmpty() {
+        Throwable thrown = catchThrowable(() -> checkDocumentId(""));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
     private void checkDocumentId(final String id) throws ArangoDBException {

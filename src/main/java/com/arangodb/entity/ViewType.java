@@ -25,6 +25,7 @@ package com.arangodb.entity;
  */
 public enum ViewType {
 
-    ARANGO_SEARCH
+    ARANGO_SEARCH,
+    SEARCH_ALIAS
 
 }

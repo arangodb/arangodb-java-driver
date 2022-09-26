@@ -20,16 +20,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
@@ -100,16 +90,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.MultiDocumentEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.CursorEntity$Stats",
     "allDeclaredFields": true,
     "methods": [
@@ -121,6 +101,486 @@
   },
   {
     "name": "com.arangodb.entity.CollectionEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.MultiDocumentEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.QueryCachePropertiesEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.AqlFunctionEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.ViewEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.BaseDocument",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.ErrorEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity$Warning",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.ShardEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionCollection",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.DocumentDeleteEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.ArangoDBVersion",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.VertexUpdateEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.KeyOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionPlan",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.LogLevelEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.DocumentEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.SearchAliasProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.LogEntriesEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.PathEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.MinReplicationFactor",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.QueryTrackingPropertiesEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity$Extras",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.LogEntriesEntity$Message",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.QueryOptimizerRule",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -160,27 +620,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.EdgeUpdateEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.QueryCachePropertiesEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -200,47 +640,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.GraphEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.AqlFunctionEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.EdgeEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -260,7 +660,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.ViewEntity",
+    "name": "com.arangodb.entity.EdgeEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -271,16 +671,6 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.analyzer.EdgeNgram",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.BaseDocument",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -340,17 +730,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.ErrorEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity$Warning",
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -370,47 +750,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.AqlParseEntity$AstNode",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -430,7 +770,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.ShardEntity",
+    "name": "com.arangodb.entity.QueryOptimizerRule$Flags",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -440,47 +780,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionCollection",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.DocumentDeleteEntity",
+    "name": "com.arangodb.entity.EdgeDefinition$Options",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -500,26 +800,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.ArangoDBVersion",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
@@ -530,7 +810,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.BaseEdgeDocument",
+    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -540,7 +820,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.VertexUpdateEntity",
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -550,7 +830,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.KeyOptions",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -561,26 +841,6 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionPlan",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.LogLevelEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -610,26 +870,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.DocumentEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
@@ -650,37 +890,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.LogEntriesEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.StreamTransactionEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.PathEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -710,37 +920,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzerProperties",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.MinReplicationFactor",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -760,27 +940,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.QueryTrackingPropertiesEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity$Extras",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.LogEntriesEntity$Message",
+    "name": "com.arangodb.entity.InvertedIndexPrimarySort",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -800,27 +960,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer",
+    "name": "com.arangodb.entity.InvertedIndexField",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -861,6 +1001,16 @@
   },
   {
     "name": "com.arangodb.model.DocumentReadOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptions$Optimizer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -990,6 +1140,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.arangosearch.SearchAliasPropertiesOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.CollectionCreateOptions",
     "allDeclaredFields": true,
     "methods": [
@@ -1000,7 +1160,27 @@
     ]
   },
   {
+    "name": "com.arangodb.model.AqlQueryExplainOptions$Options",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.ViewCreateOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionCreateOptions$Options",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1021,6 +1201,16 @@
   },
   {
     "name": "com.arangodb.model.UserAccessOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.ComputedValue",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1090,6 +1280,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.InvertedIndexOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.EdgeCreateOptions",
     "allDeclaredFields": true,
     "methods": [
@@ -1120,7 +1320,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.CollectionTruncateOptions",
+    "name": "com.arangodb.model.TransactionOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1130,7 +1330,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.TransactionOptions",
+    "name": "com.arangodb.model.CollectionTruncateOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1170,7 +1370,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.DocumentDeleteOptions",
+    "name": "com.arangodb.model.CollectionSchema",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1190,7 +1390,17 @@
     ]
   },
   {
-    "name": "com.arangodb.model.CollectionSchema",
+    "name": "com.arangodb.model.DocumentDeleteOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptions$Options",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1220,7 +1430,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.DocumentUpdateOptions",
+    "name": "com.arangodb.model.GraphDocumentReadOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1230,7 +1440,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.GraphDocumentReadOptions",
+    "name": "com.arangodb.model.DocumentUpdateOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1270,7 +1480,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.CollectionPropertiesOptions",
+    "name": "com.arangodb.model.UserCreateOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1280,7 +1490,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.UserCreateOptions",
+    "name": "com.arangodb.model.CollectionPropertiesOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1370,6 +1580,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.arangosearch.SearchAliasCreateOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.DocumentExistsOptions",
     "allDeclaredFields": true,
     "methods": [
@@ -1390,6 +1610,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.AqlFunctionCreateOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "java.lang.Object",
     "allDeclaredFields": true,
     "methods": [
@@ -1400,7 +1630,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.AqlFunctionCreateOptions",
+    "name": "com.arangodb.model.AqlQueryExplainOptions$Optimizer",
     "allDeclaredFields": true,
     "methods": [
       {

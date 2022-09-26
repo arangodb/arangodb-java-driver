@@ -20,23 +20,9 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.*;
+import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
@@ -44,11 +30,8 @@ import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -105,19 +88,19 @@ public class VPackSerializers {
 
     public static final VPackSerializer<BaseDocument> BASE_DOCUMENT = (builder, attribute, value, context) -> {
         final Map<String, Object> doc = new HashMap<>(value.getProperties());
-        doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-        doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-        doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
+        doc.put(DocumentFields.ID, value.getId());
+        doc.put(DocumentFields.KEY, value.getKey());
+        doc.put(DocumentFields.REV, value.getRevision());
         context.serialize(builder, attribute, doc);
     };
 
     public static final VPackSerializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (builder, attribute, value, context) -> {
         final Map<String, Object> doc = new HashMap<>(value.getProperties());
-        doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-        doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-        doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
-        doc.put(DocumentField.Type.FROM.getSerializeName(), value.getFrom());
-        doc.put(DocumentField.Type.TO.getSerializeName(), value.getTo());
+        doc.put(DocumentFields.ID, value.getId());
+        doc.put(DocumentFields.KEY, value.getKey());
+        doc.put(DocumentFields.REV, value.getRevision());
+        doc.put(DocumentFields.FROM, value.getFrom());
+        doc.put(DocumentFields.TO, value.getTo());
         context.serialize(builder, attribute, doc);
     };
 
@@ -149,8 +132,13 @@ public class VPackSerializers {
     };
 
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
-        final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
-        builder.add(attribute, type);
+        if (value == ViewType.ARANGO_SEARCH) {
+            builder.add(attribute, "arangosearch");
+        } else if (value == ViewType.SEARCH_ALIAS) {
+            builder.add(attribute, "search-alias");
+        } else {
+            throw new IllegalArgumentException();
+        }
     };
 
     public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = (builder, attribute, value, context) -> {
@@ -201,7 +189,12 @@ public class VPackSerializers {
                 if (storeValues != null) {
                     builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
+                Boolean inBackground = collectionLink.getInBackground();
+                if (inBackground != null) {
+                    builder.add("inBackground", inBackground);
+                }
                 serializeFieldLinks(builder, collectionLink.getFields());
+                serializeNested(builder, collectionLink.getNested());
                 builder.close();
             }
             builder.close();
@@ -228,50 +221,95 @@ public class VPackSerializers {
         if (!storedValues.isEmpty()) {
             builder.add("storedValues", ValueType.ARRAY); // open array
             for (final StoredValue storedValue : storedValues) {
-                builder.add(ValueType.OBJECT); // open object
-                builder.add("fields", ValueType.ARRAY);
-                for (final String field : storedValue.getFields()) {
-                    builder.add(field);
-                }
-                builder.close();
-                if (storedValue.getCompression() != null) {
-                    builder.add("compression", storedValue.getCompression().getValue());
-                }
-                builder.close(); // close object
+                context.serialize(builder, null, storedValue);
             }
             builder.close(); // close array
         }
 
     };
 
+    public static final VPackSerializer<SearchAliasProperties> SEARCH_ALIAS_PROPERTIES = (builder, attribute, value, context) -> {
+        Collection<SearchAliasIndex> indexes = value.getIndexes();
+        builder.add("indexes", ValueType.ARRAY);
+        for (SearchAliasIndex index : indexes) {
+            context.serialize(builder, null, index);
+        }
+        builder.close();
+    };
+
+    public static final VPackSerializer<SearchAliasIndex> SEARCH_ALIAS_INDEX = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT);
+        builder.add("collection", value.getCollection());
+        builder.add("index", value.getIndex());
+        context.serialize(builder, "operation", value.getOperation());
+        builder.close();
+    };
+
+    public static final VPackSerializer<StoredValue> STORED_VALUE = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT); // open object
+        builder.add("fields", ValueType.ARRAY);
+        for (final String field : value.getFields()) {
+            builder.add(field);
+        }
+        builder.close();
+        if (value.getCompression() != null) {
+            builder.add("compression", value.getCompression().getValue());
+        }
+        builder.close(); // close object
+    };
+
+    public static final VPackSerializer<InvertedIndexPrimarySort.Field> PRIMARY_SORT_FIELD = (builder, attribute, value, context) -> {
+        builder.add(ValueType.OBJECT);
+        builder.add("field", value.getField());
+        builder.add("direction", value.getDirection().toString());
+        builder.close();
+    };
+
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
         if (!links.isEmpty()) {
             builder.add("fields", ValueType.OBJECT);
-            for (final FieldLink fieldLink : links) {
-                builder.add(fieldLink.getName(), ValueType.OBJECT);
-                final Collection<String> analyzers = fieldLink.getAnalyzers();
-                if (!analyzers.isEmpty()) {
-                    builder.add("analyzers", ValueType.ARRAY);
-                    for (final String analyzer : analyzers) {
-                        builder.add(analyzer);
-                    }
-                    builder.close();
+            serializeFields(builder, links);
+            builder.close();
+        }
+    }
+
+    private static void serializeNested(final VPackBuilder builder, final Collection<FieldLink> nested) {
+        if (!nested.isEmpty()) {
+            builder.add("nested", ValueType.OBJECT);
+            serializeFields(builder, nested);
+            builder.close();
+        }
+    }
+
+    private static void serializeFields(final VPackBuilder builder, final Collection<FieldLink> links){
+        for (final FieldLink fieldLink : links) {
+            builder.add(fieldLink.getName(), ValueType.OBJECT);
+            final Collection<String> analyzers = fieldLink.getAnalyzers();
+            if (!analyzers.isEmpty()) {
+                builder.add("analyzers", ValueType.ARRAY);
+                for (final String analyzer : analyzers) {
+                    builder.add(analyzer);
                 }
-                final Boolean includeAllFields = fieldLink.getIncludeAllFields();
-                if (includeAllFields != null) {
-                    builder.add("includeAllFields", includeAllFields);
-                }
-                final Boolean trackListPositions = fieldLink.getTrackListPositions();
-                if (trackListPositions != null) {
-                    builder.add("trackListPositions", trackListPositions);
-                }
-                final StoreValuesType storeValues = fieldLink.getStoreValues();
-                if (storeValues != null) {
-                    builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
-                }
-                serializeFieldLinks(builder, fieldLink.getFields());
                 builder.close();
             }
+            final Boolean includeAllFields = fieldLink.getIncludeAllFields();
+            if (includeAllFields != null) {
+                builder.add("includeAllFields", includeAllFields);
+            }
+            final Boolean trackListPositions = fieldLink.getTrackListPositions();
+            if (trackListPositions != null) {
+                builder.add("trackListPositions", trackListPositions);
+            }
+            final StoreValuesType storeValues = fieldLink.getStoreValues();
+            if (storeValues != null) {
+                builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
+            }
+            Boolean inBackground = fieldLink.getInBackground();
+            if (inBackground != null) {
+                builder.add("inBackground", inBackground);
+            }
+            serializeFieldLinks(builder, fieldLink.getFields());
+            serializeNested(builder, fieldLink.getNested());
             builder.close();
         }
     }

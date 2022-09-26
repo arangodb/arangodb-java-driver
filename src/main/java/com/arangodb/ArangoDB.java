@@ -58,7 +58,10 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
@@ -83,6 +86,7 @@ import java.util.Properties;
  * @author Michele Rastelli
  */
 @SuppressWarnings("UnusedReturnValue")
+@ThreadSafe
 public interface ArangoDB extends ArangoSerializationAccessor {
 
     /**
@@ -91,7 +95,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder {
-
+        private static final Logger logger = LoggerFactory.getLogger(Builder.class);
         private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
         protected Protocol protocol;
@@ -348,7 +352,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz      the type the serializer should be registered for
          * @param serializer serializer to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
             vpackBuilder.registerSerializer(clazz, serializer);
             return this;
@@ -364,7 +371,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz      the type of the enclosing class
          * @param serializer serializer to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerEnclosingSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
             vpackBuilder.registerEnclosingSerializer(clazz, serializer);
             return this;
@@ -381,7 +391,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz        the type the serializer should be registered for
          * @param deserializer
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerDeserializer(final Class<T> clazz, final VPackDeserializer<T> deserializer) {
             vpackBuilder.registerDeserializer(clazz, deserializer);
             return this;
@@ -398,7 +411,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz   the type the instance creator should be registered for
          * @param creator
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
             vpackBuilder.registerInstanceCreator(clazz, creator);
             return this;
@@ -415,7 +431,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param type         the type the serializer should be registered for
          * @param deserializer
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerJsonDeserializer(final ValueType type, final VPackJsonDeserializer deserializer) {
             vpackParserBuilder.registerDeserializer(type, deserializer);
             return this;
@@ -433,7 +452,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param type         the type the serializer should be registered for
          * @param deserializer
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerJsonDeserializer(
                 final String attribute,
                 final ValueType type,
@@ -453,7 +475,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz      the type the serializer should be registered for
          * @param serializer
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerJsonSerializer(final Class<T> clazz, final VPackJsonSerializer<T> serializer) {
             vpackParserBuilder.registerSerializer(clazz, serializer);
             return this;
@@ -471,7 +496,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param clazz      the type the serializer should be registered for
          * @param serializer
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <T> Builder registerJsonSerializer(
                 final String attribute,
                 final Class<T> clazz,
@@ -491,7 +519,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param type        the type the serializer should be registered for
          * @param fieldFilter
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <A extends Annotation> Builder annotationFieldFilter(
                 final Class<A> type,
                 final VPackAnnotationFieldFilter<A> fieldFilter) {
@@ -510,7 +541,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @param type        the type the serializer should be registered for
          * @param fieldNaming
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
+        @Deprecated
         public <A extends Annotation> Builder annotationFieldNaming(
                 final Class<A> type,
                 final VPackAnnotationFieldNaming<A> fieldNaming) {
@@ -527,7 +561,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param module module to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom modules.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#jackson-datatype-and-language-modules">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerModule(final VPackModule module) {
             vpackBuilder.registerModule(module);
             return this;
@@ -542,7 +579,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param modules modules to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom modules.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#jackson-datatype-and-language-modules">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerModules(final VPackModule... modules) {
             vpackBuilder.registerModules(modules);
             return this;
@@ -557,7 +597,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param module module to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom modules.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#jackson-datatype-and-language-modules">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerJsonModule(final VPackParserModule module) {
             vpackParserBuilder.registerModule(module);
             return this;
@@ -572,7 +615,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param modules modules to register
          * @return {@link ArangoDB.Builder}
+         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom modules.
+         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#jackson-datatype-and-language-modules">Reference Documentation</a>
          */
+        @Deprecated
         public Builder registerJsonModules(final VPackParserModule... modules) {
             vpackParserBuilder.registerModules(modules);
             return this;
@@ -630,6 +676,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @return {@link ArangoDB}
          */
         public synchronized ArangoDB build() {
+            if (customSerializer == null) {
+                logger.warn("Usage of VelocyPack Java serialization is now deprecated for removal. " +
+                        "Future driver versions will only support Jackson serialization (for both JSON and VPACK formats). " +
+                        "Please configure according to: https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html");
+            }
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
@@ -994,6 +1045,13 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @since ArangoDB 3.1.0
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
+
+    /**
+     * @return the list of available rules and their respective flags
+     * @throws ArangoDBException
+     * @since ArangoDB 3.10
+     */
+    Collection<QueryOptimizerRule> getQueryOptimizerRules() throws ArangoDBException;
 
     /**
      * <strong>Attention:</strong> Please do not use!

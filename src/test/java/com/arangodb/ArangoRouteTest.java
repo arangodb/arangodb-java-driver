@@ -23,64 +23,55 @@ package com.arangodb;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.velocystream.Response;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoRouteTest extends BaseTest {
+class ArangoRouteTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "ArangoRouteTest_collection";
-    private final ArangoCollection collection;
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+    @BeforeAll
+    static void init() {
+        initCollections(COLLECTION_NAME);
     }
 
-	public ArangoRouteTest(final ArangoDB arangoDB) {
-		super(arangoDB);
-        collection = db.collection(COLLECTION_NAME);
-    }
-
-    @Test
-    public void get() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void get(ArangoDatabase db) {
         final Response res = db.route("/_api/version").get();
-        assertThat(res.getBody().get("version").isString(), is(true));
+        assertThat(res.getBody().get("version").isString()).isTrue();
     }
 
-    @Test
-    public void withHeader() {
-        try {
-            final BaseDocument doc = new BaseDocument();
-            collection.insertDocument(doc);
-            db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
-                    .get();
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(304));
-        }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void withHeader(ArangoDatabase db) {
+        final BaseDocument doc = new BaseDocument();
+        db.collection(COLLECTION_NAME).insertDocument(doc);
+        Throwable thrown = catchThrowable(() ->
+                db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision()).get());
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(304);
     }
 
-    @Test
-    public void withParentHeader() {
-        try {
-            final BaseDocument doc = new BaseDocument();
-            collection.insertDocument(doc);
-            db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
-                    .route(doc.getId()).get();
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(304));
-        }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void withParentHeader(ArangoDatabase db) {
+        final BaseDocument doc = new BaseDocument();
+        db.collection(COLLECTION_NAME).insertDocument(doc);
+        Throwable thrown = catchThrowable(() ->
+                db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision()).route(doc.getId()).get());
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(304);
     }
 
 }

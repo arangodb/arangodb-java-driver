@@ -22,6 +22,10 @@ package com.arangodb.model;
 
 import com.arangodb.entity.IndexType;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
@@ -33,7 +37,10 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     protected final IndexType type = IndexType.persistent;
     private Boolean unique;
     private Boolean sparse;
+    private Boolean deduplicate;
     private Boolean estimates;
+    private Boolean cacheEnabled;
+    private Collection<String> storedValues;
 
     public PersistentIndexOptions() {
         super();
@@ -79,8 +86,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     }
 
     /**
-     * @param sparse
-     *         if true, then create a sparse index
+     * @param sparse if true, then create a sparse index
      * @return options
      */
     public PersistentIndexOptions sparse(final Boolean sparse) {
@@ -88,10 +94,23 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
         return this;
     }
 
+    public Boolean getDeduplicate() {
+        return deduplicate;
+    }
+
     /**
-     * @param estimates
-     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
-     *         true}
+     * @param deduplicate if false, the deduplication of array values is turned off. Default: {@code true}
+     * @return options
+     */
+    public PersistentIndexOptions deduplicate(final Boolean deduplicate) {
+        this.deduplicate = deduplicate;
+        return this;
+    }
+
+    /**
+     * @param estimates This attribute controls whether index selectivity estimates are maintained for the index.
+     *                  Default: {@code
+     *                  true}
      * @since ArangoDB 3.8
      */
     public PersistentIndexOptions estimates(final Boolean estimates) {
@@ -101,6 +120,39 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
 
     public Boolean getEstimates() {
         return estimates;
+    }
+
+    /**
+     * @param cacheEnabled enables in-memory caching of index entries
+     * @return options
+     * @since ArangoDB 3.10
+     */
+    public PersistentIndexOptions cacheEnabled(final Boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+        return this;
+    }
+
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public Collection<String> getStoredValues() {
+        return storedValues;
+    }
+
+    /**
+     * @param storedValues (optional) array of paths to additional attributes to store in the index. These additional
+     *                     attributes cannot be used for index lookups or for sorting, but they can be used for
+     *                     projections. This allows an index to fully cover more queries and avoid extra document
+     *                     lookups. The maximum number of attributes in `storedValues` is 32.
+     * @return options
+     */
+    public PersistentIndexOptions storedValues(final String... storedValues) {
+        if (this.storedValues == null) {
+            this.storedValues = new HashSet<>();
+        }
+        Collections.addAll(this.storedValues, storedValues);
+        return this;
     }
 
 }

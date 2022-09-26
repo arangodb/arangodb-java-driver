@@ -22,66 +22,66 @@ package com.arangodb.util;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.velocypack.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoSerializationTest {
+class ArangoSerializationTest {
 
     private static ArangoSerialization util;
 
-    @BeforeClass
-    public static void setup() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+    @BeforeAll
+    static void setup() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         util = arangoDB.util();
     }
 
     @Test
-    public void deseriarlize() {
+    void deserialize() {
         final VPackBuilder builder = new VPackBuilder().add(ValueType.OBJECT).add("foo", "bar").close();
         final BaseDocument doc = util.deserialize(builder.slice(), BaseDocument.class);
-        assertThat(doc.getAttribute("foo").toString(), is("bar"));
+        assertThat(doc.getAttribute("foo")).isEqualTo("bar");
     }
 
     @Test
-    public void serialize() {
+    void serialize() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", "bar");
         final VPackSlice vpack = util.serialize(entity);
-        assertThat(vpack.get("foo").isString(), is(true));
-        assertThat(vpack.get("foo").getAsString(), is("bar"));
+        assertThat(vpack.get("foo").isString()).isTrue();
+        assertThat(vpack.get("foo").getAsString()).isEqualTo("bar");
     }
 
     @Test
-    public void serializeNullValues() {
+    void serializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("foo", null);
         final VPackSlice vpack = util.serialize(entity, new ArangoSerializer.Options().serializeNullValues(true));
-        assertThat(vpack.get("foo").isNull(), is(true));
+        assertThat(vpack.get("foo").isNull()).isTrue();
     }
 
     @Test
-    public void skipSerializeNullValues() {
+    void skipSerializeNullValues() {
         final BaseDocument entity = new BaseDocument();
         entity.addAttribute("bar", null);
         final VPackSlice vpack = util.serialize(entity);
-        assertThat(vpack.get("bar").isNone(), is(true));
+        assertThat(vpack.get("bar").isNone()).isTrue();
     }
 
     @Test
-    public void serializeType() {
+    void serializeType() {
         final Collection<BaseDocument> list = new ArrayList<>();
         list.add(new BaseDocument());
         list.add(new BaseDocument());
@@ -89,22 +89,22 @@ public class ArangoSerializationTest {
         final VPackSlice vpack = util.serialize(list,
                 new ArangoSerializer.Options().type(new Type<Collection<BaseDocument>>() {
                 }.getType()));
-        assertThat(vpack.isArray(), is(true));
-        assertThat(vpack.getLength(), is(list.size()));
+        assertThat(vpack.isArray()).isTrue();
+        assertThat(vpack.getLength()).isEqualTo(list.size());
     }
 
     @Test
-    public void parseJsonIncludeNull() {
+    void parseJsonIncludeNull() {
         final Map<String, Object> entity = new HashMap<>();
         entity.put("value", new String[]{"test", null});
         final String json = util.deserialize(util.serialize(entity, new ArangoSerializer.Options()), String.class);
-        assertThat(json, is("{\"value\":[\"test\",null]}"));
+        assertThat(json).isEqualTo("{\"value\":[\"test\",null]}");
     }
 
     @Test
-    public void parseNullString() {
+    void parseNullString() {
         final String json = util.deserialize(new VPackBuilder().add((String) null).slice(), String.class);
-        assertThat(json, nullValue());
+        assertThat(json).isNull();
     }
 
 }

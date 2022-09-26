@@ -20,29 +20,8 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionStatus;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryExecutionState;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.AnalyzerType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
@@ -113,6 +92,12 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
             case collation:
                 return context.deserialize(vpack, CollationAnalyzer.class);
+            case classification:
+                return context.deserialize(vpack, ClassificationAnalyzer.class);
+            case nearest_neighbors:
+                return context.deserialize(vpack, NearestNeighborsAnalyzer.class);
+            case minhash:
+                return context.deserialize(vpack, MinHashAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }
@@ -156,8 +141,28 @@ public class VPackDeserializers {
         return minReplicationFactor;
     };
 
-    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
-            : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
+    public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> {
+        String value = vpack.getAsString();
+        switch (value) {
+            case "arangosearch":
+                return ViewType.ARANGO_SEARCH;
+            case "search-alias":
+                return ViewType.SEARCH_ALIAS;
+            default:
+                throw new IllegalArgumentException("Unknown view type: " + value);
+        }
+    };
+
+    public static final VPackDeserializer<StoredValue> STORED_VALUE = (parent, vpack, context) -> {
+        VPackSlice fields = vpack.get("fields");
+        VPackSlice compression = vpack.get("compression");
+        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
+        List<String> fieldsList = new ArrayList<>();
+        while (fieldsIterator.hasNext()) {
+            fieldsList.add(fieldsIterator.next().getAsString());
+        }
+        return new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString()));
+    };
 
     public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (parent, vpack, context) -> {
         final ArangoSearchProperties properties = new ArangoSearchProperties();
@@ -215,6 +220,13 @@ public class VPackDeserializers {
                         link.fields(deserializeField(fieldsIterator.next()));
                     }
                 }
+                final VPackSlice nested = value.get("nested");
+                if (nested.isObject()) {
+                    final Iterator<Entry<String, VPackSlice>> fieldsIterator = nested.objectIterator();
+                    while (fieldsIterator.hasNext()) {
+                        link.nested(deserializeField(fieldsIterator.next()));
+                    }
+                }
                 properties.addLink(link);
             }
         }
@@ -240,21 +252,10 @@ public class VPackDeserializers {
         }
 
         final VPackSlice storedValues = vpack.get("storedValues");
-        if (storedValues.isArray()) {
-            final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
-            for (; storedValueIterator.hasNext(); ) {
-                final VPackSlice entry = storedValueIterator.next();
-                if (entry.isObject()) {
-                    VPackSlice fields = entry.get("fields");
-                    VPackSlice compression = entry.get("compression");
-                    if (fields.isArray() && compression.isString()) {
-                        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
-                        List<String> fieldsList = new ArrayList<>();
-                        fieldsIterator.forEachRemaining(it -> fieldsList.add(it.getAsString()));
-                        properties.addStoredValues(new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString())));
-                    }
-                }
-            }
+        final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
+        while (storedValueIterator.hasNext()) {
+            StoredValue sv = context.deserialize(storedValueIterator.next(), StoredValue.class);
+            properties.addStoredValues(sv);
         }
 
         return properties;
@@ -289,6 +290,13 @@ public class VPackDeserializers {
                 link.fields(deserializeField(fieldsIterator.next()));
             }
         }
+        final VPackSlice nested = value.get("nested");
+        if (nested.isObject()) {
+            final Iterator<Entry<String, VPackSlice>> fieldsIterator = nested.objectIterator();
+            while (fieldsIterator.hasNext()) {
+                link.nested(deserializeField(fieldsIterator.next()));
+            }
+        }
         return link;
     }
 
@@ -300,21 +308,17 @@ public class VPackDeserializers {
     };
 
     public static final VPackDeserializer<ConsolidationPolicy> CONSOLIDATE = (parent, vpack, context) -> {
-        final VPackSlice type = vpack.get("type");
-        if (type.isString()) {
-            final ConsolidationPolicy consolidate = ConsolidationPolicy
-                    .of(ConsolidationType.valueOf(type.getAsString().toUpperCase(Locale.ENGLISH)));
-            final VPackSlice threshold = vpack.get("threshold");
-            if (threshold.isNumber()) {
-                consolidate.threshold(threshold.getAsDouble());
-            }
-            final VPackSlice segmentThreshold = vpack.get("segmentThreshold");
-            if (segmentThreshold.isInteger()) {
-                consolidate.segmentThreshold(segmentThreshold.getAsLong());
-            }
-            return consolidate;
+        ConsolidationType type = ConsolidationType.valueOf(vpack.get("type").getAsString().toUpperCase(Locale.ENGLISH));
+        final ConsolidationPolicy consolidate = ConsolidationPolicy.of(type);
+        if (ConsolidationType.BYTES_ACCUM.equals(type)) {
+            consolidate.threshold(vpack.get("threshold").getAsDouble());
+        } else {
+            consolidate.segmentsMin(vpack.get("segmentsMin").getAsLong());
+            consolidate.segmentsMax(vpack.get("segmentsMax").getAsLong());
+            consolidate.segmentsBytesMax(vpack.get("segmentsBytesMax").getAsLong());
+            consolidate.segmentsBytesFloor(vpack.get("segmentsBytesFloor").getAsLong());
         }
-        return null;
+        return consolidate;
     };
 
     public static final VPackDeserializer<CollectionSchema> COLLECTION_VALIDATION = (parent, vpack, context) -> {
@@ -330,4 +334,23 @@ public class VPackDeserializers {
             (parent, vpack, context) -> ZKDIndexOptions.FieldValueTypes.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
 
+    public static final VPackDeserializer<InvertedIndexPrimarySort.Field> INVERTED_INDEX_PRIMARY_SORT_FIELD = (parent, vpack, context) -> {
+        InvertedIndexPrimarySort.Field.Direction dir = vpack.get("asc").getAsBoolean() ?
+                InvertedIndexPrimarySort.Field.Direction.asc : InvertedIndexPrimarySort.Field.Direction.desc;
+        return new InvertedIndexPrimarySort.Field(vpack.get("field").getAsString(), dir);
+    };
+
+    public static final VPackDeserializer<SearchAliasPropertiesEntity> SEARCH_ALIAS_PROPERTIES_ENTITY = (parent, vpack, context) -> {
+        String id = vpack.get("id").getAsString();
+        String name = vpack.get("name").getAsString();
+        ViewType type = context.deserialize(vpack.get("type"), ViewType.class);
+        SearchAliasProperties properties = context.deserialize(vpack, SearchAliasProperties.class);
+        return new SearchAliasPropertiesEntity(id, name, type, properties);
+    };
+
+    public static final VPackDeserializer<SearchAliasIndex> SEARCH_ALIAS_INDEX = (parent, vpack, context) -> {
+        String collection = vpack.get("collection").getAsString();
+        String index = vpack.get("index").getAsString();
+        return new SearchAliasIndex(collection, index);
+    };
 }

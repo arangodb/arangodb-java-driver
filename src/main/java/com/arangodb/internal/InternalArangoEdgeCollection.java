@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -78,10 +77,10 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
             final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.ID, doc.getId());
-            values.put(DocumentField.Type.KEY, doc.getKey());
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.ID, doc.getId());
+            values.put(DocumentFields.KEY, doc.getKey());
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };
@@ -119,8 +118,8 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
             final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };
@@ -144,8 +143,8 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return response -> {
             final VPackSlice body = response.getBody().get(EDGE);
             final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };

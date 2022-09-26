@@ -27,50 +27,49 @@ import com.arangodb.velocypack.VPack.Builder;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
-import com.arangodb.velocypack.exception.VPackException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-public class BaseDocumentTest {
+class BaseDocumentTest {
 
     @Test
-    public void serialize() throws VPackException {
-        final BaseDocument entity = new BaseDocument();
+    void serialize() {
+        BaseDocument entity = new BaseDocument();
         entity.setKey("test");
         entity.setRevision("test");
         entity.addAttribute("a", "a");
 
-        final Builder builder = new VPack.Builder();
+        Builder builder = new VPack.Builder();
         builder.registerModule(new VPackDriverModule());
-        final VPack vpacker = builder.build();
+        VPack vpacker = builder.build();
 
-        final VPackSlice vpack = vpacker.serialize(entity);
-        assertThat(vpack, is(notNullValue()));
-        assertThat(vpack.isObject(), is(true));
-        assertThat(vpack.size(), is(3));
+        VPackSlice vpack = vpacker.serialize(entity);
+        assertThat(vpack).isNotNull();
+        assertThat(vpack.isObject()).isTrue();
+        assertThat(vpack.size()).isEqualTo(3);
 
-        final VPackSlice key = vpack.get("_key");
-        assertThat(key.isString(), is(true));
-        assertThat(key.getAsString(), is("test"));
+        VPackSlice key = vpack.get("_key");
+        assertThat(key.isString()).isTrue();
+        assertThat(key.getAsString()).isEqualTo("test");
 
-        final VPackSlice rev = vpack.get("_rev");
-        assertThat(rev.isString(), is(true));
-        assertThat(rev.getAsString(), is("test"));
+        VPackSlice rev = vpack.get("_rev");
+        assertThat(rev.isString()).isTrue();
+        assertThat(rev.getAsString()).isEqualTo("test");
 
-        final VPackSlice a = vpack.get("a");
-        assertThat(a.isString(), is(true));
-        assertThat(a.getAsString(), is("a"));
+        VPackSlice a = vpack.get("a");
+        assertThat(a.isString()).isTrue();
+        assertThat(a.getAsString()).isEqualTo("a");
     }
 
     @Test
-    public void deserialize() throws VPackException {
-        final VPackBuilder builder = new VPackBuilder();
+    void deserialize() {
+        VPackBuilder builder = new VPackBuilder();
         builder.add(ValueType.OBJECT);
         builder.add("_id", "test/test");
         builder.add("_key", "test");
@@ -78,19 +77,19 @@ public class BaseDocumentTest {
         builder.add("a", "a");
         builder.close();
 
-        final VPack.Builder vbuilder = new VPack.Builder();
+        VPack.Builder vbuilder = new VPack.Builder();
         vbuilder.registerModule(new VPackDriverModule());
-        final VPack vpacker = vbuilder.build();
+        VPack vpacker = vbuilder.build();
 
-        final BaseDocument entity = vpacker.deserialize(builder.slice(), BaseDocument.class);
-        assertThat(entity.getId(), is(notNullValue()));
-        assertThat(entity.getId(), is("test/test"));
-        assertThat(entity.getKey(), is(notNullValue()));
-        assertThat(entity.getKey(), is("test"));
-        assertThat(entity.getRevision(), is(notNullValue()));
-        assertThat(entity.getRevision(), is("test"));
-        assertThat(entity.getProperties().size(), is(1));
-        assertThat(String.valueOf(entity.getAttribute("a")), is("a"));
+        BaseDocument entity = vpacker.deserialize(builder.slice(), BaseDocument.class);
+        assertThat(entity.getId()).isNotNull();
+        assertThat(entity.getId()).isEqualTo("test/test");
+        assertThat(entity.getKey()).isNotNull();
+        assertThat(entity.getKey()).isEqualTo("test");
+        assertThat(entity.getRevision()).isNotNull();
+        assertThat(entity.getRevision()).isEqualTo("test");
+        assertThat(entity.getProperties()).hasSize(1);
+        assertThat(String.valueOf(entity.getAttribute("a"))).isEqualTo("a");
     }
 
 }

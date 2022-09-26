@@ -10,3 +10,4 @@
 /docker/jwtSecret
 
 /docker/data
+/test-results-native/

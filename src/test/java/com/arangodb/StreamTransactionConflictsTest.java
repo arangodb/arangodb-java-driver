@@ -25,37 +25,32 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.UUID;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class StreamTransactionConflictsTest extends BaseTest {
+class StreamTransactionConflictsTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test-" + UUID.randomUUID();
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+    @BeforeAll
+    static void init() {
+        initCollections(COLLECTION_NAME);
     }
 
-    public StreamTransactionConflictsTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-    }
-
-    @Test
-    public void conflictOnInsertDocumentWithNotYetCommittedTx() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void conflictOnInsertDocumentWithNotYetCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -72,25 +67,24 @@ public class StreamTransactionConflictsTest extends BaseTest {
         db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument(key), new DocumentCreateOptions().streamTransactionId(tx1.getId()));
 
-        try {
-            // insert conflicting document from within tx2
-            db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
-                    new DocumentCreateOptions().streamTransactionId(tx2.getId()));
+        // insert conflicting document from within tx2
+        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
+                new DocumentCreateOptions().streamTransactionId(tx2.getId())));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
 
-            fail();
-        } catch (ArangoDBException e) {
-            if (isAtLeastVersion(3, 8)) {
-                assertThat(e.getResponseCode(), is(409));
-                assertThat(e.getErrorNum(), is(1200));
-            }
+        if (isAtLeastVersion(3, 8)) {
+            assertThat(e.getResponseCode()).isEqualTo(409);
+            assertThat(e.getErrorNum()).isEqualTo(1200);
         }
 
         db.abortStreamTransaction(tx1.getId());
         db.abortStreamTransaction(tx2.getId());
     }
 
-    @Test
-    public void conflictOnInsertDocumentWithAlreadyCommittedTx() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void conflictOnInsertDocumentWithAlreadyCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -110,17 +104,14 @@ public class StreamTransactionConflictsTest extends BaseTest {
         // commit tx1
         db.commitStreamTransaction(tx1.getId());
 
-        try {
-            // insert conflicting document from within tx2
-            db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
-                    new DocumentCreateOptions().streamTransactionId(tx2.getId()));
-
-            fail();
-        } catch (ArangoDBException e) {
-            if (isAtLeastVersion(3, 8)) {
-                assertThat(e.getResponseCode(), is(409));
-                assertThat(e.getErrorNum(), is(1200));
-            }
+        // insert conflicting document from within tx2
+        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
+                new DocumentCreateOptions().streamTransactionId(tx2.getId())));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        if (isAtLeastVersion(3, 8)) {
+            assertThat(e.getResponseCode()).isEqualTo(409);
+            assertThat(e.getErrorNum()).isEqualTo(1200);
         }
 
         db.abortStreamTransaction(tx2.getId());

@@ -20,12 +20,11 @@
 
 package com.arangodb.internal.velocypack;
 
+import com.arangodb.SearchAlias;
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
@@ -39,6 +38,7 @@ import com.arangodb.velocypack.VPackSetupContext;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
+import java.lang.annotation.Annotation;
 import java.util.Date;
 
 /**
@@ -49,9 +49,20 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
     @Override
     public <C extends VPackSetupContext<C>> void setup(final C context) {
         context.fieldNamingStrategy(field -> {
-            final DocumentField annotation = field.getAnnotation(DocumentField.class);
-            if (annotation != null) {
-                return annotation.value().getSerializeName();
+            for (Annotation annotation : field.getAnnotations()) {
+                if(annotation instanceof DocumentField) {
+                    return ((DocumentField) annotation).value().getSerializeName();
+                } else if (annotation instanceof Id) {
+                    return DocumentFields.ID;
+                } else if (annotation instanceof Key) {
+                    return DocumentFields.KEY;
+                } else if (annotation instanceof Rev) {
+                    return DocumentFields.REV;
+                } else if (annotation instanceof From) {
+                    return DocumentFields.FROM;
+                } else if (annotation instanceof To) {
+                    return DocumentFields.TO;
+                }
             }
             return field.getName();
         });
@@ -69,6 +80,10 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
         context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
+        context.registerSerializer(SearchAliasProperties.class, VPackSerializers.SEARCH_ALIAS_PROPERTIES);
+        context.registerSerializer(SearchAliasIndex.class, VPackSerializers.SEARCH_ALIAS_INDEX);
+        context.registerSerializer(StoredValue.class, VPackSerializers.STORED_VALUE);
+        context.registerSerializer(InvertedIndexPrimarySort.Field.class, VPackSerializers.PRIMARY_SORT_FIELD);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);
         context.registerSerializer(ZKDIndexOptions.FieldValueTypes.class, VPackSerializers.ZKD_FIELD_VALUE_TYPES);
@@ -87,11 +102,15 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
         context.registerDeserializer(MinReplicationFactor.class, VPackDeserializers.MIN_REPLICATION_FACTOR);
         context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
+        context.registerDeserializer(StoredValue.class, VPackDeserializers.STORED_VALUE);
         context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
         context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
         context.registerDeserializer(ConsolidationPolicy.class, VPackDeserializers.CONSOLIDATE);
         context.registerDeserializer(CollectionSchema.class, VPackDeserializers.COLLECTION_VALIDATION);
         context.registerDeserializer(ZKDIndexOptions.FieldValueTypes.class, VPackDeserializers.ZKD_FIELD_VALUE_TYPES);
+        context.registerDeserializer(InvertedIndexPrimarySort.Field.class, VPackDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
+        context.registerDeserializer(SearchAliasPropertiesEntity.class, VPackDeserializers.SEARCH_ALIAS_PROPERTIES_ENTITY);
+        context.registerDeserializer(SearchAliasIndex.class, VPackDeserializers.SEARCH_ALIAS_INDEX);
     }
 
     @Override

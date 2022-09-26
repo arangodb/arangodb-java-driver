@@ -20,28 +20,27 @@
 
 package com.arangodb.async.example.graph;
 
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.entity.*;
 
 /**
  * @author a-brandt
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class CircleEdge {
+class CircleEdge {
 
-    @DocumentField(Type.ID)
+    @Id
     private String id;
 
-    @DocumentField(Type.KEY)
+    @Key
     private String key;
 
-    @DocumentField(Type.REV)
+    @Rev
     private String revision;
 
-    @DocumentField(Type.FROM)
+    @From
     private String from;
 
-    @DocumentField(Type.TO)
+    @To
     private String to;
 
     private Boolean theFalse;
@@ -61,7 +60,7 @@ public class CircleEdge {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 
@@ -69,7 +68,7 @@ public class CircleEdge {
         return key;
     }
 
-    public void setKey(String key) {
+    void setKey(String key) {
         this.key = key;
     }
 
@@ -77,7 +76,7 @@ public class CircleEdge {
         return revision;
     }
 
-    public void setRevision(String revision) {
+    void setRevision(String revision) {
         this.revision = revision;
     }
 
@@ -85,7 +84,7 @@ public class CircleEdge {
         return from;
     }
 
-    public void setFrom(String from) {
+    void setFrom(String from) {
         this.from = from;
     }
 
@@ -93,7 +92,7 @@ public class CircleEdge {
         return to;
     }
 
-    public void setTo(String to) {
+    void setTo(String to) {
         this.to = to;
     }
 
@@ -101,7 +100,7 @@ public class CircleEdge {
         return theFalse;
     }
 
-    public void setTheFalse(Boolean theFalse) {
+    void setTheFalse(Boolean theFalse) {
         this.theFalse = theFalse;
     }
 
@@ -109,7 +108,7 @@ public class CircleEdge {
         return theTruth;
     }
 
-    public void setTheTruth(Boolean theTruth) {
+    void setTheTruth(Boolean theTruth) {
         this.theTruth = theTruth;
     }
 
@@ -117,7 +116,7 @@ public class CircleEdge {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 

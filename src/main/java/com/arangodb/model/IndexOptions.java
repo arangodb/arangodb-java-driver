@@ -59,7 +59,7 @@ public abstract class IndexOptions<T extends IndexOptions> {
         return getThis();
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 }

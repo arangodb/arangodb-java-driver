@@ -20,8 +20,7 @@
 
 package com.arangodb.example.graph;
 
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.entity.*;
 
 /**
  * @author a-brandt
@@ -29,19 +28,19 @@ import com.arangodb.entity.DocumentField.Type;
 @SuppressWarnings("unused")
 class CircleEdge {
 
-    @DocumentField(Type.ID)
+    @Id
     private String id;
 
-    @DocumentField(Type.KEY)
+    @Key
     private String key;
 
-    @DocumentField(Type.REV)
+    @Rev
     private String revision;
 
-    @DocumentField(Type.FROM)
+    @From
     private String from;
 
-    @DocumentField(Type.TO)
+    @To
     private String to;
 
     private Boolean theFalse;

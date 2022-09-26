@@ -1,0 +1,43 @@
+name: Native Tests
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ v** ]
+
+jobs:
+  test-native:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/enterprise:3.9.3
+        topology:
+          - cluster
+        db-ext-names:
+          - false
+        java-version:
+          - 17
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: ${{matrix.java-version}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          components: 'native-image,js'
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Info
+        run: mvn -version
+      - name: Test Native
+        run: mvn -Pnative --no-transfer-progress test

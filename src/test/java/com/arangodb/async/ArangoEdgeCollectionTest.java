@@ -23,29 +23,30 @@ package com.arangodb.async;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoEdgeCollectionTest extends BaseTest {
+class ArangoEdgeCollectionTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
     private static final String EDGE_COLLECTION_NAME = "db_edge_collection_test";
     private static final String VERTEX_COLLECTION_NAME = "db_vertex_collection_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setup() throws InterruptedException, ExecutionException {
         if (!db.collection(VERTEX_COLLECTION_NAME).exists().get()) {
             db.createCollection(VERTEX_COLLECTION_NAME, null).get();
         }
@@ -58,8 +59,8 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         db.createGraph(GRAPH_NAME, edgeDefinitions, null).get();
     }
 
-    @After
-    public void teardown() throws InterruptedException, ExecutionException {
+    @AfterEach
+    void teardown() throws InterruptedException, ExecutionException {
         for (final String collection : new String[]{VERTEX_COLLECTION_NAME, EDGE_COLLECTION_NAME}) {
             db.collection(collection).truncate().get();
         }
@@ -78,39 +79,39 @@ public class ArangoEdgeCollectionTest extends BaseTest {
     }
 
     @Test
-    public void insertEdge() throws InterruptedException, ExecutionException {
+    void insertEdge() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
-        assertThat(edge, is(notNullValue()));
+        assertThat(edge).isNotNull();
         final BaseEdgeDocument document = db.collection(EDGE_COLLECTION_NAME)
                 .getDocument(edge.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
     @Test
-    public void getEdge() throws InterruptedException, ExecutionException {
+    void getEdge() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
         final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(edge.getKey(), BaseDocument.class, null).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
     @Test
-    public void getEdgeIfMatch() throws InterruptedException, ExecutionException {
+    void getEdgeIfMatch() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(edge.getRev());
         final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(edge.getKey(), BaseDocument.class, options).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
     @Test
-    public void getEdgeIfMatchFail() throws InterruptedException, ExecutionException {
+    void getEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
@@ -119,23 +120,23 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getEdgeIfNoneMatch() throws InterruptedException, ExecutionException {
+    void getEdgeIfNoneMatch() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
         final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(edge.getKey(), BaseDocument.class, options).get();
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
     @Test
-    public void getEdgeIfNoneMatchFail() throws InterruptedException, ExecutionException {
+    void getEdgeIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev()).catchException(false);
@@ -144,12 +145,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void replaceEdge() throws InterruptedException, ExecutionException {
+    void replaceEdge() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
@@ -158,22 +159,22 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         doc.addAttribute("b", "test");
         final EdgeUpdateEntity replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .replaceEdge(createResult.getKey(), doc, null).get();
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
     @Test
-    public void replaceEdgeIfMatch() throws InterruptedException, ExecutionException {
+    void replaceEdgeIfMatch() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
@@ -183,22 +184,22 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .replaceEdge(createResult.getKey(), doc, options).get();
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
     @Test
-    public void replaceEdgeIfMatchFail() throws InterruptedException, ExecutionException {
+    void replaceEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
@@ -211,12 +212,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void updateEdge() throws InterruptedException, ExecutionException {
+    void updateEdge() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -227,24 +228,24 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         doc.updateAttribute("c", null);
         final EdgeUpdateEntity updateResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .updateEdge(createResult.getKey(), doc, null).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
     @Test
-    public void updateEdgeIfMatch() throws InterruptedException, ExecutionException {
+    void updateEdgeIfMatch() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -256,24 +257,24 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         final EdgeUpdateOptions options = new EdgeUpdateOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity updateResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .updateEdge(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
     @Test
-    public void updateEdgeIfMatchFail() throws InterruptedException, ExecutionException {
+    void updateEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -288,12 +289,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void updateEdgeKeepNullTrue() throws InterruptedException, ExecutionException {
+    void updateEdgeKeepNullTrue() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
@@ -302,20 +303,20 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         final EdgeUpdateOptions options = new EdgeUpdateOptions().keepNull(true);
         final EdgeUpdateEntity updateResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .updateEdge(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet().size(), is(1));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties()).containsKey("a");
     }
 
     @Test
-    public void updateEdgeKeepNullFalse() throws InterruptedException, ExecutionException {
+    void updateEdgeKeepNullFalse() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         doc.addAttribute("a", "test");
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
@@ -324,21 +325,21 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         final EdgeUpdateOptions options = new EdgeUpdateOptions().keepNull(false);
         final EdgeUpdateEntity updateResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .updateEdge(createResult.getKey(), doc, options).get();
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getRevision(), is(notNullValue()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getRevision()).isNotNull();
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
     @Test
-    public void deleteEdge() throws InterruptedException, ExecutionException {
+    void deleteEdge() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
@@ -348,12 +349,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void deleteEdgeIfMatch() throws InterruptedException, ExecutionException {
+    void deleteEdgeIfMatch() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
@@ -364,12 +365,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
                     .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void deleteEdgeIfMatchFail() throws InterruptedException, ExecutionException {
+    void deleteEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument doc = createEdgeValue();
         final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null)
                 .get();
@@ -378,7 +379,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options).get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 }

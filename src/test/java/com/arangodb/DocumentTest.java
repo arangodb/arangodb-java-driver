@@ -22,41 +22,42 @@ package com.arangodb;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class DocumentTest extends BaseTest {
+class DocumentTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "DocumentTest_collection";
-    private final ArangoCollection collection;
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+    private static Stream<Arguments> cols() {
+        return dbsStream()
+                .map(db -> db.collection(COLLECTION_NAME))
+                .map(Arguments::of);
     }
 
-    public DocumentTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-        collection = db.collection(COLLECTION_NAME);
+
+    @BeforeAll
+    static void init() {
+        initCollections(COLLECTION_NAME);
     }
 
     @SuppressWarnings("unchecked")
-    @Test
-    public void insertAsJson() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertAsJson(ArangoCollection collection) {
         //@formatter:off
         final String json =
                 "{"
@@ -82,17 +83,18 @@ public class DocumentTest extends BaseTest {
         //@formatter:on
         final DocumentCreateEntity<String> createResult = collection.insertDocument(json);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
+        assertThat(doc).isNotNull();
         final Object article = doc.getAttribute("article");
-        assertThat(article, is(notNullValue()));
+        assertThat(article).isNotNull();
         final Object artist = ((Map<String, Object>) article).get("artist");
-        assertThat(artist, is(notNullValue()));
-        assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
+        assertThat(artist).isNotNull();
+        assertThat(artist.toString()).isEqualTo("PREGARDIEN/RHEINISCHE KANTOREI/DAS");
     }
 
     @SuppressWarnings("unchecked")
-    @Test
-    public void insertAsBaseDocument() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void insertAsBaseDocument(ArangoCollection collection) {
         final BaseDocument document = new BaseDocument();
         {
             final BaseDocument article = new BaseDocument();
@@ -114,22 +116,23 @@ public class DocumentTest extends BaseTest {
         }
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
+        assertThat(doc).isNotNull();
         final Object article = doc.getAttribute("article");
-        assertThat(article, is(notNullValue()));
+        assertThat(article).isNotNull();
         final Object artist = ((Map<String, Object>) article).get("artist");
-        assertThat(artist, is(notNullValue()));
-        assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
+        assertThat(artist).isNotNull();
+        assertThat(artist.toString()).isEqualTo("PREGARDIEN/RHEINISCHE KANTOREI/DAS");
     }
 
-    @Test
-    public void documentKeyWithSpecialChars() {
-        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void documentKeyWithSpecialChars(ArangoCollection collection) {
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();
         final BaseDocument document = new BaseDocument(key);
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
         final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getKey(), is(key));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getKey()).isEqualTo(key);
     }
 
 }

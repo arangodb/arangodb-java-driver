@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.internal.DocumentFields;
 
 import java.util.Map;
 
@@ -31,9 +31,9 @@ public class BaseEdgeDocument extends BaseDocument {
 
     private static final long serialVersionUID = 6904923804449368783L;
 
-    @DocumentField(Type.FROM)
+    @From
     private String from;
-    @DocumentField(Type.TO)
+    @To
     private String to;
 
     public BaseEdgeDocument() {
@@ -54,11 +54,11 @@ public class BaseEdgeDocument extends BaseDocument {
 
     public BaseEdgeDocument(final Map<String, Object> properties) {
         super(properties);
-        final Object tmpFrom = properties.remove(DocumentField.Type.FROM.getSerializeName());
+        final Object tmpFrom = properties.remove(DocumentFields.FROM);
         if (tmpFrom != null) {
             from = tmpFrom.toString();
         }
-        final Object tmpTo = properties.remove(DocumentField.Type.TO.getSerializeName());
+        final Object tmpTo = properties.remove(DocumentFields.TO);
         if (tmpTo != null) {
             to = tmpTo.toString();
         }

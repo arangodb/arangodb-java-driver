@@ -38,6 +38,7 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -267,6 +268,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
         return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+    }
+
+    @Override
+    public Collection<QueryOptimizerRule> getQueryOptimizerRules() throws ArangoDBException {
+        return executor.execute(getQueryOptimizerRulesRequest(), new Type<Collection<QueryOptimizerRule>>() {
+        }.getType());
     }
 
     @Override

@@ -20,27 +20,29 @@
 
 package com.arangodb.async;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import com.arangodb.mapping.ArangoJack;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.concurrent.CompletableFuture;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class CommunicationTest {
+class CommunicationTest {
 
     @Test
-    @Ignore
-    public void disconnect() {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+    @Disabled
+    void disconnect() {
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         final CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null,
                 null);
         arangoDB.shutdown();
-        assertThat(result.isCompletedExceptionally(), is(true));
+        assertThat(result.isCompletedExceptionally()).isEqualTo(true);
     }
 
 }

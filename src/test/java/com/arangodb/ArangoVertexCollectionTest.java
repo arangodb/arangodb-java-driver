@@ -24,76 +24,74 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoVertexCollectionTest extends BaseTest {
+class ArangoVertexCollectionTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "ArangoVertexCollectionTest_graph";
     private static final String COLLECTION_NAME = "ArangoVertexCollectionTest_vertex_collection";
 
-    private final ArangoGraph graph;
-    private final ArangoCollection collection;
-    private final ArangoVertexCollection vertices;
+    private static Stream<Arguments> vertices() {
+        return dbsStream()
+                .map(db -> db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME))
+                .map(Arguments::of);
+    }
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
-        BaseTest.initGraph(
+    @BeforeAll
+    static void init() {
+        initCollections(COLLECTION_NAME);
+        initGraph(
                 GRAPH_NAME,
                 null,
                 new GraphCreateOptions().orphanCollections(COLLECTION_NAME)
         );
     }
 
-    public ArangoVertexCollectionTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-        collection = db.collection(COLLECTION_NAME);
-        graph = db.graph(GRAPH_NAME);
-        vertices = graph.vertexCollection(COLLECTION_NAME);
-    }
-
-    @Test
-    public void dropVertexCollection() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void dropVertexCollection(ArangoVertexCollection vertices) {
+        ArangoGraph graph = vertices.graph();
         vertices.drop();
         final Collection<String> vertexCollections = graph.getVertexCollections();
-        assertThat(vertexCollections, not(hasItem(COLLECTION_NAME)));
+        assertThat(vertexCollections).isEmpty();
 
         // revert
         graph.addVertexCollection(COLLECTION_NAME);
     }
 
-    @Test
-    public void insertVertex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void insertVertex(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
-        assertThat(vertex, is(notNullValue()));
+        assertThat(vertex).isNotNull();
+        ArangoCollection collection = vertices.graph().db().collection(vertices.name());
         final BaseDocument document = collection
                 .getDocument(vertex.getKey(), BaseDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @Test
-    public void insertVertexViolatingUniqueConstraint() {
-        // FIXME: remove once fix is backported to 3.4
-        assumeTrue(isAtLeastVersion(3, 5));
-
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void insertVertexViolatingUniqueConstraint(ArangoVertexCollection vertices) {
+        ArangoCollection collection = vertices.graph().db().collection(vertices.name());
         collection
                 .ensureSkiplistIndex(Collections.singletonList("field"), new SkiplistIndexOptions().unique(true).sparse(true));
 
@@ -102,18 +100,17 @@ public class ArangoVertexCollectionTest extends BaseTest {
         try {
             vertices.insertVertex("{\"field\": 99}", null);
         } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(409));
-            assertThat(e.getErrorNum(), is(1210));
+            assertThat(e.getResponseCode()).isEqualTo(409);
+            assertThat(e.getErrorNum()).isEqualTo(1210);
         }
 
         // revert
         vertices.deleteVertex(inserted.getKey());
     }
 
-    @Test
-    public void duplicateInsertSameObjectVertex() {
-
-        final ArangoVertexCollection vertexCollection = vertices;
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void duplicateInsertSameObjectVertex(ArangoVertexCollection vertices) {
 
         // #########################################################
         // Create a new BaseDocument
@@ -124,77 +121,84 @@ public class ArangoVertexCollectionTest extends BaseTest {
         bd.setKey(uuid.toString());
         bd.addAttribute("name", "Paul");
 
-        vertexCollection.insertVertex(bd);
+        vertices.insertVertex(bd);
 
         UUID uuid2 = UUID.randomUUID();
         BaseDocument bd2 = new BaseDocument();
         bd2.setKey(uuid2.toString());
         bd2.addAttribute("name", "Paul");
 
-        vertexCollection.insertVertex(bd2);
+        vertices.insertVertex(bd2);
     }
 
-    @Test
-    public void insertVertexUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void insertVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity vertex = vertices.insertVertex(doc, null);
-        assertThat(doc.getRevision(), is(vertex.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(vertex.getRev());
     }
 
-    @Test
-    public void getVertex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void getVertex(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
         final BaseDocument document = vertices
                 .getVertex(vertex.getKey(), BaseDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @Test
-    public void getVertexIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void getVertexIfMatch(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(vertex.getRev());
         final BaseDocument document = vertices
                 .getVertex(vertex.getKey(), BaseDocument.class, options);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @Test
-    public void getVertexIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void getVertexIfMatchFail(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
         final BaseDocument vertex2 = vertices
                 .getVertex(vertex.getKey(), BaseDocument.class, options);
-        assertThat(vertex2, is(nullValue()));
+        assertThat(vertex2).isNull();
     }
 
-    @Test
-    public void getVertexIfNoneMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void getVertexIfNoneMatch(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
         final BaseDocument document = vertices
                 .getVertex(vertex.getKey(), BaseDocument.class, options);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(vertex.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @Test
-    public void getVertexIfNoneMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void getVertexIfNoneMatchFail(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(), null);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev());
         final BaseDocument vertex2 = vertices
                 .getVertex(vertex.getKey(), BaseDocument.class, options);
-        assertThat(vertex2, is(nullValue()));
+        assertThat(vertex2).isNull();
     }
 
-    @Test
-    public void replaceVertex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void replaceVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
@@ -203,33 +207,35 @@ public class ArangoVertexCollectionTest extends BaseTest {
         doc.addAttribute("b", "test");
         final VertexUpdateEntity replaceResult = vertices
                 .replaceVertex(createResult.getKey(), doc, null);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceVertexUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void replaceVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final VertexUpdateEntity replaceResult = vertices
                 .replaceVertex(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(replaceResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
     }
 
-    @Test
-    public void replaceVertexIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void replaceVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
@@ -239,46 +245,41 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity replaceResult = vertices
                 .replaceVertex(createResult.getKey(), doc, options);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceVertexIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void replaceVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
-        try {
-            final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch("no");
-            vertices.replaceVertex(createResult.getKey(), doc, options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                // assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch("no");
+        Throwable thrown = catchThrowable(() -> vertices.replaceVertex(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void updateVertex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -289,35 +290,37 @@ public class ArangoVertexCollectionTest extends BaseTest {
         doc.updateAttribute("c", null);
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, null);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test
-    public void updateVertexUpdateRev() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(updateResult.getRev()));
+        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
     }
 
-    @Test
-    public void updateVertexIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -329,24 +332,25 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().ifMatch(createResult.getRev());
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test
-    public void updateVertexIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
@@ -355,24 +359,19 @@ public class ArangoVertexCollectionTest extends BaseTest {
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
-        try {
-            final VertexUpdateOptions options = new VertexUpdateOptions().ifMatch("no");
-            vertices.updateVertex(createResult.getKey(), doc, options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                // assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        final VertexUpdateOptions options = new VertexUpdateOptions().ifMatch("no");
+
+        Throwable thrown = catchThrowable(() -> vertices.updateVertex(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void updateVertexKeepNullTrue() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertexKeepNullTrue(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
@@ -381,20 +380,21 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(true);
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet().size(), is(1));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @Test
-    public void updateVertexKeepNullFalse() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void updateVertexKeepNullFalse(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         final VertexEntity createResult = vertices
@@ -403,32 +403,34 @@ public class ArangoVertexCollectionTest extends BaseTest {
         final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(false);
         final VertexUpdateEntity updateResult = vertices
                 .updateVertex(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseDocument readResult = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getRevision(), is(notNullValue()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getRevision()).isNotNull();
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @Test
-    public void deleteVertex() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void deleteVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         vertices.deleteVertex(createResult.getKey(), null);
         final BaseDocument vertex = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(vertex, is(nullValue()));
+        assertThat(vertex).isNull();
     }
 
-    @Test
-    public void deleteVertexIfMatch() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void deleteVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
@@ -436,40 +438,36 @@ public class ArangoVertexCollectionTest extends BaseTest {
         vertices.deleteVertex(createResult.getKey(), options);
         final BaseDocument vertex = vertices
                 .getVertex(createResult.getKey(), BaseDocument.class, null);
-        assertThat(vertex, is(nullValue()));
+        assertThat(vertex).isNull();
     }
 
-    @Test
-    public void deleteVertexIfMatchFail() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void deleteVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument();
         final VertexEntity createResult = vertices
                 .insertVertex(doc, null);
         final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch("no");
-        try {
-            vertices.deleteVertex(createResult.getKey(), options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                // assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        Throwable thrown = catchThrowable(() -> vertices.deleteVertex(createResult.getKey(), options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void vertexKeyWithSpecialChars() {
-        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void vertexKeyWithSpecialChars(ArangoVertexCollection vertices) {
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();
         final VertexEntity vertex = vertices
                 .insertVertex(new BaseDocument(key), null);
-        assertThat(vertex, is(notNullValue()));
+        assertThat(vertex).isNotNull();
+        ArangoCollection collection = vertices.graph().db().collection(vertices.name());
         final BaseDocument document = collection
                 .getDocument(vertex.getKey(), BaseDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(key));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(key);
     }
 
 }

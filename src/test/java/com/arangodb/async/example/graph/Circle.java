@@ -20,22 +20,23 @@
 
 package com.arangodb.async.example.graph;
 
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.entity.Id;
+import com.arangodb.entity.Key;
+import com.arangodb.entity.Rev;
 
 /**
  * @author a-brandt
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Circle {
+class Circle {
 
-    @DocumentField(Type.ID)
+    @Id
     private String id;
 
-    @DocumentField(Type.KEY)
+    @Key
     private String key;
 
-    @DocumentField(Type.REV)
+    @Rev
     private String revision;
 
     private String label;
@@ -49,7 +50,7 @@ public class Circle {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 
@@ -57,7 +58,7 @@ public class Circle {
         return key;
     }
 
-    public void setKey(String key) {
+    void setKey(String key) {
         this.key = key;
     }
 
@@ -65,7 +66,7 @@ public class Circle {
         return revision;
     }
 
-    public void setRevision(String revision) {
+    void setRevision(String revision) {
         this.revision = revision;
     }
 
@@ -73,7 +74,7 @@ public class Circle {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 

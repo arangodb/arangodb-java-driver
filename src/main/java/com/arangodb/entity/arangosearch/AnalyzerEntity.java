@@ -20,6 +20,8 @@
 
 package com.arangodb.entity.arangosearch;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +32,7 @@ import java.util.Set;
 @Deprecated
 public class AnalyzerEntity {
 
-    private Set<AnalyzerFeature> features;
+    private Collection<AnalyzerFeature> features;
     private AnalyzerType type;
     private String name;
     private Map<String, Object> properties;
@@ -39,7 +41,7 @@ public class AnalyzerEntity {
     }
 
     public Set<AnalyzerFeature> getFeatures() {
-        return features;
+        return features != null ? new HashSet<>(features) : null;
     }
 
     public void setFeatures(Set<AnalyzerFeature> features) {

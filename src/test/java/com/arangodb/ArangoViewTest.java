@@ -22,72 +22,93 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import java.util.Collection;
 
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoViewTest extends BaseTest {
+class ArangoViewTest extends BaseJunit5 {
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initDB();
+    @BeforeAll
+    static void init() {
+        initDB();
     }
 
-    public ArangoViewTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-    }
-
-    @Test
-    public void exists() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void exists(ArangoDatabase db) {
         String name = "view-" + rnd();
-        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(name, ViewType.ARANGO_SEARCH);
-        assertThat(db.view(name).exists(), is(true));
+        assertThat(db.view(name).exists()).isTrue();
     }
 
-    @Test
-    public void getInfo() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getInfo(ArangoDatabase db) {
         String name = "view-" + rnd();
-        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ViewEntity info = db.view(name).getInfo();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(name));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @Test
-    public void drop() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getInfoSearchAlias(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
         String name = "view-" + rnd();
-        assumeTrue(isAtLeastVersion(3, 4));
+        db.createView(name, ViewType.SEARCH_ALIAS);
+        final ViewEntity info = db.view(name).getInfo();
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getViews(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        String name1 = "view-" + rnd();
+        String name2 = "view-" + rnd();
+        db.createView(name1, ViewType.ARANGO_SEARCH);
+        db.createView(name2, ViewType.SEARCH_ALIAS);
+        Collection<ViewEntity> views = db.getViews();
+        assertThat(views).extracting(ViewEntity::getName).contains(name1, name2);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void drop(ArangoDatabase db) {
+        String name = "view-" + rnd();
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ArangoView view = db.view(name);
         view.drop();
-        assertThat(view.exists(), is(false));
+        assertThat(view.exists()).isFalse();
     }
 
-    @Test
-    public void rename() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void rename(ArangoDatabase db) {
+        assumeTrue(isSingleServer());
         String oldName = "view-" + rnd();
         String newName = "view-" + rnd();
 
-        assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(oldName, ViewType.ARANGO_SEARCH);
         db.view(oldName).rename(newName);
-        assertThat(db.view(oldName).exists(), is(false));
-        assertThat(db.view(newName).exists(), is(true));
+        assertThat(db.view(oldName).exists()).isFalse();
+        assertThat(db.view(newName).exists()).isTrue();
     }
 
 }

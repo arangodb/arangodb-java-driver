@@ -93,7 +93,9 @@ public class DocumentCreateOptions {
      *                  the old document.
      * @return options
      * @since ArangoDB 3.4
+     * @deprecated use {@link #overwriteMode(OverwriteMode)} instead
      */
+    @Deprecated
     public DocumentCreateOptions overwrite(final Boolean overwrite) {
         this.overwrite = overwrite;
         return this;

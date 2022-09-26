@@ -22,6 +22,8 @@ package com.arangodb;
 
 import com.arangodb.model.QueueTimeSample;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Interface for accessing queue time latency metrics, reported by the "X-Arango-Queue-Time-Seconds" response header.
  * This header contains the most recent request (de)queuing time (in seconds) as tracked by the server’s scheduler.
@@ -30,6 +32,7 @@ import com.arangodb.model.QueueTimeSample;
  * @see <a href="https://www.arangodb.com/docs/stable/http/general.html#overload-control">API Documentation</a>
  * @since ArangoDB 3.9
  */
+@ThreadSafe
 public interface QueueTimeMetrics {
 
     /**
