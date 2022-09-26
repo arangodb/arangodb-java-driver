@@ -26,35 +26,27 @@ import com.arangodb.model.CollectionCountOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class StreamTransactionExclusiveParallelTest extends BaseTest {
+public class StreamTransactionExclusiveParallelTest extends BaseJunit5 {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StreamTransactionExclusiveParallelTest.class);
 
@@ -66,18 +58,15 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     private final ConcurrentMap<String, LongAdder> runningCountByCollection = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, LongAdder> committedCountByCollection = new ConcurrentHashMap<>();
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
-        BaseTest.initDB();
+        BaseJunit5.initDB();
     }
 
-    public StreamTransactionExclusiveParallelTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-    }
-
-    @After
+    @AfterEach
     public void abortTransactions() {
         for (String tx : txs) {
+            ArangoDatabase db = BaseJunit5.dbsStream().iterator().next();
             if (StreamTransactionStatus.running.equals(db.getStreamTransaction(tx).getStatus())) {
                 LOGGER.info("aborting " + tx);
                 db.abortStreamTransaction(tx);
@@ -95,10 +84,12 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: Expected exactly 1 transaction running, but got: 2 (after having both inserted a document)
      */
-    @Test(timeout = 15_000)
-    public void parallelExclusiveStreamTransactions() throws ExecutionException, InterruptedException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    @Timeout(value = 15_000, unit = TimeUnit.MILLISECONDS)
+    public void parallelExclusiveStreamTransactions(ArangoDatabase db) throws ExecutionException, InterruptedException {
         System.out.println("===================================");
-        parallelizeTestsExecution(false);
+        parallelizeTestsExecution(db, false);
     }
 
     /**
@@ -111,20 +102,22 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: test timed out after 15000 milliseconds due to deadlock on collection.count()
      */
-    @Test(timeout = 15_000)
-    public void parallelExclusiveStreamTransactionsCounting() throws ExecutionException, InterruptedException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    @Timeout(value = 15_000, unit = TimeUnit.MILLISECONDS)
+    public void parallelExclusiveStreamTransactionsCounting(ArangoDatabase db) throws ExecutionException, InterruptedException {
         System.out.println("===================================");
-        parallelizeTestsExecution(true);
+        parallelizeTestsExecution(db, true);
     }
 
-    private void parallelizeTestsExecution(boolean counting) throws ExecutionException, InterruptedException {
+    private void parallelizeTestsExecution(ArangoDatabase db, boolean counting) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isCluster());
 
         CompletableFuture
                 .allOf(
                         IntStream.range(0, 10)
-                                .mapToObj(i -> doParallelExclusiveStreamTransactions(counting))
+                                .mapToObj(i -> doParallelExclusiveStreamTransactions(db, counting))
                                 .collect(Collectors.toList())
                                 .toArray(new CompletableFuture[10])
                 )
@@ -133,15 +126,15 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         // expect that all txs are committed
         for (String tx : txs) {
             StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
-            assertThat(status, is(StreamTransactionStatus.committed));
+            assertThat(status).isEqualTo(StreamTransactionStatus.committed);
         }
 
         es.shutdown();
     }
 
-    private CompletableFuture<Void> doParallelExclusiveStreamTransactions(boolean counting) {
+    private CompletableFuture<Void> doParallelExclusiveStreamTransactions(ArangoDatabase db, boolean counting) {
 
-        final String colName = "col-" + UUID.randomUUID().toString();
+        final String colName = "col-" + UUID.randomUUID();
 
         // create collection with 2 shards
         final ArangoCollection col = db.collection(colName);
@@ -150,13 +143,13 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         }
 
         // create 2 BaseDocuments having keys belonging to different shards
-        final String k1 = "key-" + UUID.randomUUID().toString();
+        final String k1 = "key-" + UUID.randomUUID();
         final BaseDocument d1 = new BaseDocument(k1);
         final String k1Shard = col.getResponsibleShard(d1).getShardId();
         String k;
         BaseDocument d;
         do {
-            k = "key-" + UUID.randomUUID().toString();
+            k = "key-" + UUID.randomUUID();
             d = new BaseDocument(k);
         } while (k1Shard.equals(col.getResponsibleShard(d).getShardId()));
         final BaseDocument d2 = d;
@@ -164,12 +157,12 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         // run actual test tasks with 2 threads in parallel
         return CompletableFuture
                 .allOf(
-                        CompletableFuture.runAsync(() -> executeTask("1-" + colName, d1, colName, counting), es),
-                        CompletableFuture.runAsync(() -> executeTask("2-" + colName, d2, colName, counting), es)
+                        CompletableFuture.runAsync(() -> executeTask(db, "1-" + colName, d1, colName, counting), es),
+                        CompletableFuture.runAsync(() -> executeTask(db, "2-" + colName, d2, colName, counting), es)
                 );
     }
 
-    private void executeTask(String idx, BaseDocument d, String colName, boolean counting) {
+    private void executeTask(ArangoDatabase db, String idx, BaseDocument d, String colName, boolean counting) {
         runningCountByCollection.computeIfAbsent(colName, k -> new LongAdder());
         committedCountByCollection.computeIfAbsent(colName, k -> new LongAdder());
 

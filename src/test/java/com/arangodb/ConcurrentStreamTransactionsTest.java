@@ -28,10 +28,9 @@ import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -40,33 +39,26 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ConcurrentStreamTransactionsTest extends BaseTest {
+public class ConcurrentStreamTransactionsTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test";
 
-    public ConcurrentStreamTransactionsTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+        BaseJunit5.initCollections(COLLECTION_NAME);
     }
 
-    @Test
-    public void concurrentWriteWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
-                isMinorVersionAndAtLeastPatch(3, 6, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void concurrentWriteWithinSameTransaction(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -83,18 +75,17 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
         db.commitStreamTransaction(tx.getId());
 
         results.forEach(it -> {
-            assertThat(it.getKey(), is(notNullValue()));
-            assertThat(db.collection(COLLECTION_NAME).documentExists(it.getKey()), is(true));
+            assertThat(it.getKey()).isNotNull();
+            assertThat(db.collection(COLLECTION_NAME).documentExists(it.getKey())).isTrue();
         });
 
         executor.shutdownNow();
     }
 
-    @Test
-    public void concurrentAqlWriteWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
-                isMinorVersionAndAtLeastPatch(3, 6, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void concurrentAqlWriteWithinSameTransaction(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -104,7 +95,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
         List<CompletableFuture<ArangoCursor<BaseDocument>>> reqs = IntStream.range(0, 100)
                 .mapToObj(it -> CompletableFuture.supplyAsync(() -> {
                             Map<String, Object> params = new HashMap<>();
-                            params.put("doc", new BaseDocument("key-" + UUID.randomUUID().toString()));
+                            params.put("doc", new BaseDocument("key-" + UUID.randomUUID()));
                             params.put("@col", COLLECTION_NAME);
                             return db.query("INSERT @doc INTO @@col RETURN NEW", params,
                                     new AqlQueryOptions().streamTransactionId(tx.getId()), BaseDocument.class);
@@ -120,21 +111,21 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
         results.forEach(it -> {
             String key = it.iterator().next().getKey();
-            assertThat(key, is(notNullValue()));
-            assertThat(db.collection(COLLECTION_NAME).documentExists(key), is(true));
+            assertThat(key).isNotNull();
+            assertThat(db.collection(COLLECTION_NAME).documentExists(key)).isTrue();
         });
 
         executor.shutdownNow();
     }
 
 
-    @Test
-    public void failingAqlFromBTS57() {
-        assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 6, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void failingAqlFromBTS57(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         String id = COLLECTION_NAME + "/" + key;
         db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
 
@@ -152,17 +143,17 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
                 new AqlQueryOptions().streamTransactionId(tx.getId()), Boolean.class);
 
         db.commitStreamTransaction(tx.getId());
-        assertThat(req.next(), is(true));
+        assertThat(req.next()).isTrue();
     }
 
-    @Test
-    public void concurrentReadWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 6, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void concurrentReadWithinSameTransaction(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -177,20 +168,19 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
         List<BaseDocument> results = reqs.stream().map(CompletableFuture::join).collect(Collectors.toList());
         db.commitStreamTransaction(tx.getId());
 
-        results.forEach(it -> assertThat(it.getKey(), is(notNullValue())));
+        results.forEach(it -> assertThat(it.getKey()).isNotNull());
 
         executor.shutdownNow();
     }
 
-    @Test
-    public void concurrentAqlReadWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
-                isMinorVersionAndAtLeastPatch(3, 6, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void concurrentAqlReadWithinSameTransaction(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        String key = "key-" + UUID.randomUUID().toString();
+        String key = "key-" + UUID.randomUUID();
         String id = COLLECTION_NAME + "/" + key;
         db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
 
@@ -210,7 +200,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
                 .collect(Collectors.toList());
 
         db.commitStreamTransaction(tx.getId());
-        results.forEach(it -> assertThat(it.iterator().next().getKey(), is(key)));
+        results.forEach(it -> assertThat(it.iterator().next().getKey()).isEqualTo(key));
         executor.shutdownNow();
     }
 

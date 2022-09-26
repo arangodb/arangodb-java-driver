@@ -23,72 +23,70 @@ package com.arangodb;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.ServerRole;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.arangodb.util.TestUtils.isAtLeastVersion;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class StreamTransactionApiTest {
+public class StreamTransactionApiTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "stream_transactions_api_test";
+    private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+            .map(p -> new ArangoDB.Builder()
+                    .useProtocol(p)
+                    .serializer(new ArangoJack())
+                    .acquireHostList(true)
+                    .loadBalancingStrategy(LoadBalancingStrategy.ROUND_ROBIN)
+                    .build())
+            .collect(Collectors.toList());
 
-    private final ArangoDB arangoDB;
-    private final ArangoDatabase db;
-    private final ArangoCollection collection;
-
-    @Parameterized.Parameters
-    public static List<ArangoDB> builders() {
-        return Arrays.asList(
-                new ArangoDB.Builder().acquireHostList(true).loadBalancingStrategy(LoadBalancingStrategy.ROUND_ROBIN).useProtocol(Protocol.VST).build(),
-                new ArangoDB.Builder().acquireHostList(true).loadBalancingStrategy(LoadBalancingStrategy.ROUND_ROBIN).useProtocol(Protocol.HTTP_JSON).build(),
-                new ArangoDB.Builder().acquireHostList(true).loadBalancingStrategy(LoadBalancingStrategy.ROUND_ROBIN).useProtocol(Protocol.HTTP_VPACK).build()
-        );
+    protected static Stream<ArangoDatabase> dbsStream() {
+        return adbs.stream().map(ArangoDB::db);
     }
 
-    public StreamTransactionApiTest(final ArangoDB arangoDB) {
-        this.arangoDB = arangoDB;
-        db = arangoDB.db();
-        collection = db.collection(COLLECTION_NAME);
+    protected static Stream<Arguments> dbs() {
+        return dbsStream().map(Arguments::of);
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void beforeEach() {
+        ArangoDatabase db = dbsStream().iterator().next();
+        ArangoCollection collection = db.collection(COLLECTION_NAME);
         if (!collection.exists())
             collection.create();
     }
 
     /**
-     * It performs the following steps, using a driver instance configured with loadBalancingStrategy set to {@link LoadBalancingStrategy#ROUND_ROBIN}:
-     * - begin a stream transaction <t> with writeCollections: [<c>]
-     * - insert a new document into <c> from within <t>
+     * It performs the following steps, using a driver instance configured with loadBalancingStrategy set to
+     * {@link LoadBalancingStrategy#ROUND_ROBIN}: - begin a stream transaction <t> with writeCollections: [<c>] - insert
+     * a new document into <c> from within <t>
      */
-    @Test(timeout = 10_000)
-    public void streamTransactionFromDifferentCoordinators() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    @Timeout(value = 10_000, unit = TimeUnit.MILLISECONDS)
+    public void streamTransactionFromDifferentCoordinators(ArangoDatabase db) {
         assumeTrue(isCluster());
-        String version = arangoDB.getVersion().getVersion();
-        assumeTrue(isAtLeastVersion(version, 3, 6, 0));
+        ArangoCollection collection = db.collection(COLLECTION_NAME);
 
         String transactionId = db.beginStreamTransaction(
                 new StreamTransactionOptions().writeCollections(COLLECTION_NAME)).getId();
         collection.insertDocument(new BaseDocument(), new DocumentCreateOptions().streamTransactionId(transactionId));
         db.abortStreamTransaction(transactionId);
-    }
-
-    private boolean isCluster() {
-        return arangoDB.getRole() == ServerRole.COORDINATOR;
     }
 
 }

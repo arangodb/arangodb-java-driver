@@ -28,11 +28,9 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.hamcrest.Matchers;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,43 +40,40 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class CursorApiTest extends BaseTest {
-
-    public CursorApiTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-    }
+public class CursorApiTest extends BaseJunit5 {
 
     private final VPackMapper mapper = new VPackMapper();
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
-        BaseTest.initDB();
+        BaseJunit5.initDB();
     }
 
     /**
      * Consume an AQL cursor calling POST /_api/cursor/<cursor-id>
      */
-    @Test
-    public void consumeCursorWithPOST() throws IOException {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void consumeCursorWithPOST(ArangoDatabase db) throws IOException {
         assumeTrue(isAtLeastVersion(3, 7, 11));
-        String cursorId = createCursor("FOR i IN 1..1000 RETURN i", IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList()));
+        String cursorId = createCursor(db, "FOR i IN 1..1000 RETURN i", IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList()));
         boolean hasMore = true;
         int i = 101;
         while (hasMore) {
             System.out.println(i);
-            hasMore = nextBatch(cursorId, IntStream.rangeClosed(i, i + 99).boxed().collect(Collectors.toList()));
+            hasMore = nextBatch(db, cursorId, IntStream.rangeClosed(i, i + 99).boxed().collect(Collectors.toList()));
             i = i + 100;
         }
     }
 
-    private String createCursor(String query, List<Integer> expected) throws IOException {
+    private String createCursor(ArangoDatabase db, String query, List<Integer> expected) throws IOException {
         Request createRequest = new Request(
                 db.name(),
                 RequestType.POST,
@@ -88,27 +83,27 @@ public class CursorApiTest extends BaseTest {
         requestBody.put("query", query);
         requestBody.put("batchSize", 100);
         createRequest.setBody(new VPackSlice(mapper.writeValueAsBytes(requestBody)));
-        Response response = arangoDB.execute(createRequest);
+        Response response = db.arango().execute(createRequest);
         JsonNode responseNode = mapper.readTree(response.getBody().toByteArray());
         JsonNode resultNode = responseNode.withArray("result");
         List<Integer> result = mapper.readerFor(TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, Integer.class))
                 .readValue(resultNode);
-        assertThat(result, Matchers.is(expected));
+        assertThat(result).isEqualTo(expected);
         return responseNode.path("id").textValue();
     }
 
-    private boolean nextBatch(String id, List<Integer> expected) throws IOException {
+    private boolean nextBatch(ArangoDatabase db, String id, List<Integer> expected) throws IOException {
         Request createRequest = new Request(
                 db.name(),
                 RequestType.POST,
                 "/_api/cursor/" + id
         );
-        Response response = arangoDB.execute(createRequest);
+        Response response = db.arango().execute(createRequest);
         JsonNode responseNode = mapper.readTree(response.getBody().toByteArray());
         JsonNode resultNode = responseNode.withArray("result");
         List<Integer> result = mapper.readerFor(TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, Integer.class))
                 .readValue(resultNode);
-        assertThat(result, Matchers.is(expected));
+        assertThat(result).isEqualTo(expected);
         return responseNode.path("hasMore").booleanValue();
     }
 }

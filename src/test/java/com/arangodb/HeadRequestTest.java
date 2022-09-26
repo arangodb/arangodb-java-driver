@@ -26,92 +26,96 @@ import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class HeadRequestTest extends BaseTest {
+public class HeadRequestTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "HeadRequestTest_collection";
-    private final ArangoCollection collection;
-    private final DocumentCreateEntity<BaseDocument> createEntity;
 
-    public HeadRequestTest(ArangoDB arangoDB) {
-        super(arangoDB);
-        collection = db.collection(COLLECTION_NAME);
-        createEntity = collection.insertDocument(new BaseDocument("key-" + UUID.randomUUID().toString()));
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+        BaseJunit5.initCollections(COLLECTION_NAME);
     }
 
-    @Test
-    public void headRequestShouldNotReturnBody() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void headRequestShouldNotReturnBody(ArangoDatabase db) {
+        DocumentCreateEntity<BaseDocument> createEntity = db.collection(COLLECTION_NAME)
+                .insertDocument(new BaseDocument("key-" + UUID.randomUUID()));
         Request request = new Request(
                 db.name(),
                 RequestType.HEAD,
                 "/_api/document/" + createEntity.getId());
-        executeAndAssert(request);
+        executeAndAssert(db, request);
     }
 
-    @Test
-    public void headRequestIfMatchNonMatchingShouldNotReturnBody() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void headRequestIfMatchNonMatchingShouldNotReturnBody(ArangoDatabase db) {
+        DocumentCreateEntity<BaseDocument> createEntity = db.collection(COLLECTION_NAME)
+                .insertDocument(new BaseDocument("key-" + UUID.randomUUID()));
         Request request = new Request(
                 db.name(),
                 RequestType.HEAD,
                 "/_api/document/" + createEntity.getId());
         request.putHeaderParam("If-Match", "nonMatching");
-        executeAndAssert(request);
+        executeAndAssert(db, request);
     }
 
-    @Test
-    public void headRequestIfMatchMatchingShouldNotReturnBody() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void headRequestIfMatchMatchingShouldNotReturnBody(ArangoDatabase db) {
+        DocumentCreateEntity<BaseDocument> createEntity = db.collection(COLLECTION_NAME)
+                .insertDocument(new BaseDocument("key-" + UUID.randomUUID()));
         Request request = new Request(
                 db.name(),
                 RequestType.HEAD,
                 "/_api/document/" + createEntity.getId());
         request.putHeaderParam("If-Match", createEntity.getRev());
-        executeAndAssert(request);
+        executeAndAssert(db, request);
     }
 
-    @Test
-    public void headRequestIfNoneMatchMatchingShouldNotReturnBody() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void headRequestIfNoneMatchMatchingShouldNotReturnBody(ArangoDatabase db) {
+        DocumentCreateEntity<BaseDocument> createEntity = db.collection(COLLECTION_NAME)
+                .insertDocument(new BaseDocument("key-" + UUID.randomUUID()));
         Request request = new Request(
                 db.name(),
                 RequestType.HEAD,
                 "/_api/document/" + createEntity.getId());
         request.putHeaderParam("If-None-Match", createEntity.getRev());
-        executeAndAssert(request);
+        executeAndAssert(db, request);
     }
 
-    @Test
-    public void headRequestIfNoneMatchNonMatchingShouldNotReturnBody() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    public void headRequestIfNoneMatchNonMatchingShouldNotReturnBody(ArangoDatabase db) {
+        DocumentCreateEntity<BaseDocument> createEntity = db.collection(COLLECTION_NAME)
+                .insertDocument(new BaseDocument("key-" + UUID.randomUUID()));
         Request request = new Request(
                 db.name(),
                 RequestType.HEAD,
                 "/_api/document/" + createEntity.getId());
         request.putHeaderParam("If-None-Match", "nonMatching");
-        executeAndAssert(request);
+        executeAndAssert(db, request);
     }
 
-    private void executeAndAssert(Request request) {
+    private void executeAndAssert(ArangoDatabase db, Request request) {
         try {
-            Response response = arangoDB.execute(request);
-            assertThat(response.getBody(), nullValue());
+            Response response = db.arango().execute(request);
+            assertThat(response.getBody()).isNull();
         } catch (ArangoDBException e) {
-            assertThat(e.getResponseBody(), nullValue());
+            assertThat(e.getResponseBody()).isNull();
         }
     }
 
