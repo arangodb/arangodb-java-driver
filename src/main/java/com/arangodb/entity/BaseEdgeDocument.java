@@ -22,13 +22,16 @@ package com.arangodb.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class BaseEdgeDocument extends AbstractBaseDocument {
+public final class BaseEdgeDocument extends AbstractBaseDocument implements Serializable {
+
+    private static final long serialVersionUID = 356629614444L;
 
     private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev", "_from", "_to"};
 
