@@ -6,7 +6,86 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-- changed default protocol from VST to HTTP/1.1
+## [7.0.0]
+
+### Changed
+
+- changed default communication protocol from VST to HTTP/1.1
+- changed default content-type encoding format from VPACK to JSON
+- transitive dependency on `org.apache.httpcomponents:httpclient:4.5.x` is not optional anymore, but it can be excluded
+  if using VST only
+- VPACK support is now provided by the optional dependency `com.arangodb:jackson-dataformat-velocypack` as dataformat
+  backend for Jackson
+- changed serialization module, which is now based on Jackson API
+- data objects passed as arguments to API methods are now treated as immutable and the related metadata fields are not
+  updated anymore (updated metadata can be found anyway in the object returned by the API method)
+- changed some API signatures which were using unnecessary generics
+- changed `com.arangodb.ArangoCursor#getStats()` to return untyped map
+- modeled replication factor with a new interface (`com.arangodb.entity.ReplicationFactor`) with
+  implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`
+- all data definition classes are now `final`
+- `BaseDocument` and `BaseEdgeDocument` are now `final`
+- `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
+
+### Removed
+
+- removed user-data custom serializer API based on `com.arangodb.util.ArangoSerialization` (in favor
+  of `com.arangodb.serde.ArangoSerde`)
+- removed user-data custom serializer implementation `com.arangodb.mapping.ArangoJack` (in favor
+  of `com.arangodb.serde.JacksonSerde`)
+- removed support for interpreting raw strings as JSON (use `com.arangodb.util.RawJson` instead)
+- removed support of data type `com.arangodb.velocypack.VPackSlice`
+- removed `catchException` parameter option from Collections, Vertexes and Edges API
+- removed `throws ArangoDBException` declarations from API method signatures
+- removed client APIs already deprecated in Java Driver version 6.19.0
+- removed deprecated server APIs:
+  - MMFiles related APIs
+  - `ArangoDatabase.executeTraversal()`
+  - `ArangoDB.getLogs()`
+  - `minReplicationFactor` in collections and graphs
+  - `overwrite` flag in `DocumentCreateOptions`
+- removed `com.arangodb.entity.CursorEntity` from public API
+- removed interface `com.arangodb.entity.Entity`
+
+### Added
+
+- added transitive dependency on Jackson Core, Databind and Annotations
+- added wrapper class for raw JSON content (`com.arangodb.util.RawJson`)
+- added wrapper class for content already encoded as byte array (`com.arangodb.util.RawBytes`)
+- added support for Jackson types (`JsonNode`, `ArrayNode`, `ObjectNode`, ...)
+- added support for Jackson annotations in data types
+- added new user-data custom serializer API based on `com.arangodb.serde.ArangoSerde`
+- added new user-data custom serializer implementation based on Jackson (`com.arangodb.serde.JacksonSerde`)
+- added JSON-B compatibility to meta binding annotations (`@Id`, `@Key`, `@Rev`, `@From`, `@To`)
+- added methods and parameters targets to meta binding annotations
+- added overloaded methods for CRUD operations allowing specifying the return type
+- added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
+- added `BaseDocument#removeAttribute(String)` and `BaseEdgeDocument#removeAttribute(String)`
+
+### Fixed
+
+- removed `--allow-incomplete-classpath` from native image configuration (#397)
+- ability to control whether `null` values are included in the serialization (#389)
+- added support to `com.arangodb.model.DocumentCreateOptions#keepNull` (#374)
+- allow specifying the return type on insertDocuments (#373)
+
+## [6.19.0]
+
+- added support for `search-alias` views (ArangoDB 3.10 #461)
+- added support for nested search (ArangoDB 3.10, #460)
+- added support for `classification`, `nearest_neighbors` and `minhash` search analyzers (ArangoDB 3.10, #458)
+- added support for inverted indexes (ArangoDB 3.10, #457)
+- added support for cluster dirty reads (ArangoDB 3.10, #455)
+- added support for index stored values (ArangoDB 3.10)
+- added support for geo index legacy polygons (ArangoDB 3.10)
+- added support for getting query optimizer rules (ArangoDB 3.10)
+- added support for enhanced cursor stats (ArangoDB 3.10)
+- added support for computed values (ArangoDB 3.10)
+- added support for index cache (ArangoDB 3.10)
+- deprecated fulltext indexes (ArangoDB 3.10, #454)
+- fixed `ConsolidationPolicy` API
+- deprecated MMFiles collection attributes (#442)
+- documented thead safe classes (#445)
 
 ## [6.18.0] - 2022-06-07
 
