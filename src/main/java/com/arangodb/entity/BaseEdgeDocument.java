@@ -26,8 +26,9 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-public final class BaseEdgeDocument extends BaseDocument {
+public final class BaseEdgeDocument extends AbstractBaseDocument {
 
     private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev", "_from", "_to"};
 
@@ -76,18 +77,7 @@ public final class BaseEdgeDocument extends BaseDocument {
 
     @Override
     public String toString() {
-        return "BaseEdgeDocument{properties=" + getProperties() + '}';
+        return "BaseEdgeDocument" + super.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }
