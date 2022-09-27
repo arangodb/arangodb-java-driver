@@ -33,13 +33,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   of `com.arangodb.serde.ArangoSerde`)
 - removed user-data custom serializer implementation `com.arangodb.mapping.ArangoJack` (in favor
   of `com.arangodb.serde.JacksonSerde`)
-- removed support for interpreting raw strings as JSON (use `com.arangodb.util.RawJson` instead)
+- removed support for interpreting raw strings as JSON (in favor of `com.arangodb.util.RawJson`)
 - removed support of data type `com.arangodb.velocypack.VPackSlice`
 - removed `catchException` parameter option from Collections, Vertexes and Edges API
 - removed `throws ArangoDBException` declarations from API method signatures
-- removed client APIs already deprecated in Java Driver version 6.19.0
+- removed client APIs already deprecated in Java Driver version `6.19.0`
 - removed deprecated server APIs:
-  - MMFiles related APIs
+  - `MMFiles` related APIs
   - `ArangoDatabase.executeTraversal()`
   - `ArangoDB.getLogs()`
   - `minReplicationFactor` in collections and graphs
