@@ -26,17 +26,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - all data definition classes are now `final`
 - `BaseDocument` and `BaseEdgeDocument` are now `final`
 - `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
+- changed API method signatures removing throw declarations like: `throws ArangoDBException` (unchecked exception)
 
 ### Removed
 
-- removed user-data custom serializer API based on `com.arangodb.util.ArangoSerialization` (in favor
+- removed user data custom serializer API based on `com.arangodb.util.ArangoSerialization` (in favor
   of `com.arangodb.serde.ArangoSerde`)
-- removed user-data custom serializer implementation `com.arangodb.mapping.ArangoJack` (in favor
+- removed user data custom serializer implementation `com.arangodb.mapping.ArangoJack` (in favor
   of `com.arangodb.serde.JacksonSerde`)
 - removed support for interpreting raw strings as JSON (in favor of `com.arangodb.util.RawJson`)
-- removed support of data type `com.arangodb.velocypack.VPackSlice`
-- removed `catchException` parameter option from Collections, Vertexes and Edges API
-- removed `throws ArangoDBException` declarations from API method signatures
+- removed support of data type `com.arangodb.velocypack.VPackSlice` (in favor of Jackson types: `JsonNode`, `ArrayNode`, `ObjectNode`, ...)
 - removed client APIs already deprecated in Java Driver version `6.19.0`
 - removed deprecated server APIs:
   - `MMFiles` related APIs
@@ -44,8 +43,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - `ArangoDB.getLogs()`
   - `minReplicationFactor` in collections and graphs
   - `overwrite` flag in `DocumentCreateOptions`
-- removed `com.arangodb.entity.CursorEntity` from public API
-- removed interface `com.arangodb.entity.Entity`
 
 ### Added
 
@@ -54,9 +51,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added wrapper class for content already encoded as byte array (`com.arangodb.util.RawBytes`)
 - added support for Jackson types (`JsonNode`, `ArrayNode`, `ObjectNode`, ...)
 - added support for Jackson annotations in data types
-- added new user-data custom serializer API based on `com.arangodb.serde.ArangoSerde`
-- added new user-data custom serializer implementation based on Jackson (`com.arangodb.serde.JacksonSerde`)
-- added JSON-B compatibility to meta binding annotations (`@Id`, `@Key`, `@Rev`, `@From`, `@To`)
+- added new user data custom serializer API based on `com.arangodb.serde.ArangoSerde`
+- added new user data custom serializer implementation based on Jackson (`com.arangodb.serde.JacksonSerde`)
 - added methods and parameters targets to meta binding annotations
 - added overloaded methods for CRUD operations allowing specifying the return type
 - added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
