@@ -65,6 +65,10 @@ public class GraphDocumentReadOptions {
         return this;
     }
 
+    /**
+     * @deprecated for removal
+     */
+    @Deprecated
     public boolean isCatchException() {
         return catchException;
     }
@@ -72,7 +76,9 @@ public class GraphDocumentReadOptions {
     /**
      * @param catchException whether or not catch possible thrown exceptions
      * @return options
+     * @deprecated for removal
      */
+    @Deprecated
     public GraphDocumentReadOptions catchException(final boolean catchException) {
         this.catchException = catchException;
         return this;

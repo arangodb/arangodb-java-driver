@@ -64,6 +64,10 @@ public class DocumentExistsOptions {
         return this;
     }
 
+    /**
+     * @deprecated for removal
+     */
+    @Deprecated
     public boolean isCatchException() {
         return catchException;
     }
@@ -71,7 +75,9 @@ public class DocumentExistsOptions {
     /**
      * @param catchException whether or not catch possible thrown exceptions
      * @return options
+     * @deprecated for removal
      */
+    @Deprecated
     public DocumentExistsOptions catchException(final boolean catchException) {
         this.catchException = catchException;
         return this;

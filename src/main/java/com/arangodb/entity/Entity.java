@@ -22,7 +22,9 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
+ * @deprecated for removal
  */
+@Deprecated
 public interface Entity {
 
 }

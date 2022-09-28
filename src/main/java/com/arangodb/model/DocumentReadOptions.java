@@ -68,6 +68,10 @@ public class DocumentReadOptions {
         return this;
     }
 
+    /**
+     * @deprecated for removal
+     */
+    @Deprecated
     public boolean isCatchException() {
         return catchException;
     }
@@ -75,7 +79,9 @@ public class DocumentReadOptions {
     /**
      * @param catchException whether or not catch possible thrown exceptions
      * @return options
+     * @deprecated for removal
      */
+    @Deprecated
     public DocumentReadOptions catchException(final boolean catchException) {
         this.catchException = catchException;
         return this;

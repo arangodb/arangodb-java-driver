@@ -22,7 +22,9 @@ package com.arangodb.util;
 
 /**
  * @author Mark Vollmary
+ * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
  */
+@Deprecated
 public interface ArangoSerialization extends ArangoSerializer, ArangoDeserializer {
 
 }
