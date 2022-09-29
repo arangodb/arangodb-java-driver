@@ -33,6 +33,7 @@ public final class ConsolidationPolicy {
     private Long segmentsMax;
     private Long segmentsBytesMax;
     private Long segmentsBytesFloor;
+    private Long minScore;
 
 
     public ConsolidationPolicy() {
@@ -125,16 +126,29 @@ public final class ConsolidationPolicy {
         return this;
     }
 
+    public Long getMinScore() {
+        return minScore;
+    }
+
+    /**
+     * @param minScore Filter out consolidation candidates with a score less than this. (default: 0)
+     * @return this
+     */
+    public ConsolidationPolicy minScore(final Long minScore) {
+        this.minScore = minScore;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConsolidationPolicy that = (ConsolidationPolicy) o;
-        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor);
+        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor) && Objects.equals(minScore, that.minScore);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor);
+        return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor, minScore);
     }
 }
