@@ -317,6 +317,7 @@ public class VPackDeserializers {
             consolidate.segmentsMax(vpack.get("segmentsMax").getAsLong());
             consolidate.segmentsBytesMax(vpack.get("segmentsBytesMax").getAsLong());
             consolidate.segmentsBytesFloor(vpack.get("segmentsBytesFloor").getAsLong());
+            consolidate.minScore(vpack.get("minScore").getAsLong());
         }
         return consolidate;
     };

@@ -103,6 +103,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                         .segmentsMax(44L)
                         .segmentsBytesMax(55555L)
                         .segmentsBytesFloor(666L)
+                        .minScore(77L)
                 )
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
