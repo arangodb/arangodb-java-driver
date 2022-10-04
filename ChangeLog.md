@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.19.0] - 2022-10-04
+
 - added support for `search-alias` views (ArangoDB 3.10 #461)
 - added support for nested search (ArangoDB 3.10, #460)
 - added support for `classification`, `nearest_neighbors` and `minhash` search analyzers (ArangoDB 3.10, #458)
@@ -20,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - deprecated fulltext indexes (ArangoDB 3.10, #454)
 - fixed `ConsolidationPolicy` API
 - deprecated MMFiles collection attributes (#442)
+- deprecated for removal `ArangoCursorInitializer` and `GraphDocumentReadOptions#isCatchException()`
 - documented thead safe classes (#445)
 
 ## [6.18.0] - 2022-06-07
