@@ -36,7 +36,6 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -55,7 +54,6 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final CommunicationProtocol cp;
     private final HostHandler hostHandler;
-    private ArangoCursorInitializer cursorInitializer;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
                         final InternalSerde util, final Protocol protocol, final HostResolver hostResolver,
@@ -135,7 +133,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public ArangoDatabase db(final DbName dbName) {
-        return new ArangoDatabaseImpl(this, dbName).setCursorInitializer(cursorInitializer);
+        return new ArangoDatabaseImpl(this, dbName);
     }
 
     @Override
@@ -263,12 +261,6 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public Collection<QueryOptimizerRule> getQueryOptimizerRules() {
         return executor.execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
-    }
-
-    @Override
-    public ArangoDBImpl _setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
-        this.cursorInitializer = cursorInitializer;
-        return this;
     }
 
 }

@@ -38,12 +38,9 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.HostnameVerifier;
@@ -337,20 +334,11 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     Collection<QueryOptimizerRule> getQueryOptimizerRules();
 
     /**
-     * <strong>Attention:</strong> Please do not use!
-     *
-     * @param cursorInitializer
-     * @return ArangoDB
-     */
-    ArangoDB _setCursorInitializer(ArangoCursorInitializer cursorInitializer);
-
-    /**
      * Builder class to build an instance of {@link ArangoDB}.
      *
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder {
-        private static final Logger logger = LoggerFactory.getLogger(Builder.class);
         private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
         protected Protocol protocol;

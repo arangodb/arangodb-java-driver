@@ -31,7 +31,6 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
-import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -46,8 +45,6 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  */
 public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, ArangoExecutorSync>
         implements ArangoDatabase {
-
-    private ArangoCursorInitializer cursorInitializer;
 
     protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final DbName name) {
         super(arangoDB, name);
@@ -216,9 +213,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
             }
         };
 
-        return cursorInitializer != null ?
-                cursorInitializer.createInstance(this, execute, type, result) :
-                new ArangoCursorImpl<>(this, execute, type, result);
+        return new ArangoCursorImpl<>(this, execute, type, result);
     }
 
     @Override
@@ -369,11 +364,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public void reloadRouting() {
         executor.execute(reloadRoutingRequest(), Void.class);
-    }
-
-    protected ArangoDatabaseImpl setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
-        this.cursorInitializer = cursorInitializer;
-        return this;
     }
 
     @Override
