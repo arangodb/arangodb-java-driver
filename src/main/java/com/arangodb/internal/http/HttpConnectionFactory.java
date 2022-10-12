@@ -44,7 +44,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
         super();
         builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
                 .sslContext(sslContext).hostnameVerifier(hostnameVerifier).serializationUtil(util).contentType(protocol)
-                .ttl(connectionTtl).httpCookieSpec(httpCookieSpec).httpRequestRetryHandler(httpRequestRetryHandler);
+                .ttl(connectionTtl).httpCookieSpec(httpCookieSpec); //.httpRequestRetryHandler(httpRequestRetryHandler);
 
     }
 

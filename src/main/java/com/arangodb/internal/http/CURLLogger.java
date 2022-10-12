@@ -23,7 +23,6 @@ package com.arangodb.internal.http;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import org.apache.http.auth.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ public final class CURLLogger {
     public static void log(
             final String url,
             final Request request,
-            final Credentials credentials,
+            final String user,
             final String jwt,
             final InternalSerde util) {
         final RequestType requestType = request.getRequestType();
@@ -60,9 +59,8 @@ public final class CURLLogger {
                 buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
             }
         }
-        if (credentials != null) {
-            buffer.append(" -u ").append(credentials.getUserPrincipal().getName()).append(":")
-                    .append(credentials.getPassword());
+        if (user != null) {
+            buffer.append(" -u ").append(user).append(":");
         }
         if (jwt != null) {
             buffer.append(" -H ").append("'Authorization: Bearer ").append(jwt).append("'");

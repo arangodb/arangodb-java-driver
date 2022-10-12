@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `BaseDocument` and `BaseEdgeDocument` are now `final`
 - `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
 - changed API method signatures removing throw declarations like: `throws ArangoDBException` (unchecked exception)
+- removed passwords from debug level requests logs
 
 ### Removed
 
