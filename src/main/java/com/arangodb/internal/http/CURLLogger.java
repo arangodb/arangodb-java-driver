@@ -42,8 +42,6 @@ public final class CURLLogger {
             final String baseUrl,
             final String path,
             final Request request,
-            final String user,
-            final String jwt,
             final InternalSerde util) {
         final RequestType requestType = request.getRequestType();
         final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
@@ -59,12 +57,6 @@ public final class CURLLogger {
             for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
                 buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
             }
-        }
-        if (user != null) {
-            buffer.append(" -u ").append(user).append(":");
-        }
-        if (jwt != null) {
-            buffer.append(" -H ").append("'Authorization: Bearer ").append(jwt).append("'");
         }
         if (includeBody) {
             buffer.append(" -d @-");

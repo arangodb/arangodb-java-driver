@@ -35,6 +35,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
@@ -56,6 +57,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
@@ -63,32 +65,30 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
  * @author Mark Vollmary
  */
 public class HttpConnection implements Connection {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
     private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
     private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
-    private final String user;
-    private final String password;
+    private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
     private final String baseUrl;
     private final Protocol contentType;
-    private volatile String jwt = null;
+    private volatile String auth;
     private final WebClient client;
     private final Integer timeout;
+    private final Vertx vertx;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier,
                            final InternalSerde util, final Protocol contentType, final Long ttl,
                            final String httpCookieSpec) {
         super();
-        this.user = user;
-        this.password = password;
         this.util = util;
         this.contentType = contentType;
         this.timeout = timeout;
         baseUrl = buildBaseUrl(host, useSsl);
-        Vertx vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
-        // TODO: name threads
+        auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
+        vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
+        vertx.runOnContext(e -> Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement()));
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
         client = WebClient.create(vertx, new WebClientOptions()
@@ -160,9 +160,8 @@ public class HttpConnection implements Connection {
 
     @Override
     public void close() throws IOException {
-        // TODO
-//        cm.shutdown();
-//        client.close();
+        client.close();
+        vertx.close();
     }
 
     private HttpMethod requestTypeToHttpMethod(RequestType requestType) {
@@ -196,18 +195,10 @@ public class HttpConnection implements Connection {
             httpRequest.putHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
-        if (jwt != null) {
-            httpRequest.putHeader(AUTHORIZATION, "Bearer " + jwt);
-            if (LOGGER.isDebugEnabled()) {
-                CURLLogger.log(baseUrl, path, request, null, jwt, util);
-            }
-        } else if (user != null) {
-            // FIXME: credentials as class field
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-            httpRequest.authentication(credentials);
-            if (LOGGER.isDebugEnabled()) {
-                CURLLogger.log(baseUrl, path, request, user, jwt, util);
-            }
+        httpRequest.putHeader(AUTHORIZATION, auth);
+
+        if (LOGGER.isDebugEnabled()) {
+            CURLLogger.log(baseUrl, path, request, util);
         }
 
         byte[] reqBody = request.getBody();
@@ -257,7 +248,9 @@ public class HttpConnection implements Connection {
 
     @Override
     public void setJwt(String jwt) {
-        this.jwt = jwt;
+        if (jwt != null) {
+            auth = new TokenCredentials(jwt).toHttpAuthorization();
+        }
     }
 
     public static class Builder {
