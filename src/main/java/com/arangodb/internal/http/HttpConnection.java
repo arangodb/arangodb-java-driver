@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
@@ -73,20 +74,29 @@ public class HttpConnection implements Connection {
     private final Protocol contentType;
     private volatile String jwt = null;
     private final WebClient client;
+    private final Integer timeout;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier
-            , final InternalSerde util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec) {
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier,
+                           final InternalSerde util, final Protocol contentType, final Long ttl,
+                           final String httpCookieSpec) {
         super();
         this.user = user;
         this.password = password;
         this.util = util;
         this.contentType = contentType;
+        this.timeout = timeout;
         baseUrl = buildBaseUrl(host, useSsl);
         Vertx vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
         // TODO: name threads
+
+        int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
         client = WebClient.create(vertx, new WebClientOptions()
+                .setConnectTimeout(timeout)
+                .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
+                .setIdleTimeout(timeout)
+                .setKeepAliveTimeout(_ttl)
+                .setHttp2KeepAliveTimeout(_ttl)
                 .setUserAgentEnabled(false)
                 .setFollowRedirects(false)
                 .setLogActivity(true)
@@ -101,41 +111,16 @@ public class HttpConnection implements Connection {
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort()));
 
-//        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
-//                .create();
 //        if (Boolean.TRUE.equals(useSsl)) {
 //            registryBuilder.register("https", new SSLConnectionSocketFactory(
 //                    sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
 //                    hostnameVerifier != null ? hostnameVerifier :
 //                            SSLConnectionSocketFactory.getDefaultHostnameVerifier()
 //            ));
-//        } else {
-//            registryBuilder.register("http", new PlainConnectionSocketFactory());
 //        }
-//        cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
-//        cm.setDefaultMaxPerRoute(1);
-//        cm.setMaxTotal(1);
-//        final RequestConfig.Builder requestConfig = RequestConfig.custom();
-//        if (timeout != null && timeout >= 0) {
-//            requestConfig.setConnectTimeout(timeout);
-//            requestConfig.setConnectionRequestTimeout(timeout);
-//            requestConfig.setSocketTimeout(timeout);
-//        }
-//
 //        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
 //            requestConfig.setCookieSpec(httpCookieSpec);
 //        }
-//
-//        final ConnectionKeepAliveStrategy keepAliveStrategy =
-//                (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
-//        final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
-//                .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-//                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler :
-//                        new DefaultHttpRequestRetryHandler());
-//        if (ttl != null) {
-//            builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
-//        }
-//        client = builder.build();
     }
 
     private static String buildUrl(final Request request) {
@@ -173,24 +158,9 @@ public class HttpConnection implements Connection {
         }
     }
 
-//    private long getKeepAliveDuration(final HttpResponse response) {
-//        final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-//        while (it.hasNext()) {
-//            final HeaderElement he = it.nextElement();
-//            final String param = he.getName();
-//            final String value = he.getValue();
-//            if (value != null && "timeout".equalsIgnoreCase(param)) {
-//                try {
-//                    return Long.parseLong(value) * 1000L;
-//                } catch (final NumberFormatException ignore) {
-//                }
-//            }
-//        }
-//        return 30L * 1000L;
-//    }
-
     @Override
     public void close() throws IOException {
+        // TODO
 //        cm.shutdown();
 //        client.close();
     }
@@ -213,51 +183,15 @@ public class HttpConnection implements Connection {
         }
     }
 
-//    private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
-//        final HttpRequestBase httpRequest;
-//        switch (request.getRequestType()) {
-//            case POST:
-//                httpRequest = requestWithBody(new HttpPost(url), request);
-//                break;
-//            case PUT:
-//                httpRequest = requestWithBody(new HttpPut(url), request);
-//                break;
-//            case PATCH:
-//                httpRequest = requestWithBody(new HttpPatch(url), request);
-//                break;
-//            case DELETE:
-//                httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
-//                break;
-//            case HEAD:
-//                httpRequest = new HttpHead(url);
-//                break;
-//            case GET:
-//            default:
-//                httpRequest = new HttpGet(url);
-//                break;
-//        }
-//        return httpRequest;
-//    }
-
-//    private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
-//        final byte[] body = request.getBody();
-//        if (body != null) {
-//            if (contentType == Protocol.HTTP_VPACK) {
-//                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_VPACK));
-//            } else {
-//                httpRequest.setEntity(new ByteArrayEntity(body, CONTENT_TYPE_APPLICATION_JSON_UTF8));
-//            }
-//        }
-//        return httpRequest;
-//    }
-
     private String buildBaseUrl(HostDescription host, boolean useSsl) {
         return (Boolean.TRUE.equals(useSsl) ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
     }
 
     public Response execute(final Request request) throws IOException {
         String path = buildUrl(request);
-        HttpRequest<Buffer> httpRequest = client.request(requestTypeToHttpMethod(request.getRequestType()), path);
+        HttpRequest<Buffer> httpRequest = client
+                .request(requestTypeToHttpMethod(request.getRequestType()), path)
+                .timeout(timeout);
         if (contentType == Protocol.HTTP_VPACK) {
             httpRequest.putHeader("Accept", "application/x-velocypack");
         }
@@ -338,7 +272,6 @@ public class HttpConnection implements Connection {
         private SSLContext sslContext;
         private HostnameVerifier hostnameVerifier;
         private Integer timeout;
-//        private HttpRequestRetryHandler httpRequestRetryHandler;
 
         public Builder user(final String user) {
             this.user = user;
@@ -394,11 +327,6 @@ public class HttpConnection implements Connection {
             this.timeout = timeout;
             return this;
         }
-
-//        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
-//            this.httpRequestRetryHandler = httpRequestRetryHandler;
-//            return this;
-//        }
 
         public HttpConnection build() {
             return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util,
