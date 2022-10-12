@@ -39,7 +39,8 @@ public final class CURLLogger {
     }
 
     public static void log(
-            final String url,
+            final String baseUrl,
+            final String path,
             final Request request,
             final String user,
             final String jwt,
@@ -68,7 +69,7 @@ public final class CURLLogger {
         if (includeBody) {
             buffer.append(" -d @-");
         }
-        buffer.append(" '").append(url).append("'");
+        buffer.append(" '").append(baseUrl).append(path).append("'");
         if (includeBody) {
             buffer.append("\n");
             buffer.append(util.toJsonString(request.getBody()));

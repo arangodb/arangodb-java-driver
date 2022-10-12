@@ -69,6 +69,7 @@ public class HttpConnection implements Connection {
     private final String user;
     private final String password;
     private final InternalSerde util;
+    private final String baseUrl;
     private final Protocol contentType;
     private volatile String jwt = null;
     private final WebClient client;
@@ -82,6 +83,7 @@ public class HttpConnection implements Connection {
         this.password = password;
         this.util = util;
         this.contentType = contentType;
+        baseUrl = buildBaseUrl(host, useSsl);
         Vertx vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
         // TODO: name threads
         client = WebClient.create(vertx, new WebClientOptions()
@@ -249,9 +251,13 @@ public class HttpConnection implements Connection {
 //        return httpRequest;
 //    }
 
+    private String buildBaseUrl(HostDescription host, boolean useSsl) {
+        return (Boolean.TRUE.equals(useSsl) ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+    }
+
     public Response execute(final Request request) throws IOException {
-        String url = buildUrl(request);
-        HttpRequest<Buffer> httpRequest = client.request(requestTypeToHttpMethod(request.getRequestType()), url);
+        String path = buildUrl(request);
+        HttpRequest<Buffer> httpRequest = client.request(requestTypeToHttpMethod(request.getRequestType()), path);
         if (contentType == Protocol.HTTP_VPACK) {
             httpRequest.putHeader("Accept", "application/x-velocypack");
         }
@@ -259,14 +265,14 @@ public class HttpConnection implements Connection {
         if (jwt != null) {
             httpRequest.putHeader(AUTHORIZATION, "Bearer " + jwt);
             if (LOGGER.isDebugEnabled()) {
-                CURLLogger.log(url, request, null, jwt, util);
+                CURLLogger.log(baseUrl, path, request, null, jwt, util);
             }
         } else if (user != null) {
             // FIXME: credentials as class field
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
             httpRequest.authentication(credentials);
             if (LOGGER.isDebugEnabled()) {
-                CURLLogger.log(url, request, user, jwt, util);
+                CURLLogger.log(baseUrl, path, request, user, jwt, util);
             }
         }
 
