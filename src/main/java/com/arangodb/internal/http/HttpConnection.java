@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.http;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
@@ -29,12 +30,18 @@ import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
+import io.netty.handler.ssl.ApplicationProtocolConfig;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.IdentityCipherSuiteFilter;
+import io.netty.handler.ssl.JdkSslContext;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.core.net.JdkSSLEngineOptions;
+import io.vertx.core.spi.tls.SslContextFactory;
 import io.vertx.ext.auth.authentication.TokenCredentials;
 import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.web.client.HttpRequest;
@@ -43,6 +50,7 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
@@ -51,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +100,8 @@ public class HttpConnection implements Connection {
         vertx.runOnContext(e -> Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement()));
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
-        client = WebClient.create(vertx, new WebClientOptions()
+
+        WebClientOptions webClientOptions = new WebClientOptions()
                 .setConnectTimeout(timeout)
                 .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
                 .setIdleTimeout(timeout)
@@ -107,20 +117,54 @@ public class HttpConnection implements Connection {
                 .setReusePort(true)
                 .setHttp2ClearTextUpgrade(false)
                 //TODO: allow configuring HTTP_2 or HTTP_1_1
+//                .setProtocolVersion(HttpVersion.HTTP_1_1)
                 .setProtocolVersion(HttpVersion.HTTP_2)
+                .setUseAlpn(true)
                 .setDefaultHost(host.getHost())
-                .setDefaultPort(host.getPort()));
+                .setDefaultPort(host.getPort());
 
-//        if (Boolean.TRUE.equals(useSsl)) {
-//            registryBuilder.register("https", new SSLConnectionSocketFactory(
-//                    sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
-//                    hostnameVerifier != null ? hostnameVerifier :
-//                            SSLConnectionSocketFactory.getDefaultHostnameVerifier()
-//            ));
-//        }
+        // FIXME: replace hostnameVerifier option with verifyHost: bool
+        webClientOptions.setVerifyHost(hostnameVerifier != null && !(hostnameVerifier instanceof NoopHostnameVerifier));
+
+        if (Boolean.TRUE.equals(useSsl)) {
+            SSLContext ctx;
+            if (sslContext != null) {
+                ctx = sslContext;
+            } else {
+                try {
+                    ctx = SSLContext.getDefault();
+                } catch (NoSuchAlgorithmException e) {
+                    throw new ArangoDBException(e);
+                }
+            }
+
+            webClientOptions.setSsl(true)
+                    .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
+                        @Override
+                        public JdkSSLEngineOptions copy() {
+                            return this;
+                        }
+
+                        @Override
+                        public SslContextFactory sslContextFactory() {
+                            return () -> new JdkSslContext(
+                                    ctx,
+                                    true,
+                                    null,
+                                    IdentityCipherSuiteFilter.INSTANCE,
+                                    ApplicationProtocolConfig.DISABLED,
+                                    ClientAuth.NONE,
+                                    null,
+                                    false
+                            );
+                        }
+                    });
+        }
 //        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
 //            requestConfig.setCookieSpec(httpCookieSpec);
 //        }
+
+        client = WebClient.create(vertx, webClientOptions);
     }
 
     private static String buildUrl(final Request request) {
@@ -218,7 +262,12 @@ public class HttpConnection implements Connection {
             // FIXME: make async API
             bufferResponse = httpRequest.sendBuffer(buffer).toCompletionStage().toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            } else {
+                throw new ArangoDBException(e);
+            }
         }
         Response response = buildResponse(bufferResponse);
         checkError(response);
