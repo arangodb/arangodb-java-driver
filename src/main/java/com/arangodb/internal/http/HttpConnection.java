@@ -87,7 +87,7 @@ public class HttpConnection implements Connection {
         this.timeout = timeout;
         baseUrl = buildBaseUrl(host, useSsl);
         auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
-        vertx = Vertx.vertx(new VertxOptions().setEventLoopPoolSize(1));
+        vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement()));
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
