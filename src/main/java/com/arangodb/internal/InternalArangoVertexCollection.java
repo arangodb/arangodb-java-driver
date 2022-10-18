@@ -44,7 +44,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     private final String name;
 
     protected InternalArangoVertexCollection(final G graph, final String name) {
-        super(graph.executor, graph.serde, graph.context);
+        super(graph.executor, graph.serde);
         this.graph = graph;
         this.name = name;
     }

@@ -28,7 +28,6 @@ import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.*;
-import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.ConnectionFactory;
@@ -543,7 +542,6 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
                     syncHostResolver,
                     asyncHostHandler,
                     syncHostHandler,
-                    new ArangoContext(),
                     responseQueueTimeSamples,
                     timeout);
         }

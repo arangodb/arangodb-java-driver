@@ -40,7 +40,7 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
     protected volatile String name;
 
     protected InternalArangoView(final D db, final String name) {
-        super(db.executor, db.serde, db.context);
+        super(db.executor, db.serde);
         this.db = db;
         this.name = name;
     }

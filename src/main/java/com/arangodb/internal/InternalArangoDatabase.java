@@ -64,7 +64,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     private final A arango;
 
     protected InternalArangoDatabase(final A arango, final DbName dbName) {
-        super(arango.executor, arango.serde, arango.context);
+        super(arango.executor, arango.serde);
         this.arango = arango;
         this.dbName = dbName;
     }

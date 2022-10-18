@@ -42,18 +42,15 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  * @author Heiko Kernbach
  */
 public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
-
-    private static final String PATH_API_ADMIN_LOG = "/_admin/log";
     private static final String PATH_API_ADMIN_LOG_ENTRIES = "/_admin/log/entries";
     private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
     private static final String PATH_API_ROLE = "/_admin/server/role";
     private static final String PATH_API_SERVER_ID = "/_admin/server/id";
-    private static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
     private static final String PATH_API_USER = "/_api/user";
     private static final String PATH_API_QUERY_RULES = "/_api/query/rules";
 
-    protected InternalArangoDB(final E executor, final InternalSerde util, final ArangoContext context) {
-        super(executor, util, context);
+    protected InternalArangoDB(final E executor, final InternalSerde util) {
+        super(executor, util);
     }
 
     protected Request getRoleRequest() {

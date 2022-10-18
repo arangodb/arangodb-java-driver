@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -619,7 +618,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                     protocol,
                     hostResolver,
                     hostHandler,
-                    new ArangoContext(),
                     responseQueueTimeSamples, timeout);
         }
 

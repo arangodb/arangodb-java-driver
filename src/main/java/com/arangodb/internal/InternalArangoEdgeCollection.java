@@ -44,7 +44,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     private final String name;
 
     protected InternalArangoEdgeCollection(final G graph, final String name) {
-        super(graph.executor, graph.serde, graph.context);
+        super(graph.executor, graph.serde);
         this.graph = graph;
         this.name = name;
     }

@@ -27,8 +27,6 @@ import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
-import java.util.Map.Entry;
-
 /**
  * @author Mark Vollmary
  */
@@ -38,13 +36,11 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
 
     protected final E executor;
     protected final InternalSerde serde;
-    protected final ArangoContext context;
 
-    protected ArangoExecuteable(final E executor, final InternalSerde serde, final ArangoContext context) {
+    protected ArangoExecuteable(final E executor, final InternalSerde serde) {
         super();
         this.executor = executor;
         this.serde = serde;
-        this.context = context;
     }
 
     protected static String createPath(final String... params) {
@@ -74,11 +70,7 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
     }
 
     protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
-        final Request request = new Request(dbName, requestType, createPath(path));
-        for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
-            request.putHeaderParam(header.getKey(), header.getValue());
-        }
-        return request;
+        return new Request(dbName, requestType, createPath(path));
     }
 
 }

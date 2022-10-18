@@ -48,7 +48,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     private final String name;
 
     protected InternalArangoGraph(final D db, final String name) {
-        super(db.executor, db.serde, db.context);
+        super(db.executor, db.serde);
         this.db = db;
         this.name = name;
     }
