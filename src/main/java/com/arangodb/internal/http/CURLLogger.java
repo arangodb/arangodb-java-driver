@@ -52,6 +52,7 @@ public final class CURLLogger {
             buffer.append("cat <<-___EOB___ | ");
         }
         buffer.append("curl -X ").append(requestType);
+        // FIXME: add --http2 in case protocol is HTTP/2
         buffer.append(" --dump -");
         if (request.getHeaderParam().size() > 0) {
             for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {

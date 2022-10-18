@@ -26,7 +26,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Mark Vollmary
@@ -89,22 +92,24 @@ public final class InternalCursorEntity implements MetaAware {
         return result;
     }
 
+    @Override
     public Map<String, String> getMeta() {
         if (meta == null) return Collections.emptyMap();
-        return meta;
+        return Collections.unmodifiableMap(meta);
     }
 
+    @Override
     public void setMeta(Map<String, String> meta) {
-        this.meta = cleanupMeta(meta);
+        this.meta = cleanupMeta(new HashMap<>(meta));
     }
 
     /**
      * @return remove not allowed (valid storable) meta information
      */
     public Map<String, String> cleanupMeta(Map<String, String> meta) {
-        meta.remove("Content-Length");
-        meta.remove("Transfer-Encoding");
-        meta.remove("X-Arango-Queue-Time-Seconds");
+        meta.remove("content-length");
+        meta.remove("transfer-encoding");
+        meta.remove("x-arango-queue-time-seconds");
         return meta;
     }
 

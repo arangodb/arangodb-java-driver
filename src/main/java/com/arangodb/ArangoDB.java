@@ -349,7 +349,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return Protocol.valueOf(
                     getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue,
                             ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
-                            .toUpperCase(Locale.ENGLISH));
+                            .toUpperCase(Locale.ROOT));
         }
 
         @Override

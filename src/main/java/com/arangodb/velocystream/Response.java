@@ -20,7 +20,9 @@
 
 package com.arangodb.velocystream;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ public class Response {
     private int version = 1;
     private int type = 2;
     private int responseCode;
-    private Map<String, String> meta;
+    private final Map<String, String> meta;
     private byte[] body = null;
 
     public Response() {
@@ -64,11 +66,25 @@ public class Response {
     }
 
     public Map<String, String> getMeta() {
-        return meta;
+        return Collections.unmodifiableMap(meta);
     }
 
-    public void setMeta(final Map<String, String> meta) {
-        this.meta = meta;
+    public String getMeta(final String key) {
+        return meta.get(key.toLowerCase(Locale.ROOT));
+    }
+
+    public boolean containsMeta(final String key) {
+        return meta.containsKey(key.toLowerCase(Locale.ROOT));
+    }
+
+    public void putMeta(final String key, final String value) {
+        this.meta.put(key.toLowerCase(Locale.ROOT), value);
+    }
+
+    public void putMetas(final Map<String, String> meta) {
+        for (Map.Entry<String, String> it : meta.entrySet()) {
+            putMeta(it.getKey(), it.getValue());
+        }
     }
 
     public byte[] getBody() {

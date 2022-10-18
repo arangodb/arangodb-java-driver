@@ -82,7 +82,7 @@ public final class InternalDeserializers {
             response.setType(it.next().intValue());
             response.setResponseCode(it.next().intValue());
             if (it.hasNext()) {
-                response.setMeta(readTreeAsValue(p, ctxt, it.next(), Map.class));
+                response.putMetas(readTreeAsValue(p, ctxt, it.next(), Map.class));
             }
             return response;
         }

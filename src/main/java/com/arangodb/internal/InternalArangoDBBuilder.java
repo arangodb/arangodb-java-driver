@@ -187,7 +187,7 @@ public abstract class InternalArangoDBBuilder {
             final Properties properties,
             final LoadBalancingStrategy currentValue) {
         return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ENGLISH));
+                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ROOT));
     }
 
     protected static <T> String getProperty(

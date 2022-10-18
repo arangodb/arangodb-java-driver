@@ -58,7 +58,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -276,9 +275,8 @@ public class HttpConnection implements Connection {
                 response.setBody(bytes);
             }
         }
-        final Map<String, String> meta = response.getMeta();
         for (Entry<String, String> header : httpResponse.headers()) {
-            meta.put(header.getKey(), header.getValue());
+            response.putMeta(header.getKey(), header.getValue());
         }
         return response;
     }
