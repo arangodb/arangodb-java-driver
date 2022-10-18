@@ -37,12 +37,11 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
     public HttpConnectionFactory(final Integer timeout, final String user, final String password, final Boolean useSsl,
                                  final SSLContext sslContext, final Boolean verifyHost,
-                                 final InternalSerde util, final Protocol protocol, final Long connectionTtl,
-                                 final String httpCookieSpec) {
+                                 final InternalSerde util, final Protocol protocol, final Long connectionTtl) {
         super();
         builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
                 .sslContext(sslContext).verifyHost(verifyHost).serializationUtil(util).contentType(protocol)
-                .ttl(connectionTtl).httpCookieSpec(httpCookieSpec);
+                .ttl(connectionTtl);
 
     }
 

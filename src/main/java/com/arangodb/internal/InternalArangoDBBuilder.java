@@ -50,7 +50,6 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
     private static final String PROPERTY_KEY_JWT = "arangodb.jwt";
     private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-    private static final String PROPERTY_KEY_COOKIE_SPEC = "arangodb.httpCookieSpec";
     private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
     private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
     private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
@@ -68,7 +67,6 @@ public abstract class InternalArangoDBBuilder {
     protected String password;
     protected String jwt;
     protected Boolean useSsl;
-    protected String httpCookieSpec;
     protected SSLContext sslContext;
     protected Boolean verifyHost;
     protected Integer chunksize;
@@ -146,10 +144,6 @@ public abstract class InternalArangoDBBuilder {
     private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
         return Boolean.parseBoolean(
                 getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
-    }
-
-    private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
     }
 
     private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
@@ -242,7 +236,6 @@ public abstract class InternalArangoDBBuilder {
         password = loadPassword(properties, password);
         jwt = loadJwt(properties, jwt);
         useSsl = loadUseSsl(properties, useSsl);
-        httpCookieSpec = loadhttpCookieSpec(properties, httpCookieSpec);
         chunksize = loadChunkSize(properties, chunksize);
         maxConnections = loadMaxConnections(properties, maxConnections);
         connectionTtl = loadConnectionTtl(properties, connectionTtl);

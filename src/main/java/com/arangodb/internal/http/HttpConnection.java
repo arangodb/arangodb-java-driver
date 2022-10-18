@@ -83,8 +83,7 @@ public class HttpConnection implements Connection {
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final Boolean verifyHost,
-                           final InternalSerde util, final Protocol contentType, final Long ttl,
-                           final String httpCookieSpec) {
+                           final InternalSerde util, final Protocol contentType, final Long ttl) {
         super();
         this.util = util;
         this.contentType = contentType;
@@ -155,9 +154,6 @@ public class HttpConnection implements Connection {
                         }
                     });
         }
-//        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
-//            requestConfig.setCookieSpec(httpCookieSpec);
-//        }
 
         client = WebClient.create(vertx, webClientOptions);
     }
@@ -303,7 +299,6 @@ public class HttpConnection implements Connection {
         private String password;
         private InternalSerde util;
         private Boolean useSsl;
-        private String httpCookieSpec;
         private Protocol contentType;
         private HostDescription host;
         private Long ttl;
@@ -328,11 +323,6 @@ public class HttpConnection implements Connection {
 
         public Builder useSsl(final Boolean useSsl) {
             this.useSsl = useSsl;
-            return this;
-        }
-
-        public Builder httpCookieSpec(String httpCookieSpec) {
-            this.httpCookieSpec = httpCookieSpec;
             return this;
         }
 
@@ -368,7 +358,7 @@ public class HttpConnection implements Connection {
 
         public HttpConnection build() {
             return new HttpConnection(host, timeout, user, password, useSsl, sslContext, verifyHost, util,
-                    contentType, ttl, httpCookieSpec);
+                    contentType, ttl);
         }
     }
 
