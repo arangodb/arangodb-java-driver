@@ -23,7 +23,6 @@ package com.arangodb.example.ssl;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 

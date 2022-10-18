@@ -48,24 +48,22 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.http.HttpHeaders.AUTHORIZATION;
 
 /**
  * @author Mark Vollmary
@@ -172,25 +170,26 @@ public class HttpConnection implements Connection {
         }
         sb.append(request.getRequest());
         if (!request.getQueryParam().isEmpty()) {
-            if (request.getRequest().contains("?")) {
-                sb.append("&");
-            } else {
-                sb.append("?");
+            sb.append("?");
+
+            try {
+                for (Iterator<Entry<String, String>> iterator = request.getQueryParam().entrySet().iterator(); iterator.hasNext(); ) {
+                    Entry<String, String> param = iterator.next();
+                    if (param.getValue() != null) {
+                        sb.append(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8.toString()));
+                        sb.append("=");
+                        sb.append(URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8.toString()));
+                        if (iterator.hasNext()) {
+                            sb.append("&");
+                        }
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
             }
-            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
-            sb.append(paramString);
+
         }
         return sb.toString();
-    }
-
-    private static List<NameValuePair> toList(final Map<String, String> parameters) {
-        final ArrayList<NameValuePair> paramList = new ArrayList<>(parameters.size());
-        for (final Entry<String, String> param : parameters.entrySet()) {
-            if (param.getValue() != null) {
-                paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
-            }
-        }
-        return paramList;
     }
 
     private static void addHeader(final Request request, final HttpRequest<?> httpRequest) {
@@ -236,7 +235,7 @@ public class HttpConnection implements Connection {
             httpRequest.putHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
-        httpRequest.putHeader(AUTHORIZATION, auth);
+        httpRequest.putHeader(HttpHeaders.AUTHORIZATION.toString(), auth);
 
         if (LOGGER.isDebugEnabled()) {
             CURLLogger.log(baseUrl, path, request, util);
