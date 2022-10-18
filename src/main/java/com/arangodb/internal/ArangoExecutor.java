@@ -48,14 +48,14 @@ public abstract class ArangoExecutor {
     }
 
     protected final void interceptResponse(Response response) {
-        String queueTime = response.getMeta().get("X-Arango-Queue-Time-Seconds");
+        String queueTime = response.getMeta("X-Arango-Queue-Time-Seconds");
         if (queueTime != null) {
             qtMetrics.add(Double.parseDouble(queueTime));
         }
     }
 
     protected final Request interceptRequest(Request request) {
-        request.putHeaderParam("X-Arango-Queue-Time-Seconds", timeoutS);
+        request.putHeaderParam("x-arango-queue-time-seconds", timeoutS);
         return request;
     }
 

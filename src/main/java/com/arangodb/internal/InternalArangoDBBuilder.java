@@ -26,11 +26,9 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.serde.ArangoSerde;
-import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +50,6 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
     private static final String PROPERTY_KEY_JWT = "arangodb.jwt";
     private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-    private static final String PROPERTY_KEY_COOKIE_SPEC = "arangodb.httpCookieSpec";
     private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
     private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
     private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
@@ -70,10 +67,8 @@ public abstract class InternalArangoDBBuilder {
     protected String password;
     protected String jwt;
     protected Boolean useSsl;
-    protected String httpCookieSpec;
-    protected HttpRequestRetryHandler httpRequestRetryHandler;
     protected SSLContext sslContext;
-    protected HostnameVerifier hostnameVerifier;
+    protected Boolean verifyHost;
     protected Integer chunksize;
     protected Integer maxConnections;
     protected Long connectionTtl;
@@ -151,10 +146,6 @@ public abstract class InternalArangoDBBuilder {
                 getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
     }
 
-    private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
-    }
-
     private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
         return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
                 ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
@@ -196,7 +187,7 @@ public abstract class InternalArangoDBBuilder {
             final Properties properties,
             final LoadBalancingStrategy currentValue) {
         return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ENGLISH));
+                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ROOT));
     }
 
     protected static <T> String getProperty(
@@ -245,7 +236,6 @@ public abstract class InternalArangoDBBuilder {
         password = loadPassword(properties, password);
         jwt = loadJwt(properties, jwt);
         useSsl = loadUseSsl(properties, useSsl);
-        httpCookieSpec = loadhttpCookieSpec(properties, httpCookieSpec);
         chunksize = loadChunkSize(properties, chunksize);
         maxConnections = loadMaxConnections(properties, maxConnections);
         connectionTtl = loadConnectionTtl(properties, connectionTtl);
@@ -284,12 +274,8 @@ public abstract class InternalArangoDBBuilder {
         this.sslContext = sslContext;
     }
 
-    protected void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
-        this.hostnameVerifier = hostnameVerifier;
-    }
-
-    protected void setHttpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
-        this.httpRequestRetryHandler = httpRequestRetryHandler;
+    protected void setVerifyHost(final Boolean verifyHost) {
+        this.verifyHost = verifyHost;
     }
 
     protected void setChunksize(final Integer chunksize) {

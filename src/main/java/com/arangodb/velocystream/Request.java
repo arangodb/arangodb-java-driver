@@ -22,7 +22,9 @@ package com.arangodb.velocystream;
 
 import com.arangodb.DbName;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -91,12 +93,29 @@ public class Request {
     }
 
     public Map<String, String> getHeaderParam() {
-        return headerParam;
+        return Collections.unmodifiableMap(headerParam);
+    }
+
+    public String getHeaderParam(final String key) {
+        return headerParam.get(key.toLowerCase(Locale.ROOT));
+    }
+
+    public boolean containsHeaderParam(final String key) {
+        return headerParam.containsKey(key.toLowerCase(Locale.ROOT));
     }
 
     public Request putHeaderParam(final String key, final String value) {
         if (value != null) {
-            headerParam.put(key, value);
+            headerParam.put(key.toLowerCase(Locale.ROOT), value);
+        }
+        return this;
+    }
+
+    public Request putHeaderParams(final Map<String, String> params) {
+        if (params != null) {
+            for (Map.Entry<String, String> it : params.entrySet()) {
+                putHeaderParam(it.getKey(), it.getValue());
+            }
         }
         return this;
     }

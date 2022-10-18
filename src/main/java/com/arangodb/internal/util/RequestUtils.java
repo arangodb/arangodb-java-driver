@@ -29,7 +29,7 @@ import com.arangodb.velocystream.RequestType;
  */
 public final class RequestUtils {
 
-    public static final String HEADER_ALLOW_DIRTY_READ = "X-Arango-Allow-Dirty-Read";
+    public static final String HEADER_ALLOW_DIRTY_READ = "x-arango-allow-dirty-read";
 
     private RequestUtils() {
         super();
@@ -40,7 +40,7 @@ public final class RequestUtils {
     }
 
     public static AccessType determineAccessType(final Request request) {
-        if (request.getHeaderParam().containsKey(HEADER_ALLOW_DIRTY_READ)) {
+        if (request.containsHeaderParam(HEADER_ALLOW_DIRTY_READ)) {
             return AccessType.DIRTY_READ;
         }
         if (request.getRequestType() == RequestType.GET) {

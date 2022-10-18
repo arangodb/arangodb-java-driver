@@ -23,7 +23,6 @@ package com.arangodb.internal.http;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import org.apache.http.auth.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +39,9 @@ public final class CURLLogger {
     }
 
     public static void log(
-            final String url,
+            final String baseUrl,
+            final String path,
             final Request request,
-            final Credentials credentials,
-            final String jwt,
             final InternalSerde util) {
         final RequestType requestType = request.getRequestType();
         final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
@@ -54,23 +52,17 @@ public final class CURLLogger {
             buffer.append("cat <<-___EOB___ | ");
         }
         buffer.append("curl -X ").append(requestType);
+        // FIXME: add --http2 in case protocol is HTTP/2
         buffer.append(" --dump -");
         if (request.getHeaderParam().size() > 0) {
             for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
                 buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
             }
         }
-        if (credentials != null) {
-            buffer.append(" -u ").append(credentials.getUserPrincipal().getName()).append(":")
-                    .append(credentials.getPassword());
-        }
-        if (jwt != null) {
-            buffer.append(" -H ").append("'Authorization: Bearer ").append(jwt).append("'");
-        }
         if (includeBody) {
             buffer.append(" -d @-");
         }
-        buffer.append(" '").append(url).append("'");
+        buffer.append(" '").append(baseUrl).append(path).append("'");
         if (includeBody) {
             buffer.append("\n");
             buffer.append(util.toJsonString(request.getBody()));

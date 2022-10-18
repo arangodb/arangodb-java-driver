@@ -40,10 +40,8 @@ import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
-import org.apache.http.client.HttpRequestRetryHandler;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.util.Collection;
@@ -351,7 +349,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return Protocol.valueOf(
                     getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue,
                             ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
-                            .toUpperCase(Locale.ENGLISH));
+                            .toUpperCase(Locale.ROOT));
         }
 
         @Override
@@ -450,30 +448,13 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the {@link javax.net.ssl.HostnameVerifier} to be used when using ssl with http protocol.
+         * Set whether hostname verification is enabled
          *
-         * @param hostnameVerifier HostnameVerifier to be used
+         * @param verifyHost {@code true} if enabled
          * @return {@link ArangoDB.Builder}
          */
-        public Builder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
-            setHostnameVerifier(hostnameVerifier);
-            return this;
-        }
-
-        /**
-         * Sets the {@link HttpRequestRetryHandler} to be used when using http protocol.
-         *
-         * @param httpRequestRetryHandler HttpRequestRetryHandler to be used
-         * @return {@link ArangoDB.Builder}
-         * <p>
-         * <br /><br />
-         * NOTE:
-         * Some ArangoDB HTTP endpoints do not honor RFC-2616 HTTP 1.1 specification in respect to
-         * <a href="https://tools.ietf.org/html/rfc2616#section-9.1">9.1 Safe and Idempotent Methods</a>.
-         * Please refer to <a href="https://www.arangodb.com/docs/stable/http/">HTTP API Documentation</a> for details.
-         */
-        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
-            setHttpRequestRetryHandler(httpRequestRetryHandler);
+        public Builder verifyHost(final Boolean verifyHost) {
+            setVerifyHost(verifyHost);
             return this;
         }
 
@@ -621,8 +602,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
                     ? new VstConnectionFactorySync(host, timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
-                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, serde,
-                    protocol, connectionTtl, httpCookieSpec, httpRequestRetryHandler);
+                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
+                    protocol, connectionTtl);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
