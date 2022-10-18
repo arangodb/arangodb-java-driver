@@ -76,7 +76,7 @@ class SslExampleTest {
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
-                .hostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                .verifyHost(false)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();

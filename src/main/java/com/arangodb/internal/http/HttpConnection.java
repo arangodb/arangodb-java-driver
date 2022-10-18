@@ -50,13 +50,10 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -75,8 +72,8 @@ import static org.apache.http.HttpHeaders.AUTHORIZATION;
  */
 public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
-    private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
-    private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
+    private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
+    private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
     private final String baseUrl;
@@ -87,7 +84,7 @@ public class HttpConnection implements Connection {
     private final Vertx vertx;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier,
+                           final Boolean useSsl, final SSLContext sslContext, final Boolean verifyHost,
                            final InternalSerde util, final Protocol contentType, final Long ttl,
                            final String httpCookieSpec) {
         super();
@@ -123,8 +120,6 @@ public class HttpConnection implements Connection {
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort());
 
-        // FIXME: replace hostnameVerifier option with verifyHost: bool
-        webClientOptions.setVerifyHost(hostnameVerifier != null && !(hostnameVerifier instanceof NoopHostnameVerifier));
 
         if (Boolean.TRUE.equals(useSsl)) {
             SSLContext ctx;
@@ -138,7 +133,9 @@ public class HttpConnection implements Connection {
                 }
             }
 
-            webClientOptions.setSsl(true)
+            webClientOptions
+                    .setSsl(true)
+                    .setVerifyHost(verifyHost != null ? verifyHost : true)
                     .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
                         public JdkSSLEngineOptions copy() {
@@ -250,9 +247,9 @@ public class HttpConnection implements Connection {
         if (reqBody != null) {
             buffer = Buffer.buffer(reqBody);
             if (contentType == Protocol.HTTP_VPACK) {
-                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK.toString());
+                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK);
             } else {
-                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8.toString());
+                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
             }
         } else {
             buffer = Buffer.buffer();
@@ -312,7 +309,7 @@ public class HttpConnection implements Connection {
         private HostDescription host;
         private Long ttl;
         private SSLContext sslContext;
-        private HostnameVerifier hostnameVerifier;
+        private Boolean verifyHost;
         private Integer timeout;
 
         public Builder user(final String user) {
@@ -360,8 +357,8 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
-            this.hostnameVerifier = hostnameVerifier;
+        public Builder verifyHost(final Boolean verifyHost) {
+            this.verifyHost = verifyHost;
             return this;
         }
 
@@ -371,7 +368,7 @@ public class HttpConnection implements Connection {
         }
 
         public HttpConnection build() {
-            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util,
+            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, verifyHost, util,
                     contentType, ttl, httpCookieSpec);
         }
     }

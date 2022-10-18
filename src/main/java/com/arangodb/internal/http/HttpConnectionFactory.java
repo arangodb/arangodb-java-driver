@@ -25,9 +25,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.serde.InternalSerde;
-import org.apache.http.client.HttpRequestRetryHandler;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
 /**
@@ -38,13 +36,13 @@ public class HttpConnectionFactory implements ConnectionFactory {
     private final HttpConnection.Builder builder;
 
     public HttpConnectionFactory(final Integer timeout, final String user, final String password, final Boolean useSsl,
-                                 final SSLContext sslContext, final HostnameVerifier hostnameVerifier,
+                                 final SSLContext sslContext, final Boolean verifyHost,
                                  final InternalSerde util, final Protocol protocol, final Long connectionTtl,
-                                 final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
+                                 final String httpCookieSpec) {
         super();
         builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
-                .sslContext(sslContext).hostnameVerifier(hostnameVerifier).serializationUtil(util).contentType(protocol)
-                .ttl(connectionTtl).httpCookieSpec(httpCookieSpec); //.httpRequestRetryHandler(httpRequestRetryHandler);
+                .sslContext(sslContext).verifyHost(verifyHost).serializationUtil(util).contentType(protocol)
+                .ttl(connectionTtl).httpCookieSpec(httpCookieSpec);
 
     }
 

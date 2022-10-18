@@ -26,11 +26,9 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.serde.ArangoSerde;
-import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,9 +69,8 @@ public abstract class InternalArangoDBBuilder {
     protected String jwt;
     protected Boolean useSsl;
     protected String httpCookieSpec;
-    protected HttpRequestRetryHandler httpRequestRetryHandler;
     protected SSLContext sslContext;
-    protected HostnameVerifier hostnameVerifier;
+    protected Boolean verifyHost;
     protected Integer chunksize;
     protected Integer maxConnections;
     protected Long connectionTtl;
@@ -284,12 +281,8 @@ public abstract class InternalArangoDBBuilder {
         this.sslContext = sslContext;
     }
 
-    protected void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
-        this.hostnameVerifier = hostnameVerifier;
-    }
-
-    protected void setHttpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
-        this.httpRequestRetryHandler = httpRequestRetryHandler;
+    protected void setVerifyHost(final Boolean verifyHost) {
+        this.verifyHost = verifyHost;
     }
 
     protected void setChunksize(final Integer chunksize) {
