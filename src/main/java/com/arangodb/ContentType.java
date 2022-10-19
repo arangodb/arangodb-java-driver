@@ -17,20 +17,20 @@
  *
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
-package com.arangodb.serde;
+package com.arangodb;
 
-import com.arangodb.Protocol;
-
-public enum DataType {
+public enum ContentType {
     JSON, VPACK;
 
-    public static DataType of(Protocol protocol) {
+    public static ContentType of(Protocol protocol) {
         switch (protocol) {
             case HTTP_JSON:
-                return DataType.JSON;
-            case HTTP_VPACK:
+            case HTTP2_JSON:
+                return ContentType.JSON;
             case VST:
-                return DataType.VPACK;
+            case HTTP_VPACK:
+            case HTTP2_VPACK:
+                return ContentType.VPACK;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + protocol);
         }

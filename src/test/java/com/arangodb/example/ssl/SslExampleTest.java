@@ -21,17 +21,21 @@
 package com.arangodb.example.ssl;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.security.KeyStore;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -52,35 +56,55 @@ class SslExampleTest {
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
-    @Test
-    void connect() throws Exception {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connect(Protocol protocol) throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
-                .useProtocol(Protocol.HTTP_JSON)
+                .useProtocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
         System.out.println(version.getVersion());
     }
 
-    @Test
-    void noopHostnameVerifier() throws Exception {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void noopHostnameVerifier(Protocol protocol) throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-
                 .host("127.0.0.1", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
                 .verifyHost(false)
-                .useProtocol(Protocol.HTTP_JSON)
+                .useProtocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
         System.out.println(version.getVersion());
+    }
+
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void hostnameVerifierFailure(Protocol protocol) throws Exception {
+        assumeTrue(protocol != Protocol.VST, "VST does not support hostname verification");
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .host("127.0.0.1", 8529)
+                .password("test")
+                .useSsl(true)
+                .sslContext(createSslContext())
+                .verifyHost(true)
+                .useProtocol(protocol)
+                .build();
+        Throwable thrown = catchThrowable(arangoDB::getVersion);
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException ex = (ArangoDBException) thrown;
+        assertThat(ex.getCause()).isInstanceOf(ArangoDBMultipleException.class);
+        List<Throwable> exceptions = ((ArangoDBMultipleException) ex.getCause()).getExceptions();
+        exceptions.forEach(e -> assertThat(e).isInstanceOf(SSLHandshakeException.class));
     }
 
     private SSLContext createSslContext() throws Exception {

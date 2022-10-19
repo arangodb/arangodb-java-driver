@@ -40,7 +40,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
                                  final InternalSerde util, final Protocol protocol, final Long connectionTtl) {
         super();
         builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
-                .sslContext(sslContext).verifyHost(verifyHost).serializationUtil(util).contentType(protocol)
+                .sslContext(sslContext).verifyHost(verifyHost).serializationUtil(util).protocol(protocol)
                 .ttl(connectionTtl);
 
     }

@@ -27,6 +27,7 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.ResponseUtils;
+import com.arangodb.ContentType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -74,7 +75,7 @@ public class HttpConnection implements Connection {
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
     private final String baseUrl;
-    private final Protocol contentType;
+    private final ContentType contentType;
     private volatile String auth;
     private final WebClient client;
     private final Integer timeout;
@@ -82,10 +83,10 @@ public class HttpConnection implements Connection {
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final Boolean verifyHost,
-                           final InternalSerde util, final Protocol contentType, final Long ttl) {
+                           final InternalSerde util, final Protocol protocol, final Long ttl) {
         super();
         this.util = util;
-        this.contentType = contentType;
+        this.contentType = ContentType.of(protocol);
         this.timeout = timeout;
         baseUrl = buildBaseUrl(host, useSsl);
         auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
@@ -93,6 +94,9 @@ public class HttpConnection implements Connection {
         vertx.runOnContext(e -> Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement()));
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
+
+        HttpVersion httpVersion = protocol == Protocol.HTTP_JSON || protocol == Protocol.HTTP_VPACK ?
+                HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
 
         WebClientOptions webClientOptions = new WebClientOptions()
                 .setConnectTimeout(timeout)
@@ -109,10 +113,7 @@ public class HttpConnection implements Connection {
                 .setReuseAddress(true)
                 .setReusePort(true)
                 .setHttp2ClearTextUpgrade(false)
-                //TODO: allow configuring HTTP_2 or HTTP_1_1
-//                .setProtocolVersion(HttpVersion.HTTP_1_1)
-                .setProtocolVersion(HttpVersion.HTTP_2)
-                .setUseAlpn(true)
+                .setProtocolVersion(httpVersion)
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort());
 
@@ -131,6 +132,7 @@ public class HttpConnection implements Connection {
 
             webClientOptions
                     .setSsl(true)
+                    .setUseAlpn(true)
                     .setVerifyHost(verifyHost != null ? verifyHost : true)
                     .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
@@ -226,7 +228,7 @@ public class HttpConnection implements Connection {
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
                 .timeout(timeout);
-        if (contentType == Protocol.HTTP_VPACK) {
+        if (contentType == ContentType.VPACK) {
             httpRequest.putHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
@@ -240,7 +242,7 @@ public class HttpConnection implements Connection {
         Buffer buffer;
         if (reqBody != null) {
             buffer = Buffer.buffer(reqBody);
-            if (contentType == Protocol.HTTP_VPACK) {
+            if (contentType == ContentType.VPACK) {
                 httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK);
             } else {
                 httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
@@ -297,7 +299,7 @@ public class HttpConnection implements Connection {
         private String password;
         private InternalSerde util;
         private Boolean useSsl;
-        private Protocol contentType;
+        private Protocol protocol;
         private HostDescription host;
         private Long ttl;
         private SSLContext sslContext;
@@ -324,8 +326,8 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder contentType(final Protocol contentType) {
-            this.contentType = contentType;
+        public Builder protocol(final Protocol protocol) {
+            this.protocol = protocol;
             return this;
         }
 
@@ -356,7 +358,7 @@ public class HttpConnection implements Connection {
 
         public HttpConnection build() {
             return new HttpConnection(host, timeout, user, password, useSsl, sslContext, verifyHost, util,
-                    contentType, ttl);
+                    protocol, ttl);
         }
     }
 

@@ -21,8 +21,9 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -54,8 +55,9 @@ class ArangoSslTest {
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
-    @Test
-    void connect() throws Exception {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connect(Protocol protocol) throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -69,15 +71,18 @@ class ArangoSslTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
+                .useProtocol(protocol)
                 .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
 
-    @Test
-    void connectWithoutValidSslContext() {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connectWithoutValidSslContext(Protocol protocol) {
         final ArangoDB arangoDB = new ArangoDB.Builder()
+                .useProtocol(protocol)
                 .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);

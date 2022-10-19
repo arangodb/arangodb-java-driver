@@ -60,7 +60,7 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(DataType.VPACK);
+        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK);
         serde.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);

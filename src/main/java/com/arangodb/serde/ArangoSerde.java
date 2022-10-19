@@ -1,5 +1,7 @@
 package com.arangodb.serde;
 
+import com.arangodb.ContentType;
+
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
@@ -20,7 +22,7 @@ import java.util.function.Consumer;
 public interface ArangoSerde {
 
     /**
-     * Serializes the object into the target data type. For data type {@link DataType#JSON}, the serialized JSON string
+     * Serializes the object into the target data type. For data type {@link ContentType#JSON}, the serialized JSON string
      * must be encoded into a byte array using the UTF-8 charset.
      *
      * @param value object to serialize
@@ -30,7 +32,7 @@ public interface ArangoSerde {
 
     /**
      * Deserializes the content and binds it to the target data type.
-     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
      * @param content byte array to deserialize
      * @param clazz   class of target data type
@@ -42,7 +44,7 @@ public interface ArangoSerde {
 
     /**
      * Deserializes the content and binds it to the target data type.
-     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
      * @param content byte array to deserialize
      * @param type    target data type

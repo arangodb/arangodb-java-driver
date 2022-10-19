@@ -1,5 +1,6 @@
 package com.arangodb.serde;
 
+import com.arangodb.ContentType;
 import com.arangodb.internal.serde.JacksonSerdeImpl;
 import com.arangodb.internal.serde.MapperProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,11 +15,11 @@ public interface JacksonSerde extends ArangoSerde {
     /**
      * Creates a new JacksonSerde with default settings for the specified data type.
      *
-     * @param dataType serialization target data type
+     * @param contentType serialization target data type
      * @return the created JacksonSerde
      */
-    static JacksonSerde of(final DataType dataType) {
-        return create(MapperProvider.of(dataType));
+    static JacksonSerde of(final ContentType contentType) {
+        return create(MapperProvider.of(contentType));
     }
 
     /**

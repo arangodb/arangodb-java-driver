@@ -50,6 +50,7 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
     private static final String PROPERTY_KEY_JWT = "arangodb.jwt";
     private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
+    private static final String PROPERTY_KEY_VERIFY_HOST = "arangodb.verifyHost";
     private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
     private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
     private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
@@ -146,6 +147,11 @@ public abstract class InternalArangoDBBuilder {
                 getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
     }
 
+    private static Boolean loadVerifyHost(final Properties properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_VERIFY_HOST, currentValue,
+                ArangoDefaults.DEFAULT_VERIFY_HOST));
+    }
+
     private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
         return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
                 ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
@@ -236,6 +242,7 @@ public abstract class InternalArangoDBBuilder {
         password = loadPassword(properties, password);
         jwt = loadJwt(properties, jwt);
         useSsl = loadUseSsl(properties, useSsl);
+        verifyHost = loadVerifyHost(properties, verifyHost);
         chunksize = loadChunkSize(properties, chunksize);
         maxConnections = loadMaxConnections(properties, maxConnections);
         connectionTtl = loadConnectionTtl(properties, connectionTtl);

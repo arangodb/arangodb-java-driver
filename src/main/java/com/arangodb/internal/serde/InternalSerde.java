@@ -1,7 +1,7 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.DataType;
+import com.arangodb.ContentType;
 import com.arangodb.serde.JacksonSerde;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -13,11 +13,11 @@ public interface InternalSerde extends JacksonSerde {
     /**
      * Creates a new InternalSerde with default settings for the specified data type.
      *
-     * @param dataType serialization target data type
+     * @param contentType serialization target data type
      * @return the created InternalSerde
      */
-    static InternalSerde of(final DataType dataType, ArangoSerde userSerde) {
-        return new InternalSerdeImpl(MapperProvider.of(dataType), userSerde);
+    static InternalSerde of(final ContentType contentType, ArangoSerde userSerde) {
+        return new InternalSerdeImpl(MapperProvider.of(contentType), userSerde);
     }
 
     /**
@@ -77,7 +77,7 @@ public interface InternalSerde extends JacksonSerde {
 
     /**
      * Deserializes the content at json pointer and binds it to the target data type.
-     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
      * @param content     byte array to deserialize
      * @param jsonPointer location of data to be deserialized
@@ -90,7 +90,7 @@ public interface InternalSerde extends JacksonSerde {
 
     /**
      * Deserializes the content at json pointer and binds it to the target data type.
-     * For data type {@link DataType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
      * @param content     byte array to deserialize
      * @param jsonPointer location of data to be deserialized

@@ -35,7 +35,6 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.DataType;
 import com.arangodb.serde.JacksonSerde;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -591,8 +590,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                 hosts.add(host);
             }
             final ArangoSerde userSerde = customSerializer != null ? customSerializer :
-                    JacksonSerde.of(DataType.of(protocol));
-            final InternalSerde serde = InternalSerde.of(DataType.of(protocol), userSerde);
+                    JacksonSerde.of(ContentType.of(protocol));
+            final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);
 
             int protocolMaxConnections = protocol == Protocol.VST ?
                     ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :

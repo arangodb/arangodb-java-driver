@@ -1,5 +1,6 @@
 package com.arangodb.serde;
 
+import com.arangodb.ContentType;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
@@ -18,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SerdeTest {
 
     @ParameterizedTest
-    @EnumSource(DataType.class)
-    void rawJsonSerde(DataType type) {
+    @EnumSource(ContentType.class)
+    void rawJsonSerde(ContentType type) {
         InternalSerde s = InternalSerde.of(type, null);
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
@@ -29,8 +30,8 @@ class SerdeTest {
     }
 
     @ParameterizedTest
-    @EnumSource(DataType.class)
-    void rawBytesSerde(DataType type) {
+    @EnumSource(ContentType.class)
+    void rawBytesSerde(ContentType type) {
         InternalSerde s = InternalSerde.of(type, null);
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
@@ -40,8 +41,8 @@ class SerdeTest {
     }
 
     @ParameterizedTest
-    @EnumSource(DataType.class)
-    void utilDateSerde(DataType type) {
+    @EnumSource(ContentType.class)
+    void utilDateSerde(ContentType type) {
         InternalSerde s = InternalSerde.of(type, null);
         long ts = 1000000000000L;
         java.util.Date date = new java.util.Date(ts);
@@ -54,8 +55,8 @@ class SerdeTest {
     }
 
     @ParameterizedTest
-    @EnumSource(DataType.class)
-    void sqlDateSerde(DataType type) {
+    @EnumSource(ContentType.class)
+    void sqlDateSerde(ContentType type) {
         InternalSerde s = InternalSerde.of(type, null);
         long ts = 1000000000000L;
         java.sql.Date date = new Date(ts);
