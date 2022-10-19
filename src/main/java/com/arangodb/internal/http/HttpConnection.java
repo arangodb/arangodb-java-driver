@@ -254,12 +254,14 @@ public class HttpConnection implements Connection {
         try {
             // FIXME: make async API
             bufferResponse = httpRequest.sendBuffer(buffer).toCompletionStage().toCompletableFuture().get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            throw new ArangoDBException(e);
+        } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof IOException) {
                 throw (IOException) cause;
             } else {
-                throw new ArangoDBException(e);
+                throw new ArangoDBException(e.getCause());
             }
         }
         Response response = buildResponse(bufferResponse);
