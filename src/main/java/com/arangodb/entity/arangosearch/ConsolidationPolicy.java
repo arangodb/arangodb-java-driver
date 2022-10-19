@@ -49,13 +49,7 @@ public final class ConsolidationPolicy {
     }
 
     /**
-     * @param threshold Select a given segment for "consolidation" if and only if the formula based on type (as defined
-     *                  above) evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
-     * @param threshold Defines threshold value of [0.0, 1.0] possible range. Consolidation is performed on segments
-     *                  which accumulated size in bytes is less than all segments’ byte size multiplied by the
-     *                  threshold; i.e. the following formula is applied for each segment: {threshold} > (segment_bytes
-     *                  + sum_of_merge_candidate_segment_bytes) / all_segment_bytes. (default: 0.1)
-     * @return policy
+     * @param threshold value in the range [0.0, 1.0]
      * @return this
      */
     public ConsolidationPolicy threshold(final Double threshold) {

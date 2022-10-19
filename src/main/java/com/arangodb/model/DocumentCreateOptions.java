@@ -130,7 +130,7 @@ public final class DocumentCreateOptions {
     }
 
     /**
-     * Only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
+     * Only considered if {@link DocumentCreateOptions#overwriteMode(OverwriteMode)} is set to {@link OverwriteMode#update}
      *
      * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and
      *                     the patch
