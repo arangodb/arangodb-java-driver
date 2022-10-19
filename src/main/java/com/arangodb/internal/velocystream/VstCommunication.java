@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * @author Mark Vollmary
  */
-public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
+public abstract class VstCommunication<R, C extends VstConnection<?>> implements Closeable {
 
     protected static final String ENCRYPTION_PLAIN = "plain";
     protected static final String ENCRYPTION_JWT = "jwt";

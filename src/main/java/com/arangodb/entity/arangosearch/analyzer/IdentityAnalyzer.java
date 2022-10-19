@@ -40,9 +40,4 @@ public final class IdentityAnalyzer extends SearchAnalyzer {
         if (o == null || getClass() != o.getClass()) return false;
         return super.equals(o);
     }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

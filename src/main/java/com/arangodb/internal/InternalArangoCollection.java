@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
@@ -510,9 +509,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
         return response -> {
             Collection<IndexEntity> indexes = new ArrayList<>();
-            final Iterator<JsonNode> it = getSerde().parse(response.getBody(), "/indexes").iterator();
-            while (it.hasNext()) {
-                JsonNode idx = it.next();
+            for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if (!"inverted".equals(idx.get("type").textValue())) {
                     indexes.add(getSerde().deserialize(idx, IndexEntity.class));
                 }
@@ -524,9 +521,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
         return response -> {
             Collection<InvertedIndexEntity> indexes = new ArrayList<>();
-            final Iterator<JsonNode> it = getSerde().parse(response.getBody(), "/indexes").iterator();
-            while (it.hasNext()) {
-                JsonNode idx = it.next();
+            for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if ("inverted".equals(idx.get("type").textValue())) {
                     indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class));
                 }

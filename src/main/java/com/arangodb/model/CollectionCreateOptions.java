@@ -41,7 +41,7 @@ public final class CollectionCreateOptions {
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
-    private List<ComputedValue> computedValues = new ArrayList<>();
+    private final List<ComputedValue> computedValues = new ArrayList<>();
     private Collection<String> shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;

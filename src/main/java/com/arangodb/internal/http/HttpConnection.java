@@ -196,7 +196,7 @@ public class HttpConnection implements Connection {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         client.close();
         vertx.close();
     }

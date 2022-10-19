@@ -75,7 +75,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
         }
 
         if (connection instanceof VstConnectionSync) {
-            LOGGER.debug("Return Connection " + ((VstConnection) connection).getConnectionName());
+            LOGGER.debug("Return Connection " + ((VstConnection<?>) connection).getConnectionName());
         }
 
         return connection;
