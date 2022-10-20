@@ -34,7 +34,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -76,13 +75,12 @@ public class HttpCommunication implements Closeable {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         final HttpConnection connection = (HttpConnection) host.connection();
-        connection.execute(request).whenComplete(((resp, err) -> {
+        connection.execute(request).whenComplete(((resp, e) -> {
             if (resp != null) {
                 hostHandler.success();
                 hostHandler.confirm();
                 rfuture.complete(resp);
-            } else if (err != null) {
-                Throwable e = err instanceof CompletionException ? err.getCause() : err;
+            } else if (e != null) {
                 if (e instanceof SocketTimeoutException) {
                     // SocketTimeoutException exceptions are wrapped and rethrown.
                     // Differently from other IOException exceptions they must not be retried,
