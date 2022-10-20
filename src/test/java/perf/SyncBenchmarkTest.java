@@ -17,6 +17,10 @@ public class SyncBenchmarkTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersion(Protocol protocol) {
+        System.out.println("-----------------------------------------");
+        System.out.println("--- getVersion(): " + protocol);
+        System.out.println("-----------------------------------------");
+
         ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             @Override
@@ -37,6 +41,10 @@ public class SyncBenchmarkTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersionWithDetails(Protocol protocol) {
+        System.out.println("-----------------------------------------");
+        System.out.println("--- getVersion w/ details: " + protocol);
+        System.out.println("-----------------------------------------");
+
         ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             private final Request request = new Request(DbName.SYSTEM, RequestType.GET,
