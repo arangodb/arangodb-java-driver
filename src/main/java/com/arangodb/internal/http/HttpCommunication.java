@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -54,54 +57,85 @@ public class HttpCommunication implements Closeable {
     }
 
     public Response execute(final Request request, final HostHandle hostHandle) {
-        return execute(request, hostHandle, 0);
+        try {
+            return execute(request, hostHandle, 0).get();
+        } catch (InterruptedException e) {
+            throw new ArangoDBException(e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof ArangoDBException) {
+                throw (ArangoDBException) cause;
+            } else {
+                throw new ArangoDBException(cause);
+            }
+        }
     }
 
-    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
+    private CompletableFuture<Response> execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
+        final CompletableFuture<Response> rfuture = new CompletableFuture<>();
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
-        try {
-            while (true) {
-                try {
-                    final HttpConnection connection = (HttpConnection) host.connection();
-                    final Response response = connection.execute(request);
-                    hostHandler.success();
-                    hostHandler.confirm();
-                    return response;
-                } catch (final SocketTimeoutException e) {
+        final HttpConnection connection = (HttpConnection) host.connection();
+        connection.execute(request).whenComplete(((resp, err) -> {
+            if (resp != null) {
+                hostHandler.success();
+                hostHandler.confirm();
+                rfuture.complete(resp);
+            } else if (err != null) {
+                Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                if (e instanceof SocketTimeoutException) {
                     // SocketTimeoutException exceptions are wrapped and rethrown.
                     // Differently from other IOException exceptions they must not be retried,
                     // since the requests could not be idempotent.
                     TimeoutException te = new TimeoutException(e.getMessage());
                     te.initCause(e);
-                    throw new ArangoDBException(te);
-                } catch (final IOException e) {
-                    hostHandler.fail(e);
+                    rfuture.completeExceptionally(new ArangoDBException(te));
+                } else if (e instanceof IOException) {
+                    hostHandler.fail((IOException) e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
                         hostHandle.setHost(null);
                     }
-                    final Host failedHost = host;
-                    host = hostHandler.get(hostHandle, accessType);
-                    if (host != null) {
-                        LOGGER.warn(String.format("Could not connect to %s", failedHost.getDescription()), e);
+
+                    Host nextHost = hostHandler.get(hostHandle, accessType);
+                    if (nextHost != null) {
+                        LOGGER.warn(String.format("Could not connect to %s", host.getDescription()), e);
                         LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
-                                failedHost.getDescription(), host.getDescription()));
+                                host.getDescription(), nextHost.getDescription()));
+                        CompletableFuture<Response> req =
+                                execute(request, new HostHandle().setHost(nextHost.getDescription()), attemptCount);
+                        mirrorFuture(req, rfuture);
                     } else {
                         LOGGER.error(e.getMessage(), e);
-                        throw new ArangoDBException(e);
+                        rfuture.completeExceptionally(new ArangoDBException(e));
                     }
+                } else if (e instanceof ArangoDBRedirectException) {
+                    if (attemptCount < 3) {
+                        ArangoDBRedirectException redirEx = (ArangoDBRedirectException) e;
+                        final String location = redirEx.getLocation();
+                        final HostDescription redirectHost = HostUtils.createFromLocation(location);
+                        hostHandler.failIfNotMatch(redirectHost, redirEx);
+                        CompletableFuture<Response> req =
+                                execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
+                        mirrorFuture(req, rfuture);
+                    } else {
+                        rfuture.completeExceptionally(e);
+                    }
+                } else {
+                    rfuture.completeExceptionally(e);
                 }
             }
-        } catch (final ArangoDBException e) {
-            if (e instanceof ArangoDBRedirectException && attemptCount < 3) {
-                final String location = ((ArangoDBRedirectException) e).getLocation();
-                final HostDescription redirectHost = HostUtils.createFromLocation(location);
-                hostHandler.failIfNotMatch(redirectHost, e);
-                return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
-            } else {
-                throw e;
+        }));
+        return rfuture;
+    }
+
+    private void mirrorFuture(CompletableFuture<Response> upstream, CompletableFuture<Response> downstream) {
+        upstream.whenComplete((v, err) -> {
+            if (v != null) {
+                downstream.complete(v);
+            } else if (err != null) {
+                downstream.completeExceptionally(err);
             }
-        }
+        });
     }
 
     public static class Builder {
