@@ -371,7 +371,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @Test
     void authenticationFailPassword() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().password("no").jwt(null).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().acquireHostList(false).password("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
@@ -380,7 +380,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void authenticationFailUser() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("no").jwt(null).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().acquireHostList(false).user("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);

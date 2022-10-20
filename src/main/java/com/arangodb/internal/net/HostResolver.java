@@ -32,4 +32,5 @@ public interface HostResolver {
 
     HostSet resolve(boolean initial, boolean closeConnections);
 
+    void shutdown();
 }

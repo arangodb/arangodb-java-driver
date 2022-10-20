@@ -93,6 +93,7 @@ public class HttpConnection implements Connection {
         vertx.runOnContext(e -> {
             Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement());
             auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
+            LOGGER.debug("Created Vert.x context");
         });
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);

@@ -31,6 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
@@ -38,15 +42,12 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Mark Vollmary
  */
 public class ExtendedHostResolver implements HostResolver {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
-
+    private final ScheduledExecutorService es;
+    private final ScheduledFuture<?> scheduledUpdateHosts;
     private final HostSet hosts;
-
     private final Integer maxConnections;
     private final ConnectionFactory connectionFactory;
-    private final Integer acquireHostListInterval;
-    private long lastUpdate;
     private ArangoExecutorSync executor;
     private InternalSerde arangoSerialization;
 
@@ -54,69 +55,74 @@ public class ExtendedHostResolver implements HostResolver {
     public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
                                 final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
 
-        this.acquireHostListInterval = acquireHostListInterval;
         this.hosts = new HostSet(hosts);
         this.maxConnections = maxConnections;
         this.connectionFactory = connectionFactory;
+        es = Executors.newSingleThreadScheduledExecutor();
+        scheduledUpdateHosts = es.scheduleAtFixedRate(() -> {
+            try {
+                updateHosts();
+            } catch (Exception e) {
+                LOGGER.error("Got exeption while fetching host list: {}", e);
+            }
+        }, acquireHostListInterval, acquireHostListInterval, TimeUnit.SECONDS);
+    }
 
-        lastUpdate = 0;
+    private void updateHosts() {
+        final Collection<String> endpoints = resolveFromServer();
+        LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
+        LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
+
+        if (!endpoints.isEmpty()) {
+            hosts.markAllForDeletion();
+        }
+
+        for (final String endpoint : endpoints) {
+            LOGGER.debug("Create HOST from " + endpoint);
+
+            if (endpoint.matches(".*://.+:[0-9]+")) {
+
+                final String[] s = endpoint.replaceAll(".*://", "").split(":");
+                if (s.length == 2) {
+                    final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
+                    hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                } else if (s.length == 4) {
+                    // IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
+                    // globally
+                    final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
+                    hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                } else {
+                    LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
+                }
+
+            } else {
+                LOGGER.warn("Skip Endpoint (Format)" + endpoint);
+            }
+        }
+        hosts.clearAllMarkedForDeletion();
     }
 
     @Override
     public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {
         this.executor = executor;
         this.arangoSerialization = arangoSerialization;
+        updateHosts();
     }
 
     @Override
     public HostSet resolve(boolean initial, boolean closeConnections) {
-
-        if (!initial && isExpired()) {
-
-            lastUpdate = System.currentTimeMillis();
-
-            final Collection<String> endpoints = resolveFromServer();
-            LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
-            LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
-
-            if (!endpoints.isEmpty()) {
-                hosts.markAllForDeletion();
-            }
-
-            for (final String endpoint : endpoints) {
-                LOGGER.debug("Create HOST from " + endpoint);
-
-                if (endpoint.matches(".*://.+:[0-9]+")) {
-
-                    final String[] s = endpoint.replaceAll(".*://", "").split(":");
-                    if (s.length == 2) {
-                        final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
-                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
-                    } else if (s.length == 4) {
-                        // IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
-                        // globally
-                        final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
-                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
-                    } else {
-                        LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
-                    }
-
-                } else {
-                    LOGGER.warn("Skip Endpoint (Format)" + endpoint);
-                }
-            }
-            hosts.clearAllMarkedForDeletion();
-        }
-
         return hosts;
     }
 
+    @Override
+    public void shutdown() {
+        scheduledUpdateHosts.cancel(true);
+        es.shutdown();
+    }
+
     private Collection<String> resolveFromServer() {
-
         Collection<String> response;
-
         try {
-
             response = executor.execute(
                     new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
@@ -143,10 +149,6 @@ public class ExtendedHostResolver implements HostResolver {
         }
 
         return response;
-    }
-
-    private boolean isExpired() {
-        return System.currentTimeMillis() > (lastUpdate + acquireHostListInterval);
     }
 
 }

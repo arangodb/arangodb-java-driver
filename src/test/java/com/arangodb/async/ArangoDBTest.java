@@ -413,7 +413,7 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailPassword() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").jwt(null).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).password("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -424,7 +424,7 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailUser() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").jwt(null).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).user("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();

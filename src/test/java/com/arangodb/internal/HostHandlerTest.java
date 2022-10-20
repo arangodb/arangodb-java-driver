@@ -70,6 +70,11 @@ class HostHandlerTest {
         }
 
         @Override
+        public void shutdown() {
+
+        }
+
+        @Override
         public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {
 
         }
@@ -87,6 +92,11 @@ class HostHandlerTest {
             set.addHost(HOST_1);
             set.addHost(HOST_2);
             return set;
+        }
+
+        @Override
+        public void shutdown() {
+
         }
 
         @Override

@@ -53,6 +53,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final CommunicationProtocol cp;
+    private final HostResolver hostResolver;
     private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
@@ -70,6 +71,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                 new HttpCommunication.Builder(httpBuilder),
                 util,
                 protocol);
+        this.hostResolver = hostResolver;
         this.hostHandler = hostHandler;
 
         hostResolver.init(this.executor(), getSerde());
@@ -108,6 +110,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public void shutdown() {
         try {
+            hostResolver.shutdown();
             executor.disconnect();
         } finally {
             try {

@@ -57,6 +57,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBAsyncImpl.class);
 
     private final CommunicationProtocol cp;
+    private final HostResolver asyncHostResolver;
+    private final HostResolver syncHostResolver;
     private final HostHandler asyncHostHandler;
     private final HostHandler syncHostHandler;
 
@@ -78,6 +80,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
         final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util);
 
         cp = new VstProtocol(cacheCom);
+        this.syncHostResolver = syncHostResolver;
+        this.asyncHostResolver = asyncHostResolver;
         this.asyncHostHandler = asyncHostHandler;
         this.syncHostHandler = syncHostHandler;
 
@@ -96,6 +100,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     @Override
     public void shutdown() {
         try {
+            asyncHostResolver.shutdown();
+            syncHostResolver.shutdown();
             executor.disconnect();
         } finally {
             try {
