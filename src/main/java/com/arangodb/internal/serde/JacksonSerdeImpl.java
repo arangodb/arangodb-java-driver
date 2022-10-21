@@ -16,6 +16,7 @@ public class JacksonSerdeImpl implements JacksonSerde {
 
     public JacksonSerdeImpl(final ObjectMapper mapper) {
         this.mapper = mapper;
+        mapper.deactivateDefaultTyping();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

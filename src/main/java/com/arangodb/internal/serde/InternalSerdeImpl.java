@@ -31,6 +31,7 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
         this.userSerde = userSerde;
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.deactivateDefaultTyping();
         mapper.setAnnotationIntrospector(new InternalAnnotationIntrospector(
                 new UserDataSerializer(this),
                 new UserDataDeserializer(this)
