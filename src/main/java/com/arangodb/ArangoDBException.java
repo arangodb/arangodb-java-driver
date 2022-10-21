@@ -62,6 +62,14 @@ public class ArangoDBException extends RuntimeException {
         this.responseCode = null;
     }
 
+    public static ArangoDBException wrap(Throwable t) {
+        if (t instanceof ArangoDBException) {
+            return (ArangoDBException) t;
+        } else {
+            return new ArangoDBException(t);
+        }
+    }
+
     /**
      * @return ArangoDB error message
      */

@@ -60,6 +60,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,6 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
@@ -76,7 +78,7 @@ public class HttpConnection implements Connection {
     private final InternalSerde util;
     private final String baseUrl;
     private final ContentType contentType;
-    private volatile String auth;
+    private String auth;
     private final WebClient client;
     private final Integer timeout;
     private final Vertx vertx;
@@ -89,9 +91,12 @@ public class HttpConnection implements Connection {
         this.contentType = ContentType.of(protocol);
         this.timeout = timeout;
         baseUrl = buildBaseUrl(host, useSsl);
-        auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
-        vertx.runOnContext(e -> Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement()));
+        vertx.runOnContext(e -> {
+            Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement());
+            auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
+            LOGGER.debug("Created Vert.x context");
+        });
 
         int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
 
@@ -224,6 +229,26 @@ public class HttpConnection implements Connection {
     }
 
     public Response execute(final Request request) throws IOException {
+        CompletableFuture<Response> rfuture = new CompletableFuture<>();
+        vertx.runOnContext(e -> doExecute(request, rfuture));
+        Response resp;
+        try {
+            resp = rfuture.get();
+        } catch (InterruptedException e) {
+            throw ArangoDBException.wrap(e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            } else {
+                throw ArangoDBException.wrap(e.getCause());
+            }
+        }
+        checkError(resp);
+        return resp;
+    }
+
+    public void doExecute(final Request request, final CompletableFuture<Response> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
@@ -250,26 +275,14 @@ public class HttpConnection implements Connection {
         } else {
             buffer = Buffer.buffer();
         }
-        HttpResponse<Buffer> bufferResponse;
-        try {
-            // FIXME: make async API
-            bufferResponse = httpRequest.sendBuffer(buffer).toCompletionStage().toCompletableFuture().get();
-        } catch (InterruptedException e) {
-            throw new ArangoDBException(e);
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof IOException) {
-                throw (IOException) cause;
-            } else {
-                throw new ArangoDBException(e.getCause());
-            }
-        }
-        Response response = buildResponse(bufferResponse);
-        checkError(response);
-        return response;
+
+        httpRequest.sendBuffer(buffer)
+                .map(this::buildResponse)
+                .onSuccess(rfuture::complete)
+                .onFailure(rfuture::completeExceptionally);
     }
 
-    public Response buildResponse(final HttpResponse<Buffer> httpResponse) throws UnsupportedOperationException {
+    private Response buildResponse(final HttpResponse<Buffer> httpResponse) {
         final Response response = new Response();
         response.setResponseCode(httpResponse.statusCode());
         Buffer body = httpResponse.body();
@@ -292,7 +305,7 @@ public class HttpConnection implements Connection {
     @Override
     public void setJwt(String jwt) {
         if (jwt != null) {
-            auth = new TokenCredentials(jwt).toHttpAuthorization();
+            vertx.runOnContext((e) -> auth = new TokenCredentials(jwt).toHttpAuthorization());
         }
     }
 
