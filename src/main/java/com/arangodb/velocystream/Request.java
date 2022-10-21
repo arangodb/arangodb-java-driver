@@ -96,10 +96,6 @@ public class Request {
         return Collections.unmodifiableMap(headerParam);
     }
 
-    public String getHeaderParam(final String key) {
-        return headerParam.get(key.toLowerCase(Locale.ROOT));
-    }
-
     public boolean containsHeaderParam(final String key) {
         return headerParam.containsKey(key.toLowerCase(Locale.ROOT));
     }

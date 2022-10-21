@@ -26,6 +26,7 @@ import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.ContentType;
 import com.arangodb.velocystream.Request;
@@ -173,23 +174,17 @@ public class HttpConnection implements Connection {
         sb.append(request.getRequest());
         if (!request.getQueryParam().isEmpty()) {
             sb.append("?");
-
-            try {
-                for (Iterator<Entry<String, String>> iterator = request.getQueryParam().entrySet().iterator(); iterator.hasNext(); ) {
-                    Entry<String, String> param = iterator.next();
-                    if (param.getValue() != null) {
-                        sb.append(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8.toString()));
-                        sb.append("=");
-                        sb.append(URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8.toString()));
-                        if (iterator.hasNext()) {
-                            sb.append("&");
-                        }
+            for (Iterator<Entry<String, String>> iterator = request.getQueryParam().entrySet().iterator(); iterator.hasNext(); ) {
+                Entry<String, String> param = iterator.next();
+                if (param.getValue() != null) {
+                    sb.append(EncodeUtils.encodeURIComponent(param.getKey()));
+                    sb.append("=");
+                    sb.append(EncodeUtils.encodeURIComponent(param.getValue()));
+                    if (iterator.hasNext()) {
+                        sb.append("&");
                     }
                 }
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
             }
-
         }
         return sb.toString();
     }
