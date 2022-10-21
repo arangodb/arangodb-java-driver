@@ -94,7 +94,14 @@ public class HttpCommunication implements Closeable {
                         hostHandle.setHost(null);
                     }
 
-                    Host nextHost = hostHandler.get(hostHandle, accessType);
+                    Host nextHost;
+                    try {
+                        nextHost = hostHandler.get(hostHandle, accessType);
+                    } catch (ArangoDBException ex) {
+                        rfuture.completeExceptionally(e);
+                        return;
+                    }
+
                     if (nextHost != null) {
                         LOGGER.warn(String.format("Could not connect to %s", host.getDescription()), e);
                         LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
