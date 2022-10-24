@@ -21,8 +21,8 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoRoute;
-import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+import com.arangodb.RequestType;
+import com.arangodb.Response;
 
 import java.util.Map;
 

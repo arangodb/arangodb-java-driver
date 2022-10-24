@@ -21,7 +21,7 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.velocystream.Request;
+import com.arangodb.Request;
 
 /**
  * @author Mark Vollmary

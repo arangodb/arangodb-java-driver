@@ -26,8 +26,8 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary

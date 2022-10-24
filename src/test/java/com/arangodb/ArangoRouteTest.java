@@ -22,7 +22,6 @@ package com.arangodb;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
-import com.arangodb.velocystream.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

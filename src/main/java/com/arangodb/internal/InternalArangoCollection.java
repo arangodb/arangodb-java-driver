@@ -28,14 +28,13 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 

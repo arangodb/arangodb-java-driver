@@ -25,8 +25,8 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 import java.util.Collection;
 

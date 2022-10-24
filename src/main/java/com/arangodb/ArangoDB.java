@@ -36,8 +36,6 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
@@ -280,7 +278,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Generic Execute. Use this method to execute custom FOXX services.
      *
-     * @param request VelocyStream request
+     * @param request request
      * @return VelocyStream response
      */
     Response execute(Request request);
@@ -288,7 +286,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Generic Execute. Use this method to execute custom FOXX services.
      *
-     * @param request    VelocyStream request
+     * @param request    request
      * @param hostHandle Used to stick to a specific host when using {@link LoadBalancingStrategy#ROUND_ROBIN}
      * @return VelocyStream response
      */

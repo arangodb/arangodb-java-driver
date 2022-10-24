@@ -21,8 +21,8 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.internal.net.AccessType;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary

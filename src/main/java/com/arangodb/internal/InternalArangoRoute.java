@@ -20,8 +20,8 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 import java.util.HashMap;
 import java.util.Map;

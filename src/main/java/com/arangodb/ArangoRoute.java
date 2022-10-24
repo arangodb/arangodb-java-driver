@@ -20,8 +20,6 @@
 
 package com.arangodb;
 
-import com.arangodb.velocystream.Response;
-
 /**
  * Interface for a specific path to be used to perform arbitrary requests.
  *

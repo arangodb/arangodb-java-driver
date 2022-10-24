@@ -36,8 +36,8 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

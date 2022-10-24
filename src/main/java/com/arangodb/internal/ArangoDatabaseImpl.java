@@ -31,7 +31,7 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
-import com.arangodb.velocystream.Request;
+import com.arangodb.Request;
 
 import java.util.Collection;
 import java.util.Collections;

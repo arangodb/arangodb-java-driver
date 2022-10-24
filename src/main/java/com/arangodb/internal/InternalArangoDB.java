@@ -28,8 +28,8 @@ import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 import java.util.ArrayList;
 import java.util.Collection;

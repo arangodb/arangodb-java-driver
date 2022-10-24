@@ -1,9 +1,6 @@
 package com.arangodb;
 
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

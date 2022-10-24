@@ -43,8 +43,8 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

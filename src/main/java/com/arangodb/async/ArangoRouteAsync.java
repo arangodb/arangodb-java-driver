@@ -21,7 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoSerdeAccessor;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Response;
 
 import java.util.concurrent.CompletableFuture;
 

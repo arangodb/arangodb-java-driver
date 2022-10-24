@@ -20,8 +20,8 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Request;
+import com.arangodb.Response;
 
 import java.io.Closeable;
 

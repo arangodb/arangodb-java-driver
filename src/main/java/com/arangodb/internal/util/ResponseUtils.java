@@ -25,7 +25,7 @@ import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Response;
 
 import java.util.concurrent.TimeoutException;
 

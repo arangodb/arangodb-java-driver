@@ -18,9 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.velocystream;
-
-import com.arangodb.DbName;
+package com.arangodb;
 
 import java.util.Collections;
 import java.util.HashMap;

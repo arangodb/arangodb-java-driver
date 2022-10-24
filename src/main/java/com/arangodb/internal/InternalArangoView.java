@@ -22,8 +22,8 @@ package com.arangodb.internal;
 
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.ViewRenameOptions;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.Request;
+import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary

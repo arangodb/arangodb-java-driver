@@ -23,8 +23,8 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Request;
+import com.arangodb.Response;
 
 import java.io.IOException;
 
