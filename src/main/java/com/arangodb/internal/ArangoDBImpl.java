@@ -41,7 +41,6 @@ import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -52,7 +51,6 @@ import java.util.Collection;
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
-    private final CommunicationProtocol cp;
     private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
@@ -65,17 +63,9 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                         util, new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util);
 
-        cp = createProtocol(
-                new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-                new HttpCommunication.Builder(httpBuilder),
-                util,
-                protocol);
         this.hostHandler = hostHandler;
-
         hostResolver.init(this.executor(), getSerde());
-
         LOGGER.debug("ArangoDB Client is ready to use");
-
     }
 
     private static CommunicationProtocol createProtocol(
@@ -97,7 +87,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static CommunicationProtocol createHTTP(
             final HttpCommunication.Builder builder,
             final InternalSerde util) {
-        return new HttpProtocol(builder.build(util));
+        return new HttpProtocol(builder.serde(util).build());
     }
 
     @Override
@@ -107,21 +97,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public void shutdown() {
-        try {
-            executor.disconnect();
-        } finally {
-            try {
-                cp.close();
-            } catch (final IOException e) {
-                LOGGER.error("Got exception during shutdown:", e);
-            }
-        }
+        executor.disconnect();
     }
 
     @Override
     public void updateJwt(String jwt) {
         hostHandler.setJwt(jwt);
-        cp.setJwt(jwt);
         executor.setJwt(jwt);
     }
 

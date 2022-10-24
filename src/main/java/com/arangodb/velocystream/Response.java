@@ -95,4 +95,11 @@ public class Response {
         this.body = body;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "statusCode=" + responseCode +
+                ", headers=" + meta +
+                '}';
+    }
 }

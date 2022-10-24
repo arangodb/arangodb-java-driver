@@ -34,6 +34,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Mark Vollmary
@@ -42,10 +43,14 @@ public class HttpCommunication implements Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
     private final HostHandler hostHandler;
+    private final InternalSerde serde;
+    private final AtomicInteger reqCount;
 
-    private HttpCommunication(final HostHandler hostHandler) {
+    private HttpCommunication(final HostHandler hostHandler, final InternalSerde serde) {
         super();
         this.hostHandler = hostHandler;
+        this.serde = serde;
+        reqCount = new AtomicInteger();
     }
 
     @Override
@@ -62,9 +67,18 @@ public class HttpCommunication implements Closeable {
         Host host = hostHandler.get(hostHandle, accessType);
         try {
             while (true) {
+                int reqId = reqCount.getAndIncrement();
                 try {
                     final HttpConnection connection = (HttpConnection) host.connection();
+                    if (LOGGER.isDebugEnabled()) {
+                        String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
+                        LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
+                    }
                     final Response response = connection.execute(request);
+                    if (LOGGER.isDebugEnabled()) {
+                        String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
+                        LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
+                    }
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;
@@ -105,20 +119,21 @@ public class HttpCommunication implements Closeable {
     }
 
     public static class Builder {
+        private HostHandler hostHandler;
+        private InternalSerde serde;
 
-        private final HostHandler hostHandler;
-
-        public Builder(final HostHandler hostHandler) {
-            super();
+        public Builder hostHandler(HostHandler hostHandler) {
             this.hostHandler = hostHandler;
+            return this;
         }
 
-        public Builder(final Builder builder) {
-            this(builder.hostHandler);
+        public Builder serde(InternalSerde serde) {
+            this.serde = serde;
+            return this;
         }
 
-        public HttpCommunication build(final InternalSerde util) {
-            return new HttpCommunication(hostHandler);
+        public HttpCommunication build() {
+            return new HttpCommunication(hostHandler, serde);
         }
     }
 

@@ -21,6 +21,7 @@
 package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ContentType;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
@@ -28,7 +29,6 @@ import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.ContentType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -55,9 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -77,7 +74,6 @@ public class HttpConnection implements Connection {
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
-    private final String baseUrl;
     private final ContentType contentType;
     private String auth;
     private final WebClient client;
@@ -91,7 +87,6 @@ public class HttpConnection implements Connection {
         this.util = util;
         this.contentType = ContentType.of(protocol);
         this.timeout = timeout;
-        baseUrl = buildBaseUrl(host, useSsl);
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> {
             Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement());
@@ -219,10 +214,6 @@ public class HttpConnection implements Connection {
         }
     }
 
-    private String buildBaseUrl(HostDescription host, boolean useSsl) {
-        return (Boolean.TRUE.equals(useSsl) ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
-    }
-
     public Response execute(final Request request) throws IOException {
         CompletableFuture<Response> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
@@ -253,10 +244,6 @@ public class HttpConnection implements Connection {
         }
         addHeader(request, httpRequest);
         httpRequest.putHeader(HttpHeaders.AUTHORIZATION.toString(), auth);
-
-        if (LOGGER.isDebugEnabled()) {
-            CURLLogger.log(baseUrl, path, request, util);
-        }
 
         byte[] reqBody = request.getBody();
         Buffer buffer;

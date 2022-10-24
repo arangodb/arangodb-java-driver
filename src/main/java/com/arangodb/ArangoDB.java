@@ -612,7 +612,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
                             .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
                             .maxConnections(maxConnections).connectionTtl(connectionTtl),
-                    new HttpCommunication.Builder(hostHandler),
+                    new HttpCommunication.Builder().hostHandler(hostHandler),
                     serde,
                     protocol,
                     hostResolver,

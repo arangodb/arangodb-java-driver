@@ -125,4 +125,15 @@ public class Request {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "requestType=" + requestType +
+                ", database='" + dbName + '\'' +
+                ", url='" + request + '\'' +
+                ", parameters=" + queryParam +
+                ", headers=" + headerParam +
+                '}';
+    }
+
 }
