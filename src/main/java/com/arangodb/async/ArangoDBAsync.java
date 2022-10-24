@@ -516,17 +516,14 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync}
          */
         public ArangoDBAsync build() {
-            if (hosts.isEmpty()) {
-                hosts.add(host);
-            }
             final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(ContentType.VPACK);
             final InternalSerde serde = InternalSerde.of(ContentType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(host, timeout, connectionTtl,
+            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(timeout, connectionTtl,
                     keepAliveInterval, useSsl, sslContext);
-            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(timeout, connectionTtl,
                     keepAliveInterval, useSsl, sslContext);
             final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
                     syncConnectionFactory);

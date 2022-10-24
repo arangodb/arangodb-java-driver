@@ -43,8 +43,6 @@ public abstract class InternalArangoDBBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
     private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
-    private static final String PROPERTY_KEY_HOST = "arangodb.host";
-    private static final String PROPERTY_KEY_PORT = "arangodb.port";
     private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
     private static final String PROPERTY_KEY_USER = "arangodb.user";
     private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
@@ -62,7 +60,6 @@ public abstract class InternalArangoDBBuilder {
     private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
     protected final List<HostDescription> hosts;
-    protected HostDescription host;
     protected Integer timeout;
     protected String user;
     protected String password;
@@ -83,7 +80,6 @@ public abstract class InternalArangoDBBuilder {
 
     public InternalArangoDBBuilder() {
         super();
-        host = new HostDescription(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
         hosts = new ArrayList<>();
         user = ArangoDefaults.DEFAULT_USER;
         try (InputStream is = ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE)) {
@@ -108,21 +104,6 @@ public abstract class InternalArangoDBBuilder {
                 }
             }
         }
-    }
-
-    private static String loadHost(final Properties properties, final String currentValue) {
-        final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDefaults.DEFAULT_HOST);
-        if (host.contains(":")) {
-            throw new ArangoDBException(String.format(
-                    "Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb" +
-                            ".hosts=ip:port ?",
-                    host));
-        }
-        return host;
-    }
-
-    private static Integer loadPort(final Properties properties, final int currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDefaults.DEFAULT_PORT));
     }
 
     private static Integer loadTimeout(final Properties properties, final Integer currentValue) {
@@ -234,9 +215,6 @@ public abstract class InternalArangoDBBuilder {
 
     protected void loadProperties(final Properties properties) {
         loadHosts(properties, this.hosts);
-        final String host = loadHost(properties, this.host.getHost());
-        final int port = loadPort(properties, this.host.getPort());
-        this.host = new HostDescription(host, port);
         timeout = loadTimeout(properties, timeout);
         user = loadUser(properties, user);
         password = loadPassword(properties, password);

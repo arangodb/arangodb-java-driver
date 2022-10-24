@@ -586,9 +586,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * @return {@link ArangoDB}
          */
         public ArangoDB build() {
-            if (hosts.isEmpty()) {
-                hosts.add(host);
-            }
             final ArangoSerde userSerde = customSerializer != null ? customSerializer :
                     JacksonSerde.of(ContentType.of(protocol));
             final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);
@@ -599,7 +596,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
-                    ? new VstConnectionFactorySync(host, timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
+                    ? new VstConnectionFactorySync(timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
                     : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
                     protocol, connectionTtl);
 

@@ -34,7 +34,7 @@ public class VstConnectionFactoryAsync implements ConnectionFactory {
 
     private final VstConnectionAsync.Builder builder;
 
-    public VstConnectionFactoryAsync(final HostDescription host, final Integer timeout, final Long connectionTtl,
+    public VstConnectionFactoryAsync(final Integer timeout, final Long connectionTtl,
                                      final Integer keepAliveInterval, final Boolean useSsl,
                                      final SSLContext sslContext) {
         super();

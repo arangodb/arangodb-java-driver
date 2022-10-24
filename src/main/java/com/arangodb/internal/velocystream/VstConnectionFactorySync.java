@@ -35,7 +35,7 @@ public class VstConnectionFactorySync implements ConnectionFactory {
 
     private final VstConnectionSync.Builder builder;
 
-    public VstConnectionFactorySync(final HostDescription host, final Integer timeout, final Long connectionTtl,
+    public VstConnectionFactorySync(final Integer timeout, final Long connectionTtl,
                                     final Integer keepAliveInterval, final Boolean useSsl,
                                     final SSLContext sslContext) {
         super();

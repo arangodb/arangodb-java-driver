@@ -587,16 +587,6 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
-    void loadproperties2() {
-        Throwable thrown = catchThrowable(() ->
-                new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad2" +
-                        ".properties"))
-        );
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
     void accessMultipleDatabases(ArangoDB arangoDB) {
         final ArangoDBVersion version1 = arangoDB.db(DB1).getVersion();
         assertThat(version1).isNotNull();

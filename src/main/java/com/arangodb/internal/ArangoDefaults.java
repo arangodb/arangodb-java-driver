@@ -30,8 +30,6 @@ public final class ArangoDefaults {
 
     public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
     public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-    public static final String DEFAULT_HOST = "127.0.0.1";
-    public static final Integer DEFAULT_PORT = 8529;
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final String DEFAULT_USER = "root";
     public static final Boolean DEFAULT_USE_SSL = false;
