@@ -22,6 +22,7 @@ package com.arangodb.async.example.ssl;
 
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -36,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
+@Tag("ssl")
 @EnabledIfSystemProperty(named = "SslTest", matches = "true")
 class SslExampleTest {
 

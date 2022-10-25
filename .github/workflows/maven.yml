@@ -69,6 +69,41 @@ jobs:
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
 
+  test-ssl:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/arangodb:3.10.0
+        topology:
+          - single
+        java-version:
+          - 17
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+          SSL: true
+      - name: Info
+        run: mvn -version
+      - name: Test
+        run: mvn --no-transfer-progress -Dgroups=ssl -DSslTest=true test
+
   # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
   test-graalvm:
     runs-on: ubuntu-latest

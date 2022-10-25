@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -40,6 +41,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@Tag("ssl")
 @EnabledIfSystemProperty(named = "SslTest", matches = "true")
 class ArangoSslTest {
 
