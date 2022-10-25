@@ -30,36 +30,49 @@ public class ArangoDBException extends RuntimeException {
     private static final long serialVersionUID = 6165638002614173801L;
     private final ErrorEntity entity;
     private final Integer responseCode;
+    private final Long requestId;
 
     public ArangoDBException(final ErrorEntity errorEntity) {
         super(String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
                 errorEntity.getErrorMessage()));
         this.entity = errorEntity;
         this.responseCode = null;
+        this.requestId = null;
     }
 
     public ArangoDBException(final String message) {
         super(message);
         this.entity = null;
         this.responseCode = null;
+        this.requestId = null;
     }
 
     public ArangoDBException(final String message, final Integer responseCode) {
         super(message);
         this.entity = null;
         this.responseCode = responseCode;
+        this.requestId = null;
     }
 
     public ArangoDBException(final Throwable cause) {
         super(cause);
         this.entity = null;
         this.responseCode = null;
+        this.requestId = null;
     }
 
     public ArangoDBException(final String message, final Throwable cause) {
         super(message, cause);
         this.entity = null;
         this.responseCode = null;
+        this.requestId = null;
+    }
+
+    public ArangoDBException(Throwable cause, long requestId) {
+        super(cause);
+        this.entity = null;
+        this.responseCode = null;
+        this.requestId = requestId;
     }
 
     public static ArangoDBException wrap(Throwable t) {
@@ -99,4 +112,10 @@ public class ArangoDBException extends RuntimeException {
         return entity != null ? entity.getErrorNum() : null;
     }
 
+    /**
+     * @return request id
+     */
+    public Long getRequestId() {
+        return requestId;
+    }
 }

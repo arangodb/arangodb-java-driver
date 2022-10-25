@@ -21,12 +21,12 @@
 package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.Request;
-import com.arangodb.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
@@ -44,13 +44,13 @@ public class HttpCommunication implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
     private final HostHandler hostHandler;
     private final InternalSerde serde;
-    private final AtomicInteger reqCount;
+    private final AtomicLong reqCount;
 
     private HttpCommunication(final HostHandler hostHandler, final InternalSerde serde) {
         super();
         this.hostHandler = hostHandler;
         this.serde = serde;
-        reqCount = new AtomicInteger();
+        reqCount = new AtomicLong();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class HttpCommunication implements Closeable {
         Host host = hostHandler.get(hostHandle, accessType);
         try {
             while (true) {
-                int reqId = reqCount.getAndIncrement();
+                long reqId = reqCount.getAndIncrement();
                 try {
                     final HttpConnection connection = (HttpConnection) host.connection();
                     if (LOGGER.isDebugEnabled()) {
@@ -88,7 +88,7 @@ public class HttpCommunication implements Closeable {
                     // since the requests could not be idempotent.
                     TimeoutException te = new TimeoutException(e.getMessage());
                     te.initCause(e);
-                    throw new ArangoDBException(te);
+                    throw new ArangoDBException(te, reqId);
                 } catch (final IOException e) {
                     hostHandler.fail(e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
@@ -97,12 +97,12 @@ public class HttpCommunication implements Closeable {
                     final Host failedHost = host;
                     host = hostHandler.get(hostHandle, accessType);
                     if (host != null) {
-                        LOGGER.warn(String.format("Could not connect to %s", failedHost.getDescription()), e);
-                        LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
-                                failedHost.getDescription(), host.getDescription()));
+                        LOGGER.warn("Could not connect to {} while executing request [id={}]",
+                                failedHost.getDescription(), reqId, e);
+                        LOGGER.debug("Try connecting to {}", host.getDescription());
                     } else {
                         LOGGER.error(e.getMessage(), e);
-                        throw new ArangoDBException(e);
+                        throw new ArangoDBException(e, reqId);
                     }
                 }
             }
