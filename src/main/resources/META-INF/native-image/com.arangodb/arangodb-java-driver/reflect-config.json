@@ -42,12 +42,6 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.BaseDocument",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "java.lang.Enum",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -84,6 +78,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.AbstractBaseDocument",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.DocumentEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -109,12 +109,6 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.BaseEdgeDocument",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -492,13 +486,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -715,6 +709,18 @@
   },
   {
     "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionExpression",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.BaseDocument",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1152,13 +1158,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.StreamTransactionOptions",
+    "name": "com.arangodb.model.UserUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserUpdateOptions",
+    "name": "com.arangodb.model.StreamTransactionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

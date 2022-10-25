@@ -1,0 +1,14 @@
+[
+  {
+    "name": "com.arangodb.entity.AbstractBaseDocument"
+  },
+  {
+    "name": "com.arangodb.entity.BaseDocument"
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument"
+  },
+  {
+    "name": "java.util.HashMap"
+  }
+]
