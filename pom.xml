@@ -26,6 +26,7 @@
         <adb.jackson.version>2.13.3</adb.jackson.version>
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <SslTest>false</SslTest>
     </properties>
 
     <developers>
@@ -110,6 +111,9 @@
                             <buildArgs>
                                 <buildArg>--no-fallback</buildArg>
                             </buildArgs>
+                            <systemProperties>
+                                <SslTest>${SslTest}</SslTest>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>

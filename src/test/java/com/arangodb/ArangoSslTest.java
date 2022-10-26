@@ -74,7 +74,8 @@ class ArangoSslTest {
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .useProtocol(protocol)
-                .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
+                .host("localhost", 8529)
+                .useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -85,7 +86,8 @@ class ArangoSslTest {
     void connectWithoutValidSslContext(Protocol protocol) {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .useProtocol(protocol)
-                .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
+                .host("localhost", 8529)
+                .useSsl(true)
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);

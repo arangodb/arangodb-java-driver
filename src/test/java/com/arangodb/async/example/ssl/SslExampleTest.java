@@ -68,7 +68,8 @@ class SslExampleTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(SslExampleTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
+                .host("localhost", 8529)
+                .useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();
         assertThat(version).isNotNull();

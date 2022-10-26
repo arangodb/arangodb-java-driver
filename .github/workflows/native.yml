@@ -41,3 +41,37 @@ jobs:
         run: mvn -version
       - name: Test Native
         run: mvn -Pnative --no-transfer-progress test
+
+  test-native-ssl:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/enterprise:3.10.0
+        topology:
+          - single
+        java-version:
+          - 17
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: ${{matrix.java-version}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          components: 'native-image,js'
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          SSL: true
+      - name: Info
+        run: mvn -version
+      - name: Test Native
+        run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true test
