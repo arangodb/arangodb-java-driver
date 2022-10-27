@@ -10,5 +10,17 @@
   },
   {
     "name": "java.util.HashMap"
+  },
+  {
+    "name": "com.arangodb.entity.ErrorEntity"
+  },
+  {
+    "name": "com.arangodb.ArangoDBException"
+  },
+  {
+    "name": "com.arangodb.ArangoDBMultipleException"
+  },
+  {
+    "name": "com.arangodb.internal.net.ArangoDBRedirectException"
   }
 ]
