@@ -56,11 +56,9 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String KEEP_NULL = "keepNull";
     private static final String IGNORE_REVS = "ignoreRevs";
     private static final String RETURN_NEW = "returnNew";
-    private static final String NEW = "new";
     private static final String RETURN_OLD = "returnOld";
     private static final String OVERWRITE = "overwrite";
     private static final String OVERWRITE_MODE = "overwriteMode";
-    private static final String OLD = "old";
     private static final String SILENT = "silent";
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
@@ -191,7 +189,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(
-            final Class<T> type, final DocumentReadOptions options) {
+            final Class<T> type) {
         return response -> {
             final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<>();
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));

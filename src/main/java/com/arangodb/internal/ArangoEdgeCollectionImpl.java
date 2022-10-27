@@ -44,12 +44,12 @@ public class ArangoEdgeCollectionImpl
     @Override
     public EdgeEntity insertEdge(final Object value) {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
-                insertEdgeResponseDeserializer(value));
+                insertEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeEntity insertEdge(final Object value, final EdgeCreateOptions options) {
-        return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
+        return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer());
     }
 
     @Override
@@ -80,23 +80,23 @@ public class ArangoEdgeCollectionImpl
     @Override
     public EdgeUpdateEntity replaceEdge(final String key, final Object value) {
         return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
-                replaceEdgeResponseDeserializer(value));
+                replaceEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity replaceEdge(final String key, final Object value, final EdgeReplaceOptions options) {
-        return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
+        return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity updateEdge(final String key, final Object value) {
         return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
-                updateEdgeResponseDeserializer(value));
+                updateEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity updateEdge(final String key, final Object value, final EdgeUpdateOptions options) {
-        return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
+        return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer());
     }
 
     @Override

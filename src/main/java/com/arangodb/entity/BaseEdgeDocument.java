@@ -20,6 +20,7 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.internal.DocumentFields;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
@@ -33,7 +34,13 @@ public final class BaseEdgeDocument extends AbstractBaseDocument implements Seri
 
     private static final long serialVersionUID = 356629614444L;
 
-    private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev", "_from", "_to"};
+    private static final String[] META_PROPS = new String[]{
+            DocumentFields.ID,
+            DocumentFields.KEY,
+            DocumentFields.REV,
+            DocumentFields.FROM,
+            DocumentFields.TO
+    };
 
     public BaseEdgeDocument() {
         super();
@@ -57,20 +64,20 @@ public final class BaseEdgeDocument extends AbstractBaseDocument implements Seri
 
     @JsonIgnore
     public String getFrom() {
-        return (String) getAttribute("_from");
+        return (String) getAttribute(DocumentFields.FROM);
     }
 
     public void setFrom(final String from) {
-        addAttribute("_from", from);
+        addAttribute(DocumentFields.FROM, from);
     }
 
     @JsonIgnore
     public String getTo() {
-        return (String) getAttribute("_to");
+        return (String) getAttribute(DocumentFields.TO);
     }
 
     public void setTo(final String to) {
-        addAttribute("_to", to);
+        addAttribute(DocumentFields.TO, to);
     }
 
     @Override

@@ -3,10 +3,14 @@ package com.arangodb.internal.serde;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 class InternalAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
-    private final UserDataSerializer userDataSerializer;
-    private final UserDataDeserializer userDataDeserializer;
+    private final transient UserDataSerializer userDataSerializer;
+    private final transient UserDataDeserializer userDataDeserializer;
 
     InternalAnnotationIntrospector(
             final UserDataSerializer userDataSerializer,
@@ -52,4 +56,11 @@ class InternalAnnotationIntrospector extends JacksonAnnotationIntrospector {
         }
     }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new IOException("Serialization not allowed");
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException {
+        throw new IOException("Deserialization not allowed");
+    }
 }

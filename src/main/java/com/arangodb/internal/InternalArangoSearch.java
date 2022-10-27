@@ -31,22 +31,24 @@ public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends Inter
         E extends ArangoExecutor>
         extends InternalArangoView<A, D, E> {
 
+    private static final String PROPERTIES_PATH = "properties";
+
     protected InternalArangoSearch(final D db, final String name) {
         super(db, name);
     }
 
     protected Request getPropertiesRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, "properties");
+        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
     }
 
     protected Request replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "properties");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }
 
     protected Request updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, "properties");
+        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }

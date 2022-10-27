@@ -35,10 +35,6 @@ public final class ConsolidationPolicy {
     private Long segmentsBytesFloor;
     private Long minScore;
 
-
-    public ConsolidationPolicy() {
-    }
-
     public static ConsolidationPolicy of(final ConsolidationType type) {
         return new ConsolidationPolicy().type(type);
     }

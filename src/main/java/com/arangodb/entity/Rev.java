@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @JsonProperty(DocumentFields.REV)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonbAnnotation
-@JsonbProperty("_rev")
+@JsonbProperty(DocumentFields.REV)
 public @interface Rev {
 }

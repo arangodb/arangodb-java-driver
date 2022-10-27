@@ -228,7 +228,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
                         InternalCursorEntity.class, hostHandle);
                 try {
                     return result.get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new ArangoDBException(e);
+                } catch (ExecutionException e) {
                     throw new ArangoDBException(e);
                 }
             }
@@ -237,7 +240,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
             public void close(final String id, Map<String, String> meta) {
                 try {
                     executor.execute(queryCloseRequest(id, options, meta), Void.class, hostHandle).get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new ArangoDBException(e);
+                } catch (ExecutionException e) {
                     throw new ArangoDBException(e);
                 }
             }

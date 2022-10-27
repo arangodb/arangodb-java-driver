@@ -76,15 +76,17 @@ public class ExtendedHostResolver implements HostResolver {
             lastUpdate = System.currentTimeMillis();
 
             final Collection<String> endpoints = resolveFromServer();
-            LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
-            LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Resolve {} Endpoints", endpoints.size());
+                LOGGER.debug("Endpoints {}", Arrays.deepToString(endpoints.toArray()));
+            }
 
             if (!endpoints.isEmpty()) {
                 hosts.markAllForDeletion();
             }
 
             for (final String endpoint : endpoints) {
-                LOGGER.debug("Create HOST from " + endpoint);
+                LOGGER.debug("Create HOST from {}", endpoint);
 
                 if (endpoint.matches(".*://.+:[0-9]+")) {
 
@@ -98,11 +100,11 @@ public class ExtendedHostResolver implements HostResolver {
                         final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
                         hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
                     } else {
-                        LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
+                        LOGGER.warn("Skip Endpoint (Missing Port) {}", endpoint);
                     }
 
                 } else {
-                    LOGGER.warn("Skip Endpoint (Format)" + endpoint);
+                    LOGGER.warn("Skip Endpoint (Format) {}", endpoint);
                 }
             }
             hosts.clearAllMarkedForDeletion();

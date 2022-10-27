@@ -20,10 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoMetrics;
-import com.arangodb.ArangoSerdeAccessor;
-import com.arangodb.DbName;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
@@ -41,12 +38,7 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.ContentType;
 import com.arangodb.serde.JacksonSerde;
-import com.arangodb.Request;
-import com.arangodb.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
@@ -311,8 +303,6 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder {
-
-        private static final Logger logger = LoggerFactory.getLogger(Builder.class);
 
         public Builder() {
             super();

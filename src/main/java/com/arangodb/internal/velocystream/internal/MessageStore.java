@@ -77,7 +77,7 @@ public class MessageStore {
     public void cancel(final long messageId) {
         final FutureTask<Message> future = task.remove(messageId);
         if (future != null) {
-            LOGGER.error(String.format("Cancel Message unexpected (id=%s).", messageId));
+            LOGGER.error("Cancel Message unexpected (id={}).", messageId);
             future.cancel(true);
         }
     }

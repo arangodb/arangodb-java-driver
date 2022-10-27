@@ -27,22 +27,24 @@ import com.arangodb.RequestType;
 public class InternalSearchAlias<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
         extends InternalArangoView<A, D, E> {
 
+    private static final String PROPERTIES_PATH = "properties";
+
     protected InternalSearchAlias(final D db, final String name) {
         super(db, name);
     }
 
     protected Request getPropertiesRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, "properties");
+        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
     }
 
     protected Request replacePropertiesRequest(final SearchAliasPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "properties");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new SearchAliasPropertiesOptions()));
         return request;
     }
 
     protected Request updatePropertiesRequest(final SearchAliasPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, "properties");
+        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new SearchAliasPropertiesOptions()));
         return request;
     }

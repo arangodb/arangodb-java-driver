@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @JsonProperty(DocumentFields.KEY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonbAnnotation
-@JsonbProperty("_key")
+@JsonbProperty(DocumentFields.KEY)
 public @interface Key {
 }

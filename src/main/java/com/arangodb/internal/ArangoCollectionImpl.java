@@ -40,7 +40,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
         implements ArangoCollection {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollection.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollectionImpl.class);
 
     protected ArangoCollectionImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);
@@ -159,7 +159,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public <T> MultiDocumentEntity<T> getDocuments(
             final Collection<String> keys, final Class<T> type, final DocumentReadOptions options) {
-        return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
+        return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type));
     }
 
     @Override

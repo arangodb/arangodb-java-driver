@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @JsonProperty(DocumentFields.ID)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonbAnnotation
-@JsonbProperty("_id")
+@JsonbProperty(DocumentFields.ID)
 public @interface Id {
 }

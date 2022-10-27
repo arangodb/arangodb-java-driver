@@ -137,7 +137,10 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         Response response;
         try {
             response = execute(authRequest, connection).get();
-        } catch (final InterruptedException | ExecutionException e) {
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ArangoDBException(e);
+        } catch (final ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof ArangoDBException) {
                 throw (ArangoDBException) cause;

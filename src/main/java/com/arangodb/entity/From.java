@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @JsonProperty(DocumentFields.FROM)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonbAnnotation
-@JsonbProperty("_from")
+@JsonbProperty(DocumentFields.FROM)
 public @interface From {
 }

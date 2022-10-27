@@ -49,12 +49,12 @@ public class ArangoVertexCollectionImpl
     @Override
     public VertexEntity insertVertex(final Object value) {
         return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
-                insertVertexResponseDeserializer(value));
+                insertVertexResponseDeserializer());
     }
 
     @Override
     public VertexEntity insertVertex(final Object value, final VertexCreateOptions options) {
-        return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
+        return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer());
     }
 
     @Override
@@ -85,23 +85,23 @@ public class ArangoVertexCollectionImpl
     @Override
     public VertexUpdateEntity replaceVertex(final String key, final Object value) {
         return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
-                replaceVertexResponseDeserializer(value));
+                replaceVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity replaceVertex(final String key, final Object value, final VertexReplaceOptions options) {
-        return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
+        return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity updateVertex(final String key, final Object value) {
         return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
-                updateVertexResponseDeserializer(value));
+                updateVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity updateVertex(final String key, final Object value, final VertexUpdateOptions options) {
-        return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
+        return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer());
     }
 
     @Override

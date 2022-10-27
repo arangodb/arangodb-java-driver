@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Michele Rastelli
  */
 public class HttpConnection implements Connection {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
@@ -94,7 +94,7 @@ public class HttpConnection implements Connection {
             LOGGER.debug("Created Vert.x context");
         });
 
-        int _ttl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
+        int intTtl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
 
         HttpVersion httpVersion = protocol == Protocol.HTTP_JSON || protocol == Protocol.HTTP_VPACK ?
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
@@ -103,8 +103,8 @@ public class HttpConnection implements Connection {
                 .setConnectTimeout(timeout)
                 .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
                 .setIdleTimeout(timeout)
-                .setKeepAliveTimeout(_ttl)
-                .setHttp2KeepAliveTimeout(_ttl)
+                .setKeepAliveTimeout(intTtl)
+                .setHttp2KeepAliveTimeout(intTtl)
                 .setUserAgentEnabled(false)
                 .setFollowRedirects(false)
                 .setLogActivity(true)
@@ -134,7 +134,7 @@ public class HttpConnection implements Connection {
             webClientOptions
                     .setSsl(true)
                     .setUseAlpn(true)
-                    .setVerifyHost(verifyHost != null ? verifyHost : true)
+                    .setVerifyHost(verifyHost == null || verifyHost)
                     .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
                         public JdkSSLEngineOptions copy() {
@@ -166,7 +166,7 @@ public class HttpConnection implements Connection {
         if (dbName != null && !dbName.get().isEmpty()) {
             sb.append("/_db/").append(dbName.getEncoded());
         }
-        sb.append(request.getRequest());
+        sb.append(request.getPath());
         if (!request.getQueryParam().isEmpty()) {
             sb.append("?");
             for (Iterator<Entry<String, String>> iterator = request.getQueryParam().entrySet().iterator(); iterator.hasNext(); ) {
@@ -221,6 +221,7 @@ public class HttpConnection implements Connection {
         try {
             resp = rfuture.get();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw ArangoDBException.wrap(e);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
@@ -240,7 +241,7 @@ public class HttpConnection implements Connection {
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
                 .timeout(timeout);
         if (contentType == ContentType.VPACK) {
-            httpRequest.putHeader("Accept", "application/x-velocypack");
+            httpRequest.putHeader("Accept", CONTENT_TYPE_VPACK);
         }
         addHeader(request, httpRequest);
         httpRequest.putHeader(HttpHeaders.AUTHORIZATION.toString(), auth);
@@ -287,7 +288,7 @@ public class HttpConnection implements Connection {
     @Override
     public void setJwt(String jwt) {
         if (jwt != null) {
-            vertx.runOnContext((e) -> auth = new TokenCredentials(jwt).toHttpAuthorization());
+            vertx.runOnContext(e -> auth = new TokenCredentials(jwt).toHttpAuthorization());
         }
     }
 

@@ -70,7 +70,7 @@ public final class InternalSerializers {
             gen.writeNumber(value.getType());
             gen.writeString(value.getDbName().get());
             gen.writeNumber(value.getRequestType().getType());
-            gen.writeString(value.getRequest());
+            gen.writeString(value.getPath());
             gen.writeStartObject();
             for (final Map.Entry<String, String> entry : value.getQueryParam().entrySet()) {
                 gen.writeStringField(entry.getKey(), entry.getValue());

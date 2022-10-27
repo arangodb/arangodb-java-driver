@@ -27,9 +27,6 @@ public final class AnalyzerDeleteOptions {
 
     private Boolean force;
 
-    public AnalyzerDeleteOptions() {
-    }
-
     public Boolean getForce() {
         return force;
     }

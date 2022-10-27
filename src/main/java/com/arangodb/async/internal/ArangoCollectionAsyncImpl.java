@@ -155,7 +155,7 @@ public class ArangoCollectionAsyncImpl
             final Collection<String> keys,
             final Class<T> type,
             final DocumentReadOptions options) {
-        return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
+        return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type));
     }
 
     @Override

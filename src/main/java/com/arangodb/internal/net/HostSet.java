@@ -34,7 +34,7 @@ public class HostSet {
 
     public void addHost(Host newHost) {
         if (hosts.contains(newHost)) {
-            LOGGER.debug("Host" + newHost + " already in Set");
+            LOGGER.debug("Host {} already in Set", newHost);
             for (Host host : hosts) {
                 if (host.equals(newHost)) {
                     host.setMarkforDeletion(false);
@@ -43,7 +43,7 @@ public class HostSet {
         } else {
             newHost.setJwt(jwt);
             hosts.add(newHost);
-            LOGGER.debug("Added Host " + newHost + " - now " + hosts.size() + " Hosts in List");
+            LOGGER.debug("Added Host {} - now {} Hosts in List", newHost, hosts.size());
         }
     }
 
@@ -53,7 +53,7 @@ public class HostSet {
         for (Host host : hosts) {
             try {
 
-                LOGGER.debug("Try to close Host " + host);
+                LOGGER.debug("Try to close Host {}", host);
                 host.close();
 
             } catch (IOException e) {
@@ -79,7 +79,7 @@ public class HostSet {
             Host host = iterable.next();
             if (host.isMarkforDeletion()) {
                 try {
-                    LOGGER.debug("Try to close Host " + host);
+                    LOGGER.debug("Try to close Host {}", host);
                     host.close();
                 } catch (IOException e) {
                     LOGGER.warn("Error during closing the Host " + host, e);

@@ -37,8 +37,9 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         extends ArangoExecuteable<E> {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
-
     private static final String TRANSACTION_ID = "x-arango-trx-id";
+    private static final String EDGE_PATH = "edge";
+    private static final String EDGE_JSON_POINTER = "/edge";
 
     private final G graph;
     private final String name;
@@ -58,7 +59,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), "edge",
+        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 name);
         final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -67,12 +68,12 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return request;
     }
 
-    protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeEntity.class);
+    protected ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeEntity.class);
     }
 
     protected Request getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), "edge",
+        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -85,11 +86,11 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-        return response -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), "/edge"), type);
+        return response -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), EDGE_JSON_POINTER), type);
     }
 
     protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), "edge",
+        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -99,13 +100,13 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return request;
     }
 
-    protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
+    protected ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class);
     }
 
     protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
         final Request request;
-        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), "edge",
+        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -116,12 +117,12 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return request;
     }
 
-    protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/edge", EdgeUpdateEntity.class);
+    protected ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class);
     }
 
     protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "edge",
+        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());

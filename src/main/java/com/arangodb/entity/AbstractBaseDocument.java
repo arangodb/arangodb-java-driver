@@ -20,6 +20,7 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.internal.DocumentFields;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,8 +40,12 @@ abstract class AbstractBaseDocument implements Serializable {
 
     private static final long serialVersionUID = 846874908582L;
 
-    private static final String[] META_PROPS = new String[]{"_id", "_key", "_rev"};
-    private final Map<String, Object> properties;
+    private static final String[] META_PROPS = new String[]{
+            DocumentFields.ID,
+            DocumentFields.KEY,
+            DocumentFields.REV
+    };
+    private final HashMap<String, Object> properties;
 
     AbstractBaseDocument() {
         properties = new HashMap<>();
@@ -58,29 +63,29 @@ abstract class AbstractBaseDocument implements Serializable {
 
     @JsonIgnore
     public String getId() {
-        return (String) getAttribute("_id");
+        return (String) getAttribute(DocumentFields.ID);
     }
 
     public void setId(final String id) {
-        addAttribute("_id", id);
+        addAttribute(DocumentFields.ID, id);
     }
 
     @JsonIgnore
     public String getKey() {
-        return (String) getAttribute("_key");
+        return (String) getAttribute(DocumentFields.KEY);
     }
 
     public void setKey(final String key) {
-        addAttribute("_key", key);
+        addAttribute(DocumentFields.KEY, key);
     }
 
     @JsonIgnore
     public String getRevision() {
-        return (String) getAttribute("_rev");
+        return (String) getAttribute(DocumentFields.REV);
     }
 
     public void setRevision(final String rev) {
-        addAttribute("_rev", rev);
+        addAttribute(DocumentFields.REV, rev);
     }
 
     @JsonInclude

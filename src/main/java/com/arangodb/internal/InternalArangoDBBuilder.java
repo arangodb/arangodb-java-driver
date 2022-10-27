@@ -78,7 +78,7 @@ public abstract class InternalArangoDBBuilder {
     protected Integer responseQueueTimeSamples;
 
 
-    public InternalArangoDBBuilder() {
+    protected InternalArangoDBBuilder() {
         super();
         hosts = new ArrayList<>();
         user = ArangoDefaults.DEFAULT_USER;
@@ -320,7 +320,7 @@ public abstract class InternalArangoDBBuilder {
             hostHandler = new FallbackHostHandler(hostResolver);
         }
 
-        LOG.debug("HostHandler is " + hostHandler.getClass().getSimpleName());
+        LOG.debug("HostHandler is {}", hostHandler.getClass().getSimpleName());
 
         return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
     }

@@ -21,6 +21,6 @@ import java.lang.annotation.Target;
 @JsonProperty(DocumentFields.TO)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonbAnnotation
-@JsonbProperty("_to")
+@JsonbProperty(DocumentFields.TO)
 public @interface To {
 }

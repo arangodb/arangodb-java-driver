@@ -32,7 +32,7 @@ public class Request {
 
     private final DbName dbName;
     private final RequestType requestType;
-    private final String request;
+    private final String path;
     private final Map<String, String> queryParam;
     private final Map<String, String> headerParam;
     private int version = 1;
@@ -43,7 +43,7 @@ public class Request {
         super();
         this.dbName = dbName;
         this.requestType = requestType;
-        this.request = path;
+        this.path = path;
         body = null;
         queryParam = new HashMap<>();
         headerParam = new HashMap<>();
@@ -75,8 +75,8 @@ public class Request {
         return requestType;
     }
 
-    public String getRequest() {
-        return request;
+    public String getPath() {
+        return path;
     }
 
     public Map<String, String> getQueryParam() {
@@ -128,7 +128,7 @@ public class Request {
         return "{" +
                 "requestType=" + requestType +
                 ", database='" + dbName + '\'' +
-                ", url='" + request + '\'' +
+                ", url='" + path + '\'' +
                 ", parameters=" + queryParam +
                 ", headers=" + headerParam +
                 '}';

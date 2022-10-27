@@ -30,8 +30,7 @@ public abstract class IndexOptions<T extends IndexOptions<T>> {
     private Boolean inBackground;
     private String name;
 
-    public IndexOptions() {
-        super();
+    protected IndexOptions() {
     }
 
     abstract T getThis();

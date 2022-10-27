@@ -37,7 +37,8 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         extends ArangoExecuteable<E> {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
-
+    private static final String VERTEX_PATH = "vertex";
+    private static final String VERTEX_JSON_POINTER = "/vertex";
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
     private final G graph;
@@ -58,11 +59,11 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected Request dropRequest() {
-        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "vertex", name);
+        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX_PATH, name);
     }
 
     protected <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), "vertex",
+        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), VERTEX_PATH,
                 name);
         final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -71,12 +72,12 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return request;
     }
 
-    protected <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexEntity.class);
+    protected ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexEntity.class);
     }
 
     protected Request getVertexRequest(final String key, final GraphDocumentReadOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), "vertex",
+        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), VERTEX_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -89,11 +90,11 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
     }
 
     protected <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-        return response -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), "/vertex"), type);
+        return response -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), VERTEX_JSON_POINTER), type);
     }
 
     protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
-        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), "vertex",
+        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), VERTEX_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -103,13 +104,13 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return request;
     }
 
-    protected <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
+    protected ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class);
     }
 
     protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
         final Request request;
-        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), "vertex",
+        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), VERTEX_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -120,13 +121,13 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return request;
     }
 
-    protected <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
-        return response -> getSerde().deserialize(response.getBody(), "/vertex", VertexUpdateEntity.class);
+    protected ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer() {
+        return response -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class);
     }
 
     protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
         final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(),
-                "vertex",
+                VERTEX_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
