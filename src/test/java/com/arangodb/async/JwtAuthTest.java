@@ -9,6 +9,7 @@ import com.arangodb.RequestType;
 import com.arangodb.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -73,6 +74,7 @@ class JwtAuthTest {
     }
 
     @Test
+    @Disabled("DE-423")
     void updateJwt() throws ExecutionException, InterruptedException {
         arangoDB = getBuilder()
                 .jwt(jwt)
