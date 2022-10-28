@@ -100,6 +100,8 @@ public class HttpConnection implements Connection {
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
 
         WebClientOptions webClientOptions = new WebClientOptions()
+                .setMaxPoolSize(1)
+                .setHttp2MaxPoolSize(1)
                 .setConnectTimeout(timeout)
                 .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
                 .setIdleTimeout(timeout)
