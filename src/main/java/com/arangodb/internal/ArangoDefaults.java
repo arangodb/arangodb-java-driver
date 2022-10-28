@@ -40,6 +40,7 @@ public final class ArangoDefaults {
     public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
     public static final Integer CONNECTION_TTL_VST_DEFAULT = null;
     public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
+    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
     public static final Protocol DEFAULT_NETWORK_PROTOCOL = Protocol.HTTP2_JSON;
     public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour

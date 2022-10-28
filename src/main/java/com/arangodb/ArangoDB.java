@@ -159,8 +159,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server storage engine.
      *
      * @return the storage engine name
-     * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
+     * @see <a
+     * href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
     ArangoDBEngine getEngine();
@@ -176,8 +176,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the id of a server in a cluster.
      *
      * @return the server id
-     * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
+     * @see <a
+     * href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
      * Documentation</a>
      */
     String getServerId();
@@ -297,8 +297,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return the log messages
-     * @see
-     * <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
@@ -499,9 +499,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         /**
          * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
-         * every
-         * {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the external
-         * environment, eg. firewall, intermediate routers, operating system).
+         * every {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the
+         * external environment, eg. firewall, intermediate routers, operating system).
          *
          * @param keepAliveInterval interval in seconds
          * @return {@link ArangoDB.Builder}
@@ -513,8 +512,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         /**
          * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover.
-         * In case of Active-Failover deployment set to {@code true} to enable automatic master discovery.
+         * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
+         * master discovery.
          *
          * <p>
          * The host list will be used for failover and load balancing.
@@ -540,9 +539,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
-         * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
-         * would be the default.
+         * Sets the load balancing strategy to be used in an ArangoDB cluster setup. In case of Active-Failover
+         * deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that would be the default.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
          *                              {@link LoadBalancingStrategy#NONE}
@@ -588,9 +586,23 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                     JacksonSerde.of(ContentType.of(protocol));
             final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);
 
-            int protocolMaxConnections = protocol == Protocol.VST ?
-                    ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :
-                    ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+            int protocolMaxConnections;
+            switch (protocol) {
+                case VST:
+                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
+                    break;
+                case HTTP_JSON:
+                case HTTP_VPACK:
+                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+                    break;
+                case HTTP2_JSON:
+                case HTTP2_VPACK:
+                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+
             final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)

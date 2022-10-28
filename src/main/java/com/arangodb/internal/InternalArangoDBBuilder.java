@@ -139,8 +139,8 @@ public abstract class InternalArangoDBBuilder {
     }
 
     private static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
-                ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT));
+        String value = getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue, null);
+        return value != null ? Integer.parseInt(value) : null;
     }
 
     private static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
