@@ -605,7 +605,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
             final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
 
-            final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
+            final ConnectionFactory connectionFactory = Protocol.VST == protocol
                     ? new VstConnectionFactorySync(timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
                     : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
                     protocol, connectionTtl);
