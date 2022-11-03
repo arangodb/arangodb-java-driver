@@ -40,6 +40,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test Native
+        working-directory: driver
         run: mvn -Pnative --no-transfer-progress test
 
   test-native-ssl:
@@ -74,4 +75,5 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test Native
+        working-directory: driver
         run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true test

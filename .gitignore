@@ -1,7 +1,7 @@
 /.classpath
 /.project
 /.settings
-/target
+**/target
 /.idea
 /*.iml
 /bin
@@ -10,5 +10,5 @@
 /docker/jwtSecret
 
 /docker/data
-/test-results-native/
+**/test-results-native
 .flattened-pom.xml
