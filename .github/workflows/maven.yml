@@ -67,6 +67,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
+        working-directory: driver
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
 
   test-ssl:
@@ -101,6 +102,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
+        working-directory: driver
         run: mvn --no-transfer-progress -Dgroups=ssl -DSslTest=true test
 
   # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
@@ -117,6 +119,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
+        working-directory: driver
         run: mvn -e --no-transfer-progress test -Dtest=com.arangodb.util.UnicodeUtilsTest
 
   test-jwt:
@@ -164,6 +167,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
+        working-directory: driver
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
 
   jackson-test:
@@ -207,6 +211,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
+        working-directory: driver
         run: mvn --no-transfer-progress test -Dadb.jackson.version=${{matrix.jackson-version}}
 
   sonar:
@@ -260,5 +265,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: driver
         run: mvn -B --no-transfer-progress -Dgpg.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
 
