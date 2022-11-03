@@ -163,7 +163,7 @@ jobs:
           echo "Active endpoint: $ENDPOINT"
           JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
           echo "Setting JWT: $JWT"
-          sed -i "/arangodb.password/c\arangodb.jwt=$JWT" src/test/resources/arangodb.properties
+          sed -i "/arangodb.password/c\arangodb.jwt=$JWT" driver/src/test/resources/arangodb.properties
       - name: Info
         run: mvn -version
       - name: Test
