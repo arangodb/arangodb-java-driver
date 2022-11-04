@@ -20,6 +20,8 @@
 
 package com.arangodb;
 
+import com.arangodb.config.ConfigPropertiesProvider;
+import com.arangodb.config.ConfigPropertyKey;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -39,10 +41,8 @@ import com.arangodb.serde.JacksonSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Properties;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -333,35 +333,25 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder {
-        private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
-        protected Protocol protocol;
+        protected Protocol protocol = ArangoDefaults.DEFAULT_NETWORK_PROTOCOL;
 
         public Builder() {
             super();
         }
 
-        private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
-            return Protocol.valueOf(
-                    getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue,
-                            ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
-                            .toUpperCase(Locale.ROOT));
+        private static Protocol loadProtocol(final ConfigPropertiesProvider properties, final Protocol currentValue) {
+            return Protocol.valueOf(getProperty(properties, ConfigPropertyKey.PROTOCOL, currentValue).toUpperCase(Locale.ROOT));
         }
 
-        @Override
-        protected void loadProperties(final Properties properties) {
-            super.loadProperties(properties);
+        public Builder loadProperties(final ConfigPropertiesProvider properties) {
+            doLoadProperties(properties);
             protocol = loadProtocol(properties, protocol);
+            return this;
         }
 
         public Builder useProtocol(final Protocol protocol) {
             this.protocol = protocol;
-            return this;
-        }
-
-        @Override
-        public Builder loadProperties(final InputStream in) {
-            super.loadProperties(in);
             return this;
         }
 
@@ -461,7 +451,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * @return {@link ArangoDB.Builder}
          */
         public Builder chunksize(final Integer chunksize) {
-            setChunksize(chunksize);
+            setChunkSize(chunksize);
             return this;
         }
 
@@ -617,7 +607,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
             return new ArangoDBImpl(
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                            .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
+                            .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize)
                             .maxConnections(maxConnections).connectionTtl(connectionTtl),
                     new HttpCommunication.Builder().hostHandler(hostHandler),
                     serde,

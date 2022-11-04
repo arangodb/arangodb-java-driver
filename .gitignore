@@ -1,14 +1,14 @@
-/.classpath
-/.project
-/.settings
-**/target
-/.idea
-/*.iml
-/bin
+.classpath
+.project
+.settings
+target
+.idea
+*.iml
+.directory
 
 /docker/jwtHeader
 /docker/jwtSecret
-
 /docker/data
-**/test-results-native
+
+test-results-native
 .flattened-pom.xml

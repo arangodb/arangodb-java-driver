@@ -1,6 +1,7 @@
 package com.arangodb.async;
 
 
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +14,9 @@ class ConcurrencyTests {
 
     @Test
     void concurrentPendingRequests() throws ExecutionException, InterruptedException {
-        ArangoDBAsync adb = new ArangoDBAsync.Builder().build();
+        ArangoDBAsync adb = new ArangoDBAsync.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .build();
         List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 10)
                 .mapToObj(__ -> adb.db().query("RETURN SLEEP(1)", Void.class))
                 .collect(Collectors.toList());

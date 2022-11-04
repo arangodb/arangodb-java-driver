@@ -24,6 +24,7 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -40,7 +41,9 @@ public class ExampleBase {
 
     @BeforeAll
     static void setUp() {
-        arangoDB = new ArangoDB.Builder().build();
+        arangoDB = new ArangoDB.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .build();
         DbName dbName = DbName.of(DB_NAME);
         if (arangoDB.db(dbName).exists())
             arangoDB.db(dbName).drop();

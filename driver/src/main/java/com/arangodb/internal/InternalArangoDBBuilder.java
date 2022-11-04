@@ -20,8 +20,9 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.ConfigPropertiesProvider;
+import com.arangodb.config.ConfigPropertyKey;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
@@ -30,67 +31,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
  * @author Mark Vollmary
  */
 public abstract class InternalArangoDBBuilder {
-
     private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
-    private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
-    private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
-    private static final String PROPERTY_KEY_USER = "arangodb.user";
-    private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
-    private static final String PROPERTY_KEY_JWT = "arangodb.jwt";
-    private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-    private static final String PROPERTY_KEY_VERIFY_HOST = "arangodb.verifyHost";
-    private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
-    private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
-    private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
-    private static final String PROPERTY_KEEP_ALIVE_INTERVAL = "arangodb.connections.keepAlive.interval";
-    private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
-    private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
-    private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
-    private static final String PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES = "arangodb.metrics.responseQueueTimeSamples";
-    private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
-
-    protected final List<HostDescription> hosts;
-    protected Integer timeout;
-    protected String user;
-    protected String password;
-    protected String jwt;
-    protected Boolean useSsl;
-    protected SSLContext sslContext;
-    protected Boolean verifyHost;
-    protected Integer chunksize;
-    protected Integer maxConnections;
-    protected Long connectionTtl;
-    protected Integer keepAliveInterval;
-    protected Boolean acquireHostList;
-    protected Integer acquireHostListInterval;
-    protected LoadBalancingStrategy loadBalancingStrategy;
+    protected final List<HostDescription> hosts = new ArrayList<>();
+    protected Integer timeout = ArangoDefaults.DEFAULT_TIMEOUT;
+    protected String user = ArangoDefaults.DEFAULT_USER;
+    protected String password = null;
+    protected String jwt = null;
+    protected Boolean useSsl = ArangoDefaults.DEFAULT_USE_SSL;
+    protected SSLContext sslContext = null;
+    protected Boolean verifyHost = ArangoDefaults.DEFAULT_VERIFY_HOST;
+    protected Integer chunkSize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
+    protected Integer maxConnections = null;
+    protected Long connectionTtl = ArangoDefaults.CONNECTION_TTL_VST_DEFAULT;
+    protected Integer keepAliveInterval = null;
+    protected Boolean acquireHostList = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST;
+    protected Integer acquireHostListInterval = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL;
+    protected LoadBalancingStrategy loadBalancingStrategy = ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY;
     protected ArangoSerde customSerializer;
-    protected Integer responseQueueTimeSamples;
+    protected Integer responseQueueTimeSamples = ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES;
 
-
-    protected InternalArangoDBBuilder() {
-        super();
-        hosts = new ArrayList<>();
-        user = ArangoDefaults.DEFAULT_USER;
-        try (InputStream is = ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE)) {
-            loadProperties(is);
-        } catch (IOException e) {
-            throw new ArangoDBException(e);
-        }
-    }
-
-    private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {
-        final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
+    private static void loadHosts(final ConfigPropertiesProvider properties, final Collection<HostDescription> hosts) {
+        final String hostsProp = properties.getProperty(ConfigPropertyKey.HOSTS);
         if (hostsProp != null) {
             final String[] hostsSplit = hostsProp.split(",");
             for (final String host : hostsSplit) {
@@ -106,122 +78,81 @@ public abstract class InternalArangoDBBuilder {
         }
     }
 
-    private static Integer loadTimeout(final Properties properties, final Integer currentValue) {
-        return Integer
-                .parseInt(getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDefaults.DEFAULT_TIMEOUT));
+    private static Integer loadTimeout(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.TIMEOUT, currentValue));
     }
 
-    private static String loadUser(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDefaults.DEFAULT_USER);
+    private static String loadUser(final ConfigPropertiesProvider properties, final String currentValue) {
+        return getProperty(properties, ConfigPropertyKey.USER, currentValue);
     }
 
-    private static String loadPassword(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
+    private static String loadPassword(final ConfigPropertiesProvider properties, final String currentValue) {
+        return getProperty(properties, ConfigPropertyKey.PASSWORD, currentValue);
     }
 
-    private static String loadJwt(final Properties properties, final String currentValue) {
-        return getProperty(properties, PROPERTY_KEY_JWT, currentValue, null);
+    private static String loadJwt(final ConfigPropertiesProvider properties, final String currentValue) {
+        return getProperty(properties, ConfigPropertyKey.JWT, currentValue);
     }
 
-    private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(
-                getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
+    private static Boolean loadUseSsl(final ConfigPropertiesProvider properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.USE_SSL, currentValue));
     }
 
-    private static Boolean loadVerifyHost(final Properties properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_VERIFY_HOST, currentValue,
-                ArangoDefaults.DEFAULT_VERIFY_HOST));
+    private static Boolean loadVerifyHost(final ConfigPropertiesProvider properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.VERIFY_HOST, currentValue));
     }
 
-    private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
-                ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
+    private static Integer loadChunkSize(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.VST_CHUNK_SIZE, currentValue));
     }
 
-    private static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
-        String value = getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue, null);
+    private static Integer loadMaxConnections(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        String value = getProperty(properties, ConfigPropertyKey.MAX_CONNECTIONS, currentValue);
         return value != null ? Integer.parseInt(value) : null;
     }
 
-    private static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
-        final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
-                ArangoDefaults.CONNECTION_TTL_VST_DEFAULT);
+    private static Long loadConnectionTtl(final ConfigPropertiesProvider properties, final Long currentValue) {
+        final String ttl = getProperty(properties, ConfigPropertyKey.CONNECTION_TTL, currentValue);
         return ttl != null ? Long.parseLong(ttl) : null;
     }
 
-    private static Integer loadKeepAliveInterval(final Properties properties, final Integer currentValue) {
-        final String keepAliveInterval = getProperty(properties, PROPERTY_KEEP_ALIVE_INTERVAL, currentValue,
-                null);
+    private static Integer loadKeepAliveInterval(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        final String keepAliveInterval = getProperty(properties, ConfigPropertyKey.KEEP_ALIVE_INTERVAL, currentValue);
         return keepAliveInterval != null ? Integer.parseInt(keepAliveInterval) : null;
     }
 
-    private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
-                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
+    private static Boolean loadAcquireHostList(final ConfigPropertiesProvider properties, final Boolean currentValue) {
+        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.ACQUIRE_HOST_LIST, currentValue));
     }
 
-    private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
-                ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
+    private static int loadAcquireHostListInterval(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.ACQUIRE_HOST_LIST_INTERVAL, currentValue));
     }
 
-    private static int loadResponseQueueTimeSamples(final Properties properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES, currentValue,
-                ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES));
+    private static int loadResponseQueueTimeSamples(final ConfigPropertiesProvider properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.RESPONSE_QUEUE_TIME_SAMPLES, currentValue));
     }
 
     private static LoadBalancingStrategy loadLoadBalancingStrategy(
-            final Properties properties,
+            final ConfigPropertiesProvider properties,
             final LoadBalancingStrategy currentValue) {
-        return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ROOT));
+        return LoadBalancingStrategy.valueOf(getProperty(properties, ConfigPropertyKey.LOAD_BALANCING_STRATEGY, currentValue).toUpperCase(Locale.ROOT));
     }
 
-    protected static <T> String getProperty(
-            final Properties properties,
-            final String key,
-            final T currentValue,
-            final T defaultValue) {
-
-        String overrideDefaultValue = null;
-
-        if (currentValue != null) {
-            overrideDefaultValue = currentValue.toString();
-        } else if (defaultValue != null) {
-            overrideDefaultValue = defaultValue.toString();
-        }
-
-        return properties.getProperty(key, overrideDefaultValue);
+    protected static String getProperty(ConfigPropertiesProvider props, ConfigPropertyKey key, Object currentValue) {
+        String defaultValue = currentValue == null ? null : currentValue.toString();
+        return props.getProperty(key, defaultValue);
     }
 
-    public InternalArangoDBBuilder loadProperties(final InputStream in) {
-
-        final Properties properties = new Properties();
-
-        if (in != null) {
-
-            try {
-                properties.load(in);
-            } catch (final IOException e) {
-                throw new ArangoDBException(e);
-            }
-        }
-
-        loadProperties(properties);
-
-        return this;
-
-    }
-
-    protected void loadProperties(final Properties properties) {
-        loadHosts(properties, this.hosts);
+    protected void doLoadProperties(final ConfigPropertiesProvider properties) {
+        loadHosts(properties, hosts);
         timeout = loadTimeout(properties, timeout);
         user = loadUser(properties, user);
         password = loadPassword(properties, password);
         jwt = loadJwt(properties, jwt);
         useSsl = loadUseSsl(properties, useSsl);
         verifyHost = loadVerifyHost(properties, verifyHost);
-        chunksize = loadChunkSize(properties, chunksize);
+        chunkSize = loadChunkSize(properties, chunkSize);
         maxConnections = loadMaxConnections(properties, maxConnections);
         connectionTtl = loadConnectionTtl(properties, connectionTtl);
         keepAliveInterval = loadKeepAliveInterval(properties, keepAliveInterval);
@@ -263,8 +194,8 @@ public abstract class InternalArangoDBBuilder {
         this.verifyHost = verifyHost;
     }
 
-    protected void setChunksize(final Integer chunksize) {
-        this.chunksize = chunksize;
+    protected void setChunkSize(final Integer chunkSize) {
+        this.chunkSize = chunkSize;
     }
 
     protected void setMaxConnections(final Integer maxConnections) {

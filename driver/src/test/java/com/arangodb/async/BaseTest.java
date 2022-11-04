@@ -24,6 +24,7 @@ import com.arangodb.DbName;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +45,9 @@ public abstract class BaseTest {
     @BeforeAll
     static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
-            arangoDB = new ArangoDBAsync.Builder().build();
+            arangoDB = new ArangoDBAsync.Builder()
+                    .loadProperties(new FileConfigPropertiesProvider())
+                    .build();
         }
 
         if (arangoDB.db(TEST_DB).exists().get()) {

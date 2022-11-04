@@ -1,6 +1,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.serde.JsonbSerde;
@@ -19,12 +20,12 @@ class BaseJunit5 {
     protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
 
     private static final List<ArangoDB> adbs = Arrays.asList(
-            new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP2_VPACK).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP2_JSON).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP2_JSON).serializer(JsonbSerde.create()).build()
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.VST).build(),
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_VPACK).build(),
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_JSON).build(),
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_VPACK).build(),
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).build(),
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).serializer(JsonbSerde.create()).build()
     );
 
     protected static Stream<ArangoDatabase> dbsStream() {
