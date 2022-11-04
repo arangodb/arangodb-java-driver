@@ -572,6 +572,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * @return {@link ArangoDB}
          */
         public ArangoDB build() {
+            if (hosts.isEmpty()) {
+                throw new ArangoDBException("No host has been set!");
+            }
+
             final ArangoSerde userSerde = customSerializer != null ? customSerializer :
                     JacksonSerde.of(ContentType.of(protocol));
             final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);

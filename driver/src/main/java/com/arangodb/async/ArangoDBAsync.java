@@ -505,6 +505,10 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync}
          */
         public ArangoDBAsync build() {
+            if (hosts.isEmpty()) {
+                throw new ArangoDBException("No host has been set!");
+            }
+
             final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(ContentType.VPACK);
             final InternalSerde serde = InternalSerde.of(ContentType.VPACK, userSerde);
 

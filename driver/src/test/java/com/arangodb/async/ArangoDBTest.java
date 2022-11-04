@@ -79,10 +79,9 @@ class ArangoDBTest {
     }
 
     private boolean supportsExtendedNames() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
         if (extendedNames == null) {
             try {
-                ArangoDatabase testDb = arangoDB.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
+                ArangoDatabase testDb = arangoDBSync.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
                 testDb.create();
                 extendedNames = true;
                 testDb.drop();
