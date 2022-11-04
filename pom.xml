@@ -9,6 +9,7 @@
     <inceptionYear>2016</inceptionYear>
     <modules>
         <module>driver</module>
+        <module>resilience-tests</module>
     </modules>
     <packaging>pom</packaging>
 
