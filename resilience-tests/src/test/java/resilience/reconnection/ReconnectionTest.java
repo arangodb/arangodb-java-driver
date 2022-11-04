@@ -5,6 +5,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.Protocol;
+import org.junit.jupiter.params.provider.EnumSource;
 import resilience.SingleServerTest;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -82,8 +84,18 @@ class ReconnectionTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("arangoProvider")
-    void connectionTimeout(ArangoDB arangoDB) throws IOException, InterruptedException {
+    @EnumSource(Protocol.class)
+    void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
+        // https://github.com/vert-x3/vertx-web/issues/2296
+        // WebClient: HTTP/2 request timeout does not throw TimeoutException
+        assumeTrue(protocol != Protocol.HTTP2_VPACK);
+        assumeTrue(protocol != Protocol.HTTP2_JSON);
+
+        ArangoDB arangoDB = dbBuilder()
+                .timeout(1_000)
+                .useProtocol(protocol)
+                .build();
+
         arangoDB.getVersion();
 
         // slow down the driver connection

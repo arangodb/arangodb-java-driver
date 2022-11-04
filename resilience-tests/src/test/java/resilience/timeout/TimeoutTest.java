@@ -4,29 +4,21 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import resilience.SingleServerTest;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import resilience.SingleServerTest;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
 class TimeoutTest extends SingleServerTest {
-
-    static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().timeout(1_000).useProtocol(Protocol.VST).build(),
-                dbBuilder().timeout(1_000).useProtocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().timeout(1_000).useProtocol(Protocol.HTTP2_VPACK).build()
-        );
-    }
 
     /**
      * on timeout failure:
@@ -37,8 +29,18 @@ class TimeoutTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("arangoProvider")
-    void requestTimeout(ArangoDB arangoDB) throws InterruptedException {
+    @EnumSource(Protocol.class)
+    void requestTimeout(Protocol protocol) throws InterruptedException {
+        // https://github.com/vert-x3/vertx-web/issues/2296
+        // WebClient: HTTP/2 request timeout does not throw TimeoutException
+        assumeTrue(protocol != Protocol.HTTP2_VPACK);
+        assumeTrue(protocol != Protocol.HTTP2_JSON);
+
+        ArangoDB arangoDB = dbBuilder()
+                .timeout(1_000)
+                .useProtocol(protocol)
+                .build();
+
         arangoDB.getVersion();
         String colName = "timeoutTest";
         ArangoCollection col = arangoDB.db().collection(colName);
