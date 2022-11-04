@@ -30,7 +30,8 @@ public enum ShardingStrategy {
     ENTERPRISE_COMPAT("enterprise-compat"),
     ENTERPRISE_SMART_EDGE_COMPAT("enterprise-smart-edge-compat"),
     HASH("hash"),
-    ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge");
+    ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge"),
+    ENTERPRISE_HEX_SMART_VERTEX("enterprise-hex-smart-vertex");
 
     private final String internalName;
 
