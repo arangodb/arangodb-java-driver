@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.*;
 import com.arangodb.entity.*;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.*;
 import com.arangodb.util.TestUtils;
 import com.arangodb.Request;
@@ -54,8 +55,12 @@ class ArangoDBTest {
     private static final String PW = "machts der hund";
     private static Boolean extendedNames;
 
-    private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-    private final ArangoDB arangoDBSync = new ArangoDB.Builder().build();
+    private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+            .loadProperties(new FileConfigPropertiesProvider())
+            .build();
+    private final ArangoDB arangoDBSync = new ArangoDB.Builder()
+            .loadProperties(new FileConfigPropertiesProvider())
+            .build();
 
     private boolean isEnterprise() {
         return arangoDBSync.getVersion().getLicense() == License.ENTERPRISE;
@@ -413,7 +418,9 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailPassword() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").jwt(null).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .password("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -424,7 +431,9 @@ class ArangoDBTest {
 
     @Test
     void authenticationFailUser() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").jwt(null).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .user("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -446,7 +455,9 @@ class ArangoDBTest {
 
     @Test
     void execute_acquireHostList_enabled() throws InterruptedException, ExecutionException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .acquireHostList(true).build();
         arangoDB
                 .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {

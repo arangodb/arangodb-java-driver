@@ -24,6 +24,7 @@ import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
+import com.arangodb.config.ConfigPropertiesProvider;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -42,7 +43,6 @@ import com.arangodb.serde.JacksonSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
@@ -308,9 +308,8 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             super();
         }
 
-        @Override
-        public Builder loadProperties(final InputStream in) {
-            super.loadProperties(in);
+        public Builder loadProperties(final ConfigPropertiesProvider config) {
+            super.doLoadProperties(config);
             return this;
         }
 
@@ -399,7 +398,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync.Builder}
          */
         public Builder chunksize(final Integer chunksize) {
-            setChunksize(chunksize);
+            setChunkSize(chunksize);
             return this;
         }
 
@@ -535,13 +534,13 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationAsync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 
         private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 

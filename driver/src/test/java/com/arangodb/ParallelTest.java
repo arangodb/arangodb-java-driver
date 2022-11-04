@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -21,6 +22,7 @@ class ParallelTest {
         // BTS-1102: the server does not run pipelined HTTP/1.1 requests in parallel
         assumeTrue(protocol != Protocol.HTTP_JSON && protocol != Protocol.HTTP_VPACK);
         ArangoDB adb = new ArangoDB.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
                 .useProtocol(protocol)
                 .maxConnections(1)
                 .build();

@@ -25,6 +25,7 @@ import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.ContentType;
 import com.arangodb.serde.JacksonSerde;
@@ -61,7 +62,9 @@ class CustomSerdeTest {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
         });
-        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(serde).build();
+        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+                .loadProperties(new FileConfigPropertiesProvider())
+                .serializer(serde).build();
 
         DbName TEST_DB = DbName.of("custom-serde-test");
         db = arangoDB.db(TEST_DB);
