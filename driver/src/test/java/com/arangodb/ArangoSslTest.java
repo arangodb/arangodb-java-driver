@@ -75,6 +75,7 @@ class ArangoSslTest {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .useProtocol(protocol)
                 .host("localhost", 8529)
+                .password("test")
                 .useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
