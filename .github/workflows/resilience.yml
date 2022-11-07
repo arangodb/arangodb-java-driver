@@ -1,0 +1,32 @@
+name: Resilience Tests
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ v** ]
+
+jobs:
+  test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 19
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+      - name: Info
+        run: mvn -version
+      - name: Start Toxiproxy
+        working-directory: resilience-tests
+        run: ./bin/toxiproxy-server-linux-amd64
+      - name: Test
+        run: mvn --no-transfer-progress -am -pl resilience-tests test
