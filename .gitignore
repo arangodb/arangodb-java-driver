@@ -12,3 +12,5 @@ target
 
 test-results-native
 .flattened-pom.xml
+/resilience-tests/bin/toxiproxy-server-linux-amd64
+

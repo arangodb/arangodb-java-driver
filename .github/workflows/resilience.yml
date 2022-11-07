@@ -10,6 +10,9 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
+    env:
+      TOXIPROXY_VERSION: v2.5.0
+
     strategy:
       fail-fast: false
 
@@ -27,6 +30,6 @@ jobs:
         run: mvn -version
       - name: Start Toxiproxy
         working-directory: resilience-tests
-        run: ./bin/toxiproxy-server-linux-amd64
+        run: ./bin/startProxy.sh
       - name: Test
         run: mvn --no-transfer-progress -am -pl resilience-tests test
