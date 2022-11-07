@@ -9,6 +9,7 @@
     <inceptionYear>2016</inceptionYear>
     <modules>
         <module>driver</module>
+        <module>resilience-tests</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -37,32 +38,6 @@
             <url>https://github.com/mpv1989</url>
         </developer>
     </developers>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <dependencyConvergence/>
-                                <requireMavenVersion>
-                                    <version>3.6</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <organization>
         <name>ArangoDB GmbH</name>
