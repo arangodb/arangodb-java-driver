@@ -33,9 +33,9 @@ class RetryTest extends SingleServerTest {
 
     static Stream<ArangoDB> arangoProvider() {
         return Stream.of(
-                dbBuilder().timeout(1_000).useProtocol(Protocol.VST).build(),
-                dbBuilder().timeout(1_000).useProtocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().timeout(1_000).useProtocol(Protocol.HTTP2_VPACK).build()
+                dbBuilder().useProtocol(Protocol.VST).build(),
+                dbBuilder().useProtocol(Protocol.HTTP_VPACK).build(),
+                dbBuilder().useProtocol(Protocol.HTTP2_VPACK).build()
         );
     }
 
@@ -57,9 +57,8 @@ class RetryTest extends SingleServerTest {
             assertThat(thrown.getMessage()).contains("Cannot contact any host");
             assertThat(thrown.getCause()).isNotNull();
             assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
-            ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e -> {
-                assertThat(e).isInstanceOf(ConnectException.class);
-            });
+            ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e ->
+                    assertThat(e).isInstanceOf(ConnectException.class));
         }
 
         long warnsCount = logs.getLoggedEvents().stream()

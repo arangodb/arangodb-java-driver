@@ -29,10 +29,6 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: driver
-
     permissions:
       actions: read
       contents: read
@@ -66,6 +62,7 @@ jobs:
       # If this step fails, then you should remove it and run the build manually (see below)
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
+        working-directory: driver
 
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -79,3 +76,4 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+        working-directory: driver
