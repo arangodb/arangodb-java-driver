@@ -88,7 +88,6 @@ class BaseJunit5 {
     @AfterAll
     static void shutdown() {
         dropDB(TEST_DB);
-        adbs.forEach(ArangoDB::shutdown);
     }
 
     static String rnd() {
