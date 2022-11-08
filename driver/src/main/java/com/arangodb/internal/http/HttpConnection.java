@@ -61,6 +61,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -227,10 +228,12 @@ public class HttpConnection implements Connection {
             throw ArangoDBException.wrap(e);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof IOException) {
+            if (cause instanceof TimeoutException) {
+                throw ArangoDBException.wrap(cause);
+            } else if (cause instanceof IOException) {
                 throw (IOException) cause;
             } else {
-                throw ArangoDBException.wrap(e.getCause());
+                throw new IOException(cause);
             }
         }
         checkError(resp);
