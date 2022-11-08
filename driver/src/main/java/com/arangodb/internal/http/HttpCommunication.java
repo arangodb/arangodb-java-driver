@@ -22,6 +22,7 @@ package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Request;
+import com.arangodb.RequestType;
 import com.arangodb.Response;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
@@ -84,8 +85,6 @@ public class HttpCommunication implements Closeable {
                     return response;
                 } catch (final SocketTimeoutException e) {
                     // SocketTimeoutException exceptions are wrapped and rethrown.
-                    // Differently from other IOException exceptions they must not be retried,
-                    // since the requests could not be idempotent.
                     TimeoutException te = new TimeoutException(e.getMessage());
                     te.initCause(e);
                     throw new ArangoDBException(te, reqId);
@@ -96,7 +95,7 @@ public class HttpCommunication implements Closeable {
                     }
                     final Host failedHost = host;
                     host = hostHandler.get(hostHandle, accessType);
-                    if (host != null) {
+                    if (host != null && isSafe(request)) {
                         LOGGER.warn("Could not connect to {} while executing request [id={}]",
                                 failedHost.getDescription(), reqId, e);
                         LOGGER.debug("Try connecting to {}", host.getDescription());
@@ -106,9 +105,9 @@ public class HttpCommunication implements Closeable {
                     }
                 }
             }
-        } catch (final ArangoDBException e) {
-            if (e instanceof ArangoDBRedirectException && attemptCount < 3) {
-                final String location = ((ArangoDBRedirectException) e).getLocation();
+        } catch (final ArangoDBRedirectException e) {
+            if (attemptCount < 3) {
+                final String location = e.getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
                 hostHandler.failIfNotMatch(redirectHost, e);
                 return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
@@ -116,6 +115,11 @@ public class HttpCommunication implements Closeable {
                 throw e;
             }
         }
+    }
+
+    private boolean isSafe(final Request request) {
+        RequestType type = request.getRequestType();
+        return type == RequestType.GET || type == RequestType.HEAD || type == RequestType.OPTIONS;
     }
 
     public static class Builder {

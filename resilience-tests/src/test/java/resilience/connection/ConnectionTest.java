@@ -8,7 +8,6 @@ import resilience.SingleServerTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.stream.Stream;
@@ -59,21 +58,18 @@ class ConnectionTest extends SingleServerTest {
 
     @ParameterizedTest
     @MethodSource("arangoProvider")
-    void connectionFailTest(ArangoDB arangoDB) throws IOException, InterruptedException {
-        getEndpoint().getProxy().disable();
-        Thread.sleep(100);
+    void connectionFailTest(ArangoDB arangoDB) {
+        disableEndpoint();
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getMessage()).contains("Cannot contact any host");
         assertThat(thrown.getCause()).isNotNull();
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
-        ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e -> {
-            assertThat(e).isInstanceOf(ConnectException.class);
-        });
+        ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e ->
+                assertThat(e).isInstanceOf(ConnectException.class));
         arangoDB.shutdown();
-        getEndpoint().getProxy().enable();
-        Thread.sleep(100);
+        enableEndpoint();
     }
 
 }

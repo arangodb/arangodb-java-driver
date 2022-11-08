@@ -28,6 +28,11 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: driver
+
     permissions:
       actions: read
       contents: read
