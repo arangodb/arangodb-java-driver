@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private final ConnectionFactory factory;
     private int current;
     private volatile String jwt = null;
+    private boolean closed = false;
 
     public ConnectionPoolImpl(final HostDescription host, final Integer maxConnections,
                               final ConnectionFactory factory) {
@@ -62,6 +64,9 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     @Override
     public synchronized Connection connection() {
+        if (closed) {
+            throw new ArangoDBException("Connection pool already closed!");
+        }
 
         final Connection connection;
 
@@ -91,6 +96,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     @Override
     public synchronized void close() throws IOException {
+        closed = true;
         for (final Connection connection : connections) {
             connection.close();
         }
