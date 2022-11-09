@@ -219,11 +219,6 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle) {
-        return executor.execute(request, response -> response, hostHandle);
-    }
-
-    @Override
     public LogEntriesEntity getLogEntries(final LogOptions options) {
         return executor.execute(getLogEntriesRequest(options), LogEntriesEntity.class);
     }

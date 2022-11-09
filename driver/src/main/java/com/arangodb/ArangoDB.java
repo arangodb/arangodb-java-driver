@@ -276,21 +276,18 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     void grantDefaultCollectionAccess(String user, Permissions permissions);
 
     /**
-     * Generic Execute. Use this method to execute custom FOXX services.
+     * Execute custom requests. Requests can be programmatically built by setting low level detail such as method, path,
+     * query parameters, headers and body payload.
+     * This method can be used to call FOXX services, API endpoints not (yet) implemented in this driver or trigger
+     * async jobs, see
+     * <a href="https://www.arangodb.com/docs/stable/http/async-results-management.html#fire-and-forget">Fire and Forget</a>
+     * and
+     * <a href="https://www.arangodb.com/docs/stable/http/async-results-management.html#async-execution-and-later-result-retrieval">Async Execution and later Result Retrieval</a>
      *
      * @param request request
-     * @return VelocyStream response
+     * @return response
      */
     Response execute(Request request);
-
-    /**
-     * Generic Execute. Use this method to execute custom FOXX services.
-     *
-     * @param request    request
-     * @param hostHandle Used to stick to a specific host when using {@link LoadBalancingStrategy#ROUND_ROBIN}
-     * @return VelocyStream response
-     */
-    Response execute(Request request, HostHandle hostHandle);
 
     /**
      * Returns the server logs
