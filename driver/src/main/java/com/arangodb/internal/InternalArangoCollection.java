@@ -28,7 +28,6 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
-import com.arangodb.RequestType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;

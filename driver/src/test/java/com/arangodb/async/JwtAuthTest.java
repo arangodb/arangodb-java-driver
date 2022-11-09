@@ -1,13 +1,7 @@
 package com.arangodb.async;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.DbName;
+import com.arangodb.*;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
-import com.arangodb.serde.ArangoSerde;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.RequestType;
-import com.arangodb.internal.InternalResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -35,17 +29,19 @@ class JwtAuthTest {
     }
 
     private static String getJwt(ArangoDB arangoDB) {
-        ArangoSerde serde = arangoDB.getSerde();
         Map<String, String> reqBody = new HashMap<>();
         reqBody.put("username", "root");
         reqBody.put("password", "test");
 
-        InternalRequest req = new InternalRequest(DbName.SYSTEM, RequestType.POST, "/_open/auth");
-        req.setBody(serde.serialize(reqBody));
+        Request<?> req = Request.builder()
+                .db(DbName.SYSTEM)
+                .method(Request.Method.POST)
+                .path("/_open/auth")
+                .body(reqBody)
+                .build();
 
-        InternalResponse resp = arangoDB.execute(req);
-        Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
-        return respBody.get("jwt");
+        Response<Map> resp = arangoDB.execute(req, Map.class);
+        return (String) resp.getBody().get("jwt");
     }
 
     @AfterEach

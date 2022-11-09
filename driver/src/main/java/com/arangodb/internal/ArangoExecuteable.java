@@ -24,7 +24,6 @@ import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary

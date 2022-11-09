@@ -21,7 +21,6 @@
 package com.arangodb.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.RequestType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,6 +88,15 @@ public class InternalRequest {
     public InternalRequest putQueryParam(final String key, final Object value) {
         if (value != null) {
             queryParam.put(key, value.toString());
+        }
+        return this;
+    }
+
+    public InternalRequest putQueryParams(final Map<String, String> params) {
+        if (params != null) {
+            for (Map.Entry<String, String> it : params.entrySet()) {
+                putQueryParam(it.getKey(), it.getValue());
+            }
         }
         return this;
     }

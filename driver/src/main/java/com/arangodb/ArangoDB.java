@@ -283,9 +283,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/async-results-management.html#async-execution-and-later-result-retrieval">Async Execution and later Result Retrieval</a>
      *
      * @param request request
+     * @param type    Deserialization target type for the response body (POJO or {@link com.arangodb.util.RawData})
      * @return response
      */
-    InternalResponse execute(InternalRequest request);
+    <T, U> Response<U> execute(Request<T> request, Class<U> type);
 
     /**
      * Returns the server logs

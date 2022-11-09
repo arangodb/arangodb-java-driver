@@ -30,7 +30,7 @@ import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.RequestType;
+import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ClientAuth;

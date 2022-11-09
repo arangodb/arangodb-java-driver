@@ -26,7 +26,7 @@ import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.RequestType;
+import com.arangodb.internal.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

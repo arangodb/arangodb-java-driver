@@ -21,6 +21,8 @@
 package com.arangodb.internal;
 
 import com.arangodb.DbName;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -28,7 +30,6 @@ import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
-import com.arangodb.RequestType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -157,6 +158,22 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected InternalRequest updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
                 "*", "*").setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+    }
+
+    protected InternalRequest executeRequest(final Request<?> request) {
+        InternalRequest ireq = new InternalRequest(request.getDb(), RequestType.from(request.getMethod()), request.getPath());
+        ireq.putHeaderParams(request.getHeaders());
+        ireq.putQueryParams(request.getQueryParams());
+        ireq.setBody(serde.serializeUserData(request.getBody()));
+        return ireq;
+    }
+
+    protected <T> ResponseDeserializer<Response<T>> responseDeserializer(Class<T> type) {
+        return response -> new Response<>(
+                response.getResponseCode(),
+                response.getMeta(),
+                serde.deserializeUserData(response.getBody(), type)
+        );
     }
 
     protected InternalRequest getLogEntriesRequest(final LogOptions options) {

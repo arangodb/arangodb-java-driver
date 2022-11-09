@@ -22,7 +22,7 @@ package com.arangodb.async.internal;
 
 import com.arangodb.async.ArangoRouteAsync;
 import com.arangodb.internal.InternalArangoRoute;
-import com.arangodb.RequestType;
+import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;
 
 import java.util.Map;

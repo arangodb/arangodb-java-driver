@@ -18,7 +18,9 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.internal;
+
+import com.arangodb.Request;
 
 /**
  * @author Mark Vollmary
@@ -43,13 +45,25 @@ public enum RequestType {
         this.type = type;
     }
 
-    public static RequestType fromType(final int type) {
-        for (final RequestType rType : RequestType.values()) {
-            if (rType.type == type) {
-                return rType;
-            }
+    public static RequestType from(final Request.Method method) {
+        switch (method) {
+            case DELETE:
+                return DELETE;
+            case GET:
+                return GET;
+            case POST:
+                return POST;
+            case PUT:
+                return PUT;
+            case HEAD:
+                return HEAD;
+            case PATCH:
+                return PATCH;
+            case OPTIONS:
+                return OPTIONS;
+            default:
+                throw new IllegalArgumentException();
         }
-        return null;
     }
 
     public int getType() {

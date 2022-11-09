@@ -22,7 +22,7 @@ package com.arangodb.internal.util;
 
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.RequestType;
+import com.arangodb.internal.RequestType;
 
 /**
  * @author Mark Vollmary

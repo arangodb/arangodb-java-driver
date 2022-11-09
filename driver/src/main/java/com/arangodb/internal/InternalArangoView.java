@@ -22,7 +22,6 @@ package com.arangodb.internal;
 
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.ViewRenameOptions;
-import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary

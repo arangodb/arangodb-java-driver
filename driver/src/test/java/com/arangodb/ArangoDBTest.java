@@ -21,12 +21,13 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.util.RawJson;
 import com.arangodb.util.TestUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -392,9 +393,20 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
-    void execute(ArangoDB arangoDB) {
-        final InternalResponse response = arangoDB.execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"));
-        assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+    void executeGetVersion(ArangoDB arangoDB) {
+        Request<?> request = Request.builder()
+                .db(DbName.SYSTEM)
+                .method(Request.Method.GET)
+                .path("/_api/version")
+                .queryParam("details", "true")
+                .build();
+        final Response<RawJson> response = arangoDB.execute(request, RawJson.class);
+        JsonNode body = SerdeUtils.INSTANCE.parseJson(response.getBody().getValue());
+        assertThat(body.get("version").isTextual()).isTrue();
+        assertThat(body.get("details").isObject()).isTrue();
+        String header = response.getHeaders().get("x-arango-queue-time-seconds");
+        assertThat(header).isNotNull();
+        assertThat(response.getResponseCode()).isEqualTo(200);
     }
 
     @ParameterizedTest(name = "{index}")

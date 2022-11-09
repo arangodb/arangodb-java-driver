@@ -23,10 +23,10 @@ package com.arangodb.async;
 import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
+import com.arangodb.util.RawJson;
 import com.arangodb.util.TestUtils;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.RequestType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -444,10 +444,14 @@ class ArangoDBTest {
     @Test
     void execute() throws InterruptedException, ExecutionException {
         arangoDB
-                .execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"))
+                .execute(Request.builder()
+                        .db(DbName.SYSTEM)
+                        .method(Request.Method.GET)
+                        .path("/_api/version")
+                        .build(), RawJson.class)
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(SerdeUtils.INSTANCE.parseJson(response.getBody().getValue()).get("version").isTextual()).isTrue();
                 })
                 .get();
     }
@@ -458,10 +462,14 @@ class ArangoDBTest {
                 .loadProperties(new FileConfigPropertiesProvider())
                 .acquireHostList(true).build();
         arangoDB
-                .execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"))
+                .execute(Request.builder()
+                        .db(DbName.SYSTEM)
+                        .method(Request.Method.GET)
+                        .path("/_api/version")
+                        .build(), RawJson.class)
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
-                    assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
+                    assertThat(SerdeUtils.INSTANCE.parseJson(response.getBody().getValue()).get("version").isTextual()).isTrue();
                 })
                 .get();
     }

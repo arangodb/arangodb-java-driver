@@ -22,6 +22,8 @@ package com.arangodb.async.internal;
 
 import com.arangodb.ArangoMetrics;
 import com.arangodb.DbName;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
@@ -40,7 +42,6 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,8 +216,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     }
 
     @Override
-    public CompletableFuture<InternalResponse> execute(final InternalRequest request) {
-        return executor.execute(request, response -> response);
+    public <T, U> CompletableFuture<Response<U>> execute(Request<T> request, Class<U> type) {
+        return executor.execute(executeRequest(request), responseDeserializer(type));
     }
 
     @Override
