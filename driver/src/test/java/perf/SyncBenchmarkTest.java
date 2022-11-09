@@ -3,7 +3,7 @@ package perf;
 import com.arangodb.ArangoDB;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.arangodb.RequestType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +47,7 @@ public class SyncBenchmarkTest {
 
         ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
-            private final Request request = new Request(DbName.SYSTEM, RequestType.GET,
+            private final InternalRequest request = new InternalRequest(DbName.SYSTEM, RequestType.GET,
                     "/_api/version").putQueryParam("details", true);
 
             @Override

@@ -21,7 +21,6 @@
 package com.arangodb.internal;
 
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.Request;
 import com.arangodb.RequestType;
 
 /**
@@ -37,18 +36,18 @@ public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends Inter
         super(db, name);
     }
 
-    protected Request getPropertiesRequest() {
+    protected InternalRequest getPropertiesRequest() {
         return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
     }
 
-    protected Request replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
+    protected InternalRequest replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
+        final InternalRequest request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }
 
-    protected Request updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
+    protected InternalRequest updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
+        final InternalRequest request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }

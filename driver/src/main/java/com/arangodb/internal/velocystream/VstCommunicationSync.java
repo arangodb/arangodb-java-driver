@@ -32,8 +32,8 @@ import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import javax.net.ssl.SSLContext;
 /**
  * @author Mark Vollmary
  */
-public class VstCommunicationSync extends VstCommunication<Response, VstConnectionSync> {
+public class VstCommunicationSync extends VstCommunication<InternalResponse, VstConnectionSync> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
 
@@ -54,16 +54,16 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
     }
 
     @Override
-    protected Response execute(final Request request, final VstConnectionSync connection) {
+    protected InternalResponse execute(final InternalRequest request, final VstConnectionSync connection) {
         return execute(request, connection, 0);
     }
 
     @Override
-    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount) {
+    protected InternalResponse execute(final InternalRequest request, final VstConnectionSync connection, final int attemptCount) {
         try {
             final Message requestMessage = createMessage(request);
             final Message responseMessage = send(requestMessage, connection);
-            final Response response = createResponse(responseMessage);
+            final InternalResponse response = createResponse(responseMessage);
             checkError(response);
             return response;
         } catch (final VPackParserException e) {
@@ -89,13 +89,13 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        Request authRequest;
+        InternalRequest authRequest;
         if (jwt != null) {
             authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
         } else {
             authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
         }
-        final Response response = execute(authRequest, connection);
+        final InternalResponse response = execute(authRequest, connection);
         checkError(response);
     }
 
@@ -169,7 +169,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
             return this;
         }
 
-        public VstCommunication<Response, VstConnectionSync> build(final InternalSerde util) {
+        public VstCommunication<InternalResponse, VstConnectionSync> build(final InternalSerde util) {
             return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util,
                     chunksize,
                     maxConnections, connectionTtl);

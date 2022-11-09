@@ -21,7 +21,7 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.internal.net.AccessType;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.arangodb.RequestType;
 
 /**
@@ -35,11 +35,11 @@ public final class RequestUtils {
         super();
     }
 
-    public static Request allowDirtyRead(final Request request) {
+    public static InternalRequest allowDirtyRead(final InternalRequest request) {
         return request.putHeaderParam(HEADER_ALLOW_DIRTY_READ, "true");
     }
 
-    public static AccessType determineAccessType(final Request request) {
+    public static AccessType determineAccessType(final InternalRequest request) {
         if (request.containsHeaderParam(HEADER_ALLOW_DIRTY_READ)) {
             return AccessType.DIRTY_READ;
         }

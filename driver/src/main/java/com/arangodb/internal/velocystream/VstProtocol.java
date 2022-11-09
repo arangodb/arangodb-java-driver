@@ -23,8 +23,8 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 
 import java.io.IOException;
 
@@ -33,15 +33,15 @@ import java.io.IOException;
  */
 public class VstProtocol implements CommunicationProtocol {
 
-    private final VstCommunication<Response, VstConnectionSync> communication;
+    private final VstCommunication<InternalResponse, VstConnectionSync> communication;
 
-    public VstProtocol(final VstCommunication<Response, VstConnectionSync> communication) {
+    public VstProtocol(final VstCommunication<InternalResponse, VstConnectionSync> communication) {
         super();
         this.communication = communication;
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle) {
+    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
         return communication.execute(request, hostHandle);
     }
 

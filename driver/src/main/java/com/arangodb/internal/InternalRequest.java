@@ -18,7 +18,10 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.internal;
+
+import com.arangodb.DbName;
+import com.arangodb.RequestType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +31,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  */
-public class Request {
+public class InternalRequest {
 
     private final DbName dbName;
     private final RequestType requestType;
@@ -39,7 +42,7 @@ public class Request {
     private int type = 1;
     private byte[] body;
 
-    public Request(final DbName dbName, final RequestType requestType, final String path) {
+    public InternalRequest(final DbName dbName, final RequestType requestType, final String path) {
         super();
         this.dbName = dbName;
         this.requestType = requestType;
@@ -53,7 +56,7 @@ public class Request {
         return version;
     }
 
-    public Request setVersion(final int version) {
+    public InternalRequest setVersion(final int version) {
         this.version = version;
         return this;
     }
@@ -62,7 +65,7 @@ public class Request {
         return type;
     }
 
-    public Request setType(final int type) {
+    public InternalRequest setType(final int type) {
         this.type = type;
         return this;
     }
@@ -83,7 +86,7 @@ public class Request {
         return queryParam;
     }
 
-    public Request putQueryParam(final String key, final Object value) {
+    public InternalRequest putQueryParam(final String key, final Object value) {
         if (value != null) {
             queryParam.put(key, value.toString());
         }
@@ -98,14 +101,14 @@ public class Request {
         return headerParam.containsKey(key.toLowerCase(Locale.ROOT));
     }
 
-    public Request putHeaderParam(final String key, final String value) {
+    public InternalRequest putHeaderParam(final String key, final String value) {
         if (value != null) {
             headerParam.put(key.toLowerCase(Locale.ROOT), value);
         }
         return this;
     }
 
-    public Request putHeaderParams(final Map<String, String> params) {
+    public InternalRequest putHeaderParams(final Map<String, String> params) {
         if (params != null) {
             for (Map.Entry<String, String> it : params.entrySet()) {
                 putHeaderParam(it.getKey(), it.getValue());
@@ -118,7 +121,7 @@ public class Request {
         return body;
     }
 
-    public Request setBody(final byte[] body) {
+    public InternalRequest setBody(final byte[] body) {
         this.body = body;
         return this;
     }

@@ -22,8 +22,6 @@ package com.arangodb.internal;
 
 import com.arangodb.QueueTimeMetrics;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.Request;
-import com.arangodb.Response;
 
 import java.lang.reflect.Type;
 
@@ -43,18 +41,18 @@ public abstract class ArangoExecutor {
         timeoutS = timeoutMs >= 1000 ? Integer.toString(timeoutMs / 1000) : null;
     }
 
-    protected <T> T createResult(final Type type, final Response response) {
+    protected <T> T createResult(final Type type, final InternalResponse response) {
         return serde.deserialize(response.getBody(), type);
     }
 
-    protected final void interceptResponse(Response response) {
+    protected final void interceptResponse(InternalResponse response) {
         String queueTime = response.getMeta("X-Arango-Queue-Time-Seconds");
         if (queueTime != null) {
             qtMetrics.add(Double.parseDouble(queueTime));
         }
     }
 
-    protected final Request interceptRequest(Request request) {
+    protected final InternalRequest interceptRequest(InternalRequest request) {
         request.putHeaderParam("x-arango-queue-time-seconds", timeoutS);
         return request;
     }
@@ -64,6 +62,6 @@ public abstract class ArangoExecutor {
     }
 
     public interface ResponseDeserializer<T> {
-        T deserialize(Response response);
+        T deserialize(InternalResponse response);
     }
 }

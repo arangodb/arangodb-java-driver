@@ -26,7 +26,7 @@ import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.QueueTimeMetricsImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -49,20 +49,20 @@ public class ArangoExecutorAsync extends ArangoExecutor {
         this.communication = communication;
     }
 
-    public <T> CompletableFuture<T> execute(final Request request, final Type type) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type) {
         return execute(request, response -> createResult(type, response));
     }
 
-    public <T> CompletableFuture<T> execute(final Request request, final Type type, final HostHandle hostHandle) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
         return execute(request, response -> createResult(type, response), hostHandle);
     }
 
-    public <T> CompletableFuture<T> execute(final Request request, final ResponseDeserializer<T> responseDeserializer) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
         return execute(request, responseDeserializer, null);
     }
 
     private <T> CompletableFuture<T> execute(
-            final Request request,
+            final InternalRequest request,
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) {
 

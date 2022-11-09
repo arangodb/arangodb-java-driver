@@ -33,8 +33,8 @@ import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
-public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Response>, VstConnectionAsync> {
+public class VstCommunicationAsync extends VstCommunication<CompletableFuture<InternalResponse>, VstConnectionAsync> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
@@ -57,19 +57,19 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
     }
 
     @Override
-    protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection) {
+    protected CompletableFuture<InternalResponse> execute(final InternalRequest request, final VstConnectionAsync connection) {
         return execute(request, connection, 0);
     }
 
     @Override
-    protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection,
-                                                  final int attemptCount) {
-        final CompletableFuture<Response> rfuture = new CompletableFuture<>();
+    protected CompletableFuture<InternalResponse> execute(final InternalRequest request, final VstConnectionAsync connection,
+                                                          final int attemptCount) {
+        final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         try {
             final Message message = createMessage(request);
             send(message, connection).whenComplete((m, ex) -> {
                 if (m != null) {
-                    final Response response;
+                    final InternalResponse response;
                     try {
                         response = createResponse(m);
                     } catch (final VPackParserException e) {
@@ -127,14 +127,14 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
 
     @Override
     protected void authenticate(final VstConnectionAsync connection) {
-        Request authRequest;
+        InternalRequest authRequest;
         if (jwt != null) {
             authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
         } else {
             authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
         }
 
-        Response response;
+        InternalResponse response;
         try {
             response = execute(authRequest, connection).get();
         } catch (final InterruptedException e) {

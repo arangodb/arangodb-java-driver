@@ -40,8 +40,8 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
         super(new ArangoExecutorAsync(asyncCommBuilder.build(util), util,
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util);
 
-        final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util);
+        final VstCommunication<InternalResponse, VstConnectionSync> cacheCom = syncCommBuilder.build(util);
 
         cp = new VstProtocol(cacheCom);
         this.asyncHostHandler = asyncHostHandler;
@@ -215,7 +215,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     }
 
     @Override
-    public CompletableFuture<Response> execute(final Request request) {
+    public CompletableFuture<InternalResponse> execute(final InternalRequest request) {
         return executor.execute(request, response -> response);
     }
 

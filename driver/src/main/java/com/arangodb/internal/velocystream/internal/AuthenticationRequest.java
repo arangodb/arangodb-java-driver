@@ -21,12 +21,12 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 
 /**
  * @author Mark Vollmary
  */
-public class AuthenticationRequest extends Request {
+public class AuthenticationRequest extends InternalRequest {
 
     private final String user;
     private final String password;

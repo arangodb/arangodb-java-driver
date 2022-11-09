@@ -25,7 +25,7 @@ import com.arangodb.entity.*;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.*;
 import com.arangodb.util.TestUtils;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.arangodb.RequestType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -444,7 +444,7 @@ class ArangoDBTest {
     @Test
     void execute() throws InterruptedException, ExecutionException {
         arangoDB
-                .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
+                .execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
                     assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
@@ -458,7 +458,7 @@ class ArangoDBTest {
                 .loadProperties(new FileConfigPropertiesProvider())
                 .acquireHostList(true).build();
         arangoDB
-                .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
+                .execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody()).isNotNull();
                     assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();

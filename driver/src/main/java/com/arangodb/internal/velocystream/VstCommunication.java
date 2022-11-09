@@ -34,8 +34,8 @@ import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,32 +138,32 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         hostHandler.close();
     }
 
-    public R execute(final Request request, final HostHandle hostHandle) {
+    public R execute(final InternalRequest request, final HostHandle hostHandle) {
         return execute(request, hostHandle, 0);
     }
 
-    protected R execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
+    protected R execute(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
         final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
         return execute(request, connection, attemptCount);
     }
 
-    protected abstract R execute(final Request request, C connection);
+    protected abstract R execute(final InternalRequest request, C connection);
 
-    protected abstract R execute(final Request request, C connection, final int attemptCount);
+    protected abstract R execute(final InternalRequest request, C connection, final int attemptCount);
 
-    protected void checkError(final Response response) {
+    protected void checkError(final InternalResponse response) {
         ResponseUtils.checkError(util, response);
     }
 
-    protected Response createResponse(final Message message) throws VPackParserException {
-        final Response response = util.deserialize(message.getHead().toByteArray(), Response.class);
+    protected InternalResponse createResponse(final Message message) throws VPackParserException {
+        final InternalResponse response = util.deserialize(message.getHead().toByteArray(), InternalResponse.class);
         if (message.getBody() != null) {
             response.setBody(message.getBody().toByteArray());
         }
         return response;
     }
 
-    protected final Message createMessage(final Request request) throws VPackParserException {
+    protected final Message createMessage(final InternalRequest request) throws VPackParserException {
         request.putHeaderParam("accept", "application/x-velocypack");
         request.putHeaderParam("content-type", "application/x-velocypack");
         final long id = mId.incrementAndGet();

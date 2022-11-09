@@ -23,9 +23,7 @@ package com.arangodb;
 import com.arangodb.config.ConfigPropertiesProvider;
 import com.arangodb.config.ConfigPropertyKey;
 import com.arangodb.entity.*;
-import com.arangodb.internal.ArangoDBImpl;
-import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.InternalArangoDBBuilder;
+import com.arangodb.internal.*;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.*;
@@ -287,7 +285,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param request request
      * @return response
      */
-    Response execute(Request request);
+    InternalResponse execute(InternalRequest request);
 
     /**
      * Returns the server logs

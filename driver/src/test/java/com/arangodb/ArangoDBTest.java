@@ -21,6 +21,8 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
@@ -391,7 +393,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void execute(ArangoDB arangoDB) {
-        final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
+        final InternalResponse response = arangoDB.execute(new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/version"));
         assertThat(arangoDB.getSerde().parse(response.getBody(), "/version").isTextual()).isTrue();
     }
 

@@ -24,7 +24,6 @@ import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.DbName;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.Request;
 import com.arangodb.RequestType;
 
 /**
@@ -69,8 +68,8 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
         return serde;
     }
 
-    protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
-        return new Request(dbName, requestType, createPath(path));
+    protected InternalRequest request(final DbName dbName, final RequestType requestType, final String... path) {
+        return new InternalRequest(dbName, requestType, createPath(path));
     }
 
 }

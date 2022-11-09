@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.Request;
 import com.arangodb.RequestType;
 
 import java.util.HashMap;
@@ -66,8 +65,8 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
         this.body = body;
     }
 
-    protected Request createRequest(final RequestType requestType) {
-        final Request request = request(db.dbName(), requestType, path);
+    protected InternalRequest createRequest(final RequestType requestType) {
+        final InternalRequest request = request(db.dbName(), requestType, path);
         for (final Entry<String, String> param : headerParam.entrySet()) {
             request.putHeaderParam(param.getKey(), param.getValue());
         }

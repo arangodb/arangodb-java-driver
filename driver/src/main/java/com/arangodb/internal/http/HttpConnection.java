@@ -29,9 +29,9 @@ import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.arangodb.RequestType;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalResponse;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.IdentityCipherSuiteFilter;
@@ -163,7 +163,7 @@ public class HttpConnection implements Connection {
         client = WebClient.create(vertx, webClientOptions);
     }
 
-    private static String buildUrl(final Request request) {
+    private static String buildUrl(final InternalRequest request) {
         StringBuilder sb = new StringBuilder();
         DbName dbName = request.getDbName();
         if (dbName != null && !dbName.get().isEmpty()) {
@@ -187,7 +187,7 @@ public class HttpConnection implements Connection {
         return sb.toString();
     }
 
-    private static void addHeader(final Request request, final HttpRequest<?> httpRequest) {
+    private static void addHeader(final InternalRequest request, final HttpRequest<?> httpRequest) {
         for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
             httpRequest.putHeader(header.getKey(), header.getValue());
         }
@@ -217,10 +217,10 @@ public class HttpConnection implements Connection {
         }
     }
 
-    public Response execute(final Request request) throws IOException {
-        CompletableFuture<Response> rfuture = new CompletableFuture<>();
+    public InternalResponse execute(final InternalRequest request) throws IOException {
+        CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
-        Response resp;
+        InternalResponse resp;
         try {
             resp = rfuture.get();
         } catch (InterruptedException e) {
@@ -240,7 +240,7 @@ public class HttpConnection implements Connection {
         return resp;
     }
 
-    public void doExecute(final Request request, final CompletableFuture<Response> rfuture) {
+    public void doExecute(final InternalRequest request, final CompletableFuture<InternalResponse> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
@@ -270,8 +270,8 @@ public class HttpConnection implements Connection {
                 .onFailure(rfuture::completeExceptionally);
     }
 
-    private Response buildResponse(final HttpResponse<Buffer> httpResponse) {
-        final Response response = new Response();
+    private InternalResponse buildResponse(final HttpResponse<Buffer> httpResponse) {
+        final InternalResponse response = new InternalResponse();
         response.setResponseCode(httpResponse.statusCode());
         Buffer body = httpResponse.body();
         if (body != null) {
@@ -286,7 +286,7 @@ public class HttpConnection implements Connection {
         return response;
     }
 
-    protected void checkError(final Response response) {
+    protected void checkError(final InternalResponse response) {
         ResponseUtils.checkError(util, response);
     }
 

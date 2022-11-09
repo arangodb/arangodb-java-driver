@@ -5,9 +5,9 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.arangodb.RequestType;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -40,10 +40,10 @@ class JwtAuthTest {
         reqBody.put("username", "root");
         reqBody.put("password", "test");
 
-        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
+        InternalRequest req = new InternalRequest(DbName.SYSTEM, RequestType.POST, "/_open/auth");
         req.setBody(serde.serialize(reqBody));
 
-        Response resp = arangoDB.execute(req);
+        InternalResponse resp = arangoDB.execute(req);
         Map<String, String> respBody = serde.deserialize(resp.getBody(), Map.class);
         return respBody.get("jwt");
     }

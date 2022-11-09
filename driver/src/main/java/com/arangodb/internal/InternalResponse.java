@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.internal;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  */
-public class Response {
+public class InternalResponse {
 
     private int version = 1;
     private int type = 2;
@@ -36,7 +36,7 @@ public class Response {
     private final Map<String, String> meta;
     private byte[] body = null;
 
-    public Response() {
+    public InternalResponse() {
         super();
         meta = new HashMap<>();
     }

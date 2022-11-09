@@ -613,15 +613,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
     void reloadRouting();
 
     /**
-     * Returns a new {@link ArangoRoute} instance for the given path (relative to the database) that can be used to
-     * perform arbitrary requests.
-     *
-     * @param path The database-relative URL of the route
-     * @return {@link ArangoRoute}
-     */
-    ArangoRoute route(String... path);
-
-    /**
      * Fetches all views from the database and returns an list of view descriptions.
      *
      * @return list of information about all views

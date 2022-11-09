@@ -7,7 +7,7 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -62,9 +62,9 @@ public final class InternalSerializers {
                     gen.writeEndArray();
                 }
             };
-    static final JsonSerializer<Request> REQUEST = new JsonSerializer<Request>() {
+    static final JsonSerializer<InternalRequest> REQUEST = new JsonSerializer<InternalRequest>() {
         @Override
-        public void serialize(Request value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(InternalRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartArray();
             gen.writeNumber(value.getVersion());
             gen.writeNumber(value.getType());

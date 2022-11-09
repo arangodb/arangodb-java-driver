@@ -28,6 +28,8 @@ import com.arangodb.config.ConfigPropertiesProvider;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
@@ -268,7 +270,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      * @param request request
      * @return response
      */
-    CompletableFuture<Response> execute(final Request request);
+    CompletableFuture<InternalResponse> execute(final InternalRequest request);
 
     /**
      * Returns the server logs
