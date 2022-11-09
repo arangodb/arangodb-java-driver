@@ -25,7 +25,7 @@ import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalResponse;
 
 import java.util.concurrent.TimeoutException;
 
@@ -42,7 +42,7 @@ public final class ResponseUtils {
         super();
     }
 
-    public static void checkError(final InternalSerde util, final Response response) {
+    public static void checkError(final InternalSerde util, final InternalResponse response) {
         final int responseCode = response.getResponseCode();
         if (responseCode >= ERROR_STATUS) {
             if (responseCode == ERROR_INTERNAL && response.containsMeta(HEADER_ENDPOINT)) {

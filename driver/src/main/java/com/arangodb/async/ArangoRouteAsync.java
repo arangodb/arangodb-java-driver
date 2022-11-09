@@ -21,7 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoSerdeAccessor;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalResponse;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -72,7 +72,7 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      *
      * @return server response
      */
-    CompletableFuture<Response> delete();
+    CompletableFuture<InternalResponse> delete();
 
     /**
      * Performs a GET request to the given URL and returns the server response.
@@ -80,7 +80,7 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    CompletableFuture<Response> get();
+    CompletableFuture<InternalResponse> get();
 
     /**
      * Performs a HEAD request to the given URL and returns the server response.
@@ -88,7 +88,7 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    CompletableFuture<Response> head();
+    CompletableFuture<InternalResponse> head();
 
     /**
      * Performs a PATCH request to the given URL and returns the server response.
@@ -96,7 +96,7 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    CompletableFuture<Response> patch();
+    CompletableFuture<InternalResponse> patch();
 
     /**
      * Performs a POST request to the given URL and returns the server response.
@@ -104,7 +104,7 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    CompletableFuture<Response> post();
+    CompletableFuture<InternalResponse> post();
 
     /**
      * Performs a PUT request to the given URL and returns the server response.
@@ -112,6 +112,6 @@ public interface ArangoRouteAsync extends ArangoSerdeAccessor {
      * @return server response
      */
 
-    CompletableFuture<Response> put();
+    CompletableFuture<InternalResponse> put();
 
 }

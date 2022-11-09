@@ -8,7 +8,7 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
@@ -73,10 +73,10 @@ public final class InternalDeserializers {
     };
 
     @SuppressWarnings("unchecked")
-    static final JsonDeserializer<Response> RESPONSE = new JsonDeserializer<Response>() {
+    static final JsonDeserializer<InternalResponse> RESPONSE = new JsonDeserializer<InternalResponse>() {
         @Override
-        public Response deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            final Response response = new Response();
+        public InternalResponse deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            final InternalResponse response = new InternalResponse();
             Iterator<JsonNode> it = ((ArrayNode) p.readValueAsTree()).iterator();
             response.setVersion(it.next().intValue());
             response.setType(it.next().intValue());

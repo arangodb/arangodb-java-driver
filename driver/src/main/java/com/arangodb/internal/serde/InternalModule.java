@@ -8,8 +8,8 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -27,7 +27,7 @@ enum InternalModule implements Supplier<Module> {
         module.addSerializer(RawBytes.class, InternalSerializers.RAW_BYTES_SERIALIZER);
         module.addSerializer(AuthenticationRequest.class, InternalSerializers.AUTHENTICATION_REQUEST);
         module.addSerializer(JwtAuthenticationRequest.class, InternalSerializers.JWT_AUTHENTICATION_REQUEST);
-        module.addSerializer(Request.class, InternalSerializers.REQUEST);
+        module.addSerializer(InternalRequest.class, InternalSerializers.REQUEST);
         module.addSerializer(CollectionType.class, InternalSerializers.COLLECTION_TYPE);
 
         module.addDeserializer(RawJson.class, InternalDeserializers.RAW_JSON_DESERIALIZER);
@@ -35,7 +35,7 @@ enum InternalModule implements Supplier<Module> {
         module.addDeserializer(CollectionStatus.class, InternalDeserializers.COLLECTION_STATUS);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
-        module.addDeserializer(Response.class, InternalDeserializers.RESPONSE);
+        module.addDeserializer(InternalResponse.class, InternalDeserializers.RESPONSE);
         module.addDeserializer(InvertedIndexPrimarySort.Field.class, InternalDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
     }
 

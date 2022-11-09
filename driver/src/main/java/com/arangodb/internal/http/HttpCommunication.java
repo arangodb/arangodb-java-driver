@@ -21,9 +21,9 @@
 package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.Request;
-import com.arangodb.RequestType;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.RequestType;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
@@ -59,11 +59,11 @@ public class HttpCommunication implements Closeable {
         hostHandler.close();
     }
 
-    public Response execute(final Request request, final HostHandle hostHandle) {
+    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
         return execute(request, hostHandle, 0);
     }
 
-    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) {
+    private InternalResponse execute(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {
@@ -75,7 +75,7 @@ public class HttpCommunication implements Closeable {
                         String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
                         LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
                     }
-                    final Response response = connection.execute(request);
+                    final InternalResponse response = connection.execute(request);
                     if (LOGGER.isDebugEnabled()) {
                         String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
                         LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
@@ -117,7 +117,7 @@ public class HttpCommunication implements Closeable {
         }
     }
 
-    private boolean isSafe(final Request request) {
+    private boolean isSafe(final InternalRequest request) {
         RequestType type = request.getRequestType();
         return type == RequestType.GET || type == RequestType.HEAD || type == RequestType.OPTIONS;
     }

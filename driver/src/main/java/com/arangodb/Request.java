@@ -1,137 +1,130 @@
-/*
- * DISCLAIMER
- *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Copyright holder is ArangoDB GmbH, Cologne, Germany
- */
-
 package com.arangodb;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
-/**
- * @author Mark Vollmary
- */
-public class Request {
-
-    private final DbName dbName;
-    private final RequestType requestType;
+public final class Request<T> {
+    private final DbName db;
+    private final Method method;
     private final String path;
-    private final Map<String, String> queryParam;
-    private final Map<String, String> headerParam;
-    private int version = 1;
-    private int type = 1;
-    private byte[] body;
+    private final Map<String, String> queryParams;
+    private final Map<String, String> headers;
+    private final T body;
 
-    public Request(final DbName dbName, final RequestType requestType, final String path) {
-        super();
-        this.dbName = dbName;
-        this.requestType = requestType;
+    public enum Method {
+        DELETE,
+        GET,
+        POST,
+        PUT,
+        HEAD,
+        PATCH,
+        OPTIONS
+    }
+
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
+    }
+
+    private Request(DbName db, Method method, String path, Map<String, String> queryParams, Map<String, String> headers, T body) {
+        this.db = db;
+        this.method = method;
         this.path = path;
-        body = null;
-        queryParam = new HashMap<>();
-        headerParam = new HashMap<>();
+        this.queryParams = queryParams;
+        this.headers = headers;
+        this.body = body;
     }
 
-    public int getVersion() {
-        return version;
+    public DbName getDb() {
+        return db;
     }
 
-    public Request setVersion(final int version) {
-        this.version = version;
-        return this;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public Request setType(final int type) {
-        this.type = type;
-        return this;
-    }
-
-    public DbName getDbName() {
-        return dbName;
-    }
-
-    public RequestType getRequestType() {
-        return requestType;
+    public Method getMethod() {
+        return method;
     }
 
     public String getPath() {
         return path;
     }
 
-    public Map<String, String> getQueryParam() {
-        return queryParam;
+    public Map<String, String> getQueryParams() {
+        return queryParams;
     }
 
-    public Request putQueryParam(final String key, final Object value) {
-        if (value != null) {
-            queryParam.put(key, value.toString());
-        }
-        return this;
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
-    public Map<String, String> getHeaderParam() {
-        return Collections.unmodifiableMap(headerParam);
-    }
-
-    public boolean containsHeaderParam(final String key) {
-        return headerParam.containsKey(key.toLowerCase(Locale.ROOT));
-    }
-
-    public Request putHeaderParam(final String key, final String value) {
-        if (value != null) {
-            headerParam.put(key.toLowerCase(Locale.ROOT), value);
-        }
-        return this;
-    }
-
-    public Request putHeaderParams(final Map<String, String> params) {
-        if (params != null) {
-            for (Map.Entry<String, String> it : params.entrySet()) {
-                putHeaderParam(it.getKey(), it.getValue());
-            }
-        }
-        return this;
-    }
-
-    public byte[] getBody() {
+    public T getBody() {
         return body;
     }
 
-    public Request setBody(final byte[] body) {
-        this.body = body;
-        return this;
-    }
+    public static final class Builder<T> {
+        private DbName db;
+        private Request.Method method;
+        private String path;
+        private final Map<String, String> queryParams;
+        private final Map<String, String> headers;
+        private T body;
 
-    @Override
-    public String toString() {
-        return "{" +
-                "requestType=" + requestType +
-                ", database='" + dbName + '\'' +
-                ", url='" + path + '\'' +
-                ", parameters=" + queryParam +
-                ", headers=" + headerParam +
-                '}';
-    }
+        public Builder() {
+            queryParams = new HashMap<>();
+            headers = new HashMap<>();
+        }
 
+        public Builder<T> db(DbName db) {
+            this.db = db;
+            return this;
+        }
+
+        public Builder<T> method(Request.Method method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder<T> path(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder<T> queryParam(final String key, final String value) {
+            if (value != null) {
+                queryParams.put(key, value);
+            }
+            return this;
+        }
+
+        public Builder<T> queryParams(Map<String, String> queryParams) {
+            if (queryParams != null) {
+                for (Map.Entry<String, String> it : queryParams.entrySet()) {
+                    queryParam(it.getKey(), it.getValue());
+                }
+            }
+            return this;
+        }
+
+        public Builder<T> header(final String key, final String value) {
+            if (value != null) {
+                headers.put(key, value);
+            }
+            return this;
+        }
+
+        public Builder<T> headers(Map<String, String> headers) {
+            if (headers != null) {
+                for (Map.Entry<String, String> it : headers.entrySet()) {
+                    header(it.getKey(), it.getValue());
+                }
+            }
+            return this;
+        }
+
+        public Builder<T> body(T body) {
+            this.body = body;
+            return this;
+        }
+
+        public Request<T> build() {
+            return new Request<>(db, method, path, queryParams, headers, body);
+        }
+    }
 }

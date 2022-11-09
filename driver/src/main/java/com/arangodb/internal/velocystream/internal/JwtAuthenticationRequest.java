@@ -1,9 +1,9 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.DbName;
-import com.arangodb.Request;
+import com.arangodb.internal.InternalRequest;
 
-public class JwtAuthenticationRequest extends Request {
+public class JwtAuthenticationRequest extends InternalRequest {
 
     private final String token;
     private final String encryption;    // "jwt"

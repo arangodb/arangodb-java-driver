@@ -25,8 +25,6 @@ import com.arangodb.entity.MetaAware;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.Request;
-import com.arangodb.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,24 +46,24 @@ public class ArangoExecutorSync extends ArangoExecutor {
         this.protocol = protocol;
     }
 
-    public <T> T execute(final Request request, final Type type) {
+    public <T> T execute(final InternalRequest request, final Type type) {
         return execute(request, type, null);
     }
 
-    public <T> T execute(final Request request, final Type type, final HostHandle hostHandle) {
+    public <T> T execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
         return execute(request, response -> createResult(type, response), hostHandle);
     }
 
-    public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) {
+    public <T> T execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
         return execute(request, responseDeserializer, null);
     }
 
     public <T> T execute(
-            final Request request,
+            final InternalRequest request,
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) {
 
-        final Response response = protocol.execute(interceptRequest(request), hostHandle);
+        final InternalResponse response = protocol.execute(interceptRequest(request), hostHandle);
         interceptResponse(response);
         T deserialize = responseDeserializer.deserialize(response);
 

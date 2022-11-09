@@ -22,8 +22,8 @@ package com.arangodb.internal.http;
 
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class HttpProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public Response execute(final Request request, final HostHandle hostHandle) {
+    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
         return httpCommunitaction.execute(request, hostHandle);
     }
 

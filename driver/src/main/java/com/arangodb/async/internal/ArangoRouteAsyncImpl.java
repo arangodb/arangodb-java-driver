@@ -22,8 +22,8 @@ package com.arangodb.async.internal;
 
 import com.arangodb.async.ArangoRouteAsync;
 import com.arangodb.internal.InternalArangoRoute;
-import com.arangodb.RequestType;
-import com.arangodb.Response;
+import com.arangodb.internal.RequestType;
+import com.arangodb.internal.InternalResponse;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -66,37 +66,37 @@ public class ArangoRouteAsyncImpl
         return this;
     }
 
-    private CompletableFuture<Response> request(final RequestType requestType) {
+    private CompletableFuture<InternalResponse> request(final RequestType requestType) {
         return executor.execute(createRequest(requestType), response -> response);
     }
 
     @Override
-    public CompletableFuture<Response> delete() {
+    public CompletableFuture<InternalResponse> delete() {
         return request(RequestType.DELETE);
     }
 
     @Override
-    public CompletableFuture<Response> get() {
+    public CompletableFuture<InternalResponse> get() {
         return request(RequestType.GET);
     }
 
     @Override
-    public CompletableFuture<Response> head() {
+    public CompletableFuture<InternalResponse> head() {
         return request(RequestType.HEAD);
     }
 
     @Override
-    public CompletableFuture<Response> patch() {
+    public CompletableFuture<InternalResponse> patch() {
         return request(RequestType.PATCH);
     }
 
     @Override
-    public CompletableFuture<Response> post() {
+    public CompletableFuture<InternalResponse> post() {
         return request(RequestType.POST);
     }
 
     @Override
-    public CompletableFuture<Response> put() {
+    public CompletableFuture<InternalResponse> put() {
         return request(RequestType.PUT);
     }
 

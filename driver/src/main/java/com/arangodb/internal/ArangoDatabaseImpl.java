@@ -31,10 +31,8 @@ import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
-import com.arangodb.Request;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
@@ -163,7 +161,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
             final String query, final Map<String, Object> bindVars, final AqlQueryOptions options,
             final Class<T> type) {
 
-        final Request request = queryRequest(query, bindVars, options);
+        final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
         final InternalCursorEntity result = executor.execute(request, InternalCursorEntity.class, hostHandle);
 
@@ -364,11 +362,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public void reloadRouting() {
         executor.execute(reloadRoutingRequest(), Void.class);
-    }
-
-    @Override
-    public ArangoRoute route(final String... path) {
-        return new ArangoRouteImpl(this, String.join("/", path), Collections.emptyMap());
     }
 
     @Override

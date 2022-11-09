@@ -20,8 +20,8 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 
 import java.io.Closeable;
 
@@ -30,7 +30,7 @@ import java.io.Closeable;
  */
 public interface CommunicationProtocol extends Closeable {
 
-    Response execute(final Request request, HostHandle hostHandle);
+    InternalResponse execute(final InternalRequest request, HostHandle hostHandle);
 
     void setJwt(String jwt);
 

@@ -22,8 +22,6 @@ package com.arangodb.internal;
 
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.ViewRenameOptions;
-import com.arangodb.Request;
-import com.arangodb.RequestType;
 
 /**
  * @author Mark Vollmary
@@ -53,17 +51,17 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
         return name;
     }
 
-    protected Request dropRequest() {
+    protected InternalRequest dropRequest() {
         return request(db.dbName(), RequestType.DELETE, PATH_API_VIEW, name);
     }
 
-    protected Request renameRequest(final String newName) {
-        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "rename");
+    protected InternalRequest renameRequest(final String newName) {
+        final InternalRequest request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "rename");
         request.setBody(getSerde().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
         return request;
     }
 
-    protected Request getInfoRequest() {
+    protected InternalRequest getInfoRequest() {
         return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name);
     }
 
