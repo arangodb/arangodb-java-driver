@@ -404,9 +404,11 @@ class ArangoDBTest extends BaseJunit5 {
         JsonNode body = SerdeUtils.INSTANCE.parseJson(response.getBody().getValue());
         assertThat(body.get("version").isTextual()).isTrue();
         assertThat(body.get("details").isObject()).isTrue();
-        String header = response.getHeaders().get("x-arango-queue-time-seconds");
-        assertThat(header).isNotNull();
         assertThat(response.getResponseCode()).isEqualTo(200);
+        if (isAtLeastVersion(3, 9)) {
+            String header = response.getHeaders().get("x-arango-queue-time-seconds");
+            assertThat(header).isNotNull();
+        }
     }
 
     @ParameterizedTest(name = "{index}")
