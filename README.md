@@ -9,7 +9,7 @@ The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 
 ## Learn more
 
-- [ChangeLog](driver/ChangeLog.md)
+- [ChangeLog](ChangeLog.md)
 - [Examples](driver/src/test/java/com/arangodb/example)
 - [Examples Async](driver/src/test/java/com/arangodb/async/example)
 - [Tutorial](https://www.arangodb.com/docs/stable/drivers/java-tutorial.html)
