@@ -1,0 +1,8 @@
+package com.arangodb;
+
+/**
+ * Automatically generated from PackageVersion.java.in by replacer plugin.
+ */
+public final class PackageVersion {
+    public final static String VERSION = "@project.version@";
+}
