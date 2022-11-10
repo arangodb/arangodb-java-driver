@@ -4,9 +4,10 @@
 
 The HTTP client has been changed to Vert.x WebClient. `HTTP/2` is now supported.
 
-## Default protocol
+## Configuration changes
 
 The default communication protocol is now `HTTP2_JSON` (`HTTP/2` with `JSON` content type).
+The default host configuration to `127.0.0.1:8529` has been removed. 
 
 ## Transitive dependencies
 
@@ -111,6 +112,10 @@ CRUD operations operating with multiple documents have now an overloaded variant
 and `RawJson`) containing multiple documents.
 
 `com.arangodb.ArangoCursor#getStats()` returns now an untyped map.
+
+`Request` and `Response` classes have been refactored to support generic body
+type. `ArangoDB.execute(Request<T>, Class<U>): Response<U>` accepts now the target deserialization type for the response
+body.
 
 ## API entities
 

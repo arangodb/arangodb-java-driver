@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
+- `ArangoDB.execute()` accepts now target deserialization type
+- `Request` and `Response` support now generic body type
+- removed default host configuration to `127.0.0.1:8529`
 - changed http client library to Vert.x WebClient
 - changed default communication protocol from `VST` to `HTTP/2`
 - changed default content-type encoding format from `VPACK` to `JSON`
