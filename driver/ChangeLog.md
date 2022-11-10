@@ -10,10 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
-- changed default communication protocol from VST to HTTP/1.1
-- changed default content-type encoding format from VPACK to JSON
-- transitive dependency on `org.apache.httpcomponents:httpclient:4.5.x` is not optional anymore, but it can be excluded
-  if using VST only
+- changed http client library to Vert.x WebClient
+- changed default communication protocol from `VST` to `HTTP/2`
+- changed default content-type encoding format from `VPACK` to `JSON`
 - VPACK support is now provided by the optional dependency `com.arangodb:jackson-dataformat-velocypack` as dataformat
   backend for Jackson
 - changed serialization module, which is now based on Jackson API
@@ -44,9 +43,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - `ArangoDB.getLogs()`
   - `minReplicationFactor` in collections and graphs
   - `overwrite` flag in `DocumentCreateOptions`
+- removed `com.arangodb.util.ArangoCursorInitializer`
 
 ### Added
 
+- added support to `HTTP/2` communication protocol
+- added transitive dependency on `io.vertx:vertx-web-client`, which can be excluded if using VST only
 - added transitive dependency on Jackson Core, Databind and Annotations
 - added wrapper class for raw JSON content (`com.arangodb.util.RawJson`)
 - added wrapper class for content already encoded as byte array (`com.arangodb.util.RawBytes`)
