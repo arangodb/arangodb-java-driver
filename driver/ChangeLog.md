@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
+- configuration properties from local files are not read automatically anymore, but can be configured
+  with `ConfigPropertiesProvider`
 - `ArangoDB.execute()` accepts now target deserialization type
 - `Request` and `Response` support now generic body type
 - removed default host configuration to `127.0.0.1:8529`
@@ -50,6 +52,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- `com.arangodb.ArangoDB.Builder.loadProperties(ConfigPropertiesProvider)` to register custom configuration providers
 - added support to `HTTP/2` communication protocol
 - added transitive dependency on `io.vertx:vertx-web-client`, which can be excluded if using VST only
 - added transitive dependency on Jackson Core, Databind and Annotations
@@ -63,6 +66,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added overloaded methods for CRUD operations allowing specifying the return type
 - added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
 - added `BaseDocument#removeAttribute(String)` and `BaseEdgeDocument#removeAttribute(String)`
+- added request id to `ArangoDBException`
 
 ### Fixed
 

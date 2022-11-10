@@ -2,12 +2,19 @@
 
 ## HTTP client
 
-The HTTP client has been changed to Vert.x WebClient. `HTTP/2` is now supported.
+The HTTP client has been changed to Vert.x WebClient. `HTTP/2` is now supported. `HTTP/2` supports multiplexing and uses
+by default `1` connection per host.
 
 ## Configuration changes
 
 The default communication protocol is now `HTTP2_JSON` (`HTTP/2` with `JSON` content type).
-The default host configuration to `127.0.0.1:8529` has been removed. 
+The default host configuration to `127.0.0.1:8529` has been removed.
+Configuration properties are not read automatically from properties files anymore.
+A new configuration option for loading properties has been
+introduced: `com.arangodb.ArangoDB.Builder.loadProperties(ConfigPropertiesProvider)`, based on a interface.
+Implementations could supply configuration properties coming from different sources, eg. system properties, remote
+stores, frameworks facilities, etc. An implementation for loading properties from local files is provided
+by `com.arangodb.internal.config.FileConfigPropertiesProvider`.
 
 ## Transitive dependencies
 
@@ -116,6 +123,8 @@ and `RawJson`) containing multiple documents.
 `Request` and `Response` classes have been refactored to support generic body
 type. `ArangoDB.execute(Request<T>, Class<U>): Response<U>` accepts now the target deserialization type for the response
 body.
+
+`ArangoDBException` has been enhanced with the id of the request causing it.
 
 ## API entities
 
