@@ -58,7 +58,7 @@ public abstract class InternalArangoDBBuilder {
     protected Boolean acquireHostList = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST;
     protected Integer acquireHostListInterval = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL;
     protected LoadBalancingStrategy loadBalancingStrategy = ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY;
-    protected ArangoSerde customSerializer;
+    protected ArangoSerde userDataSerde;
     protected Integer responseQueueTimeSamples = ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES;
 
     private static void loadHosts(final ConfigPropertiesProvider properties, final Collection<HostDescription> hosts) {
@@ -226,8 +226,8 @@ public abstract class InternalArangoDBBuilder {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
     }
 
-    protected void setSerializer(final ArangoSerde serializer) {
-        this.customSerializer = serializer;
+    protected void setUserDataSerde(final ArangoSerde serde) {
+        this.userDataSerde = serde;
     }
 
     protected HostHandler createHostHandler(final HostResolver hostResolver) {

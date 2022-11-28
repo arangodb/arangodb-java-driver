@@ -549,16 +549,24 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Replace the built-in serializer/deserializer with the given one.
+         * Sets the serde for the user data.
+         * This is used to serialize and deserialize all the data payload such as:
+         * - documents, vertexes, edges
+         * - AQL bind vars
+         * - body payload of requests and responses in {@link ArangoDB#execute(Request, Class)}
          * <p>
-         * <br />
-         * <b>ATTENTION!:</b> Any registered custom serializer/deserializer or module will be ignored.
+         * However, note that the following types will always be serialized and deserialized using the internal serde:
+         * - {@link com.fasterxml.jackson.databind.JsonNode}
+         * - {@link com.arangodb.util.RawJson}
+         * - {@link com.arangodb.util.RawBytes}
+         * - {@link com.arangodb.entity.BaseDocument}
+         * - {@link com.arangodb.entity.BaseEdgeDocument}
          *
-         * @param serialization custom serializer/deserializer
+         * @param serde custom serde for the user data
          * @return {@link ArangoDB.Builder}
          */
-        public Builder serializer(final ArangoSerde serialization) {
-            setSerializer(serialization);
+        public Builder serde(final ArangoSerde serde) {
+            setUserDataSerde(serde);
             return this;
         }
 
@@ -572,7 +580,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = customSerializer != null ? customSerializer :
+            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde :
                     JacksonSerde.of(ContentType.of(protocol));
             final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);
 

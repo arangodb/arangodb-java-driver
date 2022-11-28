@@ -502,7 +502,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync.Builder}
          */
         public Builder serializer(final ArangoSerde serialization) {
-            setSerializer(serialization);
+            setUserDataSerde(serialization);
             return this;
         }
 
@@ -516,7 +516,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = customSerializer != null ? customSerializer : JacksonSerde.of(ContentType.VPACK);
+            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde : JacksonSerde.of(ContentType.VPACK);
             final InternalSerde serde = InternalSerde.of(ContentType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)

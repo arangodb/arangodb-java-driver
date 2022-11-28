@@ -25,7 +25,7 @@ class BaseJunit5 {
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_JSON).build(),
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_VPACK).build(),
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).serializer(JsonbSerde.create()).build()
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).serde(JsonbSerde.create()).build()
     );
 
     protected static Stream<ArangoDatabase> dbsStream() {
