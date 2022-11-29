@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.9.3
+          - docker.io/arangodb/enterprise:3.10.1
         topology:
           - cluster
         db-ext-names:
