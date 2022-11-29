@@ -30,7 +30,6 @@ import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
@@ -193,6 +192,10 @@ public class VPackSerializers {
                 if (inBackground != null) {
                     builder.add("inBackground", inBackground);
                 }
+                Boolean cache = collectionLink.getCache();
+                if (cache != null) {
+                    builder.add("cache", cache);
+                }
                 serializeFieldLinks(builder, collectionLink.getFields());
                 serializeNested(builder, collectionLink.getNested());
                 builder.close();
@@ -254,6 +257,9 @@ public class VPackSerializers {
         builder.close();
         if (value.getCompression() != null) {
             builder.add("compression", value.getCompression().getValue());
+        }
+        if (value.getCache() != null) {
+            builder.add("cache", value.getCache());
         }
         builder.close(); // close object
     };

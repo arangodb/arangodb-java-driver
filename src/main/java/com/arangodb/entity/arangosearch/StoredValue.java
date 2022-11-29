@@ -33,14 +33,21 @@ public class StoredValue {
 
     private final List<String> fields;
     private final ArangoSearchCompression compression;
+    private final Boolean cache;
 
     /**
      * @param fields      A list of attribute paths. The . character denotes sub-attributes.
      * @param compression Defines how to compress the attribute values.
+     * @param cache       Whether to cache stored values in memory. (Since ArangoDB 3.9.5, Enterprise Edition only)
      */
-    public StoredValue(List<String> fields, ArangoSearchCompression compression) {
+    public StoredValue(List<String> fields, ArangoSearchCompression compression, Boolean cache) {
         this.fields = fields;
         this.compression = compression;
+        this.cache = cache;
+    }
+
+    public StoredValue(List<String> fields, ArangoSearchCompression compression) {
+        this(fields, compression, null);
     }
 
     public StoredValue(List<String> fields) {
@@ -55,16 +62,20 @@ public class StoredValue {
         return compression;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StoredValue that = (StoredValue) o;
-        return Objects.equals(fields, that.fields) && compression == that.compression;
+        return Objects.equals(fields, that.fields) && compression == that.compression && Objects.equals(cache, that.cache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fields, compression);
+        return Objects.hash(fields, compression, cache);
     }
 }

@@ -156,12 +156,13 @@ public class VPackDeserializers {
     public static final VPackDeserializer<StoredValue> STORED_VALUE = (parent, vpack, context) -> {
         VPackSlice fields = vpack.get("fields");
         VPackSlice compression = vpack.get("compression");
+        VPackSlice cache = vpack.get("cache");
         final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
         List<String> fieldsList = new ArrayList<>();
         while (fieldsIterator.hasNext()) {
             fieldsList.add(fieldsIterator.next().getAsString());
         }
-        return new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString()));
+        return new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString()), cache.getAsBoolean());
     };
 
     public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (parent, vpack, context) -> {
@@ -204,6 +205,10 @@ public class VPackDeserializers {
                 final VPackSlice includeAllFields = value.get("includeAllFields");
                 if (includeAllFields.isBoolean()) {
                     link.includeAllFields(includeAllFields.getAsBoolean());
+                }
+                final VPackSlice cache = value.get("cache");
+                if (cache.isBoolean()) {
+                    link.cache(cache.getAsBoolean());
                 }
                 final VPackSlice trackListPositions = value.get("trackListPositions");
                 if (trackListPositions.isBoolean()) {
