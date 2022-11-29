@@ -157,7 +157,7 @@ public class VPackDeserializers {
         VPackSlice fields = vpack.get("fields");
         VPackSlice compression = vpack.get("compression");
         VPackSlice cache = vpack.get("cache");
-        boolean cacheValue = cache.isBoolean() && cache.getAsBoolean();
+        Boolean cacheValue = cache.isBoolean() ? cache.getAsBoolean() : null;
         final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
         List<String> fieldsList = new ArrayList<>();
         while (fieldsIterator.hasNext()) {
