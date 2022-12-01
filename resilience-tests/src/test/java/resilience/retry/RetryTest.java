@@ -114,9 +114,14 @@ class RetryTest extends SingleServerTest {
 
 
     /**
-     * on closed pending requests of safe HTTP methods: - retry 3 times - ArangoDBMultipleException with 3 exceptions
+     * on closed pending requests of safe HTTP methods:
      * <p>
-     * once restored: - the subsequent requests should be successful
+     * - retry 3 times
+     * - ArangoDBMultipleException with 3 exceptions
+     * <p>
+     * once restored:
+     * <p>
+     * - the subsequent requests should be successful
      */
     @ParameterizedTest
     @EnumSource(Protocol.class)
@@ -164,7 +169,6 @@ class RetryTest extends SingleServerTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
                 .useProtocol(protocol)
                 .build();
@@ -182,7 +186,9 @@ class RetryTest extends SingleServerTest {
         thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
-        assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
+        if (protocol != Protocol.VST) {
+            assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
+        }
 
         toxic.remove();
         Thread.sleep(100);

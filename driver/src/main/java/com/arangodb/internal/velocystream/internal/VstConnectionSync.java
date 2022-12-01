@@ -25,6 +25,7 @@ import com.arangodb.internal.net.HostDescription;
 
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
@@ -46,8 +47,13 @@ public class VstConnectionSync extends VstConnection<Message> {
         super.writeIntern(message, chunks);
         try {
             return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (final Exception e) {
+        } catch (final ExecutionException e) {
+            throw ArangoDBException.wrap(e.getCause());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new ArangoDBException(e);
+        } catch (final Exception e) {
+            throw ArangoDBException.wrap(e);
         }
     }
 
