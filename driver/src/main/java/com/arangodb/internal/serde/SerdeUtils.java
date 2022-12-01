@@ -1,22 +1,23 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public enum SerdeUtils {
     INSTANCE;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SerdeUtils.class);
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -48,9 +49,8 @@ public enum SerdeUtils {
         ).forEach(version -> {
             int major = version.getMajorVersion();
             int minor = version.getMinorVersion();
-            if (major != 2 || minor < 10 || minor > 13) {
-                Logger.getLogger(VPackMapper.class.getName())
-                        .log(Level.WARNING, "Unsupported Jackson version: {0}", version);
+            if (major != 2 || minor < 10 || minor > 14) {
+                LOGGER.warn("Unsupported Jackson version: {}", version);
             }
         });
     }
