@@ -178,6 +178,7 @@ jobs:
       fail-fast: false
       matrix:
         jackson-version:
+          - 2.14.1
           - 2.13.3
           - 2.12.7
           - 2.11.4
