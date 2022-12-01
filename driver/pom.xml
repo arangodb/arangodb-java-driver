@@ -16,7 +16,7 @@
     <url>https://github.com/arangodb/arangodb-java-driver</url>
 
     <properties>
-        <adb.jackson.version>2.13.3</adb.jackson.version>
+        <adb.jackson.version>2.14.1</adb.jackson.version>
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <SslTest>false</SslTest>
@@ -358,7 +358,7 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-dataformat-velocypack</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>
