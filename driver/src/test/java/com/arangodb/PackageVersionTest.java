@@ -43,7 +43,7 @@ class PackageVersionTest extends BaseJunit5 {
                 .method(Request.Method.GET)
                 .path("/_admin/echo")
                 .build(), JsonNode.class);
-        assertThat(resp.getBody().get("headers").get("user-agent").textValue()).endsWith(PackageVersion.VERSION);
+        assertThat(resp.getBody().get("headers").get("x-arango-driver").textValue()).endsWith(PackageVersion.VERSION);
         adb.shutdown();
     }
 }

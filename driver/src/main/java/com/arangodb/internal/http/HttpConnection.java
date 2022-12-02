@@ -70,7 +70,7 @@ public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
-    private static final String USER_AGENT = "ArangoDB-JavaDriver/" + PackageVersion.VERSION;
+    private static final String USER_AGENT = "JavaDriver/" + PackageVersion.VERSION;
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
     private final ContentType contentType;
@@ -248,7 +248,7 @@ public class HttpConnection implements Connection {
         }
         addHeader(request, httpRequest);
         httpRequest.putHeader(HttpHeaders.AUTHORIZATION.toString(), auth);
-        httpRequest.putHeader(HttpHeaders.USER_AGENT.toString(), USER_AGENT);
+        httpRequest.putHeader("x-arango-driver", USER_AGENT);
 
         byte[] reqBody = request.getBody();
         Buffer buffer;
