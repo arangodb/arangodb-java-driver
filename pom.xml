@@ -10,6 +10,7 @@
     <modules>
         <module>driver</module>
         <module>resilience-tests</module>
+        <module>shaded</module>
     </modules>
     <packaging>pom</packaging>
 
