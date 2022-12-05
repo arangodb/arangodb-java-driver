@@ -10,14 +10,22 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
-public class JacksonSerdeImpl implements JacksonSerde {
+/**
+ * Not shaded in arangodb-java-driver-shaded.
+ */
+public final class JacksonSerdeImpl implements JacksonSerde {
 
-    protected final ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public JacksonSerdeImpl(final ObjectMapper mapper) {
         this.mapper = mapper;
-        mapper.deactivateDefaultTyping();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            mapper.deactivateDefaultTyping();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        } catch (Exception e) {
+            // to be safe in case the provided Jackson version does not support the methods above
+            e.printStackTrace();
+        }
     }
 
     @Override

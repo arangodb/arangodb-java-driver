@@ -2,13 +2,13 @@ package com.arangodb.serde;
 
 import com.arangodb.ContentType;
 import com.arangodb.internal.serde.JacksonSerdeImpl;
-import com.arangodb.internal.serde.MapperProvider;
+import com.arangodb.internal.serde.UserMapperProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.function.Consumer;
 
 /**
- * User data serde based on Jackson Databind.
+ * User data serde based on Jackson Databind. Not shaded in arangodb-java-driver-shaded.
  */
 public interface JacksonSerde extends ArangoSerde {
 
@@ -19,7 +19,7 @@ public interface JacksonSerde extends ArangoSerde {
      * @return the created JacksonSerde
      */
     static JacksonSerde of(final ContentType contentType) {
-        return create(MapperProvider.of(contentType));
+        return create(UserMapperProvider.of(contentType));
     }
 
     /**

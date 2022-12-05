@@ -7,6 +7,8 @@ import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,24 +20,35 @@ import java.util.stream.Collectors;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 
-final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
+final class InternalSerdeImpl implements InternalSerde {
 
     static {
         checkSupportedJacksonVersion();
     }
 
     private final ArangoSerde userSerde;
+    private final ObjectMapper mapper;
 
     InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
-        super(mapper);
+        this.mapper = mapper;
         this.userSerde = userSerde;
+        mapper.deactivateDefaultTyping();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.registerModule(InternalModule.INSTANCE.get());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.deactivateDefaultTyping();
         mapper.setAnnotationIntrospector(new InternalAnnotationIntrospector(
                 new UserDataSerializer(this),
                 new UserDataDeserializer(this)
         ));
+    }
+
+    @Override
+    public byte[] serialize(final Object value) {
+        try {
+            return mapper.writeValueAsBytes(value);
+        } catch (JsonProcessingException e) {
+            throw new ArangoDBException(e);
+        }
     }
 
     @Override
@@ -140,7 +153,11 @@ final class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde 
         if (content == null) {
             return null;
         }
-        return super.deserialize(content, type);
+        try {
+            return mapper.readerFor(mapper.constructType(type)).readValue(content);
+        } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
     }
 
     private boolean isManagedClass(Class<?> clazz) {

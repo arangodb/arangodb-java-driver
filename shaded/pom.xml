@@ -55,7 +55,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>shade-core-dependencies</id>
@@ -83,6 +83,17 @@
                                 <relocation>
                                     <pattern>com.fasterxml.jackson</pattern>
                                     <shadedPattern>com.arangodb.shaded.fasterxml.jackson</shadedPattern>
+                                    <referenceExcludes>
+                                        <exclude>com/arangodb/serde/JacksonSerde.java</exclude>
+                                        <exclude>com/arangodb/internal/serde/JacksonSerdeImpl.java</exclude>
+                                        <exclude>com/arangodb/internal/serde/UserJsonMapperProvider.java</exclude>
+                                        <exclude>com/arangodb/internal/serde/UserMapperProvider.java</exclude>
+                                        <exclude>com/arangodb/internal/serde/UserVPackMapperProvider.java</exclude>
+                                    </referenceExcludes>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.arangodb.jackson.dataformat.velocypack</pattern>
+                                    <shadedPattern>com.arangodb.shaded.jackson.dataformat.velocypack</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.vertx</pattern>
@@ -99,7 +110,7 @@
                                 <filter>
                                     <artifact>com.arangodb:arangodb-java-driver</artifact>
                                     <excludes>
-                                        <exclude>META-INF/**</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
