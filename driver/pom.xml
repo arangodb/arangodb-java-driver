@@ -84,17 +84,6 @@
         </profile>
     </profiles>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -311,11 +300,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <scm>
-        <url>https://github.com/arangodb/arangodb-java-driver</url>
-        <connection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</connection>
-        <developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
-    </scm>
 
 </project>
