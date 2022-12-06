@@ -213,7 +213,7 @@ jobs:
         run: mvn -version
       - name: Test
         working-directory: driver
-        run: mvn --no-transfer-progress test -Dadb.jackson.version=${{matrix.jackson-version}}
+        run: mvn --no-transfer-progress test -Djackson.version=${{matrix.jackson-version}}
 
   sonar:
     timeout-minutes: 10
