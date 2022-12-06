@@ -16,7 +16,7 @@ public interface InternalSerde extends ArangoSerde {
      * @return the created InternalSerde
      */
     static InternalSerde of(final ContentType contentType, ArangoSerde userSerde) {
-        return new InternalSerdeImpl(MapperProvider.of(contentType), userSerde);
+        return new InternalSerdeImpl(InternalMapperProvider.of(contentType), userSerde);
     }
 
     /**

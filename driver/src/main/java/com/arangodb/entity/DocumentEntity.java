@@ -20,6 +20,10 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.serde.Id;
+import com.arangodb.serde.Key;
+import com.arangodb.serde.Rev;
+
 /**
  * @author Mark Vollmary
  */

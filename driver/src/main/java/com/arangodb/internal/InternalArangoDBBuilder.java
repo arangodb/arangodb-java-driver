@@ -27,14 +27,12 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.ArangoSerdeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 
 /**
@@ -142,6 +140,19 @@ public abstract class InternalArangoDBBuilder {
     protected static String getProperty(ConfigPropertiesProvider props, ConfigPropertyKey key, Object currentValue) {
         String defaultValue = currentValue == null ? null : currentValue.toString();
         return props.getProperty(key, defaultValue);
+    }
+
+    protected static ArangoSerdeProvider serdeProvider() {
+        ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
+        Iterator<ArangoSerdeProvider> it = loader.iterator();
+        if (!it.hasNext()) {
+            throw new ArangoDBException("No ArangoSerdeProvider found!");
+        }
+        ArangoSerdeProvider serdeProvider = it.next();
+        if (it.hasNext()) {
+            throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
+        }
+        return serdeProvider;
     }
 
     protected void doLoadProperties(final ConfigPropertiesProvider properties) {

@@ -23,10 +23,16 @@ package com.arangodb;
 import com.arangodb.config.ConfigPropertiesProvider;
 import com.arangodb.config.ConfigPropertyKey;
 import com.arangodb.entity.*;
-import com.arangodb.internal.*;
+import com.arangodb.internal.ArangoDBImpl;
+import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
-import com.arangodb.internal.net.*;
+import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
@@ -35,7 +41,6 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.JacksonSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
@@ -581,8 +586,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
 
             final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde :
-                    JacksonSerde.of(ContentType.of(protocol));
-            final InternalSerde serde = InternalSerde.of(ContentType.of(protocol), userSerde);
+                    serdeProvider().of(ContentTypeFactory.of(protocol));
+            final InternalSerde serde = InternalSerde.of(ContentTypeFactory.of(protocol), userSerde);
 
             int protocolMaxConnections;
             switch (protocol) {

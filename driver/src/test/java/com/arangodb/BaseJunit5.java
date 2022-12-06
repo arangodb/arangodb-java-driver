@@ -4,7 +4,6 @@ import com.arangodb.entity.*;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.serde.JsonbSerde;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,8 +23,7 @@ class BaseJunit5 {
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_VPACK).build(),
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_JSON).build(),
             new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_VPACK).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).serde(JsonbSerde.create()).build()
+            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).build()
     );
 
     protected static Stream<ArangoDatabase> dbsStream() {

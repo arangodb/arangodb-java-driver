@@ -26,6 +26,7 @@ import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.serde.JacksonSerde;
+import com.arangodb.serde.Key;
 import com.arangodb.util.RawData;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

@@ -1,6 +1,6 @@
 package com.arangodb.mapping.annotations;
 
-import com.arangodb.entity.*;
+import com.arangodb.serde.*;
 
 import java.util.Objects;
 

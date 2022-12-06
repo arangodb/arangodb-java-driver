@@ -25,7 +25,6 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import com.arangodb.entity.Key;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

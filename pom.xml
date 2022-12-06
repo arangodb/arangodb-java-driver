@@ -11,6 +11,9 @@
         <module>driver</module>
         <module>resilience-tests</module>
         <module>shaded</module>
+        <module>jackson-serde</module>
+        <module>serde-api</module>
+        <module>jsonb-serde</module>
     </modules>
     <packaging>pom</packaging>
 

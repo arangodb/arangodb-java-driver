@@ -20,9 +20,9 @@
 
 package com.arangodb.async.example.graph;
 
-import com.arangodb.entity.Id;
-import com.arangodb.entity.Key;
-import com.arangodb.entity.Rev;
+import com.arangodb.serde.Id;
+import com.arangodb.serde.Key;
+import com.arangodb.serde.Rev;
 
 /**
  * @author a-brandt
