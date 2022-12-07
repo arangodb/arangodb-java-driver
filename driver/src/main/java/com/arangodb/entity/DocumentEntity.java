@@ -20,20 +20,24 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.serde.jackson.Id;
-import com.arangodb.serde.jackson.Key;
-import com.arangodb.serde.jackson.Rev;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Mark Vollmary
  */
 public class DocumentEntity {
 
-    @Key
+    @JsonProperty("_key")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String key;
-    @Id
+
+    @JsonProperty("_id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
-    @Rev
+
+    @JsonProperty("_rev")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String rev;
 
     public DocumentEntity() {

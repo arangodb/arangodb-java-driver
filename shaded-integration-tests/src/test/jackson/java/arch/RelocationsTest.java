@@ -45,4 +45,12 @@ public class RelocationsTest {
             .should().dependOnClassesThat()
             .resideInAPackage("com.arangodb.serde.jsonb..");
 
+    @ArchTest
+    // jackson-serde is accessed via SPI
+    public static final ArchRule noExplicitDependencyOnJacksonSerde = noClasses().that()
+            .resideInAPackage("com.arangodb..").and()
+            .resideOutsideOfPackage("com.arangodb.serde.jackson..")
+            .should().dependOnClassesThat()
+            .resideInAPackage("com.arangodb.serde.jackson..");
+
 }
