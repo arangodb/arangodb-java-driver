@@ -20,6 +20,8 @@
 
 package com.arangodb.model;
 
+import com.arangodb.internal.serde.UserData;
+
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
@@ -57,6 +59,7 @@ public final class TransactionOptions {
         return this;
     }
 
+    @UserData
     public Object getParams() {
         return params;
     }
