@@ -51,6 +51,7 @@
                                 <excludes>
                                     <exclude>org.slf4j:slf4j-api</exclude>
                                     <exclude>com.arangodb:jackson-serde</exclude>
+                                    <exclude>com.arangodb:velocypack</exclude>
                                 </excludes>
                             </artifactSet>
                             <relocations>
@@ -75,12 +76,6 @@
                                 </relocation>
                             </relocations>
                             <filters>
-                                <filter>
-                                    <artifact>com.arangodb:velocypack</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                    </excludes>
-                                </filter>
                                 <filter>
                                     <artifact>com.arangodb:arangodb-java-driver</artifact>
                                     <excludes>

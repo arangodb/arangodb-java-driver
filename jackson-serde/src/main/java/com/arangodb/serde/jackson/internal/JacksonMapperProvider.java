@@ -1,4 +1,4 @@
-package com.arangodb.internal.serde;
+package com.arangodb.serde.jackson.internal;
 
 import com.arangodb.ContentType;
 import com.fasterxml.jackson.databind.ObjectMapper;

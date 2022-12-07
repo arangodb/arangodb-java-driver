@@ -1,8 +1,9 @@
-package com.arangodb.serde;
+package com.arangodb.serde.jackson;
 
 import com.arangodb.ContentType;
-import com.arangodb.internal.serde.JacksonSerdeImpl;
-import com.arangodb.internal.serde.JacksonMapperProvider;
+import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
+import com.arangodb.serde.jackson.internal.JacksonMapperProvider;
+import com.arangodb.serde.ArangoSerdeProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonSerdeProvider implements ArangoSerdeProvider {

@@ -22,7 +22,7 @@ package com.arangodb.mapping.annotations;
 
 import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.JacksonSerdeProvider;
+import com.arangodb.serde.jackson.JacksonSerdeProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 

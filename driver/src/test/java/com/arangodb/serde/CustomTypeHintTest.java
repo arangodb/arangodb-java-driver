@@ -27,6 +27,7 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
 import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.serde.jackson.Key;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
-package com.arangodb.internal.serde;
+package com.arangodb.serde.jackson.internal;
 
-import com.arangodb.serde.JacksonSerde;
+import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

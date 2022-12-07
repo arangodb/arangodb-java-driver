@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.serde.jackson;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotationsInside
-@JsonProperty("_from")
+@JsonProperty("_id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public @interface From {
+public @interface Id {
 }

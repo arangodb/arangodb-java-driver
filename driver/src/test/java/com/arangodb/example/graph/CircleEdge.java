@@ -20,7 +20,7 @@
 
 package com.arangodb.example.graph;
 
-import com.arangodb.serde.*;
+import com.arangodb.serde.jackson.*;
 
 /**
  * @author a-brandt

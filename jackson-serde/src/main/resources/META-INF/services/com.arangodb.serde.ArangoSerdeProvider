@@ -1,1 +1,1 @@
-com.arangodb.serde.JacksonSerdeProvider
+com.arangodb.serde.jackson.JacksonSerdeProvider

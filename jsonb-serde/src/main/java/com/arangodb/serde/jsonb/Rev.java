@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.serde.jsonb;
 
 import jakarta.json.bind.annotation.JsonbAnnotation;
 import jakarta.json.bind.annotation.JsonbProperty;
@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @JsonbAnnotation
-@JsonbProperty("_from")
-public @interface From {
+@JsonbProperty("_rev")
+public @interface Rev {
 }

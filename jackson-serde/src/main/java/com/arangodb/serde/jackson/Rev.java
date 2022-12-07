@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package com.arangodb.serde.jackson;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.annotation.JsonInclude;

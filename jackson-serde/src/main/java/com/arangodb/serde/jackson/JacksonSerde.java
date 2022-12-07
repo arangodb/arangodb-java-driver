@@ -1,5 +1,6 @@
-package com.arangodb.serde;
+package com.arangodb.serde.jackson;
 
+import com.arangodb.serde.ArangoSerde;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.function.Consumer;
