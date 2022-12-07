@@ -1,5 +1,9 @@
-package com.arangodb;
+package arch;
 
+import com.arangodb.ArangoDB;
+import com.arangodb.ContentType;
+import com.arangodb.DbName;
+import com.arangodb.Protocol;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Arrays;

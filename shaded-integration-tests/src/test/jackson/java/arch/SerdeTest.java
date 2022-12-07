@@ -1,11 +1,9 @@
-package com.arangodb.serde;
+package arch;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.BaseTest;
 import com.arangodb.shaded.fasterxml.jackson.databind.JsonNode;
 import com.arangodb.shaded.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
-import jakarta.json.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -18,18 +16,32 @@ class SerdeTest extends BaseTest {
 
     @ParameterizedTest
     @MethodSource("adbByContentType")
-    void jsonNode(ArangoDB adb) {
-        JsonObject doc = Json.createObjectBuilder()
-                .add("foo", "bar")
-                .build();
-        JsonObject res = adb.db().query("return @d", Collections.singletonMap("d", doc), JsonObject.class).next();
+    void shadedJsonNode(ArangoDB adb) {
+        // uses the internal serde
+        JsonNode doc = JsonNodeFactory.instance
+                .objectNode()
+                .put("foo", "bar");
+        JsonNode res = adb.db().query("return @d", Collections.singletonMap("d", doc), JsonNode.class).next();
         assertThat(res.size()).isEqualTo(1);
-        assertThat(res.getString("foo")).isEqualTo("bar");
-        JsonValue value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc), JsonValue.class).next();
-        assertThat(value)
-                .isInstanceOf(JsonString.class)
-                .extracting(v -> ((JsonString) v).getString())
-                .isEqualTo("bar");
+        assertThat(res.get("foo").asText()).isEqualTo("bar");
+        JsonNode value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc), JsonNode.class).next();
+        assertThat(value.textValue()).isEqualTo("bar");
+    }
+
+    @ParameterizedTest
+    @MethodSource("adbByContentType")
+    void jsonNode(ArangoDB adb) {
+        // uses the user serde
+        com.fasterxml.jackson.databind.JsonNode doc = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance
+                .objectNode()
+                .put("foo", "bar");
+        com.fasterxml.jackson.databind.JsonNode res = adb.db().query("return @d", Collections.singletonMap("d", doc),
+                com.fasterxml.jackson.databind.JsonNode.class).next();
+        assertThat(res.size()).isEqualTo(1);
+        assertThat(res.get("foo").asText()).isEqualTo("bar");
+        com.fasterxml.jackson.databind.JsonNode value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc),
+                com.fasterxml.jackson.databind.JsonNode.class).next();
+        assertThat(value.textValue()).isEqualTo("bar");
     }
 
     @ParameterizedTest

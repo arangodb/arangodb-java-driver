@@ -1,4 +1,4 @@
-package com.arangodb.serde;
+package arch;
 
 
 import com.arangodb.serde.jsonb.Key;
