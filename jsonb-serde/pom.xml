@@ -9,7 +9,14 @@
         <version>7.0.0-SNAPSHOT</version>
     </parent>
 
+    <name>jsonb-serde</name>
     <artifactId>jsonb-serde</artifactId>
+    <description>JsonB Serde module for ArangoDB Java Driver</description>
+
+    <properties>
+        <!-- FIXME: requires JDK 11 -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>
