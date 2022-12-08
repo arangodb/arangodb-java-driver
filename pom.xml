@@ -13,7 +13,6 @@
         <module>shaded</module>
         <module>jackson-serde</module>
         <module>serde-api</module>
-        <module>jsonb-serde</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -321,5 +320,19 @@
         <connection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</connection>
         <developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
     </scm>
+
+    <profiles>
+        <profile>
+            <id>no-deploy</id>
+            <activation>
+                <property>
+                    <name>!deploy</name>
+                </property>
+            </activation>
+            <modules>
+                <module>jsonb-serde</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
