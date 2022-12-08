@@ -23,6 +23,7 @@ package com.arangodb.internal.http;
 import com.arangodb.*;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.ResponseUtils;
@@ -84,7 +85,7 @@ public class HttpConnection implements Connection {
                            final InternalSerde util, final Protocol protocol, final Long ttl) {
         super();
         this.util = util;
-        this.contentType = ContentType.of(protocol);
+        this.contentType = ContentTypeFactory.of(protocol);
         this.timeout = timeout;
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> {

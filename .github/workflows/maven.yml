@@ -213,7 +213,7 @@ jobs:
         run: mvn -version
       - name: Test
         working-directory: driver
-        run: mvn --no-transfer-progress test -Dadb.jackson.version=${{matrix.jackson-version}}
+        run: mvn --no-transfer-progress test -Djackson.version=${{matrix.jackson-version}}
 
   sonar:
     timeout-minutes: 10
@@ -263,3 +263,41 @@ jobs:
         working-directory: driver
         run: mvn -B --no-transfer-progress -Dgpg.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
 
+  shaded-integration-tests:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/arangodb:3.10.1
+        topology:
+          - single
+          - cluster
+        java-version:
+          - 17
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+      - name: Info
+        run: mvn -version
+      - name: Install
+        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+      - name: Test jackson-serde
+        working-directory: shaded-integration-tests
+        run: mvn --no-transfer-progress -P jackson-serde test
+      - name: Test jsonb-serde
+        working-directory: shaded-integration-tests
+        run: mvn --no-transfer-progress -P jsonb-serde test

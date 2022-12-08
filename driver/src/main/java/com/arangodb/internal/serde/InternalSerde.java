@@ -2,13 +2,12 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
-import com.arangodb.serde.JacksonSerde;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public interface InternalSerde extends JacksonSerde {
+public interface InternalSerde extends ArangoSerde {
 
     /**
      * Creates a new InternalSerde with default settings for the specified data type.
@@ -17,7 +16,7 @@ public interface InternalSerde extends JacksonSerde {
      * @return the created InternalSerde
      */
     static InternalSerde of(final ContentType contentType, ArangoSerde userSerde) {
-        return new InternalSerdeImpl(MapperProvider.of(contentType), userSerde);
+        return new InternalSerdeImpl(InternalMapperProvider.of(contentType), userSerde);
     }
 
     /**

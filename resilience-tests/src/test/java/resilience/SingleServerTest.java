@@ -18,7 +18,7 @@ public abstract class SingleServerTest {
 
     protected static final String HOST = "127.0.0.1";
     protected static final String PASSWORD = "test";
-    protected static final MemoryAppender logs = new MemoryAppender(Level.DEBUG);
+    protected static final MemoryAppender logs = new MemoryAppender(Level.INFO);
     private static final Endpoint endpoint = new Endpoint("singleServer", HOST, 18529, "172.28.0.1:8529");
 
     @BeforeAll

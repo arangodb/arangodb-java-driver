@@ -39,7 +39,6 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.JacksonSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
@@ -516,7 +515,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde : JacksonSerde.of(ContentType.VPACK);
+            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde : serdeProvider().of(ContentType.VPACK);
             final InternalSerde serde = InternalSerde.of(ContentType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
