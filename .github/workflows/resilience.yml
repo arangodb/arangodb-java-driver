@@ -29,7 +29,6 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Start Toxiproxy
-        working-directory: resilience-tests
         run: ./bin/startProxy.sh
       - name: Test
         run: mvn --no-transfer-progress -am -pl resilience-tests test

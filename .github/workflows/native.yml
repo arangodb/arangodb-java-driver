@@ -40,8 +40,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test Native
-        working-directory: driver
-        run: mvn -Pnative --no-transfer-progress test
+        run: mvn -Pnative --no-transfer-progress -am -pl driver test
 
   test-native-ssl:
     timeout-minutes: 20
@@ -75,5 +74,4 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test Native
-        working-directory: driver
-        run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true test
+        run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true -am -pl driver test
