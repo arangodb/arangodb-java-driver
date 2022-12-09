@@ -32,6 +32,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.organization>arangodb-1</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <adb.jackson.version>2.14.1</adb.jackson.version>
     </properties>
 

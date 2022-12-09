@@ -15,8 +15,6 @@
     <description>ArangoDB Java Driver</description>
 
     <properties>
-        <sonar.organization>arangodb-1</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <maven.deploy.skip>false</maven.deploy.skip>
         <SslTest>false</SslTest>
     </properties>
