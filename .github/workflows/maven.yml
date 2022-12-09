@@ -117,7 +117,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
-        run: mvn -e --no-transfer-progress -am -pl driver test -Dtest=com.arangodb.util.UnicodeUtilsTest
+        run: mvn -e --no-transfer-progress -am -pl driver test -Dtest=com.arangodb.util.UnicodeUtilsTest -Dsurefire.failIfNoSpecifiedTests=false
 
   test-jwt:
     timeout-minutes: 20
