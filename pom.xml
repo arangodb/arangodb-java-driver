@@ -32,7 +32,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <jackson.version>2.14.1</jackson.version>
+        <adb.jackson.version>2.14.1</adb.jackson.version>
     </properties>
 
     <developers>
@@ -90,7 +90,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>${jackson.version}</version>
+                <version>${adb.jackson.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

@@ -208,7 +208,7 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
-        run: mvn --no-transfer-progress -am -pl driver test -Djackson.version=${{matrix.jackson-version}}
+        run: mvn --no-transfer-progress -am -pl driver test -Dadb.jackson.version=${{matrix.jackson-version}}
 
   shaded-integration-tests:
     timeout-minutes: 20
