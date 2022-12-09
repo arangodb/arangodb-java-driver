@@ -17,6 +17,7 @@
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
         <SslTest>false</SslTest>
+        <sonar.test.exclusions>src/test/**/*</sonar.test.exclusions>
     </properties>
 
     <profiles>
