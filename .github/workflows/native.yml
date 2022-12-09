@@ -39,8 +39,11 @@ jobs:
           DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Info
         run: mvn -version
+      - name: Install
+        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
-        run: mvn -Pnative --no-transfer-progress -am -pl driver test
+        working-directory: driver
+        run: mvn -Pnative --no-transfer-progress test
 
   test-native-ssl:
     timeout-minutes: 20
@@ -73,5 +76,8 @@ jobs:
           SSL: true
       - name: Info
         run: mvn -version
+      - name: Install
+        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
-        run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true -am -pl driver test
+        working-directory: driver
+        run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true test

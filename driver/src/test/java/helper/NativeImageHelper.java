@@ -43,15 +43,12 @@ public class NativeImageHelper {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode rootNode = mapper.createArrayNode();
 
-        String serdePackage = "com.arangodb.serde";
         String internalSerdePackage = "com.arangodb.internal.serde";
-        Collection<URL> serdeUrls = new HashSet<>();
-        serdeUrls.addAll(ClasspathHelper.forPackage(serdePackage));
-        serdeUrls.addAll(ClasspathHelper.forPackage(internalSerdePackage));
+        Collection<URL> serdeUrls = ClasspathHelper.forPackage(internalSerdePackage);
         Reflections r = new Reflections(new ConfigurationBuilder()
                 .setScanners(new SubTypesScanner(false))
                 .setUrls(serdeUrls)
-                .filterInputsBy(new FilterBuilder().includePackage(serdePackage).includePackage(internalSerdePackage)));
+                .filterInputsBy(new FilterBuilder().includePackage(internalSerdePackage)));
         Stream<String> serializers = r.getSubTypesOf(JsonSerializer.class).stream()
                 .filter(it -> !it.isAnonymousClass())
                 .map(Class::getName);
@@ -78,6 +75,7 @@ public class NativeImageHelper {
                     );
                 });
         Stream.concat(serdeClasses, entityClasses)
+                .filter(className -> className.startsWith("com.arangodb"))
                 .map(className -> {
                     ObjectNode entry = mapper.createObjectNode();
                     entry.put("name", className);
