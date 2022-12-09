@@ -3,7 +3,6 @@ package com.arangodb.internal.config;
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.ConfigPropertiesProvider;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -38,8 +37,8 @@ public class FileConfigPropertiesProvider implements ConfigPropertiesProvider {
         Properties p = new Properties();
         try (InputStream is = FileConfigPropertiesProvider.class.getResourceAsStream(fileName)) {
             p.load(is);
-        } catch (IOException e) {
-            throw new ArangoDBException(e);
+        } catch (Exception e) {
+            throw new ArangoDBException("Got exception while reading properties file " + fileName, e);
         }
         return p;
     }

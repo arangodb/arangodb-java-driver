@@ -4,6 +4,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ContentType;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
+import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Arrays;
@@ -11,30 +12,24 @@ import java.util.stream.Stream;
 
 public class BaseTest {
     protected static final DbName TEST_DB = DbName.of("java_driver_integration_tests");
-    protected static final String HOST = "172.28.0.1";
-    protected static final int PORT = 8529;
-    protected static final String PASSWD = "test";
 
     protected static ArangoDB createAdb() {
         return new ArangoDB.Builder()
-                .host(HOST, PORT)
-                .password(PASSWD)
+                .loadProperties(new FileConfigPropertiesProvider())
                 .build();
     }
 
     protected static ArangoDB createAdb(ContentType contentType) {
         Protocol protocol = contentType == ContentType.VPACK ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON;
         return new ArangoDB.Builder()
-                .host(HOST, PORT)
-                .password(PASSWD)
+                .loadProperties(new FileConfigPropertiesProvider())
                 .useProtocol(protocol)
                 .build();
     }
 
     protected static ArangoDB createAdb(Protocol protocol) {
         return new ArangoDB.Builder()
-                .host(HOST, PORT)
-                .password(PASSWD)
+                .loadProperties(new FileConfigPropertiesProvider())
                 .useProtocol(protocol)
                 .build();
     }
