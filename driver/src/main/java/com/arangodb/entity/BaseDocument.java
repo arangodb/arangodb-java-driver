@@ -20,16 +20,13 @@
 
 package com.arangodb.entity;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class BaseDocument extends AbstractBaseDocument implements Serializable {
-
-    private static final long serialVersionUID = 733033350470L;
+public final class BaseDocument extends AbstractBaseDocument {
 
     public BaseDocument() {
         super();

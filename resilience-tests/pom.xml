@@ -11,6 +11,11 @@
 
     <artifactId>resilience-tests</artifactId>
 
+    <properties>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.mock-server</groupId>

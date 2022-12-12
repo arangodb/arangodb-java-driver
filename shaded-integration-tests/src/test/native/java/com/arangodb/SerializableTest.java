@@ -1,31 +1,22 @@
 package com.arangodb;
 
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.ErrorEntity;
+import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SerializableTest {
+class SerializableTest {
 
     @Test
-    public void serializeBaseDocument() throws IOException, ClassNotFoundException {
-        BaseDocument bd = new BaseDocument("poaids");
-        bd.setId("apdso/02193");
-        bd.setRevision("poip");
-        bd.addAttribute("aaa", "bbb");
-
-        BaseDocument bd2 = roundTrip(bd);
-        assertThat(bd).isEqualTo(bd2);
-    }
-
-    @Test
-    public void serializeArangoDBException() throws IOException, ClassNotFoundException {
+    void serializeArangoDBException() throws IOException, ClassNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jn = JsonNodeFactory.instance.objectNode()
                 .put("errorMessage", "boomError")
@@ -40,6 +31,23 @@ public class SerializableTest {
         assertThat(e2.getResponseCode()).isEqualTo(e.getResponseCode());
         assertThat(e2.getErrorNum()).isEqualTo(e.getErrorNum());
         assertThat(e2.getRequestId()).isEqualTo(e.getRequestId());
+    }
+
+    @Test
+    void serializeArangoDBRedirectException() throws IOException, ClassNotFoundException {
+        ArangoDBRedirectException e = new ArangoDBRedirectException("foo", "bar");
+        ArangoDBRedirectException e2 = roundTrip(e);
+        assertThat(e2.getMessage()).isEqualTo(e.getMessage());
+        assertThat(e2.getLocation()).isEqualTo(e.getLocation());
+    }
+
+    @Test
+    void serializeArangoDBMultipleException() throws IOException, ClassNotFoundException {
+        List<Throwable> exceptions = Collections.singletonList(new RuntimeException("foo"));
+        ArangoDBMultipleException e = new ArangoDBMultipleException(exceptions);
+        ArangoDBMultipleException e2 = roundTrip(e);
+        assertThat(e2.getExceptions()).hasSize(1);
+        assertThat(e2.getExceptions().iterator().next().getMessage()).isEqualTo("foo");
     }
 
     private <T> T roundTrip(T input) throws IOException, ClassNotFoundException {

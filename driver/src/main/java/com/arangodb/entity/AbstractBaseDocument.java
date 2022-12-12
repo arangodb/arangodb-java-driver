@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +35,7 @@ import java.util.Objects;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-abstract class AbstractBaseDocument implements Serializable {
-
-    private static final long serialVersionUID = 846874908582L;
+abstract class AbstractBaseDocument {
 
     private static final String[] META_PROPS = new String[]{
             DocumentFields.ID,
