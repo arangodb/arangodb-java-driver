@@ -1,0 +1,22 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\Qarangodb.properties\\E"
+      },
+      {
+        "pattern": "\\Qarangodb-bad.properties\\E"
+      },
+      {
+        "pattern": "\\Qarangodb-bad2.properties\\E"
+      },
+      {
+        "pattern": "\\Qlogback-test.xml\\E"
+      },
+      {
+        "pattern": "\\Qexample.truststore\\E"
+      }
+    ]
+  },
+  "bundles": []
+}

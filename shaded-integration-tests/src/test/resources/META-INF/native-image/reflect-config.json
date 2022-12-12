@@ -1,0 +1,359 @@
+[
+  {
+    "name":"org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name": "org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.encoder.PatternLayoutEncoder",
+    "allPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.DateConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LevelConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LineSeparatorConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LoggerConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.MessageConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.ThreadConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.core.ConsoleAppender",
+    "allPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntity",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntitySerializeNullFalse",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name": "com.arangodb.ArangoDatabaseTest$TransactionTestEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.ArangoDatabaseTest$TransactionTestEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.document.AqlQueryWithSpecialReturnTypesExampleTest$Gender",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.document.TestEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.graph.AQLActorsAndMoviesExampleTest$Actor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.graph.AQLActorsAndMoviesExampleTest$Movie",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.graph.Circle",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.graph.CircleEdge",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.async.example.graph.ShortestPathInAQLExampleTest$Pair",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.document.AqlQueryWithSpecialReturnTypesExampleTest$Gender",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.document.TestEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.graph.AQLActorsAndMoviesExampleTest$Actor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.graph.AQLActorsAndMoviesExampleTest$Movie",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.graph.Circle",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.graph.CircleEdge",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.example.graph.ShortestPathInAQLExampleTest$Pair",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomSerdeTest$Person",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomSerdeTest$PersonDeserializer",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomSerdeTest$PersonSerializer",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.serde.CustomTypeHintTest$Animal",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomTypeHintTest$Gorilla",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomTypeHintTest$Zoo",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.util.HashSet",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.annotations.AnnotatedEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.deser.std.DateDeserializers$SqlDateDeserializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.ser.std.SqlDateSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Animal",
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Cat",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.async.ArangoCollectionTest$Dog",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Animal",
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$AnnotatedEntity",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Cat",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  },
+  {
+    "name":"com.arangodb.ArangoCollectionTest$Dog",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allPublicMethods":true,
+    "allDeclaredConstructors":true,
+    "allDeclaredClasses":true
+  }
+]

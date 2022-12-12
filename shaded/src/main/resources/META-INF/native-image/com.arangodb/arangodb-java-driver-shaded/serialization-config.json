@@ -1,0 +1,26 @@
+[
+  {
+    "name": "com.arangodb.entity.AbstractBaseDocument"
+  },
+  {
+    "name": "com.arangodb.entity.BaseDocument"
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument"
+  },
+  {
+    "name": "java.util.HashMap"
+  },
+  {
+    "name": "com.arangodb.entity.ErrorEntity"
+  },
+  {
+    "name": "com.arangodb.ArangoDBException"
+  },
+  {
+    "name": "com.arangodb.ArangoDBMultipleException"
+  },
+  {
+    "name": "com.arangodb.internal.net.ArangoDBRedirectException"
+  }
+]

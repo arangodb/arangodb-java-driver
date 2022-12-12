@@ -17,10 +17,11 @@ jobs:
           - docker.io/arangodb/enterprise:3.10.1
         topology:
           - cluster
-        db-ext-names:
-          - false
         java-version:
           - 17
+        module:
+          - driver
+          - shaded
 
     steps:
       - uses: actions/checkout@v2
@@ -36,13 +37,12 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Info
         run: mvn -version
       - name: Install
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
-        working-directory: driver
+        working-directory: ${{matrix.module}}
         run: mvn -Pnative --no-transfer-progress test
 
   test-native-ssl:
@@ -58,6 +58,9 @@ jobs:
           - single
         java-version:
           - 17
+        module:
+          - driver
+          - shaded
 
     steps:
       - uses: actions/checkout@v2
@@ -79,5 +82,5 @@ jobs:
       - name: Install
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
-        working-directory: driver
+        working-directory: ${{matrix.module}}
         run: mvn -Pnative --no-transfer-progress -Dgroups=ssl -DSslTest=true test
