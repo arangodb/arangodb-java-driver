@@ -66,9 +66,6 @@
                                 </excludes>
                             </artifactSet>
                             <relocations>
-                                <!--
-                                TODO: fix native image config
-                                -->
                                 <relocation>
                                     <pattern>io.netty</pattern>
                                     <shadedPattern>com.arangodb.shaded.netty</shadedPattern>
@@ -91,6 +88,7 @@
                                     <artifact>com.arangodb:arangodb-java-driver</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/native-image/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
