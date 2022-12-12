@@ -19,5 +19,8 @@
   },
   {
     "name": "java.util.Collections$EmptyList"
+  },
+  {
+    "name": "java.util.Collections$SingletonList"
   }
 ]
