@@ -5,7 +5,6 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbConfig;
 
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -29,7 +28,7 @@ public class JsonbSerde implements ArangoSerde {
     }
 
     @Override
-    public <T> T deserialize(byte[] content, Type type) {
+    public <T> T deserialize(byte[] content, Class<T> type) {
         return jsonb.fromJson(new String(content, StandardCharsets.UTF_8), type);
     }
 

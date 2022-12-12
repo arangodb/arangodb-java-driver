@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
 /**
@@ -31,7 +30,7 @@ public final class JacksonSerdeImpl implements JacksonSerde {
     }
 
     @Override
-    public <T> T deserialize(final byte[] content, final Type type) {
+    public <T> T deserialize(final byte[] content, final Class<T> type) {
         try {
             return mapper.readerFor(mapper.constructType(type)).readValue(content);
         } catch (IOException e) {

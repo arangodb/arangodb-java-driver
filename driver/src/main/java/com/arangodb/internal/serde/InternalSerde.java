@@ -38,6 +38,16 @@ public interface InternalSerde extends ArangoSerde {
     byte[] extract(byte[] content, String jsonPointer);
 
     /**
+     * Deserializes the content and binds it to the target data type.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     *
+     * @param content byte array to deserialize
+     * @param type    target data type
+     * @return deserialized object
+     */
+    <T> T deserialize(byte[] content, Type type);
+
+    /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
      * @param node  parsed json node

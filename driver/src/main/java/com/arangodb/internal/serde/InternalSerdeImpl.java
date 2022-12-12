@@ -52,6 +52,11 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
+    public <T> T deserialize(byte[] content, Class<T> clazz) {
+        return deserialize(content, (Type) clazz);
+    }
+
+    @Override
     public String toJsonString(final byte[] content) {
         try {
             return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
@@ -125,7 +130,7 @@ final class InternalSerdeImpl implements InternalSerde {
         if (type instanceof Class) {
             return deserializeUserData(content, (Class<T>) type);
         } else {
-            return userSerde.deserialize(content, type);
+            throw new UnsupportedOperationException();
         }
     }
 
