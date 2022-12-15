@@ -71,7 +71,7 @@ public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
-    private static final String USER_AGENT = "JavaDriver/" + PackageVersion.VERSION;
+    private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private final InternalSerde util;
     private final ContentType contentType;
@@ -79,6 +79,10 @@ public class HttpConnection implements Connection {
     private final WebClient client;
     private final Integer timeout;
     private final Vertx vertx;
+
+    private static String getUserAgent() {
+        return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
+    }
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final Boolean verifyHost,
