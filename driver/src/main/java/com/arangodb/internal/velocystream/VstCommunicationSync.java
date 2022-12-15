@@ -62,8 +62,16 @@ public class VstCommunicationSync extends VstCommunication<InternalResponse, Vst
     protected InternalResponse execute(final InternalRequest request, final VstConnectionSync connection, final int attemptCount) {
         try {
             final Message requestMessage = createMessage(request);
+            if (LOGGER.isDebugEnabled()) {
+                String body = request.getBody() == null ? "" : util.toJsonString(request.getBody());
+                LOGGER.debug("Send Request [id={}]: {} {}", requestMessage.getId(), request, body);
+            }
             final Message responseMessage = send(requestMessage, connection);
             final InternalResponse response = createResponse(responseMessage);
+            if (LOGGER.isDebugEnabled()) {
+                String body = response.getBody() == null ? "" : util.toJsonString(response.getBody());
+                LOGGER.debug("Received Response [id={}]: {} {}", responseMessage.getId(), response, body);
+            }
             checkError(response);
             return response;
         } catch (final VPackParserException e) {
@@ -80,10 +88,6 @@ public class VstCommunicationSync extends VstCommunication<InternalResponse, Vst
     }
 
     private Message send(final Message message, final VstConnectionSync connection) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-                    message.getBody() != null ? message.getBody() : "{}"));
-        }
         return connection.write(message, buildChunks(message));
     }
 

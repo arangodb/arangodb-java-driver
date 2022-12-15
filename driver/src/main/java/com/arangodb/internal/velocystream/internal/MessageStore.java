@@ -54,10 +54,6 @@ public class MessageStore {
     public void consume(final Message message) {
         final FutureTask<Message> future = task.remove(message.getId());
         if (future != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", message.getId(),
-                        message.getHead(), message.getBody() != null ? message.getBody() : "{}"));
-            }
             response.put(message.getId(), message);
             future.run();
         }

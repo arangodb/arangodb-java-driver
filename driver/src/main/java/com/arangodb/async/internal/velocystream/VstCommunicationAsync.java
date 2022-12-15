@@ -67,6 +67,10 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
         final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         try {
             final Message message = createMessage(request);
+            if (LOGGER.isDebugEnabled()) {
+                String body = request.getBody() == null ? "" : util.toJsonString(request.getBody());
+                LOGGER.debug("Send Request [id={}]: {} {}", message.getId(), request, body);
+            }
             send(message, connection).whenComplete((m, ex) -> {
                 if (m != null) {
                     final InternalResponse response;
@@ -102,6 +106,10 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
                     } catch (ArangoDBException e) {
                         rfuture.completeExceptionally(e);
                     }
+                    if (LOGGER.isDebugEnabled()) {
+                        String body = response.getBody() == null ? "" : util.toJsonString(response.getBody());
+                        LOGGER.debug("Received Response [id={}]: {} {}", m.getId(), response, body);
+                    }
                     rfuture.complete(response);
                 } else if (ex != null) {
                     LOGGER.error(ex.getMessage(), ex);
@@ -118,10 +126,6 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
     }
 
     private CompletableFuture<Message> send(final Message message, final VstConnectionAsync connection) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-                    message.getBody() != null ? message.getBody() : "{}"));
-        }
         return connection.write(message, buildChunks(message));
     }
 
