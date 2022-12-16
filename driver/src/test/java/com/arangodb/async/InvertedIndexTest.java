@@ -182,7 +182,7 @@ public class InvertedIndexTest extends BaseTest {
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
 
         // create persistent index
-        collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
+        collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex")).get();
 
         // create inverted index
         String analyzerName = "delimiter-" + UUID.randomUUID();
