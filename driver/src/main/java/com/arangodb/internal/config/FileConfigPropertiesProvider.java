@@ -12,7 +12,7 @@ import java.util.Properties;
  */
 public class FileConfigPropertiesProvider implements ConfigPropertiesProvider {
     private static final String DEFAULT_PREFIX = "arangodb";
-    private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
+    private static final String DEFAULT_PROPERTY_FILE = "arangodb.properties";
     private final Properties properties;
     private final String prefix;
 
@@ -35,7 +35,7 @@ public class FileConfigPropertiesProvider implements ConfigPropertiesProvider {
 
     private Properties initProperties(String fileName) {
         Properties p = new Properties();
-        try (InputStream is = FileConfigPropertiesProvider.class.getResourceAsStream(fileName)) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(fileName)) {
             p.load(is);
         } catch (Exception e) {
             throw new ArangoDBException("Got exception while reading properties file " + fileName, e);
