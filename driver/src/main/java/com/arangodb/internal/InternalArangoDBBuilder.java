@@ -60,7 +60,7 @@ public abstract class InternalArangoDBBuilder {
     protected Integer responseQueueTimeSamples = ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES;
 
     private static void loadHosts(final ConfigPropertiesProvider properties, final Collection<HostDescription> hosts) {
-        final String hostsProp = properties.getProperty(ConfigPropertyKey.HOSTS);
+        final String hostsProp = properties.getProperty(ConfigPropertyKey.HOSTS.getValue());
         if (hostsProp != null) {
             final String[] hostsSplit = hostsProp.split(",");
             for (final String host : hostsSplit) {
@@ -138,8 +138,10 @@ public abstract class InternalArangoDBBuilder {
     }
 
     protected static String getProperty(ConfigPropertiesProvider props, ConfigPropertyKey key, Object currentValue) {
-        String defaultValue = currentValue == null ? null : currentValue.toString();
-        return props.getProperty(key, defaultValue);
+        String p = props.getProperty(key.getValue());
+        if (p != null) return p;
+        if (currentValue != null) return currentValue.toString();
+        return null;
     }
 
     protected static ArangoSerdeProvider serdeProvider() {
