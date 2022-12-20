@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Tag("activeFailover")
@@ -20,7 +21,7 @@ public abstract class ActiveFailoverTest {
     protected static final String HOST = "127.0.0.1";
     protected static final String PASSWORD = "test";
     protected static final MemoryAppender logs = new MemoryAppender(Level.WARN);
-    private static final List<Endpoint> endpoints = List.of(
+    private static final List<Endpoint> endpoints = Arrays.asList(
             new Endpoint("activeFailover1", HOST, 18529, "172.28.0.1:8529"),
             new Endpoint("activeFailover2", HOST, 18539, "172.28.0.1:8539"),
             new Endpoint("activeFailover3", HOST, 18549, "172.28.0.1:8549")
