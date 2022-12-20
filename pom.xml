@@ -35,6 +35,7 @@
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <adb.jackson.version>2.14.1</adb.jackson.version>
+        <moduleName/>
     </properties>
 
     <developers>
@@ -266,6 +267,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -315,7 +317,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
