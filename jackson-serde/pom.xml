@@ -15,6 +15,7 @@
 
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
+        <moduleName>com.arangodb.serde.jackson</moduleName>
     </properties>
 
     <dependencies>

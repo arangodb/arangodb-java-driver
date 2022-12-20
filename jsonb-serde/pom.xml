@@ -16,6 +16,7 @@
     <properties>
         <!-- FIXME: requires JDK 11 -->
         <maven.deploy.skip>true</maven.deploy.skip>
+        <moduleName>com.arangodb.serde.jsonb</moduleName>
     </properties>
 
     <dependencies>
