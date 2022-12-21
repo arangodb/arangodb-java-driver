@@ -30,5 +30,8 @@ jobs:
         run: mvn -version
       - name: Start Toxiproxy
         run: ./bin/startProxy.sh
+      - name: Install
+        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test
-        run: mvn --no-transfer-progress -am -pl resilience-tests test
+        working-directory: resilience-tests
+        run: mvn --no-transfer-progress test

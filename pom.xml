@@ -9,7 +9,6 @@
     <inceptionYear>2016</inceptionYear>
     <modules>
         <module>driver</module>
-        <module>resilience-tests</module>
         <module>shaded</module>
         <module>jackson-serde</module>
         <module>serde-api</module>
@@ -36,6 +35,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <adb.jackson.version>2.14.1</adb.jackson.version>
         <moduleName/>
+        <SslTest/>
     </properties>
 
     <developers>
@@ -135,6 +135,11 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
+                <artifactId>jsonb-serde</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
                 <artifactId>arangodb-java-driver-shaded</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -158,6 +163,16 @@
                 <artifactId>assertj-core</artifactId>
                 <version>3.23.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>
+                <version>3.0.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -173,8 +188,6 @@
                         <arg>-Xlint:deprecation</arg>
                     </compilerArgs>
                     <showWarnings>true</showWarnings>
-                    <source>1.8</source>
-                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -274,6 +287,7 @@
                             <Automatic-Module-Name>${moduleName}</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
+                    <skipIfEmpty>true</skipIfEmpty>
                 </configuration>
             </plugin>
             <plugin>
@@ -362,6 +376,39 @@
             <modules>
                 <module>jsonb-serde</module>
             </modules>
+        </profile>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>0.9.19</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>test-native</id>
+                                <goals>
+                                    <goal>generateTestResourceConfig</goal>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <quickBuild>true</quickBuild>
+                            <skip>false</skip>
+                            <buildArgs>
+                                <buildArg>--no-fallback</buildArg>
+                            </buildArgs>
+                            <systemProperties>
+                                <SslTest>${SslTest}</SslTest>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
