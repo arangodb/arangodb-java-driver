@@ -1,10 +1,12 @@
 # Version 7.0: detailed changes
 
+
 ## HTTP client
 
 The HTTP client has been changed to Vert.x WebClient. 
 
 `HTTP/2` is now supported. `HTTP/2` supports multiplexing and uses `1` connection per host by default.
+
 
 ## Configuration changes
 
@@ -42,6 +44,7 @@ ArangoDB adb = new ArangoDB.Builder()
         .build();
 ```
 
+
 ## Transitive dependencies
 
 A transitive dependency on `io.vertx:vertx-web-client` has been added. In can be excluded when using `VST` protocol
@@ -57,6 +60,9 @@ When using protocol `HTTP_JSON` or `HTTP2_JSON` (default), no dependencies on `V
 Transitive dependencies on Jackson Core, Databind and Annotations have been added, using by default version `2.14`.
 The versions of such libraries can be overridden, the driver is compatible with Jackson versions: `2.10`, `2.11`, `2.12`
 , `2.13`, `2.14`.
+
+If these dependency requirements cannot be satisfied, you might need to use the [shaded version](#arangodb-java-driver-shaded) of this driver.
+
 
 ## User Data Types
 
@@ -77,13 +83,17 @@ To represent user data already encoded as byte array, the wrapper class `RawByte
 The byte array can either represent a `JSON` string (UTF-8 encoded) or a `VPACK` value, but the format must be the
 same used for the driver protocol configuration (`JSON` for `HTTP_JSON` and `HTTP2_JSON`, `VPACK` otherwise).
 
-`BaseDocument` and `BaseEdgeDocument` are now `final`, they have a new method `removeAttribute(String)`
-and `getProperties()` returns now an unmodifiable map.
+The following changes have been applied to `BaseDocument` and `BaseEdgeDocument`:
+- `final` classes
+- not serializable anymore (Java serialization)
+- new method `removeAttribute(String)`
+- `getProperties()` returns an unmodifiable map
 
 Before version `7.0` when performing write operations, the metadata of the input data objects was updated in place with 
 the metadata received in the response.
 Since version `7.0`, the input data objects passed as arguments to API methods are treated as immutable and the related 
 metadata fields are not updated anymore. The updated metadata can be found in the returned object.
+
 
 ## Serialization
 
@@ -109,6 +119,19 @@ The user data custom serializer implementation `ArangoJack` has been removed in 
 
 Updated reference documentation can be found [here](v7_java-reference-serialization.md). 
 
+
+## ArangoDB Java Driver Shaded
+
+Since version `7`, a shaded variant of the driver is also published with maven coordinates:
+`com.arangodb:arangodb-java-driver-shaded`.
+
+It bundles and relocates the following packages from transitive dependencies:
+- `com.fasterxml.jackson`
+- `com.arangodb.jackson.dataformat.velocypack`
+- `io.vertx`
+- `io.netty`
+
+
 ## Removed APIs
 
 The following client APIs have been removed:
@@ -131,6 +154,7 @@ Support of data type `VPackSlice` has been removed (in favor of Jackson types: `
 Support for custom initialization of
 cursors (`ArangoDB._setCursorInitializer(ArangoCursorInitializer cursorInitializer)`) has been removed.
 
+
 ## API methods changes
 
 Before version `7.0` some CRUD API methods inferred the return type from the type of the data object passed as input.
@@ -146,12 +170,14 @@ and `RawJson`) containing multiple documents.
 
 `ArangoDBException` has been enhanced with the id of the request causing it.
 
+
 ## API entities
 
 All entities and options classes (in packages `com.arangodb.model` and `com.arangodb.entity`) are now `final`.
 
 The replication factor is now modeled with a new interface (`ReplicationFactor`) with
 implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`.
+
 
 ## Migration
 

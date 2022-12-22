@@ -229,5 +229,5 @@ the same Jackson packages.
 
 The driver and the `JacksonSerde` are compatible with Jackson 2.10, 2.11, 2.12, 2.13 and 2.14.
 
-If these dependency requirements cannot be satisfied, you might need to use the shaded version of the driver. 
-TODO: add link and mvn coords
+If these dependency requirements cannot be satisfied, you might need to use the
+[shaded version](v7_detailed_changes.md#arangodb-java-driver-shaded) of the driver. 

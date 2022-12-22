@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
 - removed `throws ArangoDBException` from API method signatures (unchecked exception)
 - removed passwords from debug level requests logs (#410)
-
+- JPMS: explicit automatic module name
 
 ### Added
 
@@ -51,7 +51,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
 - added `BaseDocument#removeAttribute(String)` and `BaseEdgeDocument#removeAttribute(String)`
 - added request id to `ArangoDBException`
-
+- shaded version of the driver (`com.arangodb:arangodb-java-driver-shaded`)
 
 ### Fixed
 
@@ -60,7 +60,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added support to `DocumentCreateOptions#keepNull` (#374)
 - allow specifying the return type on insertDocuments (#373)
 - credentials logging (#410)
-
 
 ### Removed
 
