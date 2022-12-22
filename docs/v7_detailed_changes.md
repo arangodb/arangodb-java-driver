@@ -1,5 +1,32 @@
 # Version 7.0: detailed changes
 
+## Maven Setup
+
+In your `pom.xml`, set the snapshots repository:
+
+```
+<repositories>
+    <repository>
+        <id>snapshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+and include the dependency:
+
+```
+<dependencies>
+    <dependency>
+        <groupId>com.arangodb</groupId>
+        <artifactId>arangodb-java-driver</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </dependency>
+<dependencies>
+```
 
 ## HTTP client
 
