@@ -599,9 +599,19 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void loadproperties() {
         Throwable thrown = catchThrowable(() -> new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider("arangodb", "/arangodb-bad.properties"))
+                .loadProperties(new FileConfigPropertiesProvider("arangodb", "arangodb-bad.properties"))
         );
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void loadpropertiesWithPrefix() {
+        ArangoDB adb = new ArangoDB.Builder()
+                .loadProperties(new FileConfigPropertiesProvider("adb", "arangodb-with-prefix.properties"))
+                .build();
+        adb.getVersion();
+        adb.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
