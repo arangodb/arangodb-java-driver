@@ -23,15 +23,6 @@
 
     <profiles>
         <profile>
-            <id>doclint-java8-disable</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <doclint>none</doclint>
-            </properties>
-        </profile>
-        <profile>
             <id>no-graalvm</id>
             <activation>
                 <jdk>1.8</jdk>
