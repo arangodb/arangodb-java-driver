@@ -107,49 +107,7 @@ The dependency on `com.arangodb:velocypack` has been removed.
 
 The user data custom serializer implementation `ArangoJack` has been removed in favor of `JacksonSerde`.
 
-### User data Serde
-
-The `ArangoSerde` interface defines the API for (de)serializing user data, namely the data payloads related to: 
-- documents
-- vertexes 
-- edges
-- AQL bind variables
-- transactions parameters
-- custom requests and responses (`Request<T>` and `Response<T>` payloads)
-
-It can be used to (de)serialize from/to any arbitrary class, as long as supported by the actual implementation.
-The only exceptions are the following classes, that will be always (de)serialized using the internal serde:
-- `JsonNode` and its children (`ArrayNode`, `ObjectNode`, ...)
-- `RawJson`
-- `RawBytes`
-- `BaseDocument`
-- `BaseEdgeDocument`
-
-The default user data serde is `JacksonSerde`, which is based on Jackson API and is available for both `JSON` and `VPACK`. 
-To use `VPACK` format, the optional dependency `com.arangodb:jackson-dataformat-velocypack` is needed, which is a 
-dataformat backend implementation for Jackson.
-`JacksonSerde` (de)serializes user data using Jackson Databind and can handle Jackson Annotations.
-It supports annotations (`@Id`, `@Key`, `@Rev`, `@From`, `@To`) for mapping documents and edges metadata fields 
-(`_id`, `_key`, `_rev`, `_from`, `_to`).
-The underlying `ObjectMapper` can be customized through `JacksonSerde#configure(Consumer<ObjectMapper>)`, for example to
-change configuration, register custom datatypes or JVM languages modules.
-
-`ArangoSerde` interface is not constrained to Jackson, but is an abstract API with no dependency on specific libraries.
-The user data serde can be customized by registering an implementation of `ArangoSerde` via `ArangoDB.Builder#serde(ArangoSerde)`.
-For example, you can find [here](../jsonb-serde/src/main/java/com/arangodb/serde/jsonb) an implementation of 
-`ArangoSerde` based on `JSON-B` (supporting `JSON` format only).
-
-### Internal Serde
-
-The `InternalSerde` is based on Jackson API and is responsible for (de)serializing data definition classes (in
-packages `com.arangodb.model` and `com.arangodb.entity`).
-
-Furthermore, it is used to (de)serialize user data of the following types:
-- `JsonNode` and its children (`ArrayNode`, `ObjectNode`, ...)
-- `RawJson`
-- `RawBytes`
-- `BaseDocument`
-- `BaseEdgeDocument`
+Updated reference documentation can be found [here](v7_java-reference-serialization.md). 
 
 ## Removed APIs
 
