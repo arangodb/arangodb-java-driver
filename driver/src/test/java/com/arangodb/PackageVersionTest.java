@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+
+import static ru.lanwen.verbalregex.VerbalExpression.regex;
+
 import ru.lanwen.verbalregex.VerbalExpression;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +17,7 @@ class PackageVersionTest extends BaseJunit5 {
 
     @Test
     void packageVersion() {
-        VerbalExpression testRegex = VerbalExpression.regex()
+        VerbalExpression testRegex = regex()
                 .startOfLine()
                 // major
                 .digit().atLeast(1)
@@ -24,7 +27,7 @@ class PackageVersionTest extends BaseJunit5 {
                 .then(".")
                 // patch
                 .digit().atLeast(1)
-                .maybe("-SNAPSHOT")
+                .maybe(regex().anything())
                 .endOfLine()
                 .build();
         assertThat(PackageVersion.VERSION).matches(testRegex.toString());
