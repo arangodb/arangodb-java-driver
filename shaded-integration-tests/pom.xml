@@ -34,6 +34,33 @@
 
     <profiles>
         <profile>
+            <id>internal-serde</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <testSourceDirectory>src/test/internal/java</testSourceDirectory>
+                <serde>jackson</serde>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
+                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
+                    <artifactId>jackson-dataformat-velocypack</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.tngtech.archunit</groupId>
+                    <artifactId>archunit-junit5</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>jackson-serde</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -46,6 +73,11 @@
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>arangodb-java-driver-shaded</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
+                    <artifactId>jackson-serde</artifactId>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -71,12 +103,6 @@
                     <groupId>com.arangodb</groupId>
                     <artifactId>arangodb-java-driver-shaded</artifactId>
                     <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>com.arangodb</groupId>
-                            <artifactId>jackson-serde</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>

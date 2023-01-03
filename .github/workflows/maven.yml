@@ -242,12 +242,15 @@ jobs:
         run: mvn -version
       - name: Install
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+      - name: Test internal-serde
+        working-directory: shaded-integration-tests
+        run: mvn --no-transfer-progress -Pinternal-serde test
       - name: Test jackson-serde
         working-directory: shaded-integration-tests
-        run: mvn --no-transfer-progress -P jackson-serde test
+        run: mvn --no-transfer-progress -Pjackson-serde test
       - name: Test jsonb-serde
         working-directory: shaded-integration-tests
-        run: mvn --no-transfer-progress -P jsonb-serde test
+        run: mvn --no-transfer-progress -Pjsonb-serde test
 
   sonar:
     timeout-minutes: 10
