@@ -10,16 +10,6 @@ import java.util.Collection;
 public interface InternalSerde extends ArangoSerde {
 
     /**
-     * Creates a new InternalSerde with default settings for the specified data type.
-     *
-     * @param contentType serialization target data type
-     * @return the created InternalSerde
-     */
-    static InternalSerde of(final ContentType contentType, ArangoSerde userSerde) {
-        return new InternalSerdeImpl(InternalMapperProvider.of(contentType), userSerde);
-    }
-
-    /**
      * Used for logging and debugging.
      *
      * @param content byte array

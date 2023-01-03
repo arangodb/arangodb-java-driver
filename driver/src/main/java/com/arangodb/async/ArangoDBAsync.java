@@ -32,6 +32,7 @@ import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
@@ -516,7 +517,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             }
 
             final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde : serdeProvider().of(ContentType.VPACK);
-            final InternalSerde serde = InternalSerde.of(ContentType.VPACK, userSerde);
+            final InternalSerde serde = InternalSerdeProvider.create(ContentType.VPACK, userSerde);
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;

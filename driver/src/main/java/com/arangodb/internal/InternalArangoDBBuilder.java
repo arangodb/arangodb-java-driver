@@ -25,6 +25,7 @@ import com.arangodb.config.ConfigPropertiesProvider;
 import com.arangodb.config.ConfigPropertyKey;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
+import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
@@ -147,12 +148,15 @@ public abstract class InternalArangoDBBuilder {
     protected static ArangoSerdeProvider serdeProvider() {
         ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
         Iterator<ArangoSerdeProvider> it = loader.iterator();
+        ArangoSerdeProvider serdeProvider;
         if (!it.hasNext()) {
-            throw new ArangoDBException("No ArangoSerdeProvider found!");
-        }
-        ArangoSerdeProvider serdeProvider = it.next();
-        if (it.hasNext()) {
-            throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
+            LOG.info("No ArangoSerdeProvider found, using InternalSerdeProvider.");
+            serdeProvider = new InternalSerdeProvider();
+        } else {
+            serdeProvider = it.next();
+            if (it.hasNext()) {
+                throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
+            }
         }
         return serdeProvider;
     }
