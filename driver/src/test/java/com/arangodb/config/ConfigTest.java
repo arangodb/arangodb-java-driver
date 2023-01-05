@@ -15,14 +15,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ConfigTest {
     private Host hostA = new Host("aaa", 1111);
     private Host hostB = new Host("bbb", 2222);
+    private Protocol protocol = Protocol.HTTP_VPACK;
     private String user = "testUser";
     private String password = "testPassword";
     private String jwt = "testJwt";
+    private Boolean useSsl = true;
 
 
     static class TestConfig {
         @Inject
-        @ConfigProperties(prefix = "arangodb")
+        @ConfigProperties(prefix = "adb")
         ArangoConfigProperties arangodbConfig;
     }
 
@@ -35,10 +37,11 @@ class ConfigTest {
     void progConfig() {
         ArangoConfigProperties config = new ArangoConfigProperties()
                 .host(hostA, hostB)
-                .protocol(Protocol.HTTP_VPACK)
+                .protocol(protocol)
                 .user(user)
                 .password(password)
-                .jwt(jwt);
+                .jwt(jwt)
+                .useSsl(useSsl);
         checkResult(config);
     }
 
@@ -56,7 +59,7 @@ class ConfigTest {
 
     private void checkResult(ArangoConfigProperties config) {
         assertThat(config.getHosts()).containsExactly(hostA, hostB);
-        assertThat(config.getProtocol()).isEqualTo(Protocol.HTTP_VPACK);
+        assertThat(config.getProtocol()).isEqualTo(protocol);
         assertThat(config.getUser()).isEqualTo(user);
         assertThat(config.getPassword())
                 .isPresent()
@@ -64,5 +67,6 @@ class ConfigTest {
         assertThat(config.getJwt())
                 .isPresent()
                 .hasValue(jwt);
+        assertThat(config.getUseSsl()).isEqualTo(useSsl);
     }
 }

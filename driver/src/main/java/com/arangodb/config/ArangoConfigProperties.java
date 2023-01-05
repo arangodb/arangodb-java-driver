@@ -14,7 +14,6 @@ public final class ArangoConfigProperties {
 //    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
 //    public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
 //    public static final Integer DEFAULT_TIMEOUT = 0;
-//    public static final Boolean DEFAULT_USE_SSL = false;
 //    public static final Boolean DEFAULT_VERIFY_HOST = true;
 //    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
 //    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
@@ -31,12 +30,14 @@ public final class ArangoConfigProperties {
     // default values
     public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
     public static final String DEFAULT_USER = "root";
+    public static final Boolean DEFAULT_USE_SSL = false;
 
     private Optional<List<Host>> hosts;
     private Optional<Protocol> protocol;
     private Optional<String> user;
     private Optional<String> password;
     private Optional<String> jwt;
+    private Optional<Boolean> useSsl;
 
 
 
@@ -68,6 +69,11 @@ public final class ArangoConfigProperties {
         return this;
     }
 
+    public ArangoConfigProperties useSsl(final Boolean useSsl) {
+        this.useSsl = Optional.of(useSsl);
+        return this;
+    }
+
     public List<Host> getHosts() {
         return resolve(hosts, Collections.emptyList());
     }
@@ -86,6 +92,10 @@ public final class ArangoConfigProperties {
 
     public Optional<String> getJwt() {
         return jwt == null ? Optional.empty() : jwt;
+    }
+
+    public Boolean getUseSsl() {
+        return resolve(useSsl, DEFAULT_USE_SSL);
     }
 
     private <T> T resolve(Optional<T> field, T defValue) {
