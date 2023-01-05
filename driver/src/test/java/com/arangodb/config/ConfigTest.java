@@ -13,6 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled
 class ConfigTest {
+    private Host hostA = new Host("aaa", 1111);
+    private Host hostB = new Host("bbb", 2222);
+    private String user = "testUser";
+    private String password = "testPassword";
+    private String jwt = "testJwt";
+
 
     static class TestConfig {
         @Inject
@@ -27,16 +33,13 @@ class ConfigTest {
 
     @Test
     void progConfig() {
-        Host hostA = new Host("aaa", 1111);
-        Host hostB = new Host("bbb", 2222);
-        String user = "testUser";
         ArangoConfigProperties config = new ArangoConfigProperties()
                 .host(hostA, hostB)
                 .protocol(Protocol.HTTP_VPACK)
-                .user(user);
-        assertThat(config.getHosts()).containsExactly(hostA, hostB);
-        assertThat(config.getProtocol()).isEqualTo(Protocol.HTTP_VPACK);
-        assertThat(config.getUser()).isEqualTo(user);
+                .user(user)
+                .password(password)
+                .jwt(jwt);
+        checkResult(config);
     }
 
     @Test
@@ -45,15 +48,21 @@ class ConfigTest {
         System.setProperty("mp.config.profile", "configTest");
         System.out.println(System.getProperty("mp.config.profile"));
 
-        Host hostA = new Host("aaa", 1111);
-        Host hostB = new Host("bbb", 2222);
-        String user = "testUser";
         try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
             ArangoConfigProperties config = container.select(TestConfig.class).get().arangodbConfig;
-            assertThat(config.getHosts()).containsExactly(hostA, hostB);
-            assertThat(config.getProtocol()).isEqualTo(Protocol.HTTP_VPACK);
-            assertThat(config.getUser()).isEqualTo(user);
+            checkResult(config);
         }
     }
 
+    private void checkResult(ArangoConfigProperties config) {
+        assertThat(config.getHosts()).containsExactly(hostA, hostB);
+        assertThat(config.getProtocol()).isEqualTo(Protocol.HTTP_VPACK);
+        assertThat(config.getUser()).isEqualTo(user);
+        assertThat(config.getPassword())
+                .isPresent()
+                .hasValue(password);
+        assertThat(config.getJwt())
+                .isPresent()
+                .hasValue(jwt);
+    }
 }

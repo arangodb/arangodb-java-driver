@@ -22,18 +22,22 @@ class ConfigDefaultsTest {
     void defaultValuesCDI() {
         try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
             ArangoConfigProperties config = container.select(TestConfig.class).get().arangodbConfig;
-            assertThat(config.getHosts()).isEmpty();
-            assertThat(config.getProtocol()).isEqualTo(ArangoConfigProperties.DEFAULT_PROTOCOL);
-            assertThat(config.getUser()).isEqualTo(ArangoConfigProperties.DEFAULT_USER);
+            checkResult(config);
         }
     }
 
     @Test
     void defaultValuesProg() {
         ArangoConfigProperties config = new ArangoConfigProperties();
+        checkResult(config);
+    }
+
+    private void checkResult(ArangoConfigProperties config) {
         assertThat(config.getHosts()).isEmpty();
         assertThat(config.getProtocol()).isEqualTo(ArangoConfigProperties.DEFAULT_PROTOCOL);
         assertThat(config.getUser()).isEqualTo(ArangoConfigProperties.DEFAULT_USER);
+        assertThat(config.getPassword()).isNotPresent();
+        assertThat(config.getJwt()).isNotPresent();
     }
 
 }

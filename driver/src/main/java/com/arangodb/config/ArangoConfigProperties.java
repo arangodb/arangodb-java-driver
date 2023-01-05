@@ -35,9 +35,13 @@ public final class ArangoConfigProperties {
     private Optional<List<Host>> hosts;
     private Optional<Protocol> protocol;
     private Optional<String> user;
+    private Optional<String> password;
+    private Optional<String> jwt;
+
+
 
     public ArangoConfigProperties host(final Host... host) {
-        if(hosts == null || !hosts.isPresent()) {
+        if (hosts == null || !hosts.isPresent()) {
             hosts = Optional.of(new ArrayList<>());
         }
         Collections.addAll(hosts.get(), host);
@@ -54,6 +58,16 @@ public final class ArangoConfigProperties {
         return this;
     }
 
+    public ArangoConfigProperties password(final String password) {
+        this.password = Optional.of(password);
+        return this;
+    }
+
+    public ArangoConfigProperties jwt(final String jwt) {
+        this.jwt = Optional.of(jwt);
+        return this;
+    }
+
     public List<Host> getHosts() {
         return resolve(hosts, Collections.emptyList());
     }
@@ -66,10 +80,15 @@ public final class ArangoConfigProperties {
         return resolve(user, DEFAULT_USER);
     }
 
+    public Optional<String> getPassword() {
+        return password == null ? Optional.empty() : password;
+    }
+
+    public Optional<String> getJwt() {
+        return jwt == null ? Optional.empty() : jwt;
+    }
+
     private <T> T resolve(Optional<T> field, T defValue) {
-        if (field == null) {
-            return defValue;
-        }
-        return field.orElse(defValue);
+        return field == null ? defValue : field.orElse(defValue);
     }
 }
