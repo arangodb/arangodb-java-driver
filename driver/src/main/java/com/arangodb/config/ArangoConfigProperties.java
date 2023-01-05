@@ -1,43 +1,75 @@
 package com.arangodb.config;
 
+import com.arangodb.Protocol;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @ConfigProperties(prefix = "arangodb")
 public final class ArangoConfigProperties {
 
-    private List<Host> hosts = new ArrayList<>();
+//    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+//    public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
+//    public static final Integer DEFAULT_TIMEOUT = 0;
+//    public static final Boolean DEFAULT_USE_SSL = false;
+//    public static final Boolean DEFAULT_VERIFY_HOST = true;
+//    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
+//    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
+//    public static final int CHUNK_DEFAULT_CONTENT_SIZE = 30000;
+//    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
+//    public static final Long CONNECTION_TTL_VST_DEFAULT = null;
+//    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
+//    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
+//    public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+//    public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
+//    public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
+//    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
+
+    // default values
+    public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
+    public static final String DEFAULT_USER = "root";
+
+    private Optional<List<Host>> hosts;
+    private Optional<Protocol> protocol;
+    private Optional<String> user;
 
     public ArangoConfigProperties host(final Host... host) {
-        Collections.addAll(hosts, host);
+        if(hosts == null || !hosts.isPresent()) {
+            hosts = Optional.of(new ArrayList<>());
+        }
+        Collections.addAll(hosts.get(), host);
+        return this;
+    }
+
+    public ArangoConfigProperties protocol(final Protocol protocol) {
+        this.protocol = Optional.of(protocol);
+        return this;
+    }
+
+    public ArangoConfigProperties user(final String user) {
+        this.user = Optional.of(user);
         return this;
     }
 
     public List<Host> getHosts() {
-        return hosts;
+        return resolve(hosts, Collections.emptyList());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ArangoConfigProperties that = (ArangoConfigProperties) o;
-        return Objects.equals(hosts, that.hosts);
+    public Protocol getProtocol() {
+        return resolve(protocol, DEFAULT_PROTOCOL);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(hosts);
+    public String getUser() {
+        return resolve(user, DEFAULT_USER);
     }
 
-    @Override
-    public String toString() {
-        return "ArangoConfigProperties{" +
-                "hosts=" + hosts +
-                '}';
+    private <T> T resolve(Optional<T> field, T defValue) {
+        if (field == null) {
+            return defValue;
+        }
+        return field.orElse(defValue);
     }
 }
