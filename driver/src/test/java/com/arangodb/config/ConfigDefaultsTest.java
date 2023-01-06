@@ -35,6 +35,7 @@ class ConfigDefaultsTest {
         assertThat(config.getAcquireHostList()).isEqualTo(ArangoConfigProperties.DEFAULT_ACQUIRE_HOST_LIST);
         assertThat(config.getAcquireHostListInterval()).isEqualTo(ArangoConfigProperties.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
         assertThat(config.getLoadBalancingStrategy()).isEqualTo(ArangoConfigProperties.DEFAULT_LOAD_BALANCING_STRATEGY);
+        assertThat(config.getResponseQueueTimeSamples()).isEqualTo(ArangoConfigProperties.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
     }
 
 }

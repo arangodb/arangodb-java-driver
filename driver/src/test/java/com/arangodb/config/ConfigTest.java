@@ -25,6 +25,7 @@ class ConfigTest {
     private Boolean acquireHostList = true;
     private Integer acquireHostListInterval = 1234567;
     private LoadBalancingStrategy loadBalancingStrategy = LoadBalancingStrategy.ROUND_ROBIN;
+    private Integer responseQueueTimeSamples = 12345678;
 
     @Test
     void readConfig() {
@@ -64,5 +65,6 @@ class ConfigTest {
         assertThat(config.getAcquireHostList()).isEqualTo(acquireHostList);
         assertThat(config.getAcquireHostListInterval()).isEqualTo(acquireHostListInterval);
         assertThat(config.getLoadBalancingStrategy()).isEqualTo(loadBalancingStrategy);
+        assertThat(config.getResponseQueueTimeSamples()).isEqualTo(responseQueueTimeSamples);
     }
 }

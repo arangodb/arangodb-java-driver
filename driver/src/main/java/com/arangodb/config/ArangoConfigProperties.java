@@ -9,29 +9,17 @@ import java.util.Optional;
 
 public final class ArangoConfigProperties {
 
-//    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
-//    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
-//    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
-
     // default values
     public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
     public static final String DEFAULT_USER = "root";
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final Boolean DEFAULT_VERIFY_HOST = true;
+    public static final int DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
-
-
-    // VST default values
-
-    private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-    private static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-    //    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
-    //    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
-    //    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
-    public static final int DEFAULT_CHUNK_SIZE = 30_000;
+    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
     private Optional<List<Host>> hosts;
     private Optional<Protocol> protocol;
@@ -48,6 +36,7 @@ public final class ArangoConfigProperties {
     private Optional<Boolean> acquireHostList;
     private Optional<Integer> acquireHostListInterval;
     private Optional<LoadBalancingStrategy> loadBalancingStrategy;
+    private Optional<Integer> responseQueueTimeSamples;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -107,6 +96,10 @@ public final class ArangoConfigProperties {
 
     public LoadBalancingStrategy getLoadBalancingStrategy() {
         return loadBalancingStrategy.orElse(DEFAULT_LOAD_BALANCING_STRATEGY);
+    }
+
+    public Integer getResponseQueueTimeSamples() {
+        return responseQueueTimeSamples.orElse(DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
     }
 
 }
