@@ -32,6 +32,7 @@ class ConfigDefaultsTest {
         assertThat(config.getMaxConnections()).isNotPresent();
         assertThat(config.getConnectionTtl()).isNotPresent();
         assertThat(config.getKeepAliveInterval()).isNotPresent();
+        assertThat(config.getAcquireHostList()).isEqualTo(ArangoConfigProperties.DEFAULT_ACQUIRE_HOST_LIST);
     }
 
 }

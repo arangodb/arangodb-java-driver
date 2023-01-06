@@ -21,6 +21,7 @@ class ConfigTest {
     private Integer maxConnections = 123;
     private Long connectionTtl = 12345L;
     private Integer keepAliveInterval = 123456;
+    private Boolean acquireHostList = true;
 
     @Test
     void readConfig() {
@@ -57,5 +58,6 @@ class ConfigTest {
         assertThat(config.getKeepAliveInterval())
                 .isPresent()
                 .hasValue(keepAliveInterval);
+        assertThat(config.getAcquireHostList()).isEqualTo(acquireHostList);
     }
 }
