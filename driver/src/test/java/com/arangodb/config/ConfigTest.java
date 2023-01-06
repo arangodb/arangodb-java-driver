@@ -20,6 +20,7 @@ class ConfigTest {
     private Integer vstChunkSize = 1234;
     private Integer maxConnections = 123;
     private Long connectionTtl = 12345L;
+    private Integer keepAliveInterval = 123456;
 
     @Test
     void readConfig() {
@@ -53,5 +54,8 @@ class ConfigTest {
         assertThat(config.getConnectionTtl())
                 .isPresent()
                 .hasValue(connectionTtl);
+        assertThat(config.getKeepAliveInterval())
+                .isPresent()
+                .hasValue(keepAliveInterval);
     }
 }

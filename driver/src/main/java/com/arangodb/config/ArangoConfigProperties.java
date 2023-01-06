@@ -42,6 +42,7 @@ public final class ArangoConfigProperties {
     private Optional<Integer> vstChunkSize;
     private Optional<Integer> maxConnections;
     private Optional<Long> connectionTtl;
+    private Optional<Integer> keepAliveInterval;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -85,6 +86,10 @@ public final class ArangoConfigProperties {
 
     public Optional<Long> getConnectionTtl() {
         return connectionTtl;
+    }
+
+    public Optional<Integer> getKeepAliveInterval() {
+        return keepAliveInterval;
     }
 
 }

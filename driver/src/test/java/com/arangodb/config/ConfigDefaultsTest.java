@@ -31,6 +31,7 @@ class ConfigDefaultsTest {
         assertThat(config.getVstChunkSize()).isEqualTo(ArangoConfigProperties.DEFAULT_CHUNK_SIZE);
         assertThat(config.getMaxConnections()).isNotPresent();
         assertThat(config.getConnectionTtl()).isNotPresent();
+        assertThat(config.getKeepAliveInterval()).isNotPresent();
     }
 
 }
