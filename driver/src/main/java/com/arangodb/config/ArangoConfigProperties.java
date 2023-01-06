@@ -10,7 +10,6 @@ public final class ArangoConfigProperties {
 
 //    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 //    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
-//    public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
 //    public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 //    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
@@ -21,6 +20,8 @@ public final class ArangoConfigProperties {
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+    public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
+
 
     // VST default values
 
@@ -44,6 +45,7 @@ public final class ArangoConfigProperties {
     private Optional<Long> connectionTtl;
     private Optional<Integer> keepAliveInterval;
     private Optional<Boolean> acquireHostList;
+    private Optional<Integer> acquireHostListInterval;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -97,4 +99,7 @@ public final class ArangoConfigProperties {
         return acquireHostList.orElse(DEFAULT_ACQUIRE_HOST_LIST);
     }
 
+    public Integer getAcquireHostListInterval() {
+        return acquireHostListInterval.orElse(DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
+    }
 }
