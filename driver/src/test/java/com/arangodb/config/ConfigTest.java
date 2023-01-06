@@ -1,6 +1,7 @@
 package com.arangodb.config;
 
 import com.arangodb.Protocol;
+import com.arangodb.entity.LoadBalancingStrategy;
 import io.smallrye.config.SmallRyeConfig;
 import io.smallrye.config.SmallRyeConfigBuilder;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ class ConfigTest {
     private Integer keepAliveInterval = 123456;
     private Boolean acquireHostList = true;
     private Integer acquireHostListInterval = 1234567;
+    private LoadBalancingStrategy loadBalancingStrategy = LoadBalancingStrategy.ROUND_ROBIN;
 
     @Test
     void readConfig() {
@@ -61,5 +63,6 @@ class ConfigTest {
                 .hasValue(keepAliveInterval);
         assertThat(config.getAcquireHostList()).isEqualTo(acquireHostList);
         assertThat(config.getAcquireHostListInterval()).isEqualTo(acquireHostListInterval);
+        assertThat(config.getLoadBalancingStrategy()).isEqualTo(loadBalancingStrategy);
     }
 }

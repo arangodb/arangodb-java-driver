@@ -1,6 +1,7 @@
 package com.arangodb.config;
 
 import com.arangodb.Protocol;
+import com.arangodb.entity.LoadBalancingStrategy;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +11,6 @@ public final class ArangoConfigProperties {
 
 //    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 //    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
-//    public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 //    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
     // default values
@@ -21,6 +21,7 @@ public final class ArangoConfigProperties {
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
+    public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 
 
     // VST default values
@@ -46,6 +47,7 @@ public final class ArangoConfigProperties {
     private Optional<Integer> keepAliveInterval;
     private Optional<Boolean> acquireHostList;
     private Optional<Integer> acquireHostListInterval;
+    private Optional<LoadBalancingStrategy> loadBalancingStrategy;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -102,4 +104,9 @@ public final class ArangoConfigProperties {
     public Integer getAcquireHostListInterval() {
         return acquireHostListInterval.orElse(DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
     }
+
+    public LoadBalancingStrategy getLoadBalancingStrategy() {
+        return loadBalancingStrategy.orElse(DEFAULT_LOAD_BALANCING_STRATEGY);
+    }
+
 }
