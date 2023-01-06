@@ -14,6 +14,7 @@ class ConfigTest {
     private String user = "testUser";
     private String password = "testPassword";
     private String jwt = "testJwt";
+    private Integer timeout = 9876;
     private Boolean useSsl = true;
     private Integer vstChunkSize = 1234;
 
@@ -26,6 +27,7 @@ class ConfigTest {
                 .user(user)
                 .password(password)
                 .jwt(jwt)
+                .timeout(timeout)
                 .useSsl(useSsl)
                 .vstChunkSize(vstChunkSize);
         checkResult(config);
@@ -53,6 +55,7 @@ class ConfigTest {
         assertThat(config.getJwt())
                 .isPresent()
                 .hasValue(jwt);
+        assertThat(config.getTimeout()).isEqualTo(timeout);
         assertThat(config.getUseSsl()).isEqualTo(useSsl);
         assertThat(config.getVstChunkSize()).isEqualTo(vstChunkSize);
     }

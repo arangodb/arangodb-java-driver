@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public final class ArangoConfigProperties {
 
-//    public static final Integer DEFAULT_TIMEOUT = 0;
 //    public static final Boolean DEFAULT_VERIFY_HOST = true;
 //    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 //    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
@@ -21,6 +20,7 @@ public final class ArangoConfigProperties {
     // default values
     public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
     public static final String DEFAULT_USER = "root";
+    public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Boolean DEFAULT_USE_SSL = false;
 
     // VST default values
@@ -38,6 +38,7 @@ public final class ArangoConfigProperties {
     private Optional<String> user;
     private Optional<String> password;
     private Optional<String> jwt;
+    private Optional<Integer> timeout;
     private Optional<Boolean> useSsl;
     private Optional<Integer> vstChunkSize;
 
@@ -70,6 +71,11 @@ public final class ArangoConfigProperties {
         return this;
     }
 
+    public ArangoConfigProperties timeout(final Integer timeout) {
+        this.timeout = Optional.of(timeout);
+        return this;
+    }
+
     public ArangoConfigProperties useSsl(final Boolean useSsl) {
         this.useSsl = Optional.of(useSsl);
         return this;
@@ -98,6 +104,10 @@ public final class ArangoConfigProperties {
 
     public Optional<String> getJwt() {
         return jwt == null ? Optional.empty() : jwt;
+    }
+
+    public Integer getTimeout() {
+        return resolve(timeout, DEFAULT_TIMEOUT);
     }
 
     public Boolean getUseSsl() {
