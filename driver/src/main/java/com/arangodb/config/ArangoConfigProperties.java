@@ -29,7 +29,6 @@ public final class ArangoConfigProperties {
     //    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
     //    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
     //    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
-    //    public static final Long CONNECTION_TTL_VST_DEFAULT = null;
     public static final int DEFAULT_CHUNK_SIZE = 30_000;
 
     private Optional<List<Host>> hosts;
@@ -42,6 +41,7 @@ public final class ArangoConfigProperties {
     private Optional<Boolean> verifyHost;
     private Optional<Integer> vstChunkSize;
     private Optional<Integer> maxConnections;
+    private Optional<Long> connectionTtl;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -81,6 +81,10 @@ public final class ArangoConfigProperties {
 
     public Optional<Integer> getMaxConnections() {
         return maxConnections;
+    }
+
+    public Optional<Long> getConnectionTtl() {
+        return connectionTtl;
     }
 
 }

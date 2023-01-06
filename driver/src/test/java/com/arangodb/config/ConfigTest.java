@@ -19,6 +19,7 @@ class ConfigTest {
     private Boolean verifyHost = false;
     private Integer vstChunkSize = 1234;
     private Integer maxConnections = 123;
+    private Long connectionTtl = 12345L;
 
     @Test
     void readConfig() {
@@ -49,5 +50,8 @@ class ConfigTest {
         assertThat(config.getMaxConnections())
                 .isPresent()
                 .hasValue(maxConnections);
+        assertThat(config.getConnectionTtl())
+                .isPresent()
+                .hasValue(connectionTtl);
     }
 }

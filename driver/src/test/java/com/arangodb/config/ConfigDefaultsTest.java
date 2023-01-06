@@ -30,6 +30,7 @@ class ConfigDefaultsTest {
         assertThat(config.getVerifyHost()).isEqualTo(ArangoConfigProperties.DEFAULT_VERIFY_HOST);
         assertThat(config.getVstChunkSize()).isEqualTo(ArangoConfigProperties.DEFAULT_CHUNK_SIZE);
         assertThat(config.getMaxConnections()).isNotPresent();
+        assertThat(config.getConnectionTtl()).isNotPresent();
     }
 
 }
