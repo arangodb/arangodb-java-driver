@@ -16,10 +16,10 @@ public class ConfigUtils {
 
     public static ArangoConfigProperties loadConfig(final String location, final String prefix) {
         SmallRyeConfig cfg = new SmallRyeConfigBuilder()
-                .withSources(new PropertiesConfigSourceProvider(location, Thread.currentThread().getContextClassLoader(), false))
-                .withMapping(ArangoConfigProperties.class, prefix)
+                .withSources(new PropertiesConfigSourceProvider(location, ConfigUtils.class.getClassLoader(), false))
+                .withMapping(ArangoConfigPropertiesImpl.class, prefix)
                 .build();
-        return cfg.getConfigMapping(ArangoConfigProperties.class, prefix);
+        return cfg.getConfigMapping(ArangoConfigPropertiesImpl.class, prefix);
     }
 
 }

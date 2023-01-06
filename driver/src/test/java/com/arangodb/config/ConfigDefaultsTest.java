@@ -14,7 +14,7 @@ class ConfigDefaultsTest {
 
     @Test
     void progDefaultValues() {
-        ArangoConfigProperties config = new ArangoConfigProperties();
+        ArangoConfigProperties config = new ArangoConfigPropertiesImpl();
         checkResult(config);
     }
 

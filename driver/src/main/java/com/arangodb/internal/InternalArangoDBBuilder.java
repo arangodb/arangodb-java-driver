@@ -23,6 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.ArangoConfigPropertiesImpl;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerdeProvider;
@@ -63,7 +64,8 @@ public abstract class InternalArangoDBBuilder {
     protected Integer responseQueueTimeSamples;
 
     protected InternalArangoDBBuilder() {
-        doLoadProperties(new ArangoConfigProperties());
+        // load default properties
+        doLoadProperties(new ArangoConfigPropertiesImpl());
     }
 
     protected static ArangoSerdeProvider serdeProvider() {
