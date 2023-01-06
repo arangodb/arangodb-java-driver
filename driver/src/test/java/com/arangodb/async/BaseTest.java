@@ -21,10 +21,11 @@
 package com.arangodb.async;
 
 import com.arangodb.DbName;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,7 +38,7 @@ import java.util.concurrent.ExecutionException;
  * @author Mark Vollmary
  */
 public abstract class BaseTest {
-
+    protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     static final DbName TEST_DB = DbName.of("java_driver_test_db");
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
@@ -46,7 +47,7 @@ public abstract class BaseTest {
     static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
             arangoDB = new ArangoDBAsync.Builder()
-                    .loadProperties(new FileConfigPropertiesProvider())
+                    .loadProperties(ConfigUtils.loadConfig())
                     .build();
         }
 

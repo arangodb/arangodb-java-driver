@@ -1,6 +1,5 @@
 package com.arangodb;
 
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +37,7 @@ class PackageVersionTest extends BaseJunit5 {
     void userAgentHeader(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .useProtocol(protocol)
                 .build();
 

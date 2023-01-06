@@ -1,7 +1,5 @@
 package com.arangodb.config;
 
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,12 +8,13 @@ class ConfigDefaultsTest {
 
     @Test
     void defaultValues() {
-        SmallRyeConfig cfg = new SmallRyeConfigBuilder()
-                .addDefaultSources()
-                .withMapping(ArangoConfigProperties.class, "arangodb")
-                .build();
+        ArangoConfigProperties config = ConfigUtils.loadConfig("arangodb.properties", "wrong");
+        checkResult(config);
+    }
 
-        ArangoConfigProperties config = cfg.getConfigMapping(ArangoConfigProperties.class, "arangodb");
+    @Test
+    void progDefaultValues() {
+        ArangoConfigProperties config = new ArangoConfigProperties();
         checkResult(config);
     }
 

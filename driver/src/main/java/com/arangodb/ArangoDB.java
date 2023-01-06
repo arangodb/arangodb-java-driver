@@ -20,8 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.config.ConfigPropertiesProvider;
-import com.arangodb.config.ConfigPropertyKey;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -336,19 +335,12 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      */
     class Builder extends InternalArangoDBBuilder {
 
-        protected Protocol protocol = ArangoDefaults.DEFAULT_NETWORK_PROTOCOL;
-
         public Builder() {
             super();
         }
 
-        private static Protocol loadProtocol(final ConfigPropertiesProvider properties, final Protocol currentValue) {
-            return Protocol.valueOf(getProperty(properties, ConfigPropertyKey.PROTOCOL, currentValue).toUpperCase(Locale.ROOT));
-        }
-
-        public Builder loadProperties(final ConfigPropertiesProvider properties) {
+        public Builder loadProperties(final ArangoConfigProperties properties) {
             doLoadProperties(properties);
-            protocol = loadProtocol(properties, protocol);
             return this;
         }
 

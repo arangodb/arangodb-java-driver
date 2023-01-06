@@ -15,11 +15,11 @@ public final class ArangoConfigProperties {
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final Boolean DEFAULT_VERIFY_HOST = true;
-    public static final int DEFAULT_CHUNK_SIZE = 30_000;
+    public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
-    public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
+    public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
-    public static final int DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
+    public static final Integer DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
     private Optional<List<Host>> hosts;
     private Optional<Protocol> protocol;
@@ -39,67 +39,74 @@ public final class ArangoConfigProperties {
     private Optional<Integer> responseQueueTimeSamples;
 
     public List<Host> getHosts() {
-        return hosts.orElse(Collections.emptyList());
+        return resolve(hosts, Collections.emptyList());
     }
 
     public Protocol getProtocol() {
-        return protocol.orElse(DEFAULT_PROTOCOL);
+        return resolve(protocol, DEFAULT_PROTOCOL);
     }
 
     public String getUser() {
-        return user.orElse(DEFAULT_USER);
+        return resolve(user, DEFAULT_USER);
     }
 
     public Optional<String> getPassword() {
-        return password;
+        return resolve(password);
     }
 
     public Optional<String> getJwt() {
-        return jwt;
+        return resolve(jwt);
     }
 
     public Integer getTimeout() {
-        return timeout.orElse(DEFAULT_TIMEOUT);
+        return resolve(timeout, DEFAULT_TIMEOUT);
     }
 
     public Boolean getUseSsl() {
-        return useSsl.orElse(DEFAULT_USE_SSL);
+        return resolve(useSsl, DEFAULT_USE_SSL);
     }
 
     public Boolean getVerifyHost() {
-        return verifyHost.orElse(DEFAULT_VERIFY_HOST);
+        return resolve(verifyHost, DEFAULT_VERIFY_HOST);
     }
 
     public Integer getVstChunkSize() {
-        return vstChunkSize.orElse(DEFAULT_CHUNK_SIZE);
+        return resolve(vstChunkSize, DEFAULT_CHUNK_SIZE);
     }
 
     public Optional<Integer> getMaxConnections() {
-        return maxConnections;
+        return resolve(maxConnections);
     }
 
     public Optional<Long> getConnectionTtl() {
-        return connectionTtl;
+        return resolve(connectionTtl);
     }
 
     public Optional<Integer> getKeepAliveInterval() {
-        return keepAliveInterval;
+        return resolve(keepAliveInterval);
     }
 
     public Boolean getAcquireHostList() {
-        return acquireHostList.orElse(DEFAULT_ACQUIRE_HOST_LIST);
+        return resolve(acquireHostList, DEFAULT_ACQUIRE_HOST_LIST);
     }
 
     public Integer getAcquireHostListInterval() {
-        return acquireHostListInterval.orElse(DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
+        return resolve(acquireHostListInterval, DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
     }
 
     public LoadBalancingStrategy getLoadBalancingStrategy() {
-        return loadBalancingStrategy.orElse(DEFAULT_LOAD_BALANCING_STRATEGY);
+        return resolve(loadBalancingStrategy, DEFAULT_LOAD_BALANCING_STRATEGY);
     }
 
     public Integer getResponseQueueTimeSamples() {
-        return responseQueueTimeSamples.orElse(DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
+        return resolve(responseQueueTimeSamples, DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
     }
 
+    private <T> T resolve(Optional<T> field, T defValue) {
+        return field == null ? defValue : field.orElse(defValue);
+    }
+
+    private <T> Optional<T> resolve(Optional<T> field) {
+        return field == null ? Optional.empty() : field;
+    }
 }

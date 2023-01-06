@@ -21,8 +21,8 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.config.ConfigPropertiesProvider;
-import com.arangodb.config.ConfigPropertyKey;
+import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerdeProvider;
@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,106 +44,26 @@ public abstract class InternalArangoDBBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
     protected final List<HostDescription> hosts = new ArrayList<>();
-    protected Integer timeout = ArangoDefaults.DEFAULT_TIMEOUT;
-    protected String user = ArangoDefaults.DEFAULT_USER;
-    protected String password = null;
-    protected String jwt = null;
-    protected Boolean useSsl = ArangoDefaults.DEFAULT_USE_SSL;
-    protected SSLContext sslContext = null;
-    protected Boolean verifyHost = ArangoDefaults.DEFAULT_VERIFY_HOST;
-    protected Integer chunkSize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
-    protected Integer maxConnections = null;
-    protected Long connectionTtl = ArangoDefaults.CONNECTION_TTL_VST_DEFAULT;
-    protected Integer keepAliveInterval = null;
-    protected Boolean acquireHostList = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST;
-    protected Integer acquireHostListInterval = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL;
-    protected LoadBalancingStrategy loadBalancingStrategy = ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY;
+    protected Protocol protocol;
+    protected Integer timeout;
+    protected String user;
+    protected String password;
+    protected String jwt;
+    protected Boolean useSsl;
+    protected SSLContext sslContext;
+    protected Boolean verifyHost;
+    protected Integer chunkSize;
+    protected Integer maxConnections;
+    protected Long connectionTtl;
+    protected Integer keepAliveInterval;
+    protected Boolean acquireHostList;
+    protected Integer acquireHostListInterval;
+    protected LoadBalancingStrategy loadBalancingStrategy;
     protected ArangoSerde userDataSerde;
-    protected Integer responseQueueTimeSamples = ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES;
+    protected Integer responseQueueTimeSamples;
 
-    private static void loadHosts(final ConfigPropertiesProvider properties, final Collection<HostDescription> hosts) {
-        final String hostsProp = properties.getProperty(ConfigPropertyKey.HOSTS.getValue());
-        if (hostsProp != null) {
-            final String[] hostsSplit = hostsProp.split(",");
-            for (final String host : hostsSplit) {
-                final String[] split = host.split(":");
-                if (split.length != 2 || !split[1].matches("[0-9]+")) {
-                    throw new ArangoDBException(String.format(
-                            "Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
-                            hostsProp));
-                } else {
-                    hosts.add(new HostDescription(split[0], Integer.parseInt(split[1])));
-                }
-            }
-        }
-    }
-
-    private static Integer loadTimeout(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.TIMEOUT, currentValue));
-    }
-
-    private static String loadUser(final ConfigPropertiesProvider properties, final String currentValue) {
-        return getProperty(properties, ConfigPropertyKey.USER, currentValue);
-    }
-
-    private static String loadPassword(final ConfigPropertiesProvider properties, final String currentValue) {
-        return getProperty(properties, ConfigPropertyKey.PASSWORD, currentValue);
-    }
-
-    private static String loadJwt(final ConfigPropertiesProvider properties, final String currentValue) {
-        return getProperty(properties, ConfigPropertyKey.JWT, currentValue);
-    }
-
-    private static Boolean loadUseSsl(final ConfigPropertiesProvider properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.USE_SSL, currentValue));
-    }
-
-    private static Boolean loadVerifyHost(final ConfigPropertiesProvider properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.VERIFY_HOST, currentValue));
-    }
-
-    private static Integer loadChunkSize(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.VST_CHUNK_SIZE, currentValue));
-    }
-
-    private static Integer loadMaxConnections(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        String value = getProperty(properties, ConfigPropertyKey.MAX_CONNECTIONS, currentValue);
-        return value != null ? Integer.parseInt(value) : null;
-    }
-
-    private static Long loadConnectionTtl(final ConfigPropertiesProvider properties, final Long currentValue) {
-        final String ttl = getProperty(properties, ConfigPropertyKey.CONNECTION_TTL, currentValue);
-        return ttl != null ? Long.parseLong(ttl) : null;
-    }
-
-    private static Integer loadKeepAliveInterval(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        final String keepAliveInterval = getProperty(properties, ConfigPropertyKey.KEEP_ALIVE_INTERVAL, currentValue);
-        return keepAliveInterval != null ? Integer.parseInt(keepAliveInterval) : null;
-    }
-
-    private static Boolean loadAcquireHostList(final ConfigPropertiesProvider properties, final Boolean currentValue) {
-        return Boolean.parseBoolean(getProperty(properties, ConfigPropertyKey.ACQUIRE_HOST_LIST, currentValue));
-    }
-
-    private static int loadAcquireHostListInterval(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.ACQUIRE_HOST_LIST_INTERVAL, currentValue));
-    }
-
-    private static int loadResponseQueueTimeSamples(final ConfigPropertiesProvider properties, final Integer currentValue) {
-        return Integer.parseInt(getProperty(properties, ConfigPropertyKey.RESPONSE_QUEUE_TIME_SAMPLES, currentValue));
-    }
-
-    private static LoadBalancingStrategy loadLoadBalancingStrategy(
-            final ConfigPropertiesProvider properties,
-            final LoadBalancingStrategy currentValue) {
-        return LoadBalancingStrategy.valueOf(getProperty(properties, ConfigPropertyKey.LOAD_BALANCING_STRATEGY, currentValue).toUpperCase(Locale.ROOT));
-    }
-
-    protected static String getProperty(ConfigPropertiesProvider props, ConfigPropertyKey key, Object currentValue) {
-        String p = props.getProperty(key.getValue());
-        if (p != null) return p;
-        if (currentValue != null) return currentValue.toString();
-        return null;
+    protected InternalArangoDBBuilder() {
+        doLoadProperties(new ArangoConfigProperties());
     }
 
     protected static ArangoSerdeProvider serdeProvider() {
@@ -161,22 +82,31 @@ public abstract class InternalArangoDBBuilder {
         return serdeProvider;
     }
 
-    protected void doLoadProperties(final ConfigPropertiesProvider properties) {
-        loadHosts(properties, hosts);
-        timeout = loadTimeout(properties, timeout);
-        user = loadUser(properties, user);
-        password = loadPassword(properties, password);
-        jwt = loadJwt(properties, jwt);
-        useSsl = loadUseSsl(properties, useSsl);
-        verifyHost = loadVerifyHost(properties, verifyHost);
-        chunkSize = loadChunkSize(properties, chunkSize);
-        maxConnections = loadMaxConnections(properties, maxConnections);
-        connectionTtl = loadConnectionTtl(properties, connectionTtl);
-        keepAliveInterval = loadKeepAliveInterval(properties, keepAliveInterval);
-        acquireHostList = loadAcquireHostList(properties, acquireHostList);
-        acquireHostListInterval = loadAcquireHostListInterval(properties, acquireHostListInterval);
-        loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
-        responseQueueTimeSamples = loadResponseQueueTimeSamples(properties, responseQueueTimeSamples);
+    protected void doLoadProperties(final ArangoConfigProperties properties) {
+        // FIXME: rm config.Host and use HostDescription
+        hosts.addAll(properties.getHosts().stream()
+                .map(it -> new HostDescription(it.getName(), it.getPort()))
+                .collect(Collectors.toList()));
+        protocol = properties.getProtocol();
+        timeout = properties.getTimeout();
+        user = properties.getUser();
+        // FIXME: make password field Optional
+        password = properties.getPassword().orElse(null);
+        // FIXME: make jwt field Optional
+        jwt = properties.getJwt().orElse(null);
+        useSsl = properties.getUseSsl();
+        verifyHost = properties.getVerifyHost();
+        chunkSize = properties.getVstChunkSize();
+        // FIXME: make maxConnections field Optional
+        maxConnections = properties.getMaxConnections().orElse(null);
+        // FIXME: make connectionTtl field Optional
+        connectionTtl = properties.getConnectionTtl().orElse(null);
+        // FIXME: make keepAliveInterval field Optional
+        keepAliveInterval = properties.getKeepAliveInterval().orElse(null);
+        acquireHostList = properties.getAcquireHostList();
+        acquireHostListInterval = properties.getAcquireHostListInterval();
+        loadBalancingStrategy = properties.getLoadBalancingStrategy();
+        responseQueueTimeSamples = properties.getResponseQueueTimeSamples();
     }
 
     protected void setHost(final String host, final int port) {

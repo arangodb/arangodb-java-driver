@@ -21,8 +21,8 @@
 package com.arangodb.async;
 
 import com.arangodb.*;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.*;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.util.RawJson;
@@ -56,10 +56,10 @@ class ArangoDBTest {
     private static Boolean extendedNames;
 
     private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-            .loadProperties(new FileConfigPropertiesProvider())
+            .loadProperties(ConfigUtils.loadConfig())
             .build();
     private final ArangoDB arangoDBSync = new ArangoDB.Builder()
-            .loadProperties(new FileConfigPropertiesProvider())
+            .loadProperties(ConfigUtils.loadConfig())
             .build();
 
     private boolean isEnterprise() {
@@ -418,7 +418,7 @@ class ArangoDBTest {
     @Test
     void authenticationFailPassword() throws InterruptedException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .password("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
@@ -431,7 +431,7 @@ class ArangoDBTest {
     @Test
     void authenticationFailUser() throws InterruptedException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .user("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
@@ -459,7 +459,7 @@ class ArangoDBTest {
     @Test
     void execute_acquireHostList_enabled() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .acquireHostList(true).build();
         arangoDB
                 .execute(Request.builder()

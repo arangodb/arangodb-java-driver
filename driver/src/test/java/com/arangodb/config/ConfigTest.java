@@ -2,8 +2,6 @@ package com.arangodb.config;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,13 +27,7 @@ class ConfigTest {
 
     @Test
     void readConfig() {
-        SmallRyeConfig cfg = new SmallRyeConfigBuilder()
-                .addDefaultSources()
-                .withMapping(ArangoConfigProperties.class, "adb")
-                .withProfile("configTest")
-                .build();
-
-        ArangoConfigProperties config = cfg.getConfigMapping(ArangoConfigProperties.class, "adb");
+        ArangoConfigProperties config = ConfigUtils.loadConfig("arangodb-config-test.properties", "adb");
         checkResult(config);
     }
 

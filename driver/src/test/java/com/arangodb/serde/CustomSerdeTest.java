@@ -22,7 +22,7 @@ package com.arangodb.serde;
 
 
 import com.arangodb.*;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.jackson.JacksonSerde;
@@ -72,7 +72,7 @@ class CustomSerdeTest {
             mapper.registerModule(module);
         });
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .useProtocol(Protocol.VST)
                 .serde(serde).build();
 

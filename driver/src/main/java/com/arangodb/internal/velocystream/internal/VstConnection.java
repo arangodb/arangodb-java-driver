@@ -21,6 +21,7 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
@@ -160,7 +161,7 @@ public abstract class VstConnection<T> implements Connection {
             socket = SocketFactory.getDefault().createSocket();
         }
         socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout != null ? timeout :
-                ArangoDefaults.DEFAULT_TIMEOUT);
+                ArangoConfigProperties.DEFAULT_TIMEOUT);
         socket.setKeepAlive(true);
         socket.setTcpNoDelay(true);
         if (LOGGER.isDebugEnabled()) {
