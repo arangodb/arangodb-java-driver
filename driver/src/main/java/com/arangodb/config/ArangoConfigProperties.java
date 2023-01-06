@@ -2,14 +2,12 @@ package com.arangodb.config;
 
 import com.arangodb.Protocol;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public final class ArangoConfigProperties {
 
-//    public static final Boolean DEFAULT_VERIFY_HOST = true;
 //    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 //    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
 //    public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
@@ -22,6 +20,7 @@ public final class ArangoConfigProperties {
     public static final String DEFAULT_USER = "root";
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Boolean DEFAULT_USE_SSL = false;
+    public static final Boolean DEFAULT_VERIFY_HOST = true;
 
     // VST default values
 
@@ -40,85 +39,43 @@ public final class ArangoConfigProperties {
     private Optional<String> jwt;
     private Optional<Integer> timeout;
     private Optional<Boolean> useSsl;
+    private Optional<Boolean> verifyHost;
     private Optional<Integer> vstChunkSize;
 
-
-    public ArangoConfigProperties host(final Host... host) {
-        if (hosts == null || !hosts.isPresent()) {
-            hosts = Optional.of(new ArrayList<>());
-        }
-        Collections.addAll(hosts.get(), host);
-        return this;
-    }
-
-    public ArangoConfigProperties protocol(final Protocol protocol) {
-        this.protocol = Optional.of(protocol);
-        return this;
-    }
-
-    public ArangoConfigProperties user(final String user) {
-        this.user = Optional.of(user);
-        return this;
-    }
-
-    public ArangoConfigProperties password(final String password) {
-        this.password = Optional.of(password);
-        return this;
-    }
-
-    public ArangoConfigProperties jwt(final String jwt) {
-        this.jwt = Optional.of(jwt);
-        return this;
-    }
-
-    public ArangoConfigProperties timeout(final Integer timeout) {
-        this.timeout = Optional.of(timeout);
-        return this;
-    }
-
-    public ArangoConfigProperties useSsl(final Boolean useSsl) {
-        this.useSsl = Optional.of(useSsl);
-        return this;
-    }
-
-    public ArangoConfigProperties vstChunkSize(final Integer vstChunkSize) {
-        this.vstChunkSize = Optional.of(vstChunkSize);
-        return this;
-    }
-
     public List<Host> getHosts() {
-        return resolve(hosts, Collections.emptyList());
+        return hosts.orElse(Collections.emptyList());
     }
 
     public Protocol getProtocol() {
-        return resolve(protocol, DEFAULT_PROTOCOL);
+        return protocol.orElse(DEFAULT_PROTOCOL);
     }
 
     public String getUser() {
-        return resolve(user, DEFAULT_USER);
+        return user.orElse(DEFAULT_USER);
     }
 
     public Optional<String> getPassword() {
-        return password == null ? Optional.empty() : password;
+        return password;
     }
 
     public Optional<String> getJwt() {
-        return jwt == null ? Optional.empty() : jwt;
+        return jwt;
     }
 
     public Integer getTimeout() {
-        return resolve(timeout, DEFAULT_TIMEOUT);
+        return timeout.orElse(DEFAULT_TIMEOUT);
     }
 
     public Boolean getUseSsl() {
-        return resolve(useSsl, DEFAULT_USE_SSL);
+        return useSsl.orElse(DEFAULT_USE_SSL);
+    }
+
+    public Boolean getVerifyHost() {
+        return verifyHost.orElse(DEFAULT_VERIFY_HOST);
     }
 
     public Integer getVstChunkSize() {
-        return resolve(vstChunkSize, DEFAULT_CHUNK_SIZE);
+        return vstChunkSize.orElse(DEFAULT_CHUNK_SIZE);
     }
 
-    private <T> T resolve(Optional<T> field, T defValue) {
-        return field == null ? defValue : field.orElse(defValue);
-    }
 }

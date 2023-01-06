@@ -19,12 +19,6 @@ class ConfigDefaultsTest {
         checkResult(config);
     }
 
-    @Test
-    void defaultValuesProg() {
-        ArangoConfigProperties config = new ArangoConfigProperties();
-        checkResult(config);
-    }
-
     private void checkResult(ArangoConfigProperties config) {
         assertThat(config.getHosts()).isEmpty();
         assertThat(config.getProtocol()).isEqualTo(ArangoConfigProperties.DEFAULT_PROTOCOL);
@@ -33,6 +27,7 @@ class ConfigDefaultsTest {
         assertThat(config.getJwt()).isNotPresent();
         assertThat(config.getTimeout()).isEqualTo(ArangoConfigProperties.DEFAULT_TIMEOUT);
         assertThat(config.getUseSsl()).isEqualTo(ArangoConfigProperties.DEFAULT_USE_SSL);
+        assertThat(config.getVerifyHost()).isEqualTo(ArangoConfigProperties.DEFAULT_VERIFY_HOST);
         assertThat(config.getVstChunkSize()).isEqualTo(ArangoConfigProperties.DEFAULT_CHUNK_SIZE);
     }
 

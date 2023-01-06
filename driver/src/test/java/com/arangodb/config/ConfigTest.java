@@ -16,22 +16,8 @@ class ConfigTest {
     private String jwt = "testJwt";
     private Integer timeout = 9876;
     private Boolean useSsl = true;
+    private Boolean verifyHost = false;
     private Integer vstChunkSize = 1234;
-
-
-    @Test
-    void progConfig() {
-        ArangoConfigProperties config = new ArangoConfigProperties()
-                .host(hostA, hostB)
-                .protocol(protocol)
-                .user(user)
-                .password(password)
-                .jwt(jwt)
-                .timeout(timeout)
-                .useSsl(useSsl)
-                .vstChunkSize(vstChunkSize);
-        checkResult(config);
-    }
 
     @Test
     void readConfig() {
@@ -57,6 +43,7 @@ class ConfigTest {
                 .hasValue(jwt);
         assertThat(config.getTimeout()).isEqualTo(timeout);
         assertThat(config.getUseSsl()).isEqualTo(useSsl);
+        assertThat(config.getVerifyHost()).isEqualTo(verifyHost);
         assertThat(config.getVstChunkSize()).isEqualTo(vstChunkSize);
     }
 }
