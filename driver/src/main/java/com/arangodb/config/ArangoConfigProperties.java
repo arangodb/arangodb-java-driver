@@ -20,7 +20,7 @@ public interface ArangoConfigProperties {
     LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
     Integer DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
-    List<Host> getHosts();
+    List<HostDescription> getHosts();
 
     Protocol getProtocol();
 

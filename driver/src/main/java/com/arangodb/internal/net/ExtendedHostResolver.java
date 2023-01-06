@@ -22,6 +22,7 @@ package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;

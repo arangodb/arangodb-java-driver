@@ -21,6 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.HostDescription;
 
 import java.io.IOException;
 

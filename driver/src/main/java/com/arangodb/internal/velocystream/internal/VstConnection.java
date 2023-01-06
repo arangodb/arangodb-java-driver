@@ -24,7 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;

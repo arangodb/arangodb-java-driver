@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.ArangoConfigPropertiesImpl;
+import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerdeProvider;
@@ -85,9 +86,8 @@ public abstract class InternalArangoDBBuilder {
     }
 
     protected void doLoadProperties(final ArangoConfigProperties properties) {
-        // FIXME: rm config.Host and use HostDescription
         hosts.addAll(properties.getHosts().stream()
-                .map(it -> new HostDescription(it.getName(), it.getPort()))
+                .map(it -> new HostDescription(it.getHost(), it.getPort()))
                 .collect(Collectors.toList()));
         protocol = properties.getProtocol();
         timeout = properties.getTimeout();

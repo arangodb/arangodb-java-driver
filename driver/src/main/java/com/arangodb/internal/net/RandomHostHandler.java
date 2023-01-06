@@ -20,6 +20,8 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.config.HostDescription;
+
 import java.util.ArrayList;
 import java.util.Collections;
 

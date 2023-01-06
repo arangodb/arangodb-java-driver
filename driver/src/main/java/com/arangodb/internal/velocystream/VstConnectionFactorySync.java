@@ -22,7 +22,7 @@ package com.arangodb.internal.velocystream;
 
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 

@@ -21,6 +21,7 @@
 package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;

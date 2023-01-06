@@ -22,6 +22,7 @@ package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
+import com.arangodb.config.HostDescription;
 
 import java.util.ArrayList;
 import java.util.List;

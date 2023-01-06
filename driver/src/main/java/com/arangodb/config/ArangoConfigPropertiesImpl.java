@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties {
-    private Optional<List<Host>> hosts;
+    private Optional<List<HostDescription>> hosts;
     private Optional<Protocol> protocol;
     private Optional<String> user;
     private Optional<String> password;
@@ -27,7 +27,7 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     private Optional<Integer> responseQueueTimeSamples;
 
     @Override
-    public List<Host> getHosts() {
+    public List<HostDescription> getHosts() {
         return resolve(hosts, Collections.emptyList());
     }
 

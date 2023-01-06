@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfigTest {
-    private Host hostA = new Host("aaa", 1111);
-    private Host hostB = new Host("bbb", 2222);
+    private HostDescription hostA = new HostDescription("aaa", 1111);
+    private HostDescription hostB = new HostDescription("bbb", 2222);
     private Protocol protocol = Protocol.HTTP_VPACK;
     private String user = "testUser";
     private String password = "testPassword";

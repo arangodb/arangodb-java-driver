@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.util;
 
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.net.*;
 
 /**
