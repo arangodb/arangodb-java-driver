@@ -9,15 +9,8 @@ import java.util.Optional;
 
 public final class ArangoConfigProperties {
 
-//    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-//    public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
 //    public static final Integer DEFAULT_TIMEOUT = 0;
 //    public static final Boolean DEFAULT_VERIFY_HOST = true;
-//    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
-//    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
-//    public static final int CHUNK_DEFAULT_CONTENT_SIZE = 30000;
-//    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
-//    public static final Long CONNECTION_TTL_VST_DEFAULT = null;
 //    public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 //    public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
 //    public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
@@ -30,12 +23,23 @@ public final class ArangoConfigProperties {
     public static final String DEFAULT_USER = "root";
     public static final Boolean DEFAULT_USE_SSL = false;
 
+    // VST default values
+
+    private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+    private static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
+    //    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
+    //    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
+    //    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
+    //    public static final Long CONNECTION_TTL_VST_DEFAULT = null;
+    public static final int DEFAULT_CHUNK_SIZE = 30_000;
+
     private Optional<List<Host>> hosts;
     private Optional<Protocol> protocol;
     private Optional<String> user;
     private Optional<String> password;
     private Optional<String> jwt;
     private Optional<Boolean> useSsl;
+    private Optional<Integer> vstChunkSize;
 
 
     public ArangoConfigProperties host(final Host... host) {
@@ -71,6 +75,11 @@ public final class ArangoConfigProperties {
         return this;
     }
 
+    public ArangoConfigProperties vstChunkSize(final Integer vstChunkSize) {
+        this.vstChunkSize = Optional.of(vstChunkSize);
+        return this;
+    }
+
     public List<Host> getHosts() {
         return resolve(hosts, Collections.emptyList());
     }
@@ -93,6 +102,10 @@ public final class ArangoConfigProperties {
 
     public Boolean getUseSsl() {
         return resolve(useSsl, DEFAULT_USE_SSL);
+    }
+
+    public Integer getVstChunkSize() {
+        return resolve(vstChunkSize, DEFAULT_CHUNK_SIZE);
     }
 
     private <T> T resolve(Optional<T> field, T defValue) {

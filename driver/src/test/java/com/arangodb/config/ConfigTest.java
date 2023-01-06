@@ -15,6 +15,7 @@ class ConfigTest {
     private String password = "testPassword";
     private String jwt = "testJwt";
     private Boolean useSsl = true;
+    private Integer vstChunkSize = 1234;
 
 
     @Test
@@ -25,7 +26,8 @@ class ConfigTest {
                 .user(user)
                 .password(password)
                 .jwt(jwt)
-                .useSsl(useSsl);
+                .useSsl(useSsl)
+                .vstChunkSize(vstChunkSize);
         checkResult(config);
     }
 
@@ -52,5 +54,6 @@ class ConfigTest {
                 .isPresent()
                 .hasValue(jwt);
         assertThat(config.getUseSsl()).isEqualTo(useSsl);
+        assertThat(config.getVstChunkSize()).isEqualTo(vstChunkSize);
     }
 }

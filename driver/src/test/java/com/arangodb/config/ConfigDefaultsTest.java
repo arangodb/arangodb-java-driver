@@ -32,6 +32,7 @@ class ConfigDefaultsTest {
         assertThat(config.getPassword()).isNotPresent();
         assertThat(config.getJwt()).isNotPresent();
         assertThat(config.getUseSsl()).isEqualTo(ArangoConfigProperties.DEFAULT_USE_SSL);
+        assertThat(config.getVstChunkSize()).isEqualTo(ArangoConfigProperties.DEFAULT_CHUNK_SIZE);
     }
 
 }
