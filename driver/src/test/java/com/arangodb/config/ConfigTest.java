@@ -1,17 +1,12 @@
 package com.arangodb.config;
 
 import com.arangodb.Protocol;
-import jakarta.enterprise.inject.se.SeContainer;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
+import io.smallrye.config.SmallRyeConfig;
+import io.smallrye.config.SmallRyeConfigBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 class ConfigTest {
     private Host hostA = new Host("aaa", 1111);
     private Host hostB = new Host("bbb", 2222);
@@ -21,17 +16,6 @@ class ConfigTest {
     private String jwt = "testJwt";
     private Boolean useSsl = true;
 
-
-    static class TestConfig {
-        @Inject
-        @ConfigProperties(prefix = "adb")
-        ArangoConfigProperties arangodbConfig;
-    }
-
-    @AfterEach
-    void clear() {
-        System.clearProperty("mp.config.profile");
-    }
 
     @Test
     void progConfig() {
@@ -46,15 +30,15 @@ class ConfigTest {
     }
 
     @Test
-    void readConfigCDI() {
-        // read config from META-INF/microprofile-config-configTest.properties
-        System.setProperty("mp.config.profile", "configTest");
-        System.out.println(System.getProperty("mp.config.profile"));
+    void readConfig() {
+        SmallRyeConfig cfg = new SmallRyeConfigBuilder()
+                .addDefaultSources()
+                .withMapping(ArangoConfigProperties.class, "adb")
+                .withProfile("configTest")
+                .build();
 
-        try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
-            ArangoConfigProperties config = container.select(TestConfig.class).get().arangodbConfig;
-            checkResult(config);
-        }
+        ArangoConfigProperties config = cfg.getConfigMapping(ArangoConfigProperties.class, "adb");
+        checkResult(config);
     }
 
     private void checkResult(ArangoConfigProperties config) {

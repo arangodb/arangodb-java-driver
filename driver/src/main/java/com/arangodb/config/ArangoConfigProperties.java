@@ -1,14 +1,12 @@
 package com.arangodb.config;
 
 import com.arangodb.Protocol;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ConfigProperties(prefix = "arangodb")
 public final class ArangoConfigProperties {
 
 //    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
@@ -38,7 +36,6 @@ public final class ArangoConfigProperties {
     private Optional<String> password;
     private Optional<String> jwt;
     private Optional<Boolean> useSsl;
-
 
 
     public ArangoConfigProperties host(final Host... host) {

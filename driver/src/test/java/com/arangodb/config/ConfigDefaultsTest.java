@@ -1,29 +1,22 @@
 package com.arangodb.config;
 
-import jakarta.enterprise.inject.se.SeContainer;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
-import org.junit.jupiter.api.Disabled;
+import io.smallrye.config.SmallRyeConfig;
+import io.smallrye.config.SmallRyeConfigBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 class ConfigDefaultsTest {
 
-    static class TestConfig {
-        @Inject
-        @ConfigProperties(prefix = "arangodb")
-        ArangoConfigProperties arangodbConfig;
-    }
-
     @Test
-    void defaultValuesCDI() {
-        try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
-            ArangoConfigProperties config = container.select(TestConfig.class).get().arangodbConfig;
-            checkResult(config);
-        }
+    void defaultValues() {
+        SmallRyeConfig cfg = new SmallRyeConfigBuilder()
+                .addDefaultSources()
+                .withMapping(ArangoConfigProperties.class, "arangodb")
+                .build();
+
+        ArangoConfigProperties config = cfg.getConfigMapping(ArangoConfigProperties.class, "arangodb");
+        checkResult(config);
     }
 
     @Test
