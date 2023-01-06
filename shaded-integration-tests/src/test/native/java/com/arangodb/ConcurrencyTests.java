@@ -1,6 +1,6 @@
 package com.arangodb;
 
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -19,7 +19,7 @@ class ConcurrencyTests {
     void concurrentPendingRequests(Protocol protocol) throws ExecutionException, InterruptedException {
         ExecutorService es = Executors.newFixedThreadPool(10);
         ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .useProtocol(protocol).build();
         List<CompletableFuture<Void>> futures = IntStream.range(0, 10)
                 .mapToObj(__ -> CompletableFuture.runAsync(() -> adb.db().query("RETURN SLEEP(1)", Void.class), es))

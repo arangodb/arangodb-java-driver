@@ -22,8 +22,8 @@ package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ class CommunicationTest {
     @Test
     void chunkSizeSmall() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .chunksize(20).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -52,7 +52,7 @@ class CommunicationTest {
     @Test
     void multiThread() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
@@ -80,7 +80,7 @@ class CommunicationTest {
     @Test
     void multiThreadSameDatabases() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .build();
         arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
@@ -105,7 +105,7 @@ class CommunicationTest {
     @Test
     void minOneConnection() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .maxConnections(0).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -114,7 +114,7 @@ class CommunicationTest {
     @Test
     void defaultMaxConnection() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .maxConnections(null).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();

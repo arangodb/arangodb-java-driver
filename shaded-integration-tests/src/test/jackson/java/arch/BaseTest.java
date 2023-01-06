@@ -4,32 +4,34 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ContentType;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class BaseTest {
+    private static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     protected static final DbName TEST_DB = DbName.of("java_driver_integration_tests");
 
     protected static ArangoDB createAdb() {
         return new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .build();
     }
 
     protected static ArangoDB createAdb(ContentType contentType) {
         Protocol protocol = contentType == ContentType.VPACK ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON;
         return new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .useProtocol(protocol)
                 .build();
     }
 
     protected static ArangoDB createAdb(Protocol protocol) {
         return new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .useProtocol(protocol)
                 .build();
     }

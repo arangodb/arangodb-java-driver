@@ -1,4 +1,4 @@
-package com.arangodb.annotations;
+package com.arangodb.mapping.annotations;
 
 import com.arangodb.serde.jackson.*;
 

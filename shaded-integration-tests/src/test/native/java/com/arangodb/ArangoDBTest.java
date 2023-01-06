@@ -20,8 +20,8 @@
 
 package com.arangodb;
 
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.*;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
@@ -210,7 +210,7 @@ class ArangoDBTest extends BaseJunit5 {
         Thread.sleep(2_000);
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .user("testUser")
                 .password("testPasswd")
                 .build();
@@ -373,7 +373,7 @@ class ArangoDBTest extends BaseJunit5 {
     @Test
     void authenticationFailPassword() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .password("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -384,7 +384,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void authenticationFailUser() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .user("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -589,7 +589,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void fallbackHost() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(config)
                 .host("not-accessible", 8529).host("127.0.0.1", 8529).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -599,9 +599,19 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void loadproperties() {
         Throwable thrown = catchThrowable(() -> new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider("arangodb", "/arangodb-bad.properties"))
+                .loadProperties(ConfigUtils.loadConfig("arangodb-bad.properties"))
         );
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void loadpropertiesWithPrefix() {
+        ArangoDB adb = new ArangoDB.Builder()
+                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
+                .build();
+        adb.getVersion();
+        adb.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
