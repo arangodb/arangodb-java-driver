@@ -18,6 +18,7 @@ class ConfigTest {
     private Boolean useSsl = true;
     private Boolean verifyHost = false;
     private Integer vstChunkSize = 1234;
+    private Integer maxConnections = 123;
 
     @Test
     void readConfig() {
@@ -45,5 +46,8 @@ class ConfigTest {
         assertThat(config.getUseSsl()).isEqualTo(useSsl);
         assertThat(config.getVerifyHost()).isEqualTo(verifyHost);
         assertThat(config.getVstChunkSize()).isEqualTo(vstChunkSize);
+        assertThat(config.getMaxConnections())
+                .isPresent()
+                .hasValue(maxConnections);
     }
 }

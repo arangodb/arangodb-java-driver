@@ -41,6 +41,7 @@ public final class ArangoConfigProperties {
     private Optional<Boolean> useSsl;
     private Optional<Boolean> verifyHost;
     private Optional<Integer> vstChunkSize;
+    private Optional<Integer> maxConnections;
 
     public List<Host> getHosts() {
         return hosts.orElse(Collections.emptyList());
@@ -76,6 +77,10 @@ public final class ArangoConfigProperties {
 
     public Integer getVstChunkSize() {
         return vstChunkSize.orElse(DEFAULT_CHUNK_SIZE);
+    }
+
+    public Optional<Integer> getMaxConnections() {
+        return maxConnections;
     }
 
 }
