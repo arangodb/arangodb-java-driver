@@ -28,7 +28,7 @@ class ConfigTest {
 
     @Test
     void readConfig() {
-        ArangoConfigProperties config = ConfigUtils.loadConfig("arangodb-config-test.properties", "adb");
+        ArangoConfigProperties config = ConfigUtils.loadConfigMP("arangodb-config-test.properties", "adb");
         checkResult(config);
     }
 

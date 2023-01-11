@@ -8,6 +8,30 @@ import java.util.Optional;
 
 public interface ArangoConfigProperties {
 
+    /**
+     * Reads properties from file arangodb.properties.
+     * Properties must be prefixed with @{code "arangodb"}, eg. @{code "arangodb.hosts=localhost:8529"}.
+     */
+    static ArangoConfigProperties fromFile() {
+        return new ArangoConfigPropertiesImpl();
+    }
+
+    /**
+     * Reads properties from file {@code fileName}.
+     * Properties must be prefixed with @{code "arangodb"}, eg. @{code "arangodb.hosts=localhost:8529"}.
+     */
+    static ArangoConfigProperties fromFile(final String fileName) {
+        return new ArangoConfigPropertiesImpl(fileName);
+    }
+
+    /**
+     * Reads properties from file {@code fileName}.
+     * Properties must be prefixed with @{code prefix}, eg. @{code "<prefix>.hosts=localhost:8529"}.
+     */
+    static ArangoConfigProperties fromFile(final String fileName, final String prefix) {
+        return new ArangoConfigPropertiesImpl(fileName, prefix);
+    }
+
     default Optional<List<HostDescription>> getHosts() {
         return Optional.empty();
     }

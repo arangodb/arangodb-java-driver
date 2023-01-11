@@ -8,7 +8,7 @@ class ConfigDefaultsTest {
 
     @Test
     void defaultValues() {
-        ArangoConfigProperties config = ConfigUtils.loadConfig("arangodb.properties", "wrong");
+        ArangoConfigProperties config = ConfigUtils.loadConfigMP("arangodb.properties", "wrong");
         checkResult(config);
     }
 
