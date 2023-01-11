@@ -1,10 +1,18 @@
 package com.arangodb.config;
 
+import org.graalvm.nativeimage.ImageInfo;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 class ConfigDefaultsTest {
+
+    @BeforeAll
+    static void beforeClass() {
+        assumeFalse(ImageInfo.inImageCode(), "skipped in native mode");
+    }
 
     @Test
     void defaultValues() {
