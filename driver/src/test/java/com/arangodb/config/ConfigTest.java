@@ -3,13 +3,12 @@ package com.arangodb.config;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.graalvm.nativeimage.ImageInfo;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+@DisabledInNativeImage
 class ConfigTest {
     private final HostDescription hostA = new HostDescription("aaa", 1111);
     private final HostDescription hostB = new HostDescription("bbb", 2222);
@@ -28,11 +27,6 @@ class ConfigTest {
     private final Integer acquireHostListInterval = 1234567;
     private final LoadBalancingStrategy loadBalancingStrategy = LoadBalancingStrategy.ROUND_ROBIN;
     private final Integer responseQueueTimeSamples = 12345678;
-
-    @BeforeAll
-    static void beforeClass() {
-        assumeFalse(ImageInfo.inImageCode(), "skipped in native mode");
-    }
 
     @Test
     void readConfig() {
