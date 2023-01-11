@@ -5,7 +5,6 @@ import com.arangodb.ContentType;
 import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Arrays;

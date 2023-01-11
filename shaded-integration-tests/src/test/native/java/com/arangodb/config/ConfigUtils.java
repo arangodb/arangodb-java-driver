@@ -1,25 +1,18 @@
 package com.arangodb.config;
 
-import io.smallrye.config.PropertiesConfigSourceProvider;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
 
 public class ConfigUtils {
 
     public static ArangoConfigProperties loadConfig() {
-        return loadConfig("arangodb.properties");
+        return ArangoConfigProperties.fromFile();
     }
 
     public static ArangoConfigProperties loadConfig(final String location) {
-        return loadConfig(location, "arangodb");
+        return ArangoConfigProperties.fromFile(location);
     }
 
     public static ArangoConfigProperties loadConfig(final String location, final String prefix) {
-        SmallRyeConfig cfg = new SmallRyeConfigBuilder()
-                .withSources(new PropertiesConfigSourceProvider(location, ConfigUtils.class.getClassLoader(), false))
-                .withMapping(ArangoConfigPropertiesImpl.class, prefix)
-                .build();
-        return cfg.getConfigMapping(ArangoConfigPropertiesImpl.class, prefix);
+        return ArangoConfigProperties.fromFile(location, prefix);
     }
 
 }
