@@ -45,13 +45,21 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
+                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.arangodb</groupId>
+                            <artifactId>jackson-serde</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
                     <artifactId>jackson-dataformat-velocypack</artifactId>
-                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.tngtech.archunit</groupId>
                     <artifactId>archunit-junit5</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -67,18 +75,19 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
+                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
                     <artifactId>jackson-serde</artifactId>
-                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>jackson-dataformat-velocypack</artifactId>
-                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.tngtech.archunit</groupId>
                     <artifactId>archunit-junit5</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -91,8 +100,17 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
+                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.arangodb</groupId>
+                            <artifactId>jackson-serde</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
                     <artifactId>jsonb-serde</artifactId>
-                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.eclipse</groupId>
@@ -101,7 +119,6 @@
                 <dependency>
                     <groupId>com.tngtech.archunit</groupId>
                     <artifactId>archunit-junit5</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -114,23 +131,18 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
+                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.arangodb</groupId>
                     <artifactId>jackson-serde</artifactId>
-                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>jackson-dataformat-velocypack</artifactId>
-                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
     </profiles>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>arangodb-java-driver-shaded</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 </project>

@@ -1,9 +1,6 @@
 package arch;
 
 import com.arangodb.config.ArangoConfigProperties;
-import io.smallrye.config.PropertiesConfigSourceProvider;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
 
 public class ConfigUtils {
 
