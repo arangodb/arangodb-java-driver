@@ -21,11 +21,11 @@
 package com.arangodb.example.graph;
 
 import com.arangodb.*;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentCreateEntity;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.CollectionCreateOptions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,7 +53,7 @@ class AQLActorsAndMoviesExampleTest {
     @BeforeAll
     static void setUp() {
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

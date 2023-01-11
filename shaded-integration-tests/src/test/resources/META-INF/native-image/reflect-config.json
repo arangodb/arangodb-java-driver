@@ -281,7 +281,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.annotations.AnnotatedEntity",
+    "name": "com.arangodb.mapping.annotations.AnnotatedEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

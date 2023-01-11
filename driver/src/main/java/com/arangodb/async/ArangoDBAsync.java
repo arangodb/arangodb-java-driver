@@ -24,7 +24,7 @@ import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.config.ConfigPropertiesProvider;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -315,7 +315,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             super();
         }
 
-        public Builder loadProperties(final ConfigPropertiesProvider config) {
+        public Builder loadProperties(final ArangoConfigProperties config) {
             super.doLoadProperties(config);
             return this;
         }

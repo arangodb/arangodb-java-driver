@@ -1,7 +1,7 @@
 package com.arangodb.async;
 
 import com.arangodb.*;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -22,7 +22,7 @@ class JwtAuthTest {
     @BeforeAll
     static void init() {
         ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
@@ -95,7 +95,7 @@ class JwtAuthTest {
 
     private ArangoDBAsync.Builder getBuilder() {
         return new ArangoDBAsync.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file

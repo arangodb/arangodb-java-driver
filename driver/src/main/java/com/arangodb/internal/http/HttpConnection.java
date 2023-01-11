@@ -22,7 +22,7 @@ package com.arangodb.internal.http;
 
 import com.arangodb.*;
 import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;

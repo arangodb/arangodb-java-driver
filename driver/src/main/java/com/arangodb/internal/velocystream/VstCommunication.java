@@ -21,6 +21,7 @@
 package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.Host;
@@ -71,7 +72,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         this.jwt = jwt;
         this.util = util;
         this.hostHandler = hostHandler;
-        this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
+        this.chunksize = chunksize;
     }
 
     @SuppressWarnings("unchecked")

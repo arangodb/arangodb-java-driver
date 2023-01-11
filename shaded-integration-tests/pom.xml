@@ -45,11 +45,6 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>arangodb-java-driver-shaded</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
                     <artifactId>jackson-dataformat-velocypack</artifactId>
                     <scope>test</scope>
                 </dependency>
@@ -70,11 +65,6 @@
                 <serde>jackson</serde>
             </properties>
             <dependencies>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>arangodb-java-driver-shaded</artifactId>
-                    <scope>test</scope>
-                </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>jackson-serde</artifactId>
@@ -101,11 +91,6 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>arangodb-java-driver-shaded</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
                     <artifactId>jsonb-serde</artifactId>
                     <scope>test</scope>
                 </dependency>
@@ -129,7 +114,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>arangodb-java-driver-shaded</artifactId>
+                    <artifactId>jackson-serde</artifactId>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
@@ -140,4 +125,12 @@
             </dependencies>
         </profile>
     </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>arangodb-java-driver-shaded</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

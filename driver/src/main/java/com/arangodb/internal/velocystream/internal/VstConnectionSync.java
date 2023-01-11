@@ -21,7 +21,7 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 
 import javax.net.ssl.SSLContext;
 import java.util.Collection;

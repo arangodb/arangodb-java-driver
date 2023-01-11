@@ -1,7 +1,8 @@
 package com.arangodb;
 
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.*;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;
@@ -17,13 +18,13 @@ import java.util.stream.Stream;
 
 class BaseJunit5 {
     protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
-
+    protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final List<ArangoDB> adbs = Arrays.asList(
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.VST).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_VPACK).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_VPACK).build(),
-            new ArangoDB.Builder().loadProperties(new FileConfigPropertiesProvider()).useProtocol(Protocol.HTTP2_JSON).build()
+            new ArangoDB.Builder().loadProperties(config).useProtocol(Protocol.VST).build(),
+            new ArangoDB.Builder().loadProperties(config).useProtocol(Protocol.HTTP_VPACK).build(),
+            new ArangoDB.Builder().loadProperties(config).useProtocol(Protocol.HTTP_JSON).build(),
+            new ArangoDB.Builder().loadProperties(config).useProtocol(Protocol.HTTP2_VPACK).build(),
+            new ArangoDB.Builder().loadProperties(config).useProtocol(Protocol.HTTP2_JSON).build()
     );
 
     protected static Stream<ArangoDatabase> dbsStream() {

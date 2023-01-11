@@ -22,7 +22,7 @@ package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.serde.InternalSerde;

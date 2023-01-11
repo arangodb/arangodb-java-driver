@@ -21,7 +21,7 @@
 package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.async.internal.utils.CompletableFutureUtils;
-import com.arangodb.internal.net.HostDescription;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.MessageStore;

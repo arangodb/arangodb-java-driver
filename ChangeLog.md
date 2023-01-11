@@ -35,8 +35,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added `ArangoDB.Builder.loadProperties(ConfigPropertiesProvider)` to register custom configuration providers
-- added `FileConfigPropertiesProvider` to load properties from local files
+- added `ArangoDB.Builder.loadProperties(ArangoConfigProperties)` to register custom configuration suppliers
+- added `ArangoConfigProperties.fromFile()` to load properties from local files
 - added support to `HTTP/2` communication protocol
 - added optional transitive dependency on `io.vertx:vertx-web-client` (can be excluded if using VST only)
 - added transitive dependency on Jackson Core, Databind and Annotations

@@ -21,6 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import org.slf4j.Logger;

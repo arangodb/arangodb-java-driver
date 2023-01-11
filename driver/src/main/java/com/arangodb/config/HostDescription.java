@@ -18,15 +18,34 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.config;
+
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class HostDescription {
 
     private final String host;
     private final int port;
+
+    /**
+     * Factory method used by MicroProfile Config as
+     * <a href="https://download.eclipse.org/microprofile/microprofile-config-3.0.2/microprofile-config-spec-3.0.2.html#_automatic_converters">automatic converter</a>.
+     *
+     * @param value hostname:port
+     * @return Host
+     */
+    public static HostDescription parse(CharSequence value) {
+        Objects.requireNonNull(value);
+        final String[] split = value.toString().split(":");
+        if (split.length != 2) {
+            throw new IllegalArgumentException("Could not parse host. Expected hostname:port, but got: " + value);
+        }
+        return new HostDescription(split[0], Integer.parseInt(split[1]));
+    }
 
     public HostDescription(final String host, final int port) {
         super();
@@ -48,34 +67,15 @@ public class HostDescription {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((host == null) ? 0 : host.hashCode());
-        result = prime * result + port;
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HostDescription that = (HostDescription) o;
+        return port == that.port && Objects.equals(host, that.host);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final HostDescription other = (HostDescription) obj;
-        if (host == null) {
-            if (other.host != null) {
-                return false;
-            }
-        } else if (!host.equals(other.host)) {
-            return false;
-        }
-        return port == other.port;
+    public int hashCode() {
+        return Objects.hash(host, port);
     }
-
 }

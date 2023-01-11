@@ -42,16 +42,17 @@ The default communication protocol is now `HTTP2_JSON` (`HTTP/2` with `JSON` con
 The default host configuration to `127.0.0.1:8529` has been removed.
 
 Configuration properties are not read automatically from properties files anymore.
-A new API for loading properties has been introduced: `ArangoDB.Builder.loadProperties(ConfigPropertiesProvider)`. 
+A new API for loading properties has been introduced: `ArangoDB.Builder.loadProperties(ArangoConfigProperties)`. 
 Implementations could supply configuration properties coming from different sources, eg. system properties, remote 
-stores, frameworks facilities, etc. 
-An implementation for loading properties from local files is provided by `FileConfigPropertiesProvider`.
+stores, frameworks facilities, etc.
+An implementation for loading properties from local files is provided by `ArangoConfigProperties.fromFile()` and its 
+overloaded variants.
 
-Here is an example to read config properties from `arangodb.properties` file (same behavior as in version `6`):
+Here is an example to read config properties from `arangodb.properties` file (as in version `6`):
 
 ```java
 ArangoDB adb = new ArangoDB.Builder()
-        .loadProperties(new FileConfigPropertiesProvider())
+        .loadProperties(ArangoConfigProperties.fromFile())
         // ...
         .build();
 ```
@@ -67,10 +68,12 @@ are prefixed with `adb`:
 // ...
 
 ArangoDB adb = new ArangoDB.Builder()
-        .loadProperties(new FileConfigPropertiesProvider("adb", "arangodb-with-prefix.properties"))
+        .loadProperties(new FileConfigPropertiesProvider("arangodb-with-prefix.properties", "adb"))
         .build();
 ```
 
+An example showing how to provide configuration using Eclipse MicroProfile Config can be found 
+[here](../driver/src/test/java/com/arangodb/config).
 
 ## Transitive dependencies
 

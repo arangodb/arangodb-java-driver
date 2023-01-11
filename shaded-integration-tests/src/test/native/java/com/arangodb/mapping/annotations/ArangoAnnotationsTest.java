@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.annotations;
+package com.arangodb.mapping.annotations;
 
 import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;

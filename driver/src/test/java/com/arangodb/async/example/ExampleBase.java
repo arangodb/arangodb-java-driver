@@ -24,7 +24,7 @@ import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
-import com.arangodb.internal.config.FileConfigPropertiesProvider;
+import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -44,7 +44,7 @@ public class ExampleBase {
     @BeforeAll
     static void setUp() throws InterruptedException, ExecutionException {
         arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(new FileConfigPropertiesProvider())
+                .loadProperties(ConfigUtils.loadConfig())
                 .build();
         if (arangoDB.db(DB_NAME).exists().get()) {
             arangoDB.db(DB_NAME).drop().get();
