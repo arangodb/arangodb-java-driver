@@ -1,4 +1,5 @@
-![ArangoDB-Logo](https://www.arangodb.com/docs/assets/arangodb_logo_2016_inverted.png)
+![ArangoDB_Logo_RGB_Full_Color_Black-f](https://user-images.githubusercontent.com/7775349/211664508-17d52a3b-e84f-4115-8fa0-e24b65d81c71.jpg)
+
 
 # ArangoDB Java Driver
 
