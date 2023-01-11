@@ -74,7 +74,8 @@ public abstract class InternalArangoDBBuilder {
         Iterator<ArangoSerdeProvider> it = loader.iterator();
         ArangoSerdeProvider serdeProvider;
         if (!it.hasNext()) {
-            LOG.info("No ArangoSerdeProvider found, using InternalSerdeProvider.");
+            LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
+                    "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
             serdeProvider = new InternalSerdeProvider();
         } else {
             serdeProvider = it.next();
