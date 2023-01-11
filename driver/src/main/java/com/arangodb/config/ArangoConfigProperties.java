@@ -8,48 +8,68 @@ import java.util.Optional;
 
 public interface ArangoConfigProperties {
 
-    // default values
-    Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
-    String DEFAULT_USER = "root";
-    Integer DEFAULT_TIMEOUT = 0;
-    Boolean DEFAULT_USE_SSL = false;
-    Boolean DEFAULT_VERIFY_HOST = true;
-    Integer DEFAULT_CHUNK_SIZE = 30_000;
-    Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
-    Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
-    LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
-    Integer DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
+    default Optional<List<HostDescription>> getHosts() {
+        return Optional.empty();
+    }
 
-    List<HostDescription> getHosts();
+    default Optional<Protocol> getProtocol() {
+        return Optional.empty();
+    }
 
-    Protocol getProtocol();
+    default Optional<String> getUser() {
+        return Optional.empty();
+    }
 
-    String getUser();
+    default Optional<String> getPassword() {
+        return Optional.empty();
+    }
 
-    Optional<String> getPassword();
+    default Optional<String> getJwt() {
+        return Optional.empty();
+    }
 
-    Optional<String> getJwt();
+    default Optional<Integer> getTimeout() {
+        return Optional.empty();
+    }
 
-    Integer getTimeout();
+    default Optional<Boolean> getUseSsl() {
+        return Optional.empty();
+    }
 
-    Boolean getUseSsl();
+    default Optional<Boolean> getVerifyHost() {
+        return Optional.empty();
+    }
 
-    Boolean getVerifyHost();
+    default Optional<Integer> getChunkSize() {
+        return Optional.empty();
+    }
 
-    Integer getVstChunkSize();
+    default Optional<Integer> getMaxConnections() {
+        return Optional.empty();
+    }
 
-    Optional<Integer> getMaxConnections();
+    default Optional<Long> getConnectionTtl() {
+        return Optional.empty();
+    }
 
-    Optional<Long> getConnectionTtl();
+    default Optional<Integer> getKeepAliveInterval() {
+        return Optional.empty();
+    }
 
-    Optional<Integer> getKeepAliveInterval();
+    default Optional<Boolean> getAcquireHostList() {
+        return Optional.empty();
+    }
 
-    Boolean getAcquireHostList();
+    default Optional<Integer> getAcquireHostListInterval() {
+        return Optional.empty();
+    }
 
-    Integer getAcquireHostListInterval();
+    default Optional<LoadBalancingStrategy> getLoadBalancingStrategy() {
+        return Optional.empty();
+    }
 
-    LoadBalancingStrategy getLoadBalancingStrategy();
-
-    Integer getResponseQueueTimeSamples();
+    default Optional<Integer> getResponseQueueTimeSamples() {
+        return Optional.empty();
+    }
 
 }

@@ -23,7 +23,6 @@ package com.arangodb.internal;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.config.ArangoConfigPropertiesImpl;
 import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.*;
@@ -66,7 +65,8 @@ public abstract class InternalArangoDBBuilder {
 
     protected InternalArangoDBBuilder() {
         // load default properties
-        doLoadProperties(new ArangoConfigPropertiesImpl());
+        doLoadProperties(new ArangoConfigProperties() {
+        });
     }
 
     protected static ArangoSerdeProvider serdeProvider() {
@@ -86,29 +86,29 @@ public abstract class InternalArangoDBBuilder {
     }
 
     protected void doLoadProperties(final ArangoConfigProperties properties) {
-        hosts.addAll(properties.getHosts().stream()
+        hosts.addAll(properties.getHosts().orElse(ArangoDefaults.DEFAULT_HOSTS).stream()
                 .map(it -> new HostDescription(it.getHost(), it.getPort()))
                 .collect(Collectors.toList()));
-        protocol = properties.getProtocol();
-        timeout = properties.getTimeout();
-        user = properties.getUser();
+        protocol = properties.getProtocol().orElse(ArangoDefaults.DEFAULT_PROTOCOL);
+        timeout = properties.getTimeout().orElse(ArangoDefaults.DEFAULT_TIMEOUT);
+        user = properties.getUser().orElse(ArangoDefaults.DEFAULT_USER);
         // FIXME: make password field Optional
         password = properties.getPassword().orElse(null);
         // FIXME: make jwt field Optional
         jwt = properties.getJwt().orElse(null);
-        useSsl = properties.getUseSsl();
-        verifyHost = properties.getVerifyHost();
-        chunkSize = properties.getVstChunkSize();
+        useSsl = properties.getUseSsl().orElse(ArangoDefaults.DEFAULT_USE_SSL);
+        verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
+        chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
         // FIXME: make connectionTtl field Optional
         connectionTtl = properties.getConnectionTtl().orElse(null);
         // FIXME: make keepAliveInterval field Optional
         keepAliveInterval = properties.getKeepAliveInterval().orElse(null);
-        acquireHostList = properties.getAcquireHostList();
-        acquireHostListInterval = properties.getAcquireHostListInterval();
-        loadBalancingStrategy = properties.getLoadBalancingStrategy();
-        responseQueueTimeSamples = properties.getResponseQueueTimeSamples();
+        acquireHostList = properties.getAcquireHostList().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);
+        acquireHostListInterval = properties.getAcquireHostListInterval().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
+        loadBalancingStrategy = properties.getLoadBalancingStrategy().orElse(ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY);
+        responseQueueTimeSamples = properties.getResponseQueueTimeSamples().orElse(ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
     }
 
     protected void setHost(final String host, final int port) {

@@ -72,7 +72,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         this.jwt = jwt;
         this.util = util;
         this.hostHandler = hostHandler;
-        this.chunksize = chunksize != null ? chunksize : ArangoConfigProperties.DEFAULT_CHUNK_SIZE;
+        this.chunksize = chunksize;
     }
 
     @SuppressWarnings("unchecked")

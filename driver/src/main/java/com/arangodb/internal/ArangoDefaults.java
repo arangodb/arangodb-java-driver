@@ -20,6 +20,13 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.Protocol;
+import com.arangodb.config.HostDescription;
+import com.arangodb.entity.LoadBalancingStrategy;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Mark Vollmary
  */
@@ -32,6 +39,19 @@ public final class ArangoDefaults {
     public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
     public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
     public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
+
+    // default config properties
+    public static final List<HostDescription> DEFAULT_HOSTS = Collections.emptyList();
+    public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
+    public static final String DEFAULT_USER = "root";
+    public static final Integer DEFAULT_TIMEOUT = 0;
+    public static final Boolean DEFAULT_USE_SSL = false;
+    public static final Boolean DEFAULT_VERIFY_HOST = true;
+    public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
+    public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+    public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
+    public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
+    public static final Integer DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
     private ArangoDefaults() {
         super();

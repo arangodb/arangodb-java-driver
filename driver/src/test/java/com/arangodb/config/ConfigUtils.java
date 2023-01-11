@@ -17,9 +17,9 @@ public class ConfigUtils {
     public static ArangoConfigProperties loadConfig(final String location, final String prefix) {
         SmallRyeConfig cfg = new SmallRyeConfigBuilder()
                 .withSources(new PropertiesConfigSourceProvider(location, ConfigUtils.class.getClassLoader(), false))
-                .withMapping(ArangoConfigPropertiesImpl.class, prefix)
+                .withMapping(ArangoConfigPropertiesMPImpl.class, prefix)
                 .build();
-        return cfg.getConfigMapping(ArangoConfigPropertiesImpl.class, prefix);
+        return cfg.getConfigMapping(ArangoConfigPropertiesMPImpl.class, prefix);
     }
 
 }

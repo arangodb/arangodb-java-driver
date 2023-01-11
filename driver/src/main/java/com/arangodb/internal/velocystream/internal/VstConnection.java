@@ -160,8 +160,7 @@ public abstract class VstConnection<T> implements Connection {
         } else {
             socket = SocketFactory.getDefault().createSocket();
         }
-        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout != null ? timeout :
-                ArangoConfigProperties.DEFAULT_TIMEOUT);
+        socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout);
         socket.setKeepAlive(true);
         socket.setTcpNoDelay(true);
         if (LOGGER.isDebugEnabled()) {
