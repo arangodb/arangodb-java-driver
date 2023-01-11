@@ -1,7 +1,9 @@
-package com.arangodb.config;
+package com.arangodb.internal.config;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 
 import java.io.InputStream;
@@ -14,21 +16,21 @@ import java.util.Properties;
  * ArangoConfigProperties implementation that reads configuration entries from local file. Properties path prefix can be
  * configured, so that it is possible to distinguish configurations for multiple driver instances in the same file.
  */
-final class ArangoConfigPropertiesImpl implements ArangoConfigProperties {
+public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties {
     private static final String DEFAULT_PREFIX = "arangodb";
     private static final String DEFAULT_PROPERTY_FILE = "arangodb.properties";
     private final Properties properties;
     private final String prefix;
 
-    ArangoConfigPropertiesImpl() {
+    public ArangoConfigPropertiesImpl() {
         this(DEFAULT_PROPERTY_FILE, DEFAULT_PREFIX);
     }
 
-    ArangoConfigPropertiesImpl(final String fileName) {
+    public ArangoConfigPropertiesImpl(final String fileName) {
         this(fileName, DEFAULT_PREFIX);
     }
 
-    ArangoConfigPropertiesImpl(final String fileName, final String prefix) {
+    public  ArangoConfigPropertiesImpl(final String fileName, final String prefix) {
         properties = initProperties(fileName);
         this.prefix = initPrefix(prefix);
     }

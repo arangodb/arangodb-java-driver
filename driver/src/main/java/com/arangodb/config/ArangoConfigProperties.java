@@ -2,6 +2,7 @@ package com.arangodb.config;
 
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
+import com.arangodb.internal.config.ArangoConfigPropertiesImpl;
 
 import java.util.List;
 import java.util.Optional;
