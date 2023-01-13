@@ -7,11 +7,8 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.0.0-SNAPSHOT'
+    implementation 'com.arangodb:arangodb-java-driver:7.0.0-ALPHA.1'
 }
