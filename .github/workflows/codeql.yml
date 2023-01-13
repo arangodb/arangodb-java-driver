@@ -15,10 +15,18 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - '.github/**'
+      - 'docker/**'
+      - 'docs/**'
+      - 'tutorial/**'
+      - 'ChangeLog.md'
+      - 'README.md'
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
       - master
+      - main
       - v7
       - v6
   schedule:

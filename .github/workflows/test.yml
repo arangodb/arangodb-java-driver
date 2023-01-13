@@ -1,13 +1,21 @@
-name: Java CI
+name: Test
 
 on:
   push:
     branches:
       - master
+    paths-ignore:
+      - '.github/**'
+      - 'docker/**'
+      - 'docs/**'
+      - 'tutorial/**'
+      - 'ChangeLog.md'
+      - 'README.md'
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
       - master
+      - main
       - v7
       - v6
 
@@ -297,4 +305,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -Pstatic-code-analysis -B --no-transfer-progress -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+        run: mvn --no-transfer-progress -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver

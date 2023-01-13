@@ -1,12 +1,12 @@
-name: Publish
+name: Release
 
 on:
   workflow_dispatch:
   push:
-    tags: [ v** ]
+    tags: [ release** ]
 
 jobs:
-  verify:
+  release:
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -27,7 +27,13 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish to Apache Maven Central
-        run: mvn deploy -Ddeploy -Dmaven.test.skip=true
+        run: mvn --no-transfer-progress -Ddeploy -Dmaven.test.skip=true deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      - name: Release to Apache Maven Central
+        run: mvn --no-transfer-progress -Ddeploy -Dmaven.test.skip=true nexus-staging:release
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_PASSWORD }}
