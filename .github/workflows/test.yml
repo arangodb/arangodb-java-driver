@@ -1,9 +1,13 @@
 name: Test
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
+      - main
+      - v7
+      - v6
     paths-ignore:
       - '.github/**'
       - 'docker/**'
