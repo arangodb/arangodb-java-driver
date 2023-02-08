@@ -8,6 +8,7 @@
     <version>7.0.0-ALPHA.2</version>
     <inceptionYear>2016</inceptionYear>
     <modules>
+        <module>core</module>
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde</module>
@@ -122,6 +123,11 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>arangodb-java-driver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
