@@ -13,6 +13,7 @@
         <module>shaded</module>
         <module>jackson-serde</module>
         <module>serde-api</module>
+        <module>http</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -100,20 +101,6 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-stack-depchain</artifactId>
-                <version>4.3.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>4.1.85.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.9.1</version>
@@ -128,6 +115,11 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>http-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

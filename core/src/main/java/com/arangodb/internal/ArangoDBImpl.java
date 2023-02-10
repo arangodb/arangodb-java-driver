@@ -22,11 +22,10 @@ package com.arangodb.internal;
 
 import com.arangodb.*;
 import com.arangodb.entity.*;
-import com.arangodb.internal.http.HttpCommunication;
-import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.net.ProtocolProvider;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
@@ -50,13 +49,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final HostHandler hostHandler;
 
-    public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-                        final InternalSerde util, final Protocol protocol, final HostResolver hostResolver,
+    public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder,
+                        final InternalSerde util, final Protocol protocol, final HostResolver hostResolver, final ProtocolProvider protocolProvider,
                         final HostHandler hostHandler, int responseQueueTimeSamples,
                         final int timeoutMs) {
 
         super(new ArangoExecutorSync(
-                        createProtocol(vstBuilder, httpBuilder, util, protocol),
+                        createProtocol(vstBuilder, hostHandler, util, protocol, protocolProvider),
                         util, new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util);
 
@@ -67,12 +66,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private static CommunicationProtocol createProtocol(
             final VstCommunicationSync.Builder vstBuilder,
-            final HttpCommunication.Builder httpBuilder,
+            final HostHandler hostHandler,
             final InternalSerde util,
-            final Protocol protocol) {
+            final Protocol protocol,
+            final ProtocolProvider protocolProvider) {
 
         return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
-                : createHTTP(httpBuilder, util);
+                : createHTTP(hostHandler, util, protocolProvider);
     }
 
     private static CommunicationProtocol createVST(
@@ -82,9 +82,10 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     private static CommunicationProtocol createHTTP(
-            final HttpCommunication.Builder builder,
-            final InternalSerde util) {
-        return new HttpProtocol(builder.serde(util).build());
+            final HostHandler hostHandler,
+            final InternalSerde util,
+            final ProtocolProvider protocolProvider) {
+        return protocolProvider.createProtocol(hostHandler, util);
     }
 
     @Override

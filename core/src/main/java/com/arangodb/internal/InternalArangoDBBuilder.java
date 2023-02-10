@@ -69,6 +69,16 @@ public abstract class InternalArangoDBBuilder {
         });
     }
 
+    protected ProtocolProvider protocolProvider(Protocol protocol) {
+        ServiceLoader<ProtocolProvider> loader = ServiceLoader.load(ProtocolProvider.class);
+        for (ProtocolProvider p : loader) {
+            if (p.supportsProtocol(protocol)) {
+                return p;
+            }
+        }
+        throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
+    }
+
     protected static ArangoSerdeProvider serdeProvider() {
         ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
         Iterator<ArangoSerdeProvider> it = loader.iterator();

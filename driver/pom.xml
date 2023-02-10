@@ -159,6 +159,10 @@
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
+            <artifactId>http-protocol</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
             <artifactId>serde-api</artifactId>
         </dependency>
         <dependency>
@@ -180,10 +184,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-web-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>

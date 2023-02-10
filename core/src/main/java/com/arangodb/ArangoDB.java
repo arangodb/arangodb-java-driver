@@ -25,8 +25,6 @@ import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
-import com.arangodb.internal.http.HttpCommunication;
-import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
@@ -45,7 +43,6 @@ import com.arangodb.serde.ArangoSerde;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -603,7 +600,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
             final ConnectionFactory connectionFactory = Protocol.VST == protocol
                     ? new VstConnectionFactorySync(timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
-                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
+                    : protocolProvider(protocol).createConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
                     protocol, connectionTtl);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
@@ -615,10 +612,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
                             .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize)
                             .maxConnections(maxConnections).connectionTtl(connectionTtl),
-                    new HttpCommunication.Builder().hostHandler(hostHandler),
                     serde,
                     protocol,
                     hostResolver,
+                    protocolProvider(protocol),
                     hostHandler,
                     responseQueueTimeSamples, timeout);
         }

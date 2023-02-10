@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.http;
+package com.arangodb.http;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
@@ -48,7 +48,7 @@ public class HttpCommunication implements Closeable {
     private final InternalSerde serde;
     private final AtomicLong reqCount;
 
-    private HttpCommunication(final HostHandler hostHandler, final InternalSerde serde) {
+    HttpCommunication(final HostHandler hostHandler, final InternalSerde serde) {
         super();
         this.hostHandler = hostHandler;
         this.serde = serde;
@@ -121,25 +121,6 @@ public class HttpCommunication implements Closeable {
     private boolean isSafe(final InternalRequest request) {
         RequestType type = request.getRequestType();
         return type == RequestType.GET || type == RequestType.HEAD || type == RequestType.OPTIONS;
-    }
-
-    public static class Builder {
-        private HostHandler hostHandler;
-        private InternalSerde serde;
-
-        public Builder hostHandler(HostHandler hostHandler) {
-            this.hostHandler = hostHandler;
-            return this;
-        }
-
-        public Builder serde(InternalSerde serde) {
-            this.serde = serde;
-            return this;
-        }
-
-        public HttpCommunication build() {
-            return new HttpCommunication(hostHandler, serde);
-        }
     }
 
 }

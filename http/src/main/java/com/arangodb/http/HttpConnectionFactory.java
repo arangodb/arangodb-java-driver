@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.http;
+package com.arangodb.http;
 
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
