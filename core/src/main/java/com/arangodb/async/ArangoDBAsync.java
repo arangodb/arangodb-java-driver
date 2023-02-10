@@ -24,7 +24,6 @@ import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -42,8 +41,8 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.serde.ArangoSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -276,8 +275,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return the log messages
-     * @see
-     * <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
@@ -309,201 +307,10 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      *
      * @author Mark Vollmary
      */
-    class Builder extends InternalArangoDBBuilder {
+    class Builder extends InternalArangoDBBuilder<Builder> {
 
         public Builder() {
             super();
-        }
-
-        public Builder loadProperties(final ArangoConfigProperties config) {
-            super.doLoadProperties(config);
-            return this;
-        }
-
-        /**
-         * Adds a host to connect to. Multiple hosts can be added to provide fallbacks.
-         *
-         * @param host address of the host
-         * @param port port of the host
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder host(final String host, final int port) {
-            setHost(host, port);
-            return this;
-        }
-
-        /**
-         * Sets the timeout in milliseconds. It is used as socket timeout when opening a VecloyStream.
-         *
-         * @param timeout timeout in milliseconds
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder timeout(final Integer timeout) {
-            setTimeout(timeout);
-            return this;
-        }
-
-        /**
-         * Sets the username to use for authentication.
-         *
-         * @param user the user in the database (default: <code>root</code>)
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder user(final String user) {
-            setUser(user);
-            return this;
-        }
-
-        /**
-         * Sets the password for the user for authentication.
-         *
-         * @param password the password of the user in the database (default: <code>null</code>)
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder password(final String password) {
-            setPassword(password);
-            return this;
-        }
-
-        /**
-         * Sets the JWT for the user authentication.
-         *
-         * @param jwt token to use (default: {@code null})
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder jwt(final String jwt) {
-            setJwt(jwt);
-            return this;
-        }
-
-        /**
-         * If set to <code>true</code> SSL will be used when connecting to an ArangoDB server.
-         *
-         * @param useSsl whether or not use SSL (default: <code>false</code>)
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder useSsl(final Boolean useSsl) {
-            setUseSsl(useSsl);
-            return this;
-        }
-
-        /**
-         * Sets the SSL context to be used when <code>true</code> is passed through {@link #useSsl(Boolean)}.
-         *
-         * @param sslContext SSL context to be used
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder sslContext(final SSLContext sslContext) {
-            setSslContext(sslContext);
-            return this;
-        }
-
-        /**
-         * Sets the chunk size when {@link Protocol#VST} is used.
-         *
-         * @param chunksize size of a chunk in bytes
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder chunksize(final Integer chunksize) {
-            setChunkSize(chunksize);
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of connections the built in connection pool will open.
-         *
-         * <p>
-         * In an ArangoDB cluster setup with {@link LoadBalancingStrategy#ROUND_ROBIN} set, this value should be at
-         * least as high as the number of ArangoDB coordinators in the cluster.
-         * </p>
-         *
-         * @param maxConnections max number of connections (default: 1)
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder maxConnections(final Integer maxConnections) {
-            setMaxConnections(maxConnections);
-            return this;
-        }
-
-        /**
-         * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
-         *
-         * @param connectionTtl the maximum time to life of a connection.
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder connectionTtl(final Long connectionTtl) {
-            setConnectionTtl(connectionTtl);
-            return this;
-        }
-
-        /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
-         * every
-         * {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the external
-         * environment, eg. firewall, intermediate routers, operating system).
-         *
-         * @param keepAliveInterval interval in seconds
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder keepAliveInterval(final Integer keepAliveInterval) {
-            setKeepAliveInterval(keepAliveInterval);
-            return this;
-        }
-
-        /**
-         * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover.
-         * In case of Active-Failover deployment set to {@code true} to enable automatic master discovery.
-         *
-         * <p>
-         * The host list will be used for failover and load balancing.
-         * </p>
-         *
-         * @param acquireHostList whether or not automatically acquire a list of available hosts (default: false)
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder acquireHostList(final Boolean acquireHostList) {
-            setAcquireHostList(acquireHostList);
-            return this;
-        }
-
-        /**
-         * Setting the amount of samples kept for queue time metrics
-         *
-         * @param responseQueueTimeSamples amount of samples to keep
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
-            setResponseQueueTimeSamples(responseQueueTimeSamples);
-            return this;
-        }
-
-        /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
-         * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
-         * would be the default.
-         *
-         * @param loadBalancingStrategy the load balancing strategy to be used (default:
-         *                              {@link LoadBalancingStrategy#NONE}
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
-            setLoadBalancingStrategy(loadBalancingStrategy);
-            return this;
-        }
-
-        /**
-         * Replace the built-in serializer/deserializer with the given one.
-         * <p>
-         * <br />
-         * <b>ATTENTION!:</b> Any registered custom serializer/deserializer or module will be ignored.
-         *
-         * @param serialization custom serializer/deserializer
-         * @return {@link ArangoDBAsync.Builder}
-         */
-        public Builder serializer(final ArangoSerde serialization) {
-            setUserDataSerde(serialization);
-            return this;
         }
 
         /**
@@ -512,19 +319,31 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync}
          */
         public ArangoDBAsync build() {
-            if (hosts.isEmpty()) {
+            if (config.getHosts().isEmpty()) {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde : serdeProvider().of(ContentType.VPACK);
+            final ArangoSerde userSerde = Optional.ofNullable(config.getUserDataSerde())
+                    .orElseGet(() -> serdeProvider().of(ContentType.VPACK));
             final InternalSerde serde = InternalSerdeProvider.create(ContentType.VPACK, userSerde);
 
-            final int max = maxConnections != null ? Math.max(1, maxConnections)
-                    : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(timeout, connectionTtl,
-                    keepAliveInterval, useSsl, sslContext);
-            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(timeout, connectionTtl,
-                    keepAliveInterval, useSsl, sslContext);
+            final int max = Optional.ofNullable(config.getMaxConnections())
+                    .map(maxConnections -> Math.max(1, maxConnections))
+                    .orElse(ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT);
+            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(
+                    config.getTimeout(),
+                    config.getConnectionTtl(),
+                    config.getKeepAliveInterval(),
+                    config.getUseSsl(),
+                    config.getSslContext()
+            );
+            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(
+                    config.getTimeout(),
+                    config.getConnectionTtl(),
+                    config.getKeepAliveInterval(),
+                    config.getUseSsl(),
+                    config.getSslContext()
+            );
             final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
                     syncConnectionFactory);
             final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
@@ -539,20 +358,24 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
                     syncHostResolver,
                     asyncHostHandler,
                     syncHostHandler,
-                    responseQueueTimeSamples,
-                    timeout);
+                    config.getResponseQueueTimeSamples(),
+                    config.getTimeout()
+            );
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationAsync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize).maxConnections(maxConnections)
-                    .connectionTtl(connectionTtl);
+            return new VstCommunicationAsync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser())
+                    .password(config.getPassword())
+                    .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext())
+                    .chunksize(config.getChunkSize()).maxConnections(config.getMaxConnections())
+                    .connectionTtl(config.getConnectionTtl());
         }
 
         private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize).maxConnections(maxConnections)
-                    .connectionTtl(connectionTtl);
+            return new VstCommunicationSync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser()).password(config.getPassword())
+                    .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext()).chunksize(config.getChunkSize())
+                    .maxConnections(config.getMaxConnections())
+                    .connectionTtl(config.getConnectionTtl());
         }
 
     }

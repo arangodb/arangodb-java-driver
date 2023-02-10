@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.HostDescription;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -43,6 +44,7 @@ import com.arangodb.serde.ArangoSerde;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -330,239 +332,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @author Mark Vollmary
      */
-    class Builder extends InternalArangoDBBuilder {
+    class Builder extends InternalArangoDBBuilder<Builder> {
 
         public Builder() {
             super();
-        }
-
-        public Builder loadProperties(final ArangoConfigProperties properties) {
-            doLoadProperties(properties);
-            return this;
-        }
-
-        public Builder useProtocol(final Protocol protocol) {
-            this.protocol = protocol;
-            return this;
-        }
-
-        /**
-         * Adds a host to connect to. Multiple hosts can be added to provide fallbacks.
-         *
-         * @param host address of the host
-         * @param port port of the host
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder host(final String host, final int port) {
-            setHost(host, port);
-            return this;
-        }
-
-        /**
-         * Sets the connection and request timeout in milliseconds.
-         *
-         * @param timeout timeout in milliseconds
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder timeout(final Integer timeout) {
-            setTimeout(timeout);
-            return this;
-        }
-
-        /**
-         * Sets the username to use for authentication.
-         *
-         * @param user the user in the database (default: {@code root})
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder user(final String user) {
-            setUser(user);
-            return this;
-        }
-
-        /**
-         * Sets the password for the user for authentication.
-         *
-         * @param password the password of the user in the database (default: {@code null})
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder password(final String password) {
-            setPassword(password);
-            return this;
-        }
-
-        /**
-         * Sets the JWT for the user authentication.
-         *
-         * @param jwt token to use (default: {@code null})
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder jwt(final String jwt) {
-            setJwt(jwt);
-            return this;
-        }
-
-        /**
-         * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
-         *
-         * @param useSsl whether or not use SSL (default: {@code false})
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder useSsl(final Boolean useSsl) {
-            setUseSsl(useSsl);
-            return this;
-        }
-
-        /**
-         * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
-         *
-         * @param sslContext SSL context to be used
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder sslContext(final SSLContext sslContext) {
-            setSslContext(sslContext);
-            return this;
-        }
-
-        /**
-         * Set whether hostname verification is enabled
-         *
-         * @param verifyHost {@code true} if enabled
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder verifyHost(final Boolean verifyHost) {
-            setVerifyHost(verifyHost);
-            return this;
-        }
-
-        /**
-         * Sets the chunk size when {@link Protocol#VST} is used.
-         *
-         * @param chunksize size of a chunk in bytes
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder chunksize(final Integer chunksize) {
-            setChunkSize(chunksize);
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of connections the built in connection pool will open per host.
-         *
-         * <p>
-         * Defaults:
-         * </p>
-         *
-         * <pre>
-         * {@link Protocol#VST} == 1
-         * {@link Protocol#HTTP_JSON} == 20
-         * {@link Protocol#HTTP_VPACK} == 20
-         * </pre>
-         *
-         * @param maxConnections max number of connections
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder maxConnections(final Integer maxConnections) {
-            setMaxConnections(maxConnections);
-            return this;
-        }
-
-        /**
-         * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
-         *
-         * @param connectionTtl the maximum time to life of a connection in milliseconds
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder connectionTtl(final Long connectionTtl) {
-            setConnectionTtl(connectionTtl);
-            return this;
-        }
-
-        /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
-         * every {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the
-         * external environment, eg. firewall, intermediate routers, operating system).
-         *
-         * @param keepAliveInterval interval in seconds
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder keepAliveInterval(final Integer keepAliveInterval) {
-            setKeepAliveInterval(keepAliveInterval);
-            return this;
-        }
-
-        /**
-         * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
-         * master discovery.
-         *
-         * <p>
-         * The host list will be used for failover and load balancing.
-         * </p>
-         *
-         * @param acquireHostList whether or not automatically acquire a list of available hosts (default: false)
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder acquireHostList(final Boolean acquireHostList) {
-            setAcquireHostList(acquireHostList);
-            return this;
-        }
-
-        /**
-         * Setting the Interval for acquireHostList
-         *
-         * @param acquireHostListInterval Interval in milliseconds
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
-            setAcquireHostListInterval(acquireHostListInterval);
-            return this;
-        }
-
-        /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup. In case of Active-Failover
-         * deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that would be the default.
-         *
-         * @param loadBalancingStrategy the load balancing strategy to be used (default:
-         *                              {@link LoadBalancingStrategy#NONE}
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
-            setLoadBalancingStrategy(loadBalancingStrategy);
-            return this;
-        }
-
-        /**
-         * Setting the amount of samples kept for queue time metrics
-         *
-         * @param responseQueueTimeSamples amount of samples to keep
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
-            setResponseQueueTimeSamples(responseQueueTimeSamples);
-            return this;
-        }
-
-        /**
-         * Sets the serde for the user data.
-         * This is used to serialize and deserialize all the data payload such as:
-         * - documents, vertexes, edges
-         * - AQL bind vars
-         * - body payload of requests and responses in {@link ArangoDB#execute(Request, Class)}
-         * <p>
-         * However, note that the following types will always be serialized and deserialized using the internal serde:
-         * - {@link com.fasterxml.jackson.databind.JsonNode}
-         * - {@link com.arangodb.util.RawJson}
-         * - {@link com.arangodb.util.RawBytes}
-         * - {@link com.arangodb.entity.BaseDocument}
-         * - {@link com.arangodb.entity.BaseEdgeDocument}
-         *
-         * @param serde custom serde for the user data
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder serde(final ArangoSerde serde) {
-            setUserDataSerde(serde);
-            return this;
         }
 
         /**
@@ -571,16 +344,16 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * @return {@link ArangoDB}
          */
         public ArangoDB build() {
-            if (hosts.isEmpty()) {
+            if (config.getHosts().isEmpty()) {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = this.userDataSerde != null ? this.userDataSerde :
-                    serdeProvider().of(ContentTypeFactory.of(protocol));
-            final InternalSerde serde = InternalSerdeProvider.create(ContentTypeFactory.of(protocol), userSerde);
+            final ArangoSerde userSerde = Optional.ofNullable(config.getUserDataSerde())
+                    .orElseGet(() -> serdeProvider().of(ContentTypeFactory.of(config.getProtocol())));
+            final InternalSerde serde = InternalSerdeProvider.create(ContentTypeFactory.of(config.getProtocol()), userSerde);
 
             int protocolMaxConnections;
-            switch (protocol) {
+            switch (config.getProtocol()) {
                 case VST:
                     protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
                     break;
@@ -596,28 +369,31 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                     throw new IllegalArgumentException();
             }
 
-            final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
+            final int max = Optional.ofNullable(config.getMaxConnections())
+                    .map(maxConnections -> Math.max(1, maxConnections))
+                    .orElse(protocolMaxConnections);
 
-            final ConnectionFactory connectionFactory = Protocol.VST == protocol
-                    ? new VstConnectionFactorySync(timeout, connectionTtl, keepAliveInterval, useSsl, sslContext)
-                    : protocolProvider(protocol).createConnectionFactory(timeout, user, password, useSsl, sslContext, verifyHost, serde,
-                    protocol, connectionTtl);
+            final ConnectionFactory connectionFactory = Protocol.VST == config.getProtocol()
+                    ? new VstConnectionFactorySync(config.getTimeout(), config.getConnectionTtl(), config.getKeepAliveInterval(), config.getUseSsl(), config.getSslContext())
+                    : protocolProvider(config.getProtocol()).createConnectionFactory(config.getTimeout(), config.getUser(), config.getPassword(), config.getUseSsl(),
+                    config.getSslContext(), config.getVerifyHost(), serde,
+                    config.getProtocol(), config.getConnectionTtl());
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);
-            hostHandler.setJwt(jwt);
+            hostHandler.setJwt(config.getJwt());
 
             return new ArangoDBImpl(
-                    new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                            .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunkSize)
-                            .maxConnections(maxConnections).connectionTtl(connectionTtl),
+                    new VstCommunicationSync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser()).password(config.getPassword())
+                            .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext()).chunksize(config.getChunkSize())
+                            .maxConnections(config.getMaxConnections()).connectionTtl(config.getConnectionTtl()),
                     serde,
-                    protocol,
+                    config.getProtocol(),
                     hostResolver,
-                    protocolProvider(protocol),
+                    protocolProvider(config.getProtocol()),
                     hostHandler,
-                    responseQueueTimeSamples, timeout);
+                    config.getResponseQueueTimeSamples(), config.getTimeout());
         }
 
     }
