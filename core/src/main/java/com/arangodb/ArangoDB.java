@@ -20,31 +20,21 @@
 
 package com.arangodb;
 
-import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.config.HostDescription;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
-import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.serde.ContentTypeFactory;
-import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
-import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.serde.ArangoSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.net.ssl.SSLContext;
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -334,10 +324,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      */
     class Builder extends InternalArangoDBBuilder<Builder> {
 
-        public Builder() {
-            super();
-        }
-
         /**
          * Returns an instance of {@link ArangoDB}.
          *
@@ -348,52 +334,21 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = Optional.ofNullable(config.getUserDataSerde())
-                    .orElseGet(() -> serdeProvider().of(ContentTypeFactory.of(config.getProtocol())));
-            final InternalSerde serde = InternalSerdeProvider.create(ContentTypeFactory.of(config.getProtocol()), userSerde);
-
-            int protocolMaxConnections;
-            switch (config.getProtocol()) {
-                case VST:
-                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-                    break;
-                case HTTP_JSON:
-                case HTTP_VPACK:
-                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
-                    break;
-                case HTTP2_JSON:
-                case HTTP2_VPACK:
-                    protocolMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
-
-            final int max = Optional.ofNullable(config.getMaxConnections())
-                    .map(maxConnections -> Math.max(1, maxConnections))
-                    .orElse(protocolMaxConnections);
-
             final ConnectionFactory connectionFactory = Protocol.VST == config.getProtocol()
-                    ? new VstConnectionFactorySync(config.getTimeout(), config.getConnectionTtl(), config.getKeepAliveInterval(), config.getUseSsl(), config.getSslContext())
-                    : protocolProvider(config.getProtocol()).createConnectionFactory(config.getTimeout(), config.getUser(), config.getPassword(), config.getUseSsl(),
-                    config.getSslContext(), config.getVerifyHost(), serde,
-                    config.getProtocol(), config.getConnectionTtl());
+                    ? new VstConnectionFactorySync(config)
+                    : protocolProvider(config.getProtocol()).createConnectionFactory(config);
 
-            final Collection<Host> hostList = createHostList(max, connectionFactory);
-            final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
+            final Collection<Host> hostList = createHostList(config.getMaxConnections(), connectionFactory);
+            final HostResolver hostResolver = createHostResolver(hostList, config.getMaxConnections(), connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);
             hostHandler.setJwt(config.getJwt());
 
             return new ArangoDBImpl(
-                    new VstCommunicationSync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser()).password(config.getPassword())
-                            .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext()).chunksize(config.getChunkSize())
-                            .maxConnections(config.getMaxConnections()).connectionTtl(config.getConnectionTtl()),
-                    serde,
-                    config.getProtocol(),
+                    config,
                     hostResolver,
                     protocolProvider(config.getProtocol()),
-                    hostHandler,
-                    config.getResponseQueueTimeSamples(), config.getTimeout());
+                    hostHandler
+            );
         }
 
     }

@@ -22,14 +22,11 @@ package com.arangodb.internal;
 
 import com.arangodb.*;
 import com.arangodb.entity.*;
-import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.ProtocolProvider;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.SerdeUtils;
-import com.arangodb.internal.velocystream.VstCommunicationSync;
-import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -49,43 +46,18 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final HostHandler hostHandler;
 
-    public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder,
-                        final InternalSerde util, final Protocol protocol, final HostResolver hostResolver, final ProtocolProvider protocolProvider,
-                        final HostHandler hostHandler, int responseQueueTimeSamples,
-                        final int timeoutMs) {
+    public ArangoDBImpl(final ArangoConfig config,
+                        final HostResolver hostResolver, final ProtocolProvider protocolProvider,
+                        final HostHandler hostHandler) {
 
         super(new ArangoExecutorSync(
-                        createProtocol(vstBuilder, hostHandler, util, protocol, protocolProvider),
-                        util, new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
-                util);
+                        protocolProvider.createProtocol(config, hostHandler),
+                        config.getInternalSerde(), new QueueTimeMetricsImpl(config.getResponseQueueTimeSamples()), config.getTimeout()),
+                config.getInternalSerde());
 
         this.hostHandler = hostHandler;
         hostResolver.init(this.executor(), getSerde());
         LOGGER.debug("ArangoDB Client is ready to use");
-    }
-
-    private static CommunicationProtocol createProtocol(
-            final VstCommunicationSync.Builder vstBuilder,
-            final HostHandler hostHandler,
-            final InternalSerde util,
-            final Protocol protocol,
-            final ProtocolProvider protocolProvider) {
-
-        return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
-                : createHTTP(hostHandler, util, protocolProvider);
-    }
-
-    private static CommunicationProtocol createVST(
-            final VstCommunicationSync.Builder builder,
-            final InternalSerde util) {
-        return new VstProtocol(builder.build(util));
-    }
-
-    private static CommunicationProtocol createHTTP(
-            final HostHandler hostHandler,
-            final InternalSerde util,
-            final ProtocolProvider protocolProvider) {
-        return protocolProvider.createProtocol(hostHandler, util);
     }
 
     @Override

@@ -309,41 +309,26 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     class Builder extends InternalArangoDBBuilder<Builder> {
 
-        public Builder() {
-            super();
-        }
-
         /**
          * Returns an instance of {@link ArangoDBAsync}.
          *
          * @return {@link ArangoDBAsync}
          */
         public ArangoDBAsync build() {
+            config.setProtocol(Protocol.VST);
+
             if (config.getHosts().isEmpty()) {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ArangoSerde userSerde = Optional.ofNullable(config.getUserDataSerde())
-                    .orElseGet(() -> serdeProvider().of(ContentType.VPACK));
+            final ArangoSerde userSerde = config.getUserDataSerde();
             final InternalSerde serde = InternalSerdeProvider.create(ContentType.VPACK, userSerde);
 
             final int max = Optional.ofNullable(config.getMaxConnections())
                     .map(maxConnections -> Math.max(1, maxConnections))
                     .orElse(ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT);
-            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(
-                    config.getTimeout(),
-                    config.getConnectionTtl(),
-                    config.getKeepAliveInterval(),
-                    config.getUseSsl(),
-                    config.getSslContext()
-            );
-            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(
-                    config.getTimeout(),
-                    config.getConnectionTtl(),
-                    config.getKeepAliveInterval(),
-                    config.getUseSsl(),
-                    config.getSslContext()
-            );
+            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(config);
+            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(config);
             final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
                     syncConnectionFactory);
             final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
@@ -364,18 +349,11 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationAsync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser())
-                    .password(config.getPassword())
-                    .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext())
-                    .chunksize(config.getChunkSize()).maxConnections(config.getMaxConnections())
-                    .connectionTtl(config.getConnectionTtl());
+            return new VstCommunicationAsync.Builder().hostHandler(hostHandler).config(config);
         }
 
         private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationSync.Builder(hostHandler).timeout(config.getTimeout()).user(config.getUser()).password(config.getPassword())
-                    .jwt(config.getJwt()).useSsl(config.getUseSsl()).sslContext(config.getSslContext()).chunksize(config.getChunkSize())
-                    .maxConnections(config.getMaxConnections())
-                    .connectionTtl(config.getConnectionTtl());
+            return new VstCommunicationSync.Builder().hostHandler(hostHandler).config(config);
         }
 
     }

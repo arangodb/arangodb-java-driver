@@ -21,11 +21,13 @@
 package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
@@ -33,12 +35,9 @@ import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -49,11 +48,8 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
-    private VstCommunicationAsync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                  final String password, final String jwt, final Boolean useSsl,
-                                  final SSLContext sslContext, final InternalSerde util,
-                                  final Integer chunksize, final Integer maxConnections, final Long connectionTtl) {
-        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
+    private VstCommunicationAsync(ArangoConfig config, HostHandler hostHandler) {
+        super(config, hostHandler);
     }
 
     @Override
@@ -68,7 +64,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
         try {
             final Message message = createMessage(request);
             if (LOGGER.isDebugEnabled()) {
-                String body = request.getBody() == null ? "" : util.toJsonString(request.getBody());
+                String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
                 LOGGER.debug("Send Request [id={}]: {} {}", message.getId(), request, body);
             }
             send(message, connection).whenComplete((m, ex) -> {
@@ -107,7 +103,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
                         rfuture.completeExceptionally(e);
                     }
                     if (LOGGER.isDebugEnabled()) {
-                        String body = response.getBody() == null ? "" : util.toJsonString(response.getBody());
+                        String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
                         LOGGER.debug("Received Response [id={}]: {} {}", m.getId(), response, body);
                     }
                     rfuture.complete(response);
@@ -157,71 +153,21 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
 
     public static class Builder {
 
-        private final HostHandler hostHandler;
-        private Integer timeout;
-        private Long connectionTtl;
-        private String user;
-        private String password;
-        private String jwt;
-        private Boolean useSsl;
-        private SSLContext sslContext;
-        private Integer chunksize;
-        private Integer maxConnections;
+        private ArangoConfig config;
+        private HostHandler hostHandler;
 
-        public Builder(final HostHandler hostHandler) {
-            super();
+        public Builder config(final ArangoConfig config) {
+            this.config = config;
+            return this;
+        }
+
+        public Builder hostHandler(final HostHandler hostHandler) {
             this.hostHandler = hostHandler;
-        }
-
-        public Builder timeout(final Integer timeout) {
-            this.timeout = timeout;
             return this;
         }
 
-        public Builder user(final String user) {
-            this.user = user;
-            return this;
-        }
-
-        public Builder password(final String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder jwt(final String jwt) {
-            this.jwt = jwt;
-            return this;
-        }
-
-        public Builder useSsl(final Boolean useSsl) {
-            this.useSsl = useSsl;
-            return this;
-        }
-
-        public Builder sslContext(final SSLContext sslContext) {
-            this.sslContext = sslContext;
-            return this;
-        }
-
-        public Builder chunksize(final Integer chunksize) {
-            this.chunksize = chunksize;
-            return this;
-        }
-
-        public Builder maxConnections(final Integer maxConnections) {
-            this.maxConnections = maxConnections;
-            return this;
-        }
-
-        public Builder connectionTtl(final Long connectionTtl) {
-            this.connectionTtl = connectionTtl;
-            return this;
-        }
-
-        public VstCommunicationAsync build(final InternalSerde util) {
-            return new VstCommunicationAsync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util,
-                    chunksize,
-                    maxConnections, connectionTtl);
+        public VstCommunicationAsync build() {
+            return new VstCommunicationAsync(config, hostHandler);
         }
     }
 

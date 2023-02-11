@@ -22,12 +22,11 @@ package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.async.internal.utils.CompletableFutureUtils;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
-import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 
-import javax.net.ssl.SSLContext;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.FutureTask;
@@ -38,10 +37,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl,
-                               final Integer keepAliveInterval,
-                               final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
-        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
+    private VstConnectionAsync(final ArangoConfig config, final HostDescription host) {
+        super(config, host);
     }
 
     @Override
@@ -70,21 +67,11 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
     }
 
     public static class Builder {
-
-        private MessageStore messageStore;
+        private ArangoConfig config;
         private HostDescription host;
-        private Integer timeout;
-        private Long ttl;
-        private Integer keepAliveInterval;
-        private Boolean useSsl;
-        private SSLContext sslContext;
 
-        public Builder() {
-            super();
-        }
-
-        public Builder messageStore(final MessageStore messageStore) {
-            this.messageStore = messageStore;
+        public Builder config(final ArangoConfig config) {
+            this.config = config;
             return this;
         }
 
@@ -93,33 +80,8 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
             return this;
         }
 
-        public Builder timeout(final Integer timeout) {
-            this.timeout = timeout;
-            return this;
-        }
-
-        public Builder ttl(final Long ttl) {
-            this.ttl = ttl;
-            return this;
-        }
-
-        public Builder keepAliveInterval(final Integer keepAliveInterval) {
-            this.keepAliveInterval = keepAliveInterval;
-            return this;
-        }
-
-        public Builder useSsl(final Boolean useSsl) {
-            this.useSsl = useSsl;
-            return this;
-        }
-
-        public Builder sslContext(final SSLContext sslContext) {
-            this.sslContext = sslContext;
-            return this;
-        }
-
         public VstConnectionAsync build() {
-            return new VstConnectionAsync(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
+            return new VstConnectionAsync(config, host);
         }
     }
 

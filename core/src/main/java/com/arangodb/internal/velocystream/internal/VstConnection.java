@@ -21,10 +21,10 @@
 package com.arangodb.internal.velocystream.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.net.Connection;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.Connection;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class VstConnection<T> implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
     private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
-    protected final MessageStore messageStore;
+    protected final MessageStore messageStore = new MessageStore();
     protected final Integer timeout;
     private final AtomicLong keepAliveId = new AtomicLong();
     private final Long ttl;
@@ -87,21 +87,14 @@ public abstract class VstConnection<T> implements Connection {
     private OutputStream outputStream;
     private InputStream inputStream;
 
-    protected VstConnection(final HostDescription host,
-                            final Integer timeout,
-                            final Long ttl,
-                            final Integer keepAliveInterval,
-                            final Boolean useSsl,
-                            final SSLContext sslContext,
-                            final MessageStore messageStore) {
+    protected VstConnection(final ArangoConfig config, final HostDescription host) {
         super();
+        timeout = config.getTimeout();
+        ttl = config.getConnectionTtl();
+        keepAliveInterval = config.getKeepAliveInterval();
+        useSsl = config.getUseSsl();
+        sslContext = config.getSslContext();
         this.host = host;
-        this.timeout = timeout;
-        this.ttl = ttl;
-        this.keepAliveInterval = keepAliveInterval;
-        this.useSsl = useSsl;
-        this.sslContext = sslContext;
-        this.messageStore = messageStore;
 
         connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
         LOGGER.debug("[" + connectionName + "]: Connection created");

@@ -21,8 +21,7 @@
 package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandle;
@@ -40,7 +39,6 @@ import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected static final String ENCRYPTION_JWT = "jwt";
     protected static final AtomicLong mId = new AtomicLong(0L);
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
-    protected final InternalSerde util;
+    protected final InternalSerde serde;
 
     protected final String user;
     protected final String password;
@@ -64,15 +62,13 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected final HostHandler hostHandler;
     protected volatile String jwt;
 
-    protected VstCommunication(final Integer timeout, final String user, final String password, final String jwt,
-                               final Boolean useSsl, final SSLContext sslContext, final InternalSerde util,
-                               final Integer chunksize, final HostHandler hostHandler) {
-        this.user = user;
-        this.password = password;
-        this.jwt = jwt;
-        this.util = util;
+    protected VstCommunication(final ArangoConfig config, final HostHandler hostHandler) {
+        user = config.getUser();
+        password = config.getPassword();
+        jwt = config.getJwt();
+        serde = config.getInternalSerde();
+        chunksize = config.getChunkSize();
         this.hostHandler = hostHandler;
-        this.chunksize = chunksize;
     }
 
     @SuppressWarnings("unchecked")
@@ -153,11 +149,11 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected abstract R execute(final InternalRequest request, C connection, final int attemptCount);
 
     protected void checkError(final InternalResponse response) {
-        ResponseUtils.checkError(util, response);
+        ResponseUtils.checkError(serde, response);
     }
 
     protected InternalResponse createResponse(final Message message) throws VPackParserException {
-        final InternalResponse response = util.deserialize(message.getHead().toByteArray(), InternalResponse.class);
+        final InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class);
         if (message.getBody() != null) {
             response.setBody(message.getBody().toByteArray());
         }
@@ -168,7 +164,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         request.putHeaderParam("accept", "application/x-velocypack");
         request.putHeaderParam("content-type", "application/x-velocypack");
         final long id = mId.incrementAndGet();
-        return new Message(id, util.serialize(request), request.getBody());
+        return new Message(id, serde.serialize(request), request.getBody());
     }
 
     protected Collection<Chunk> buildChunks(final Message message) {

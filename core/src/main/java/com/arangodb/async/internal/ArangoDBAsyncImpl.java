@@ -73,10 +73,10 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final int timeoutMs
     ) {
 
-        super(new ArangoExecutorAsync(asyncCommBuilder.build(util), util,
+        super(new ArangoExecutorAsync(asyncCommBuilder.build(), util,
                 new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util);
 
-        final VstCommunication<InternalResponse, VstConnectionSync> cacheCom = syncCommBuilder.build(util);
+        final VstCommunication<InternalResponse, VstConnectionSync> cacheCom = syncCommBuilder.build();
 
         cp = new VstProtocol(cacheCom);
         this.asyncHostHandler = asyncHostHandler;

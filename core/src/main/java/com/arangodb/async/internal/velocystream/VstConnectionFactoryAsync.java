@@ -20,12 +20,10 @@
 
 package com.arangodb.async.internal.velocystream;
 
+import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.config.HostDescription;
-import com.arangodb.internal.velocystream.internal.MessageStore;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * @author Mark Vollmary
@@ -34,18 +32,14 @@ public class VstConnectionFactoryAsync implements ConnectionFactory {
 
     private final VstConnectionAsync.Builder builder;
 
-    public VstConnectionFactoryAsync(final Integer timeout, final Long connectionTtl,
-                                     final Integer keepAliveInterval, final Boolean useSsl,
-                                     final SSLContext sslContext) {
+    public VstConnectionFactoryAsync(final ArangoConfig config) {
         super();
-        builder = new VstConnectionAsync.Builder().timeout(timeout).ttl(connectionTtl)
-                .keepAliveInterval(keepAliveInterval).useSsl(useSsl)
-                .sslContext(sslContext);
+        builder = new VstConnectionAsync.Builder().config(config);
     }
 
     @Override
     public Connection create(final HostDescription host) {
-        return builder.messageStore(new MessageStore()).host(host).build();
+        return builder.host(host).build();
     }
 
 }

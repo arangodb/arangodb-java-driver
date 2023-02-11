@@ -1,15 +1,21 @@
 package com.arangodb.internal.config;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.serde.ContentTypeFactory;
+import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.ArangoSerdeProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArangoConfig {
@@ -29,8 +35,34 @@ public class ArangoConfig {
     private Boolean acquireHostList;
     private Integer acquireHostListInterval;
     private LoadBalancingStrategy loadBalancingStrategy;
+    private InternalSerde internalSerde;
     private ArangoSerde userDataSerde;
     private Integer responseQueueTimeSamples;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
+
+    private static ArangoSerdeProvider serdeProvider() {
+        ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
+        Iterator<ArangoSerdeProvider> it = loader.iterator();
+        ArangoSerdeProvider serdeProvider;
+        if (!it.hasNext()) {
+            LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
+                    "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
+            serdeProvider = new InternalSerdeProvider();
+        } else {
+            serdeProvider = it.next();
+            if (it.hasNext()) {
+                throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
+            }
+        }
+        return serdeProvider;
+    }
+
+    public ArangoConfig() {
+        // load default properties
+        loadProperties(new ArangoConfigProperties() {
+        });
+    }
 
     public void loadProperties(final ArangoConfigProperties properties) {
         hosts.addAll(properties.getHosts().orElse(ArangoDefaults.DEFAULT_HOSTS).stream()
@@ -139,7 +171,30 @@ public class ArangoConfig {
     }
 
     public Integer getMaxConnections() {
+        if (maxConnections == null) {
+            maxConnections = getDefaultMaxConnections();
+        }
         return maxConnections;
+    }
+
+    private int getDefaultMaxConnections() {
+        int defaultMaxConnections;
+        switch (getProtocol()) {
+            case VST:
+                defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
+                break;
+            case HTTP_JSON:
+            case HTTP_VPACK:
+                defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+                break;
+            case HTTP2_JSON:
+            case HTTP2_VPACK:
+                defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return defaultMaxConnections;
     }
 
     public void setMaxConnections(Integer maxConnections) {
@@ -187,7 +242,17 @@ public class ArangoConfig {
     }
 
     public ArangoSerde getUserDataSerde() {
+        if (userDataSerde == null) {
+            userDataSerde = serdeProvider().of(ContentTypeFactory.of(getProtocol()));
+        }
         return userDataSerde;
+    }
+
+    public InternalSerde getInternalSerde() {
+        if (internalSerde == null) {
+            internalSerde = InternalSerdeProvider.create(ContentTypeFactory.of(getProtocol()), getUserDataSerde());
+        }
+        return internalSerde;
     }
 
     public void setUserDataSerde(ArangoSerde userDataSerde) {

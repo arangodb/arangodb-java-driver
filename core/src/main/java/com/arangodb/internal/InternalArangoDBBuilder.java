@@ -29,17 +29,14 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.*;
-import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.ArangoSerdeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 
@@ -49,12 +46,6 @@ import java.util.ServiceLoader;
 public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
     protected final ArangoConfig config = new ArangoConfig();
-
-    protected InternalArangoDBBuilder() {
-        // load default properties
-        config.loadProperties(new ArangoConfigProperties() {
-        });
-    }
 
     public T loadProperties(final ArangoConfigProperties properties) {
         config.loadProperties(properties);
@@ -293,23 +284,6 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
             }
         }
         throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
-    }
-
-    protected static ArangoSerdeProvider serdeProvider() {
-        ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
-        Iterator<ArangoSerdeProvider> it = loader.iterator();
-        ArangoSerdeProvider serdeProvider;
-        if (!it.hasNext()) {
-            LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
-                    "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
-            serdeProvider = new InternalSerdeProvider();
-        } else {
-            serdeProvider = it.next();
-            if (it.hasNext()) {
-                throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
-            }
-        }
-        return serdeProvider;
     }
 
     protected HostHandler createHostHandler(final HostResolver hostResolver) {

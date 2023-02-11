@@ -25,6 +25,7 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
@@ -48,10 +49,10 @@ public class HttpCommunication implements Closeable {
     private final InternalSerde serde;
     private final AtomicLong reqCount;
 
-    HttpCommunication(final HostHandler hostHandler, final InternalSerde serde) {
+    HttpCommunication(final HostHandler hostHandler, final ArangoConfig config) {
         super();
         this.hostHandler = hostHandler;
-        this.serde = serde;
+        this.serde = config.getInternalSerde();
         reqCount = new AtomicLong();
     }
 

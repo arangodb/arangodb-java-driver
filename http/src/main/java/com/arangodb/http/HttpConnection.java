@@ -21,8 +21,9 @@
 package com.arangodb.http;
 
 import com.arangodb.*;
-import com.arangodb.internal.net.Connection;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
@@ -56,6 +57,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +75,7 @@ public class HttpConnection implements Connection {
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
-    private final InternalSerde util;
+    private final InternalSerde serde;
     private final ContentType contentType;
     private String auth;
     private final WebClient client;
@@ -84,21 +86,24 @@ public class HttpConnection implements Connection {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final Boolean verifyHost,
-                           final InternalSerde util, final Protocol protocol, final Long ttl) {
+    private HttpConnection(final ArangoConfig config, final HostDescription host) {
         super();
-        this.util = util;
-        this.contentType = ContentTypeFactory.of(protocol);
-        this.timeout = timeout;
+        serde = config.getInternalSerde();
+        Protocol protocol = config.getProtocol();
+        contentType = ContentTypeFactory.of(protocol);
+        timeout = config.getTimeout();
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> {
             Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement());
-            auth = new UsernamePasswordCredentials(user, password != null ? password : "").toHttpAuthorization();
+            auth = new UsernamePasswordCredentials(
+                    config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
+            ).toHttpAuthorization();
             LOGGER.debug("Created Vert.x context");
         });
 
-        int intTtl = ttl == null ? 0 : Math.toIntExact(ttl / 1000);
+        int intTtl = Optional.ofNullable(config.getConnectionTtl())
+                .map(ttl -> Math.toIntExact(ttl / 1000))
+                .orElse(0);
 
         HttpVersion httpVersion = protocol == Protocol.HTTP_JSON || protocol == Protocol.HTTP_VPACK ?
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
@@ -125,10 +130,10 @@ public class HttpConnection implements Connection {
                 .setDefaultPort(host.getPort());
 
 
-        if (Boolean.TRUE.equals(useSsl)) {
+        if (Boolean.TRUE.equals(config.getUseSsl())) {
             SSLContext ctx;
-            if (sslContext != null) {
-                ctx = sslContext;
+            if (config.getSslContext() != null) {
+                ctx = config.getSslContext();
             } else {
                 try {
                     ctx = SSLContext.getDefault();
@@ -140,7 +145,7 @@ public class HttpConnection implements Connection {
             webClientOptions
                     .setSsl(true)
                     .setUseAlpn(true)
-                    .setVerifyHost(verifyHost == null || verifyHost)
+                    .setVerifyHost(config.getVerifyHost())
                     .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
                         public JdkSSLEngineOptions copy() {
@@ -291,7 +296,7 @@ public class HttpConnection implements Connection {
     }
 
     protected void checkError(final InternalResponse response) {
-        ResponseUtils.checkError(util, response);
+        ResponseUtils.checkError(serde, response);
     }
 
     @Override
@@ -302,39 +307,11 @@ public class HttpConnection implements Connection {
     }
 
     public static class Builder {
-        private String user;
-        private String password;
-        private InternalSerde util;
-        private Boolean useSsl;
-        private Protocol protocol;
+        private ArangoConfig config;
         private HostDescription host;
-        private Long ttl;
-        private SSLContext sslContext;
-        private Boolean verifyHost;
-        private Integer timeout;
 
-        public Builder user(final String user) {
-            this.user = user;
-            return this;
-        }
-
-        public Builder password(final String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder serializationUtil(final InternalSerde util) {
-            this.util = util;
-            return this;
-        }
-
-        public Builder useSsl(final Boolean useSsl) {
-            this.useSsl = useSsl;
-            return this;
-        }
-
-        public Builder protocol(final Protocol protocol) {
-            this.protocol = protocol;
+        public Builder config(final ArangoConfig config) {
+            this.config = config;
             return this;
         }
 
@@ -343,29 +320,8 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder ttl(final Long ttl) {
-            this.ttl = ttl;
-            return this;
-        }
-
-        public Builder sslContext(final SSLContext sslContext) {
-            this.sslContext = sslContext;
-            return this;
-        }
-
-        public Builder verifyHost(final Boolean verifyHost) {
-            this.verifyHost = verifyHost;
-            return this;
-        }
-
-        public Builder timeout(final Integer timeout) {
-            this.timeout = timeout;
-            return this;
-        }
-
         public HttpConnection build() {
-            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, verifyHost, util,
-                    protocol, ttl);
+            return new HttpConnection(config, host);
         }
     }
 
