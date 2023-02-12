@@ -60,21 +60,7 @@ public class VstConnectionSync extends VstConnection<Message> {
         sendKeepAlive();
     }
 
-    public static class Builder {
-
-        private ArangoConfig config;
-        private HostDescription host;
-
-        public Builder config(final ArangoConfig config) {
-            this.config = config;
-            return this;
-        }
-
-        public Builder host(final HostDescription host) {
-            this.host = host;
-            return this;
-        }
-
+    public static class Builder extends VstConnection.Builder<Builder> {
         public VstConnectionSync build() {
             return new VstConnectionSync(config, host);
         }

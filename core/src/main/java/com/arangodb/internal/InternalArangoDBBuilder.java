@@ -47,6 +47,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
     private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
     protected final ArangoConfig config = new ArangoConfig();
 
+    @SuppressWarnings("unchecked")
     public T loadProperties(final ArangoConfigProperties properties) {
         config.loadProperties(properties);
         return (T) this;
@@ -59,6 +60,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param port port of the host
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T host(final String host, final int port) {
         config.addHost(new HostDescription(host, port));
         return (T) this;
@@ -70,6 +72,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param timeout timeout in milliseconds
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T timeout(final Integer timeout) {
         config.setTimeout(timeout);
         return (T) this;
@@ -81,6 +84,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param user the user in the database (default: {@code root})
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T user(final String user) {
         config.setUser(user);
         return (T) this;
@@ -92,6 +96,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param password the password of the user in the database (default: {@code null})
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T password(final String password) {
         config.setPassword(password);
         return (T) this;
@@ -103,6 +108,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param jwt token to use (default: {@code null})
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T jwt(final String jwt) {
         config.setJwt(jwt);
         return (T) this;
@@ -114,6 +120,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param useSsl whether or not use SSL (default: {@code false})
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T useSsl(final Boolean useSsl) {
         config.setUseSsl(useSsl);
         return (T) this;
@@ -125,6 +132,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param sslContext SSL context to be used
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T sslContext(final SSLContext sslContext) {
         config.setSslContext(sslContext);
         return (T) this;
@@ -136,6 +144,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param verifyHost {@code true} if enabled
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T verifyHost(final Boolean verifyHost) {
         config.setVerifyHost(verifyHost);
         return (T) this;
@@ -147,6 +156,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param chunksize size of a chunk in bytes
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T chunksize(final Integer chunksize) {
         config.setChunkSize(chunksize);
         return (T) this;
@@ -168,6 +178,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param maxConnections max number of connections
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T maxConnections(final Integer maxConnections) {
         config.setMaxConnections(maxConnections);
         return (T) this;
@@ -179,6 +190,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param connectionTtl the maximum time to life of a connection in milliseconds
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T connectionTtl(final Long connectionTtl) {
         config.setConnectionTtl(connectionTtl);
         return (T) this;
@@ -192,6 +204,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param keepAliveInterval interval in seconds
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T keepAliveInterval(final Integer keepAliveInterval) {
         config.setKeepAliveInterval(keepAliveInterval);
         return (T) this;
@@ -209,6 +222,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param acquireHostList whether or not automatically acquire a list of available hosts (default: false)
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T acquireHostList(final Boolean acquireHostList) {
         config.setAcquireHostList(acquireHostList);
         return (T) this;
@@ -220,6 +234,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param acquireHostListInterval Interval in milliseconds
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T acquireHostListInterval(final Integer acquireHostListInterval) {
         config.setAcquireHostListInterval(acquireHostListInterval);
         return (T) this;
@@ -233,6 +248,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      *                              {@link LoadBalancingStrategy#NONE}
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
         config.setLoadBalancingStrategy(loadBalancingStrategy);
         return (T) this;
@@ -244,6 +260,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param responseQueueTimeSamples amount of samples to keep
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
         config.setResponseQueueTimeSamples(responseQueueTimeSamples);
         return (T) this;
@@ -266,6 +283,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * @param serde custom serde for the user data
      * @return {@link ArangoDB.Builder}
      */
+    @SuppressWarnings("unchecked")
     public T serde(final ArangoSerde serde) {
         config.setUserDataSerde(serde);
         return (T) this;

@@ -21,6 +21,8 @@
 package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.Host;
@@ -34,8 +36,6 @@ import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,5 +193,22 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         this.jwt = jwt;
     }
 
+
+    protected static class Builder<T extends Builder<T>> {
+        protected ArangoConfig config;
+        protected HostHandler hostHandler;
+
+        @SuppressWarnings("unchecked")
+        public T config(final ArangoConfig config) {
+            this.config = config;
+            return (T) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public T hostHandler(final HostHandler hostHandler) {
+            this.hostHandler = hostHandler;
+            return (T) this;
+        }
+    }
 
 }

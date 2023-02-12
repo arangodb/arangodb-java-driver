@@ -306,20 +306,7 @@ public class HttpConnection implements Connection {
         }
     }
 
-    public static class Builder {
-        private ArangoConfig config;
-        private HostDescription host;
-
-        public Builder config(final ArangoConfig config) {
-            this.config = config;
-            return this;
-        }
-
-        public Builder host(final HostDescription host) {
-            this.host = host;
-            return this;
-        }
-
+    public static class Builder extends Connection.Builder<Builder> {
         public HttpConnection build() {
             return new HttpConnection(config, host);
         }

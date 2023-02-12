@@ -20,6 +20,9 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
+
 import java.io.Closeable;
 
 /**
@@ -27,4 +30,23 @@ import java.io.Closeable;
  */
 public interface Connection extends Closeable {
     void setJwt(String jwt);
+
+    abstract class Builder<T extends Builder<T>> {
+
+        protected ArangoConfig config;
+        protected HostDescription host;
+
+        @SuppressWarnings("unchecked")
+        public T config(final ArangoConfig config) {
+            this.config = config;
+            return (T) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public T host(final HostDescription host) {
+            this.host = host;
+            return (T) this;
+        }
+
+    }
 }

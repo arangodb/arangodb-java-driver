@@ -98,25 +98,11 @@ public class VstCommunicationSync extends VstCommunication<InternalResponse, Vst
         checkError(response);
     }
 
-    public static class Builder {
 
-        private  ArangoConfig config;
-        private  HostHandler hostHandler;
-
-        public Builder config(final ArangoConfig config) {
-            this.config = config;
-            return this;
-        }
-
-        public Builder hostHandler(final HostHandler hostHandler) {
-            this.hostHandler = hostHandler;
-            return this;
-        }
-
+    public static class Builder extends VstCommunication.Builder<Builder> {
         public VstCommunication<InternalResponse, VstConnectionSync> build() {
             return new VstCommunicationSync(config, hostHandler);
         }
-
     }
 
 }
