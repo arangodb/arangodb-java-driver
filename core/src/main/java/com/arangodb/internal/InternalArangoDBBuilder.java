@@ -52,11 +52,6 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
         return (T) this;
     }
 
-    public T useProtocol(final Protocol protocol) {
-        config.setProtocol(protocol);
-        return (T) this;
-    }
-
     /**
      * Adds a host to connect to. Multiple hosts can be added to provide fallbacks.
      *
