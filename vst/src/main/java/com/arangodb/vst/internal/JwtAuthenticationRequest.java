@@ -1,4 +1,4 @@
-package com.arangodb.internal.velocystream.internal;
+package com.arangodb.vst.internal;
 
 import com.arangodb.DbName;
 import com.arangodb.internal.InternalRequest;

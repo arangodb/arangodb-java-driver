@@ -1,10 +1,18 @@
 package com.arangodb.internal.net;
 
 
+import com.arangodb.Protocol;
 import com.arangodb.internal.config.ArangoConfig;
+import com.fasterxml.jackson.databind.Module;
 
-public interface AsyncProtocolProvider extends ProtocolProvider {
+public interface AsyncProtocolProvider {
 
-    AsyncCommunication createAsyncCommunication(ArangoConfig config, HostHandler hostHandler);
+    boolean supportsProtocol(Protocol protocol);
+
+    ConnectionFactory createConnectionFactory(ArangoConfig config);
+
+    AsyncCommunication createCommunication(ArangoConfig config, HostHandler hostHandler);
+
+    Module protocolModule();
 
 }

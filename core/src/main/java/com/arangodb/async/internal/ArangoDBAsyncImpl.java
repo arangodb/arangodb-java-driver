@@ -31,10 +31,7 @@ import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.ArangoMetricsImpl;
 import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.config.ArangoConfig;
-import com.arangodb.internal.net.AsyncProtocolProvider;
-import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
@@ -62,11 +59,12 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final ArangoConfig config,
             final HostResolver asyncHostResolver,
             final HostResolver syncHostResolver,
-            final AsyncProtocolProvider protocolProvider,
+            final AsyncProtocolProvider asyncProtocolProvider,
+            final ProtocolProvider protocolProvider,
             final HostHandler asyncHostHandler,
             final HostHandler syncHostHandler
     ) {
-        super(new ArangoExecutorAsync(protocolProvider.createAsyncCommunication(config, asyncHostHandler), config), config.getInternalSerde());
+        super(new ArangoExecutorAsync(asyncProtocolProvider.createCommunication(config, asyncHostHandler), config), config.getInternalSerde());
         cp = protocolProvider.createProtocol(config, syncHostHandler);
         this.asyncHostHandler = asyncHostHandler;
         this.syncHostHandler = syncHostHandler;

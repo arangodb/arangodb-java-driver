@@ -18,13 +18,13 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream;
+package com.arangodb.vst;
 
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
+import com.arangodb.vst.internal.VstConnectionSync;
 
 /**
  * @author Mark Vollmary

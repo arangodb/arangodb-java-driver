@@ -23,11 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.InternalArangoDBBuilder;
-import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.velocystream.VstConnectionFactorySync;
+import com.arangodb.internal.net.*;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -339,19 +335,19 @@ public interface ArangoDB extends ArangoSerdeAccessor {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final ConnectionFactory connectionFactory = Protocol.VST == config.getProtocol()
-                    ? new VstConnectionFactorySync(config)
-                    : protocolProvider(config.getProtocol()).createConnectionFactory(config);
+            ProtocolProvider protocolProvider = protocolProvider(config.getProtocol());
+            config.setProtocolModule(protocolProvider.protocolModule());
 
-            final Collection<Host> hostList = createHostList(config.getMaxConnections(), connectionFactory);
-            final HostResolver hostResolver = createHostResolver(hostList, config.getMaxConnections(), connectionFactory);
-            final HostHandler hostHandler = createHostHandler(hostResolver);
+            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config);
+            Collection<Host> hostList = createHostList(config.getMaxConnections(), connectionFactory);
+            HostResolver hostResolver = createHostResolver(hostList, config.getMaxConnections(), connectionFactory);
+            HostHandler hostHandler = createHostHandler(hostResolver);
             hostHandler.setJwt(config.getJwt());
 
             return new ArangoDBImpl(
                     config,
                     hostResolver,
-                    protocolProvider(config.getProtocol()),
+                    protocolProvider,
                     hostHandler
             );
         }

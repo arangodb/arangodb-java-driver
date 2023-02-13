@@ -18,13 +18,13 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream;
+package com.arangodb.vst;
 
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
+import com.arangodb.vst.internal.VstConnectionSync;
 
 import java.io.IOException;
 

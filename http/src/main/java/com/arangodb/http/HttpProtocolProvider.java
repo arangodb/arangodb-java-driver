@@ -6,6 +6,7 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.ProtocolProvider;
+import com.fasterxml.jackson.databind.Module;
 
 public class HttpProtocolProvider implements ProtocolProvider {
 
@@ -26,4 +27,10 @@ public class HttpProtocolProvider implements ProtocolProvider {
     public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
         return new HttpProtocol(new HttpCommunication(hostHandler, config));
     }
+
+    @Override
+    public Module protocolModule() {
+        return null;
+    }
+
 }

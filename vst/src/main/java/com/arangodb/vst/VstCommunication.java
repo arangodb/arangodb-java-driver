@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream;
+package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.InternalRequest;
@@ -31,11 +31,11 @@ import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.internal.velocystream.internal.Chunk;
-import com.arangodb.internal.velocystream.internal.Message;
-import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
+import com.arangodb.vst.internal.Chunk;
+import com.arangodb.vst.internal.Message;
+import com.arangodb.vst.internal.VstConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

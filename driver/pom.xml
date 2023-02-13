@@ -191,6 +191,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>vst-protocol</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>

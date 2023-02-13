@@ -22,15 +22,9 @@ package com.arangodb.async;
 
 import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
-import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.*;
-import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
-import com.arangodb.internal.net.AsyncProtocolProvider;
-import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.velocystream.VstConnectionFactorySync;
+import com.arangodb.internal.net.*;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -38,7 +32,6 @@ import com.arangodb.model.UserUpdateOptions;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 
@@ -322,30 +315,33 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
          * @return {@link ArangoDBAsync}
          */
         public ArangoDBAsync build() {
-            config.setProtocol(Protocol.VST);
-
             if (config.getHosts().isEmpty()) {
                 throw new ArangoDBException("No host has been set!");
             }
 
-            final int max = Optional.ofNullable(config.getMaxConnections())
-                    .map(maxConnections -> Math.max(1, maxConnections))
-                    .orElse(ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT);
-            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(config);
-            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(config);
-            final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
-                    syncConnectionFactory);
+            AsyncProtocolProvider asyncProtocolProvider = asyncProtocolProvider(Protocol.VST);
+            ProtocolProvider protocolProvider = protocolProvider(Protocol.VST);
+
+            config.setProtocol(Protocol.VST);
+            config.setProtocolModule(protocolProvider.protocolModule());
+
+            final int max = config.getMaxConnections();
+            final ConnectionFactory asyncConnectionFactory = asyncProtocolProvider.createConnectionFactory(config);
+            final ConnectionFactory syncConnectionFactory = protocolProvider.createConnectionFactory(config);
             final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
                     asyncConnectionFactory);
-            final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
+            final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
+                    syncConnectionFactory);
             final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
+            final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
             return new ArangoDBAsyncImpl(
-                config,
-                asyncHostResolver,
-                syncHostResolver,
-                asyncProtocolProvider(Protocol.VST),
-                asyncHostHandler,
-                syncHostHandler
+                    config,
+                    asyncHostResolver,
+                    syncHostResolver,
+                    asyncProtocolProvider,
+                    protocolProvider,
+                    asyncHostHandler,
+                    syncHostHandler
             );
         }
     }

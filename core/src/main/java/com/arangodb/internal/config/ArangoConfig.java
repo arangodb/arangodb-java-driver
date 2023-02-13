@@ -11,6 +11,7 @@ import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
+import com.fasterxml.jackson.databind.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class ArangoConfig {
     private InternalSerde internalSerde;
     private ArangoSerde userDataSerde;
     private Integer responseQueueTimeSamples;
+    private Module protocolModule;
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
@@ -250,7 +252,7 @@ public class ArangoConfig {
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = InternalSerdeProvider.create(ContentTypeFactory.of(getProtocol()), getUserDataSerde());
+            internalSerde = InternalSerdeProvider.create(ContentTypeFactory.of(getProtocol()), getUserDataSerde(), protocolModule);
         }
         return internalSerde;
     }
@@ -265,5 +267,9 @@ public class ArangoConfig {
 
     public void setResponseQueueTimeSamples(Integer responseQueueTimeSamples) {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
+    }
+
+    public void setProtocolModule(Module m) {
+        protocolModule = m;
     }
 }

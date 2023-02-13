@@ -22,11 +22,6 @@ package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +30,6 @@ import java.util.List;
  * @author Mark Vollmary
  */
 public class ConnectionPoolImpl implements ConnectionPool {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPoolImpl.class);
 
     private final HostDescription host;
     private final int maxConnections;
@@ -78,10 +71,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
         } else {
             final int index = Math.floorMod(current++, connections.size());
             connection = connections.get(index);
-        }
-
-        if (connection instanceof VstConnectionSync) {
-            LOGGER.debug("Return Connection {}", ((VstConnection<?>) connection).getConnectionName());
         }
 
         return connection;

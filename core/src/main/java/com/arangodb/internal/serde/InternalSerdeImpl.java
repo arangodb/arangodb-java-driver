@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -29,12 +30,15 @@ final class InternalSerdeImpl implements InternalSerde {
     private final ArangoSerde userSerde;
     private final ObjectMapper mapper;
 
-    InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde) {
+    InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde, final Module protocolModule) {
         this.mapper = mapper;
         this.userSerde = userSerde;
         mapper.deactivateDefaultTyping();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.registerModule(InternalModule.INSTANCE.get());
+        if (protocolModule != null) {
+            mapper.registerModule(protocolModule);
+        }
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         mapper.setAnnotationIntrospector(new InternalAnnotationIntrospector(
                 new UserDataSerializer(this),

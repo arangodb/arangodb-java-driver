@@ -3,8 +3,6 @@ package com.arangodb.internal.serde;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
-import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
@@ -36,32 +34,6 @@ public final class InternalSerializers {
             }
         }
     };
-    static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST =
-            new JsonSerializer<AuthenticationRequest>() {
-                @Override
-                public void serialize(AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                    gen.writeStartArray();
-                    gen.writeNumber(value.getVersion());
-                    gen.writeNumber(value.getType());
-                    gen.writeString(value.getEncryption());
-                    gen.writeString(value.getUser());
-                    gen.writeString(value.getPassword());
-                    gen.writeEndArray();
-                }
-            };
-    static final JsonSerializer<JwtAuthenticationRequest> JWT_AUTHENTICATION_REQUEST =
-            new JsonSerializer<JwtAuthenticationRequest>() {
-                @Override
-                public void serialize(JwtAuthenticationRequest value, JsonGenerator gen,
-                                      SerializerProvider serializers) throws IOException {
-                    gen.writeStartArray();
-                    gen.writeNumber(value.getVersion());
-                    gen.writeNumber(value.getType());
-                    gen.writeString(value.getEncryption());
-                    gen.writeString(value.getToken());
-                    gen.writeEndArray();
-                }
-            };
     static final JsonSerializer<InternalRequest> REQUEST = new JsonSerializer<InternalRequest>() {
         @Override
         public void serialize(InternalRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
