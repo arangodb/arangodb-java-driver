@@ -26,23 +26,20 @@ import com.arangodb.Request;
 import com.arangodb.Response;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
-import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.entity.*;
-import com.arangodb.internal.*;
+import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.ArangoMetricsImpl;
+import com.arangodb.internal.InternalArangoDB;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.AsyncProtocolProvider;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.SerdeUtils;
-import com.arangodb.internal.velocystream.VstCommunication;
-import com.arangodb.internal.velocystream.VstCommunicationSync;
-import com.arangodb.internal.velocystream.VstProtocol;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.internal.InternalResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,31 +59,21 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     private final HostHandler syncHostHandler;
 
     public ArangoDBAsyncImpl(
-            final VstCommunicationAsync.Builder asyncCommBuilder,
-            final InternalSerde util,
-            final VstCommunicationSync.Builder syncCommBuilder,
+            final ArangoConfig config,
             final HostResolver asyncHostResolver,
             final HostResolver syncHostResolver,
+            final AsyncProtocolProvider protocolProvider,
             final HostHandler asyncHostHandler,
-            final HostHandler syncHostHandler,
-            final int responseQueueTimeSamples,
-            final int timeoutMs
+            final HostHandler syncHostHandler
     ) {
-
-        super(new ArangoExecutorAsync(asyncCommBuilder.build(), util,
-                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util);
-
-        final VstCommunication<InternalResponse, VstConnectionSync> cacheCom = syncCommBuilder.build();
-
-        cp = new VstProtocol(cacheCom);
+        super(new ArangoExecutorAsync(protocolProvider.createAsyncCommunication(config, asyncHostHandler), config), config.getInternalSerde());
+        cp = protocolProvider.createProtocol(config, syncHostHandler);
         this.asyncHostHandler = asyncHostHandler;
         this.syncHostHandler = syncHostHandler;
 
-        ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util,
-                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs);
-        asyncHostResolver.init(arangoExecutorSync, util);
-        syncHostResolver.init(arangoExecutorSync, util);
-
+        ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, config);
+        asyncHostResolver.init(arangoExecutorSync, config.getInternalSerde());
+        syncHostResolver.init(arangoExecutorSync, config.getInternalSerde());
     }
 
     @Override

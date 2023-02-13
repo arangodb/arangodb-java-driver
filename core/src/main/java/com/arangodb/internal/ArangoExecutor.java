@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.QueueTimeMetrics;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
 
 import java.lang.reflect.Type;
@@ -34,11 +35,11 @@ public abstract class ArangoExecutor {
     private final InternalSerde serde;
     private final String timeoutS;
 
-    protected ArangoExecutor(final InternalSerde serde, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+    protected ArangoExecutor(final ArangoConfig config) {
         super();
-        this.qtMetrics = qtMetrics;
-        this.serde = serde;
-        timeoutS = timeoutMs >= 1000 ? Integer.toString(timeoutMs / 1000) : null;
+        qtMetrics = new QueueTimeMetricsImpl(config.getResponseQueueTimeSamples());
+        serde = config.getInternalSerde();
+        timeoutS = config.getTimeout() >= 1000 ? Integer.toString(config.getTimeout() / 1000) : null;
     }
 
     protected <T> T createResult(final Type type, final InternalResponse response) {

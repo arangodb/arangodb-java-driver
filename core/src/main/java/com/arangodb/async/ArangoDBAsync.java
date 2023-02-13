@@ -22,27 +22,24 @@ package com.arangodb.async;
 
 import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
-import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
+import com.arangodb.internal.net.AsyncProtocolProvider;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
-import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.serde.ArangoSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -309,6 +306,16 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     class Builder extends InternalArangoDBBuilder<Builder> {
 
+        private AsyncProtocolProvider asyncProtocolProvider(Protocol protocol) {
+            ServiceLoader<AsyncProtocolProvider> loader = ServiceLoader.load(AsyncProtocolProvider.class);
+            for (AsyncProtocolProvider p : loader) {
+                if (p.supportsProtocol(protocol)) {
+                    return p;
+                }
+            }
+            throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
+        }
+
         /**
          * Returns an instance of {@link ArangoDBAsync}.
          *
@@ -320,9 +327,6 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             if (config.getHosts().isEmpty()) {
                 throw new ArangoDBException("No host has been set!");
             }
-
-            final ArangoSerde userSerde = config.getUserDataSerde();
-            final InternalSerde serde = InternalSerdeProvider.create(ContentType.VPACK, userSerde);
 
             final int max = Optional.ofNullable(config.getMaxConnections())
                     .map(maxConnections -> Math.max(1, maxConnections))
@@ -336,25 +340,13 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
             final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
             return new ArangoDBAsyncImpl(
-                    asyncBuilder(asyncHostHandler),
-                    serde,
-                    syncBuilder(syncHostHandler),
-                    asyncHostResolver,
-                    syncHostResolver,
-                    asyncHostHandler,
-                    syncHostHandler,
-                    config.getResponseQueueTimeSamples(),
-                    config.getTimeout()
+                config,
+                asyncHostResolver,
+                syncHostResolver,
+                asyncProtocolProvider(Protocol.VST),
+                asyncHostHandler,
+                syncHostHandler
             );
         }
-
-        private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationAsync.Builder().hostHandler(hostHandler).config(config);
-        }
-
-        private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
-            return new VstCommunicationSync.Builder().hostHandler(hostHandler).config(config);
-        }
-
     }
 }

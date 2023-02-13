@@ -49,12 +49,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     public ArangoDBImpl(final ArangoConfig config,
                         final HostResolver hostResolver, final ProtocolProvider protocolProvider,
                         final HostHandler hostHandler) {
-
-        super(new ArangoExecutorSync(
-                        protocolProvider.createProtocol(config, hostHandler),
-                        config.getInternalSerde(), new QueueTimeMetricsImpl(config.getResponseQueueTimeSamples()), config.getTimeout()),
-                config.getInternalSerde());
-
+        super(new ArangoExecutorSync(protocolProvider.createProtocol(config, hostHandler), config), config.getInternalSerde());
         this.hostHandler = hostHandler;
         hostResolver.init(this.executor(), getSerde());
         LOGGER.debug("ArangoDB Client is ready to use");

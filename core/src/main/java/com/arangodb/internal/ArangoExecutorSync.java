@@ -22,9 +22,9 @@ package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.MetaAware;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.serde.InternalSerde;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +40,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
     private final CommunicationProtocol protocol;
 
-    public ArangoExecutorSync(final CommunicationProtocol protocol, final InternalSerde serde,
-                              final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
-        super(serde, qtMetrics, timeoutMs);
+    public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoConfig config) {
+        super(config);
         this.protocol = protocol;
     }
 

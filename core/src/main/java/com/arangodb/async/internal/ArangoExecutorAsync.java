@@ -21,12 +21,11 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
-import com.arangodb.internal.QueueTimeMetricsImpl;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.AsyncCommunication;
+import com.arangodb.internal.net.HostHandle;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -40,12 +39,11 @@ import java.util.concurrent.Executors;
  */
 public class ArangoExecutorAsync extends ArangoExecutor {
 
-    private final VstCommunicationAsync communication;
+    private final AsyncCommunication communication;
     private final ExecutorService outgoingExecutor = Executors.newSingleThreadExecutor();
 
-    public ArangoExecutorAsync(final VstCommunicationAsync communication, final InternalSerde util,
-                               final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
-        super(util, qtMetrics, timeoutMs);
+    public ArangoExecutorAsync(final AsyncCommunication communication, final ArangoConfig config) {
+        super(config);
         this.communication = communication;
     }
 

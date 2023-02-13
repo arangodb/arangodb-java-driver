@@ -26,6 +26,7 @@ import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.AsyncCommunication;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
@@ -44,7 +45,9 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
-public class VstCommunicationAsync extends VstCommunication<CompletableFuture<InternalResponse>, VstConnectionAsync> {
+public class VstCommunicationAsync
+        extends VstCommunication<CompletableFuture<InternalResponse>, VstConnectionAsync>
+        implements AsyncCommunication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
