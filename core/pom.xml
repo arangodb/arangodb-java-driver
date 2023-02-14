@@ -23,10 +23,6 @@
             <artifactId>serde-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>jackson-serde</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -41,11 +37,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>jackson-dataformat-velocypack</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

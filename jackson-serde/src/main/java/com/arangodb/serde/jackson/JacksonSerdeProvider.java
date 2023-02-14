@@ -4,16 +4,9 @@ import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerdeProvider;
 import com.arangodb.serde.jackson.internal.JacksonMapperProvider;
 import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ServiceLoader;
 
 public class JacksonSerdeProvider implements ArangoSerdeProvider {
-
-    private final static Logger LOG = LoggerFactory.getLogger(JacksonSerdeProvider.class);
 
     /**
      * Creates a new JacksonSerde with default settings for the specified data type.
@@ -25,8 +18,7 @@ public class JacksonSerdeProvider implements ArangoSerdeProvider {
     @Override
     public JacksonSerde of(final ContentType contentType) {
         JacksonSerde serde = create(JacksonMapperProvider.of(contentType));
-        ServiceLoader<Module> loader = ServiceLoader.load(Module.class);
-        serde.configure(mapper -> mapper.registerModules(loader));
+        serde.configure(mapper -> mapper.registerModules(ObjectMapper.findModules()));
         return serde;
     }
 
