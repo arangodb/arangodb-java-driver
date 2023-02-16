@@ -22,6 +22,7 @@ package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.List;
 public class ConnectionPoolImpl implements ConnectionPool {
 
     private final HostDescription host;
+    private final ArangoConfig config;
     private final int maxConnections;
     private final List<Connection> connections;
     private final ConnectionFactory factory;
@@ -39,11 +41,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private volatile String jwt = null;
     private boolean closed = false;
 
-    public ConnectionPoolImpl(final HostDescription host, final Integer maxConnections,
-                              final ConnectionFactory factory) {
+    public ConnectionPoolImpl(final HostDescription host, final ArangoConfig config, final ConnectionFactory factory) {
         super();
         this.host = host;
-        this.maxConnections = maxConnections;
+        this.config = config;
+        this.maxConnections = config.getMaxConnections();
         this.factory = factory;
         connections = new ArrayList<>();
         current = 0;
@@ -51,7 +53,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     @Override
     public Connection createConnection(final HostDescription host) {
-        Connection c = factory.create(host);
+        Connection c = factory.create(config, host);
         c.setJwt(jwt);
         return c;
     }

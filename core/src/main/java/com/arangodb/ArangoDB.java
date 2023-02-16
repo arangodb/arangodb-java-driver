@@ -338,9 +338,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             ProtocolProvider protocolProvider = protocolProvider(config.getProtocol());
             config.setProtocolModule(protocolProvider.protocolModule());
 
-            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config);
-            Collection<Host> hostList = createHostList(config.getMaxConnections(), connectionFactory);
-            HostResolver hostResolver = createHostResolver(hostList, config.getMaxConnections(), connectionFactory);
+            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory();
+            Collection<Host> hostList = createHostList(connectionFactory);
+            HostResolver hostResolver = createHostResolver(hostList, connectionFactory);
             HostHandler hostHandler = createHostHandler(hostResolver);
             hostHandler.setJwt(config.getJwt());
 

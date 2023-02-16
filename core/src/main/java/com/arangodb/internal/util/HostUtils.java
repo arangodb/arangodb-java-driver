@@ -21,6 +21,7 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.*;
 
 /**
@@ -45,8 +46,8 @@ public final class HostUtils {
 
     public static Host createHost(
             final HostDescription description,
-            final int maxConnections,
+            final ArangoConfig config,
             final ConnectionFactory factory) {
-        return new HostImpl(new ConnectionPoolImpl(description, maxConnections, factory), description);
+        return new HostImpl(new ConnectionPoolImpl(description, config, factory), description);
     }
 }

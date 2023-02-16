@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.InternalRequest;
@@ -44,7 +45,7 @@ public class ExtendedHostResolver implements HostResolver {
 
     private final HostSet hosts;
 
-    private final Integer maxConnections;
+    private final ArangoConfig config;
     private final ConnectionFactory connectionFactory;
     private final Integer acquireHostListInterval;
     private long lastUpdate;
@@ -52,12 +53,12 @@ public class ExtendedHostResolver implements HostResolver {
     private InternalSerde arangoSerialization;
 
 
-    public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
+    public ExtendedHostResolver(final List<Host> hosts, final ArangoConfig config,
                                 final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
 
         this.acquireHostListInterval = acquireHostListInterval;
         this.hosts = new HostSet(hosts);
-        this.maxConnections = maxConnections;
+        this.config = config;
         this.connectionFactory = connectionFactory;
 
         lastUpdate = 0;
@@ -94,12 +95,12 @@ public class ExtendedHostResolver implements HostResolver {
                     final String[] s = endpoint.replaceAll(".*://", "").split(":");
                     if (s.length == 2) {
                         final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
-                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                        hosts.addHost(HostUtils.createHost(description, config, connectionFactory));
                     } else if (s.length == 4) {
                         // IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
                         // globally
                         final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
-                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                        hosts.addHost(HostUtils.createHost(description, config, connectionFactory));
                     } else {
                         LOGGER.warn("Skip Endpoint (Missing Port) {}", endpoint);
                     }

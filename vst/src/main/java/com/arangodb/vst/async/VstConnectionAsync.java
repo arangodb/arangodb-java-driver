@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    private VstConnectionAsync(final ArangoConfig config, final HostDescription host) {
+    VstConnectionAsync(final ArangoConfig config, final HostDescription host) {
         super(config, host);
     }
 
@@ -64,12 +64,6 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
     @Override
     protected void doKeepAlive() {
         sendKeepAlive().join();
-    }
-
-    public static class Builder extends VstConnection.Builder<Builder> {
-        public VstConnectionAsync build() {
-            return new VstConnectionAsync(config, host);
-        }
     }
 
 }

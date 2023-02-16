@@ -21,12 +21,11 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.config.ArangoConfig;
 
 /**
  * @author Mark Vollmary
  */
 public interface ConnectionFactory {
-
-    Connection create(final HostDescription host);
-
+    Connection create(ArangoConfig config, HostDescription host);
 }

@@ -15,8 +15,8 @@ public class VstProtocolProvider implements ProtocolProvider {
     }
 
     @Override
-    public ConnectionFactory createConnectionFactory(ArangoConfig config) {
-        return new VstConnectionFactorySync(config);
+    public ConnectionFactory createConnectionFactory() {
+        return new VstConnectionFactorySync();
     }
 
     @Override

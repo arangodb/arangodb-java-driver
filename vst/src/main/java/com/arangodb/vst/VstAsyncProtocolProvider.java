@@ -14,8 +14,8 @@ public class VstAsyncProtocolProvider implements AsyncProtocolProvider {
     }
 
     @Override
-    public ConnectionFactory createConnectionFactory(ArangoConfig config) {
-        return new VstConnectionFactoryAsync(config);
+    public ConnectionFactory createConnectionFactory() {
+        return new VstConnectionFactoryAsync();
     }
 
     @Override

@@ -9,7 +9,7 @@ public interface AsyncProtocolProvider {
 
     boolean supportsProtocol(Protocol protocol);
 
-    ConnectionFactory createConnectionFactory(ArangoConfig config);
+    ConnectionFactory createConnectionFactory();
 
     AsyncCommunication createCommunication(ArangoConfig config, HostHandler hostHandler);
 

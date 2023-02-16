@@ -9,7 +9,7 @@ public interface ProtocolProvider {
 
     boolean supportsProtocol(Protocol protocol);
 
-    ConnectionFactory createConnectionFactory(ArangoConfig config);
+    ConnectionFactory createConnectionFactory();
 
     CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler);
 

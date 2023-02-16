@@ -29,17 +29,8 @@ import com.arangodb.internal.net.ConnectionFactory;
  * @author Mark Vollmary
  */
 public class HttpConnectionFactory implements ConnectionFactory {
-
-    private final HttpConnection.Builder builder;
-
-    public HttpConnectionFactory(final ArangoConfig config) {
-        super();
-        builder = new HttpConnection.Builder().config(config);
-    }
-
     @Override
-    public Connection create(final HostDescription host) {
-        return builder.host(host).build();
+    public Connection create(final ArangoConfig config, final HostDescription host) {
+        return new HttpConnection(config, host);
     }
-
 }

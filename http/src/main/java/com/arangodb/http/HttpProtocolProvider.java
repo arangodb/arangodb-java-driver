@@ -19,8 +19,8 @@ public class HttpProtocolProvider implements ProtocolProvider {
     }
 
     @Override
-    public ConnectionFactory createConnectionFactory(final ArangoConfig config) {
-        return new HttpConnectionFactory(config);
+    public ConnectionFactory createConnectionFactory() {
+        return new HttpConnectionFactory();
     }
 
     @Override

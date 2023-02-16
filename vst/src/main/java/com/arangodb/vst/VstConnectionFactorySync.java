@@ -31,15 +31,8 @@ import com.arangodb.vst.internal.VstConnectionSync;
  */
 public class VstConnectionFactorySync implements ConnectionFactory {
 
-    private final VstConnectionSync.Builder builder;
-
-    public VstConnectionFactorySync(final ArangoConfig config) {
-        builder = new VstConnectionSync.Builder().config(config);
-    }
-
     @Override
-    public Connection create(final HostDescription host) {
-        return builder.host(host).build();
+    public Connection create(final ArangoConfig config, final HostDescription host) {
+        return new VstConnectionSync(config, host);
     }
-
 }

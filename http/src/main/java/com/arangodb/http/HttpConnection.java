@@ -86,7 +86,7 @@ public class HttpConnection implements Connection {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    private HttpConnection(final ArangoConfig config, final HostDescription host) {
+    HttpConnection(final ArangoConfig config, final HostDescription host) {
         super();
         serde = config.getInternalSerde();
         Protocol protocol = config.getProtocol();
@@ -303,12 +303,6 @@ public class HttpConnection implements Connection {
     public void setJwt(String jwt) {
         if (jwt != null) {
             vertx.runOnContext(e -> auth = new TokenCredentials(jwt).toHttpAuthorization());
-        }
-    }
-
-    public static class Builder extends Connection.Builder<Builder> {
-        public HttpConnection build() {
-            return new HttpConnection(config, host);
         }
     }
 

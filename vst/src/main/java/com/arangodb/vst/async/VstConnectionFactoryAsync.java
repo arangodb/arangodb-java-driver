@@ -30,16 +30,8 @@ import com.arangodb.internal.net.ConnectionFactory;
  */
 public class VstConnectionFactoryAsync implements ConnectionFactory {
 
-    private final VstConnectionAsync.Builder builder;
-
-    public VstConnectionFactoryAsync(final ArangoConfig config) {
-        super();
-        builder = new VstConnectionAsync.Builder().config(config);
-    }
-
     @Override
-    public Connection create(final HostDescription host) {
-        return builder.host(host).build();
+    public Connection create(final ArangoConfig config, final HostDescription host) {
+        return new VstConnectionAsync(config, host);
     }
-
 }

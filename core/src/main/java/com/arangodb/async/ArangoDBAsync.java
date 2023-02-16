@@ -323,15 +323,12 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
             ProtocolProvider protocolProvider = protocolProvider(Protocol.VST);
 
             config.setProtocol(Protocol.VST);
-            config.setProtocolModule(protocolProvider.protocolModule());
+            config.setProtocolModule(asyncProtocolProvider.protocolModule());
 
-            final int max = config.getMaxConnections();
-            final ConnectionFactory asyncConnectionFactory = asyncProtocolProvider.createConnectionFactory(config);
-            final ConnectionFactory syncConnectionFactory = protocolProvider.createConnectionFactory(config);
-            final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
-                    asyncConnectionFactory);
-            final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
-                    syncConnectionFactory);
+            final ConnectionFactory asyncConnectionFactory = asyncProtocolProvider.createConnectionFactory();
+            final ConnectionFactory syncConnectionFactory = protocolProvider.createConnectionFactory();
+            final HostResolver asyncHostResolver = createHostResolver(createHostList(asyncConnectionFactory), asyncConnectionFactory);
+            final HostResolver syncHostResolver = createHostResolver(createHostList(syncConnectionFactory), syncConnectionFactory);
             final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
             final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
             return new ArangoDBAsyncImpl(

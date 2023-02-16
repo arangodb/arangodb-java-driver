@@ -326,12 +326,11 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
         return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
     }
 
-    protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,
-                                              final ConnectionFactory connectionFactory) {
+    protected HostResolver createHostResolver(final Collection<Host> hosts, final ConnectionFactory connectionFactory) {
         Boolean acquireHostList = config.getAcquireHostList();
         if (acquireHostList != null && acquireHostList) {
             LOG.debug("acquireHostList -> Use ExtendedHostResolver");
-            return new ExtendedHostResolver(new ArrayList<>(hosts), maxConnections, connectionFactory,
+            return new ExtendedHostResolver(new ArrayList<>(hosts), config, connectionFactory,
                     config.getAcquireHostListInterval());
         } else {
             LOG.debug("Use SimpleHostResolver");
@@ -340,12 +339,10 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
 
     }
 
-    protected <C extends Connection> Collection<Host> createHostList(
-            final int maxConnections,
-            final ConnectionFactory connectionFactory) {
+    protected <C extends Connection> Collection<Host> createHostList(final ConnectionFactory connectionFactory) {
         final Collection<Host> hostList = new ArrayList<>();
         for (final HostDescription host : config.getHosts()) {
-            hostList.add(HostUtils.createHost(host, maxConnections, connectionFactory));
+            hostList.add(HostUtils.createHost(host, config, connectionFactory));
         }
         return hostList;
     }
