@@ -23,12 +23,6 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>serde-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>

@@ -12,7 +12,6 @@
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde</module>
-        <module>serde-api</module>
         <module>http</module>
         <module>vst</module>
     </modules>
@@ -126,11 +125,6 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>vst-protocol</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>serde-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

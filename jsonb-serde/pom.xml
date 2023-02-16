@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.arangodb</groupId>
-            <artifactId>serde-api</artifactId>
+            <artifactId>core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
