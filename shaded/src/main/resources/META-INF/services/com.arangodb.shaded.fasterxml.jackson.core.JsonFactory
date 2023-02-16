@@ -1,0 +1,2 @@
+com.arangodb.shaded.fasterxml.jackson.core.JsonFactory
+com.arangodb.shaded.jackson.dataformat.velocypack.VPackFactory
