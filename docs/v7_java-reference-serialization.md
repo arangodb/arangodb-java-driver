@@ -38,7 +38,7 @@ The default user-data serde is `JacksonSerde`, which is provided by the module `
 This is used by default from the driver, if no custom serde is registered explicitly.
 It is implemented delegating [Jackson](https://github.com/FasterXML/jackson) `ObjectMapper`, therefore it is compatible 
 with Jackson Streaming, Data Binding and Tree Model API.
-It supports both `JSON` and `VPACK` data formats. To use `VPACK`, the optional dependency on
+It supports both `JSON` and `VPACK` data formats. To use `VPACK`, the additional dependency on
 [jackson-dataformat-velocypack](https://github.com/arangodb/jackson-dataformat-velocypack) is required.
 
 
