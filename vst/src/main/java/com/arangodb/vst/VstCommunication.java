@@ -193,22 +193,4 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         this.jwt = jwt;
     }
 
-
-    protected static class Builder<T extends Builder<T>> {
-        protected ArangoConfig config;
-        protected HostHandler hostHandler;
-
-        @SuppressWarnings("unchecked")
-        public T config(final ArangoConfig config) {
-            this.config = config;
-            return (T) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public T hostHandler(final HostHandler hostHandler) {
-            this.hostHandler = hostHandler;
-            return (T) this;
-        }
-    }
-
 }

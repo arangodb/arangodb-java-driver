@@ -20,7 +20,7 @@ public class VstAsyncProtocolProvider implements AsyncProtocolProvider {
 
     @Override
     public AsyncCommunication createCommunication(final ArangoConfig config, final HostHandler hostHandler) {
-        return new VstCommunicationAsync.Builder().config(config).hostHandler(hostHandler).build();
+        return new VstCommunicationAsync(config, hostHandler);
     }
 
     @Override

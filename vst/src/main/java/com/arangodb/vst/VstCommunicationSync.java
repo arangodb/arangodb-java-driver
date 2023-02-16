@@ -44,7 +44,7 @@ public class VstCommunicationSync extends VstCommunication<InternalResponse, Vst
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
 
-    protected VstCommunicationSync(final ArangoConfig config, final HostHandler hostHandler) {
+    public VstCommunicationSync(final ArangoConfig config, final HostHandler hostHandler) {
         super(config, hostHandler);
     }
 
@@ -96,13 +96,6 @@ public class VstCommunicationSync extends VstCommunication<InternalResponse, Vst
         }
         final InternalResponse response = execute(authRequest, connection);
         checkError(response);
-    }
-
-
-    public static class Builder extends VstCommunication.Builder<Builder> {
-        public VstCommunication<InternalResponse, VstConnectionSync> build() {
-            return new VstCommunicationSync(config, hostHandler);
-        }
     }
 
 }

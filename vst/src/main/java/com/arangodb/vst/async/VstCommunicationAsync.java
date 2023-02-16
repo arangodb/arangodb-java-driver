@@ -51,7 +51,7 @@ public class VstCommunicationAsync
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
-    private VstCommunicationAsync(ArangoConfig config, HostHandler hostHandler) {
+    public VstCommunicationAsync(ArangoConfig config, HostHandler hostHandler) {
         super(config, hostHandler);
     }
 
@@ -152,12 +152,6 @@ public class VstCommunicationAsync
             }
         }
         checkError(response);
-    }
-
-    public static class Builder extends VstCommunication.Builder<Builder> {
-        public VstCommunicationAsync build() {
-            return new VstCommunicationAsync(config, hostHandler);
-        }
     }
 
 }
