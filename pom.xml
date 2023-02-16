@@ -5,13 +5,15 @@
 
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver-parent</artifactId>
-    <version>7.0.0-ALPHA.1</version>
+    <version>7.0.0-ALPHA.2</version>
     <inceptionYear>2016</inceptionYear>
     <modules>
+        <module>core</module>
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde</module>
-        <module>serde-api</module>
+        <module>http</module>
+        <module>vst</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -99,20 +101,6 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-stack-depchain</artifactId>
-                <version>4.3.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>4.1.85.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>5.9.1</version>
@@ -126,7 +114,17 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
-                <artifactId>serde-api</artifactId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>http-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>vst-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -146,8 +144,13 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
+                <artifactId>velocypack</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>3.1.0</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -291,6 +294,8 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
+                            <Implementation-Title>${project.name}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
                             <Automatic-Module-Name>${moduleName}</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>

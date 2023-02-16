@@ -65,7 +65,7 @@ class CustomSerdeTest {
         });
         ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .serializer(serde).build();
+                .serde(serde).build();
 
         DbName TEST_DB = DbName.of("custom-serde-test");
         db = arangoDB.db(TEST_DB);

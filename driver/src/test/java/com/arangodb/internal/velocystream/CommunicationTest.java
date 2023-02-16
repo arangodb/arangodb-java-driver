@@ -103,15 +103,6 @@ class CommunicationTest {
     }
 
     @Test
-    void minOneConnection() {
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig())
-                .maxConnections(0).build();
-        final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version).isNotNull();
-    }
-
-    @Test
     void defaultMaxConnection() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())

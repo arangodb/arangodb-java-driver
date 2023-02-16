@@ -1,0 +1,2 @@
+com.arangodb.http.HttpProtocolProvider
+com.arangodb.vst.VstProtocolProvider

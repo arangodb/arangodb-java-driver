@@ -36,14 +36,6 @@ public class RelocationsTest {
             .resideInAPackage("com.arangodb.jackson.dataformat.velocypack..");
 
     @ArchTest
-    public static final ArchRule noVelocypackDependency = noClasses().that()
-            .resideInAPackage("com.arangodb..").and()
-            .resideOutsideOfPackage("..velocystream..").and()
-            .resideOutsideOfPackage("com.arangodb.shaded.jackson.dataformat.velocypack..")
-            .should().dependOnClassesThat()
-            .resideInAPackage("com.arangodb.velocypack..");
-
-    @ArchTest
     // jsonb-serde is accessed via SPI
     public static final ArchRule noExplicitDependencyOnJsonbSerde = noClasses().that()
             .resideInAPackage("com.arangodb..").and()

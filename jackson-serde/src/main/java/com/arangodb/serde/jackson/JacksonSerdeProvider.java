@@ -1,22 +1,25 @@
 package com.arangodb.serde.jackson;
 
 import com.arangodb.ContentType;
-import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
-import com.arangodb.serde.jackson.internal.JacksonMapperProvider;
 import com.arangodb.serde.ArangoSerdeProvider;
+import com.arangodb.serde.jackson.internal.JacksonMapperProvider;
+import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonSerdeProvider implements ArangoSerdeProvider {
 
     /**
      * Creates a new JacksonSerde with default settings for the specified data type.
+     * Registers all the Jackson modules ({@link com.fasterxml.jackson.databind.Module}) discovered via SPI.
      *
      * @param contentType serialization target data type
      * @return the created JacksonSerde
      */
     @Override
     public JacksonSerde of(final ContentType contentType) {
-        return create(JacksonMapperProvider.of(contentType));
+        JacksonSerde serde = create(JacksonMapperProvider.of(contentType));
+        serde.configure(mapper -> mapper.registerModules(ObjectMapper.findModules()));
+        return serde;
     }
 
     /**

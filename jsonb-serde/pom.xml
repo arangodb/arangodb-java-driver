@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver-parent</artifactId>
-        <version>7.0.0-ALPHA.1</version>
+        <version>7.0.0-ALPHA.2</version>
     </parent>
 
     <name>jsonb-serde</name>
@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.arangodb</groupId>
-            <artifactId>serde-api</artifactId>
+            <artifactId>core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
