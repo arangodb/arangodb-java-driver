@@ -1,5 +1,5 @@
 package com.arangodb.serde.jackson.vpack;
 
-class Package {
+public enum NoOp {
     // no-op, just to trigger package creation
 }
