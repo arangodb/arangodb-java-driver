@@ -73,11 +73,11 @@
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-serde</artifactId>
+                    <artifactId>jackson-serde-json</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-dataformat-velocypack</artifactId>
+                    <artifactId>jackson-serde-vpack</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>com.tngtech.archunit</groupId>
@@ -123,11 +123,11 @@
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-serde</artifactId>
+                    <artifactId>jackson-serde-json</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-dataformat-velocypack</artifactId>
+                    <artifactId>jackson-serde-vpack</artifactId>
                 </dependency>
             </dependencies>
         </profile>

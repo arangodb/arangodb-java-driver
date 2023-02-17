@@ -11,7 +11,8 @@
         <module>core</module>
         <module>driver</module>
         <module>shaded</module>
-        <module>jackson-serde</module>
+        <module>jackson-serde-json</module>
+        <module>jackson-serde-vpack</module>
         <module>http</module>
         <module>vst</module>
     </modules>
@@ -129,7 +130,12 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
-                <artifactId>jackson-serde</artifactId>
+                <artifactId>jackson-serde-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>jackson-serde-vpack</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

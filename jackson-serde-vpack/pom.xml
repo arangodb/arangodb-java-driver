@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.arangodb</groupId>
+        <artifactId>arangodb-java-driver-parent</artifactId>
+        <version>7.0.0-ALPHA.2</version>
+    </parent>
+
+    <name>jackson-serde-vpack</name>
+    <artifactId>jackson-serde-vpack</artifactId>
+    <description>Jackson Serde VPACK module for ArangoDB Java Driver</description>
+
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <moduleName>com.arangodb.serde.jackson.vpack</moduleName>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson-serde-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson-dataformat-velocypack</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>velocypack</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

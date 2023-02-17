@@ -9,13 +9,13 @@
         <version>7.0.0-ALPHA.2</version>
     </parent>
 
-    <name>jackson-serde</name>
-    <artifactId>jackson-serde</artifactId>
-    <description>Jackson Serde module for ArangoDB Java Driver</description>
+    <name>jackson-serde-json</name>
+    <artifactId>jackson-serde-json</artifactId>
+    <description>Jackson Serde JSON module for ArangoDB Java Driver</description>
 
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <moduleName>com.arangodb.serde.jackson</moduleName>
+        <moduleName>com.arangodb.serde.jackson.json</moduleName>
     </properties>
 
     <dependencies>
