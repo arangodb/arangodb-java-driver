@@ -493,8 +493,8 @@ class ArangoDatabaseTest extends BaseTest {
                             assertThat(cursor.hasNext()).isEqualTo(true);
                         }
                         assertThat(cursor.getStats()).isNotNull();
-                        assertThat(((Number) cursor.getStats().get("fullCount")).intValue())
-                                .isGreaterThanOrEqualTo(10);
+                        assertThat(((Number) cursor.getStats().get("executionTime")).doubleValue()).isPositive();
+                        assertThat((cursor.getStats().getFullCount())).isGreaterThanOrEqualTo(10);
                     })
                     .get();
         } finally {

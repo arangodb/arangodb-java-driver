@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.cursor.entity;
 
+import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
 import com.arangodb.entity.MetaAware;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -113,9 +114,9 @@ public final class InternalCursorEntity implements MetaAware {
 
     public static final class Extras {
         private final Collection<CursorWarning> warnings = Collections.emptyList();
-        private Map<String, Object> stats;
+        private CursorStats stats;
 
-        public Map<String, Object> getStats() {
+        public CursorStats getStats() {
             return stats;
         }
 

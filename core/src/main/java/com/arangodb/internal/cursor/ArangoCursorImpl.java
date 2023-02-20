@@ -22,6 +22,7 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
+import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
@@ -31,7 +32,6 @@ import com.arangodb.internal.cursor.entity.InternalCursorEntity.Extras;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -78,7 +78,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     }
 
     @Override
-    public Map<String, Object> getStats() {
+    public CursorStats getStats() {
         final Extras extra = iterator.getResult().getExtra();
         return extra != null ? extra.getStats() : null;
     }
