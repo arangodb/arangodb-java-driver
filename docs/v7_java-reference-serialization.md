@@ -34,12 +34,12 @@ For example, you can find [here](../jsonb-serde/src/main/java/com/arangodb/serde
 
 ## JacksonSerde (default user-data serde)
 
-The default user-data serde is `JacksonSerde`, which is provided by the module `com.arangodb:jackson-serde`. 
+The default user-data serde is `JacksonSerde`, which is provided by the module `com.arangodb:jackson-serde-json`. 
 This is used by default from the driver, if no custom serde is registered explicitly.
 It is implemented delegating [Jackson](https://github.com/FasterXML/jackson) `ObjectMapper`, therefore it is compatible 
 with Jackson Streaming, Data Binding and Tree Model API.
 It supports both `JSON` and `VPACK` data formats. To use `VPACK`, the additional dependency on
-[jackson-dataformat-velocypack](https://github.com/arangodb/jackson-dataformat-velocypack) is required.
+`com.arangodb:jackson-serde-vpack` is required.
 
 
 ### Configure
@@ -147,36 +147,32 @@ ArangoDB adb = new ArangoDB.Builder()
 
 ### Jackson datatype and language modules
 
-The `JacksonSerde` can be configured
-with [Jackson datatype modules](https://github.com/FasterXML/jackson#third-party-datatype-modules)
-as well as [Jackson JVM Language modules](https://github.com/FasterXML/jackson#jvm-language-modules).
+By default, Jackson modules in the classpath are discovered via SPI and registered to the `JacksonSerde`.
+For example, this will automatically
+register [Jackson datatype modules](https://github.com/FasterXML/jackson#third-party-datatype-modules)
+as well as [Jackson JVM Language modules](https://github.com/FasterXML/jackson#jvm-language-modules)
+like Kotlin or Scala module (see sections below).
+
+To avoid automatic Jackson modules discovery and registration, an instance of `JacksonSerde` can be manually created 
+using `JacksonSerdeProvider.create(ObjectMapper)` and registered using `ArangoDBBuilder.serde(ArangoSerde)`, e.g.:
+
+```java
+ArangoDB adb = new ArangoDB.Builder()
+    .serde(new JacksonSerdeProvider().create(new ObjectMapper()))
+    .build();
+```
 
 ### Kotlin
 
 [Kotlin language module](https://github.com/FasterXML/jackson-module-kotlin)
-enables support for Kotlin native types and can be registered in the following way:
-
-```kotlin
-val arangoDB = ArangoDB.Builder()
-    .serde(JacksonSerdeProvider().of(ContentType.JSON).apply {
-        configure { it.registerModule(KotlinModule()) }
-    })
-    .build()
-```
+enables support for Kotlin classes and types. 
+It can be used including `com.fasterxml.jackson.module:jackson-module-kotlin`.
 
 ### Scala
 
 [Scala language module](https://github.com/FasterXML/jackson-module-scala)
-enables support for Scala native types and can be registered in the following way:
-
-```scala
-val serde = JacksonSerdeProvider().of(ContentType.JSON)
-serde.configure(mapper => mapper.registerModule(DefaultScalaModule))
-
-val arangoDB = new ArangoDB.Builder()
-  .serde(arangoJack)
-  .build()
-```
+enables support for Scala classes and types.
+It can be used including `com.fasterxml.jackson.module:jackson-module-scala_<scala-version>`.
 
 ### Java 8 types
 
@@ -202,32 +198,3 @@ public class MyObject {
   // ...
 }
 ```
-
-
-## Dependency convergence
-
-The driver and the `jackson-serde` module depend on `jackson-core`, `jackson-databind` and `jackson-annotations` 
-packages. 
-You might need to include [jackson-bom](https://github.com/FasterXML/jackson-bom)
-to ensure dependency convergence across the entire project, for example in case
-there are in your project other libraries depending on different versions of
-the same Jackson packages.
-
-```xml
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson</groupId>
-            <artifactId>jackson-bom</artifactId>
-            <version>...</version>
-            <scope>import</scope>
-            <type>pom</type>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-```
-
-The driver and the `JacksonSerde` are compatible with Jackson 2.10, 2.11, 2.12, 2.13 and 2.14.
-
-If these dependency requirements cannot be satisfied, you might need to use the
-[shaded version](v7_detailed_changes.md#arangodb-java-driver-shaded) of the driver. 

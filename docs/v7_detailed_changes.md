@@ -61,23 +61,90 @@ ArangoDB adb = new ArangoDB.Builder()
 An example showing how to provide configuration using Eclipse MicroProfile Config can be found 
 [here](../driver/src/test/java/com/arangodb/config).
 
+
+## Modules
+
+Support for different serializers and communication protocols is offered by separate modules. 
+Defaults modules are transitively included, but they could be excluded if not needed.
+
+The driver artifact `com.arangodb:arangodb-java-driver` has transitive dependencies on default modules:
+- `com.arangodb:http-protocol`: `HTTP` communication protocol
+- `com.arangodb:jackson-serde-json`: `JSON` user serde module based on Jackson Databind
+Alternative modules are respectively:
+- `com.arangodb:vst-protocol`: `VST` communication protocol
+- `com.arangodb:jackson-serde-vpack`: `VPACK` user serde module based on Jackson Databind
+
+In case a non-default communication protocol or user serde are used, the related module(s) must be explicitly included 
+and the corresponding default module(s) can be excluded.
+
+For example, to use the driver with `VPACK` over `VST`, we must include:
+- `com.arangodb:vst-protocol` and
+- `com.arangodb:jackson-serde-vpack`
+and could exclude:
+- `com.arangodb:http-protocol` and
+- `com.arangodb:jackson-serde-json`
+ 
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.arangodb</groupId>
+        <artifactId>arangodb-java-driver</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>com.arangodb</groupId>
+                <artifactId>http-protocol</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.arangodb</groupId>
+                <artifactId>jackson-serde-json</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>com.arangodb</groupId>
+        <artifactId>vst-protocol</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.arangodb</groupId>
+        <artifactId>jackson-serde-vpack</artifactId>
+    </dependency>
+</dependencies>
+```
+
+
 ## Transitive dependencies
 
-A transitive dependency on `io.vertx:vertx-web-client` has been added. In can be excluded when using `VST` protocol
-only.
+`com.arangodb:arangodb-java-driver` has transitive dependencies on `jackson-core`, `jackson-databind`
+and `jackson-annotations`, using by default version `2.14`.
 
-The dependency on `com.arangodb:velocypack` has been removed.
+The versions of such libraries can be overridden, the driver is compatible with Jackson 2 (at least `2.10` or greater).
 
-When using protocol `VST`, `HTTP_VPACK` or `HTTP2_VPACK`, the optional dependency
-on `com.arangodb:jackson-dataformat-velocypack` must be provided.
+To do this, you might need to include [jackson-bom](https://github.com/FasterXML/jackson-bom)
+to ensure dependency convergence across the entire project, for example in case
+there are in your project other libraries depending on different versions of Jackson.
 
-When using protocol `HTTP_JSON` or `HTTP2_JSON` (default), no dependencies on `VPACK` libraries are required.
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson</groupId>
+            <artifactId>jackson-bom</artifactId>
+            <version>...</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
 
-Transitive dependencies on Jackson Core, Databind and Annotations have been added, using by default version `2.14`.
-The versions of such libraries can be overridden, the driver is compatible with Jackson versions: `2.10`, `2.11`, `2.12`
-, `2.13`, `2.14`.
+The module `http-protocol` has transitive dependency on `io.vertx:vertx-web-client:4.3.5`.
 
-If these dependency requirements cannot be satisfied, you might need to use the [shaded version](#arangodb-java-driver-shaded) of this driver.
+If these dependency requirements cannot be satisfied, you might need to use the
+[shaded version](#arangodb-java-driver-shaded) of this driver, which bundles together all modules with relocated
+external dependencies.
+
+The dependency on `com.arangodb:velocypack` has been removed from core module and is now only used
+by `com.arangodb:vst-protocol` and `com.arangodb:jackson-serde-vpack`.
 
 
 ## User Data Types
