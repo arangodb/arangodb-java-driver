@@ -1,10 +1,11 @@
 package arch;
 
 
+import com.arangodb.serde.InternalKey;
 import com.arangodb.shaded.fasterxml.jackson.annotation.JsonProperty;
 
 public record Person(
-        @JsonProperty("_key")
+        @InternalKey
         String key,
         @JsonProperty("firstName")
         String name,
