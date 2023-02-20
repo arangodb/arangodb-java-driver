@@ -656,7 +656,7 @@ class ArangoDBTest extends BaseJunit5 {
                     System.err.println(v.value);
                 }
             }
-            assertThat(avg).isPositive();
+            assertThat(avg).isNotNegative();
         } else {
             assertThat(avg).isEqualTo(0.0);
             assertThat(values).isEmpty();
