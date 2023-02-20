@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class BaseDocument extends AbstractBaseDocument {
+public class BaseDocument extends AbstractBaseDocument {
 
     public BaseDocument() {
         super();
@@ -42,7 +42,7 @@ public final class BaseDocument extends AbstractBaseDocument {
 
     @Override
     public String toString() {
-        return "BaseDocument" + super.toString();
+        return "BaseDocument" + stringify();
     }
 
 }

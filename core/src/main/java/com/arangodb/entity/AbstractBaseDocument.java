@@ -133,8 +133,7 @@ abstract class AbstractBaseDocument {
         }
     }
 
-    @Override
-    public String toString() {
+    String stringify() {
         return "{" +
                 "properties=" + properties +
                 '}';

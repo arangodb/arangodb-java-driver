@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class BaseEdgeDocument extends AbstractBaseDocument {
+public class BaseEdgeDocument extends BaseDocument {
 
     private static final String[] META_PROPS = new String[]{
             DocumentFields.ID,
@@ -84,7 +84,7 @@ public final class BaseEdgeDocument extends AbstractBaseDocument {
 
     @Override
     public String toString() {
-        return "BaseEdgeDocument" + super.toString();
+        return "BaseEdgeDocument" + stringify();
     }
 
 }
