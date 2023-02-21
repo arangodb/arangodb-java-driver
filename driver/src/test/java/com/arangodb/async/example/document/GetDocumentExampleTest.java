@@ -69,7 +69,7 @@ class GetDocumentExampleTest extends ExampleBase {
     }
 
     @Test
-    void getAsVPack() throws InterruptedException, ExecutionException {
+    void getAsJsonNode() throws InterruptedException, ExecutionException {
         collection.getDocument(key, JsonNode.class)
                 .whenComplete((doc, ex) -> {
                     assertThat(doc).isNotNull();

@@ -1224,7 +1224,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void transactionVPack(ArangoDatabase db) {
+    void transactionJsonNode(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
         assertThat(result.isTextual()).isTrue();

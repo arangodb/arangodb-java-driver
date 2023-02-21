@@ -64,11 +64,11 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final ArangoCursor<ObjectNode> cursor = db.query(query, bindVars, null, ObjectNode.class);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
-            final ObjectNode vpack = cursor.next();
-            assertThat(vpack.get("name").asText())
+            final ObjectNode node = cursor.next();
+            assertThat(node.get("name").asText())
                     .isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-            assertThat(vpack.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
-            assertThat(vpack.get("age").asInt()).isIn(21, 23, 25, 27, 29);
+            assertThat(node.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
+            assertThat(node.get("age").asInt()).isIn(21, 23, 25, 27, 29);
         }
     }
 
