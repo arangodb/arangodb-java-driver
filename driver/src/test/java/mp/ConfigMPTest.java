@@ -1,6 +1,8 @@
-package com.arangodb.config;
+package mp;
 
 import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisabledInNativeImage
-class ConfigTest {
+class ConfigMPTest {
     private final HostDescription hostA = new HostDescription("aaa", 1111);
     private final HostDescription hostB = new HostDescription("bbb", 2222);
     private final Protocol protocol = Protocol.HTTP_VPACK;
@@ -30,7 +32,7 @@ class ConfigTest {
 
     @Test
     void readConfig() {
-        ArangoConfigProperties config = ConfigUtils.loadConfigMP("arangodb-config-test.properties", "adb");
+        ArangoConfigProperties config = ConfigUtilsMP.loadConfigMP("arangodb-config-test.properties", "adb");
         checkResult(config);
     }
 

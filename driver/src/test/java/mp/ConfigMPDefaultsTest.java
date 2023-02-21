@@ -1,16 +1,17 @@
-package com.arangodb.config;
+package mp;
 
+import com.arangodb.config.ArangoConfigProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisabledInNativeImage
-class ConfigDefaultsTest {
+class ConfigMPDefaultsTest {
 
     @Test
     void defaultValues() {
-        ArangoConfigProperties config = ConfigUtils.loadConfigMP("arangodb.properties", "wrong");
+        ArangoConfigProperties config = ConfigUtilsMP.loadConfigMP("arangodb.properties", "wrong");
         checkResult(config);
     }
 

@@ -1,6 +1,8 @@
-package com.arangodb.config;
+package mp;
 
 import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
 
 import java.util.List;

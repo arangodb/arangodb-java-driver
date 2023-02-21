@@ -5,31 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static ru.lanwen.verbalregex.VerbalExpression.regex;
-
-import ru.lanwen.verbalregex.VerbalExpression;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class PackageVersionTest extends BaseJunit5 {
 
+    private static final String EXPECTED_VERSION = "7.0.0-ALPHA.2";
+
     @Test
     void packageVersion() {
-        VerbalExpression testRegex = regex()
-                .startOfLine()
-                // major
-                .digit().atLeast(1)
-                .then(".")
-                // minor
-                .digit().atLeast(1)
-                .then(".")
-                // patch
-                .digit().atLeast(1)
-                .maybe(regex().anything())
-                .endOfLine()
-                .build();
-        assertThat(PackageVersion.VERSION).matches(testRegex.toString());
+        assertThat(PackageVersion.VERSION).isEqualTo(EXPECTED_VERSION);
     }
 
     @ParameterizedTest
