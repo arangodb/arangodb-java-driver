@@ -1197,7 +1197,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     void getIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = collection.ensureHashIndex(fields, null);
+        final IndexEntity createResult = collection.ensurePersistentIndex(fields, null);
         final IndexEntity readResult = collection.getIndex(createResult.getId());
         assertThat(readResult.getId()).isEqualTo(createResult.getId());
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
@@ -1208,7 +1208,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     void getIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = collection.ensureHashIndex(fields, null);
+        final IndexEntity createResult = collection.ensurePersistentIndex(fields, null);
         final IndexEntity readResult = collection.getIndex(createResult.getId().split("/")[1]);
         assertThat(readResult.getId()).isEqualTo(createResult.getId());
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
@@ -1219,7 +1219,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     void deleteIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = collection.ensureHashIndex(fields, null);
+        final IndexEntity createResult = collection.ensurePersistentIndex(fields, null);
         final String id = collection.deleteIndex(createResult.getId());
         assertThat(id).isEqualTo(createResult.getId());
         Throwable thrown = catchThrowable(() -> collection.db().getIndex(id));
@@ -1231,63 +1231,11 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     void deleteIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = collection.ensureHashIndex(fields, null);
+        final IndexEntity createResult = collection.ensurePersistentIndex(fields, null);
         final String id = collection.deleteIndex(createResult.getId().split("/")[1]);
         assertThat(id).isEqualTo(createResult.getId());
         Throwable thrown = catchThrowable(() -> collection.db().getIndex(id));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void createHashIndex(ArangoCollection collection) {
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-        final Collection<String> fields = Arrays.asList(f1, f2);
-        final IndexEntity indexResult = collection.ensureHashIndex(fields, null);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate()).isPositive();
-        }
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
-        assertThat(indexResult.getUnique()).isFalse();
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void createHashIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "hashIndex-" + rnd();
-        final HashIndexOptions options = new HashIndexOptions();
-        options.name(name);
-
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-        final Collection<String> fields = Arrays.asList(f1, f2);
-
-        final IndexEntity indexResult = collection.ensureHashIndex(fields, options);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate()).isPositive();
-        }
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
-        assertThat(indexResult.getUnique()).isFalse();
-        assertThat(indexResult.getName()).isEqualTo(name);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1424,51 +1372,6 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         } else {
             assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
         }
-        assertThat(indexResult.getName()).isEqualTo(name);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void createSkiplistIndex(ArangoCollection collection) {
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-        final Collection<String> fields = Arrays.asList(f1, f2);
-        final IndexEntity indexResult = collection.ensureSkiplistIndex(fields, null);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
-        assertThat(indexResult.getUnique()).isFalse();
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void createSkiplistIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "skiplistIndex-" + rnd();
-        final SkiplistIndexOptions options = new SkiplistIndexOptions();
-        options.name(name);
-
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-        final Collection<String> fields = Arrays.asList(f1, f2);
-        final IndexEntity indexResult = collection.ensureSkiplistIndex(fields, options);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
-        assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
@@ -1789,9 +1692,9 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     void getIndexes(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
-        collection.ensureHashIndex(fields, null);
+        collection.ensurePersistentIndex(fields, null);
         long matchingIndexes =
-         collection.getIndexes().stream().filter(i -> i.getType() == IndexType.hash).filter(i -> i.getFields().contains(f1)).count();
+         collection.getIndexes().stream().filter(i -> i.getType() == IndexType.persistent).filter(i -> i.getFields().contains(f1)).count();
         assertThat(matchingIndexes).isEqualTo(1L);
     }
 

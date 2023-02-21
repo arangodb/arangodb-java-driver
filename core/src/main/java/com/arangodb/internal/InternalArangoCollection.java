@@ -425,25 +425,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return index;
     }
 
-    @Deprecated
-    protected InternalRequest createHashIndexRequest(final Iterable<String> fields, final HashIndexOptions options) {
-        final InternalRequest request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
-        request.putQueryParam(COLLECTION, name);
-        request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new HashIndexOptions(), fields)));
-        return request;
-    }
-
-    @Deprecated
-    protected InternalRequest createSkiplistIndexRequest(final Iterable<String> fields, final SkiplistIndexOptions options) {
-        final InternalRequest request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
-        request.putQueryParam(COLLECTION, name);
-        request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(),
-                        fields)));
-        return request;
-    }
-
     protected InternalRequest createPersistentIndexRequest(
             final Iterable<String> fields, final PersistentIndexOptions options) {
         final InternalRequest request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);

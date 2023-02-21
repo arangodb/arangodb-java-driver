@@ -359,18 +359,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
         return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
 
-    @Deprecated
-    @Override
-    public IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options) {
-        return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-    }
-
-    @Deprecated
-    @Override
-    public IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options) {
-        return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
-    }
-
     @Override
     public IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options) {
         return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);

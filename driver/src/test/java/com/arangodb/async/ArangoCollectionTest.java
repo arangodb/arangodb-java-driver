@@ -773,7 +773,7 @@ class ArangoCollectionTest extends BaseTest {
     void getIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.collection(COLLECTION_NAME).getIndex(createResult.getId())
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getId()).isEqualTo(createResult.getId());
@@ -786,7 +786,7 @@ class ArangoCollectionTest extends BaseTest {
     void getIndexByKey() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.collection(COLLECTION_NAME).getIndex(createResult.getId().split("/")[1])
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getId()).isEqualTo(createResult.getId());
@@ -799,7 +799,7 @@ class ArangoCollectionTest extends BaseTest {
     void deleteIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("deleteIndexField");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.getIndex(createResult.getId()).get();
         db.collection(COLLECTION_NAME).deleteIndex(createResult.getId())
                 .whenComplete((id, ex) -> {
@@ -821,7 +821,7 @@ class ArangoCollectionTest extends BaseTest {
     void deleteIndexByKey() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("deleteIndexByKeyField");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.getIndex(createResult.getId()).get();
         db.collection(COLLECTION_NAME).deleteIndex(createResult.getId().split("/")[1])
                 .whenComplete((id, ex) -> {
@@ -837,58 +837,6 @@ class ArangoCollectionTest extends BaseTest {
                     }
                 })
                 .get();
-    }
-
-    @Test
-    void createHashIndex() throws InterruptedException, ExecutionException {
-        final boolean singleServer = isSingleServer();
-        final Collection<String> fields = new ArrayList<>();
-        fields.add("a");
-        fields.add("b");
-        db.collection(COLLECTION_NAME).ensureHashIndex(fields, null)
-                .whenComplete((indexResult, ex) -> {
-                    assertThat(indexResult).isNotNull();
-                    assertThat(indexResult.getConstraint()).isNull();
-                    assertThat(indexResult.getFields()).contains("a");
-                    assertThat(indexResult.getFields()).contains("b");
-                    assertThat(indexResult.getGeoJson()).isNull();
-                    assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-                    assertThat(indexResult.getIsNewlyCreated()).isEqualTo(true);
-                    assertThat(indexResult.getMinLength()).isNull();
-                    if (singleServer) {
-                        assertThat(indexResult.getSelectivityEstimate()).isEqualTo(1.0);
-                    }
-                    assertThat(indexResult.getSparse()).isEqualTo(false);
-                    assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
-                    assertThat(indexResult.getUnique()).isEqualTo(false);
-                })
-                .get();
-    }
-
-    @Test
-    void createHashIndexWithOptions() throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-        final HashIndexOptions options = new HashIndexOptions();
-        options.name("myHashIndex");
-
-        final Collection<String> fields = new ArrayList<>();
-        fields.add("a");
-        fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, options).get();
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains("a");
-        assertThat(indexResult.getFields()).contains("b");
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate()).isEqualTo(1.);
-        }
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.hash);
-        assertThat(indexResult.getUnique()).isFalse();
-        assertThat(indexResult.getName()).isEqualTo("myHashIndex");
     }
 
     @Test
@@ -986,51 +934,6 @@ class ArangoCollectionTest extends BaseTest {
             assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
         }
         assertThat(indexResult.getName()).isEqualTo("myGeoIndex2");
-    }
-
-    @Test
-    void createSkiplistIndex() throws InterruptedException, ExecutionException {
-        final Collection<String> fields = new ArrayList<>();
-        fields.add("a");
-        fields.add("b");
-        db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, null)
-                .whenComplete((indexResult, ex) -> {
-                    assertThat(indexResult).isNotNull();
-                    assertThat(indexResult.getConstraint()).isNull();
-                    assertThat(indexResult.getFields()).contains("a");
-                    assertThat(indexResult.getFields()).contains("b");
-                    assertThat(indexResult.getGeoJson()).isNull();
-                    assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-                    assertThat(indexResult.getIsNewlyCreated()).isEqualTo(true);
-                    assertThat(indexResult.getMinLength()).isNull();
-                    assertThat(indexResult.getSparse()).isEqualTo(false);
-                    assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
-                    assertThat(indexResult.getUnique()).isEqualTo(false);
-                })
-                .get();
-    }
-
-    @Test
-    void createSkiplistIndexWithOptions() throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-        final SkiplistIndexOptions options = new SkiplistIndexOptions();
-        options.name("mySkiplistIndex");
-
-        final Collection<String> fields = new ArrayList<>();
-        fields.add("a");
-        fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, options).get();
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains("a");
-        assertThat(indexResult.getFields()).contains("b");
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        assertThat(indexResult.getSparse()).isFalse();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.skiplist);
-        assertThat(indexResult.getUnique()).isFalse();
-        assertThat(indexResult.getName()).isEqualTo("mySkiplistIndex");
     }
 
     @Test
@@ -1244,13 +1147,13 @@ class ArangoCollectionTest extends BaseTest {
         final int initialIndexCount = db.collection(COLLECTION_NAME).getIndexes().get().size();
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.collection(COLLECTION_NAME).getIndexes()
                 .whenComplete((indexes, ex) -> {
                     assertThat(indexes).isNotNull();
                     assertThat(indexes.size()).isEqualTo(initialIndexCount + 1);
                     for (final IndexEntity i : indexes) {
-                        if (i.getType() == IndexType.hash) {
+                        if (i.getType() == IndexType.persistent) {
                             assertThat(i.getFields().size()).isEqualTo(1);
                             assertThat(i.getFields()).contains("a");
                         }

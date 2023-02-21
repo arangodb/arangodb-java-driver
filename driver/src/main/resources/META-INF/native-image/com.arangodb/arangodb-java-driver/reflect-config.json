@@ -1392,12 +1392,6 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.SkiplistIndexOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.GeoIndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1411,12 +1405,6 @@
   },
   {
     "name": "com.arangodb.model.FulltextIndexOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.HashIndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

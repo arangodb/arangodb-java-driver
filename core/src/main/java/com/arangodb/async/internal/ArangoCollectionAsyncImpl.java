@@ -362,22 +362,6 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    @Deprecated
-    public CompletableFuture<IndexEntity> ensureHashIndex(
-            final Iterable<String> fields,
-            final HashIndexOptions options) {
-        return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-    }
-
-    @Override
-    @Deprecated
-    public CompletableFuture<IndexEntity> ensureSkiplistIndex(
-            final Iterable<String> fields,
-            final SkiplistIndexOptions options) {
-        return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
-    }
-
-    @Override
     public CompletableFuture<IndexEntity> ensurePersistentIndex(
             final Iterable<String> fields,
             final PersistentIndexOptions options) {

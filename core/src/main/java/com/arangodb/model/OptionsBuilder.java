@@ -41,24 +41,6 @@ public final class OptionsBuilder {
         return options.user(user).passwd(passwd);
     }
 
-    /**
-     * @deprecated use {@link #build(PersistentIndexOptions, Iterable)} instead. Since ArangoDB 3.7 a hash index is an
-     * alias for a persistent index.
-     */
-    @Deprecated
-    public static HashIndexOptions build(final HashIndexOptions options, final Iterable<String> fields) {
-        return options.fields(fields);
-    }
-
-    /**
-     * @deprecated use {@link #build(PersistentIndexOptions, Iterable)} instead. Since ArangoDB 3.7 a skiplist index is
-     * an alias for a persistent index.
-     */
-    @Deprecated
-    public static SkiplistIndexOptions build(final SkiplistIndexOptions options, final Iterable<String> fields) {
-        return options.fields(fields);
-    }
-
     public static PersistentIndexOptions build(final PersistentIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }

@@ -222,7 +222,7 @@ class ArangoDatabaseTest extends BaseTest {
         db.createCollection(COLLECTION_NAME, null).get();
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
         db.getIndex(createResult.getId())
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getId()).isEqualTo(createResult.getId());
@@ -238,7 +238,7 @@ class ArangoDatabaseTest extends BaseTest {
             db.createCollection(COLLECTION_NAME, null).get();
             final Collection<String> fields = new ArrayList<>();
             fields.add("a");
-            final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+            final IndexEntity createResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null).get();
             db.deleteIndex(createResult.getId())
                     .whenComplete((id, ex) -> {
                         assertThat(id).isEqualTo(createResult.getId());

@@ -432,7 +432,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getIndex(ArangoDatabase db) {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
-        final IndexEntity createResult = db.collection(CNAME1).ensureHashIndex(fields, null);
+        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null);
         final IndexEntity readResult = db.getIndex(createResult.getId());
         assertThat(readResult.getId()).isEqualTo(createResult.getId());
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
@@ -442,7 +442,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void deleteIndex(ArangoDatabase db) {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
-        final IndexEntity createResult = db.collection(CNAME1).ensureHashIndex(fields, null);
+        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null);
         final String id = db.deleteIndex(createResult.getId());
         assertThat(id).isEqualTo(createResult.getId());
         try {

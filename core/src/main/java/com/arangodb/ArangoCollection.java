@@ -611,34 +611,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     String deleteIndex(String id);
 
     /**
-     * Creates a hash index for the collection if it does not already exist.
-     *
-     * @param fields  A list of attribute paths
-     * @param options Additional options, can be null
-     * @return information about the index
-     * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
-     * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
-     * hash index is an alias for a persistent index.
-     */
-    @Deprecated
-    IndexEntity ensureHashIndex(Iterable<String> fields, HashIndexOptions options);
-
-    /**
-     * Creates a skip-list index for the collection, if it does not already exist.
-     *
-     * @param fields  A list of attribute paths
-     * @param options Additional options, can be null
-     * @return information about the index
-     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API
-     * Documentation</a>
-     * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
-     * skiplist index is an alias for a persistent index.
-     */
-    @Deprecated
-    IndexEntity ensureSkiplistIndex(Iterable<String> fields, SkiplistIndexOptions options);
-
-    /**
      * Creates a persistent index for the collection, if it does not already exist.
      *
      * @param fields  A list of attribute paths
