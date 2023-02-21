@@ -570,6 +570,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.CursorStats",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
