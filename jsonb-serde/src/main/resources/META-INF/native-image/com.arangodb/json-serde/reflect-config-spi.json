@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.arangodb.serde.jsonb.JsonbSerdeProvider",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

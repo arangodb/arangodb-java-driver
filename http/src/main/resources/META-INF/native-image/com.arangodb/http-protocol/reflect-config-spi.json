@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.arangodb.http.HttpProtocolProvider",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

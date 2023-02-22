@@ -156,7 +156,7 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
