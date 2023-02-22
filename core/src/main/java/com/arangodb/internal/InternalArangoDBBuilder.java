@@ -44,7 +44,7 @@ import java.util.ServiceLoader;
  * @author Mark Vollmary
  */
 public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<T>> {
-    private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
     protected final ArangoConfig config = new ArangoConfig();
 
     @SuppressWarnings("unchecked")
@@ -295,6 +295,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
             if (p.supportsProtocol(protocol)) {
                 return p;
             }
+            LOG.debug("Required protocol ({}) not supported by ProtocolProvider: {}", protocol, p.getClass().getName());
         }
         throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
     }
