@@ -1,0 +1,10 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "META-INF/services/com.arangodb.shaded.fasterxml.jackson.core.JsonFactory"
+      }
+    ]
+  },
+  "bundles": []
+}
