@@ -43,6 +43,9 @@
                             <rules>
                                 <enforceBytecodeVersion>
                                     <maxJdkVersion>1.8</maxJdkVersion>
+                                    <excludes>
+                                        <exclude>com.tngtech.archunit:archunit</exclude>
+                                    </excludes>
                                 </enforceBytecodeVersion>
                             </rules>
                             <fail>true</fail>
