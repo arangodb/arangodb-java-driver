@@ -1,6 +1,7 @@
 package com.arangodb.example;
 
 import com.arangodb.*;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +13,7 @@ import java.util.UUID;
 public class FirstProject {
 
     public static void main(final String[] args) {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("root").build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().loadProperties(ArangoConfigProperties.fromFile()).user("root").build();
 
         // create database
         final DbName dbName = DbName.of("mydb");
