@@ -45,6 +45,8 @@
                                     <maxJdkVersion>1.8</maxJdkVersion>
                                     <excludes>
                                         <exclude>com.tngtech.archunit:archunit</exclude>
+                                        <exclude>org.eclipse:yasson</exclude>
+                                        <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
                                     </excludes>
                                 </enforceBytecodeVersion>
                             </rules>
