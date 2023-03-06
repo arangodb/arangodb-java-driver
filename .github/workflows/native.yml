@@ -16,7 +16,7 @@ jobs:
         docker-img:
           - docker.io/arangodb/enterprise:3.10.1
         topology:
-          - cluster
+          - single
         java-version:
           - 17
         module:
