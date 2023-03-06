@@ -1,0 +1,20 @@
+[
+  {
+    "name": "com.arangodb.shaded.fasterxml.jackson.core.JsonFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.shaded.jackson.dataformat.velocypack.VPackFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

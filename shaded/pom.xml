@@ -40,6 +40,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
+            <version>22.3.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -94,7 +100,8 @@
                                 <filter>
                                     <artifact>com.arangodb:vst-protocol</artifact>
                                     <excludes>
-                                        <exclude>META-INF/**</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/services/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>

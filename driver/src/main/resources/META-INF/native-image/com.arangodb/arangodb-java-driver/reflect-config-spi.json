@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.fasterxml.jackson.core.JsonFactory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]

@@ -305,6 +305,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
                 if (p.supportsProtocol(protocol)) {
                     return p;
                 }
+                LOG.debug("Required protocol ({}) not supported by ProtocolProvider: {}", protocol, p.getClass().getName());
             }
             throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
         }

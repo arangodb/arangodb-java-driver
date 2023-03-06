@@ -1,0 +1,13 @@
+[
+  {
+    "name": "com.arangodb.config.HostDescription",
+    "methods": [
+      {
+        "name": "parse",
+        "parameterTypes": [
+          "java.lang.CharSequence"
+        ]
+      }
+    ]
+  }
+]

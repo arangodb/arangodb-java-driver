@@ -138,12 +138,12 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-serde-vpack</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>vst-protocol</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>22.3.0</version>
+            <version>22.3.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

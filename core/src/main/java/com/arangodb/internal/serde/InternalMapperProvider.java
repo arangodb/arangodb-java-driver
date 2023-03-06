@@ -4,11 +4,15 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
 public interface InternalMapperProvider extends Supplier<ObjectMapper> {
+    Logger LOG = LoggerFactory.getLogger(InternalMapperProvider.class);
+
     static ObjectMapper of(final ContentType contentType) {
         String formatName;
         if (contentType == ContentType.JSON) {
@@ -24,6 +28,7 @@ public interface InternalMapperProvider extends Supplier<ObjectMapper> {
             if(formatName.equals(jf.getFormatName())){
                 return new ObjectMapper(jf);
             }
+            LOG.debug("Required format ({}) not supported by JsonFactory: {}", formatName, jf.getClass().getName());
         }
 
         throw new ArangoDBException("No JsonFactory found for content type: " + contentType);

@@ -16,12 +16,12 @@ jobs:
         docker-img:
           - docker.io/arangodb/enterprise:3.10.1
         topology:
-          - cluster
+          - single
         java-version:
           - 17
         module:
           - driver
-          - shaded-integration-tests
+          - integration-tests
 
     steps:
       - uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
           - 17
         module:
           - driver
-          - shaded-integration-tests
+          - integration-tests
 
     steps:
       - uses: actions/checkout@v2

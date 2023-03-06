@@ -46,7 +46,7 @@ jobs:
         db-ext-names:
           - false
         java-version:
-          - 8
+          - 11
         user-language:
           - en
         include:
@@ -222,7 +222,7 @@ jobs:
       - name: Test
         run: mvn --no-transfer-progress -am -pl driver test -Dadb.jackson.version=${{matrix.jackson-version}}
 
-  shaded-integration-tests:
+  integration-tests:
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -255,14 +255,17 @@ jobs:
       - name: Install
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test internal-serde
-        working-directory: shaded-integration-tests
+        working-directory: integration-tests
         run: mvn --no-transfer-progress -Pinternal-serde test
       - name: Test jackson-serde
-        working-directory: shaded-integration-tests
+        working-directory: integration-tests
         run: mvn --no-transfer-progress -Pjackson-serde test
       - name: Test jsonb-serde
-        working-directory: shaded-integration-tests
+        working-directory: integration-tests
         run: mvn --no-transfer-progress -Pjsonb-serde test
+      - name: Test plain
+        working-directory: integration-tests
+        run: mvn --no-transfer-progress -Pplain test
 
   sonar:
     timeout-minutes: 10
