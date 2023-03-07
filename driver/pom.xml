@@ -119,6 +119,32 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <includeDependencySources>true</includeDependencySources>
+                            <excludePackageNames>
+                                com.arangodb.internal,
+                                com.arangodb.internal.*,
+                                com.arangodb.async.internal,
+                                com.arangodb.async.internal.*,
+                                com.arangodb.http,
+                                com.arangodb.serde.jackson,
+                                com.arangodb.serde.jackson.*,
+                                javax.*
+                            </excludePackageNames>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -144,6 +170,11 @@
             <groupId>com.arangodb</groupId>
             <artifactId>vst-protocol</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
