@@ -5,11 +5,12 @@ import com.arangodb.ContentType;
 public interface ArangoSerdeProvider {
 
     /**
-     * Returns a serde instance for the given content type
-     *
-     * @param contentType content type
-     * @return serde instance
+     * @return a new serde instance
      */
-    ArangoSerde of(final ContentType contentType);
+    ArangoSerde create();
 
+    /**
+     * @return the supported content type
+     */
+    ContentType getContentType();
 }

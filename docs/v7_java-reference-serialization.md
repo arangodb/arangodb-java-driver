@@ -47,7 +47,7 @@ It supports both `JSON` and `VPACK` data formats. To use `VPACK`, the additional
 Create an instance of `JacksonSerde`, configure the underlying `ObjectMapper` and pass it to the driver:
 
 ```java
-JacksonSerde serde = new JacksonSerdeProvider().of(ContentType.JSON);
+JacksonSerde serde = JacksonSerde.of(ContentType.JSON);
 serde.configure((ObjectMapper mapper) -> {
     // ...
 });
@@ -132,7 +132,7 @@ public static class Person {
 }
 
 // registering programmatically
-JacksonSerde serde = new JacksonSerdeProvider().of(ContentType.JSON);
+JacksonSerde serde = JacksonSerde.of(ContentType.JSON);
 serde.configure(mapper -> {
     SimpleModule module = new SimpleModule("PersonModule");
     module.addDeserializer(Person.class, new PersonDeserializer());
@@ -154,11 +154,11 @@ as well as [Jackson JVM Language modules](https://github.com/FasterXML/jackson#j
 like Kotlin or Scala module (see sections below).
 
 To avoid automatic Jackson modules discovery and registration, an instance of `JacksonSerde` can be manually created 
-using `JacksonSerdeProvider.create(ObjectMapper)` and registered using `ArangoDBBuilder.serde(ArangoSerde)`, e.g.:
+using `JacksonSerde.create(ObjectMapper)` and registered using `ArangoDBBuilder.serde(ArangoSerde)`, e.g.:
 
 ```java
 ArangoDB adb = new ArangoDB.Builder()
-    .serde(new JacksonSerdeProvider().create(new ObjectMapper()))
+    .serde(JacksonSerde.create(new ObjectMapper()))
     .build();
 ```
 

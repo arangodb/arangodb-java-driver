@@ -22,6 +22,11 @@
     <dependencies>
         <dependency>
             <groupId>com.arangodb</groupId>
+            <artifactId>core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
             <artifactId>jackson-serde-json</artifactId>
         </dependency>
         <dependency>

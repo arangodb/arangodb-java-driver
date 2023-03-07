@@ -26,7 +26,6 @@ import com.arangodb.config.ConfigUtils;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.arangodb.serde.jackson.JacksonSerdeProvider;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
@@ -63,7 +62,7 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = new JacksonSerdeProvider().of(ContentType.VPACK);
+        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK);
         serde.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);

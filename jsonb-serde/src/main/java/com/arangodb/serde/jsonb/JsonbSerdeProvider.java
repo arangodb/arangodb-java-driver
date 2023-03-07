@@ -4,8 +4,6 @@ import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerdeProvider;
 import jakarta.json.bind.JsonbConfig;
 
-import java.util.Objects;
-
 public class JsonbSerdeProvider implements ArangoSerdeProvider {
 
     /**
@@ -14,15 +12,12 @@ public class JsonbSerdeProvider implements ArangoSerdeProvider {
      * @return the created JsonbSerde
      */
     @Override
-    public JsonbSerde of(final ContentType contentType) {
-        if (Objects.requireNonNull(contentType) == ContentType.JSON) {
-            return new JsonbSerde();
-        }
-        throw new IllegalArgumentException(contentType.toString());
+    public JsonbSerde create() {
+        return new JsonbSerde();
     }
 
     /**
-     * Creates a new JsonbSerde using the provided .
+     * Creates a new JsonbSerde using the provided configuration.
      *
      * @param config JsonbConfig to use
      * @return the created JsonbSerde
@@ -30,4 +25,10 @@ public class JsonbSerdeProvider implements ArangoSerdeProvider {
     static JsonbSerde create(final JsonbConfig config) {
         return new JsonbSerde(config);
     }
+
+    @Override
+    public ContentType getContentType() {
+        return ContentType.JSON;
+    }
+
 }

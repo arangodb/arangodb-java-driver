@@ -1,6 +1,6 @@
 [
   {
-    "name": "com.arangodb.serde.jackson.JacksonSerdeProvider",
+    "name": "com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider",
     "methods": [
       {
         "name": "<init>",

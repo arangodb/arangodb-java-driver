@@ -1,6 +1,7 @@
 package com.arangodb.internal.config;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
@@ -43,19 +44,21 @@ public class ArangoConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
-    private static ArangoSerdeProvider serdeProvider() {
+    private static ArangoSerdeProvider serdeProvider(ContentType contentType) {
         ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
-        Iterator<ArangoSerdeProvider> it = loader.iterator();
-        ArangoSerdeProvider serdeProvider;
-        if (!it.hasNext()) {
+        ArangoSerdeProvider serdeProvider = null;
+        for (ArangoSerdeProvider p : loader) {
+            if (contentType.equals(p.getContentType())) {
+                if (serdeProvider != null) {
+                    throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
+                }
+                serdeProvider = p;
+            }
+        }
+        if (serdeProvider == null) {
             LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
                     "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
-            serdeProvider = new InternalSerdeProvider();
-        } else {
-            serdeProvider = it.next();
-            if (it.hasNext()) {
-                throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
-            }
+            serdeProvider = new InternalSerdeProvider(contentType);
         }
         return serdeProvider;
     }
@@ -245,14 +248,14 @@ public class ArangoConfig {
 
     public ArangoSerde getUserDataSerde() {
         if (userDataSerde == null) {
-            userDataSerde = serdeProvider().of(ContentTypeFactory.of(getProtocol()));
+            userDataSerde = serdeProvider(ContentTypeFactory.of(getProtocol())).create();
         }
         return userDataSerde;
     }
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = InternalSerdeProvider.create(ContentTypeFactory.of(getProtocol()), getUserDataSerde(), protocolModule);
+            internalSerde = new InternalSerdeProvider(ContentTypeFactory.of(getProtocol())).create(getUserDataSerde(), protocolModule);
         }
         return internalSerde;
     }

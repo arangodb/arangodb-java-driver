@@ -22,7 +22,7 @@ package com.arangodb.mapping.annotations;
 
 import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.jackson.JacksonSerdeProvider;
+import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -38,7 +38,7 @@ class ArangoAnnotationsTest {
     @ParameterizedTest
     @EnumSource(ContentType.class)
     void documentFieldAnnotations(ContentType contentType) {
-        ArangoSerde mapper = new JacksonSerdeProvider().of(contentType);
+        ArangoSerde mapper = JacksonSerde.of(contentType);
 
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");

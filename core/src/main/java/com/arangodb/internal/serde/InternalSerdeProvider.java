@@ -7,27 +7,39 @@ import com.fasterxml.jackson.databind.Module;
 
 public class InternalSerdeProvider implements ArangoSerdeProvider {
 
+    private final ContentType contentType;
+
     /**
-     * Creates a new InternalSerde with default settings for the specified data type.
-     *
      * @param contentType serialization target data type
-     * @return the created InternalSerde
      */
-    @Override
-    public InternalSerde of(final ContentType contentType) {
-        return create(contentType, null, null);
+    public InternalSerdeProvider(final ContentType contentType) {
+        this.contentType = contentType;
     }
 
     /**
-     * Creates a new InternalSerde with default settings for the specified data type.
+     * Creates a new InternalSerde with default settings.
      *
-     * @param contentType serialization target data type
-     * @param userSerde user serde
+     * @return the created InternalSerde
+     */
+    @Override
+    public InternalSerde create() {
+        return create(null, null);
+    }
+
+    /**
+     * Creates a new InternalSerde with default settings.
+     *
+     * @param userSerde      user serde
      * @param protocolModule optional Jackson module to support protocol specific types
      * @return the created InternalSerde
      */
-    public static InternalSerde create(final ContentType contentType, ArangoSerde userSerde, Module protocolModule) {
+    public InternalSerde create(ArangoSerde userSerde, Module protocolModule) {
         return new InternalSerdeImpl(InternalMapperProvider.of(contentType), userSerde, protocolModule);
+    }
+
+    @Override
+    public ContentType getContentType() {
+        return contentType;
     }
 
 }
