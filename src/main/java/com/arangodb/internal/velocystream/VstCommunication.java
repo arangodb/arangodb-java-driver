@@ -21,6 +21,7 @@
 package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.PackageVersion;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.Host;
@@ -54,14 +55,13 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     protected static final String ENCRYPTION_PLAIN = "plain";
     protected static final String ENCRYPTION_JWT = "jwt";
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
-
     protected static final AtomicLong mId = new AtomicLong(0L);
-    protected final ArangoSerialization util;
+    private static final String X_ARANGO_DRIVER = "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
 
+    protected final ArangoSerialization util;
     protected final String user;
     protected final String password;
     protected volatile String jwt;
-
     protected final Integer chunksize;
     protected final HostHandler hostHandler;
 
@@ -168,6 +168,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     protected final Message createMessage(final Request request) throws VPackParserException {
         request.putHeaderParam("accept", "application/x-velocypack");
         request.putHeaderParam("content-type", "application/x-velocypack");
+        request.putHeaderParam("x-arango-driver", X_ARANGO_DRIVER);
         final long id = mId.incrementAndGet();
         return new Message(id, util.serialize(request), request.getBody());
     }
