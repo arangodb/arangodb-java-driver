@@ -22,6 +22,7 @@ package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
+import com.arangodb.PackageVersion;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
@@ -84,6 +85,8 @@ public class HttpConnection implements Connection {
 
     // max safe UTF-8 json string length, so that it can be converted to byte array
     private static final int MAX_JSON_LENGTH = (Integer.MAX_VALUE - 8) / 4;
+
+    private static final String X_ARANGO_DRIVER = "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
 
     public static class Builder {
         private String user;
@@ -323,6 +326,7 @@ public class HttpConnection implements Connection {
         final String url = buildUrl(buildBaseUrl(host), request);
         final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
         httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+        httpRequest.setHeader("x-arango-driver", X_ARANGO_DRIVER);
         if (contentType == Protocol.HTTP_VPACK) {
             httpRequest.setHeader("Accept", "application/x-velocypack");
         }
