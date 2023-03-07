@@ -21,6 +21,7 @@
 package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.PackageVersion;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
@@ -55,6 +56,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected static final AtomicLong mId = new AtomicLong(0L);
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
     protected final InternalSerde serde;
+    private static final String X_ARANGO_DRIVER = "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
 
     protected final String user;
     protected final String password;
@@ -163,6 +165,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected final Message createMessage(final InternalRequest request) throws VPackParserException {
         request.putHeaderParam("accept", "application/x-velocypack");
         request.putHeaderParam("content-type", "application/x-velocypack");
+        request.putHeaderParam("x-arango-driver", X_ARANGO_DRIVER);
         final long id = mId.incrementAndGet();
         return new Message(id, serde.serialize(request), request.getBody());
     }

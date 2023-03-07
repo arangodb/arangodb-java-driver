@@ -6,9 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-class PackageVersionTest extends BaseJunit5 {
+class UserAgentTest extends BaseJunit5 {
 
     private static final String EXPECTED_VERSION = "7.0.0-ALPHA.2";
 
@@ -20,7 +19,6 @@ class PackageVersionTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void userAgentHeader(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(config)
                 .useProtocol(protocol)

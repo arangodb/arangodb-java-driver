@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.DbName;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class InternalSerializers {
 
@@ -40,7 +42,7 @@ public final class InternalSerializers {
             gen.writeStartArray();
             gen.writeNumber(value.getVersion());
             gen.writeNumber(value.getType());
-            gen.writeString(value.getDbName().get());
+            gen.writeString(Optional.ofNullable(value.getDbName()).orElse(DbName.SYSTEM).get());
             gen.writeNumber(value.getRequestType().getType());
             gen.writeString(value.getPath());
             gen.writeStartObject();
