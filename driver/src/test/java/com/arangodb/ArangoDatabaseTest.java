@@ -188,9 +188,12 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
+        String fooName = "collection-" + rnd();
+        db.collection(fooName).create();
+
         String name = "collection-" + rnd();
         final CollectionEntity result = db.createCollection(name,
-                new CollectionCreateOptions().smartJoinAttribute("test123").shardKeys("_key:"));
+                new CollectionCreateOptions().smartJoinAttribute("test123").distributeShardsLike(fooName).shardKeys("_key:"));
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         assertThat(db.collection(name).getProperties().getSmartJoinAttribute()).isEqualTo("test123");
