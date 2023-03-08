@@ -131,12 +131,4 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
         return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 
-    protected InternalRequest removeEdgeDefinitionRequest(final String definitionName) {
-        return request(db.dbName(), RequestType.DELETE, PATH_API_GHARIAL, name, EDGE, definitionName);
-    }
-
-    protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
-    }
-
 }

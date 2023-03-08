@@ -123,9 +123,4 @@ public class ArangoGraphAsyncImpl
         return executor.execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
     }
 
-    @Override
-    public CompletableFuture<GraphEntity> removeEdgeDefinition(final String definitionName) {
-        return executor.execute(removeEdgeDefinitionRequest(definitionName),
-                removeEdgeDefinitionResponseDeserializer());
-    }
 }

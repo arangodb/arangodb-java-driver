@@ -125,10 +125,4 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
         return executor.execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
     }
 
-    @Override
-    public GraphEntity removeEdgeDefinition(final String definitionName) {
-        return executor.execute(removeEdgeDefinitionRequest(definitionName),
-                removeEdgeDefinitionResponseDeserializer());
-    }
-
 }

@@ -207,16 +207,4 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options);
 
-    /**
-     * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
-     * remain untouched and can still be used in your queries
-     *
-     * @param definitionName The name of the edge collection used in the definition
-     * @return information about the graph
-     * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
-     * Documentation</a>
-     */
-    CompletableFuture<GraphEntity> removeEdgeDefinition(final String definitionName);
-
 }

@@ -41,6 +41,16 @@ public class ArangoEdgeCollectionAsyncImpl extends
     }
 
     @Override
+    public CompletableFuture<Void> drop() {
+        return drop(new EdgeCollectionDropOptions());
+    }
+
+    @Override
+    public CompletableFuture<Void> drop(final EdgeCollectionDropOptions options) {
+        return executor.execute(removeEdgeDefinitionRequest(options), Void.class);
+    }
+
+    @Override
     public CompletableFuture<EdgeEntity> insertEdge(final Object value) {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer());

@@ -50,6 +50,25 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
     String name();
 
     /**
+     * Remove one edge definition from the graph.
+     *
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * Documentation</a>
+     */
+    void drop();
+
+    /**
+     * Remove one edge definition from the graph.
+     *
+     * @param options options
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * Documentation</a>
+     */
+    void drop(EdgeCollectionDropOptions options);
+
+    /**
      * Creates a new edge in the collection
      *
      * @param value A representation of a single edge (POJO or {@link com.arangodb.util.RawData})

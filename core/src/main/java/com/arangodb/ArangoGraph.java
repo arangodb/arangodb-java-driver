@@ -201,17 +201,4 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      */
     GraphEntity replaceEdgeDefinition(EdgeDefinition definition, ReplaceEdgeDefinitionOptions options);
 
-    //FIXME: move to ArangoEdgeCollection
-    /**
-     * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
-     * remain untouched and can still be used in your queries
-     *
-     * @param definitionName The name of the edge collection used in the definition
-     * @return information about the graph
-     * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
-     * Documentation</a>
-     */
-    GraphEntity removeEdgeDefinition(String definitionName);
-
 }

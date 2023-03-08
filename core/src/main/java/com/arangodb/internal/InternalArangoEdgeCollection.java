@@ -56,6 +56,12 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
         return name;
     }
 
+    protected InternalRequest removeEdgeDefinitionRequest(final EdgeCollectionDropOptions options) {
+        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "edge", name)
+                .putQueryParam("waitForSync", options.getWaitForSync())
+                .putQueryParam("dropCollections", options.getDropCollections());
+    }
+
     protected <T> InternalRequest insertEdgeRequest(final T value, final EdgeCreateOptions options) {
         final InternalRequest request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
                 name);

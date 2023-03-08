@@ -42,6 +42,16 @@ public class ArangoEdgeCollectionImpl
     }
 
     @Override
+    public void drop() {
+        drop(new EdgeCollectionDropOptions());
+    }
+
+    @Override
+    public void drop(final EdgeCollectionDropOptions options) {
+        executor.execute(removeEdgeDefinitionRequest(options), Void.class);
+    }
+
+    @Override
     public EdgeEntity insertEdge(final Object value) {
         return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer());
