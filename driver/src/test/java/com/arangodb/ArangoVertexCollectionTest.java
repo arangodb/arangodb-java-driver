@@ -71,8 +71,23 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         vertices.drop();
         final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections).isEmpty();
+        assertThat(graph.db().collection(COLLECTION_NAME).exists()).isTrue();
 
         // revert
+        graph.addVertexCollection(COLLECTION_NAME);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("vertices")
+    void dropVertexCollectionDropCollectionTrue(ArangoVertexCollection vertices) {
+        ArangoGraph graph = vertices.graph();
+        vertices.drop(new VertexCollectionDropOptions().dropCollection(true));
+        final Collection<String> vertexCollections = graph.getVertexCollections();
+        assertThat(vertexCollections).isEmpty();
+        assertThat(graph.db().collection(COLLECTION_NAME).exists()).isFalse();
+
+        // revert
+        initCollections(COLLECTION_NAME);
         graph.addVertexCollection(COLLECTION_NAME);
     }
 

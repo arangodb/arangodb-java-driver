@@ -21,6 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.entity.*;
+import com.arangodb.model.EdgeCollectionDropOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import org.junit.jupiter.api.AfterEach;
@@ -269,10 +270,25 @@ class ArangoGraphTest extends BaseTest {
 
     @Test
     void removeEdgeDefinition() throws InterruptedException, ExecutionException {
-        final GraphEntity graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1).get();
-        final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+        db.graph(GRAPH_NAME).edgeCollection(EDGE_COL_1).drop().get();
+        Collection<String> edgeDefinitions = db.graph(GRAPH_NAME).getEdgeDefinitions().get();
         assertThat(edgeDefinitions).hasSize(1);
-        assertThat(edgeDefinitions.iterator().next().getCollection()).isEqualTo(EDGE_COL_2);
+        assertThat(edgeDefinitions.iterator().next()).isEqualTo(EDGE_COL_2);
+        assertThat(db.collection(EDGE_COL_1).exists().get()).isTrue();
+        setup();
+    }
+
+    @Test
+    void removeEdgeDefinitionDropCollections() throws InterruptedException, ExecutionException {
+        db.graph(GRAPH_NAME).edgeCollection(EDGE_COL_1)
+                .drop(new EdgeCollectionDropOptions()
+                        .dropCollections(true)
+                        .waitForSync(true)
+                ).get();
+        Collection<String> edgeDefinitions = db.graph(GRAPH_NAME).getEdgeDefinitions().get();
+        assertThat(edgeDefinitions).hasSize(1);
+        assertThat(edgeDefinitions.iterator().next()).isEqualTo(EDGE_COL_2);
+        assertThat(db.collection(EDGE_COL_1).exists().get()).isFalse();
         setup();
     }
 

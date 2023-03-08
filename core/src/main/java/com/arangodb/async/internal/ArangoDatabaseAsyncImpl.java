@@ -340,8 +340,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     public CompletableFuture<GraphEntity> createGraph(
             final String name,
             final Collection<EdgeDefinition> edgeDefinitions) {
-        return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
-                createGraphResponseDeserializer());
+        return createGraph(name, edgeDefinitions, new GraphCreateOptions());
     }
 
     @Override

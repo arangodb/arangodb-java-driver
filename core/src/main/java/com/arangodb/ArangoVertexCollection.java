@@ -50,13 +50,21 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     String name();
 
     /**
-     * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
-     * graph
+     * Remove a vertex collection form the graph.
      *
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
      * Documentation</a>
      */
     void drop();
+
+    /**
+     * Remove a vertex collection form the graph.
+     *
+     * @param options options
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * Documentation</a>
+     */
+    void drop(VertexCollectionDropOptions options);
 
     /**
      * Creates a new vertex in the collection

@@ -24,6 +24,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
@@ -117,22 +118,16 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
         return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 
-    protected InternalRequest replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
-        final InternalRequest request = request(db.dbName(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE,
-                definition.getCollection());
+    protected InternalRequest replaceEdgeDefinitionRequest(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
+        final InternalRequest request =
+                request(db.dbName(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE, definition.getCollection())
+                        .putQueryParam("waitForSync", options.getWaitForSync())
+                        .putQueryParam("dropCollections", options.getDropCollections());
         request.setBody(getSerde().serialize(definition));
         return request;
     }
 
     protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
-    }
-
-    protected InternalRequest removeEdgeDefinitionRequest(final String definitionName) {
-        return request(db.dbName(), RequestType.DELETE, PATH_API_GHARIAL, name, EDGE, definitionName);
-    }
-
-    protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
         return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
     }
 

@@ -56,8 +56,9 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return name;
     }
 
-    protected InternalRequest dropRequest() {
-        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX_PATH, name);
+    protected InternalRequest dropRequest(final VertexCollectionDropOptions options) {
+        return request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX_PATH, name)
+                .putQueryParam("dropCollection", options.getDropCollection());
     }
 
     protected <T> InternalRequest insertVertexRequest(final T value, final VertexCreateOptions options) {

@@ -295,8 +295,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions) {
-        return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
-                createGraphResponseDeserializer());
+        return createGraph(name, edgeDefinitions, new GraphCreateOptions());
     }
 
     @Override

@@ -31,12 +31,12 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API Documentation</a>
  */
 public final class GraphCreateOptions {
-
     private String name;
     private Collection<EdgeDefinition> edgeDefinitions;
     private Collection<String> orphanCollections;
     private Boolean isSmart;
     private SmartOptions options;
+    private Boolean waitForSync;
 
     public GraphCreateOptions() {
         super();
@@ -201,6 +201,15 @@ public final class GraphCreateOptions {
         return this;
     }
 
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
+
+    public GraphCreateOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
+
     public SmartOptions getOptions() {
         if (options == null) {
             options = new SmartOptions();
@@ -209,12 +218,12 @@ public final class GraphCreateOptions {
     }
 
     public static final class SmartOptions {
+        private String smartGraphAttribute;
+        private Collection<String> satellites;
+        private Integer numberOfShards;
         private ReplicationFactor replicationFactor;
         private Integer writeConcern;
-        private Integer numberOfShards;
-        private String smartGraphAttribute;
         private Boolean isDisjoint;
-        private Collection<String> satellites;
 
         public SmartOptions() {
             super();

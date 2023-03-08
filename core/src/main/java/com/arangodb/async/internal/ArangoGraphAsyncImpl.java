@@ -27,6 +27,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.InternalArangoGraph;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
@@ -114,12 +115,12 @@ public class ArangoGraphAsyncImpl
 
     @Override
     public CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition) {
-        return executor.execute(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
+        return replaceEdgeDefinition(definition, new ReplaceEdgeDefinitionOptions());
     }
 
     @Override
-    public CompletableFuture<GraphEntity> removeEdgeDefinition(final String definitionName) {
-        return executor.execute(removeEdgeDefinitionRequest(definitionName),
-                removeEdgeDefinitionResponseDeserializer());
+    public CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
+        return executor.execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
     }
+
 }
