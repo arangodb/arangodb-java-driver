@@ -46,11 +46,15 @@ class ArangoVertexCollectionTest extends BaseTest {
 
     @BeforeAll
     static void setup() throws InterruptedException, ExecutionException {
+        initCollections();
+        final GraphCreateOptions options = new GraphCreateOptions().orphanCollections(COLLECTION_NAME);
+        db.createGraph(GRAPH_NAME, null, options).get();
+    }
+
+    private static void initCollections() throws ExecutionException, InterruptedException {
         if (!db.collection(COLLECTION_NAME).exists().get()) {
             db.createCollection(COLLECTION_NAME, null).get();
         }
-        final GraphCreateOptions options = new GraphCreateOptions().orphanCollections(COLLECTION_NAME);
-        db.createGraph(GRAPH_NAME, null, options).get();
     }
 
     @AfterEach
@@ -63,6 +67,21 @@ class ArangoVertexCollectionTest extends BaseTest {
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).drop().get();
         final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections().get();
         assertThat(vertexCollections).doesNotContain(COLLECTION_NAME);
+
+        // revert
+        db.graph(GRAPH_NAME).addVertexCollection(COLLECTION_NAME).get();
+    }
+
+    @Test
+    void dropVertexCollectionDropCollectionTrue() throws InterruptedException, ExecutionException {
+        db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).drop(new VertexCollectionDropOptions().dropCollection(true)).get();
+        final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections().get();
+        assertThat(vertexCollections).doesNotContain(COLLECTION_NAME);
+        assertThat(db.collection(COLLECTION_NAME).exists().get()).isFalse();
+
+        // revert
+        initCollections();
+        db.graph(GRAPH_NAME).addVertexCollection(COLLECTION_NAME).get();
     }
 
     @Test

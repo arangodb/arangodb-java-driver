@@ -43,7 +43,12 @@ public class ArangoVertexCollectionImpl
 
     @Override
     public void drop() {
-        executor.execute(dropRequest(), Void.class);
+        drop(new VertexCollectionDropOptions());
+    }
+
+    @Override
+    public void drop(final VertexCollectionDropOptions options) {
+        executor.execute(dropRequest(options), Void.class);
     }
 
     @Override

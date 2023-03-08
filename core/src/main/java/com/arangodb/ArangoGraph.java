@@ -188,6 +188,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      */
     GraphEntity replaceEdgeDefinition(EdgeDefinition definition);
 
+    //FIXME: move to ArangoEdgeCollection
     /**
      * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
      * remain untouched and can still be used in your queries

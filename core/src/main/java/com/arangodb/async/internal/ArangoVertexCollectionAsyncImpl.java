@@ -42,7 +42,12 @@ public class ArangoVertexCollectionAsyncImpl extends
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executor.execute(dropRequest(), Void.class);
+        return drop(new VertexCollectionDropOptions());
+    }
+
+    @Override
+    public CompletableFuture<Void> drop(VertexCollectionDropOptions options) {
+        return executor.execute(dropRequest(options), Void.class);
     }
 
     @Override

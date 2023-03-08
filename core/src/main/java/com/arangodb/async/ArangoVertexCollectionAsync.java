@@ -52,14 +52,23 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
     String name();
 
     /**
-     * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
-     * graph
+     * Removes a vertex collection from the graph and optionally deletes the collection.
      *
      * @return void
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
      * Documentation</a>
      */
     CompletableFuture<Void> drop();
+
+    /**
+     * Removes a vertex collection from the graph and optionally deletes the collection.
+     *
+     * @param options options
+     * @return void
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * Documentation</a>
+     */
+    CompletableFuture<Void> drop(VertexCollectionDropOptions options);
 
     /**
      * Creates a new vertex in the collection
