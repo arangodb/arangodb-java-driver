@@ -2,7 +2,6 @@ package resilience;
 
 import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
-import com.arangodb.async.ArangoDBAsync;
 import resilience.utils.MemoryAppender;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
@@ -47,12 +46,6 @@ public abstract class SingleServerTest {
 
     protected static ArangoDB.Builder dbBuilder() {
         return new ArangoDB.Builder()
-                .host(endpoint.getHost(), endpoint.getPort())
-                .password(PASSWORD);
-    }
-
-    protected static ArangoDBAsync.Builder dbBuilderAsync() {
-        return new ArangoDBAsync.Builder()
                 .host(endpoint.getHost(), endpoint.getPort())
                 .password(PASSWORD);
     }

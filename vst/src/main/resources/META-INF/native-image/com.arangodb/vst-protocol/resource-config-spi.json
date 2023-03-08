@@ -2,9 +2,6 @@
   "resources": {
     "includes": [
       {
-        "pattern": "META-INF/services/com.arangodb.internal.net.AsyncProtocolProvider"
-      },
-      {
         "pattern": "META-INF/services/com.arangodb.internal.net.ProtocolProvider"
       }
     ]

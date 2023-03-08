@@ -37,69 +37,6 @@
     "allDeclaredClasses": true
   },
   {
-    "name": "com.arangodb.async.ArangoDatabaseTest$TransactionTestEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.document.AqlQueryWithSpecialReturnTypesExampleTest$Gender",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.document.TestEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.graph.AQLActorsAndMoviesExampleTest$Actor",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.graph.AQLActorsAndMoviesExampleTest$Movie",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.graph.Circle",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.graph.CircleEdge",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
-    "name": "com.arangodb.async.example.graph.ShortestPathInAQLExampleTest$Pair",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allPublicMethods": true,
-    "allDeclaredConstructors": true,
-    "allDeclaredClasses": true
-  },
-  {
     "name": "com.arangodb.example.document.AqlQueryWithSpecialReturnTypesExampleTest$Gender",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -229,28 +166,6 @@
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name":"com.arangodb.async.ArangoCollectionTest$Animal",
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredClasses":true
-  },
-  {
-    "name":"com.arangodb.async.ArangoCollectionTest$Cat",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
-  },
-  {
-    "name":"com.arangodb.async.ArangoCollectionTest$Dog",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
   },
   {
     "name":"com.arangodb.ArangoCollectionTest$Animal",
