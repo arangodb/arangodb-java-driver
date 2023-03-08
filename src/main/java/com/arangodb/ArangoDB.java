@@ -1058,7 +1058,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *
      * @param cursorInitializer
      * @return ArangoDB
+     * @deprecated for removal
      */
+    @Deprecated
     ArangoDB _setCursorInitializer(ArangoCursorInitializer cursorInitializer);
 
 }

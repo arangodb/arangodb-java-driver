@@ -27,7 +27,9 @@ import com.arangodb.internal.InternalArangoDatabase;
 
 /**
  * @author Mark Vollmary
+ * @deprecated for removal
  */
+@Deprecated
 public interface ArangoCursorInitializer {
 
     <T> ArangoCursor<T> createInstance(

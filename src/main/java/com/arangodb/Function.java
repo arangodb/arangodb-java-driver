@@ -24,7 +24,9 @@ package com.arangodb;
  * @param <T> the type of the input to the function
  * @param <R> the type of the result of the function
  * @author Mark Vollmary
+ * @deprecated Use {@link java.util.function.Function} instead.
  */
+@Deprecated
 public interface Function<T, R> {
 
     /**

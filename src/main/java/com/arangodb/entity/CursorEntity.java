@@ -30,7 +30,9 @@ import java.util.Map;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
+ * @deprecated use accessors from {@link com.arangodb.ArangoCursor} instead
  */
+@Deprecated
 public class CursorEntity implements Entity, MetaAware {
 
     private String id;

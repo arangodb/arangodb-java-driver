@@ -919,11 +919,14 @@ class ArangoSearchTest extends BaseJunit5 {
                 .includeAllFields(true)
                 .storeValues(StoreValuesType.ID)
                 .trackListPositions(false)
-                .inBackground(true);
+                .inBackground(true)
+                .cache(true);
         if (isEnterprise()) {
             link.nested(FieldLink.on("f3"));
         }
         ArangoSearchCreateOptions options = new ArangoSearchCreateOptions().link(link);
+        StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none, true);
+        options.storedValues(storedValue);
 
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(options);
@@ -941,6 +944,14 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(createdLink.getIncludeAllFields()).isTrue();
         assertThat(createdLink.getStoreValues()).isEqualTo(StoreValuesType.ID);
         assertThat(createdLink.getTrackListPositions()).isFalse();
+
+        if (isEnterprise() && isAtLeastVersion(3, 9, 5) && isLessThanVersion(3, 10)) {
+            assertThat(createdLink.getCache()).isTrue();
+            assertThat(properties.getStoredValues())
+                    .isNotEmpty()
+                    .allSatisfy(it -> assertThat(it.getCache()).isTrue());
+        }
+
         if (isEnterprise() && isAtLeastVersion(3, 10)) {
             assertThat(createdLink.getNested()).isNotEmpty();
             FieldLink nested = createdLink.getNested().iterator().next();
