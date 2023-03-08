@@ -25,8 +25,10 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -50,6 +52,7 @@ class ArangoGraphTest extends BaseJunit5 {
     private static final String VERTEX_COL_2 = "ArangoGraphTest_vertex_collection_2";
     private static final String VERTEX_COL_3 = "ArangoGraphTest_vertex_collection_3";
     private static final String VERTEX_COL_4 = "ArangoGraphTest_vertex_collection_4";
+    private static final String VERTEX_COL_5 = "ArangoGraphTest_vertex_collection_5";
 
     private static final String EDGE_COL_1 = "ArangoGraphTest_edge_collection_1";
     private static final String EDGE_COL_2 = "ArangoGraphTest_edge_collection_2";
@@ -59,7 +62,7 @@ class ArangoGraphTest extends BaseJunit5 {
     private static final Integer NUMBER_OF_SHARDS = 2;
 
     private static final EdgeDefinition ed1 =
-            new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2);
+            new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_5);
     private static final EdgeDefinition ed2 =
             new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3);
 
@@ -122,7 +125,7 @@ class ArangoGraphTest extends BaseJunit5 {
         final EdgeDefinition e1 = iterator.next();
         assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
         assertThat(e1.getFrom()).contains(VERTEX_COL_1);
-        assertThat(e1.getTo()).contains(VERTEX_COL_2);
+        assertThat(e1.getTo()).contains(VERTEX_COL_5);
         final EdgeDefinition e2 = iterator.next();
         assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
         assertThat(e2.getFrom()).contains(VERTEX_COL_2);
@@ -130,7 +133,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(info.getOrphanCollections()).isEmpty();
 
         if (isCluster()) {
-            for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2}) {
+            for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_5}) {
                 final CollectionPropertiesEntity properties = graph.db().collection(collection).getProperties();
                 assertThat(properties.getReplicationFactor().getValue()).isEqualTo(REPLICATION_FACTOR);
                 assertThat(properties.getNumberOfShards()).isEqualTo(NUMBER_OF_SHARDS);
@@ -143,8 +146,8 @@ class ArangoGraphTest extends BaseJunit5 {
     void getVertexCollections(ArangoGraph graph) {
         final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections)
-                .hasSize(3)
-                .contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3);
+                .hasSize(4)
+                .contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_5);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -153,7 +156,7 @@ class ArangoGraphTest extends BaseJunit5 {
         final GraphEntity g = graph.addVertexCollection(VERTEX_COL_4);
         assertThat(g).isNotNull();
         final Collection<String> vertexCollections = graph.getVertexCollections();
-        assertThat(vertexCollections).contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4);
+        assertThat(vertexCollections).contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4, VERTEX_COL_5);
 
         // revert
         graph.vertexCollection(VERTEX_COL_4).drop();
@@ -270,6 +273,38 @@ class ArangoGraphTest extends BaseJunit5 {
                 assertThat(e.getTo()).contains(VERTEX_COL_4);
             }
         }
+        assertThat(graph.db().collection(VERTEX_COL_1).exists()).isTrue();
+
+        // revert
+        graph.removeEdgeDefinition(EDGE_COL_1);
+        graph.vertexCollection(VERTEX_COL_4).drop();
+        graph.addEdgeDefinition(ed1);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("graphs")
+    @Disabled
+    // FIXME: with dropCollections=true the vertex collections remain in the graph as orphan and not dropped
+    void replaceEdgeDefinitionDropCollections(ArangoGraph graph) {
+        final GraphEntity g = graph
+                .replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4),
+                        new ReplaceEdgeDefinitionOptions().waitForSync(true).dropCollections(true));
+        final Collection<EdgeDefinition> edgeDefinitions = g.getEdgeDefinitions();
+        assertThat(edgeDefinitions).hasSize(2);
+        int count = 0;
+        for (final EdgeDefinition e : edgeDefinitions) {
+            if (e.getCollection().equals(EDGE_COL_1)) {
+                count++;
+            }
+        }
+        assertThat(count).isEqualTo(1);
+        for (final EdgeDefinition e : edgeDefinitions) {
+            if (e.getCollection().equals(EDGE_COL_1)) {
+                assertThat(e.getFrom()).contains(VERTEX_COL_3);
+                assertThat(e.getTo()).contains(VERTEX_COL_4);
+            }
+        }
+        assertThat(graph.db().collection(VERTEX_COL_5).exists()).isFalse();
 
         // revert
         graph.removeEdgeDefinition(EDGE_COL_1);

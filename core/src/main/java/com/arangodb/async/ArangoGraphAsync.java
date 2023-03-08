@@ -24,6 +24,7 @@ import com.arangodb.ArangoSerdeAccessor;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -193,6 +194,18 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition);
+
+    /**
+     * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
+     * your database
+     *
+     * @param definition The edge definition
+     * @param options    options
+     * @return information about the graph
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
+     * Documentation</a>
+     */
+    CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options);
 
     /**
      * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections

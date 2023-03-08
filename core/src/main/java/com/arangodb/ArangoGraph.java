@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -187,6 +188,18 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     GraphEntity replaceEdgeDefinition(EdgeDefinition definition);
+
+    /**
+     * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
+     * your database
+     *
+     * @param definition The edge definition
+     * @param options options
+     * @return information about the graph
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
+     * Documentation</a>
+     */
+    GraphEntity replaceEdgeDefinition(EdgeDefinition definition, ReplaceEdgeDefinitionOptions options);
 
     //FIXME: move to ArangoEdgeCollection
     /**
