@@ -262,7 +262,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected InternalRequest createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions,
                                                  final GraphCreateOptions options) {
-        return request(dbName, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name, edgeDefinitions)));
+        GraphCreateOptions opts = options != null ? options : new GraphCreateOptions();
+        return request(dbName, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL)
+                .putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, opts.getWaitForSync())
+                .setBody(getSerde().serialize(OptionsBuilder.build(opts, name, edgeDefinitions)));
     }
 
     protected ResponseDeserializer<GraphEntity> createGraphResponseDeserializer() {
