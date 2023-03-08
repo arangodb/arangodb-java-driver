@@ -133,8 +133,6 @@
                             <excludePackageNames>
                                 com.arangodb.internal,
                                 com.arangodb.internal.*,
-                                com.arangodb.async.internal,
-                                com.arangodb.async.internal.*,
                                 com.arangodb.http,
                                 com.arangodb.serde.jackson,
                                 com.arangodb.serde.jackson.*,

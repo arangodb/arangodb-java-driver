@@ -1,14 +1,5 @@
 [
   {
-    "name": "com.arangodb.vst.VstAsyncProtocolProvider",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.vst.VstProtocolProvider",
     "methods": [
       {

@@ -2,7 +2,6 @@ package resilience;
 
 import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
-import com.arangodb.async.ArangoDBAsync;
 import resilience.utils.MemoryAppender;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
@@ -59,14 +58,6 @@ public abstract class ClusterTest {
 
     protected static ArangoDB.Builder dbBuilder() {
         ArangoDB.Builder builder = new ArangoDB.Builder().password(PASSWORD);
-        for (Endpoint ph : endpoints) {
-            builder.host(ph.getHost(), ph.getPort());
-        }
-        return builder;
-    }
-
-    protected static ArangoDBAsync.Builder dbBuilderAsync() {
-        ArangoDBAsync.Builder builder = new ArangoDBAsync.Builder().password(PASSWORD);
         for (Endpoint ph : endpoints) {
             builder.host(ph.getHost(), ph.getPort());
         }
