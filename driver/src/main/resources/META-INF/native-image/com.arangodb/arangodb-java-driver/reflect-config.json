@@ -42,6 +42,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.BaseDocument",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.CollectionEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -79,6 +85,12 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -366,6 +378,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.CursorStats",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.GraphEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -522,13 +540,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -565,12 +583,6 @@
   },
   {
     "name": "com.arangodb.entity.CursorWarning",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorStats",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -655,18 +667,6 @@
   },
   {
     "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionExpression",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.BaseEdgeDocument",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.BaseDocument",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1044,6 +1044,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.VertexCollectionDropOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.AqlQueryOptions$Optimizer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1080,13 +1086,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserUpdateOptions",
+    "name": "com.arangodb.model.StreamTransactionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.StreamTransactionOptions",
+    "name": "com.arangodb.model.UserUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1111,6 +1117,12 @@
   },
   {
     "name": "com.arangodb.model.arangosearch.SearchAliasPropertiesOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeCollectionDropOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1206,6 +1218,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.CollectionTruncateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.CollectionsReadOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1218,18 +1236,6 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionTruncateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.CollectionSchema",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.DocumentImportOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1237,6 +1243,12 @@
   },
   {
     "name": "com.arangodb.model.DocumentDeleteOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionSchema",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1260,13 +1272,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.GraphDocumentReadOptions",
+    "name": "com.arangodb.model.DocumentUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentUpdateOptions",
+    "name": "com.arangodb.model.GraphDocumentReadOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1290,19 +1302,25 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.ReplaceEdgeDefinitionOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.LogOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserCreateOptions",
+    "name": "com.arangodb.model.CollectionPropertiesOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionPropertiesOptions",
+    "name": "com.arangodb.model.UserCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
