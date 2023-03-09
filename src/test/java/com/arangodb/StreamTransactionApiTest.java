@@ -65,6 +65,8 @@ public class StreamTransactionApiTest extends BaseJunit5 {
 
     @BeforeEach
     void beforeEach() {
+        assumeTrue(isCluster());
+
         ArangoDatabase db = dbsStream().iterator().next();
         ArangoCollection collection = db.collection(COLLECTION_NAME);
         if (!collection.exists())
@@ -80,7 +82,6 @@ public class StreamTransactionApiTest extends BaseJunit5 {
     @MethodSource("dbs")
     @Timeout(value = 10_000, unit = TimeUnit.MILLISECONDS)
     public void streamTransactionFromDifferentCoordinators(ArangoDatabase db) {
-        assumeTrue(isCluster());
         ArangoCollection collection = db.collection(COLLECTION_NAME);
 
         String transactionId = db.beginStreamTransaction(
