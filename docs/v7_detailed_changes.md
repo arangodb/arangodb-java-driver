@@ -9,7 +9,7 @@ In your `pom.xml` include the dependency:
     <dependency>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver</artifactId>
-        <version>7.0.0-ALPHA.3</version>
+        <version>7.0.0-ALPHA.4</version>
     </dependency>
 <dependencies>
 ```
