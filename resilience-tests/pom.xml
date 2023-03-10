@@ -23,7 +23,11 @@
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
-            <artifactId>jackson-dataformat-velocypack</artifactId>
+            <artifactId>vst-protocol</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson-serde-vpack</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.rekawek.toxiproxy</groupId>
