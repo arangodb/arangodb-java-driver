@@ -147,32 +147,36 @@ ArangoDB adb = new ArangoDB.Builder()
 
 ### Jackson datatype and language modules
 
-By default, Jackson modules in the classpath are discovered via SPI and registered to the `JacksonSerde`.
-For example, this will automatically
-register [Jackson datatype modules](https://github.com/FasterXML/jackson#third-party-datatype-modules)
-as well as [Jackson JVM Language modules](https://github.com/FasterXML/jackson#jvm-language-modules)
-like Kotlin or Scala module (see sections below).
-
-To avoid automatic Jackson modules discovery and registration, an instance of `JacksonSerde` can be manually created 
-using `JacksonSerde.create(ObjectMapper)` and registered using `ArangoDBBuilder.serde(ArangoSerde)`, e.g.:
-
-```java
-ArangoDB adb = new ArangoDB.Builder()
-    .serde(JacksonSerde.create(new ObjectMapper()))
-    .build();
-```
+The `JacksonSerde` can be configured
+with [Jackson datatype modules](https://github.com/FasterXML/jackson#third-party-datatype-modules)
+as well as [Jackson JVM Language modules](https://github.com/FasterXML/jackson#jvm-language-modules).
 
 ### Kotlin
 
 [Kotlin language module](https://github.com/FasterXML/jackson-module-kotlin)
-enables support for Kotlin classes and types. 
-It can be used including `com.fasterxml.jackson.module:jackson-module-kotlin`.
+enables support for Kotlin classes and types and can be registered in the following way:
+
+```kotlin
+val arangoDB = ArangoDB.Builder()
+    .serde(JacksonSerdeProvider().of(ContentType.JSON).apply {
+        configure { it.registerModule(KotlinModule()) }
+    })
+    .build()
+```
 
 ### Scala
 
 [Scala language module](https://github.com/FasterXML/jackson-module-scala)
-enables support for Scala classes and types.
-It can be used including `com.fasterxml.jackson.module:jackson-module-scala_<scala-version>`.
+enables support for Scala classes and types and can be registered in the following way:
+
+```scala
+val serde = JacksonSerdeProvider().of(ContentType.JSON)
+serde.configure(mapper => mapper.registerModule(DefaultScalaModule))
+
+val arangoDB = new ArangoDB.Builder()
+  .serde(arangoJack)
+  .build()
+```
 
 ### Java 8 types
 

@@ -15,15 +15,12 @@ public interface JacksonSerde extends ArangoSerde {
 
     /**
      * Creates a new JacksonSerde with default settings for the specified data type.
-     * Registers all the Jackson modules ({@link com.fasterxml.jackson.databind.Module}) discovered via SPI.
      *
      * @param contentType serialization target data type
      * @return the created JacksonSerde
      */
     static JacksonSerde of(final ContentType contentType) {
-        JacksonSerde serde = create(JacksonMapperProvider.of(contentType));
-        serde.configure(mapper -> mapper.registerModules(ObjectMapper.findModules()));
-        return serde;
+        return create(JacksonMapperProvider.of(contentType));
     }
 
     /**
