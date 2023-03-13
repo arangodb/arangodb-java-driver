@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver-parent</artifactId>
-        <version>7.0.0-ALPHA.4</version>
+        <version>7.0.0-RC.1</version>
     </parent>
 
     <name>arangodb-java-driver-shaded</name>
