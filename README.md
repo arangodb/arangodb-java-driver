@@ -13,4 +13,4 @@ The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 - [Examples](driver/src/test/java/com/arangodb/example)
 - [Tutorial](https://www.arangodb.com/docs/stable/drivers/java-tutorial.html)
 - [Documentation](https://www.arangodb.com/docs/stable/drivers/java.html)
-- [JavaDoc](http://arangodb.github.io/arangodb-java-driver/)
+- [JavaDoc](https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/latest/index.html)
