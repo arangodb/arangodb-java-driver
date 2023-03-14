@@ -351,7 +351,7 @@ class StreamTransactionTest extends BaseJunit5 {
         // insert documents from within the tx
         MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> txDocs = collection
                 .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()),
-                        new DocumentCreateOptions().streamTransactionId(tx.getId()));
+                        new DocumentCreateOptions().streamTransactionId(tx.getId()), BaseDocument.class);
 
         List<String> keys = txDocs.getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
 
@@ -418,7 +418,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
         List<BaseDocument> createdDocs = collection
-                .insertDocuments(docs, new DocumentCreateOptions().returnNew(true)).getDocuments().stream()
+                .insertDocuments(docs, new DocumentCreateOptions().returnNew(true), BaseDocument.class).getDocuments().stream()
                 .map(DocumentCreateEntity::getNew).collect(Collectors.toList());
 
         List<String> keys = createdDocs.stream().map(BaseDocument::getKey).collect(Collectors.toList());
@@ -503,7 +503,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
         ArangoCollection collection = db.collection(COLLECTION_NAME);
         List<BaseDocument> createdDocs = collection
-                .insertDocuments(docs, new DocumentCreateOptions().returnNew(true)).getDocuments().stream()
+                .insertDocuments(docs, new DocumentCreateOptions().returnNew(true), BaseDocument.class).getDocuments().stream()
                 .map(DocumentCreateEntity::getNew).collect(Collectors.toList());
 
         List<String> keys = createdDocs.stream().map(BaseDocument::getKey).collect(Collectors.toList());

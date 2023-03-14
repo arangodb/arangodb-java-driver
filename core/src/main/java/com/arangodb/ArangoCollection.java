@@ -134,8 +134,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            Collection<T> values, DocumentCreateOptions options);
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(
+            Collection<?> values, DocumentCreateOptions options);
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -318,8 +318,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            Collection<T> values, DocumentReplaceOptions options);
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(
+            Collection<?> values, DocumentReplaceOptions options);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -436,8 +436,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            Collection<T> values, DocumentUpdateOptions options);
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(
+            Collection<?> values, DocumentUpdateOptions options);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -537,7 +537,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
-    <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(
             Collection<?> values, DocumentDeleteOptions options);
 
     /**

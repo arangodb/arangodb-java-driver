@@ -575,15 +575,4 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 Permissions.class);
     }
 
-    protected Class<?> getCollectionContentClass(Collection<?> c) {
-        if (c == null || c.isEmpty()) {
-            return null;
-        }
-        Object v = c.iterator().next();
-        if (v == null) {
-            return null;
-        }
-        return v.getClass();
-    }
-
 }

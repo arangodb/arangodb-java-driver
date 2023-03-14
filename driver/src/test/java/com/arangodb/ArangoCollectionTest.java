@@ -389,7 +389,7 @@ new DocumentCreateOptions().returnNew(true));
         assumeTrue(isSingleServer());
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info =
     collection.insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument()),
-new DocumentCreateOptions().silent(true));
+new DocumentCreateOptions().silent(true), BaseDocument.class);
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).isEmpty();
         assertThat(info.getDocumentsAndErrors()).isEmpty();
@@ -899,7 +899,7 @@ options);
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info =
 collection.updateDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
-          new DocumentUpdateOptions().silent(true));
+          new DocumentUpdateOptions().silent(true), BaseDocument.class);
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).isEmpty();
         assertThat(info.getDocumentsAndErrors()).isEmpty();
@@ -1111,7 +1111,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info =
  collection.replaceDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
-    new DocumentReplaceOptions().silent(true));
+    new DocumentReplaceOptions().silent(true), BaseDocument.class);
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).isEmpty();
         assertThat(info.getDocumentsAndErrors()).isEmpty();
@@ -1827,7 +1827,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
 
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert =
          collection.insertDocuments(Arrays.asList(doc1, doc2),
-          new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
+          new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true), BaseDocument.class);
         assertThat(repsert).isNotNull();
         assertThat(repsert.getDocuments()).hasSize(2);
         assertThat(repsert.getErrors()).isEmpty();
@@ -1924,7 +1924,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         values.add(new BaseDocument());
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> docs = collection.insertDocuments(values,
- options);
+ options, BaseDocument.class);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
         assertThat(docs.getDocuments()).hasSize(3);

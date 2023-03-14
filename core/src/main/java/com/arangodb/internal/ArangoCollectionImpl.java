@@ -83,16 +83,15 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values) {
-        return executor
-                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
-                        insertDocumentsResponseDeserializer(Void.class));
+        return insertDocuments(values, new DocumentCreateOptions());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            final Collection<T> values, final DocumentCreateOptions options) {
-        return insertDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(
+            final Collection<?> values, final DocumentCreateOptions options) {
+        return executor
+                .execute(insertDocumentsRequest(values, options),
+                        insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -198,15 +197,14 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values) {
-        return executor.execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
-                replaceDocumentsResponseDeserializer(Void.class));
+        return replaceDocuments(values, new DocumentReplaceOptions());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            final Collection<T> values, final DocumentReplaceOptions options) {
-        return replaceDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(
+            final Collection<?> values, final DocumentReplaceOptions options) {
+        return executor.execute(replaceDocumentsRequest(values, options),
+                replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
@@ -253,14 +251,13 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values) {
-        return updateDocuments(values, new DocumentUpdateOptions(), Void.class);
+        return updateDocuments(values, new DocumentUpdateOptions());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            final Collection<T> values, final DocumentUpdateOptions options) {
-        return updateDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(
+            final Collection<?> values, final DocumentUpdateOptions options) {
+        return updateDocuments(values, options, Void.class);
     }
 
     @Override
@@ -303,14 +300,13 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
     @Override
     public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values) {
-        return deleteDocuments(values, new DocumentDeleteOptions(), Void.class);
+        return deleteDocuments(values, new DocumentDeleteOptions());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+    public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(
             final Collection<?> values, final DocumentDeleteOptions options) {
-        return deleteDocuments(values, options, (Class<T>) getCollectionContentClass(values));
+        return deleteDocuments(values, options, Void.class);
     }
 
     @Override
