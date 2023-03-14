@@ -1365,17 +1365,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void getDocument(ArangoDatabase db) {
-        String key = "key-" + rnd();
-        final BaseDocument value = new BaseDocument(key);
-        db.collection(CNAME1).insertDocument(value);
-        final BaseDocument document = db.getDocument(CNAME1 + "/" + key, BaseDocument.class);
-        assertThat(document).isNotNull();
-        assertThat(document.getKey()).isEqualTo(key);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
     void shouldIncludeExceptionMessage(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
 
@@ -1387,13 +1376,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
         } catch (final ArangoDBException e) {
             assertThat(e.getErrorMessage()).isEqualTo(exceptionMessage);
         }
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void getDocumentWrongId(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.getDocument("123", BaseDocument.class));
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
     @ParameterizedTest(name = "{index}")

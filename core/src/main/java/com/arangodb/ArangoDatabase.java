@@ -580,29 +580,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
     DatabaseEntity getInfo();
 
     /**
-     * Reads a single document
-     *
-     * @param id   The id of the document
-     * @param type The type of the document (POJO or {@link com.arangodb.util.RawData})
-     * @return the document identified by the id
-     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
-     * Documentation</a>
-     */
-    <T> T getDocument(String id, Class<T> type);
-
-    /**
-     * Reads a single document
-     *
-     * @param id      The id of the document
-     * @param type    The type of the document (POJO or {@link com.arangodb.util.RawData})
-     * @param options Additional options, can be null
-     * @return the document identified by the id
-     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
-     * Documentation</a>
-     */
-    <T> T getDocument(String id, Class<T> type, DocumentReadOptions options);
-
-    /**
      * Reload the routing table.
      *
      * @see <a href=

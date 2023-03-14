@@ -345,20 +345,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
-    public <T> T getDocument(final String id, final Class<T> type) {
-        DocumentUtil.validateDocumentId(id);
-        final String[] split = id.split("/");
-        return collection(split[0]).getDocument(split[1], type);
-    }
-
-    @Override
-    public <T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options) {
-        DocumentUtil.validateDocumentId(id);
-        final String[] split = id.split("/");
-        return collection(split[0]).getDocument(split[1], type, options);
-    }
-
-    @Override
     public void reloadRouting() {
         executor.execute(reloadRoutingRequest(), Void.class);
     }
