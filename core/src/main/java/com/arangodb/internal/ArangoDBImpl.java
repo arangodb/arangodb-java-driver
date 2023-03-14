@@ -179,7 +179,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public <T, U> Response<U> execute(Request<T> request, Class<U> type) {
+    public <T> Response<T> execute(Request<?> request, Class<T> type) {
         return executor.execute(executeRequest(request), responseDeserializer(type));
     }
 

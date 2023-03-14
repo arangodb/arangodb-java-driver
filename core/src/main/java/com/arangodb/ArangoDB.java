@@ -276,7 +276,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param type    Deserialization target type for the response body (POJO or {@link com.arangodb.util.RawData})
      * @return response
      */
-    <T, U> Response<U> execute(Request<T> request, Class<U> type);
+    <T> Response<T> execute(Request<?> request, Class<T> type);
 
     /**
      * Returns the server logs

@@ -149,7 +149,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            Collection<T> values, DocumentCreateOptions options, Class<T> type);
+            Collection<? extends T> values, DocumentCreateOptions options, Class<T> type);
 
     /**
      * Bulk imports the given values into the collection.
@@ -334,7 +334,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            Collection<T> values, DocumentReplaceOptions options, Class<T> type);
+            Collection<? extends T> values, DocumentReplaceOptions options, Class<T> type);
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes

@@ -96,7 +96,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values,
+    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<? extends T> values,
                                                                             DocumentCreateOptions options,
                                                                             Class<T> type) {
         return executor
@@ -210,7 +210,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values,
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<? extends T> values,
                                                                              DocumentReplaceOptions options,
                                                                              Class<T> type) {
         return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
