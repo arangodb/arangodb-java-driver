@@ -777,8 +777,8 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
         db.createSearchAnalyzer(analyzer);
         Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), " +
-                        "@aName))",
-                Collections.singletonMap("aName", name), Collection.class).next();
+                        "@aName))", Collection.class,
+                Collections.singletonMap("aName", name)).next();
         assertThat(res).containsExactly("fox", "dog", "a", "theater");
         db.deleteSearchAnalyzer(name);
     }

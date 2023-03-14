@@ -40,12 +40,12 @@ class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
     @Test
     void queryAllVertices() throws ArangoDBException {
         String queryString = "FOR v IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' RETURN v._key";
-        ArangoCursor<String> cursor = db.query(queryString, null, null, String.class);
+        ArangoCursor<String> cursor = db.query(queryString, String.class);
         Collection<String> result = cursor.asListRemaining();
         assertThat(result).hasSize(10);
 
         queryString = "WITH circles FOR v IN 1..3 OUTBOUND 'circles/A' edges RETURN v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
         result = cursor.asListRemaining();
         assertThat(result).hasSize(10);
     }
@@ -53,12 +53,12 @@ class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
     @Test
     void queryDepthTwo() throws ArangoDBException {
         String queryString = "FOR v IN 2..2 OUTBOUND 'circles/A' GRAPH 'traversalGraph' return v._key";
-        ArangoCursor<String> cursor = db.query(queryString, null, null, String.class);
+        ArangoCursor<String> cursor = db.query(queryString, String.class);
         Collection<String> result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("C", "E", "H", "J");
 
         queryString = "FOR v IN 2 OUTBOUND 'circles/A' GRAPH 'traversalGraph' return v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("C", "E", "H", "J");
     }
@@ -67,26 +67,26 @@ class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
     void queryWithFilter() throws ArangoDBException {
         String queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]" +
                 "._key != 'G' RETURN v._key";
-        ArangoCursor<String> cursor = db.query(queryString, null, null, String.class);
+        ArangoCursor<String> cursor = db.query(queryString, String.class);
         Collection<String> result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("B", "C", "D", "E", "F");
 
         queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.edges[0].label != " +
                 "'right_foo' RETURN v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("B", "C", "D", "E", "F");
 
         queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G'" +
                 " FILTER p.edges[1].label != 'left_blub' return v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
 
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("B", "C", "D");
 
         queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G'" +
                 " AND    p.edges[1].label != 'left_blub' return v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("B", "C", "D");
     }
@@ -94,17 +94,17 @@ class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
     @Test
     void queryOutboundInbound() throws ArangoDBException {
         String queryString = "FOR v IN 1..3 OUTBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
-        ArangoCursor<String> cursor = db.query(queryString, null, null, String.class);
+        ArangoCursor<String> cursor = db.query(queryString, String.class);
         Collection<String> result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("F");
 
         queryString = "FOR v IN 1..3 INBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("B", "A");
 
         queryString = "FOR v IN 1..3 ANY 'circles/E' GRAPH 'traversalGraph' return v._key";
-        cursor = db.query(queryString, null, null, String.class);
+        cursor = db.query(queryString, String.class);
 
         result = cursor.asListRemaining();
         assertThat(result).containsExactlyInAnyOrder("F", "B", "C", "D", "A", "G");

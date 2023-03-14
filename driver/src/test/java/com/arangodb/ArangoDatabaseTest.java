@@ -565,7 +565,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
         }
-        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null, null, String.class);
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class);
         assertThat((Object) cursor).isNotNull();
         for (int i = 0; i < 10; i++, cursor.next()) {
             assertThat((Iterator<?>) cursor).hasNext();
@@ -575,8 +575,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithNullBindVar(ArangoDatabase db) {
-        final ArangoCursor<Object> cursor = db.query("return @foo", Collections.singletonMap("foo", null), null,
-                Object.class);
+        final ArangoCursor<Object> cursor = db.query("return @foo", Object.class, Collections.singletonMap("foo", null));
         assertThat(cursor.hasNext()).isTrue();
         assertThat(cursor.next()).isNull();
     }
@@ -587,7 +586,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
         }
-        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null, null, String.class);
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class);
         assertThat((Object) cursor).isNotNull();
 
         int i = 0;
@@ -606,8 +605,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final ArangoCursor<String> cursor = db
-                .query("for i in " + CNAME1 + " Limit 6 return i._id", null, new AqlQueryOptions().count(true),
-                        String.class);
+                .query("for i in " + CNAME1 + " Limit 6 return i._id", String.class, new AqlQueryOptions().count(true));
         assertThat((Object) cursor).isNotNull();
         for (int i = 1; i <= 6; i++, cursor.next()) {
             assertThat(cursor.hasNext()).isTrue();
@@ -623,8 +621,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final ArangoCursor<String> cursor = db
-                .query("for i in " + CNAME1 + " Limit 5 return i._id", null, new AqlQueryOptions().fullCount(true),
-                        String.class);
+                .query("for i in " + CNAME1 + " Limit 5 return i._id", String.class, new AqlQueryOptions().fullCount(true));
         assertThat((Object) cursor).isNotNull();
         for (int i = 0; i < 5; i++, cursor.next()) {
             assertThat((Iterator<?>) cursor).hasNext();
@@ -642,8 +639,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final ArangoCursor<String> cursor = db
-                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
-                        String.class);
+                .query("for i in " + CNAME1 + " return i._id", String.class, new AqlQueryOptions().batchSize(5).count(true));
 
         assertThat((Object) cursor).isNotNull();
         for (int i = 0; i < 10; i++, cursor.next()) {
@@ -659,8 +655,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final ArangoCursor<String> cursor = db
-                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
-                        String.class);
+                .query("for i in " + CNAME1 + " return i._id", String.class, new AqlQueryOptions().batchSize(5).count(true));
 
         assertThat((Object) cursor).isNotNull();
         final AtomicInteger i = new AtomicInteger(0);
@@ -681,8 +676,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final ArangoCursor<String> cursor = db
-                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).ttl(ttl),
-                        String.class);
+                .query("for i in " + CNAME1 + " return i._id", String.class, new AqlQueryOptions().batchSize(5).ttl(ttl));
 
         assertThat((Iterable<String>) cursor).isNotNull();
 
@@ -733,15 +727,15 @@ class ArangoDatabaseTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties);
 
         final ArangoCursor<String> cursor = db
-                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", null,
-                        new AqlQueryOptions().cache(true), String.class);
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
+                        new AqlQueryOptions().cache(true));
 
         assertThat((Object) cursor).isNotNull();
         assertThat(cursor.isCached()).isFalse();
 
         final ArangoCursor<String> cachedCursor = db
-                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", null,
-                        new AqlQueryOptions().cache(true), String.class);
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
+                        new AqlQueryOptions().cache(true));
 
         assertThat((Object) cachedCursor).isNotNull();
         assertThat(cachedCursor.isCached()).isTrue();
@@ -754,8 +748,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithMemoryLimit(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", null,
-                new AqlQueryOptions().memoryLimit(32 * 1024L), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", String.class,
+                new AqlQueryOptions().memoryLimit(32 * 1024L)));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
     }
@@ -763,8 +757,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryWithFailOnWarningTrue(ArangoDatabase db) {
-        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", null,
-                new AqlQueryOptions().failOnWarning(true), String.class));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", String.class,
+                new AqlQueryOptions().failOnWarning(true)));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
@@ -772,7 +766,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithFailOnWarningFalse(ArangoDatabase db) {
         final ArangoCursor<String> cursor = db
-                .query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(false), String.class);
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().failOnWarning(false));
         assertThat(cursor.next()).isNull();
     }
 
@@ -780,8 +774,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
-        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", null,
-                new AqlQueryOptions().maxRuntime(0.1), String.class).next());
+        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", String.class,
+                new AqlQueryOptions().maxRuntime(0.1)).next());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
     }
@@ -790,10 +784,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithMaxWarningCount(ArangoDatabase db) {
         final ArangoCursor<String> cursorWithWarnings = db
-                .query("RETURN 1 / 0", null, new AqlQueryOptions(), String.class);
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions());
         assertThat(cursorWithWarnings.getWarnings()).hasSize(1);
         final ArangoCursor<String> cursorWithLimitedWarnings = db
-                .query("RETURN 1 / 0", null, new AqlQueryOptions().maxWarningCount(0L), String.class);
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().maxWarningCount(0L));
         final Collection<CursorWarning> warnings = cursorWithLimitedWarnings.getWarnings();
         assertThat(warnings).isNullOrEmpty();
     }
@@ -807,8 +801,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
 
         final int batchSize = 5;
-        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null,
-                new AqlQueryOptions().batchSize(batchSize).count(true), String.class);
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class,
+                new AqlQueryOptions().batchSize(batchSize).count(true));
         assertThat((Object) cursor).isNotNull();
         assertThat(cursor.getCount()).isGreaterThanOrEqualTo(numbDocs);
 
@@ -859,8 +853,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         bindVars.put("age", 25);
 
         final ArangoCursor<String> cursor = db
-                .query("FOR t IN @@coll FILTER t.age >= @age SORT t.age RETURN t._id", bindVars, null,
-                        String.class);
+                .query("FOR t IN @@coll FILTER t.age >= @age SORT t.age RETURN t._id", String.class, bindVars);
 
         assertThat((Object) cursor).isNotNull();
 
@@ -876,7 +869,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 
-        final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", bindVars, null, JsonNode.class).next();
+        final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", JsonNode.class, bindVars).next();
 
         assertThat(res.get("foo").textValue()).isEqualTo("fooValue");
         assertThat(res.get("bar").intValue()).isEqualTo(11);
@@ -885,7 +878,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void queryWithWarning(ArangoDB arangoDB) {
-        final ArangoCursor<String> cursor = arangoDB.db().query("return 1/0", null, null, String.class);
+        final ArangoCursor<String> cursor = arangoDB.db().query("return 1/0", String.class);
 
         assertThat((Object) cursor).isNotNull();
         assertThat(cursor.getWarnings()).isNotNull();
@@ -896,8 +889,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void queryStream(ArangoDatabase db) {
         if (isAtLeastVersion(3, 4)) {
             final ArangoCursor<Void> cursor = db
-                    .query("FOR i IN 1..2 RETURN i", null, new AqlQueryOptions().stream(true).count(true),
-                            Void.class);
+                    .query("FOR i IN 1..2 RETURN i", Void.class, new AqlQueryOptions().stream(true).count(true));
             assertThat((Object) cursor).isNotNull();
             assertThat(cursor.getCount()).isNull();
         }
@@ -907,7 +899,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("arangos")
     void queryClose(ArangoDB arangoDB) throws IOException {
         final ArangoCursor<String> cursor = arangoDB.db()
-                .query("for i in 1..2 return i", null, new AqlQueryOptions().batchSize(1), String.class);
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().batchSize(1));
         cursor.close();
         AtomicInteger count = new AtomicInteger();
         Throwable thrown = catchThrowable(() -> {
@@ -925,8 +917,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryNoResults(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db
-                .query("FOR i IN @@col RETURN i", new MapBuilder().put("@col", CNAME1).get(), null,
-                        BaseDocument.class);
+                .query("FOR i IN @@col RETURN i", BaseDocument.class, new MapBuilder().put("@col", CNAME1).get());
         cursor.close();
     }
 
@@ -934,7 +925,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryWithNullBindParam(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
-                new MapBuilder().put("@col", CNAME1).put("test", null).get(), null, BaseDocument.class);
+                BaseDocument.class, new MapBuilder().put("@col", CNAME1).put("test", null).get());
         cursor.close();
     }
 
@@ -942,8 +933,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void queryAllowDirtyRead(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
-                new MapBuilder().put("@col", CNAME1).put("test", null).get(),
-                new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
+                BaseDocument.class, new MapBuilder().put("@col", CNAME1).put("test", null).get(),
+                new AqlQueryOptions().allowDirtyRead(true));
         if (isAtLeastVersion(3, 10)) {
             assertThat(cursor.isPotentialDirtyRead()).isTrue();
         }
@@ -1023,7 +1014,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getCurrentlyRunningQueries(ArangoDatabase db) throws InterruptedException {
         String query = "return sleep(1)";
-        Thread t = new Thread(() -> db.query(query, null, null, Void.class));
+        Thread t = new Thread(() -> db.query(query, Void.class));
         t.start();
         Thread.sleep(300);
         final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
@@ -1040,7 +1031,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         ExecutorService es = Executors.newSingleThreadExecutor();
         Future<?> future = es.submit(() -> {
             try {
-                db.query("return sleep(5)", null, null, Void.class);
+                db.query("return sleep(5)", Void.class);
                 fail();
             } catch (ArangoDBException e) {
                 assertThat(e.getResponseCode()).isEqualTo(410);
@@ -1074,7 +1065,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         properties.setSlowQueryThreshold(1L);
         db.setQueryTrackingProperties(properties);
 
-        db.query("return sleep(1.1)", null, null, Void.class);
+        db.query("return sleep(1.1)", Void.class);
         final Collection<QueryEntity> slowQueries = db.getSlowQueries();
         assertThat(slowQueries).hasSize(1);
         final QueryEntity queryEntity = slowQueries.iterator().next();

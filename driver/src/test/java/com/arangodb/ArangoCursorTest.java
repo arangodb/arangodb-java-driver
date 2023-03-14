@@ -57,8 +57,7 @@ class ArangoCursorTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void next(ArangoDatabase db) {
-        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5),
-                JsonNode.class);
+        final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class, new AqlQueryOptions().batchSize(5));
         while (cursor.hasNext()) {
             cursor.next();
         }

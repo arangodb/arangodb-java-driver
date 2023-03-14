@@ -61,7 +61,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
-        final ArangoCursor<ObjectNode> cursor = db.query(query, bindVars, null, ObjectNode.class);
+        final ArangoCursor<ObjectNode> cursor = db.query(query, ObjectNode.class, bindVars);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final ObjectNode node = cursor.next();
@@ -77,7 +77,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
-        final ArangoCursor<ArrayNode> cursor = db.query(query, bindVars, null, ArrayNode.class);
+        final ArangoCursor<ArrayNode> cursor = db.query(query, ArrayNode.class, bindVars);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final ArrayNode arrNode = cursor.next();
@@ -93,7 +93,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
-        final ArangoCursor<Map> cursor = db.query(query, bindVars, null, Map.class);
+        final ArangoCursor<Map> cursor = db.query(query, Map.class, bindVars);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final Map map = cursor.next();
@@ -112,7 +112,7 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         final String query = "FOR t IN " + COLLECTION_NAME
                 + " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN [t.name, t.gender, t.age]";
         final Map<String, Object> bindVars = Collections.singletonMap("gender", Gender.FEMALE);
-        final ArangoCursor<List> cursor = db.query(query, bindVars, null, List.class);
+        final ArangoCursor<List> cursor = db.query(query, List.class, bindVars);
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final List list = cursor.next();

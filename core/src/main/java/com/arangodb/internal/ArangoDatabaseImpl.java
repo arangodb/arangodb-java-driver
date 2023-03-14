@@ -33,6 +33,7 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
@@ -158,31 +159,26 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public <T> ArangoCursor<T> query(
-            final String query, final Map<String, Object> bindVars, final AqlQueryOptions options,
-            final Class<T> type) {
-
+            final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
         final InternalCursorEntity result = executor.execute(request, InternalCursorEntity.class, hostHandle);
-
         return createCursor(result, type, options, hostHandle);
-
     }
 
     @Override
-    public <T> ArangoCursor<T> query(
-            final String query, final Map<String, Object> bindVars, final Class<T> type) {
-        return query(query, bindVars, null, type);
+    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final Map<String, Object> bindVars) {
+        return query(query, type, bindVars, new AqlQueryOptions());
     }
 
     @Override
-    public <T> ArangoCursor<T> query(final String query, final AqlQueryOptions options, final Class<T> type) {
-        return query(query, null, options, type);
+    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final AqlQueryOptions options) {
+        return query(query, type, null, options);
     }
 
     @Override
     public <T> ArangoCursor<T> query(final String query, final Class<T> type) {
-        return query(query, null, null, type);
+        return query(query, type, null, new AqlQueryOptions());
     }
 
     @Override

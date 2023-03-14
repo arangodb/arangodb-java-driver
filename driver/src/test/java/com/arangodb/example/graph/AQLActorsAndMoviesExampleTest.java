@@ -317,8 +317,7 @@ class AQLActorsAndMoviesExampleTest {
     void allActorsActsInMovie1or2() {
         final ArangoCursor<String> cursor = db.query(
                 "WITH actors, movies FOR x IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: " +
-                        "'global'} RETURN x._id",
-                null, null, String.class);
+                        "'global'} RETURN x._id", String.class);
         assertThat(cursor.asListRemaining())
                 .contains("actors/Keanu", "actors/Hugo", "actors/Emil", "actors/Carrie", "actors/Laurence");
     }
@@ -334,8 +333,7 @@ class AQLActorsAndMoviesExampleTest {
         final ArangoCursor<String> cursor = db.query(
                 "WITH actors, movies FOR x IN UNION_DISTINCT ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: " +
                         "true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' " +
-                        "actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
-                null, null, String.class);
+                        "actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x", String.class);
         assertThat(cursor.asListRemaining()).contains("actors/Emil", "actors/Hugo", "actors/Carrie", "actors/Laurence",
                 "actors/Keanu", "actors/Al", "actors/Charlize");
     }
@@ -351,8 +349,7 @@ class AQLActorsAndMoviesExampleTest {
         final ArangoCursor<String> cursor = db.query(
                 "WITH actors, movies FOR x IN INTERSECTION ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: " +
                         "true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' " +
-                        "actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
-                null, null, String.class);
+                        "actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x", String.class);
         assertThat(cursor.asListRemaining()).contains("actors/Keanu");
     }
 
@@ -367,8 +364,7 @@ class AQLActorsAndMoviesExampleTest {
         final ArangoCursor<String> cursor = db.query(
                 "WITH actors, movies FOR x IN INTERSECTION ((FOR y IN ANY 'actors/Hugo' actsIn OPTIONS {bfs: true, " +
                         "uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'actors/Keanu' actsIn OPTIONS {bfs: " +
-                        "true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
-                null, null, String.class);
+                        "true, uniqueVertices: 'global'} RETURN y._id)) RETURN x", String.class);
         assertThat(cursor.asListRemaining())
                 .contains("movies/TheMatrixRevolutions", "movies/TheMatrixReloaded", "movies/TheMatrix");
     }
@@ -383,8 +379,7 @@ class AQLActorsAndMoviesExampleTest {
     void allActorsWhoActedIn3orMoreMovies() {
         final ArangoCursor<Actor> cursor = db.query(
                 "FOR x IN actsIn COLLECT actor = x._from WITH COUNT INTO counter FILTER counter >= 3 RETURN {actor: " +
-                        "actor, movies: counter}",
-                null, null, Actor.class);
+                        "actor, movies: counter}", Actor.class);
         assertThat(cursor.asListRemaining())
                 .contains(new Actor("actors/Carrie", 3), new Actor("actors/CubaG", 4), new Actor("actors/Hugo", 3),
                         new Actor("actors/Keanu", 4), new Actor("actors/Laurence", 3), new Actor("actors/MegR", 5),
@@ -400,8 +395,7 @@ class AQLActorsAndMoviesExampleTest {
     @Test
     void allMoviesWhereExactly6ActorsActedIn() {
         final ArangoCursor<String> cursor = db.query(
-                "FOR x IN actsIn COLLECT movie = x._to WITH COUNT INTO counter FILTER counter == 6 RETURN movie", null,
-                null, String.class);
+                "FOR x IN actsIn COLLECT movie = x._to WITH COUNT INTO counter FILTER counter == 6 RETURN movie", String.class);
         assertThat(cursor.asListRemaining())
                 .contains("movies/SleeplessInSeattle", "movies/TopGun", "movies/YouveGotMail");
     }
@@ -416,7 +410,7 @@ class AQLActorsAndMoviesExampleTest {
     void theNumberOfActorsByMovie() {
         final ArangoCursor<Movie> cursor = db.query(
                 "FOR x IN actsIn COLLECT movie = x._to WITH COUNT INTO counter RETURN {movie: movie, actors: counter}",
-                null, null, Movie.class);
+                Movie.class);
         assertThat(cursor.asListRemaining())
                 .contains(new Movie("movies/AFewGoodMen", 11), new Movie("movies/AsGoodAsItGets", 4),
                         new Movie("movies/JerryMaguire", 9), new Movie("movies/JoeVersustheVolcano", 3),
@@ -438,8 +432,7 @@ class AQLActorsAndMoviesExampleTest {
     void theNumberOfMoviesByActor() {
         final ArangoCursor<Actor> cursor = db.query(
                 "FOR x IN actsIn COLLECT actor = x._from WITH COUNT INTO counter RETURN {actor: actor, movies: " +
-                        "counter}",
-                null, null, Actor.class);
+                        "counter}", Actor.class);
         assertThat(cursor.asListRemaining())
                 .contains(new Actor("actors/Al", 1), new Actor("actors/AnnabellaS", 1), new Actor("actors/AnthonyE", 1),
                         new Actor("actors/BillPull", 1), new Actor("actors/BillyC", 1), new Actor("actors/BonnieH", 1),
@@ -474,8 +467,7 @@ class AQLActorsAndMoviesExampleTest {
     void theNumberOfMoviesActedInBetween2005and2010byActor() {
         final ArangoCursor<Actor> cursor = db.query(
                 "FOR x IN actsIn FILTER x.year >= 1990 && x.year <= 1995 COLLECT actor = x._from WITH COUNT INTO " +
-                        "counter RETURN {actor: actor, movies: counter}",
-                null, null, Actor.class);
+                        "counter RETURN {actor: actor, movies: counter}", Actor.class);
         assertThat(cursor.asListRemaining())
                 .contains(new Actor("actors/BillPull", 1), new Actor("actors/ChristopherG", 1), new Actor("actors" +
                                 "/CubaG", 1),

@@ -696,8 +696,8 @@ class StreamTransactionTest extends BaseJunit5 {
         bindVars.put("key", externalDoc.getKey());
 
         ArangoCursor<BaseDocument> cursor = db
-                .query("FOR doc IN @@collection FILTER doc._key == @key RETURN doc", bindVars,
-                        new AqlQueryOptions().streamTransactionId(tx.getId()), BaseDocument.class);
+                .query("FOR doc IN @@collection FILTER doc._key == @key RETURN doc", BaseDocument.class, bindVars,
+                        new AqlQueryOptions().streamTransactionId(tx.getId()));
 
         // assert that the document is not found from within the tx
         assertThat(cursor.hasNext()).isFalse();
@@ -727,8 +727,8 @@ class StreamTransactionTest extends BaseJunit5 {
         bindVars.put("keys", keys);
 
         ArangoCursor<BaseDocument> cursor = db
-                .query("FOR doc IN @@collection FILTER CONTAINS_ARRAY(@keys, doc._key) RETURN doc", bindVars,
-                        new AqlQueryOptions().streamTransactionId(tx.getId()).batchSize(2), BaseDocument.class);
+                .query("FOR doc IN @@collection FILTER CONTAINS_ARRAY(@keys, doc._key) RETURN doc", BaseDocument.class, bindVars,
+                        new AqlQueryOptions().streamTransactionId(tx.getId()).batchSize(2));
 
         List<BaseDocument> docs = cursor.asListRemaining();
 
@@ -808,9 +808,9 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(readDocs.isPotentialDirtyRead()).isTrue();
         assertThat(readDocs.getDocuments()).hasSize(1);
 
-        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i",
+        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i", BaseDocument.class,
                 Collections.singletonMap("@col", COLLECTION_NAME),
-                new AqlQueryOptions().streamTransactionId(tx.getId()), BaseDocument.class);
+                new AqlQueryOptions().streamTransactionId(tx.getId()));
             assertThat(cursor.isPotentialDirtyRead()).isTrue();
             cursor.close();
 

@@ -42,14 +42,14 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
     void queryShortestPathFromAToD() throws ArangoDBException {
         String queryString = "FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' GRAPH 'traversalGraph' " +
                 "RETURN {'vertex': v._key, 'edge': e._key}";
-        ArangoCursor<Pair> cursor = db.query(queryString, null, null, Pair.class);
+        ArangoCursor<Pair> cursor = db.query(queryString, Pair.class);
         final Collection<String> collection = toVertexCollection(cursor);
         assertThat(collection.size()).isEqualTo(4);
         assertThat(collection).containsExactlyInAnyOrder("A", "B", "C", "D");
 
         queryString = "WITH circles FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN " +
                 "{'vertex': v._key, 'edge': e._key}";
-        db.query(queryString, null, null, Pair.class);
+        db.query(queryString, Pair.class);
         assertThat(collection.size()).isEqualTo(4);
         assertThat(collection).containsExactlyInAnyOrder("A", "B", "C", "D");
     }
@@ -58,14 +58,14 @@ class ShortestPathInAQLExampleTest extends BaseGraphTest {
     void queryShortestPathByFilter() throws ArangoDBException {
         String queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN" +
                 " OUTBOUND SHORTEST_PATH a TO d GRAPH 'traversalGraph' RETURN {'vertex':v._key, 'edge':e._key}";
-        ArangoCursor<Pair> cursor = db.query(queryString, null, null, Pair.class);
+        ArangoCursor<Pair> cursor = db.query(queryString, Pair.class);
         final Collection<String> collection = toVertexCollection(cursor);
         assertThat(collection.size()).isEqualTo(4);
         assertThat(collection).containsExactlyInAnyOrder("A", "B", "C", "D");
 
         queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN " +
                 "OUTBOUND SHORTEST_PATH a TO d edges RETURN {'vertex': v._key, 'edge': e._key}";
-        db.query(queryString, null, null, Pair.class);
+        db.query(queryString, Pair.class);
         assertThat(collection.size()).isEqualTo(4);
         assertThat(collection).containsExactlyInAnyOrder("A", "B", "C", "D");
     }

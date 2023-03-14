@@ -52,8 +52,8 @@ class TimeoutTest extends SingleServerTest {
                             "INSERT {value:sleep(2)}\n" +
                             "INTO @@col\n" +
                             "RETURN NEW\n",
-                    Collections.singletonMap("@col", colName),
-                    Map.class);
+                    Map.class,
+                    Collections.singletonMap("@col", colName));
         } catch (Exception e) {
             e.printStackTrace();
             assertThat(e)

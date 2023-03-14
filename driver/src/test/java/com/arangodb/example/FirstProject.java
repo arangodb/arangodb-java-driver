@@ -107,8 +107,7 @@ public class FirstProject {
         try {
             final String query = "FOR t IN firstCollection FILTER t.name == @name RETURN t";
             final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
-            final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
-                    BaseDocument.class);
+            final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, BaseDocument.class, bindVars);
             while (cursor.hasNext()) {
                 System.out.println("Key: " + cursor.next().getKey());
             }
@@ -121,8 +120,7 @@ public class FirstProject {
             final String query = "FOR t IN firstCollection FILTER t.name == @name "
                     + "REMOVE t IN firstCollection LET removed = OLD RETURN removed";
             final Map<String, Object> bindVars = Collections.singletonMap("name", "Homer");
-            final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
-                    BaseDocument.class);
+            final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, BaseDocument.class, bindVars);
             while (cursor.hasNext()) {
                 System.out.println("Removed document " + cursor.next().getKey());
             }

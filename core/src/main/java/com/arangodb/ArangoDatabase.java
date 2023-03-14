@@ -246,43 +246,43 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * {@code ArangoCursor} instance for the result list.
      *
      * @param query    An AQL query string
+     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param bindVars key/value pairs defining the variables to bind the query to
      * @param options  Additional options that will be passed to the query API, can be null
-     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
      * result list.
      *
      * @param query   An AQL query string
-     * @param options Additional options that will be passed to the query API, can be null
      * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
+     * @param options Additional options that will be passed to the query API, can be null
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, AqlQueryOptions options, Class<T> type);
+    <T> ArangoCursor<T> query(String query, Class<T> type, AqlQueryOptions options);
 
     /**
      * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
      * {@code ArangoCursor} instance for the result list.
      *
      * @param query    An AQL query string
-     * @param bindVars key/value pairs defining the variables to bind the query to
      * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
+     * @param bindVars key/value pairs defining the variables to bind the query to
      * @return cursor of the results
      * @see
      * <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the

@@ -128,8 +128,8 @@ class CustomSerdeTest {
 
         Map<String, Object> result = db.query(
                 "INSERT @doc INTO @@collection RETURN NEW",
-                params,
-                Map.class
+                Map.class,
+                params
         ).next();
 
         assertThat(result.get("arr")).isInstanceOf(String.class);
@@ -151,8 +151,8 @@ class CustomSerdeTest {
 
         final Map<String, Object> result = db.query(
                 "RETURN DOCUMENT(@docId)",
-                Collections.singletonMap("docId", COLLECTION_NAME + "/" + key),
-                Map.class
+                Map.class,
+                Collections.singletonMap("docId", COLLECTION_NAME + "/" + key)
         ).next();
 
         assertThat(result.get("arr")).isInstanceOf(String.class);
