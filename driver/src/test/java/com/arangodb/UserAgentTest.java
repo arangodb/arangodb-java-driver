@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserAgentTest extends BaseJunit5 {
 
-    private static final String EXPECTED_VERSION = "7.0.0-RC.1";
+    private static final String EXPECTED_VERSION = "7.0.0-RC.2";
 
     @Test
     void packageVersion() {
