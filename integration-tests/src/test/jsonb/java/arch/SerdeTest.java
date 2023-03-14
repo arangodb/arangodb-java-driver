@@ -19,10 +19,10 @@ class SerdeTest extends BaseTest {
         JsonObject doc = Json.createObjectBuilder()
                 .add("foo", "bar")
                 .build();
-        JsonObject res = adb.db().query("return @d", Collections.singletonMap("d", doc), JsonObject.class).next();
+        JsonObject res = adb.db().query("return @d", JsonObject.class, Collections.singletonMap("d", doc)).next();
         assertThat(res.size()).isEqualTo(1);
         assertThat(res.getString("foo")).isEqualTo("bar");
-        JsonValue value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc), JsonValue.class).next();
+        JsonValue value = adb.db().query("return @d.foo", JsonValue.class, Collections.singletonMap("d", doc)).next();
         assertThat(value)
                 .isInstanceOf(JsonString.class)
                 .extracting(v -> ((JsonString) v).getString())
@@ -33,10 +33,10 @@ class SerdeTest extends BaseTest {
     @MethodSource("adbByContentType")
     void map(ArangoDB adb) {
         Map<String, String> doc = Collections.singletonMap("foo", "bar");
-        Map<?, ?> res = adb.db().query("return @d", Collections.singletonMap("d", doc), Map.class).next();
+        Map<?, ?> res = adb.db().query("return @d", Map.class, Collections.singletonMap("d", doc)).next();
         assertThat(res).hasSize(1);
         assertThat(res.get("foo")).isEqualTo("bar");
-        String value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc), String.class).next();
+        String value = adb.db().query("return @d.foo", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(value).isEqualTo("bar");
     }
 
@@ -45,9 +45,9 @@ class SerdeTest extends BaseTest {
     void rawJson(ArangoDB adb) {
         RawJson doc = RawJson.of("""
                 {"foo":"bar"}""");
-        RawJson res = adb.db().query("return @d", Collections.singletonMap("d", doc), RawJson.class).next();
+        RawJson res = adb.db().query("return @d", RawJson.class, Collections.singletonMap("d", doc)).next();
         assertThat(res.getValue()).isEqualTo(doc.getValue());
-        RawJson value = adb.db().query("return @d.foo", Collections.singletonMap("d", doc), RawJson.class).next();
+        RawJson value = adb.db().query("return @d.foo", RawJson.class, Collections.singletonMap("d", doc)).next();
         assertThat(value.getValue()).isEqualTo("\"bar\"");
     }
 
@@ -55,11 +55,11 @@ class SerdeTest extends BaseTest {
     @MethodSource("adbByContentType")
     void person(ArangoDB adb) {
         Person doc = new Person("key", "Jim", 22);
-        Person res = adb.db().query("return @d", Collections.singletonMap("d", doc), Person.class).next();
+        Person res = adb.db().query("return @d", Person.class, Collections.singletonMap("d", doc)).next();
         assertThat(res).isEqualTo(doc);
-        String key = adb.db().query("return @d._key", Collections.singletonMap("d", doc), String.class).next();
+        String key = adb.db().query("return @d._key", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(key).isEqualTo("key");
-        String name = adb.db().query("return @d.firstName", Collections.singletonMap("d", doc), String.class).next();
+        String name = adb.db().query("return @d.firstName", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(name).isEqualTo("Jim");
     }
 
