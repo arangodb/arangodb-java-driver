@@ -30,7 +30,7 @@ The **user-data serde** is used to serialize and deserialize the user data, name
 A `user-data serde` implements the `com.arangodb.serde.ArangoSerde` interface, which is an abstract API with no 
 dependencies on specific libraries.
 The `user-data serde` can be explicitly registered via `ArangoDB.Builder#serde(ArangoSerde)`.
-If no serde is registered, then the driver will automatically use SPI (Service Provider Interface) to automatically
+If no serde is registered, then the driver will use SPI (Service Provider Interface) to automatically
 discover and load serde service providers (instances of `com.arangodb.serde.ArangoSerdeProvider`).
 In case no `user-data serde` is explicitly registered and no serde service provider can be discovered via SPI, then the
 **internal serde** will be used to serialize and deserialize user data. In this case, please note that the 

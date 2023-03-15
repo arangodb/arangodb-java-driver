@@ -2,8 +2,6 @@
 
 ## Maven Setup
 
-In your `pom.xml` include the dependency:
-
 ```
 <dependencies>
     <dependency>
@@ -14,11 +12,25 @@ In your `pom.xml` include the dependency:
 <dependencies>
 ```
 
+## Gradle Setup
+
+```
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.arangodb:arangodb-java-driver:7.0.0-RC.2'
+}
+```
+
+
 ## HTTP client
 
-The HTTP client has been changed to Vert.x WebClient. 
+The HTTP client has been changed to [Vert.x WebClient](https://vertx.io/docs/vertx-web-client/java). 
 
-`HTTP/2` is now supported. `HTTP/2` supports multiplexing and uses `1` connection per host by default.
+`HTTP/2` is now supported. 
+`HTTP/2` supports multiplexing and uses `1` connection per host by default.
 
 
 ## Configuration changes
@@ -30,25 +42,24 @@ The default host configuration to `127.0.0.1:8529` has been removed.
 Configuration properties are not read automatically from properties files anymore.
 A new API for loading properties has been introduced: `ArangoDB.Builder.loadProperties(ArangoConfigProperties)`. 
 Implementations could supply configuration properties coming from different sources, eg. system properties, remote 
-stores, frameworks facilities, etc.
+stores, frameworks integrations, etc.
 An implementation for loading properties from local files is provided by `ArangoConfigProperties.fromFile()` and its 
 overloaded variants.
 
-Here is an example to read config properties from `arangodb.properties` file (as in version `6`):
+To read config properties from `arangodb.properties` file (as in version `6`):
 
 ```java
 ArangoDB adb = new ArangoDB.Builder()
-        .loadProperties(ArangoConfigProperties.fromFile())
+        .loadProperties(ArangoConfigProperties.fromFile())  // reads "arangodb.properties" by default
         // ...
         .build();
 ```
 
-Here is an example to read config properties from `arangodb-with-prefix.properties` file, where the config properties
+To read config properties from `arangodb-with-prefix.properties` file, where the config properties
 are prefixed with `adb`:
 
 ```java
-// arangodb-with-prefix.properties content:
-//
+// ## arangodb-with-prefix.properties
 // adb.hosts=172.28.0.1:8529
 // adb.acquireHostList=true
 // ...
@@ -58,21 +69,24 @@ ArangoDB adb = new ArangoDB.Builder()
         .build();
 ```
 
-An example showing how to provide configuration using Eclipse MicroProfile Config can be found 
-[here](../driver/src/test/java/com/arangodb/config).
+Here are some examples showing how to provide configuration properties from different sources:
+- [Eclipse MicroProfile Config](https://github.com/arangodb-helper/arango-quarkus-native-example/blob/master/src/main/java/org/acme/quickstart/ArangoConfig.java)
+- [Micronaut Configuration](https://github.com/arangodb-helper/arango-micronaut-native-example/blob/main/src/main/kotlin/com/example/ArangoConfig.kt)
 
 
 ## Modules
 
-Support for different serializers and communication protocols is offered by separate modules. 
+Support for different serdes and communication protocols is offered by separate modules. 
 Defaults modules are transitively included, but they could be excluded if not needed.
 
 The driver artifact `com.arangodb:arangodb-java-driver` has transitive dependencies on default modules:
-- `com.arangodb:http-protocol`: `HTTP` communication protocol
-- `com.arangodb:jackson-serde-json`: `JSON` user serde module based on Jackson Databind
+- `com.arangodb:http-protocol`: `HTTP` communication protocol (HTTP/1.1 and HTTP/2)
+- `com.arangodb:jackson-serde-json`: `JSON` `user-data serde` module based on Jackson Databind
 Alternative modules are respectively:
 - `com.arangodb:vst-protocol`: `VST` communication protocol
-- `com.arangodb:jackson-serde-vpack`: `VPACK` user serde module based on Jackson Databind
+- `com.arangodb:jackson-serde-vpack`: `VPACK` `user-data serde` module based on Jackson Databind
+
+The modules above are discovered and loaded using SPI (Service Provider Interface).
 
 In case a non-default communication protocol or user serde are used, the related module(s) must be explicitly included 
 and the corresponding default module(s) can be excluded.
@@ -80,10 +94,12 @@ and the corresponding default module(s) can be excluded.
 For example, to use the driver with `VPACK` over `VST`, we must include:
 - `com.arangodb:vst-protocol` and
 - `com.arangodb:jackson-serde-vpack`
-and could exclude:
+and can exclude:
 - `com.arangodb:http-protocol` and
 - `com.arangodb:jackson-serde-json`
  
+For example in Maven:
+
 ```xml
 <dependencies>
     <dependency>
@@ -137,14 +153,27 @@ there are in your project other libraries depending on different versions of Jac
 </dependencyManagement>
 ```
 
-The module `http-protocol` has transitive dependency on `io.vertx:vertx-web-client:4.3.5`.
+The module `http-protocol` has transitive dependency on `io.vertx:vertx-web-client:4.3.5`, which in turn depends on 
+packages from `io.netty`.
 
 If these dependency requirements cannot be satisfied, you might need to use the
 [shaded version](#arangodb-java-driver-shaded) of this driver, which bundles together all modules with relocated
 external dependencies.
 
 The dependency on `com.arangodb:velocypack` has been removed from core module and is now only used
-by `com.arangodb:vst-protocol` and `com.arangodb:jackson-serde-vpack`.
+by `com.arangodb:vst-protocol` and `com.arangodb:jackson-serde-vpack`, thus only for `VST` protocol or `VPACK` content 
+type.
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## User Data Types
