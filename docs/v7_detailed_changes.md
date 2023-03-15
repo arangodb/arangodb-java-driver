@@ -165,22 +165,12 @@ by `com.arangodb:vst-protocol` and `com.arangodb:jackson-serde-vpack`, thus only
 type.
 
 
+## User Data
 
-
-
-
-
-
-
-
-
-
-
-## User Data Types
-
-Before version `7.0` the driver always parsed raw strings as JSON, but unfortunately this does not allow distinguishing
-the case when the intent is to use the raw string as such, without parsing it. Since version `7.0`, strings are not
-interpreted as JSON anymore. To represent user data as raw JSON, the wrapper class `RawJson` has been added:
+Before version `7.0` the driver always parsed raw strings as JSON, but unfortunately this does not allow to distinguish
+it from the case when the intent is to use the raw string as such, without parsing it. Since version `7.0`, strings are 
+not interpreted as JSON anymore. To represent user data as raw JSON, the wrapper class `com.arangodb.util.RawJson` has 
+been added:
 
 ```java
 RawJson rawJsonIn = RawJson.of("""
@@ -192,12 +182,12 @@ String json = rawJsonOut.getValue();  // {"foo":"bar"}
 ```
 
 To represent user data already encoded as byte array, the wrapper class `RawBytes` has been added.
-The byte array can either represent a `JSON` string (UTF-8 encoded) or a `VPACK` value, but the format must be the
-same used for the driver protocol configuration (`JSON` for `HTTP_JSON` and `HTTP2_JSON`, `VPACK` otherwise).
+The byte array can either represent a `JSON` string (UTF-8 encoded) or a `VPACK` value. The format used should match the
+driver protocol configuration (`JSON` for `HTTP_JSON` and `HTTP2_JSON`, `VPACK` otherwise).
 
-The following changes have been applied to `BaseDocument` and `BaseEdgeDocument`:
+The following changes have been applied to `com.arangodb.entity.BaseDocument` and `com.arangodb.entity.BaseEdgeDocument`:
 - `final` classes
-- not serializable anymore (Java serialization)
+- not serializable anymore (using Java serialization)
 - new method `removeAttribute(String)`
 - `getProperties()` returns an unmodifiable map
 
@@ -207,17 +197,20 @@ Since version `7.0`, the input data objects passed as arguments to API methods a
 metadata fields are not updated anymore. The updated metadata can be found in the returned object.
 
 
-## Serialization
+## Serialization / Deserialization
 
 Up to version 6, the (de)serialization was always performed to/from `VPACK`. In case the JSON format was
 required, the raw `VPACK` was then converted to `JSON`. Since version 7, the serialization module is a dataformat
-agnostic API, by default using `JSON` format. 
+agnostic API. Implementations can serialize and deserialize directly to the target dataformat, without intermediate 
+conversion to `VPACK`.
+The default implementation uses the `JSON` format. 
 
-Support of data type `VPackSlice` has been removed (in favor of Jackson types: `JsonNode`, `ArrayNode`, `ObjectNode`,
-...), for example:
+Support for data type `VPackSlice` has been removed in favor of Jackson type `com.fasterxml.jackson.databind.JsonNode`
+and its subclasses (`ArrayNode`, `ObjectNode`, ...), for example:
 
 ```java
-JsonNode jsonNodeIn = JsonNodeFactory.instance.objectNode()
+JsonNode jsonNodeIn = JsonNodeFactory.instance
+        .objectNode()
         .put("foo", "bar");
 
 ArangoCursor<JsonNode> res = adb.db().query("RETURN @v", Map.of("v", jsonNodeIn), JsonNode.class);
@@ -225,11 +218,16 @@ JsonNode jsonNodeOut = res.next();
 String foo = jsonNodeOut.get("foo").textValue();    // bar
 ```
 
-The dependency on `com.arangodb:velocypack` has been removed.
+The dependency on `com.arangodb:velocypack` has been removed. Since version 3.0, `com.arangodb:velocypack` does not 
+include databind functionalities anymore. It only offers a lower level API to deal with primitive `VPACK` types.
+`VPACK` databind functionalities are now offered by 
+[`jackson-dataformat-velocypack`](https://github.com/arangodb/jackson-dataformat-velocypack), which is a Jackson backend
+for `VPACK` dataformat.
 
-The user data custom serializer implementation `ArangoJack` has been removed in favor of `JacksonSerde`.
+The user data custom serializer implementation `ArangoJack` has been removed in favor of 
+`com.arangodb.serde.jackson.JacksonSerde`.
 
-Updated reference documentation can be found [here](v7_java-reference-serialization.md). 
+Detailed documentation about serialization can be found [here](v7_java-reference-serialization.md). 
 
 
 ## ArangoDB Java Driver Shaded
@@ -237,7 +235,7 @@ Updated reference documentation can be found [here](v7_java-reference-serializat
 Since version `7`, a shaded variant of the driver is also published with maven coordinates:
 `com.arangodb:arangodb-java-driver-shaded`.
 
-It bundles and relocates the following packages from transitive dependencies:
+It bundles and relocates the following packages:
 - `com.fasterxml.jackson`
 - `com.arangodb.jackson.dataformat.velocypack`
 - `io.vertx`
@@ -256,12 +254,14 @@ The following client APIs have been removed:
     - `minReplicationFactor` in collections and graphs
     - `overwrite` flag in `DocumentCreateOptions`
 
-The user data custom serializer implementation `ArangoJack` has been removed in favor of `JacksonSerde`.
+The user data custom serializer implementation `ArangoJack` has been removed in favor of 
+`com.arangodb.serde.jackson.JacksonSerde`.
 
-Support for interpreting raw strings as JSON has been removed (in favor of `RawJson`).
+Support for interpreting raw strings as JSON has been removed (in favor of `com.arangodb.util.RawJson`).
 
-Support of data type `VPackSlice` has been removed (in favor of Jackson types: `JsonNode`, `ArrayNode`, `ObjectNode`,
-...).
+Support of data type `com.arangodb.velocypack.VPackSlice` has been removed in favor of Jackson type 
+`com.fasterxml.jackson.databind.JsonNode` and its subclasses (`ArrayNode`, `ObjectNode`, ...). 
+Raw `VPACK` data must be used with `com.arangodb.util.RawBytes`).
 
 Support for custom initialization of
 cursors (`ArangoDB._setCursorInitializer(ArangoCursorInitializer cursorInitializer)`) has been removed.
@@ -270,24 +270,24 @@ cursors (`ArangoDB._setCursorInitializer(ArangoCursorInitializer cursorInitializ
 ## API methods changes
 
 Before version `7.0` some CRUD API methods inferred the return type from the type of the data object passed as input.
-Now the return type can be explicitly set for each CRUD API method.
+Now the return type can be explicitly set for each CRUD API method. This type is used as deserialization target by
+the `user-data serde`.
 
 CRUD operations operating with multiple documents have now an overloaded variant which accepts raw data (`RawBytes`
 and `RawJson`) containing multiple documents.
 
-`ArangoCursor#getStats()` returns now an untyped map.
-
-`Request` and `Response` classes have been refactored to support generic body type. 
+`com.arangodb.Request` and `com.arangodb.Response` classes have been refactored to support generic body type. 
 `ArangoDB.execute(Request<T>, Class<U>): Response<U>` accepts now the target deserialization type for the response body.
 
-`ArangoDBException` has been enhanced with the id of the request causing it.
+`com.arangodb.ArangoDBException` has been enhanced with the id of the request causing it. This can be useful to 
+correlate it with the debug level logs.
 
 
 ## API entities
 
 All entities and options classes (in packages `com.arangodb.model` and `com.arangodb.entity`) are now `final`.
 
-The replication factor is now modeled with a new interface (`ReplicationFactor`) with
+The replication factor is now modeled with a new interface (`com.arangodb.entity.ReplicationFactor`) with
 implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`.
 
 
