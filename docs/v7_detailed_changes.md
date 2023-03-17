@@ -65,7 +65,7 @@ are prefixed with `adb`:
 // ...
 
 ArangoDB adb = new ArangoDB.Builder()
-        .loadProperties(new FileConfigPropertiesProvider("arangodb-with-prefix.properties", "adb"))
+        .loadProperties(ArangoConfigProperties.fromFile("arangodb-with-prefix.properties", "adb"))
         .build();
 ```
 

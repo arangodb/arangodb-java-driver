@@ -44,7 +44,7 @@ class CommunicationTest {
     void chunkSizeSmall() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .chunksize(20).build();
+                .chunkSize(20).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }

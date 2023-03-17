@@ -60,7 +60,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
 
     protected final String user;
     protected final String password;
-    protected final Integer chunksize;
+    protected final Integer chunkSize;
     protected final HostHandler hostHandler;
     protected volatile String jwt;
 
@@ -69,7 +69,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         password = config.getPassword();
         jwt = config.getJwt();
         serde = config.getInternalSerde();
-        chunksize = config.getChunkSize();
+        chunkSize = config.getChunkSize();
         this.hostHandler = hostHandler;
     }
 
@@ -178,11 +178,11 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         if (body != null) {
             size += body.getByteSize();
         }
-        final int n = size / chunksize;
-        final int numberOfChunks = (size % chunksize != 0) ? (n + 1) : n;
+        final int n = size / chunkSize;
+        final int numberOfChunks = (size % chunkSize != 0) ? (n + 1) : n;
         int off = 0;
         for (int i = 0; size > 0; i++) {
-            final int len = Math.min(chunksize, size);
+            final int len = Math.min(chunkSize, size);
             final long messageLength = (i == 0 && numberOfChunks > 1) ? size : -1L;
             final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, messageLength, off, len);
             size -= len;
