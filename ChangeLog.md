@@ -6,75 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [7.0.0-RC.2]
+## [7.0.0-RC.3] - 2023-03-17
 
-### Changed
-
-- configuration properties from local files are not loaded automatically anymore
-- `ArangoDB.execute()` accepts now target deserialization type
-- `Request<T>` and `Response<T>` support now generic body type
-- removed default host configuration (`127.0.0.1:8529`)
-- changed http client library to Vert.x WebClient
-- changed default communication protocol from `VST` to `HTTP/2`
-- changed default content-type format from `VPACK` to `JSON`
-- changed internal serialization, now based on Jackson API
-- `VPACK` support is now provided by `JacksonSerde` including the optional dependency
-  `com.arangodb:jackson-dataformat-velocypack` (`VPACK` dataformat backend for Jackson)
-- data objects passed as arguments to API methods are treated as immutable and the related metadata fields are not
-  updated in place anymore (updated metadata can be found in the returned object)
-- changed some API signatures which were using unnecessary generics from `ArangoCollection`, `ArangoVertexCollection` and `ArangoEdgeCollection`
-- changed `ArangoCursor#getStats()` to return untyped map
-- replication factor is now represented by a new interface (`ReplicationFactor`) with
-  implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`
-- all data definition classes are now `final` (packages `com.arangodb.entity` and `com.arangodb.model`)
-- `BaseDocument` and `BaseEdgeDocument` are now `final`
-- `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
-- removed `throws ArangoDBException` from API method signatures (unchecked exception)
-- removed passwords from debug level requests logs (#410)
-- JPMS: explicit automatic module name
-
-### Added
-
-- added `ArangoDB.Builder.loadProperties(ArangoConfigProperties)` to register custom configuration suppliers
-- added `ArangoConfigProperties.fromFile()` to load properties from local files
-- added support to `HTTP/2` communication protocol
-- added optional transitive dependency on `io.vertx:vertx-web-client` (can be excluded if using VST only)
-- added transitive dependency on Jackson Core, Databind and Annotations
-- added wrapper class for raw JSON content (`RawJson`)
-- added wrapper class for content already encoded as byte array (`RawBytes`)
-- added support for Jackson types (`JsonNode`, `ArrayNode`, `ObjectNode`, ...)
-- added support for Jackson annotations in data types
-- added new user data custom serializer API based on `ArangoSerde`
-- added new user data custom serializer implementation based on Jackson (`JacksonSerde`), supporting both `JSON` and `VPACK`)
-- added methods and parameters targets to meta binding annotations
-- added overloaded methods for CRUD operations allowing specifying the return type
-- added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
-- added `BaseDocument#removeAttribute(String)` and `BaseEdgeDocument#removeAttribute(String)`
-- added request id to `ArangoDBException`
-- shaded version of the driver (`com.arangodb:arangodb-java-driver-shaded`)
-
-### Fixed
-
-- removed `--allow-incomplete-classpath` from native image configuration (#397)
-- ability to control whether `null` values are included in the serialization (#389)
-- added support to `DocumentCreateOptions#keepNull` (#374)
-- allow specifying the return type on insertDocuments (#373)
-- credentials logging (#410)
-
-### Removed
-
-- removed user data custom serializer API based on `ArangoSerialization` (in favor of `ArangoSerde`)
-- removed user data custom serializer implementation `ArangoJack` (in favor of `JacksonSerde`)
-- removed support for interpreting raw strings as JSON (in favor of `RawJson`)
-- removed support of data type `VPackSlice` (in favor of Jackson types: `JsonNode`, `ArrayNode`, `ObjectNode`, ...)
-- removed client APIs already deprecated in Java Driver version `6`
-- removed deprecated server APIs:
-  - `MMFiles` related APIs
-  - `ArangoDatabase.executeTraversal()`
-  - `ArangoDB.getLogs()`
-  - `minReplicationFactor` in collections and graphs
-  - `overwrite` flag in `DocumentCreateOptions`
-- removed `ArangoCursorInitializer`
+Detailed changes documentation is available [here](./docs/v7_detailed_changes.md).
+Reference documentation [here](./docs/v7_java.md).
 
 ## [6.20.0] - 2022-11-29
 

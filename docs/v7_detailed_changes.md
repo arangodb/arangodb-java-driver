@@ -7,7 +7,7 @@
     <dependency>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver</artifactId>
-        <version>7.0.0-RC.2</version>
+        <version>7.0.0-RC.3</version>
     </dependency>
 <dependencies>
 ```
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.0.0-RC.2'
+    implementation 'com.arangodb:arangodb-java-driver:7.0.0-RC.3'
 }
 ```
 
@@ -334,6 +334,24 @@ The replication factor is now modeled with a new interface (`com.arangodb.entity
 implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`.
 
 Cursor statistics are now in `com.arangodb.entity.CursorStats`.
+
+
+## GraalVM Native Image
+
+The driver supports GraalVM Native Image compilation.
+To compile with `--link-at-build-time` when `http-protocol` module is present in the classpath, additional substitutions
+are be required for its transitive dependencies (`Netty` and `Vert.x`). An example of this can be found
+[here](../driver/src/test/java/graal). Such substitutions are not required when compiling the shaded driver.
+
+
+### Quarkus and Micronaut examples
+
+The driver can be used from Quarkus and Micronaut applications and does not
+require any additional configuration for GraalVM native image generation.
+Examples can be found here:
+
+- [arango-quarkus-native-example](https://github.com/arangodb-helper/arango-quarkus-native-example)
+- [arango-micronaut-native-example](https://github.com/arangodb-helper/arango-micronaut-native-example)
 
 
 ## Migration
