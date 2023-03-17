@@ -62,14 +62,14 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK);
-        serde.configure((mapper) -> {
-            mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
-            mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
-            SimpleModule module = new SimpleModule("PersonModule");
-            module.addDeserializer(Person.class, new PersonDeserializer());
-            mapper.registerModule(module);
-        });
+        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK)
+                .configure((mapper) -> {
+                    mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
+                    mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
+                    SimpleModule module = new SimpleModule("PersonModule");
+                    module.addDeserializer(Person.class, new PersonDeserializer());
+                    mapper.registerModule(module);
+                });
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .protocol(Protocol.VST)
