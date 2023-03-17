@@ -39,8 +39,9 @@ public final class JacksonSerdeImpl implements JacksonSerde {
     }
 
     @Override
-    public void configure(Consumer<ObjectMapper> configureFunction) {
+    public JacksonSerde configure(Consumer<ObjectMapper> configureFunction) {
         configureFunction.accept(mapper);
+        return this;
     }
 
 }

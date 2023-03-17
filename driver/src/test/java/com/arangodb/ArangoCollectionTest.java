@@ -352,7 +352,7 @@ new DocumentCreateOptions().returnNew(true));
         assertThat(createEntity.getKey()).isEqualTo(key);
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
-        Map<String, Object> newDoc = collection.getSerde().deserializeUserData(createEntity.getNew().getValue(),
+        Map<String, Object> newDoc = collection.getSerde().deserializeUserData(createEntity.getNew().get(),
          Map.class);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
@@ -455,7 +455,7 @@ new DocumentCreateOptions().silent(true), BaseDocument.class);
         RawJson rawJson = RawJson.of("{\"_key\":\"" + key + "\",\"a\":\"test\"}");
         collection.insertDocument(rawJson);
         final RawJson readResult = collection.getDocument(key, RawJson.class);
-        assertThat(readResult.getValue()).contains("\"_key\":\"" + key + "\"").contains("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\"");
+        assertThat(readResult.get()).contains("\"_key\":\"" + key + "\"").contains("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1884,7 +1884,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("aaa")).isTrue();
             assertThat(jn.get("aaa").intValue()).isEqualTo(33);
         }
@@ -2404,7 +2404,7 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
         for (final DocumentDeleteEntity<RawData> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isIn("1", "2");
             assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).getValue());
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).get());
             assertThat(jn.get("_key").asText()).isEqualTo(i.getKey());
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -2650,7 +2650,7 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
             assertThat(jn.get("foo").textValue()).isEqualTo("bar");
         }
@@ -2769,7 +2769,7 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).getValue());
+            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
             assertThat(jn.get("foo").textValue()).isEqualTo("bar");
         }

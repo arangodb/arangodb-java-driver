@@ -33,9 +33,9 @@ class RetryTest extends SingleServerTest {
 
     static Stream<ArangoDB> arangoProvider() {
         return Stream.of(
-                dbBuilder().useProtocol(Protocol.VST).build(),
-                dbBuilder().useProtocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().useProtocol(Protocol.HTTP2_VPACK).build()
+                dbBuilder().protocol(Protocol.VST).build(),
+                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
+                dbBuilder().protocol(Protocol.HTTP2_VPACK).build()
         );
     }
 
@@ -89,7 +89,7 @@ class RetryTest extends SingleServerTest {
 
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         arangoDB.getVersion();
@@ -128,7 +128,7 @@ class RetryTest extends SingleServerTest {
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         arangoDB.getVersion();
@@ -170,7 +170,7 @@ class RetryTest extends SingleServerTest {
     @EnumSource(Protocol.class)
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         arangoDB.db().query("return null", Void.class);

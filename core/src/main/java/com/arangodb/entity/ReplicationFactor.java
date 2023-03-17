@@ -33,13 +33,13 @@ public interface ReplicationFactor {
     }
 
     @JsonValue
-    Object getValue();
+    Object get();
 
     enum SatelliteReplicationFactor implements ReplicationFactor {
         INSTANCE;
 
         @Override
-        public String getValue() {
+        public String get() {
             return "satellite";
         }
     }
@@ -53,7 +53,7 @@ public interface ReplicationFactor {
         }
 
         @Override
-        public Integer getValue() {
+        public Integer get() {
             return value;
         }
     }

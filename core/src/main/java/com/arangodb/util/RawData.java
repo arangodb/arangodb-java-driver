@@ -5,7 +5,7 @@ package com.arangodb.util;
  * - {@link RawBytes}
  * - {@link RawJson}
  */
-public interface RawData {
+public interface RawData<T> {
     static RawJson of(final String value) {
         return RawJson.of(value);
     }
@@ -14,4 +14,5 @@ public interface RawData {
         return RawBytes.of(value);
     }
 
+    T get();
 }

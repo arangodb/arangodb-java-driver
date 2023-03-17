@@ -320,7 +320,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      */
     class Builder extends InternalArangoDBBuilder<Builder> {
 
-        public Builder useProtocol(final Protocol protocol) {
+        public Builder protocol(final Protocol protocol) {
             config.setProtocol(protocol);
             return this;
         }

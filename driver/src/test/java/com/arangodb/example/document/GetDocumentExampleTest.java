@@ -82,7 +82,7 @@ class GetDocumentExampleTest extends ExampleBase {
     @Test
     void getAsJson() {
         final RawJson doc = collection.getDocument(key, RawJson.class);
-        assertThat(doc.getValue()).isNotNull()
+        assertThat(doc.get()).isNotNull()
                 .contains("foo")
                 .contains("bar");
     }
@@ -90,8 +90,8 @@ class GetDocumentExampleTest extends ExampleBase {
     @Test
     void getAsBytes() {
         final RawBytes doc = collection.getDocument(key, RawBytes.class);
-        assertThat(doc.getValue()).isNotNull();
-        Map<String, Object> mapDoc = collection.getSerde().deserializeUserData(doc.getValue(), Map.class);
+        assertThat(doc.get()).isNotNull();
+        Map<String, Object> mapDoc = collection.getSerde().deserializeUserData(doc.get(), Map.class);
         assertThat(mapDoc).containsEntry("foo", "bar");
     }
 

@@ -45,9 +45,9 @@ class SerdeTest extends BaseTest {
         RawJson doc = RawJson.of("""
                 {"foo":"bar"}""");
         RawJson res = adb.db().query("return @d", RawJson.class, Collections.singletonMap("d", doc)).next();
-        assertThat(res.getValue()).isEqualTo(doc.getValue());
+        assertThat(res.get()).isEqualTo(doc.get());
         RawJson value = adb.db().query("return @d.foo", RawJson.class, Collections.singletonMap("d", doc)).next();
-        assertThat(value.getValue()).isEqualTo("\"bar\"");
+        assertThat(value.get()).isEqualTo("\"bar\"");
     }
 
     @ParameterizedTest

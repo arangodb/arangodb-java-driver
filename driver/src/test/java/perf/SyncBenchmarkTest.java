@@ -20,7 +20,7 @@ public class SyncBenchmarkTest {
         System.out.println("--- getVersion(): " + protocol);
         System.out.println("-----------------------------------------");
 
-        ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
+        ArangoDB adb = new ArangoDB.Builder().protocol(protocol).build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             @Override
             protected void sendRequest() {
@@ -44,7 +44,7 @@ public class SyncBenchmarkTest {
         System.out.println("--- getVersion w/ details: " + protocol);
         System.out.println("-----------------------------------------");
 
-        ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
+        ArangoDB adb = new ArangoDB.Builder().protocol(protocol).build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             private final Request<?> request = Request.builder()
                     .db(DbName.SYSTEM)

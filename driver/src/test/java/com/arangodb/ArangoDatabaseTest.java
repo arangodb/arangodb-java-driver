@@ -116,7 +116,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -131,7 +131,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
         assertThat(props.getWriteConcern()).isEqualTo(2);
     }
 
@@ -1166,7 +1166,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isNotNull();
         for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
             final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-            assertThat(properties.getReplicationFactor().getValue()).isEqualTo(2);
+            assertThat(properties.getReplicationFactor().get()).isEqualTo(2);
         }
     }
 
@@ -1205,7 +1205,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void transactionString(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params("test");
         final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options);
-        assertThat(result.getValue()).isEqualTo("\"test\"");
+        assertThat(result.get()).isEqualTo("\"test\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1233,7 +1233,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final RawJson result = db
                 .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
                         options);
-        assertThat(result.getValue()).isEqualTo("\"hello world\"");
+        assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1243,7 +1243,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.getValue()).isEqualTo("\"hello world\"");
+        assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1254,7 +1254,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final RawJson result = db
                 .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
                         options);
-        assertThat(result.getValue()).isEqualTo("\"hello world\"");
+        assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1264,7 +1264,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.getValue()).isEqualTo("\"hello world\"");
+        assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1276,7 +1276,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
                 .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.getValue()).isEqualTo("\"hello world\"");
+        assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
     @ParameterizedTest(name = "{index}")

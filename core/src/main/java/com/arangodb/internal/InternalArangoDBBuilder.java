@@ -153,12 +153,12 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
     /**
      * Sets the chunk size when {@link Protocol#VST} is used.
      *
-     * @param chunksize size of a chunk in bytes
+     * @param chunkSize size of a chunk in bytes
      * @return {@link ArangoDB.Builder}
      */
     @SuppressWarnings("unchecked")
-    public T chunksize(final Integer chunksize) {
-        config.setChunkSize(chunksize);
+    public T chunkSize(final Integer chunkSize) {
+        config.setChunkSize(chunkSize);
         return (T) this;
     }
 
@@ -211,7 +211,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
     }
 
     /**
-     * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
+     * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
      * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
      * master discovery.
      *
@@ -219,7 +219,7 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
      * The host list will be used for failover and load balancing.
      * </p>
      *
-     * @param acquireHostList whether or not automatically acquire a list of available hosts (default: false)
+     * @param acquireHostList whether automatically acquire a list of available hosts (default: false)
      * @return {@link ArangoDB.Builder}
      */
     @SuppressWarnings("unchecked")

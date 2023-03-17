@@ -73,7 +73,7 @@ class ArangoSslTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
@@ -86,7 +86,7 @@ class ArangoSslTest {
     @EnumSource(Protocol.class)
     void connectWithoutValidSslContext(Protocol protocol) {
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .host("localhost", 8529)
                 .useSsl(true)
                 .build();

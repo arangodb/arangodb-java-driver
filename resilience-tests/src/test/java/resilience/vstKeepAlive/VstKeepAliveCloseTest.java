@@ -25,7 +25,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
     @BeforeEach
     void init() {
         arangoDB = dbBuilder()
-                .useProtocol(Protocol.VST)
+                .protocol(Protocol.VST)
                 .timeout(1000)
                 .keepAliveInterval(1)
                 .build();

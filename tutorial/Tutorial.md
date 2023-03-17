@@ -175,7 +175,7 @@ Documents can also be read as raw JSON strings:
 ```java
 System.out.println("Reading document as JSON String...");
 RawJson readJson = collection.getDocument(keyJson, RawJson.class);
-System.out.println(readJson.getValue());
+System.out.println(readJson.get());
 ```
 
 After executing this program the console output should be:

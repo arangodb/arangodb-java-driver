@@ -36,7 +36,7 @@ public class BaseTest {
         return new ArangoDB.Builder()
                 .host(HOST, PORT)
                 .password(PASSWD)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class BaseTest {
         return new ArangoDB.Builder()
                 .host(HOST, PORT)
                 .password(PASSWD)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
     }
 

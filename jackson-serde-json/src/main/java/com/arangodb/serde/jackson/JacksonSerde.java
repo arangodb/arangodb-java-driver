@@ -38,6 +38,6 @@ public interface JacksonSerde extends ArangoSerde {
      *
      * @param configureFunction function to configure the Jackson ObjectMapper
      */
-    void configure(final Consumer<ObjectMapper> configureFunction);
+    JacksonSerde configure(final Consumer<ObjectMapper> configureFunction);
 
 }

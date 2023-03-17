@@ -26,7 +26,7 @@ class ShutdownTest extends SingleServerTest {
     @EnumSource(Protocol.class)
     void shutdown(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = dbBuilder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         arangoDB.getVersion();
@@ -42,7 +42,7 @@ class ShutdownTest extends SingleServerTest {
     void shutdownWithPendingRequests(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();

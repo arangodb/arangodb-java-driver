@@ -30,9 +30,9 @@ class ConnectionTest extends SingleServerTest {
 
     static Stream<ArangoDB> arangoProvider() {
         return Stream.of(
-                dbBuilder().useProtocol(Protocol.VST).build(),
-                dbBuilder().useProtocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().useProtocol(Protocol.HTTP2_VPACK).build()
+                dbBuilder().protocol(Protocol.VST).build(),
+                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
+                dbBuilder().protocol(Protocol.HTTP2_VPACK).build()
         );
     }
 
@@ -41,7 +41,7 @@ class ConnectionTest extends SingleServerTest {
     void nameResolutionFailTest(Protocol protocol) {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
