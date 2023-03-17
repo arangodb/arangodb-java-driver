@@ -186,7 +186,6 @@ The byte array can either represent a `JSON` string (UTF-8 encoded) or a `VPACK`
 driver protocol configuration (`JSON` for `HTTP_JSON` and `HTTP2_JSON`, `VPACK` otherwise).
 
 The following changes have been applied to `com.arangodb.entity.BaseDocument` and `com.arangodb.entity.BaseEdgeDocument`:
-- `final` classes
 - not serializable anymore (using Java serialization)
 - new method `removeAttribute(String)`
 - `getProperties()` returns an unmodifiable map
@@ -267,6 +266,7 @@ The following client APIs have been removed:
     - `ArangoDB.getLogs()`
     - `minReplicationFactor` in collections and graphs
     - `overwrite` flag in `DocumentCreateOptions`
+    - `hash` and `skipList` indexes
 
 The user data custom serializer implementation `ArangoJack` has been removed in favor of 
 `com.arangodb.serde.jackson.JacksonSerde`.
@@ -280,21 +280,50 @@ Raw `VPACK` data must be used with `com.arangodb.util.RawBytes`).
 Support for custom initialization of
 cursors (`ArangoDB._setCursorInitializer(ArangoCursorInitializer cursorInitializer)`) has been removed.
 
+### Async API
+
+The asynchronous API (before under the package `com.arangodb.async`) has been removed from version 7.0 (#487).
+This has been done because the asynchronous API needs a substantial refactoring, i.e. supporting 
+HTTP protocol, fixing #433 and a better alignment with the synchronous API.
+It will be reworked and re-added in a future version 7.x.
+
 
 ## API methods changes
 
 Before version `7.0` some CRUD API methods inferred the return type from the type of the data object passed as input.
 Now the return type can be explicitly set for each CRUD API method. This type is used as deserialization target by
-the `user-data serde`.
+the `user-data serde`. In particular, no automatic type inference is performed anymore in:
+- `ArangoCollection.insertDocuments()`
+- `ArangoCollection.replaceDocuments()`
+- `ArangoCollection.updateDocuments()`
+- `ArangoCollection.deleteDocuments()`
+Unless specified explicitly, the target deserialization type is `Void.class`, thus allowing only `null` values. 
 
 CRUD operations operating with multiple documents have now an overloaded variant which accepts raw data (`RawBytes`
 and `RawJson`) containing multiple documents.
+
+CRUD operations operating with multiple documents with parametric types are now covariant:
+- `ArangoCollection.insertDocuments(Collection<? extends T>, DocumentCreateOptions, Class<T>)`
+- `ArangoCollection.replaceDocuments(Collection<? extends T>, DocumentReplaceOptions, Class<T>)`
 
 `com.arangodb.Request` and `com.arangodb.Response` classes have been refactored to support generic body type. 
 `ArangoDB.execute(Request<T>, Class<U>): Response<U>` accepts now the target deserialization type for the response body.
 
 `com.arangodb.ArangoDBException` has been enhanced with the id of the request causing it. This can be useful to 
 correlate it with the debug level logs.
+
+Graph API has been updated (#486):
+- added `com.arangodb.ArangoEdgeCollection.drop()` and overloads
+- added `com.arangodb.ArangoVertexCollection.drop(VertexCollectionDropOptions)`
+- updated `com.arangodb.ArangoGraph.replaceEdgeDefinition()`
+
+`ArangoDatabase.getDocument()` has been removed, in favor of `ArangoCollection.getDocument()`.
+
+`ArangoDatabase.query()` overloaded variants have now a different order of parameters:
+- `query(String query, Class<T> type)`
+- `query(String query, Class<T> type, AqlQueryOptions options)`
+- `query(String query, Class<T> type, Map<String,Object> bindVars)`
+- `query(String query, Class<T> type, Map<String,Object> bindVars, AqlQueryOptions options)`
 
 
 ## API entities
@@ -303,6 +332,8 @@ All entities and options classes (in packages `com.arangodb.model` and `com.aran
 
 The replication factor is now modeled with a new interface (`com.arangodb.entity.ReplicationFactor`) with
 implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`.
+
+Cursor statistics are now in `com.arangodb.entity.CursorStats`.
 
 
 ## Migration

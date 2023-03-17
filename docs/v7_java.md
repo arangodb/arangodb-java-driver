@@ -52,7 +52,7 @@ dependencies {
 The driver supports GraalVM Native Image compilation. 
 To compile with `--link-at-build-time` when `http-protocol` module is present in the classpath, additional substitutions
 are be required for its transitive dependencies (`Netty` and `Vert.x`). An example of this can be found 
-[here](../driver/src/test/java/graal).
+[here](../driver/src/test/java/graal). Such substituions are not required when compiling the shaded driver. 
 
 
 ### Quarkus and Micronaut examples
