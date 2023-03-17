@@ -241,6 +241,20 @@ It bundles and relocates the following packages:
 - `io.vertx`
 - `io.netty`
 
+Note that the **internal serde** uses internally Jackson classes from `com.fasterxml.jackson` that are relocated 
+to `com.arangodb.shaded.fasterxml.jackson`. Therefore, the **internal serde** of the shaded driver is not
+compatible with Jackson annotations and modules from package`com.fasterxml.jackson`, but only with their relocated 
+variants. In case the **internal serde** is used as **user-data serde**, the annotations from package 
+`com.arangodb.serde` can be used to annotate fields, parameters, getters and setters for mapping values representing 
+ArangoDB documents metadata (`_id`, `_key`, `_rev`, `_from`, `_to`):
+- `@InternalId`
+- `@InternalKey`
+- `@InternalRev`
+- `@InternalFrom`
+- `@InternalTo`
+
+These annotations are compatible with the shaded  **internal serde**.
+
 
 ## Removed APIs
 

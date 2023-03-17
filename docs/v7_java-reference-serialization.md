@@ -60,11 +60,22 @@ The `VPACK` implementation is provided by the optional module `com.arangodb:jack
 
 ### Mapping API
 
-The library is fully compatible with [Jackson Databind](https://github.com/FasterXML/jackson-databind)
+`JacksonSerde` is fully compatible with [Jackson Databind](https://github.com/FasterXML/jackson-databind)
 API. To customize the serialization and deserialization behavior using the
 Jackson Data Binding API, entities can be annotated with
 [Jackson Annotations](https://github.com/FasterXML/jackson-annotations).
 For more advanced customizations refer to [Custom serializer](#custom-serializers) section.
+
+
+### Document Annotations
+
+The annotations from package `com.arangodb.serde.jackson` can be used to annotate fields, parameters, getters and 
+setters for mapping values representing ArangoDB documents metadata (`_id`, `_key`, `_rev`, `_from`, `_to`):
+- `@Id`
+- `@Key`
+- `@Rev`
+- `@From`
+- `@To`
 
 
 ### Renaming Properties
