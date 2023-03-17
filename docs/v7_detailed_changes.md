@@ -178,7 +178,7 @@ RawJson rawJsonIn = RawJson.of("""
         """);
 ArangoCursor<RawJson> res = adb.db().query("RETURN @v", Map.of("v", rawJsonIn), RawJson.class);
 RawJson rawJsonOut = res.next();
-String json = rawJsonOut.getValue();  // {"foo":"bar"}
+String json = rawJsonOut.get();  // {"foo":"bar"}
 ```
 
 To represent user data already encoded as byte array, the wrapper class `RawBytes` has been added.
@@ -275,7 +275,7 @@ Support for interpreting raw strings as JSON has been removed (in favor of `com.
 
 Support of data type `com.arangodb.velocypack.VPackSlice` has been removed in favor of Jackson type 
 `com.fasterxml.jackson.databind.JsonNode` and its subclasses (`ArrayNode`, `ObjectNode`, ...). 
-Raw `VPACK` data must be used with `com.arangodb.util.RawBytes`).
+Raw `VPACK` data can be used now with `com.arangodb.util.RawBytes`).
 
 Support for custom initialization of
 cursors (`ArangoDB._setCursorInitializer(ArangoCursorInitializer cursorInitializer)`) has been removed.

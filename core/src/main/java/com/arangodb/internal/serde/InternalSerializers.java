@@ -23,7 +23,7 @@ public final class InternalSerializers {
     static final JsonSerializer<RawJson> RAW_JSON_SERIALIZER = new JsonSerializer<RawJson>() {
         @Override
         public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value.getValue()));
+            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value.get()));
         }
     };
     static final JsonSerializer<RawBytes> RAW_BYTES_SERIALIZER = new JsonSerializer<RawBytes>() {
@@ -31,7 +31,7 @@ public final class InternalSerializers {
         public void serialize(RawBytes value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             // TODO: find a way to append raw bytes directly
             // see https://github.com/FasterXML/jackson-dataformats-binary/issues/331
-            try (JsonParser parser = gen.getCodec().getFactory().createParser(value.getValue())) {
+            try (JsonParser parser = gen.getCodec().getFactory().createParser(value.get())) {
                 gen.writeTree(parser.readValueAsTree());
             }
         }
