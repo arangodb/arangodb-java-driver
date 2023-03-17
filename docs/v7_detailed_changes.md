@@ -7,7 +7,7 @@
     <dependency>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver</artifactId>
-        <version>7.0.0-RC.2</version>
+        <version>7.0.0-RC.3</version>
     </dependency>
 <dependencies>
 ```
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.0.0-RC.2'
+    implementation 'com.arangodb:arangodb-java-driver:7.0.0-RC.3'
 }
 ```
 
