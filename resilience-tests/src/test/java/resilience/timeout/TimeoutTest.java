@@ -38,7 +38,7 @@ class TimeoutTest extends SingleServerTest {
 
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         arangoDB.getVersion();

@@ -72,7 +72,7 @@ class CustomSerdeTest {
         });
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .useProtocol(Protocol.VST)
+                .protocol(Protocol.VST)
                 .serde(serde).build();
 
         db = arangoDB.db(DbName.of("custom-serde-test"));

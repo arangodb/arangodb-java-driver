@@ -44,7 +44,7 @@ class SimpleSyncPerfTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersion(Protocol protocol) throws InterruptedException {
-        ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(protocol).build();
+        ArangoDB arangoDB = new ArangoDB.Builder().protocol(protocol).build();
         // warmup
         doGetVersion(arangoDB);
 

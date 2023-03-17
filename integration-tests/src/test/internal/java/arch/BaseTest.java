@@ -24,14 +24,14 @@ public class BaseTest {
         Protocol protocol = contentType == ContentType.VPACK ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON;
         return new ArangoDB.Builder()
                 .loadProperties(config)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
     }
 
     protected static ArangoDB createAdb(Protocol protocol) {
         return new ArangoDB.Builder()
                 .loadProperties(config)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
     }
 

@@ -23,7 +23,7 @@ class ParallelTest {
         assumeTrue(protocol != Protocol.HTTP_JSON && protocol != Protocol.HTTP_VPACK);
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .maxConnections(1)
                 .build();
 

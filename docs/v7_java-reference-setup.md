@@ -60,7 +60,7 @@ Here are examples to integrate configuration properties from different sources:
 `ArangoDB.Builder` has the following configuration methods:
 
 - `host(String, int)`:           adds a host (hostname and port) to connect to, multiple hosts can be added
-- `useProtocol(Protocol)`:       communication protocol, possible values are: `VST`, `HTTP_JSON`, `HTTP_VPACK`, `HTTP2_JSON`, `HTTP2_VPACK`, (default: `HTTP2_JSON`)
+- `protocol(Protocol)`:       communication protocol, possible values are: `VST`, `HTTP_JSON`, `HTTP_VPACK`, `HTTP2_JSON`, `HTTP2_VPACK`, (default: `HTTP2_JSON`)
 - `timeout(Integer)`:            connection and request timeout (ms), (default `0`, no timeout)
 - `user(String)`:                username for authentication, (default: `root`)
 - `password(String)`:            password for authentication
@@ -103,13 +103,13 @@ Here are examples to integrate configuration properties from different sources:
 
 The drivers default used network protocol is the binary protocol VelocyStream
 which offers the best performance within the driver. To use HTTP, you have to
-set the configuration `useProtocol` to `Protocol.HTTP_JSON` for HTTP with JSON
+set the configuration `protocol` to `Protocol.HTTP_JSON` for HTTP with JSON
 content or `Protocol.HTTP_VPACK` for HTTP with
 [VelocyPack](https://github.com/arangodb/velocypack/blob/master/VelocyPack.md){:target="_blank"} content.
 
 ```java
 ArangoDB arangoDB = new ArangoDB.Builder()
-  .useProtocol(Protocol.VST)
+  .protocol(Protocol.VST)
   .build();
 ```
 

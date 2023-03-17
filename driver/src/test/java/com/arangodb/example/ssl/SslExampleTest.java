@@ -66,7 +66,7 @@ class SslExampleTest {
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -82,7 +82,7 @@ class SslExampleTest {
                 .useSsl(true)
                 .sslContext(createSslContext())
                 .verifyHost(false)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
@@ -99,7 +99,7 @@ class SslExampleTest {
                 .useSsl(true)
                 .sslContext(createSslContext())
                 .verifyHost(true)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);

@@ -21,7 +21,7 @@ class UserAgentTest extends BaseJunit5 {
     void userAgentHeader(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(config)
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .build();
 
         Response<JsonNode> resp = adb.execute(Request.builder()

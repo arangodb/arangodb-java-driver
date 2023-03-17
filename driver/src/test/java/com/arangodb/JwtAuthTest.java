@@ -89,7 +89,7 @@ class JwtAuthTest {
     private ArangoDB.Builder getBuilder(Protocol protocol) {
         return new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .useProtocol(protocol)
+                .protocol(protocol)
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file

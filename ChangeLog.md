@@ -761,7 +761,7 @@ Any usage of the current Java driver API related to it is therefore discouraged.
 - added `ArangoDBVersion#getLicense()`
 - added `ArangoDB#getRole()`
 - added `ArangoDBException#getException()`
-- added protocol switch (`ArangoDB.Builder#useProtocol(Protocol)`)
+- added protocol switch (`ArangoDB.Builder#protocol(Protocol)`)
   - `Protocol#VST` = VeclocyStream (default)
   - `Protocol#HTTP_JSON` = JSON over HTTP
   - `Protocol#HTTP_VPACK` = VelocyPack over HTTP
