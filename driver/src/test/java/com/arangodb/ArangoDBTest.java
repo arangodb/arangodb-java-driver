@@ -141,7 +141,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultCreate).isTrue();
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(info.getReplicationFactor().get()).isEqualTo(2);
         assertThat(info.getWriteConcern()).isEqualTo(2);
         assertThat(info.getSharding()).isEmpty();
 

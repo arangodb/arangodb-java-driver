@@ -78,7 +78,7 @@ public class FirstProject {
         {
             System.out.println("Reading document as JSON String...");
             RawJson readJson = collection.getDocument(keyJson, RawJson.class);
-            System.out.println(readJson.getValue());
+            System.out.println(readJson.get());
         }
 
         // Update a document

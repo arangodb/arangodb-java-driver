@@ -104,7 +104,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(graph).isNotNull();
         assertThat(graph.getName()).isEqualTo(GRAPH_NAME + "_1");
         assertThat(graph.getWriteConcern()).isEqualTo(2);
-        assertThat(graph.getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(graph.getReplicationFactor().get()).isEqualTo(2);
         db.graph(GRAPH_NAME + "_1").drop();
     }
 
@@ -136,7 +136,7 @@ class ArangoGraphTest extends BaseJunit5 {
         if (isCluster()) {
             for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_5}) {
                 final CollectionPropertiesEntity properties = graph.db().collection(collection).getProperties();
-                assertThat(properties.getReplicationFactor().getValue()).isEqualTo(REPLICATION_FACTOR);
+                assertThat(properties.getReplicationFactor().get()).isEqualTo(REPLICATION_FACTOR);
                 assertThat(properties.getNumberOfShards()).isEqualTo(NUMBER_OF_SHARDS);
             }
         }
@@ -216,7 +216,7 @@ class ArangoGraphTest extends BaseJunit5 {
         }
         if (isCluster()) {
             final CollectionPropertiesEntity properties = graph.db().collection(EDGE_COL_3).getProperties();
-            assertThat(properties.getReplicationFactor().getValue()).isEqualTo(REPLICATION_FACTOR);
+            assertThat(properties.getReplicationFactor().get()).isEqualTo(REPLICATION_FACTOR);
             assertThat(properties.getNumberOfShards()).isEqualTo(NUMBER_OF_SHARDS);
         }
 
@@ -385,7 +385,7 @@ class ArangoGraphTest extends BaseJunit5 {
 
         assertThat(db.collection(eName).getProperties().getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
         assertThat(db.collection(v1Name).getProperties().getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
-        assertThat(db.collection(v2Name).getProperties().getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(db.collection(v2Name).getProperties().getReplicationFactor().get()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -434,7 +434,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(g.getNumberOfShards()).isEqualTo(2);
 
         assertThat(db.collection(v1Name).getProperties().getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
-        assertThat(db.collection(v2Name).getProperties().getReplicationFactor().getValue()).isEqualTo(2);
+        assertThat(db.collection(v2Name).getProperties().getReplicationFactor().get()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
