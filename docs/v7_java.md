@@ -8,24 +8,26 @@ The official ArangoDB [Java Driver](https://github.com/arangodb/arangodb-java-dr
 
 ## Supported versions
 
-Only the latest version of this driver is maintained to support the most recent ArangoDB server features. 
-It is compatible with all supported stable versions of ArangoDB server, see 
+Version `7` is the latest supported and actively developed release.
+Version `6` is still supported and maintained, but not actively developed anymore. Upgrading to `7` is recommended.
+
+Both versions are compatible with all supported stable versions of ArangoDB server, see 
 [Product Support End-of-life Announcements](https://www.arangodb.com/eol-notice).
 
-It is compatible with JDK 8 and higher versions, currently tested up to JDK 19.
+They are compatible with JDK 8 and higher versions, currently tested up to JDK 19.
 
 
 ## Maven
 
 To add the driver to your project with Maven, add the following code to your
-`pom.xml` (substitute `x.x.x` with the latest driver version):
+`pom.xml` (substitute `7.x.x` with the latest driver version):
 
 ```xml
 <dependencies>
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>x.x.x</version>
+    <version>7.x.x</version>
   </dependency>
 </dependencies>
 ```
@@ -34,7 +36,7 @@ To add the driver to your project with Maven, add the following code to your
 ## Gradle
 
 To add the driver to your project with Gradle, add the following code to your
-`build.gradle` (substitute `x.x.x` with the latest driver version):
+`build.gradle` (substitute `7.x.x` with the latest driver version):
 
 ```
 repositories {
@@ -42,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:x.x.x'
+    implementation 'com.arangodb:arangodb-java-driver:7.x.x'
 }
 ```
 

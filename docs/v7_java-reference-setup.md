@@ -28,20 +28,26 @@ ArangoDB arangoDB = new ArangoDB.Builder()
 ```
 
 Implementations of `com.arangodb.config.ArangoConfigProperties` could supply configuration properties coming from
-different sources, eg. system properties, remote stores, frameworks integrations, etc. 
-An implementation for loading properties from local files is provided by 
-`ArangoConfigProperties.fromFile(String fileName, String prefix)` and its overloaded variants.
+different sources, eg. system properties, remote stores, frameworks integrations, etc.
+An implementation for loading properties from local files is provided by `ArangoConfigProperties.fromFile()` and its
+overloaded variants.
 
-For example, to read config properties from `arangodb.properties` file (same as in version `6`):
+To read config properties prefixed with `arangodb` from `arangodb.properties` file (as in version `6`):
 
 ```java
-ArangoConfigProperties props = ArangoConfigProperties.fromFile();  // reads "arangodb.properties" by default
+// ## src/main/resources/arangodb.properties
+// arangodb.hosts=172.28.0.1:8529
+// arangodb.password=test
+// ...
+
+ArangoConfigProperties props = ArangoConfigProperties.fromFile();
 ```
 
-Overloaded variants can be used to specify the configuration file name and the prefix of the config keys:
+To read config properties from `arangodb-with-prefix.properties` file, where the config properties
+are prefixed with `adb`:
 
 ```java
-// ## arangodb-with-prefix.properties
+// ## src/main/resources/arangodb-with-prefix.properties
 // adb.hosts=172.28.0.1:8529
 // adb.password=test
 // ...
@@ -76,10 +82,15 @@ Here are examples to integrate configuration properties from different sources:
 - `acquireHostListInterval(Integer)`:             acquireHostList interval (ms), (default: `3_600_000`, 1 hour)
 - `loadBalancingStrategy(LoadBalancingStrategy)`: load balancing strategy, possible values are: `NONE`, `ROUND_ROBIN`, `ONE_RANDOM`, (default: `NONE`)
 - `responseQueueTimeSamples(Integer)`:            amount of samples kept for queue time metrics, (default: `10`)
-- `serde(ArangoSerde)`:                           serde to serialize and deserialize user data
+- `serde(ArangoSerde)`:                           serde to serialize and deserialize user-data
 
 
-`ArangoConfigProperties.fromFile()` reads the following properties:
+### Config File Properties
+
+`ArangoConfigProperties.fromFile()` reads config properties prefixed with `arangodb` from `arangodb.properties` file 
+(as in version `6`). Different prefix and file name can be specified using its overloaded variants.
+
+The properties read are:
 - `hosts`: comma-separated list of `<hostname>:<port>` entries
 - `protocol`: `VST`, `HTTP_JSON`, `HTTP_VPACK`, `HTTP2_JSON` or `HTTP2_VPACK`
 - `timeout`
@@ -115,7 +126,8 @@ ArangoDB arangoDB = new ArangoDB.Builder()
 
 The driver keeps a pool of connections for each host, the max amount of connections is configurable.
 
-Connections are released after the configured connection ttl or when the driver is shut down:
+Connections are released after the configured connection ttl (`ArangoDB.Builder.connectionTtl(Long)`) or when the driver
+is shut down:
 
 ```java
 arangoDB.shutdown();
@@ -135,7 +147,7 @@ The driver can be used concurrently by multiple threads. All the following class
 - `com.arangodb.ArangoSearch`
 
 Any other class should not be considered thread safe. In particular classes representing request options (package 
-`com.arangodb.model`) and response entities (package `com.arangodb.entity`) are not thread safe.
+`com.arangodb.model`) and response entities (package `com.arangodb.entity`) are **not** thread safe.
 
 
 ## Fallback hosts

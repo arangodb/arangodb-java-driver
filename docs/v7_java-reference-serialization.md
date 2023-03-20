@@ -6,9 +6,9 @@ The driver functionalities related to serialization and deserialization (serde) 
 
 The **internal serde** is based on [Jackson](https://github.com/FasterXML/jackson) API and is responsible for
 serializing/deserializing data definition classes (in packages `com.arangodb.model` and `com.arangodb.entity`). 
-This includes all the classes that are not user data, such as metadata properties for databases, collections, graphs, ...
+This includes all the classes that are not user-data, such as metadata properties for databases, collections, graphs, ...
 
-Furthermore, it is used to serialize and deserialize user data of the following managed types:
+Furthermore, it is used to serialize and deserialize user-data of the following managed types:
 - `com.fasterxml.jackson.databind.JsonNode` and its subclasses (`ArrayNode`, `ObjectNode`, ...)
 - `com.arangodb.util.RawJson`
 - `com.arangodb.util.RawBytes`
@@ -19,7 +19,7 @@ Note that in `arangodb-java-driver-shaded`, due to dependencies relocation, the 
 entry above (`JsonNode`) is: `com.arangodb.shaded.fasterxml.jackson.databind.JsonNode`. The same relocation rule is also
 applied to its subclasses (`ArrayNode`, `ObjectNode`, ...).
 
-The **user-data serde** is used to serialize and deserialize the user data, namely the data representing:
+The **user-data serde** is used to serialize and deserialize the user-data, namely the data representing:
 - documents
 - vertexes
 - edges
@@ -33,9 +33,9 @@ The `user-data serde` can be explicitly registered via `ArangoDB.Builder#serde(A
 If no serde is registered, then the driver will use SPI (Service Provider Interface) to automatically
 discover and load serde service providers (instances of `com.arangodb.serde.ArangoSerdeProvider`).
 In case no `user-data serde` is explicitly registered and no serde service provider can be discovered via SPI, then the
-**internal serde** will be used to serialize and deserialize user data. In this case, please note that the 
+**internal serde** will be used to serialize and deserialize user-data. In this case, please note that the 
 **internal serde** is not part of the public API and could change in future releases without notice, thus breaking 
-client applications relying on it to serialize or deserialize user data.
+client applications relying on it to serialize or deserialize user-data.
 
 Examples of custom `user-data serde` implementations can be found here: 
 - [JSON_B serde](../jsonb-serde/src/main/java/com/arangodb/serde/jsonb): a custom serde implementation based on `JSON-B`
