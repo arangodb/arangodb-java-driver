@@ -67,6 +67,38 @@ Examples can be found here:
 - [arango-micronaut-native-example](https://github.com/arangodb-helper/arango-micronaut-native-example)
 
 
+## ArangoDB Java Driver Shaded
+
+Since version `7`, a shaded variant of the driver is also published with maven coordinates:
+`com.arangodb:arangodb-java-driver-shaded`.
+
+It bundles and relocates the following packages:
+- `com.fasterxml.jackson`
+- `com.arangodb.jackson.dataformat.velocypack`
+- `io.vertx`
+- `io.netty`
+
+Note that the **internal serde** uses internally Jackson classes from `com.fasterxml.jackson` that are relocated
+to `com.arangodb.shaded.fasterxml.jackson`. Therefore, the **internal serde** of the shaded driver is not
+compatible with Jackson annotations and modules from package`com.fasterxml.jackson`, but only with their relocated
+variants. In case the **internal serde** is used as **user-data serde**, the annotations from package
+`com.arangodb.serde` can be used to annotate fields, parameters, getters and setters for mapping values representing
+ArangoDB documents metadata (`_id`, `_key`, `_rev`, `_from`, `_to`):
+- `@InternalId`
+- `@InternalKey`
+- `@InternalRev`
+- `@InternalFrom`
+- `@InternalTo`
+
+These annotations are compatible with relocated Jackson classes.
+Note that the **internal serde** is not part of the public API and could change in future releases without notice, thus
+breaking client applications relying on it to serialize or deserialize user-data. It is therefore recommended also in
+this case either:
+- using the default user-data serde `JacksonSerde` (from packages `com.arangodb:jackson-serde-json` or
+  `com.arangodb:jackson-serde-vpack`), or
+- providing a custom user-data serde implementation via `ArangoDB.Builder.serde(ArangoSerde)`.
+
+
 ## See Also
 
 - [JavaDoc](https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/latest/index.html)
