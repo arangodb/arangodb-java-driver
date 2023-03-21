@@ -35,14 +35,7 @@
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-stack-depchain</artifactId>
-                <version>4.3.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>4.1.85.Final</version>
+                <version>4.4.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

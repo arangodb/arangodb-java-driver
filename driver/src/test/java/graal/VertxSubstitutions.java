@@ -17,8 +17,8 @@ import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.resolver.DefaultResolverProvider;
 import io.vertx.core.net.NetServerOptions;
-import io.vertx.core.net.impl.transport.Transport;
 import io.vertx.core.spi.resolver.ResolverProvider;
+import io.vertx.core.spi.transport.Transport;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLException;
@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-@TargetClass(className = "io.vertx.core.net.impl.transport.Transport")
-final class Target_io_vertx_core_net_impl_transport_Transport {
+@TargetClass(className = "io.vertx.core.impl.VertxBuilder")
+final class Target_io_vertx_core_impl_VertxBuilder {
     @Substitute
     public static Transport nativeTransport() {
-        return Transport.JDK;
+        return null;
     }
 }
 

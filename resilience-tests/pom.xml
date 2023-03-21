@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-netty</artifactId>
-            <version>5.13.2</version>
+            <version>5.15.0</version>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.3.5</version>
+            <version>1.4.6</version>
         </dependency>
     </dependencies>
 
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.85.Final</version>
+                <version>4.1.90.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
