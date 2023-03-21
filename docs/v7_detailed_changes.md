@@ -32,6 +32,8 @@ The HTTP client has been changed to [Vert.x WebClient](https://vertx.io/docs/ver
 `HTTP/2` is now supported. 
 `HTTP/2` supports multiplexing and uses `1` connection per host by default.
 
+Cookies are not supported anymore: cookies received in the response will be ignored.
+
 
 ## Configuration changes
 
