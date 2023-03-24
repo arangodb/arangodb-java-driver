@@ -1857,7 +1857,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentsRawData(ArangoCollection collection) {
-        final RawData values = RawData.of("[{},{},{}]");
+        final RawData values = RawJson.of("[{},{},{}]");
         final MultiDocumentEntity<?> docs = collection.insertDocuments(values);
         assertThat(docs).isNotNull();
         assertThat(docs.getDocuments()).isNotNull();
@@ -1869,7 +1869,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentsRawDataReturnNew(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
+        final RawData values = RawJson.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
         final MultiDocumentEntity<DocumentCreateEntity<RawData>> docs =
                 collection.insertDocuments(values, new DocumentCreateOptions().returnNew(true));
         assertThat(docs).isNotNull();
@@ -2178,7 +2178,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
          Collections.singletonMap("_key", rnd())));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values));
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2197,7 +2197,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
          Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values));
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
         assertThat(docs.getEmpty()).isZero();
@@ -2216,7 +2216,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
          Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values),
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values),
          new DocumentImportOptions().onDuplicate(OnDuplicate.error));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
@@ -2235,7 +2235,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
         Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values),
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values),
         new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
@@ -2255,7 +2255,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
          Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values),
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values),
          new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
@@ -2275,7 +2275,7 @@ new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
 Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values),
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values),
  new DocumentImportOptions().onDuplicate(OnDuplicate.update));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
@@ -2290,7 +2290,7 @@ Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
     @MethodSource("cols")
     void importDocumentsJsonCompleteFail(ArangoCollection collection) {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        Throwable thrown = catchThrowable(() -> collection.importDocuments(RawData.of(values),
+        Throwable thrown = catchThrowable(() -> collection.importDocuments(RawJson.of(values),
          new DocumentImportOptions().complete(true)));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
@@ -2306,7 +2306,7 @@ Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", k1),
  Collections.singletonMap("_key", k2), Collections.singletonMap("_key", k2)));
 
-        final DocumentImportEntity docs = collection.importDocuments(RawData.of(values),
+        final DocumentImportEntity docs = collection.importDocuments(RawJson.of(values),
 new DocumentImportOptions().details(true));
         assertThat(docs).isNotNull();
         assertThat(docs.getCreated()).isEqualTo(2);
@@ -2326,7 +2326,7 @@ new DocumentImportOptions().details(true));
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
          Collections.singletonMap("_key", rnd())));
-        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(false));
+        collection.importDocuments(RawJson.of(values), new DocumentImportOptions().overwrite(false));
         assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
@@ -2337,7 +2337,7 @@ new DocumentImportOptions().details(true));
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
          Collections.singletonMap("_key", rnd())));
-        collection.importDocuments(RawData.of(values), new DocumentImportOptions().overwrite(true));
+        collection.importDocuments(RawJson.of(values), new DocumentImportOptions().overwrite(true));
         assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
@@ -2352,7 +2352,7 @@ new DocumentImportOptions().details(true));
         final String values = mapper.writeValueAsString(Arrays.asList(new MapBuilder().put("_key", k1).put("_from",
         "from").put("_to", "to").get(), new MapBuilder().put("_key", k2).put("_from", "from").put("_to", "to").get()));
 
-        final DocumentImportEntity importResult = edgeCollection.importDocuments(RawData.of(values),
+        final DocumentImportEntity importResult = edgeCollection.importDocuments(RawJson.of(values),
 new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
         assertThat(importResult).isNotNull();
         assertThat(importResult.getCreated()).isEqualTo(2);
@@ -2394,9 +2394,9 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void deleteDocumentsRawDataByKeyReturnOld(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
+        final RawData values = RawJson.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
         collection.insertDocuments(values);
-        final RawData keys = RawData.of("[\"1\",\"2\"]");
+        final RawData keys = RawJson.of("[\"1\",\"2\"]");
         MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteResult = collection.deleteDocuments(keys,
                 new DocumentDeleteOptions().returnOld(true));
         assertThat(deleteResult).isNotNull();
@@ -2622,10 +2622,10 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentsRawData(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values);
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+        final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
     "\"foo\":\"bar\"}]");
         final MultiDocumentEntity<?> updateResult = collection.updateDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
@@ -2635,10 +2635,10 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void updateDocumentsRawDataReturnNew(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values);
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+        final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
          "\"foo\":\"bar\"}]");
         MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
                 collection.updateDocuments(updatedValues, new DocumentUpdateOptions().returnNew(true));
@@ -2741,10 +2741,10 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentsRawData(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values);
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+        final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
          "\"foo\":\"bar\"}]");
         final MultiDocumentEntity<?> updateResult = collection.replaceDocuments(updatedValues);
         assertThat(updateResult.getDocuments()).hasSize(2);
@@ -2754,10 +2754,10 @@ new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void replaceDocumentsRawDataReturnNew(ArangoCollection collection) {
-        final RawData values = RawData.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
+        final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
         collection.insertDocuments(values);
 
-        final RawData updatedValues = RawData.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
+        final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
          "\"foo\":\"bar\"}]");
         MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateResult =
                 collection.replaceDocuments(updatedValues, new DocumentReplaceOptions().returnNew(true));

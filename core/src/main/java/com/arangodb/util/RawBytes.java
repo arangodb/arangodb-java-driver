@@ -19,7 +19,7 @@ import java.util.Arrays;
  * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawBytes}.
  */
-public final class RawBytes implements RawData<byte[]> {
+public final class RawBytes implements RawData {
     private final byte[] value;
 
     private RawBytes(final byte[] value) {
@@ -30,7 +30,6 @@ public final class RawBytes implements RawData<byte[]> {
         return new RawBytes(value);
     }
 
-    @Override
     public byte[] get() {
         return value;
     }

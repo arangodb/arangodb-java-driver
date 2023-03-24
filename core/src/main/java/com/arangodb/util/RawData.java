@@ -1,18 +1,11 @@
 package com.arangodb.util;
 
 /**
- * Wrapper for raw data, current implementations are:
- * - {@link RawBytes}
- * - {@link RawJson}
+ * Marker interface for raw data, implementations are:
+ *  <ul>
+ *   <li>{@link RawBytes}</li>
+ *   <li>{@link RawJson}</li>
+ * </ul>
  */
-public interface RawData<T> {
-    static RawJson of(final String value) {
-        return RawJson.of(value);
-    }
-
-    static RawBytes of(final byte[] value) {
-        return RawBytes.of(value);
-    }
-
-    T get();
+public interface RawData {
 }

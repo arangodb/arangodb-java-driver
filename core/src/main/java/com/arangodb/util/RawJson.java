@@ -13,7 +13,7 @@ import java.util.Objects;
  * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawJson}.
  */
-public final class RawJson implements RawData<String> {
+public final class RawJson implements RawData {
     private final String value;
 
     private RawJson(final String value) {
@@ -24,7 +24,6 @@ public final class RawJson implements RawData<String> {
         return new RawJson(value);
     }
 
-    @Override
     public String get() {
         return value;
     }
