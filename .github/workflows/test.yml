@@ -39,6 +39,7 @@ jobs:
           - docker.io/arangodb/enterprise:3.8.8
           - docker.io/arangodb/enterprise:3.9.9
           - docker.io/arangodb/enterprise:3.10.4
+          - docker.io/arangodb/arangodb-test:devel-nightly
         topology:
           - single
           - cluster

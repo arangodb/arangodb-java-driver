@@ -47,7 +47,7 @@ if [ "$SSL" == "true" ]; then
 fi
 
 if [ "$DATABASE_EXTENDED_NAMES" == "true" ]; then
-    STARTER_ARGS="${STARTER_ARGS} --all.database.extended-names-databases=true"
+    STARTER_ARGS="${STARTER_ARGS} --all.database.extended-names-databases=true --all.database.extended-names=true"
 fi
 
 if [ "$USE_MOUNTED_DATA" == "true" ]; then
