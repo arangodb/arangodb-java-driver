@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AQLActorsAndMoviesExampleTest {
 
-    private static final DbName TEST_DB = DbName.of("actors_movies_test_db");
+    private static final String TEST_DB = "actors_movies_test_db";
     private static ArangoDB arangoDB;
     private static ArangoDatabase db;
 

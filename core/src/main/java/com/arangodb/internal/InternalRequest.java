@@ -20,8 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.DbName;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,7 +30,7 @@ import java.util.Map;
  */
 public class InternalRequest {
 
-    private final DbName dbName;
+    private final String dbName;
     private final RequestType requestType;
     private final String path;
     private final Map<String, String> queryParam;
@@ -41,7 +39,7 @@ public class InternalRequest {
     private int type = 1;
     private byte[] body;
 
-    public InternalRequest(final DbName dbName, final RequestType requestType, final String path) {
+    public InternalRequest(final String dbName, final RequestType requestType, final String path) {
         super();
         this.dbName = dbName;
         this.requestType = requestType;
@@ -69,7 +67,7 @@ public class InternalRequest {
         return this;
     }
 
-    public DbName getDbName() {
+    public String getDbName() {
         return dbName;
     }
 

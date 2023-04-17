@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 class BaseJunit5 {
-    protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
+    protected static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final List<ArangoDB> adbs = Arrays.asList(
             new ArangoDB.Builder().loadProperties(config).protocol(Protocol.VST).build(),
@@ -39,7 +39,7 @@ class BaseJunit5 {
         return dbsStream().map(Arguments::of);
     }
 
-    static ArangoDatabase initDB(DbName name) {
+    static ArangoDatabase initDB(String name) {
         ArangoDatabase database = adbs.get(0).db(name);
         if (!database.exists())
             database.create();
@@ -50,7 +50,7 @@ class BaseJunit5 {
         return initDB(TEST_DB);
     }
 
-    static void dropDB(DbName name) {
+    static void dropDB(String name) {
         ArangoDatabase database = adbs.get(0).db(name);
         if (database.exists())
             database.drop();

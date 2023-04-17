@@ -56,11 +56,6 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    protected ArangoExecutorSync executor() {
-        return executor;
-    }
-
-    @Override
     public void shutdown() {
         executor.disconnect();
     }
@@ -73,11 +68,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public ArangoDatabase db() {
-        return db(DbName.SYSTEM);
+        return db(ArangoRequestParam.SYSTEM);
     }
 
     @Override
-    public ArangoDatabase db(final DbName dbName) {
+    public ArangoDatabase db(final String dbName) {
         return new ArangoDatabaseImpl(this, dbName);
     }
 
@@ -87,7 +82,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public Boolean createDatabase(final DbName dbName) {
+    public Boolean createDatabase(final String dbName) {
         return createDatabase(new DBCreateOptions().name(dbName));
     }
 
@@ -98,7 +93,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public Collection<String> getDatabases() {
-        return executor.execute(getDatabasesRequest(db().dbName()), getDatabaseResponseDeserializer());
+        return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -108,7 +103,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public Collection<String> getAccessibleDatabasesFor(final String user) {
-        return executor.execute(getAccessibleDatabasesForRequest(db().dbName(), user),
+        return executor.execute(getAccessibleDatabasesForRequest(db().name(), user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
@@ -134,38 +129,38 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public UserEntity createUser(final String user, final String passwd) {
-        return executor.execute(createUserRequest(db().dbName(), user, passwd, new UserCreateOptions()),
+        return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
     @Override
     public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options) {
-        return executor.execute(createUserRequest(db().dbName(), user, passwd, options), UserEntity.class);
+        return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
     }
 
     @Override
     public void deleteUser(final String user) {
-        executor.execute(deleteUserRequest(db().dbName(), user), Void.class);
+        executor.execute(deleteUserRequest(db().name(), user), Void.class);
     }
 
     @Override
     public UserEntity getUser(final String user) {
-        return executor.execute(getUserRequest(db().dbName(), user), UserEntity.class);
+        return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
     }
 
     @Override
     public Collection<UserEntity> getUsers() {
-        return executor.execute(getUsersRequest(db().dbName()), getUsersResponseDeserializer());
+        return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
     }
 
     @Override
     public UserEntity updateUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(updateUserRequest(db().dbName(), user, options), UserEntity.class);
+        return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
     }
 
     @Override
     public UserEntity replaceUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(replaceUserRequest(db().dbName(), user, options), UserEntity.class);
+        return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
     }
 
     @Override

@@ -23,7 +23,6 @@ package com.arangodb.example;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
 import com.arangodb.config.ConfigUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +43,7 @@ public class ExampleBase {
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .build();
-        DbName dbName = DbName.of(DB_NAME);
+        String dbName = DB_NAME;
         if (arangoDB.db(dbName).exists())
             arangoDB.db(dbName).drop();
         arangoDB.createDatabase(dbName);

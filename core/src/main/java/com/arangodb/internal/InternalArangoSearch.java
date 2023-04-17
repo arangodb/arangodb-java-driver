@@ -36,17 +36,17 @@ public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends Inter
     }
 
     protected InternalRequest getPropertiesRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
+        return request(db.name(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
     }
 
     protected InternalRequest replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final InternalRequest request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
+        final InternalRequest request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }
 
     protected InternalRequest updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-        final InternalRequest request = request(db.dbName(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
+        final InternalRequest request = request(db.name(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
         return request;
     }

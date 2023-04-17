@@ -1,6 +1,7 @@
 package com.arangodb;
 
 import com.arangodb.config.ConfigUtils;
+import com.arangodb.internal.ArangoRequestParam;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -35,7 +36,7 @@ class JwtAuthTest {
         reqBody.put("password", "test");
 
         Request<?> req = Request.builder()
-                .db(DbName.SYSTEM)
+                .db(ArangoRequestParam.SYSTEM)
                 .method(Request.Method.POST)
                 .path("/_open/auth")
                 .body(reqBody)

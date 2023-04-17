@@ -24,7 +24,6 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.jackson.Key;
@@ -51,7 +50,7 @@ class CustomTypeHintTest {
                 .loadProperties(ConfigUtils.loadConfig())
                 .build();
 
-        db = arangoDB.db(DbName.of("custom-serde-test"));
+        db = arangoDB.db("custom-serde-test");
         if (!db.exists()) {
             db.create();
         }

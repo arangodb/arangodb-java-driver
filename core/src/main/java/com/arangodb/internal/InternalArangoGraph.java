@@ -65,7 +65,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest dropRequest(final boolean dropCollections) {
-        final InternalRequest request = request(db.dbName(), RequestType.DELETE, PATH_API_GHARIAL, name);
+        final InternalRequest request = request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name);
         if (dropCollections) {
             request.putQueryParam("dropCollections", true);
         }
@@ -73,7 +73,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest getInfoRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_GHARIAL, name);
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name);
     }
 
     protected ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
@@ -81,7 +81,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest getVertexCollectionsRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_GHARIAL, name, VERTEX);
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, VERTEX);
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
@@ -90,7 +90,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
-        final InternalRequest request = request(db.dbName(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
+        final InternalRequest request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
         request.setBody(getSerde().serialize(OptionsBuilder.build(options, name)));
         return request;
     }
@@ -100,7 +100,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest getEdgeDefinitionsRequest() {
-        return request(db.dbName(), RequestType.GET, PATH_API_GHARIAL, name, EDGE);
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, EDGE);
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
@@ -109,7 +109,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
     }
 
     protected InternalRequest addEdgeDefinitionRequest(final EdgeDefinition definition) {
-        final InternalRequest request = request(db.dbName(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
+        final InternalRequest request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
         request.setBody(getSerde().serialize(definition));
         return request;
     }
@@ -120,7 +120,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 
     protected InternalRequest replaceEdgeDefinitionRequest(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
         final InternalRequest request =
-                request(db.dbName(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE, definition.getCollection())
+                request(db.name(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE, definition.getCollection())
                         .putQueryParam("waitForSync", options.getWaitForSync())
                         .putQueryParam("dropCollections", options.getDropCollections());
         request.setBody(getSerde().serialize(definition));

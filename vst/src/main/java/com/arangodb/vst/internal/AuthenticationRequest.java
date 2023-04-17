@@ -20,7 +20,6 @@
 
 package com.arangodb.vst.internal;
 
-import com.arangodb.DbName;
 import com.arangodb.internal.InternalRequest;
 
 /**
@@ -33,7 +32,7 @@ public class AuthenticationRequest extends InternalRequest {
     private final String encryption;// "plain"
 
     public AuthenticationRequest(final String user, final String password, final String encryption) {
-        super(DbName.of(null), null, null);
+        super(null, null, null);
         this.user = user;
         this.password = password;
         this.encryption = encryption;

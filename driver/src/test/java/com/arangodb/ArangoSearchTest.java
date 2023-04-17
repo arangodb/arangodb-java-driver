@@ -409,7 +409,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     private void createGetAndDeleteTypedAnalyzer(ArangoDatabase db, SearchAnalyzer analyzer) {
 
-        String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
+        String fullyQualifiedName = db.name() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
 
         // createAnalyzer

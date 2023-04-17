@@ -23,7 +23,6 @@ package com.arangodb.example.graph;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.DbName;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
@@ -38,7 +37,7 @@ import java.util.Collection;
  */
 abstract class BaseGraphTest {
 
-    private static final DbName TEST_DB = DbName.of("java_driver_graph_test_db");
+    private static final String TEST_DB = "java_driver_graph_test_db";
     private static final String GRAPH_NAME = "traversalGraph";
     private static final String EDGE_COLLECTION_NAME = "edges";
     private static final String VERTEX_COLLECTION_NAME = "circles";

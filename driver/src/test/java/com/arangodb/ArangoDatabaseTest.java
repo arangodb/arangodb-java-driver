@@ -87,7 +87,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("arangos")
     void exists(ArangoDB arangoDB) {
         assertThat(arangoDB.db(TEST_DB).exists()).isTrue();
-        assertThat(arangoDB.db(DbName.of("no")).exists()).isFalse();
+        assertThat(arangoDB.db("no").exists()).isFalse();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1397,7 +1397,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final DatabaseEntity info = db.getInfo();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
-        assertThat(info.getName()).isEqualTo(TEST_DB.get());
+        assertThat(info.getName()).isEqualTo(TEST_DB);
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 
