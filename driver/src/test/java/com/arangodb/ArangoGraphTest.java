@@ -28,6 +28,7 @@ import com.arangodb.model.EdgeCollectionDropOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,15 +50,15 @@ class ArangoGraphTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "ArangoGraphTest_graph";
 
-    private static final String VERTEX_COL_1 = "ArangoGraphTest_vertex_collection_1";
-    private static final String VERTEX_COL_2 = "ArangoGraphTest_vertex_collection_2";
-    private static final String VERTEX_COL_3 = "ArangoGraphTest_vertex_collection_3";
-    private static final String VERTEX_COL_4 = "ArangoGraphTest_vertex_collection_4";
-    private static final String VERTEX_COL_5 = "ArangoGraphTest_vertex_collection_5";
+    private static final String VERTEX_COL_1 = "ArangoGraphTest_vertex_collection_1-"+ TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String VERTEX_COL_2 = "ArangoGraphTest_vertex_collection_2-"+ TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String VERTEX_COL_3 = "ArangoGraphTest_vertex_collection_3-"+ TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String VERTEX_COL_4 = "ArangoGraphTest_vertex_collection_4-"+ TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String VERTEX_COL_5 = "ArangoGraphTest_vertex_collection_5-"+ TestUtils.generateRandomName(supportsExtendedNames());
 
-    private static final String EDGE_COL_1 = "ArangoGraphTest_edge_collection_1";
-    private static final String EDGE_COL_2 = "ArangoGraphTest_edge_collection_2";
-    private static final String EDGE_COL_3 = "ArangoGraphTest_edge_collection_3";
+    private static final String EDGE_COL_1 = "ArangoGraphTest_edge_collection_1-"+TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String EDGE_COL_2 = "ArangoGraphTest_edge_collection_2-"+TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String EDGE_COL_3 = "ArangoGraphTest_edge_collection_3-"+TestUtils.generateRandomName(supportsExtendedNames());
 
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;

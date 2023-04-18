@@ -96,6 +96,34 @@ class BaseJunit5 {
         return UUID.randomUUID().toString();
     }
 
+    static synchronized boolean supportsExtendedDbNames() {
+        if (extendedDbNames == null) {
+            try {
+                ArangoDatabase testDb = adbs.get(0).db("test-" + TestUtils.generateRandomDbName(true));
+                testDb.create();
+                extendedDbNames = true;
+                testDb.drop();
+            } catch (ArangoDBException e) {
+                extendedDbNames = false;
+            }
+        }
+        return extendedDbNames;
+    }
+
+    static synchronized boolean supportsExtendedNames() {
+        if (extendedNames == null) {
+            try {
+                ArangoCollection testCol = adbs.get(0).db().collection("test-" + TestUtils.generateRandomDbName(true));
+                testCol.create();
+                extendedNames = true;
+                testCol.drop();
+            } catch (ArangoDBException e) {
+                extendedNames = false;
+            }
+        }
+        return extendedNames;
+    }
+
     boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
     }
@@ -126,34 +154,6 @@ class BaseJunit5 {
 
     boolean isEnterprise() {
         return adbs.get(0).getVersion().getLicense() == License.ENTERPRISE;
-    }
-
-    synchronized boolean supportsExtendedDbNames() {
-        if (extendedDbNames == null) {
-            try {
-                ArangoDatabase testDb = adbs.get(0).db("test-" + TestUtils.generateRandomDbName(true));
-                testDb.create();
-                extendedDbNames = true;
-                testDb.drop();
-            } catch (ArangoDBException e) {
-                extendedDbNames = false;
-            }
-        }
-        return extendedDbNames;
-    }
-
-    synchronized boolean supportsExtendedNames() {
-        if (extendedNames == null) {
-            try {
-                ArangoCollection testCol = adbs.get(0).db().collection("test-" + TestUtils.generateRandomDbName(true));
-                testCol.create();
-                extendedNames = true;
-                testCol.drop();
-            } catch (ArangoDBException e) {
-                extendedNames = false;
-            }
-        }
-        return extendedNames;
     }
 
 }
