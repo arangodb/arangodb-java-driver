@@ -403,6 +403,28 @@ public class AqlQueryOptions implements Serializable {
         return this;
     }
 
+
+    public String getForceOneShardAttributeValue() {
+        return options != null ? options.forceOneShardAttributeValue : null;
+    }
+
+    /**
+     * @param forceOneShardAttributeValue This query option can be used in complex queries in case the query optimizer
+     *                                    cannot automatically detect that the query can be limited to only a single
+     *                                    server (e.g. in a disjoint smart graph case).
+     *                                    <p/>
+     *                                    If the option is set incorrectly, i.e. to a wrong shard key value, then the
+     *                                    query may be shipped to a wrong DB server and may not return results (i.e.
+     *                                    empty result set).
+     *                                    <p/>
+     *                                    Use at your own risk.
+     * @return options
+     */
+    public AqlQueryOptions forceOneShardAttributeValue(final String forceOneShardAttributeValue) {
+        getOptions().forceOneShardAttributeValue = forceOneShardAttributeValue;
+        return this;
+    }
+
     private Options getOptions() {
         if (options == null) {
             options = new Options();
@@ -429,6 +451,7 @@ public class AqlQueryOptions implements Serializable {
         private Collection<String> shardIds;
         private Double maxRuntime;
         private Boolean fillBlockCache;
+        private String forceOneShardAttributeValue;
 
         protected Optimizer getOptimizer() {
             if (optimizer == null) {
