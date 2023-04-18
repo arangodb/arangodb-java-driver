@@ -104,8 +104,8 @@ class ArangoDBTest extends BaseJunit5 {
 
         Throwable thrown = catchThrowable(() -> arangoDB.createDatabase(dbName));
         assertThat(thrown)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("not normalized");
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("normalized");
     }
 
     @ParameterizedTest(name = "{index}")

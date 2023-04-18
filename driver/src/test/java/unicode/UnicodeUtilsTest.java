@@ -59,4 +59,15 @@ class UnicodeUtilsTest {
         }
     }
 
+    @Test
+    void normalize() {
+        String normalized = UnicodeUtils.normalize("\u006E\u0303\u00f1");
+        assertThat(normalized).isEqualTo("\u00f1\u00f1");
+    }
+
+    @Test
+    void isNormalized() {
+        assertThat(UnicodeUtils.isNormalized("𝔸𝕣𝕒𝕟𝕘𝕠𝔻𝔹")).isTrue();
+        assertThat(UnicodeUtils.isNormalized("\u006E\u0303\u00f1")).isFalse();
+    }
 }

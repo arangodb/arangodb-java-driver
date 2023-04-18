@@ -338,6 +338,10 @@ Graph API has been updated (#486):
 - `query(String query, Class<T> type, Map<String,Object> bindVars)`
 - `query(String query, Class<T> type, Map<String,Object> bindVars, AqlQueryOptions options)`
 
+The class `com.arangodb.DbName` has been removed. The database names can now be passed as `String`.
+Support to unicode characters in data definition names (databases, collections, views, indexes) has been added, see
+[Support to unicode data definition names](v7_java.md#unicode-characters-in-data-definition-names).
+
 
 ## API entities
 
