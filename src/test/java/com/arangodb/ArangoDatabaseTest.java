@@ -912,13 +912,41 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryStream(ArangoDatabase db) {
-        if (isAtLeastVersion(3, 4)) {
-            final ArangoCursor<VPackSlice> cursor = db
-                    .query("FOR i IN 1..2 RETURN i", null, new AqlQueryOptions().stream(true).count(true),
-                            VPackSlice.class);
-            assertThat((Object) cursor).isNotNull();
-            assertThat(cursor.getCount()).isNull();
-        }
+        final ArangoCursor<VPackSlice> cursor = db
+                .query("FOR i IN 1..2 RETURN i", null, new AqlQueryOptions().stream(true).count(true),
+                        VPackSlice.class);
+        assertThat((Object) cursor).isNotNull();
+        assertThat(cursor.getCount()).isNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void queryForceOneShardAttributeValue(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+
+        String cname = "forceOneShardAttr-" + UUID.randomUUID();
+        db.createCollection(cname, new CollectionCreateOptions()
+                .shardKeys("foo")
+                .numberOfShards(3));
+        ArangoCollection col = db.collection(cname);
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("foo", "bar");
+        col.insertDocument(doc);
+
+        ArangoCursor<BaseDocument> c1 = db
+                .query("FOR d IN @@c RETURN d", Collections.singletonMap("@c", cname), new AqlQueryOptions()
+                                .forceOneShardAttributeValue("bar"),
+                        BaseDocument.class);
+        assertThat(c1.hasNext()).isTrue();
+        assertThat(c1.next().getAttribute("foo")).isEqualTo("bar");
+
+        ArangoCursor<BaseDocument> c2 = db
+                .query("FOR d IN @@c RETURN d", Collections.singletonMap("@c", cname), new AqlQueryOptions()
+                                .forceOneShardAttributeValue("ooo"),
+                        BaseDocument.class);
+        assertThat(c2.hasNext()).isFalse();
     }
 
     @ParameterizedTest(name = "{index}")
