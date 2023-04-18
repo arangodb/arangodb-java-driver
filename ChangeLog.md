@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [6.22.0] - 2023-03-07
+## [6.22.0] - 2023-04-18
 
 - added support to `forceOneShardAttributeValue` query parameter (DE-541)
 
