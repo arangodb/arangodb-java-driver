@@ -562,6 +562,10 @@ public final class AqlQueryOptions {
             return fillBlockCache;
         }
 
+        public String getForceOneShardAttributeValue() {
+            return forceOneShardAttributeValue;
+        }
+
         public Optimizer getOptimizer() {
             if (optimizer == null) {
                 optimizer = new Optimizer();
