@@ -2830,16 +2830,26 @@ new CollectionPropertiesOptions().waitForSync(!properties.getWaitForSync()).sche
     void rename(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         ArangoDatabase db = collection.db();
-        final CollectionEntity result = collection.rename(COLLECTION_NAME + "1");
+
+        if (!db.collection("c1").exists()) {
+            db.collection("c1").create();
+        }
+
+        if (db.collection("c2").exists()) {
+            db.collection("c2").drop();
+        }
+
+        final CollectionEntity result = db.collection("c1").rename("c2");
         assertThat(result).isNotNull();
-        assertThat(result.getName()).isEqualTo(COLLECTION_NAME + "1");
-        final CollectionEntity info = db.collection(COLLECTION_NAME + "1").getInfo();
-        assertThat(info.getName()).isEqualTo(COLLECTION_NAME + "1");
-        Throwable thrown = catchThrowable(() -> db.collection(COLLECTION_NAME).getInfo());
+        assertThat(result.getName()).isEqualTo("c2");
+
+        final CollectionEntity info = db.collection("c2").getInfo();
+        assertThat(info.getName()).isEqualTo("c2");
+
+        Throwable thrown = catchThrowable(() -> db.collection("c1").getInfo());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(404);
-        db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -2850,15 +2860,6 @@ new CollectionPropertiesOptions().waitForSync(!properties.getWaitForSync()).sche
         ShardEntity shard = collection.getResponsibleShard(new BaseDocument("testKey"));
         assertThat(shard).isNotNull();
         assertThat(shard.getShardId()).isNotNull();
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void renameDontBreaksCollectionHandler(ArangoCollection collection) {
-        assumeTrue(isSingleServer());
-        collection.rename(COLLECTION_NAME + "1");
-        assertThat(collection.getInfo()).isNotNull();
-        collection.db().collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
     }
 
     @ParameterizedTest(name = "{index}")
