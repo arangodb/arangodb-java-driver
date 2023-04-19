@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class ArangoVertexCollectionTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "ArangoVertexCollectionTest_graph";
-    private static final String COLLECTION_NAME = "ArangoVertexCollectionTest_vertex_collection-" + TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String COLLECTION_NAME = rndName();
 
     private static Stream<Arguments> vertices() {
         return dbsStream()

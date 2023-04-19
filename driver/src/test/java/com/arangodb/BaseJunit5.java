@@ -99,7 +99,8 @@ class BaseJunit5 {
     static synchronized boolean supportsExtendedDbNames() {
         if (extendedDbNames == null) {
             try {
-                ArangoDatabase testDb = adbs.get(0).db("test-" + TestUtils.generateRandomDbName(true));
+                ArangoDatabase testDb = adbs.get(0)
+                        .db("test-" + TestUtils.generateRandomName(true, 20));
                 testDb.create();
                 extendedDbNames = true;
                 testDb.drop();
@@ -113,7 +114,8 @@ class BaseJunit5 {
     static synchronized boolean supportsExtendedNames() {
         if (extendedNames == null) {
             try {
-                ArangoCollection testCol = adbs.get(0).db().collection("test-" + TestUtils.generateRandomDbName(true));
+                ArangoCollection testCol = adbs.get(0).db()
+                        .collection("test-" + TestUtils.generateRandomName(true, 20));
                 testCol.create();
                 extendedNames = true;
                 testCol.drop();
@@ -122,6 +124,14 @@ class BaseJunit5 {
             }
         }
         return extendedNames;
+    }
+
+    static String rndDbName() {
+        return "testDB-" + TestUtils.generateRandomName(supportsExtendedDbNames(), 20);
+    }
+
+    static String rndName() {
+        return "dd-" + TestUtils.generateRandomName(supportsExtendedNames(), 20);
     }
 
     boolean isAtLeastVersion(final int major, final int minor) {

@@ -79,7 +79,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         }
 
         return new InvertedIndexOptions()
-                .name("invertedIndex-" + TestUtils.generateRandomName(supportsExtendedNames()))
+                .name(rndName())
                 .inBackground(true)
                 .parallelism(5)
                 .primarySort(new InvertedIndexPrimarySort()

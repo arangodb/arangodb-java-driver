@@ -93,18 +93,6 @@ public final class TestUtils {
         return list.toArray(new String[0]);
     }
 
-    public static String generateRandomDbName(boolean extendedNames) {
-        return generateRandomDbName(extendedNames, 20);
-    }
-
-    public static String generateRandomDbName(boolean extendedNames, int length) {
-        return generateRandomName(extendedNames, length);
-    }
-
-    public static String generateRandomName(boolean extendedNames) {
-        return generateRandomName(extendedNames, 20);
-    }
-
     public static String generateRandomName(boolean extendedNames, int length) {
         if (extendedNames) {
             int max = allChars.length;

@@ -42,7 +42,7 @@ class UnicodeUtilsTest {
     @Test
     void normalizeShouldBehaveAsJs() {
         for (int i = 0; i < 10_000; i++) {
-            String value = TestUtils.generateRandomDbName(true, 100);
+            String value = TestUtils.generateRandomName(true, 100);
             String jsNormalized = jsNormalizer.execute(value).as(String.class);
             String javaNormalized = UnicodeUtils.normalize(value);
             assertThat(javaNormalized).isEqualTo(jsNormalized);
@@ -52,7 +52,7 @@ class UnicodeUtilsTest {
     @Test
     void encodeURIComponentShouldBehaveAsJs() {
         for (int i = 0; i < 10_000; i++) {
-            String value = TestUtils.generateRandomDbName(true, 100);
+            String value = TestUtils.generateRandomName(true, 100);
             String jsEncoded = jsEncoder.execute(value).as(String.class);
             String driverJavaEncoded = EncodeUtils.encodeURIComponent(value);
             assertThat(driverJavaEncoded).isEqualTo(jsEncoded);

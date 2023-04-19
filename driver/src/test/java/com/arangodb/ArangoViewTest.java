@@ -48,7 +48,7 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void create(ArangoDatabase db) {
-        String name = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         assertThat(db.view(name).exists()).isTrue();
     }
@@ -68,7 +68,7 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
-        String name = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ViewEntity info = db.view(name).getInfo();
         assertThat(info).isNotNull();
@@ -81,7 +81,7 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getInfoSearchAlias(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String name = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String name = rndName();
         db.createView(name, ViewType.SEARCH_ALIAS);
         final ViewEntity info = db.view(name).getInfo();
         assertThat(info).isNotNull();
@@ -94,8 +94,8 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getViews(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String name1 = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
-        String name2 = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String name1 = rndName();
+        String name2 = rndName();
         db.createView(name1, ViewType.ARANGO_SEARCH);
         db.createView(name2, ViewType.SEARCH_ALIAS);
         Collection<ViewEntity> views = db.getViews();
@@ -105,7 +105,7 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
-        String name = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ArangoView view = db.view(name);
         view.drop();
@@ -116,8 +116,8 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
-        String oldName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
-        String newName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String oldName = rndName();
+        String newName = rndName();
 
         db.createView(oldName, ViewType.ARANGO_SEARCH);
         db.view(oldName).rename(newName);

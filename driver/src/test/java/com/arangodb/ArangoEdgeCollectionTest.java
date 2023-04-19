@@ -44,8 +44,8 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class ArangoEdgeCollectionTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "EdgeCollectionTest_graph";
-    private static final String VERTEX_COLLECTION_NAME = "EdgeCollectionTest_vertex_collection-" + TestUtils.generateRandomName(supportsExtendedNames());
-    private static final String EDGE_COLLECTION_NAME = "EdgeCollectionTest_edge_collection-" + TestUtils.generateRandomName(supportsExtendedNames());
+    private static final String VERTEX_COLLECTION_NAME = rndName();
+    private static final String EDGE_COLLECTION_NAME = rndName();
 
     private static Stream<Arguments> args() {
         return dbsStream()

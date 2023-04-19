@@ -56,7 +56,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void exists(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
@@ -65,7 +65,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createAndExistsSearchAlias(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         db.createSearchAlias(viewName, new SearchAliasCreateOptions());
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
@@ -74,7 +74,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ViewEntity info = db.arangoSearch(viewName).getInfo();
         assertThat(info).isNotNull();
@@ -87,7 +87,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ArangoView view = db.arangoSearch(viewName);
         view.drop();
@@ -99,7 +99,7 @@ class ArangoSearchTest extends BaseJunit5 {
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final String name = viewName + "_new";
         db.createArangoSearch(name, new ArangoSearchCreateOptions());
         db.arangoSearch(name).rename(viewName);
@@ -111,7 +111,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createArangoSearchView(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ViewEntity info = db.arangoSearch(viewName).create();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
@@ -124,7 +124,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createSearchAliasView(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ViewEntity info = db.searchAlias(viewName).create();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
@@ -137,7 +137,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createArangoSearchViewWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         final ViewEntity info = db.arangoSearch(viewName).create(options);
         assertThat(info).isNotNull();
@@ -151,7 +151,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createArangoSearchViewWithPrimarySort(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
 
         final PrimarySort primarySort = PrimarySort.on("myFieldName");
@@ -187,7 +187,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createArangoSearchViewWithCommitIntervalMsec(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         options.commitIntervalMsec(666666L);
 
@@ -208,7 +208,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createSearchAliasViewWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions();
         final ViewEntity info = db.searchAlias(viewName).create(options);
         assertThat(info).isNotNull();
@@ -223,17 +223,17 @@ class ArangoSearchTest extends BaseJunit5 {
     void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
-        String idxName1 = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName1 = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName1)
                 .fields(new InvertedIndexField().name("a" + rnd())));
 
-        String idxName2 = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName2 = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName2)
                 .fields(new InvertedIndexField().name("a" + rnd())));
 
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
                 .indexes(
                         new SearchAliasIndex(COLL_1, idxName1, SearchAliasIndex.OperationType.add),
@@ -261,7 +261,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
         final ArangoSearchPropertiesEntity properties = view.getProperties();
@@ -281,7 +281,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void updateArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
         final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
@@ -315,17 +315,17 @@ class ArangoSearchTest extends BaseJunit5 {
     void updateSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
-        String idxName = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName)
                 .fields(new InvertedIndexField().name("a" + rnd())));
         ArangoCollection col2 = db.collection(COLL_2);
-        String idxName2 = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName2 = rndName();
         col2.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName2)
                 .fields(new InvertedIndexField().name("a" + rnd())));
 
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
                 .indexes(new SearchAliasIndex(COLL_1, idxName));
         final ViewEntity info = db.searchAlias(viewName).create(options);
@@ -354,7 +354,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void replaceArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
         final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
@@ -374,17 +374,17 @@ class ArangoSearchTest extends BaseJunit5 {
     void replaceSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
-        String idxName = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName)
                 .fields(new InvertedIndexField().name("a" + rnd())));
         ArangoCollection col2 = db.collection(COLL_2);
-        String idxName2 = "idx-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String idxName2 = rndName();
         col2.ensureInvertedIndex(new InvertedIndexOptions()
                 .name(idxName2)
                 .fields(new InvertedIndexField().name("a" + rnd())));
 
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions()
                 .indexes(new SearchAliasIndex(COLL_1, idxName));
         final ViewEntity info = db.searchAlias(viewName).create(options);
@@ -647,7 +647,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
-        String viewName = "view-" + TestUtils.generateRandomName(supportsExtendedNames());
+        String viewName = rndName();
         FieldLink field = FieldLink.on("f1").inBackground(true);
         if (isEnterprise()) {
             field.nested(FieldLink.on("f2"));

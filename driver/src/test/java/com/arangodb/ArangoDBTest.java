@@ -84,7 +84,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createAndDeleteDatabase(ArangoDB arangoDB) {
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(supportsExtendedDbNames());
+        final String dbName = rndDbName();
         final Boolean resultCreate;
         resultCreate = arangoDB.createDatabase(dbName);
         assertThat(resultCreate).isTrue();
@@ -113,7 +113,7 @@ class ArangoDBTest extends BaseJunit5 {
     void createDatabaseWithOptions(ArangoDB arangoDB) {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 6));
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(supportsExtendedDbNames());
+        final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -140,7 +140,7 @@ class ArangoDBTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 6));
 
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(supportsExtendedDbNames());
+        final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -163,7 +163,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createDatabaseWithUsers(ArangoDB arangoDB) throws InterruptedException {
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(supportsExtendedDbNames());
+        final String dbName = rndDbName();
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)

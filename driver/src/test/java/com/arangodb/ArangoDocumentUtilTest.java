@@ -60,11 +60,11 @@ class ArangoDocumentUtilTest {
 
     @Test
     void validateDocumentIdValid() {
-        checkDocumentId(TestUtils.generateRandomName(true) + "/1test");
-        checkDocumentId(TestUtils.generateRandomName(true) + "/test1");
-        checkDocumentId(TestUtils.generateRandomName(true) + "/test-1");
-        checkDocumentId(TestUtils.generateRandomName(true) + "/test_1");
-        checkDocumentId(TestUtils.generateRandomName(true) + "/_test");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/1test");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test-1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test_1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/_test");
     }
 
     @Test
