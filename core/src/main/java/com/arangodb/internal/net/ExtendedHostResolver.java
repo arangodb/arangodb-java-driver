@@ -21,9 +21,9 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.DbName;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
@@ -122,7 +122,7 @@ public class ExtendedHostResolver implements HostResolver {
         try {
 
             response = executor.execute(
-                    new InternalRequest(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
+                    new InternalRequest(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
                         final List<Map<String, String>> tmp = arangoSerialization.deserialize(response1.getBody(),
                                 "/endpoints",

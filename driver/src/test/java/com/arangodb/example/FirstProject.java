@@ -16,7 +16,7 @@ public class FirstProject {
         final ArangoDB arangoDB = new ArangoDB.Builder().loadProperties(ArangoConfigProperties.fromFile()).user("root").build();
 
         // create database
-        final DbName dbName = DbName.of("mydb");
+        final String dbName = "mydb";
         try {
             arangoDB.createDatabase(dbName);
             System.out.println("Database created: " + dbName);

@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 class BaseJunit5 {
-    protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
+    protected static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final List<ArangoDB> adbs = Arrays.asList(
             new ArangoDB.Builder().loadProperties(config).protocol(Protocol.VST).build(),
@@ -26,6 +26,9 @@ class BaseJunit5 {
             new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP2_VPACK).build(),
             new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP2_JSON).build()
     );
+
+    private static Boolean extendedDbNames;
+    private static Boolean extendedNames;
 
     protected static Stream<ArangoDatabase> dbsStream() {
         return adbs.stream().map(adb -> adb.db(TEST_DB));
@@ -39,7 +42,7 @@ class BaseJunit5 {
         return dbsStream().map(Arguments::of);
     }
 
-    static ArangoDatabase initDB(DbName name) {
+    static ArangoDatabase initDB(String name) {
         ArangoDatabase database = adbs.get(0).db(name);
         if (!database.exists())
             database.create();
@@ -50,7 +53,7 @@ class BaseJunit5 {
         return initDB(TEST_DB);
     }
 
-    static void dropDB(DbName name) {
+    static void dropDB(String name) {
         ArangoDatabase database = adbs.get(0).db(name);
         if (database.exists())
             database.drop();
@@ -93,6 +96,44 @@ class BaseJunit5 {
         return UUID.randomUUID().toString();
     }
 
+    static synchronized boolean supportsExtendedDbNames() {
+        if (extendedDbNames == null) {
+            try {
+                ArangoDatabase testDb = adbs.get(0)
+                        .db("test-" + TestUtils.generateRandomName(true, 20));
+                testDb.create();
+                extendedDbNames = true;
+                testDb.drop();
+            } catch (ArangoDBException e) {
+                extendedDbNames = false;
+            }
+        }
+        return extendedDbNames;
+    }
+
+    static synchronized boolean supportsExtendedNames() {
+        if (extendedNames == null) {
+            try {
+                ArangoCollection testCol = adbs.get(0).db()
+                        .collection("test-" + TestUtils.generateRandomName(true, 20));
+                testCol.create();
+                extendedNames = true;
+                testCol.drop();
+            } catch (ArangoDBException e) {
+                extendedNames = false;
+            }
+        }
+        return extendedNames;
+    }
+
+    static String rndDbName() {
+        return "testDB-" + TestUtils.generateRandomName(supportsExtendedDbNames(), 20);
+    }
+
+    static String rndName() {
+        return "dd-" + TestUtils.generateRandomName(supportsExtendedNames(), 20);
+    }
+
     boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
     }
@@ -124,6 +165,5 @@ class BaseJunit5 {
     boolean isEnterprise() {
         return adbs.get(0).getVersion().getLicense() == License.ENTERPRISE;
     }
-
 
 }

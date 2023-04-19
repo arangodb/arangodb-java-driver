@@ -173,9 +173,9 @@ public class HttpConnection implements Connection {
 
     private static String buildUrl(final InternalRequest request) {
         StringBuilder sb = new StringBuilder();
-        DbName dbName = request.getDbName();
-        if (dbName != null && !dbName.get().isEmpty()) {
-            sb.append("/_db/").append(dbName.getEncoded());
+        String dbName = request.getDbName();
+        if (dbName != null && !dbName.isEmpty()) {
+            sb.append("/_db/").append(EncodeUtils.encodeURIComponent(dbName));
         }
         sb.append(request.getPath());
         if (!request.getQueryParam().isEmpty()) {

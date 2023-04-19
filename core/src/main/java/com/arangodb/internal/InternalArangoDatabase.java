@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -58,21 +57,21 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
-    private final DbName dbName;
+    private final String name;
     private final A arango;
 
-    protected InternalArangoDatabase(final A arango, final DbName dbName) {
+    protected InternalArangoDatabase(final A arango, final String name) {
         super(arango.executor, arango.serde);
         this.arango = arango;
-        this.dbName = dbName;
+        this.name = name;
     }
 
     public A arango() {
         return arango;
     }
 
-    public DbName dbName() {
-        return dbName;
+    public String name() {
+        return name;
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
@@ -80,15 +79,15 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest getAccessibleDatabasesRequest() {
-        return request(dbName, RequestType.GET, PATH_API_DATABASE, "user");
+        return request(name, RequestType.GET, PATH_API_DATABASE, "user");
     }
 
     protected InternalRequest getVersionRequest() {
-        return request(dbName, RequestType.GET, PATH_API_VERSION);
+        return request(name, RequestType.GET, PATH_API_VERSION);
     }
 
     protected InternalRequest getEngineRequest() {
-        return request(dbName, RequestType.GET, PATH_API_ENGINE);
+        return request(name, RequestType.GET, PATH_API_ENGINE);
     }
 
     protected InternalRequest createCollectionRequest(final String name, final CollectionCreateOptions options) {
@@ -96,12 +95,12 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         byte[] body = getSerde().serialize(OptionsBuilder.build(options != null ? options :
                 new CollectionCreateOptions(), name));
 
-        return request(dbName, RequestType.POST, InternalArangoCollection.PATH_API_COLLECTION).setBody(body);
+        return request(this.name, RequestType.POST, InternalArangoCollection.PATH_API_COLLECTION).setBody(body);
     }
 
     protected InternalRequest getCollectionsRequest(final CollectionsReadOptions options) {
         final InternalRequest request;
-        request = request(dbName, RequestType.GET, InternalArangoCollection.PATH_API_COLLECTION);
+        request = request(name, RequestType.GET, InternalArangoCollection.PATH_API_COLLECTION);
         final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
         request.putQueryParam("excludeSystem", params.getExcludeSystem());
         return request;
@@ -113,7 +112,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest dropRequest() {
-        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, dbName.get());
+        return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, name);
     }
 
     protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
@@ -122,22 +121,22 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest grantAccessRequest(final String user, final Permissions permissions) {
-        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.get()).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+        return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                name).setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected InternalRequest resetAccessRequest(final String user) {
-        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.get());
+        return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                name);
     }
 
     protected InternalRequest updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get()
+        return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE, name
                 , "*").setBody(getSerde().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected InternalRequest getPermissionsRequest(final String user) {
-        return request(DbName.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE, dbName.get());
+        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE, name);
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
@@ -148,7 +147,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected InternalRequest queryRequest(final String query, final Map<String, Object> bindVars,
                                            final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
-        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_CURSOR)
+        final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
         if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
@@ -159,7 +158,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected InternalRequest queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
 
-        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_CURSOR, id);
+        final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id);
         request.putHeaderParams(meta);
 
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
@@ -173,7 +172,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected InternalRequest queryCloseRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
 
-        final InternalRequest request = request(dbName, RequestType.DELETE, PATH_API_CURSOR, id);
+        final InternalRequest request = request(name, RequestType.DELETE, PATH_API_CURSOR, id);
         request.putHeaderParams(meta);
 
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
@@ -188,57 +187,57 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected InternalRequest explainQueryRequest(final String query, final Map<String, Object> bindVars,
                                                   final AqlQueryExplainOptions options) {
         final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
-        return request(dbName, RequestType.POST, PATH_API_EXPLAIN)
+        return request(name, RequestType.POST, PATH_API_EXPLAIN)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
     }
 
     protected InternalRequest parseQueryRequest(final String query) {
-        return request(dbName, RequestType.POST, PATH_API_QUERY).setBody(getSerde().serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
+        return request(name, RequestType.POST, PATH_API_QUERY).setBody(getSerde().serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
     }
 
     protected InternalRequest clearQueryCacheRequest() {
-        return request(dbName, RequestType.DELETE, PATH_API_QUERY_CACHE);
+        return request(name, RequestType.DELETE, PATH_API_QUERY_CACHE);
     }
 
     protected InternalRequest getQueryCachePropertiesRequest() {
-        return request(dbName, RequestType.GET, PATH_API_QUERY_CACHE_PROPERTIES);
+        return request(name, RequestType.GET, PATH_API_QUERY_CACHE_PROPERTIES);
     }
 
     protected InternalRequest setQueryCachePropertiesRequest(final QueryCachePropertiesEntity properties) {
-        return request(dbName, RequestType.PUT, PATH_API_QUERY_CACHE_PROPERTIES).setBody(getSerde().serialize(properties));
+        return request(name, RequestType.PUT, PATH_API_QUERY_CACHE_PROPERTIES).setBody(getSerde().serialize(properties));
     }
 
     protected InternalRequest getQueryTrackingPropertiesRequest() {
-        return request(dbName, RequestType.GET, PATH_API_QUERY_PROPERTIES);
+        return request(name, RequestType.GET, PATH_API_QUERY_PROPERTIES);
     }
 
     protected InternalRequest setQueryTrackingPropertiesRequest(final QueryTrackingPropertiesEntity properties) {
-        return request(dbName, RequestType.PUT, PATH_API_QUERY_PROPERTIES).setBody(getSerde().serialize(properties));
+        return request(name, RequestType.PUT, PATH_API_QUERY_PROPERTIES).setBody(getSerde().serialize(properties));
     }
 
     protected InternalRequest getCurrentlyRunningQueriesRequest() {
-        return request(dbName, RequestType.GET, PATH_API_QUERY_CURRENT);
+        return request(name, RequestType.GET, PATH_API_QUERY_CURRENT);
     }
 
     protected InternalRequest getSlowQueriesRequest() {
-        return request(dbName, RequestType.GET, PATH_API_QUERY_SLOW);
+        return request(name, RequestType.GET, PATH_API_QUERY_SLOW);
     }
 
     protected InternalRequest clearSlowQueriesRequest() {
-        return request(dbName, RequestType.DELETE, PATH_API_QUERY_SLOW);
+        return request(name, RequestType.DELETE, PATH_API_QUERY_SLOW);
     }
 
     protected InternalRequest killQueryRequest(final String id) {
-        return request(dbName, RequestType.DELETE, PATH_API_QUERY, id);
+        return request(name, RequestType.DELETE, PATH_API_QUERY, id);
     }
 
     protected InternalRequest createAqlFunctionRequest(final String name, final String code,
                                                        final AqlFunctionCreateOptions options) {
-        return request(dbName, RequestType.POST, PATH_API_AQLFUNCTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
+        return request(this.name, RequestType.POST, PATH_API_AQLFUNCTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
     }
 
     protected InternalRequest deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
-        final InternalRequest request = request(dbName, RequestType.DELETE, PATH_API_AQLFUNCTION, name);
+        final InternalRequest request = request(this.name, RequestType.DELETE, PATH_API_AQLFUNCTION, name);
         final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
         request.putQueryParam("group", params.getGroup());
         return request;
@@ -249,7 +248,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
-        final InternalRequest request = request(dbName, RequestType.GET, PATH_API_AQLFUNCTION);
+        final InternalRequest request = request(name, RequestType.GET, PATH_API_AQLFUNCTION);
         final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
         request.putQueryParam("namespace", params.getNamespace());
         return request;
@@ -263,7 +262,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected InternalRequest createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions,
                                                  final GraphCreateOptions options) {
         GraphCreateOptions opts = options != null ? options : new GraphCreateOptions();
-        return request(dbName, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL)
+        return request(this.name, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL)
                 .putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, opts.getWaitForSync())
                 .setBody(getSerde().serialize(OptionsBuilder.build(opts, name, edgeDefinitions)));
     }
@@ -273,7 +272,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest getGraphsRequest() {
-        return request(dbName, RequestType.GET, InternalArangoGraph.PATH_API_GHARIAL);
+        return request(name, RequestType.GET, InternalArangoGraph.PATH_API_GHARIAL);
     }
 
     protected ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
@@ -282,7 +281,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest transactionRequest(final String action, final TransactionOptions options) {
-        return request(dbName, RequestType.POST, PATH_API_TRANSACTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
+        return request(name, RequestType.POST, PATH_API_TRANSACTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
     }
 
     protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
@@ -294,7 +293,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected InternalRequest beginStreamTransactionRequest(final StreamTransactionOptions options) {
         StreamTransactionOptions opts = options != null ? options : new StreamTransactionOptions();
-        InternalRequest r = request(dbName, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION).setBody(getSerde().serialize(opts));
+        InternalRequest r = request(name, RequestType.POST, PATH_API_BEGIN_STREAM_TRANSACTION).setBody(getSerde().serialize(opts));
         if(Boolean.TRUE.equals(opts.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(r);
         }
@@ -302,15 +301,15 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest abortStreamTransactionRequest(String id) {
-        return request(dbName, RequestType.DELETE, PATH_API_TRANSACTION, id);
+        return request(name, RequestType.DELETE, PATH_API_TRANSACTION, id);
     }
 
     protected InternalRequest getStreamTransactionsRequest() {
-        return request(dbName, RequestType.GET, PATH_API_TRANSACTION);
+        return request(name, RequestType.GET, PATH_API_TRANSACTION);
     }
 
     protected InternalRequest getStreamTransactionRequest(String id) {
-        return request(dbName, RequestType.GET, PATH_API_TRANSACTION, id);
+        return request(name, RequestType.GET, PATH_API_TRANSACTION, id);
     }
 
     protected ResponseDeserializer<Collection<TransactionEntity>> transactionsResponseDeserializer() {
@@ -319,7 +318,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest commitStreamTransactionRequest(String id) {
-        return request(dbName, RequestType.PUT, PATH_API_TRANSACTION, id);
+        return request(name, RequestType.PUT, PATH_API_TRANSACTION, id);
     }
 
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
@@ -328,7 +327,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest getInfoRequest() {
-        return request(dbName, RequestType.GET, PATH_API_DATABASE, "current");
+        return request(name, RequestType.GET, PATH_API_DATABASE, "current");
     }
 
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
@@ -337,11 +336,11 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest reloadRoutingRequest() {
-        return request(dbName, RequestType.POST, PATH_API_ADMIN_ROUTING_RELOAD);
+        return request(name, RequestType.POST, PATH_API_ADMIN_ROUTING_RELOAD);
     }
 
     protected InternalRequest getViewsRequest() {
-        return request(dbName, RequestType.GET, InternalArangoView.PATH_API_VIEW);
+        return request(name, RequestType.GET, InternalArangoView.PATH_API_VIEW);
     }
 
     protected ResponseDeserializer<Collection<ViewEntity>> getViewsResponseDeserializer() {
@@ -350,24 +349,24 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest createViewRequest(final String name, final ViewType type) {
-        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(OptionsBuilder.build(new ViewCreateOptions(), name, type)));
+        return request(this.name, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(OptionsBuilder.build(new ViewCreateOptions(), name, type)));
     }
 
     protected InternalRequest createArangoSearchRequest(final String name, final ArangoSearchCreateOptions options) {
-        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
+        return request(this.name, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
     }
 
     protected InternalRequest createSearchAliasRequest(final String name, final SearchAliasCreateOptions options) {
-        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(
+        return request(this.name, RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(getSerde().serialize(
                 SearchAliasOptionsBuilder.build(options != null ? options : new SearchAliasCreateOptions(), name)));
     }
 
     protected InternalRequest getAnalyzerRequest(final String name) {
-        return request(dbName, RequestType.GET, InternalArangoView.PATH_API_ANALYZER, name);
+        return request(this.name, RequestType.GET, InternalArangoView.PATH_API_ANALYZER, name);
     }
 
     protected InternalRequest getAnalyzersRequest() {
-        return request(dbName, RequestType.GET, InternalArangoView.PATH_API_ANALYZER);
+        return request(name, RequestType.GET, InternalArangoView.PATH_API_ANALYZER);
     }
 
     protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
@@ -376,11 +375,11 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected InternalRequest createAnalyzerRequest(final SearchAnalyzer options) {
-        return request(dbName, RequestType.POST, InternalArangoView.PATH_API_ANALYZER).setBody(getSerde().serialize(options));
+        return request(name, RequestType.POST, InternalArangoView.PATH_API_ANALYZER).setBody(getSerde().serialize(options));
     }
 
     protected InternalRequest deleteAnalyzerRequest(final String name, final AnalyzerDeleteOptions options) {
-        InternalRequest request = request(dbName, RequestType.DELETE, InternalArangoView.PATH_API_ANALYZER, name);
+        InternalRequest request = request(this.name, RequestType.DELETE, InternalArangoView.PATH_API_ANALYZER, name);
         request.putQueryParam("force", options != null ? options.getForce() : null);
         return request;
     }

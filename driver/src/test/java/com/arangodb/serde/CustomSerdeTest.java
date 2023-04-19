@@ -75,7 +75,7 @@ class CustomSerdeTest {
                 .protocol(Protocol.VST)
                 .serde(serde).build();
 
-        db = arangoDB.db(DbName.of("custom-serde-test"));
+        db = arangoDB.db("custom-serde-test");
         if (!db.exists()) {
             db.create();
         }

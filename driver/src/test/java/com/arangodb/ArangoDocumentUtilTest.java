@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.internal.util.DocumentUtil;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,11 +60,11 @@ class ArangoDocumentUtilTest {
 
     @Test
     void validateDocumentIdValid() {
-        checkDocumentId("1test/1test");
-        checkDocumentId("test1/test1");
-        checkDocumentId("test-1/test-1");
-        checkDocumentId("test_1/test_1");
-        checkDocumentId("_test/_test");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/1test");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test-1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/test_1");
+        checkDocumentId(TestUtils.generateRandomName(true, 100) + "/_test");
     }
 
     @Test

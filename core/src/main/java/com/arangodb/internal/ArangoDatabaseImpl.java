@@ -33,7 +33,6 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
@@ -45,7 +44,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, ArangoExecutorSync>
         implements ArangoDatabase {
 
-    protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final DbName name) {
+    protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
         super(arangoDB, name);
     }
 
@@ -119,7 +118,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public Boolean create() {
-        return arango().createDatabase(dbName());
+        return arango().createDatabase(name());
     }
 
     @Override

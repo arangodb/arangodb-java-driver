@@ -54,7 +54,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return database name
      */
-    DbName dbName();
+    String name();
 
     /**
      * Returns the server name and version number.
@@ -324,7 +324,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
 
     /**
      * Parse an AQL query and return information about it This method is for query validation only. To actually query
-     * the database, see {@link ArangoDatabase#query(String, Map, AqlQueryOptions, Class)}
+     * the database, see {@link ArangoDatabase#query(String, Class, Map, AqlQueryOptions)}
      *
      * @param query the query which you want parse
      * @return imformation about the query

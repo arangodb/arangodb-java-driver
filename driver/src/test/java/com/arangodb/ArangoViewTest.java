@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,6 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
@@ -45,16 +47,28 @@ class ArangoViewTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void exists(ArangoDatabase db) {
-        String name = "view-" + rnd();
+    void create(ArangoDatabase db) {
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         assertThat(db.view(name).exists()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void createWithNotNormalizedName(ArangoDatabase db) {
+        assumeTrue(supportsExtendedNames());
+        final String name = "view-\u006E\u0303\u00f1";
+        Throwable thrown = catchThrowable(() -> db.createView(name, ViewType.ARANGO_SEARCH));
+        assertThat(thrown)
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("normalized")
+                .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
-        String name = "view-" + rnd();
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ViewEntity info = db.view(name).getInfo();
         assertThat(info).isNotNull();
@@ -67,7 +81,7 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getInfoSearchAlias(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String name = "view-" + rnd();
+        String name = rndName();
         db.createView(name, ViewType.SEARCH_ALIAS);
         final ViewEntity info = db.view(name).getInfo();
         assertThat(info).isNotNull();
@@ -80,8 +94,8 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void getViews(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String name1 = "view-" + rnd();
-        String name2 = "view-" + rnd();
+        String name1 = rndName();
+        String name2 = rndName();
         db.createView(name1, ViewType.ARANGO_SEARCH);
         db.createView(name2, ViewType.SEARCH_ALIAS);
         Collection<ViewEntity> views = db.getViews();
@@ -91,7 +105,7 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
-        String name = "view-" + rnd();
+        String name = rndName();
         db.createView(name, ViewType.ARANGO_SEARCH);
         final ArangoView view = db.view(name);
         view.drop();
@@ -102,8 +116,8 @@ class ArangoViewTest extends BaseJunit5 {
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
-        String oldName = "view-" + rnd();
-        String newName = "view-" + rnd();
+        String oldName = rndName();
+        String newName = rndName();
 
         db.createView(oldName, ViewType.ARANGO_SEARCH);
         db.view(oldName).rename(newName);

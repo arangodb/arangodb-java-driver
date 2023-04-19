@@ -99,6 +99,28 @@ this case either:
 - providing a custom user-data serde implementation via `ArangoDB.Builder.serde(ArangoSerde)`.
 
 
+## Support to unicode data definition names
+
+The driver supports ArangoDB **extended** naming convention, thus allows unicode characters in data definition names:
+- databases
+- collections
+- views
+- indexes
+
+These names must be NFC-normalized, otherwise the server will return an error.
+To normalize a string, use the function `com.arangodb.util.UnicodeUtils.normalize(String): String`:
+
+    ```java 
+    String normalized = UnicodeUtils.normalize("𝔸𝕣𝕒𝕟𝕘𝕠𝔻𝔹");
+    ```
+
+To check if a string is already normalized, use the
+function `com.arangodb.util.UnicodeUtils.isNormalized(String): boolean`:
+
+    ```java 
+    boolean isNormalized = UnicodeUtils.isNormalized("𝔸𝕣𝕒𝕟𝕘𝕠𝔻𝔹");
+    ```
+
 ## See Also
 
 - [JavaDoc](https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/latest/index.html)

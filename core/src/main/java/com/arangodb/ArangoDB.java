@@ -73,10 +73,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Returns a {@code ArangoDatabase} instance for the given database name.
      *
-     * @param dbName Name of the database
+     * @param name Name of the database
      * @return database handler
      */
-    ArangoDatabase db(DbName dbName);
+    ArangoDatabase db(String name);
 
     /**
      * @return entry point for accessing client metrics
@@ -86,12 +86,12 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Creates a new database with the given name.
      *
-     * @param dbName Name of the database to create
+     * @param name Name of the database to create
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      */
-    Boolean createDatabase(DbName dbName);
+    Boolean createDatabase(String name);
 
     /**
      * Creates a new database with the given name.

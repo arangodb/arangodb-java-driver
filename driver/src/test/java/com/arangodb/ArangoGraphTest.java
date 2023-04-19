@@ -28,6 +28,7 @@ import com.arangodb.model.EdgeCollectionDropOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.ReplaceEdgeDefinitionOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,15 +50,15 @@ class ArangoGraphTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "ArangoGraphTest_graph";
 
-    private static final String VERTEX_COL_1 = "ArangoGraphTest_vertex_collection_1";
-    private static final String VERTEX_COL_2 = "ArangoGraphTest_vertex_collection_2";
-    private static final String VERTEX_COL_3 = "ArangoGraphTest_vertex_collection_3";
-    private static final String VERTEX_COL_4 = "ArangoGraphTest_vertex_collection_4";
-    private static final String VERTEX_COL_5 = "ArangoGraphTest_vertex_collection_5";
+    private static final String VERTEX_COL_1 = rndName();
+    private static final String VERTEX_COL_2 = rndName();
+    private static final String VERTEX_COL_3 = rndName();
+    private static final String VERTEX_COL_4 = rndName();
+    private static final String VERTEX_COL_5 = rndName();
 
-    private static final String EDGE_COL_1 = "ArangoGraphTest_edge_collection_1";
-    private static final String EDGE_COL_2 = "ArangoGraphTest_edge_collection_2";
-    private static final String EDGE_COL_3 = "ArangoGraphTest_edge_collection_3";
+    private static final String EDGE_COL_1 = rndName();
+    private static final String EDGE_COL_2 = rndName();
+    private static final String EDGE_COL_3 = rndName();
 
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;
@@ -122,15 +123,19 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(info).isNotNull();
         assertThat(info.getName()).isEqualTo(GRAPH_NAME);
         assertThat(info.getEdgeDefinitions()).hasSize(2);
-        final Iterator<EdgeDefinition> iterator = info.getEdgeDefinitions().iterator();
-        final EdgeDefinition e1 = iterator.next();
-        assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
-        assertThat(e1.getFrom()).contains(VERTEX_COL_1);
-        assertThat(e1.getTo()).contains(VERTEX_COL_5);
-        final EdgeDefinition e2 = iterator.next();
-        assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
-        assertThat(e2.getFrom()).contains(VERTEX_COL_2);
-        assertThat(e2.getTo()).contains(VERTEX_COL_1, VERTEX_COL_3);
+
+        assertThat(info.getEdgeDefinitions())
+                .anySatisfy(e1 -> {
+                    assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
+                    assertThat(e1.getFrom()).contains(VERTEX_COL_1);
+                    assertThat(e1.getTo()).contains(VERTEX_COL_5);
+                })
+                .anySatisfy(e2 -> {
+                    assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
+                    assertThat(e2.getFrom()).contains(VERTEX_COL_2);
+                    assertThat(e2.getTo()).contains(VERTEX_COL_1, VERTEX_COL_3);
+                });
+
         assertThat(info.getOrphanCollections()).isEmpty();
 
         if (isCluster()) {

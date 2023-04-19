@@ -39,9 +39,8 @@ public final class TestUtils {
     }
 
     /**
-     * Parses {@param version} and checks whether it is greater or equal to
-     * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
-     * comparing the corresponding version components in lexicographical order.
+     * Parses {@param version} and checks whether it is greater or equal to <{@param otherMajor}, {@param otherMinor},
+     * {@param otherPatch}> comparing the corresponding version components in lexicographical order.
      */
     public static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor,
                                            final int otherPatch) {
@@ -49,9 +48,8 @@ public final class TestUtils {
     }
 
     /**
-     * Parses {@param version} and checks whether it is less than
-     * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
-     * comparing the corresponding version components in lexicographical order.
+     * Parses {@param version} and checks whether it is less than <{@param otherMajor}, {@param otherMinor},
+     * {@param otherPatch}> comparing the corresponding version components in lexicographical order.
      */
     public static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor,
                                             final int otherPatch) {
@@ -95,7 +93,7 @@ public final class TestUtils {
         return list.toArray(new String[0]);
     }
 
-    public static String generateRandomDbName(int length, boolean extendedNames) {
+    public static String generateRandomName(boolean extendedNames, int length) {
         if (extendedNames) {
             int max = allChars.length;
             StringBuilder sb = new StringBuilder();

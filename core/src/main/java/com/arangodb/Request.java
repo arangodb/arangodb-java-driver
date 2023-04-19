@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Request<T> {
-    private final DbName db;
+    private final String db;
     private final Method method;
     private final String path;
     private final Map<String, String> queryParams;
@@ -25,7 +25,7 @@ public final class Request<T> {
         return new Builder<>();
     }
 
-    private Request(DbName db, Method method, String path, Map<String, String> queryParams, Map<String, String> headers, T body) {
+    private Request(String db, Method method, String path, Map<String, String> queryParams, Map<String, String> headers, T body) {
         this.db = db;
         this.method = method;
         this.path = path;
@@ -34,7 +34,7 @@ public final class Request<T> {
         this.body = body;
     }
 
-    public DbName getDb() {
+    public String getDb() {
         return db;
     }
 
@@ -59,7 +59,7 @@ public final class Request<T> {
     }
 
     public static final class Builder<T> {
-        private DbName db;
+        private String db;
         private Request.Method method;
         private String path;
         private final Map<String, String> queryParams;
@@ -71,7 +71,7 @@ public final class Request<T> {
             headers = new HashMap<>();
         }
 
-        public Builder<T> db(DbName db) {
+        public Builder<T> db(String db) {
             this.db = db;
             return this;
         }

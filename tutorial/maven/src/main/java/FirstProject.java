@@ -14,7 +14,7 @@ public class FirstProject {
             .build();
 
     private static void cleanup() {
-        ArangoDatabase db = arangoDB.db(DbName.of("mydb"));
+        ArangoDatabase db = arangoDB.db("mydb");
         if (db.exists()) db.drop();
     }
 
@@ -22,7 +22,7 @@ public class FirstProject {
         cleanup();
 
         // Creating a database
-        ArangoDatabase db = arangoDB.db(DbName.of("mydb"));
+        ArangoDatabase db = arangoDB.db("mydb");
         System.out.println("Creating database...");
         db.create();
 

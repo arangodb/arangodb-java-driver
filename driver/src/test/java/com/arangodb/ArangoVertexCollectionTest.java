@@ -25,6 +25,7 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
 import com.arangodb.util.RawJson;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -46,7 +47,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class ArangoVertexCollectionTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "ArangoVertexCollectionTest_graph";
-    private static final String COLLECTION_NAME = "ArangoVertexCollectionTest_vertex_collection";
+    private static final String COLLECTION_NAME = rndName();
 
     private static Stream<Arguments> vertices() {
         return dbsStream()

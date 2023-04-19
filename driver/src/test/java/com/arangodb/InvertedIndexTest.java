@@ -6,6 +6,7 @@ import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -78,7 +79,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         }
 
         return new InvertedIndexOptions()
-                .name("invertedIndex-" + UUID.randomUUID())
+                .name(rndName())
                 .inBackground(true)
                 .parallelism(5)
                 .primarySort(new InvertedIndexPrimarySort()

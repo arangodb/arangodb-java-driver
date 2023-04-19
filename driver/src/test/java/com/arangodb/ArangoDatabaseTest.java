@@ -24,9 +24,7 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.util.RawBytes;
-import com.arangodb.util.RawJson;
+import com.arangodb.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -87,7 +85,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("arangos")
     void exists(ArangoDB arangoDB) {
         assertThat(arangoDB.db(TEST_DB).exists()).isTrue();
-        assertThat(arangoDB.db(DbName.of("no")).exists()).isFalse();
+        assertThat(arangoDB.db("no").exists()).isFalse();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -100,7 +98,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void createCollection(ArangoDatabase db) {
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db.createCollection(name, null);
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
@@ -108,9 +106,22 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void createCollectionWithNotNormalizedName(ArangoDatabase db) {
+        assumeTrue(supportsExtendedNames());
+        final String colName = "testCol-\u006E\u0303\u00f1";
+
+        Throwable thrown = catchThrowable(() -> db.createCollection(colName));
+        assertThat(thrown)
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("normalized")
+                .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void createCollectionWithReplicationFactor(ArangoDatabase db) {
         assumeTrue(isCluster());
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions().replicationFactor(2));
         assertThat(result).isNotNull();
@@ -125,7 +136,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db.createCollection(name,
                 new CollectionCreateOptions().replicationFactor(2).writeConcern(2));
         assertThat(result).isNotNull();
@@ -141,7 +152,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions().replicationFactor(ReplicationFactor.ofSatellite()));
 
@@ -155,7 +166,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createCollectionWithNumberOfShards(ArangoDatabase db) {
         assumeTrue(isCluster());
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions().numberOfShards(2));
 
@@ -171,7 +182,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isAtLeastVersion(3, 4));
         assumeTrue(isCluster());
 
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db.createCollection(name, new CollectionCreateOptions()
                 .shardingStrategy(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
 
@@ -188,10 +199,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        String fooName = "collection-" + rnd();
+        String fooName = rndName();
         db.collection(fooName).create();
 
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db.createCollection(name,
                 new CollectionCreateOptions().smartJoinAttribute("test123").distributeShardsLike(fooName).shardKeys("_key:"));
         assertThat(result).isNotNull();
@@ -206,7 +217,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        String name = "collection-" + rnd();
+        String name = rndName();
 
         try {
             db.createCollection(name, new CollectionCreateOptions().smartJoinAttribute("test123"));
@@ -221,7 +232,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void createCollectionWithNumberOfShardsAndShardKey(ArangoDatabase db) {
         assumeTrue(isCluster());
 
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
         assertThat(result).isNotNull();
@@ -235,7 +246,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createCollectionWithNumberOfShardsAndShardKeys(ArangoDatabase db) {
         assumeTrue(isCluster());
-        String name = "collection-" + rnd();
+        String name = rndName();
         final CollectionEntity result = db.createCollection(name,
                 new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
         assertThat(result).isNotNull();
@@ -253,8 +264,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
         final Integer numberOfShards = 3;
 
-        String name1 = "collection-" + rnd();
-        String name2 = "collection-" + rnd();
+        String name1 = rndName();
+        String name2 = rndName();
         db.createCollection(name1, new CollectionCreateOptions().numberOfShards(numberOfShards));
         db.createCollection(name2, new CollectionCreateOptions().distributeShardsLike(name1));
 
@@ -263,7 +274,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     private void createCollectionWithKeyType(ArangoDatabase db, KeyType keyType) {
-        String name = "collection-" + rnd();
+        String name = rndName();
         db.createCollection(name, new CollectionCreateOptions().keyOptions(
                 false,
                 keyType,
@@ -304,7 +315,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createCollectionWithJsonSchema(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 7));
-        String name = "collection-" + rnd();
+        String name = rndName();
         String rule = ("{  " +
                 "           \"properties\": {" +
                 "               \"number\": {" +
@@ -352,7 +363,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createCollectionWithComputedFields(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
-        String cName = "collection-" + rnd();
+        String cName = rndName();
         ComputedValue cv = new ComputedValue()
                 .name("foo")
                 .expression("RETURN 11")
@@ -387,7 +398,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void deleteCollection(ArangoDatabase db) {
-        String name = "collection-" + rnd();
+        String name = rndName();
         db.createCollection(name, null);
         db.collection(name).drop();
         Throwable thrown = catchThrowable(() -> db.collection(name).getInfo());
@@ -1211,9 +1222,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void createGraphReplicationFaktor(ArangoDatabase db) {
         assumeTrue(isCluster());
         String name = "graph-" + rnd();
-        final String edgeCollection = "edge-" + rnd();
-        final String fromCollection = "from-" + rnd();
-        final String toCollection = "to-" + rnd();
+        final String edgeCollection = rndName();
+        final String fromCollection = rndName();
+        final String toCollection = rndName();
         final Collection<EdgeDefinition> edgeDefinitions =
                 Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db.createGraph(name, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
@@ -1229,9 +1240,9 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void createGraphNumberOfShards(ArangoDatabase db) {
         assumeTrue(isCluster());
         String name = "graph-" + rnd();
-        final String edgeCollection = "edge-" + rnd();
-        final String fromCollection = "from-" + rnd();
-        final String toCollection = "to-" + rnd();
+        final String edgeCollection = rndName();
+        final String fromCollection = rndName();
+        final String toCollection = rndName();
         final Collection<EdgeDefinition> edgeDefinitions =
                 Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db
@@ -1397,7 +1408,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final DatabaseEntity info = db.getInfo();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
-        assertThat(info.getName()).isEqualTo(TEST_DB.get());
+        assertThat(info.getName()).isEqualTo(TEST_DB);
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 

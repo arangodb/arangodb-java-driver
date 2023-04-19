@@ -22,11 +22,13 @@ package com.arangodb;
 
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.*;
+import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.RawJson;
 import com.arangodb.util.TestUtils;
+import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,13 +55,11 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class ArangoDBTest extends BaseJunit5 {
 
-    private static final DbName DB1 = DbName.of("ArangoDBTest_db1");
-    private static final DbName DB2 = DbName.of("ArangoDBTest_db2");
+    private static final String DB1 = "ArangoDBTest_db1";
+    private static final String DB2 = "ArangoDBTest_db2";
 
     private static final String ROOT = "root";
     private static final String PW = "machts der hund";
-
-    private static Boolean extendedNames;
 
     @BeforeAll
     static void initDBs() {
@@ -73,20 +73,6 @@ class ArangoDBTest extends BaseJunit5 {
         dropDB(DB2);
     }
 
-    private boolean supportsExtendedNames(ArangoDB arangoDB) {
-        if (extendedNames == null) {
-            try {
-                ArangoDatabase testDb = arangoDB.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
-                testDb.create();
-                extendedNames = true;
-                testDb.drop();
-            } catch (ArangoDBException e) {
-                extendedNames = false;
-            }
-        }
-        return extendedNames;
-    }
-
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void getVersion(ArangoDB arangoDB) {
@@ -98,8 +84,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createAndDeleteDatabase(ArangoDB arangoDB) {
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
-                supportsExtendedNames(arangoDB)));
+        final String dbName = rndDbName();
         final Boolean resultCreate;
         resultCreate = arangoDB.createDatabase(dbName);
         assertThat(resultCreate).isTrue();
@@ -110,17 +95,17 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createWithNotNormalizedName(ArangoDB arangoDB) {
-        assumeTrue(supportsExtendedNames(arangoDB));
+        assumeTrue(supportsExtendedDbNames());
 
         final String dbName = "testDB-\u006E\u0303\u00f1";
-        DbName normalized = DbName.normalize(dbName);
+        String normalized = UnicodeUtils.normalize(dbName);
         arangoDB.createDatabase(normalized);
         arangoDB.db(normalized).drop();
 
-        Throwable thrown = catchThrowable(() -> DbName.of(dbName));
+        Throwable thrown = catchThrowable(() -> arangoDB.createDatabase(dbName));
         assertThat(thrown)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("not normalized");
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("normalized");
     }
 
     @ParameterizedTest(name = "{index}")
@@ -128,8 +113,7 @@ class ArangoDBTest extends BaseJunit5 {
     void createDatabaseWithOptions(ArangoDB arangoDB) {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 6));
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
-                supportsExtendedNames(arangoDB)));
+        final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -156,8 +140,7 @@ class ArangoDBTest extends BaseJunit5 {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 6));
 
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
-                supportsExtendedNames(arangoDB)));
+        final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -180,8 +163,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void createDatabaseWithUsers(ArangoDB arangoDB) throws InterruptedException {
-        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20,
-                supportsExtendedNames(arangoDB)));
+        final String dbName = rndDbName();
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
@@ -195,7 +177,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultCreate).isTrue();
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getName()).isEqualTo(dbName.get());
+        assertThat(info.getName()).isEqualTo(dbName);
 
         Optional<UserEntity> retrievedUserOptional = arangoDB.getUsers().stream()
                 .filter(it -> it.getUser().equals("testUser"))
@@ -228,7 +210,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void getDatabases(ArangoDB arangoDB) {
         Collection<String> dbs = arangoDB.getDatabases();
-        assertThat(dbs).contains("_system", DB1.get());
+        assertThat(dbs).contains("_system", DB1);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -395,7 +377,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void executeGetVersion(ArangoDB arangoDB) {
         Request<?> request = Request.builder()
-                .db(DbName.SYSTEM)
+                .db(ArangoRequestParam.SYSTEM)
                 .method(Request.Method.GET)
                 .path("/_api/version")
                 .queryParam("details", "true")
@@ -481,7 +463,7 @@ class ArangoDBTest extends BaseJunit5 {
     void getLogEntriesSearch(ArangoDB arangoDB) {
         assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
-        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(TEST_DB.get()));
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(TEST_DB));
         assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotal());
     }
 
@@ -578,7 +560,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void arangoDBException(ArangoDB arangoDB) {
-        Throwable thrown = catchThrowable(() -> arangoDB.db(DbName.of("no")).getInfo());
+        Throwable thrown = catchThrowable(() -> arangoDB.db("no").getInfo());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(404);
