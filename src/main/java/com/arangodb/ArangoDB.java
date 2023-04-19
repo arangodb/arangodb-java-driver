@@ -753,9 +753,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
-     * @deprecated Use {@link #db(DbName)} instead
      */
-    @Deprecated
     default ArangoDatabase db(String name) {
         return db(DbName.of(name));
     }
@@ -765,7 +763,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *
      * @param dbName Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(String)} instead
      */
+    @Deprecated
     ArangoDatabase db(DbName dbName);
 
     /**
@@ -781,9 +781,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
-     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    @Deprecated
     default Boolean createDatabase(String name) throws ArangoDBException {
         return createDatabase(DbName.of(name));
     }
@@ -796,7 +794,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(String)} instead
      */
+    @Deprecated
     Boolean createDatabase(DbName dbName) throws ArangoDBException;
 
     /**

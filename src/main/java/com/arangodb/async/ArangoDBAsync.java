@@ -96,9 +96,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
-     * @deprecated Use {@link #db(DbName)} instead
      */
-    @Deprecated
     default ArangoDatabaseAsync db(final String name) {
         return db(DbName.of(name));
     }
@@ -108,7 +106,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param dbName Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(String)} instead
      */
+    @Deprecated
     ArangoDatabaseAsync db(final DbName dbName);
 
     /**
@@ -123,9 +123,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
-     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    @Deprecated
     default CompletableFuture<Boolean> createDatabase(final String name) {
         return createDatabase(DbName.of(name));
     }
@@ -137,7 +135,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(String)} instead
      */
+    @Deprecated
     CompletableFuture<Boolean> createDatabase(final DbName dbName);
 
     /**

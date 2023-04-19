@@ -42,14 +42,14 @@ public class Request {
     @Expose(serialize = false)
     private VPackSlice body;
 
-    /**
-     * @deprecated Use {@link #Request(DbName, RequestType, String)} instead
-     */
-    @Deprecated
     public Request(final String database, final RequestType requestType, final String path) {
         this(DbName.of(database), requestType, path);
     }
 
+    /**
+     * @deprecated Use {@link #Request(String, RequestType, String)} instead
+     */
+    @Deprecated
     public Request(final DbName dbName, final RequestType requestType, final String path) {
         super();
         this.dbName = dbName;
@@ -78,14 +78,14 @@ public class Request {
         return this;
     }
 
-    /**
-     * @deprecated Use {@link #getDbName()} instead
-     */
-    @Deprecated
     public String getDatabase() {
         return getDbName().get();
     }
 
+    /**
+     * @deprecated Use {@link #getDatabase()} instead
+     */
+    @Deprecated
     public DbName getDbName() {
         return dbName;
     }

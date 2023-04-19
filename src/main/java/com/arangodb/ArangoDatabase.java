@@ -55,9 +55,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * Returns the name of the database
      *
      * @return database name
-     * @deprecated Use {@link #dbName()} instead
      */
-    @Deprecated
     default String name() {
         return dbName().get();
     }
@@ -66,7 +64,9 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * Returns the name of the database
      *
      * @return database name
+     * @deprecated Use {@link #name()} instead
      */
+    @Deprecated
     DbName dbName();
 
     /**
