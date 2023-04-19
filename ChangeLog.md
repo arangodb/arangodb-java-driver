@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [7.0.0-RC.4] - 2023-03-21
+## [7.0.0-RC.5] - 2023-04-19
 
 Detailed changes documentation is available [here](./docs/v7_detailed_changes.md).
 Reference documentation [here](./docs/v7_java.md).
