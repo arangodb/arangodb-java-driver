@@ -342,6 +342,9 @@ The class `com.arangodb.DbName` has been removed. The database names can now be 
 Support to unicode characters in data definition names (databases, collections, views, indexes) has been added, see
 [Support to unicode data definition names](v7_java.md#unicode-characters-in-data-definition-names).
 
+`com.arangodb.ArangoCollection.rename(String)` does not change anymore the collection name of the instance
+of `ArangoCollection` on which it is invoked. To interact with the renamed collection, a new instance
+of `ArangoCollection` with the new name must be created.
 
 ## API entities
 

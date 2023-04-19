@@ -61,7 +61,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
     private final D db;
-    protected volatile String name;
+    protected final String name;
 
     protected InternalArangoCollection(final D db, final String name) {
         super(db.executor, db.serde);
