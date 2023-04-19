@@ -49,7 +49,7 @@ ArangoDB arangoDB = new ArangoDB.Builder()
 Let’s create a new database:
 
 ```java
-ArangoDatabase db = arangoDB.db(DbName.of("mydb"));
+ArangoDatabase db = arangoDB.db("mydb");
 System.out.println("Creating database...");
 db.create();
 ```

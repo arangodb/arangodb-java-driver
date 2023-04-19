@@ -2,7 +2,6 @@ package arch;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ContentType;
-import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +11,7 @@ import java.util.stream.Stream;
 
 public class BaseTest {
     private static final ArangoConfigProperties config = ConfigUtils.loadConfig();
-    protected static final DbName TEST_DB = DbName.of("java_driver_integration_tests");
+    protected static final String TEST_DB = "java_driver_integration_tests";
 
     protected static ArangoDB createAdb() {
         return new ArangoDB.Builder()

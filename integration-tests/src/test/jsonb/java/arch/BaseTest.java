@@ -2,7 +2,6 @@ package arch;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ContentType;
-import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.serde.ContentTypeFactory;
@@ -14,7 +13,7 @@ import java.util.stream.Stream;
 
 public class BaseTest {
     private static final ArangoConfigProperties config = ConfigUtils.loadConfig();
-    protected static final DbName TEST_DB = DbName.of("java_driver_integration_tests");
+    protected static final String TEST_DB = "java_driver_integration_tests";
     protected static final String HOST = "172.28.0.1";
     protected static final int PORT = 8529;
     protected static final String PASSWD = "test";
