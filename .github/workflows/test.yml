@@ -39,7 +39,6 @@ jobs:
           - docker.io/arangodb/enterprise:3.8.8
           - docker.io/arangodb/enterprise:3.9.9
           - docker.io/arangodb/enterprise:3.10.4
-          - docker.io/arangodb/arangodb-test:devel-nightly
         topology:
           - single
           - cluster
@@ -51,12 +50,12 @@ jobs:
         user-language:
           - en
         include:
-          - docker-img: docker.io/arangodb/arangodb:3.10.4
+          - docker-img: docker.io/arangodb/arangodb-test:devel-nightly
             topology: single
             db-ext-names: true
             java-version: 11
             user-language: tr
-          - docker-img: docker.io/arangodb/enterprise:3.10.4
+          - docker-img: docker.io/arangodb/enterprise-test:devel-nightly
             topology: cluster
             db-ext-names: true
             java-version: 17
@@ -76,7 +75,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+          EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Info
         run: mvn -version
       - name: Test
@@ -166,7 +165,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+          EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Set JWT
         run: |
           ENDPOINT=$(./docker/find_active_endpoint.sh)
@@ -217,7 +216,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+          EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Info
         run: mvn -version
       - name: Test
@@ -300,7 +299,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+          EXTENDED_NAMES: ${{matrix.db-ext-names}}
       - name: Info
         run: mvn -version
       - name: Cache SonarCloud packages
