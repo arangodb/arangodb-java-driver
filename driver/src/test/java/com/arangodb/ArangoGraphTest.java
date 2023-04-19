@@ -123,15 +123,19 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(info).isNotNull();
         assertThat(info.getName()).isEqualTo(GRAPH_NAME);
         assertThat(info.getEdgeDefinitions()).hasSize(2);
-        final Iterator<EdgeDefinition> iterator = info.getEdgeDefinitions().iterator();
-        final EdgeDefinition e1 = iterator.next();
-        assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
-        assertThat(e1.getFrom()).contains(VERTEX_COL_1);
-        assertThat(e1.getTo()).contains(VERTEX_COL_5);
-        final EdgeDefinition e2 = iterator.next();
-        assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
-        assertThat(e2.getFrom()).contains(VERTEX_COL_2);
-        assertThat(e2.getTo()).contains(VERTEX_COL_1, VERTEX_COL_3);
+
+        assertThat(info.getEdgeDefinitions())
+                .anySatisfy(e1 -> {
+                    assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
+                    assertThat(e1.getFrom()).contains(VERTEX_COL_1);
+                    assertThat(e1.getTo()).contains(VERTEX_COL_5);
+                })
+                .anySatisfy(e2 -> {
+                    assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
+                    assertThat(e2.getFrom()).contains(VERTEX_COL_2);
+                    assertThat(e2.getTo()).contains(VERTEX_COL_1, VERTEX_COL_3);
+                });
+
         assertThat(info.getOrphanCollections()).isEmpty();
 
         if (isCluster()) {
