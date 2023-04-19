@@ -56,10 +56,8 @@ public class ArangoSearchImpl extends InternalArangoSearch<ArangoDBImpl, ArangoD
     }
 
     @Override
-    public synchronized ViewEntity rename(final String newName) {
-        final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
-        name = result.getName();
-        return result;
+    public ViewEntity rename(final String newName) {
+        return executor.execute(renameRequest(newName), ViewEntity.class);
     }
 
     @Override

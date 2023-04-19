@@ -35,7 +35,7 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
     protected static final String PATH_API_ANALYZER = "/_api/analyzer";
 
     protected final D db;
-    protected volatile String name;
+    protected final String name;
 
     protected InternalArangoView(final D db, final String name) {
         super(db.executor, db.serde);

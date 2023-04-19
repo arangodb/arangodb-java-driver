@@ -465,7 +465,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public synchronized CollectionEntity rename(final String newName) {
+    public CollectionEntity rename(final String newName) {
         return executor.execute(renameRequest(newName), CollectionEntity.class);
     }
 
