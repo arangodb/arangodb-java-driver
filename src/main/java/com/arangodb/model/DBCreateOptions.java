@@ -61,9 +61,7 @@ public class DBCreateOptions {
     /**
      * @param name Has to contain a valid database name
      * @return options
-     * @deprecated Use {@link #name(DbName)} instead.
      */
-    @Deprecated
     public DBCreateOptions name(final String name) {
         return name(DbName.of(name));
     }
@@ -71,7 +69,9 @@ public class DBCreateOptions {
     /**
      * @param dbName database name
      * @return options
+     * @deprecated Use {@link #name(String)} instead.
      */
+    @Deprecated
     public DBCreateOptions name(final DbName dbName) {
         name = dbName.get();
         return this;

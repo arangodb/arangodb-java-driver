@@ -13,7 +13,12 @@ import java.util.function.Supplier;
  *
  * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html">
  * API Documentation</a>
+ *
+ * @deprecated This class is deprecated and will be removed in a future release. Use plain String instead.
+ * Wrapper classes for data definition names are not required anymore, since ArangoDB throws an error if a name is
+ * not NFC-normalized.
  */
+@Deprecated
 public final class DbName implements Supplier<String> {
 
     /**
