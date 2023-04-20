@@ -4,13 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
-      - v7
       - v6
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
-      - master
+      - v6
 
 jobs:
 
