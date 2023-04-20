@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
       - main
-      - v7
-      - v6
     paths-ignore:
-      - '.github/**'
       - 'docker/**'
       - 'docs/**'
       - 'tutorial/**'
@@ -18,10 +14,7 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
-      - master
       - main
-      - v7
-      - v6
 
 jobs:
 

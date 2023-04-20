@@ -15,9 +15,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
-      - '.github/**'
       - 'docker/**'
       - 'docs/**'
       - 'tutorial/**'
@@ -26,10 +25,7 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
     branches:
-      - master
       - main
-      - v7
-      - v6
   schedule:
     - cron: '0 0 * * *'
 
