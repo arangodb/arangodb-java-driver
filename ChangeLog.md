@@ -6,10 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [7.0.0-RC.5] - 2023-04-19
+## [7.0.0] - 2023-04-20
 
-Detailed changes documentation is available [here](./docs/v7_detailed_changes.md).
-Reference documentation [here](./docs/v7_java.md).
+Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/doc/java_driver_v7/drivers/java-changes-v7.md).
+Reference documentation [here](https://github.com/arangodb/docs/pull/1342).
 
 ## [6.20.0] - 2022-11-29
 
