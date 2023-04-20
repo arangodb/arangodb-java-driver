@@ -18,7 +18,6 @@ on:
       - main
     paths-ignore:
       - 'docker/**'
-      - 'docs/**'
       - 'tutorial/**'
       - 'ChangeLog.md'
       - 'README.md'
