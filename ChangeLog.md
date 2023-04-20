@@ -8,8 +8,99 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [7.0.0] - 2023-04-20
 
-Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/doc/java_driver_v7/drivers/java-changes-v7.md).
-Reference documentation [here](https://github.com/arangodb/docs/pull/1342).
+Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/main/drivers/java-changes-v7.md).
+
+### Added
+
+- added `ArangoDB.Builder.loadProperties(ArangoConfigProperties)` to register custom configuration suppliers
+- added `ArangoConfigProperties.fromFile()` to load properties from local files
+- added support to `HTTP/2` communication protocol
+- added optional transitive dependency on `io.vertx:vertx-web-client` (can be excluded if using VST only)
+- added transitive dependency on Jackson Core, Databind and Annotations
+- added wrapper class for raw JSON content (`RawJson`)
+- added wrapper class for content already encoded as byte array (`RawBytes`)
+- added support for Jackson types (`JsonNode`, `ArrayNode`, `ObjectNode`, ...)
+- added support for Jackson annotations in data types
+- added new user data custom serializer API based on `ArangoSerde`
+- added new user data custom serializer implementation based on Jackson (`JacksonSerde`), supporting both `JSON` and `VPACK`
+- added methods and parameters targets to meta binding annotations
+- added overloaded methods for CRUD operations allowing specifying the return type
+- added API to support CRUD operations from raw data (`RawBytes` and `RawJson`) containing multiple documents
+- added `BaseDocument#removeAttribute(String)` and `BaseEdgeDocument#removeAttribute(String)`
+- added request id to `ArangoDBException`
+- shaded version of the driver (`com.arangodb:arangodb-java-driver-shaded`)
+- added `ArangoEdgeCollection.drop()` and `ArangoVertexCollection.drop(VertexCollectionDropOptions)`
+
+### Fixed
+
+- removed `--allow-incomplete-classpath` from native image configuration (#397)
+- ability to control whether `null` values are included in the serialization (#389)
+- added support to `DocumentCreateOptions#keepNull` (#374)
+- allow specifying the return type on insertDocuments (#373)
+- credentials logging (#410)
+- fixed `ArangoCollection.rename()` and `ArangoView.rename()` thread safety
+
+### Changed
+
+- configuration properties from local files are not loaded automatically anymore
+- `ArangoDB.execute()` accepts now target deserialization type
+- `Request<T>` and `Response<T>` support now generic body type
+- removed default host configuration (`127.0.0.1:8529`)
+- changed http client library to Vert.x WebClient
+- changed default communication protocol from `VST` to `HTTP/2`
+- changed default content-type format from `VPACK` to `JSON`
+- changed internal serialization, now based on Jackson API
+- `VPACK` support is now provided by `JacksonSerde` including the optional dependency
+  `com.arangodb:jackson-dataformat-velocypack` (`VPACK` dataformat backend for Jackson)
+- data objects passed as arguments to API methods are treated as immutable and the related metadata fields are not
+  updated in place anymore (updated metadata can be found in the returned object)
+- changed some API signatures which were using unnecessary generics from `ArangoCollection`, `ArangoVertexCollection` and `ArangoEdgeCollection`
+- changed `ArangoCursor#getStats()` return type
+- replication factor is now represented by a new interface (`ReplicationFactor`) with
+  implementations: `NumericReplicationFactor` and `SatelliteReplicationFactor`
+- all data definition classes are now `final` (packages `com.arangodb.entity` and `com.arangodb.model`)
+- `BaseDocument` and `BaseEdgeDocument` are now `final`
+- `BaseDocument#getProperties()` and `BaseEdgeDocument#getProperties()` return now an unmodifiable map
+- `BaseDocument` and `BaseEdgeDocument` are not serializable anymore (using Java serialization)
+- removed `throws ArangoDBException` from API method signatures (unchecked exception)
+- removed passwords from debug level requests logs (#410)
+- JPMS: explicit automatic module name
+- updated `ArangoGraph.replaceEdgeDefinition()`
+- CRUD methods to insert and replace multiple documents have now covariant argument types
+- changed order of arguments in `ArangoDatabase.query()` overloads
+- `ArangoCollection.rename()` and `ArangoView.rename()` do not change the collection or view name of the API class instance
+
+### Removed
+
+- removed user data custom serializer API based on `ArangoSerialization` (in favor of `ArangoSerde`)
+- removed user data custom serializer implementation `ArangoJack` (in favor of `JacksonSerde`)
+- removed support for interpreting raw strings as JSON (in favor of `RawJson`)
+- removed support of data type `VPackSlice` (in favor of Jackson types: `JsonNode`, `ArrayNode`, `ObjectNode`, ...)
+- removed client APIs already deprecated in Java Driver version `6`
+- removed deprecated server APIs:
+  - `MMFiles` related APIs
+  - `ArangoDatabase.executeTraversal()`
+  - `ArangoDB.getLogs()`
+  - `minReplicationFactor` in collections and graphs
+  - `overwrite` flag in `DocumentCreateOptions`
+  - `hash` and `skipList` indexes
+- removed `ArangoCursorInitializer`
+- removed Asynchronous API (`com.arangodb.async`)
+- removed `ArangoDatabase.getDocument()`
+- removed automatic type inference in CRUD methods operating on multiple documents
+- removed `DbName` in favor of plain strings
+
+## [6.23.0] - 2023-04-20
+
+- deprecated `DbName` in favor of plain strings
+
+## [6.22.0] - 2023-04-18
+
+- added support to `forceOneShardAttributeValue` query parameter (DE-541)
+
+## [6.21.0] - 2023-03-07
+
+- added `x-arango-driver` header (DE-479)
 
 ## [6.20.0] - 2022-11-29
 
@@ -1238,3 +1329,125 @@ Added support for sparse indexes
 ## [1.2.0] - 2013-06-30
 
 - Initial Release
+
+
+
+[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/v7.0.0...HEAD
+[7.0.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.23.0..v7.0.0
+[6.23.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.22.0..v6.23.0
+[6.22.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.21.0..v6.22.0
+[6.21.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.20.0..v6.21.0
+[6.20.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.19.0..v6.20.0
+[6.19.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.18.0..v6.19.0
+[6.18.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.17.0..v6.18.0
+[6.17.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.16.1..v6.17.0
+[6.16.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.16.0..v6.16.1
+[6.16.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.15.0..v6.16.0
+[6.15.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.14.0..v6.15.0
+[6.14.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.13.0..v6.14.0
+[6.13.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.12.3..v6.13.0
+[6.12.3]: https://github.com/arangodb/arangodb-java-driver/compare/v6.12.2..v6.12.3
+[6.12.2]: https://github.com/arangodb/arangodb-java-driver/compare/v6.12.1..v6.12.2
+[6.12.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.12.0..v6.12.1
+[6.12.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.11.1..v6.12.0
+[6.11.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.11.0..v6.11.1
+[6.11.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.10.0..v6.11.0
+[6.10.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.9.1..v6.10.0
+[6.9.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.9.0..v6.9.1
+[6.9.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.8.2..v6.9.0
+[6.8.2]: https://github.com/arangodb/arangodb-java-driver/compare/v6.8.1..v6.8.2
+[6.8.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.8.0..v6.8.1
+[6.8.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.5..v6.8.0
+[6.7.5]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.4..v6.7.5
+[6.7.4]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.3..v6.7.4
+[6.7.3]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.2..v6.7.3
+[6.7.2]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.1..v6.7.2
+[6.7.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.7.0..v6.7.1
+[6.7.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.6.3..v6.7.0
+[6.6.3]: https://github.com/arangodb/arangodb-java-driver/compare/v6.6.2..v6.6.3
+[6.6.2]: https://github.com/arangodb/arangodb-java-driver/compare/v6.6.1..v6.6.2
+[6.6.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.6.0..v6.6.1
+[6.6.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.5.0..v6.6.0
+[6.5.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.4.1..v6.5.0
+[6.4.1]: https://github.com/arangodb/arangodb-java-driver/compare/v6.4.0..v6.4.1
+[6.4.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.3.0..v6.4.0
+[6.3.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.2.0..v6.3.0
+[6.2.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.1.0..v6.2.0
+[6.1.0]: https://github.com/arangodb/arangodb-java-driver/compare/v6.0.0..v6.1.0
+[6.0.0]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.7..v6.0.0
+[5.0.7]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.6...5.0.7
+[5.0.6]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.5...5.0.6
+[5.0.5]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.4...5.0.5
+[5.0.4]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.3...5.0.4
+[5.0.3]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.2...5.0.3
+[5.0.2]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.1...5.0.2
+[5.0.1]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.0...5.0.1
+[5.0.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.3...5.0.0
+[4.7.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.2...4.7.3
+[4.7.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.1...4.7.2
+[4.7.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.0...4.7.1
+[4.7.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.6.1...4.7.0
+[4.6.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.6.0...4.6.1
+[4.6.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.5.2...4.6.0
+[4.5.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.5.1...4.5.2
+[4.5.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.5.0...4.5.1
+[4.5.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.4.1...4.5.0
+[4.4.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.4.0...4.4.1
+[4.4.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.7...4.4.0
+[4.3.7]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.6...4.3.7
+[4.3.6]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.5...4.3.6
+[4.3.5]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.4...4.3.5
+[4.3.4]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.3...4.3.4
+[4.3.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.2...4.3.3
+[4.3.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.1...4.3.2
+[4.3.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.3.0...4.3.1
+[4.3.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.7...4.3.0
+[4.2.7]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.6...4.2.7
+[4.2.6]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.5...4.2.6
+[4.2.5]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.4...4.2.5
+[4.2.4]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.3...4.2.4
+[4.2.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.2...4.2.3
+[4.2.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.1...4.2.2
+[4.2.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.2.0...4.2.1
+[4.2.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.12...4.2.0
+[4.1.12]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.11...4.1.12
+[4.1.11]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.10...4.1.11
+[4.1.10]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.9...4.1.10
+[4.1.9]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.8...4.1.9
+[4.1.8]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.7...4.1.8
+[4.1.7]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.6...4.1.7
+[4.1.6]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.5...4.1.6
+[4.1.5]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.4...4.1.5
+[4.1.4]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.3...4.1.4
+[4.1.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.2...4.1.3
+[4.1.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.1...4.1.2
+[4.1.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.1.0...4.1.1
+[4.1.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.0.0...4.1.0
+[4.0.0]: https://github.com/arangodb/arangodb-java-driver/compare/3.1.0...4.0.0
+[3.1.0]: https://github.com/arangodb/arangodb-java-driver/compare/3.0.4...3.1.0
+[3.0.4]: https://github.com/arangodb/arangodb-java-driver/compare/3.0.3...3.0.4
+[3.0.3]: https://github.com/arangodb/arangodb-java-driver/compare/3.0.2...3.0.3
+[3.0.2]: https://github.com/arangodb/arangodb-java-driver/compare/3.0.1...3.0.2
+[3.0.1]: https://github.com/arangodb/arangodb-java-driver/compare/3.0.0...3.0.1
+[3.0.0]: https://github.com/arangodb/arangodb-java-driver/compare/2.7.4...3.0.0
+[2.7.4]: https://github.com/arangodb/arangodb-java-driver/compare/2.7.3...2.7.4
+[2.7.3]: https://github.com/arangodb/arangodb-java-driver/compare/2.7.2...2.7.3
+[2.7.2]: https://github.com/arangodb/arangodb-java-driver/compare/2.7.1...2.7.2
+[2.7.1]: https://github.com/arangodb/arangodb-java-driver/compare/2.7.0...2.7.1
+[2.7.0]: https://github.com/arangodb/arangodb-java-driver/compare/2.6.9...2.7.0
+[2.6.9]: https://github.com/arangodb/arangodb-java-driver/compare/2.6.8...2.6.9
+[2.6.8]: https://github.com/arangodb/arangodb-java-driver/compare/2.5.6...2.6.8
+[2.5.6]: https://github.com/arangodb/arangodb-java-driver/compare/2.5.5...2.5.6
+[2.5.5]: https://github.com/arangodb/arangodb-java-driver/compare/2.5.4...2.5.5
+[2.5.4]: https://github.com/arangodb/arangodb-java-driver/compare/2.5.3...2.5.4
+[2.5.3]: https://github.com/arangodb/arangodb-java-driver/compare/2.5.0...2.5.3
+[2.5.0]: https://github.com/arangodb/arangodb-java-driver/compare/2.4.4...2.5.0
+[2.4.4]: https://github.com/arangodb/arangodb-java-driver/compare/2.4.3...2.4.4
+[2.4.3]: https://github.com/arangodb/arangodb-java-driver/compare/2.4.2...2.4.3
+[2.4.2]: https://github.com/arangodb/arangodb-java-driver/compare/2.4.1...2.4.2
+[2.4.1]: https://github.com/arangodb/arangodb-java-driver/compare/1.4.1...2.4.1
+[1.4.1]: https://github.com/arangodb/arangodb-java-driver/compare/1.4.0...1.4.1
+[1.4.0]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.2...1.4.0
+[1.2.2]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.0...1.2.1
+
