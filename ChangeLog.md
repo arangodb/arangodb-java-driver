@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.23.0] - 2023-04-20
+
 - deprecated `DbName` in favor of plain strings
 
 ## [6.22.0] - 2023-04-18
