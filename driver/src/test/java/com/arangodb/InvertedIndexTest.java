@@ -108,7 +108,8 @@ public class InvertedIndexTest extends BaseJunit5 {
                 )
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
-                .writebufferSizeMax(66L);
+                .writebufferSizeMax(66L)
+                .primaryKeyCache(true);
     }
 
     private void assertCorrectIndexEntity(InvertedIndexEntity indexResult, InvertedIndexOptions options) {
@@ -137,6 +138,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferIdle()).isEqualTo(options.getWritebufferIdle());
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
+        assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
     }
 
     @ParameterizedTest(name = "{index}")

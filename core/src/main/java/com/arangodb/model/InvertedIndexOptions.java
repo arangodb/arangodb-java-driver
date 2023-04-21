@@ -51,6 +51,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
     private Long writebufferIdle;
     private Long writebufferActive;
     private Long writebufferSizeMax;
+    private Boolean primaryKeyCache;
 
     public InvertedIndexOptions() {
         super();
@@ -347,16 +348,32 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
         return this;
     }
 
+    public Boolean getPrimaryKeyCache() {
+        return primaryKeyCache;
+    }
+
+    /**
+     * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
+     *                        can improve the performance of queries that return many documents. Otherwise, these values
+     *                        are memory-mapped and it is up to the operating system to load them from disk into memory
+     *                        and to evict them from memory. (default: false)
+     * @return this
+     */
+    public InvertedIndexOptions primaryKeyCache(Boolean primaryKeyCache) {
+        this.primaryKeyCache = primaryKeyCache;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvertedIndexOptions that = (InvertedIndexOptions) o;
-        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax);
+        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax);
+        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax, primaryKeyCache);
     }
 }
