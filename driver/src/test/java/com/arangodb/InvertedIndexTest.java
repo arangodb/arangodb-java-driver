@@ -138,7 +138,9 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferIdle()).isEqualTo(options.getWritebufferIdle());
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
-        assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
+        if (isEnterprise()) {
+            assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
+        }
     }
 
     @ParameterizedTest(name = "{index}")
