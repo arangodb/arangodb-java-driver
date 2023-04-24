@@ -53,6 +53,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                 .includeAllFields(true)
                 .searchField(false)
                 .trackListPositions(false)
+                .cache(false)
                 .features(
                         AnalyzerFeature.position,
                         AnalyzerFeature.frequency,
@@ -124,7 +125,15 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getCode()).isNotNull();
         assertThat(indexResult.getType()).isEqualTo(IndexType.inverted);
         assertThat(indexResult.getName()).isEqualTo(options.getName());
-        assertThat(indexResult.getFields()).containsExactlyElementsOf(options.getFields());
+        InvertedIndexField optionField = options.getFields().iterator().next();
+        InvertedIndexField resultField = indexResult.getFields().iterator().next();
+        assertThat(resultField.getName()).isEqualTo(optionField.getName());
+        assertThat(resultField.getAnalyzer()).isEqualTo(optionField.getAnalyzer());
+        assertThat(resultField.getIncludeAllFields()).isEqualTo(optionField.getIncludeAllFields());
+        assertThat(resultField.getSearchField()).isEqualTo(optionField.getSearchField());
+        assertThat(resultField.getTrackListPositions()).isEqualTo(optionField.getTrackListPositions());
+        assertThat(resultField.getFeatures()).isEqualTo(optionField.getFeatures());
+        assertThat(resultField.getNested()).isEqualTo(optionField.getNested());
         assertThat(indexResult.getSearchField()).isEqualTo(options.getSearchField());
         assertThat(indexResult.getStoredValues()).hasSize(1);
         StoredValue optionStoredValue = options.getStoredValues().iterator().next();
@@ -144,6 +153,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         if (isEnterprise()) {
+            assertThat(resultField.getCache()).isEqualTo(optionField.getCache());
             assertThat(indexResult.getCache()).isEqualTo(options.getCache());
             assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
             assertThat(indexResult.getPrimarySort().getCache()).isEqualTo(options.getPrimarySort().getCache());
