@@ -47,13 +47,15 @@ public class InvertedIndexTest extends BaseJunit5 {
     }
 
     private InvertedIndexOptions createOptions(String analyzerName) {
+        Boolean cache = isEnterprise() ? true : null;
+        Boolean fieldCache = cache != null ? false : null;
         InvertedIndexField field = new InvertedIndexField()
                 .name("foo")
                 .analyzer(AnalyzerType.identity.toString())
                 .includeAllFields(true)
                 .searchField(false)
                 .trackListPositions(false)
-                .cache(false)
+                .cache(fieldCache)
                 .features(
                         AnalyzerFeature.position,
                         AnalyzerFeature.frequency,
@@ -88,9 +90,9 @@ public class InvertedIndexTest extends BaseJunit5 {
                                 new InvertedIndexPrimarySort.Field("f2", InvertedIndexPrimarySort.Field.Direction.desc)
                         )
                         .compression(ArangoSearchCompression.lz4)
-                        .cache(true)
+                        .cache(cache)
                 )
-                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none, true))
+                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none, cache))
                 .analyzer(analyzerName)
                 .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
                 .includeAllFields(false)
@@ -110,8 +112,8 @@ public class InvertedIndexTest extends BaseJunit5 {
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
                 .writebufferSizeMax(66L)
-                .cache(true)
-                .primaryKeyCache(true);
+                .cache(cache)
+                .primaryKeyCache(cache);
     }
 
     private void assertCorrectIndexEntity(InvertedIndexEntity indexResult, InvertedIndexOptions options) {
@@ -125,21 +127,9 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getCode()).isNotNull();
         assertThat(indexResult.getType()).isEqualTo(IndexType.inverted);
         assertThat(indexResult.getName()).isEqualTo(options.getName());
-        InvertedIndexField optionField = options.getFields().iterator().next();
-        InvertedIndexField resultField = indexResult.getFields().iterator().next();
-        assertThat(resultField.getName()).isEqualTo(optionField.getName());
-        assertThat(resultField.getAnalyzer()).isEqualTo(optionField.getAnalyzer());
-        assertThat(resultField.getIncludeAllFields()).isEqualTo(optionField.getIncludeAllFields());
-        assertThat(resultField.getSearchField()).isEqualTo(optionField.getSearchField());
-        assertThat(resultField.getTrackListPositions()).isEqualTo(optionField.getTrackListPositions());
-        assertThat(resultField.getFeatures()).isEqualTo(optionField.getFeatures());
-        assertThat(resultField.getNested()).isEqualTo(optionField.getNested());
+        assertThat(indexResult.getFields()).containsExactlyElementsOf(options.getFields());
         assertThat(indexResult.getSearchField()).isEqualTo(options.getSearchField());
-        assertThat(indexResult.getStoredValues()).hasSize(1);
-        StoredValue optionStoredValue = options.getStoredValues().iterator().next();
-        StoredValue resultStoredValue = indexResult.getStoredValues().iterator().next();
-        assertThat(resultStoredValue.getFields()).isEqualTo(optionStoredValue.getFields());
-        assertThat(resultStoredValue.getCompression()).isEqualTo(optionStoredValue.getCompression());
+        assertThat(indexResult.getStoredValues()).containsExactlyElementsOf(options.getStoredValues());
         assertThat(indexResult.getPrimarySort()).isEqualTo(options.getPrimarySort());
         assertThat(indexResult.getAnalyzer()).isEqualTo(options.getAnalyzer());
         assertThat(indexResult.getFeatures()).hasSameElementsAs(options.getFeatures());
@@ -152,13 +142,8 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferIdle()).isEqualTo(options.getWritebufferIdle());
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
-        if (isEnterprise()) {
-            assertThat(resultField.getCache()).isEqualTo(optionField.getCache());
-            assertThat(indexResult.getCache()).isEqualTo(options.getCache());
-            assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
-            assertThat(indexResult.getPrimarySort().getCache()).isEqualTo(options.getPrimarySort().getCache());
-            assertThat(resultStoredValue.getCache()).isEqualTo(optionStoredValue.getCache());
-        }
+        assertThat(indexResult.getCache()).isEqualTo(options.getCache());
+        assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
     }
 
     @ParameterizedTest(name = "{index}")
