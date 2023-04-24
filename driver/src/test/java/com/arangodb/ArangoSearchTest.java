@@ -648,7 +648,9 @@ class ArangoSearchTest extends BaseJunit5 {
     void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
-        FieldLink field = FieldLink.on("f1").inBackground(true);
+        FieldLink field = FieldLink.on("f1")
+                .inBackground(true)
+                .cache(false);
         if (isEnterprise()) {
             field.nested(FieldLink.on("f2"));
         }
@@ -664,7 +666,10 @@ class ArangoSearchTest extends BaseJunit5 {
         if (isEnterprise()) {
             link.nested(FieldLink.on("f3"));
         }
-        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions().link(link);
+        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
+                .link(link)
+                .primarySortCache(true)
+                .primaryKeyCache(true);
         StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none, true);
         options.storedValues(storedValue);
 
@@ -685,8 +690,12 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(createdLink.getStoreValues()).isEqualTo(StoreValuesType.ID);
         assertThat(createdLink.getTrackListPositions()).isFalse();
 
-        if (isEnterprise() && isAtLeastVersion(3, 9, 5) && isLessThanVersion(3, 10)) {
+        FieldLink fieldLink = createdLink.getFields().iterator().next();
+        if (isEnterprise()) {
             assertThat(createdLink.getCache()).isTrue();
+            assertThat(fieldLink.getCache()).isFalse();
+            assertThat(properties.getPrimaryKeyCache()).isTrue();
+            assertThat(properties.getPrimarySortCache()).isTrue();
             assertThat(properties.getStoredValues())
                     .isNotEmpty()
                     .allSatisfy(it -> assertThat(it.getCache()).isTrue());
@@ -698,7 +707,6 @@ class ArangoSearchTest extends BaseJunit5 {
             assertThat(nested.getName()).isEqualTo("f3");
         }
 
-        FieldLink fieldLink = createdLink.getFields().iterator().next();
         assertThat(fieldLink.getName()).isEqualTo("f1");
         if (isEnterprise() && isAtLeastVersion(3, 10)) {
             assertThat(fieldLink.getNested()).isNotEmpty();

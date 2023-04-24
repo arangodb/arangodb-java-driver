@@ -6,7 +6,6 @@ import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -48,12 +47,15 @@ public class InvertedIndexTest extends BaseJunit5 {
     }
 
     private InvertedIndexOptions createOptions(String analyzerName) {
+        Boolean cache = isEnterprise() ? true : null;
+        Boolean fieldCache = cache != null ? false : null;
         InvertedIndexField field = new InvertedIndexField()
                 .name("foo")
                 .analyzer(AnalyzerType.identity.toString())
                 .includeAllFields(true)
                 .searchField(false)
                 .trackListPositions(false)
+                .cache(fieldCache)
                 .features(
                         AnalyzerFeature.position,
                         AnalyzerFeature.frequency,
@@ -88,8 +90,9 @@ public class InvertedIndexTest extends BaseJunit5 {
                                 new InvertedIndexPrimarySort.Field("f2", InvertedIndexPrimarySort.Field.Direction.desc)
                         )
                         .compression(ArangoSearchCompression.lz4)
+                        .cache(cache)
                 )
-                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none))
+                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none, cache))
                 .analyzer(analyzerName)
                 .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
                 .includeAllFields(false)
@@ -108,7 +111,9 @@ public class InvertedIndexTest extends BaseJunit5 {
                 )
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
-                .writebufferSizeMax(66L);
+                .writebufferSizeMax(66L)
+                .cache(cache)
+                .primaryKeyCache(cache);
     }
 
     private void assertCorrectIndexEntity(InvertedIndexEntity indexResult, InvertedIndexOptions options) {
@@ -137,6 +142,8 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferIdle()).isEqualTo(options.getWritebufferIdle());
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
+        assertThat(indexResult.getCache()).isEqualTo(options.getCache());
+        assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
     }
 
     @ParameterizedTest(name = "{index}")

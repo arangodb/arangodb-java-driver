@@ -15,6 +15,7 @@ public final class InvertedIndexField {
     private Boolean includeAllFields;
     private Boolean searchField;
     private Boolean trackListPositions;
+    private Boolean cache;
     private final Set<AnalyzerFeature> features = new HashSet<>();
     private Collection<InvertedIndexField> nested;
 
@@ -103,6 +104,23 @@ public final class InvertedIndexField {
         return this;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
+    /**
+     * @param cache Enable this option to always cache the field normalization values in memory for this specific field.
+     *              This can improve the performance of scoring and ranking queries. Otherwise, these values are
+     *              memory-mapped and it is up to the operating system to load them from disk into memory and to evict
+     *              them from memory. (Enterprise Edition only)
+     * @return this
+     * @since ArangoDB 3.10.2
+     */
+    public InvertedIndexField cache(Boolean cache) {
+        this.cache = cache;
+        return this;
+    }
+
     public Set<AnalyzerFeature> getFeatures() {
         return features;
     }
@@ -139,11 +157,11 @@ public final class InvertedIndexField {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvertedIndexField that = (InvertedIndexField) o;
-        return Objects.equals(name, that.name) && Objects.equals(analyzer, that.analyzer) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(searchField, that.searchField) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(features, that.features) && Objects.equals(nested, that.nested);
+        return Objects.equals(name, that.name) && Objects.equals(analyzer, that.analyzer) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(searchField, that.searchField) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(cache, that.cache) && Objects.equals(features, that.features) && Objects.equals(nested, that.nested);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, analyzer, includeAllFields, searchField, trackListPositions, features, nested);
+        return Objects.hash(name, analyzer, includeAllFields, searchField, trackListPositions, cache, features, nested);
     }
 }
