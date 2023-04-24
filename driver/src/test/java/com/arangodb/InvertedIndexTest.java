@@ -89,7 +89,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                         .compression(ArangoSearchCompression.lz4)
                         .cache(true)
                 )
-                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none))
+                .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none, true))
                 .analyzer(analyzerName)
                 .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
                 .includeAllFields(false)
@@ -125,7 +125,11 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(options.getName());
         assertThat(indexResult.getFields()).containsExactlyElementsOf(options.getFields());
         assertThat(indexResult.getSearchField()).isEqualTo(options.getSearchField());
-        assertThat(indexResult.getStoredValues()).containsExactlyElementsOf(options.getStoredValues());
+        assertThat(indexResult.getStoredValues()).hasSize(1);
+        StoredValue optionStoredValue = options.getStoredValues().iterator().next();
+        StoredValue resultStoredValue = indexResult.getStoredValues().iterator().next();
+        assertThat(resultStoredValue.getFields()).isEqualTo(optionStoredValue.getFields());
+        assertThat(resultStoredValue.getCompression()).isEqualTo(optionStoredValue.getCompression());
         assertThat(indexResult.getPrimarySort()).isEqualTo(options.getPrimarySort());
         assertThat(indexResult.getAnalyzer()).isEqualTo(options.getAnalyzer());
         assertThat(indexResult.getFeatures()).hasSameElementsAs(options.getFeatures());
@@ -141,6 +145,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         if (isEnterprise()) {
             assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
             assertThat(indexResult.getPrimarySort().getCache()).isEqualTo(options.getPrimarySort().getCache());
+            assertThat(resultStoredValue.getCache()).isEqualTo(optionStoredValue.getCache());
         }
     }
 
