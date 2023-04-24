@@ -109,6 +109,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
                 .writebufferSizeMax(66L)
+                .cache(true)
                 .primaryKeyCache(true);
     }
 
@@ -143,6 +144,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferActive()).isEqualTo(options.getWritebufferActive());
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         if (isEnterprise()) {
+            assertThat(indexResult.getCache()).isEqualTo(options.getCache());
             assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
             assertThat(indexResult.getPrimarySort().getCache()).isEqualTo(options.getPrimarySort().getCache());
             assertThat(resultStoredValue.getCache()).isEqualTo(optionStoredValue.getCache());

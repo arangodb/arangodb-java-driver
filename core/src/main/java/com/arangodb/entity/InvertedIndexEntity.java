@@ -57,6 +57,7 @@ public final class InvertedIndexEntity {
     private Long writebufferIdle;
     private Long writebufferActive;
     private Long writebufferSizeMax;
+    private Boolean cache;
     private Boolean primaryKeyCache;
 
     public String getId() {
@@ -149,6 +150,10 @@ public final class InvertedIndexEntity {
 
     public Long getWritebufferSizeMax() {
         return writebufferSizeMax;
+    }
+
+    public Boolean getCache() {
+        return cache;
     }
 
     public Boolean getPrimaryKeyCache() {

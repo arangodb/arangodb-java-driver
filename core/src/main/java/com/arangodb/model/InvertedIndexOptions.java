@@ -51,6 +51,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
     private Long writebufferIdle;
     private Long writebufferActive;
     private Long writebufferSizeMax;
+    private Boolean cache;
     private Boolean primaryKeyCache;
 
     public InvertedIndexOptions() {
@@ -348,6 +349,25 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
         return this;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
+    /**
+     * @param cache Enable this option to always cache the field normalization values in memory for all fields by
+     *              default. This can improve the performance of scoring and ranking queries. Otherwise, these values
+     *              are memory-mapped and it is up to the operating system to load them from disk into memory and to
+     *              evict them from memory.
+     *              <p/>
+     *              Default: `false`. (Enterprise Edition only)
+     * @return this
+     * @since ArangoDB 3.10.2
+     */
+    public InvertedIndexOptions cache(Boolean cache) {
+        this.cache = cache;
+        return this;
+    }
+
     public Boolean getPrimaryKeyCache() {
         return primaryKeyCache;
     }
@@ -370,11 +390,11 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvertedIndexOptions that = (InvertedIndexOptions) o;
-        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
+        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax) && Objects.equals(cache, that.cache) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax, primaryKeyCache);
+        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax, cache, primaryKeyCache);
     }
 }
