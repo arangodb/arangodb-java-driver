@@ -21,6 +21,7 @@ public final class FieldLink {
     private Collection<FieldLink> fields;
     private Collection<FieldLink> nested;
     private Boolean inBackground;
+    private Boolean cache;
 
     private FieldLink(final String name) {
         super();
@@ -112,6 +113,19 @@ public final class FieldLink {
         return this;
     }
 
+    /**
+     * @param cache If you enable this option, then field normalization values are always cached in memory. This can
+     *              improve the performance of scoring and ranking queries. Otherwise, these values are memory-mapped
+     *              and it is up to the operating system to load them from disk into memory and to evict them from
+     *              memory.
+     * @return link
+     * @since ArangoDB 3.9.5, Enterprise Edition only
+     */
+    public FieldLink cache(final Boolean cache) {
+        this.cache = cache;
+        return this;
+    }
+
     @JsonIgnore
     public String getName() {
         return name;
@@ -145,5 +159,9 @@ public final class FieldLink {
 
     public Boolean getInBackground() {
         return inBackground;
+    }
+
+    public Boolean getCache() {
+        return cache;
     }
 }
