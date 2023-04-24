@@ -666,7 +666,10 @@ class ArangoSearchTest extends BaseJunit5 {
         if (isEnterprise()) {
             link.nested(FieldLink.on("f3"));
         }
-        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions().link(link);
+        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
+                .link(link)
+                .primarySortCache(true)
+                .primaryKeyCache(true);
         StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none, true);
         options.storedValues(storedValue);
 
@@ -691,6 +694,8 @@ class ArangoSearchTest extends BaseJunit5 {
         if (isEnterprise()) {
             assertThat(createdLink.getCache()).isTrue();
             assertThat(fieldLink.getCache()).isFalse();
+            assertThat(properties.getPrimaryKeyCache()).isTrue();
+            assertThat(properties.getPrimarySortCache()).isTrue();
             assertThat(properties.getStoredValues())
                     .isNotEmpty()
                     .allSatisfy(it -> assertThat(it.getCache()).isTrue());

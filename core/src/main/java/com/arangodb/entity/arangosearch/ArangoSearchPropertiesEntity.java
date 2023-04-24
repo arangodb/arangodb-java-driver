@@ -41,6 +41,8 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
     private Collection<CollectionLink> links;
     private ArangoSearchCompression primarySortCompression;
     private Collection<StoredValue> storedValues;
+    private Boolean primarySortCache;
+    private Boolean primaryKeyCache;
 
     /**
      * @return Wait at least this many milliseconds between committing view data store changes and making documents
@@ -119,4 +121,11 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
         return storedValues;
     }
 
+    public Boolean getPrimarySortCache() {
+        return primarySortCache;
+    }
+
+    public Boolean getPrimaryKeyCache() {
+        return primaryKeyCache;
+    }
 }
