@@ -356,8 +356,9 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
      * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
      *                        can improve the performance of queries that return many documents. Otherwise, these values
      *                        are memory-mapped and it is up to the operating system to load them from disk into memory
-     *                        and to evict them from memory. (default: false)
+     *                        and to evict them from memory (Enterprise Edition only). (default: false)
      * @return this
+     * @since ArangoDB 3.10.2
      */
     public InvertedIndexOptions primaryKeyCache(Boolean primaryKeyCache) {
         this.primaryKeyCache = primaryKeyCache;

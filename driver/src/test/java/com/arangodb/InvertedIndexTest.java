@@ -6,7 +6,6 @@ import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -88,6 +87,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                                 new InvertedIndexPrimarySort.Field("f2", InvertedIndexPrimarySort.Field.Direction.desc)
                         )
                         .compression(ArangoSearchCompression.lz4)
+                        .cache(true)
                 )
                 .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none))
                 .analyzer(analyzerName)
@@ -140,6 +140,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         if (isEnterprise()) {
             assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
+            assertThat(indexResult.getPrimarySort().getCache()).isEqualTo(options.getPrimarySort().getCache());
         }
     }
 

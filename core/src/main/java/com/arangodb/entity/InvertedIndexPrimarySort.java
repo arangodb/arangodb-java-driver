@@ -17,6 +17,7 @@ import java.util.Objects;
 public final class InvertedIndexPrimarySort {
     private final List<Field> fields = new ArrayList<>();
     private ArangoSearchCompression compression;
+    private Boolean cache;
 
     public List<Field> getFields() {
         return fields;
@@ -44,17 +45,34 @@ public final class InvertedIndexPrimarySort {
         return this;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
+    /**
+     * @param cache If you enable this option, then the primary sort columns are always cached in memory. This can
+     *              improve the performance of queries that utilize the primary sort order. Otherwise, these values are
+     *              memory-mapped and it is up to the operating system to load them from disk into memory and to evict
+     *              them from memory (Enterprise Edition only).
+     * @return this
+     * @since ArangoDB 3.10.2
+     */
+    public InvertedIndexPrimarySort cache(Boolean cache) {
+        this.cache = cache;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvertedIndexPrimarySort that = (InvertedIndexPrimarySort) o;
-        return Objects.equals(fields, that.fields) && compression == that.compression;
+        return Objects.equals(fields, that.fields) && compression == that.compression && Objects.equals(cache, that.cache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fields, compression);
+        return Objects.hash(fields, compression, cache);
     }
 
     public static class Field {
