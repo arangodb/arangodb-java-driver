@@ -36,6 +36,7 @@ public final class DocumentCreateOptions {
     private String streamTransactionId;
     private Boolean mergeObjects;
     private Boolean keepNull;
+    private Boolean refillIndexCaches;
 
     public DocumentCreateOptions() {
         super();
@@ -163,4 +164,17 @@ public final class DocumentCreateOptions {
         return this;
     }
 
+    public Boolean getRefillIndexCaches() {
+        return refillIndexCaches;
+    }
+
+    /**
+     * @param refillIndexCaches Whether to add a new entry to the in-memory edge cache if an edge document is inserted.
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public DocumentCreateOptions refillIndexCaches(Boolean refillIndexCaches) {
+        this.refillIndexCaches = refillIndexCaches;
+        return this;
+    }
 }

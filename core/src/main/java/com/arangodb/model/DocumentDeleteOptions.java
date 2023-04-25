@@ -33,6 +33,7 @@ public final class DocumentDeleteOptions {
     private Boolean returnOld;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean refillIndexCaches;
 
     public DocumentDeleteOptions() {
         super();
@@ -107,4 +108,18 @@ public final class DocumentDeleteOptions {
         return this;
     }
 
+    public Boolean getRefillIndexCaches() {
+        return refillIndexCaches;
+    }
+
+    /**
+     * @param refillIndexCaches Whether to delete an existing entry from the in-memory edge cache and refill it with
+     *                          another edge if an edge document is removed.
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public DocumentDeleteOptions refillIndexCaches(Boolean refillIndexCaches) {
+        this.refillIndexCaches = refillIndexCaches;
+        return this;
+    }
 }

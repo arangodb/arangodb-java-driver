@@ -51,6 +51,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String PATH_API_USER = "/_api/user";
     private static final String MERGE_OBJECTS = "mergeObjects";
     private static final String KEEP_NULL = "keepNull";
+    private static final String REFILL_INDEX_CACHES = "refillIndexCaches";
     private static final String IGNORE_REVS = "ignoreRevs";
     private static final String RETURN_NEW = "returnNew";
     private static final String RETURN_OLD = "returnOld";
@@ -106,6 +107,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putQueryParam(KEEP_NULL, params.getKeepNull());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         return request;
     }
@@ -243,6 +245,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 
@@ -304,6 +307,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 
@@ -359,6 +363,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 
