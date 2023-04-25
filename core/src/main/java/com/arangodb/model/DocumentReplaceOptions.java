@@ -145,7 +145,8 @@ public final class DocumentReplaceOptions {
     }
 
     /**
-     * @param refillIndexCaches Whether to add a new entry to the in-memory edge cache if an edge document is inserted.
+     * @param refillIndexCaches Whether to update an existing entry in the in-memory edge cache if an edge document is
+     *                          replaced.
      * @return options
      * @since ArangoDB 3.11
      */

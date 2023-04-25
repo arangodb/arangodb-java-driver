@@ -955,6 +955,19 @@ collection.updateDocuments(Collections.singletonList(new BaseDocument(createResu
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void updateDocumentRefillIndexCaches(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument();
+        DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
+        doc.addAttribute("foo", "bar");
+        DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(createResult.getKey(),
+                doc , new DocumentUpdateOptions().refillIndexCaches(true));
+        assertThat(updateResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void replaceDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
