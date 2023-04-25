@@ -24,10 +24,7 @@ import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.*;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
@@ -299,6 +296,14 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     LogLevelEntity getLogLevel();
 
     /**
+     * Returns the server's current loglevel settings.
+     *
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.1.0
+     */
+    LogLevelEntity getLogLevel(LogLevelOptions options);
+
+    /**
      * Modifies and returns the server's current loglevel settings.
      *
      * @param entity loglevel settings
@@ -306,6 +311,15 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @since ArangoDB 3.1.0
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity);
+
+    /**
+     * Modifies and returns the server's current loglevel settings.
+     *
+     * @param entity loglevel settings
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.1.0
+     */
+    LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
     /**
      * @return the list of available rules and their respective flags
