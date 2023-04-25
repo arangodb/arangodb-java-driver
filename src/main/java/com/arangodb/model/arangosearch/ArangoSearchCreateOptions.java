@@ -134,4 +134,31 @@ public class ArangoSearchCreateOptions {
         return this;
     }
 
+
+    /**
+     * @param primarySortCache If you enable this option, then the primary sort columns are always cached in memory.
+     *                         This can improve the performance of queries that utilize the primary sort order.
+     *                         Otherwise, these values are memory-mapped and it is up to the operating system to load
+     *                         them from disk into memory and to evict them from memory.
+     * @return options
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public ArangoSearchCreateOptions primarySortCache(final Boolean primarySortCache) {
+        properties.setPrimarySortCache(primarySortCache);
+        return this;
+    }
+
+    /**
+     * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
+     *                        can improve the performance of queries that return many documents. Otherwise, these values
+     *                        are memory-mapped and it is up to the operating system to load them from disk into memory
+     *                        and to evict them from memory.
+     * @return options
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public ArangoSearchCreateOptions primaryKeyCache(final Boolean primaryKeyCache) {
+        properties.setPrimaryKeyCache(primaryKeyCache);
+        return this;
+    }
+
 }

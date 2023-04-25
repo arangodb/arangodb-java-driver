@@ -163,6 +163,16 @@ public class VPackSerializers {
         }
         context.serialize(builder, "consolidationPolicy", value.getConsolidationPolicy());
 
+        final Boolean primarySortCache = value.getPrimarySortCache();
+        if (primarySortCache != null) {
+            builder.add("primarySortCache", primarySortCache);
+        }
+
+        final Boolean primaryKeyCache = value.getPrimaryKeyCache();
+        if (primaryKeyCache != null) {
+            builder.add("primaryKeyCache", primaryKeyCache);
+        }
+
         final Collection<CollectionLink> links = value.getLinks();
         if (!links.isEmpty()) {
             builder.add("links", ValueType.OBJECT);
@@ -313,6 +323,10 @@ public class VPackSerializers {
             Boolean inBackground = fieldLink.getInBackground();
             if (inBackground != null) {
                 builder.add("inBackground", inBackground);
+            }
+            Boolean cache = fieldLink.getCache();
+            if (cache != null) {
+                builder.add("cache", cache);
             }
             serializeFieldLinks(builder, fieldLink.getFields());
             serializeNested(builder, fieldLink.getNested());

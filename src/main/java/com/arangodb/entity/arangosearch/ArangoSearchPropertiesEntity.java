@@ -116,4 +116,23 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
         return properties.getStoredValues();
     }
 
+    /**
+     * @return If you enable this option, then the primary sort columns are always cached in memory. This can improve
+     * the performance of queries that utilize the primary sort order. Otherwise, these values are memory-mapped and it
+     * is up to the operating system to load them from disk into memory and to evict them from memory.
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public Boolean getPrimarySortCache() {
+        return properties.getPrimarySortCache();
+    }
+
+    /**
+     * @return If you enable this option, then the primary key columns are always cached in memory. This can improve the
+     * performance of queries that return many documents. Otherwise, these values are memory-mapped and it is up to the
+     * operating system to load them from disk into memory and to evict them from memory.
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public Boolean getPrimaryKeyCache() {
+        return properties.getPrimaryKeyCache();
+    }
 }
