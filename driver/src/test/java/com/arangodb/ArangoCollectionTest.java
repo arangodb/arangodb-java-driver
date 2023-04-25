@@ -1110,7 +1110,7 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
         final DocumentUpdateEntity<BaseDocument> meta = collection.replaceDocument(createResult.getKey(), doc,
-         new DocumentReplaceOptions().silent(true));
+                new DocumentReplaceOptions().silent(true));
         assertThat(meta.getRev()).isNull();
         assertThat(doc.getRevision()).isNull();
         assertThat(createResult.getRev()).isNotNull();
@@ -1122,12 +1122,24 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         assumeTrue(isSingleServer());
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info =
- collection.replaceDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
-    new DocumentReplaceOptions().silent(true), BaseDocument.class);
+                collection.replaceDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
+                        new DocumentReplaceOptions().silent(true), BaseDocument.class);
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).isEmpty();
         assertThat(info.getDocumentsAndErrors()).isEmpty();
         assertThat(info.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void replaceDocumentRefillIndexCaches(ArangoCollection collection) {
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(doc);
+        final DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(createResult.getKey(), doc,
+                new DocumentReplaceOptions().refillIndexCaches(true));
+        assertThat(replaceResult.getRev())
+                .isNotNull()
+                .isNotEqualTo(createResult.getRev());
     }
 
     @ParameterizedTest(name = "{index}")

@@ -245,6 +245,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 
