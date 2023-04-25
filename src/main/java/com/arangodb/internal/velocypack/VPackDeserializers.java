@@ -189,6 +189,16 @@ public class VPackDeserializers {
                     context.deserialize(consolidationPolicy, ConsolidationPolicy.class));
         }
 
+        final VPackSlice primarySortCache = vpack.get("primarySortCache");
+        if (primarySortCache.isBoolean()) {
+            properties.setPrimarySortCache(primarySortCache.getAsBoolean());
+        }
+
+        final VPackSlice primaryKeyCache = vpack.get("primaryKeyCache");
+        if (primaryKeyCache.isBoolean()) {
+            properties.setPrimaryKeyCache(primaryKeyCache.getAsBoolean());
+        }
+
         final VPackSlice links = vpack.get("links");
         if (links.isObject()) {
             final Iterator<Entry<String, VPackSlice>> collectionIterator = links.objectIterator();
@@ -302,6 +312,10 @@ public class VPackDeserializers {
             while (fieldsIterator.hasNext()) {
                 link.nested(deserializeField(fieldsIterator.next()));
             }
+        }
+        final VPackSlice cache = value.get("cache");
+        if (cache.isBoolean()) {
+            link.cache(cache.getAsBoolean());
         }
         return link;
     }

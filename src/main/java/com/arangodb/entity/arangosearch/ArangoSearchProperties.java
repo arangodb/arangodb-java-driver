@@ -20,6 +20,8 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +42,8 @@ public class ArangoSearchProperties {
     private final Collection<CollectionLink> links;
     private ArangoSearchCompression primarySortCompression;
     private final Collection<StoredValue> storedValues;
+    private Boolean primarySortCache;
+    private Boolean primaryKeyCache;
 
     public ArangoSearchProperties() {
         super();
@@ -121,6 +125,37 @@ public class ArangoSearchProperties {
 
     public void addStoredValues(final StoredValue... storedValues) {
         this.storedValues.addAll(Arrays.asList(storedValues));
+    }
+
+    public Boolean getPrimarySortCache() {
+        return primarySortCache;
+    }
+
+
+    /**
+     * @param primarySortCache If you enable this option, then the primary sort columns are always cached in memory.
+     *                         This can improve the performance of queries that utilize the primary sort order.
+     *                         Otherwise, these values are memory-mapped and it is up to the operating system to load
+     *                         them from disk into memory and to evict them from memory.
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public void setPrimarySortCache(final Boolean primarySortCache) {
+        this.primarySortCache = primarySortCache;
+    }
+
+    public Boolean getPrimaryKeyCache() {
+        return primaryKeyCache;
+    }
+
+    /**
+     * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
+     *                        can improve the performance of queries that return many documents. Otherwise, these values
+     *                        are memory-mapped and it is up to the operating system to load them from disk into memory
+     *                        and to evict them from memory.
+     * @since ArangoDB 3.9.6, Enterprise Edition only
+     */
+    public void setPrimaryKeyCache(final Boolean primaryKeyCache) {
+        this.primaryKeyCache = primaryKeyCache;
     }
 
 }
