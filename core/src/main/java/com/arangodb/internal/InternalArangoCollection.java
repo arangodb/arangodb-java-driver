@@ -363,6 +363,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 

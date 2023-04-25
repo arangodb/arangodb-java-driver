@@ -1231,6 +1231,17 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void deleteDocumentRefillIndexCaches(ArangoCollection collection) {
+        DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
+        DocumentDeleteEntity<?> deleteResult = collection.deleteDocument(createResult.getKey(),
+                new DocumentDeleteOptions().refillIndexCaches(true));
+        assertThat(deleteResult.getRev())
+                .isNotNull()
+                .isEqualTo(createResult.getRev());
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void getIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
