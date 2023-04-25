@@ -278,6 +278,8 @@ public final class AqlExecutionExplainEntity {
         private Integer rulesExecuted;
         private Integer rulesSkipped;
         private Integer plansCreated;
+        private Long peakMemoryUsage;
+        private Double executionTime;
 
         public Integer getRulesExecuted() {
             return rulesExecuted;
@@ -291,6 +293,13 @@ public final class AqlExecutionExplainEntity {
             return plansCreated;
         }
 
+        public Long getPeakMemoryUsage() {
+            return peakMemoryUsage;
+        }
+
+        public Double getExecutionTime() {
+            return executionTime;
+        }
     }
 
 }
