@@ -27,10 +27,7 @@ import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.ProtocolProvider;
 import com.arangodb.internal.serde.SerdeUtils;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,12 +182,22 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public LogLevelEntity getLogLevel() {
-        return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
+        return getLogLevel(new LogLevelOptions());
+    }
+
+    @Override
+    public LogLevelEntity getLogLevel(final LogLevelOptions options) {
+        return executor.execute(getLogLevelRequest(options), LogLevelEntity.class);
     }
 
     @Override
     public LogLevelEntity setLogLevel(final LogLevelEntity entity) {
-        return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+        return setLogLevel(entity, new LogLevelOptions());
+    }
+
+    @Override
+    public LogLevelEntity setLogLevel(final LogLevelEntity entity, final LogLevelOptions options) {
+        return executor.execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
     }
 
     @Override

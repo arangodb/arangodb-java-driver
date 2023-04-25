@@ -540,6 +540,25 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
+    void logLevelWithServerId(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isCluster());
+        String serverId = arangoDB.getServerId();
+        LogLevelOptions options = new LogLevelOptions().serverId(serverId);
+        final LogLevelEntity entity = new LogLevelEntity();
+        try {
+            entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+            final LogLevelEntity logLevel = arangoDB.setLogLevel(entity, options);
+            assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+            assertThat(arangoDB.getLogLevel(options).getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+        } finally {
+            entity.setGraphs(LogLevelEntity.LogLevel.INFO);
+            arangoDB.setLogLevel(entity);
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
     void getQueryOptimizerRules(ArangoDB arangoDB) {
         assumeTrue(isAtLeastVersion(3, 10));
         final Collection<QueryOptimizerRule> rules = arangoDB.getQueryOptimizerRules();
