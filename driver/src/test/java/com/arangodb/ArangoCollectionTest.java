@@ -410,6 +410,15 @@ new DocumentCreateOptions().silent(true), BaseDocument.class);
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void insertDocumentsRefillIndexCaches(ArangoCollection collection) {
+        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info =
+                collection.insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument()),
+                        new DocumentCreateOptions().refillIndexCaches(true), BaseDocument.class);
+        assertThat(info.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void getDocument(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
         assertThat(createResult.getKey()).isNotNull();
@@ -968,6 +977,16 @@ collection.updateDocuments(Collections.singletonList(new BaseDocument(createResu
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void updateDocumentsRefillIndexCaches(ArangoCollection collection) {
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
+        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info =
+                collection.updateDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
+                        new DocumentUpdateOptions().refillIndexCaches(true), BaseDocument.class);
+        assertThat(info.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void replaceDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
@@ -1157,6 +1176,16 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void replaceDocumentsRefillIndexCaches(ArangoCollection collection) {
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
+        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info =
+                collection.replaceDocuments(Collections.singletonList(new BaseDocument(createResult.getKey())),
+                        new DocumentReplaceOptions().refillIndexCaches(true), BaseDocument.class);
+        assertThat(info.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void deleteDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null);
@@ -1238,6 +1267,18 @@ new BaseDocument(), new DocumentReplaceOptions().silent(true));
         assertThat(deleteResult.getRev())
                 .isNotNull()
                 .isEqualTo(createResult.getRev());
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void deleteDocumentsRefillIndexCaches(ArangoCollection collection) {
+        assumeTrue(isSingleServer());
+        final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
+        final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = collection.deleteDocuments(
+                Collections.singletonList(createResult.getKey()),
+                new DocumentDeleteOptions().refillIndexCaches(true),
+                BaseDocument.class);
+        assertThat(info.getErrors()).isEmpty();
     }
 
     @ParameterizedTest(name = "{index}")
