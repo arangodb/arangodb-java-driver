@@ -299,7 +299,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.1.0
+     * @since ArangoDB 3.10
      */
     LogLevelEntity getLogLevel(LogLevelOptions options);
 
@@ -317,7 +317,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.1.0
+     * @since ArangoDB 3.10
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
