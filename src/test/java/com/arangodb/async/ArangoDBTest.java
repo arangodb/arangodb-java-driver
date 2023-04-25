@@ -637,6 +637,24 @@ class ArangoDBTest {
     }
 
     @Test
+    void logLevelWithServerId() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isCluster());
+        String serverId = arangoDB.getServerId().get();
+        LogLevelOptions options = new LogLevelOptions().serverId(serverId);
+        final LogLevelEntity entity = new LogLevelEntity();
+        try {
+            entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+            final LogLevelEntity logLevel = arangoDB.setLogLevel(entity, options).get();
+            assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+            assertThat(arangoDB.getLogLevel(options).get().getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+        } finally {
+            entity.setGraphs(LogLevelEntity.LogLevel.INFO);
+            arangoDB.setLogLevel(entity);
+        }
+    }
+
+    @Test
     void queueTime() throws InterruptedException, ExecutionException {
         List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 80)
                 .mapToObj(__ -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))

@@ -37,10 +37,7 @@ import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -169,6 +166,11 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     }
 
     @Override
+    public CompletableFuture<String> getServerId() {
+        return executor.execute(getServerIdRequest(), getServerIdResponseDeserializer());
+    }
+
+    @Override
     public CompletableFuture<UserEntity> createUser(final String user, final String passwd) {
         return executor.execute(createUserRequest(db().dbName(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
@@ -234,12 +236,22 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<LogLevelEntity> getLogLevel() {
-        return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
+        return getLogLevel(new LogLevelOptions());
+    }
+
+    @Override
+    public CompletableFuture<LogLevelEntity> getLogLevel(final LogLevelOptions options) {
+        return executor.execute(getLogLevelRequest(options), LogLevelEntity.class);
     }
 
     @Override
     public CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity) {
-        return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+        return setLogLevel(entity, new LogLevelOptions());
+    }
+
+    @Override
+    public CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity, final LogLevelOptions options) {
+        return executor.execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
     }
 
     @Override

@@ -32,10 +32,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.Type;
@@ -262,12 +259,22 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public LogLevelEntity getLogLevel() throws ArangoDBException {
-        return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
+        return getLogLevel(new LogLevelOptions());
+    }
+
+    @Override
+    public LogLevelEntity getLogLevel(final LogLevelOptions options) throws ArangoDBException {
+        return executor.execute(getLogLevelRequest(options), LogLevelEntity.class);
     }
 
     @Override
     public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
-        return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+        return setLogLevel(entity, new LogLevelOptions());
+    }
+
+    @Override
+    public LogLevelEntity setLogLevel(final LogLevelEntity entity, final LogLevelOptions options) {
+        return executor.execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
     }
 
     @Override
