@@ -326,6 +326,18 @@ new DocumentCreateOptions().overwriteMode(OverwriteMode.replace).returnNew(true)
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void insertDocumentRefillIndexCaches(ArangoCollection collection) {
+        final DocumentCreateOptions options = new DocumentCreateOptions().refillIndexCaches(true);
+        final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument(), options);
+        assertThat(doc).isNotNull();
+        assertThat(doc.getId()).isNotNull();
+        assertThat(doc.getKey()).isNotNull();
+        assertThat(doc.getRev()).isNotNull();
+        assertThat(doc.getNew()).isNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void insertDocumentAsJson(ArangoCollection collection) {
         String key = "doc-" + UUID.randomUUID();
         RawJson rawJson = RawJson.of("{\"_key\":\"" + key + "\",\"a\":\"test\"}");
