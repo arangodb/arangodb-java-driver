@@ -189,12 +189,14 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
                 .putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
     }
 
-    protected Request getLogLevelRequest() {
-        return request(DbName.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_LEVEL);
+    protected Request getLogLevelRequest(final LogLevelOptions options) {
+        return request(DbName.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_LEVEL)
+                .putQueryParam("serverId", options.getServerId());
     }
 
-    protected Request setLogLevelRequest(final LogLevelEntity entity) {
+    protected Request setLogLevelRequest(final LogLevelEntity entity, final LogLevelOptions options) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
+                .putQueryParam("serverId", options.getServerId())
                 .setBody(util().serialize(entity));
     }
 

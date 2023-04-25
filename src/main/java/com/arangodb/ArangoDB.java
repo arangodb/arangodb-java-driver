@@ -38,10 +38,7 @@ import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.util.*;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackAnnotationFieldFilter;
@@ -1037,6 +1034,14 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     LogLevelEntity getLogLevel() throws ArangoDBException;
 
     /**
+     * Returns the server's current loglevel settings.
+     *
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.10
+     */
+    LogLevelEntity getLogLevel(LogLevelOptions options) throws ArangoDBException;
+
+    /**
      * Modifies and returns the server's current loglevel settings.
      *
      * @param entity loglevel settings
@@ -1045,6 +1050,15 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @since ArangoDB 3.1.0
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
+
+    /**
+     * Modifies and returns the server's current loglevel settings.
+     *
+     * @param entity loglevel settings
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.10
+     */
+    LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options) throws ArangoDBException;
 
     /**
      * @return the list of available rules and their respective flags

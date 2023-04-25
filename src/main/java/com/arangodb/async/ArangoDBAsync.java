@@ -37,10 +37,7 @@ import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
@@ -198,6 +195,16 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     CompletableFuture<ServerRole> getRole();
 
     /**
+     * Returns the id of a server in a cluster.
+     *
+     * @return the server id
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
+     * Documentation</a>
+     */
+    CompletableFuture<String> getServerId() throws ArangoDBException;
+
+    /**
      * Create a new user. This user will not have access to any database. You need permission to the _system database in
      * order to execute this call.
      *
@@ -332,12 +339,29 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     CompletableFuture<LogLevelEntity> getLogLevel();
 
     /**
+     * Returns the server's current loglevel settings.
+     *
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<LogLevelEntity> getLogLevel(final LogLevelOptions options);
+
+    /**
      * Modifies and returns the server's current loglevel settings.
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
      */
     CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity);
+
+    /**
+     * Modifies and returns the server's current loglevel settings.
+     *
+     * @param entity loglevel settings
+     * @return the server's current loglevel settings
+     * @since ArangoDB 3.10
+     */
+    CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity, final LogLevelOptions options);
 
     /**
      * @return the list of available rules and their respective flags
