@@ -1019,6 +1019,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(plan.getEstimatedNrItems()).isPositive();
         assertThat(plan.getVariables()).hasSize(2);
         assertThat(plan.getNodes()).isNotEmpty();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(explain.getStats().getPeakMemoryUsage()).isNotNull();
+            assertThat(explain.getStats().getExecutionTime()).isNotNull();
+        }
     }
 
     @ParameterizedTest(name = "{index}")
