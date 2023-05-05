@@ -88,6 +88,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, GeoJSONAnalyzer.class);
             case geopoint:
                 return context.deserialize(vpack, GeoPointAnalyzer.class);
+            case geo_s2:
+                return context.deserialize(vpack, GeoS2Analyzer.class);
             case segmentation:
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
             case collation:
