@@ -30,6 +30,7 @@ import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
+import com.arangodb.internal.util.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public class HttpCommunication implements Closeable {
                         String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
                         LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
                     }
+                    ResponseUtils.checkError(serde, response);
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;

@@ -25,9 +25,7 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.serde.ContentTypeFactory;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;
@@ -75,7 +73,6 @@ public class HttpConnection implements Connection {
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
-    private final InternalSerde serde;
     private final ContentType contentType;
     private String auth;
     private final WebClient client;
@@ -88,7 +85,6 @@ public class HttpConnection implements Connection {
 
     HttpConnection(final ArangoConfig config, final HostDescription host) {
         super();
-        serde = config.getInternalSerde();
         Protocol protocol = config.getProtocol();
         contentType = ContentTypeFactory.of(protocol);
         timeout = config.getTimeout();
@@ -244,7 +240,6 @@ public class HttpConnection implements Connection {
                 throw new IOException(cause);
             }
         }
-        checkError(resp);
         return resp;
     }
 
@@ -293,10 +288,6 @@ public class HttpConnection implements Connection {
             response.putMeta(header.getKey(), header.getValue());
         }
         return response;
-    }
-
-    protected void checkError(final InternalResponse response) {
-        ResponseUtils.checkError(serde, response);
     }
 
     @Override

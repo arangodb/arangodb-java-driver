@@ -848,6 +848,36 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
+    void geoS2Analyzer(ArangoDatabase db) {
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 10, 5));
+
+        GeoAnalyzerOptions options = new GeoAnalyzerOptions();
+        options.setMaxLevel(10);
+        options.setMaxCells(11);
+        options.setMinLevel(8);
+
+        GeoS2AnalyzerProperties properties = new GeoS2AnalyzerProperties();
+        properties.setOptions(options);
+        properties.setType(GeoS2AnalyzerProperties.GeoS2AnalyzerType.point);
+        properties.setFormat(GeoS2AnalyzerProperties.GeoS2Format.s2Point);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        GeoS2Analyzer geoS2Analyzer = new GeoS2Analyzer();
+        geoS2Analyzer.setName("test-" + UUID.randomUUID());
+        geoS2Analyzer.setProperties(properties);
+        geoS2Analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, geoS2Analyzer);
+    }
+
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
     void geoPointAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
