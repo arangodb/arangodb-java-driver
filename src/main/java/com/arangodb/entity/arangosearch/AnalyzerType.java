@@ -35,6 +35,7 @@ public enum AnalyzerType {
     aql,
     geojson,
     geopoint,
+    geo_s2,
     segmentation,
     collation,
     classification,
