@@ -48,6 +48,7 @@ import java.util.Set;
         @JsonSubTypes.Type(name = "aql", value = AQLAnalyzer.class),
         @JsonSubTypes.Type(name = "geojson", value = GeoJSONAnalyzer.class),
         @JsonSubTypes.Type(name = "geopoint", value = GeoPointAnalyzer.class),
+        @JsonSubTypes.Type(name = "geo_s2", value = GeoS2Analyzer.class),
         @JsonSubTypes.Type(name = "segmentation", value = SegmentationAnalyzer.class),
         @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class),
         @JsonSubTypes.Type(name = "classification", value = ClassificationAnalyzer.class),
