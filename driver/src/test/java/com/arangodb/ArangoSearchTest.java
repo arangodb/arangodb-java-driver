@@ -849,6 +849,7 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void geoS2Analyzer(ArangoDatabase db) {
+        assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 10, 5));
 
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
