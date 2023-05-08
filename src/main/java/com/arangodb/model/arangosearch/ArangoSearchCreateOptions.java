@@ -134,6 +134,15 @@ public class ArangoSearchCreateOptions {
         return this;
     }
 
+    /**
+     * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
+     * @return options
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public ArangoSearchCreateOptions optimizeTopK(final String... optimizeTopK) {
+        properties.addOptimizeTopK(optimizeTopK);
+        return this;
+    }
 
     /**
      * @param primarySortCache If you enable this option, then the primary sort columns are always cached in memory.

@@ -42,6 +42,7 @@ public class ArangoSearchProperties {
     private final Collection<CollectionLink> links;
     private ArangoSearchCompression primarySortCompression;
     private final Collection<StoredValue> storedValues;
+    private final Collection<String> optimizeTopK;
     private Boolean primarySortCache;
     private Boolean primaryKeyCache;
 
@@ -50,6 +51,7 @@ public class ArangoSearchProperties {
         links = new ArrayList<>();
         primarySorts = new ArrayList<>();
         storedValues = new ArrayList<>();
+        optimizeTopK = new ArrayList<>();
     }
 
     public Long getCommitIntervalMsec() {
@@ -125,6 +127,18 @@ public class ArangoSearchProperties {
 
     public void addStoredValues(final StoredValue... storedValues) {
         this.storedValues.addAll(Arrays.asList(storedValues));
+    }
+
+    /**
+     * @return An array of strings defining optimized sort expressions.
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
+    }
+
+    public void addOptimizeTopK(final String... optimizeTopK) {
+        this.optimizeTopK.addAll(Arrays.asList(optimizeTopK));
     }
 
     public Boolean getPrimarySortCache() {

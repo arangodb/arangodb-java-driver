@@ -117,6 +117,14 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
     }
 
     /**
+     * @return An array of strings defining optimized sort expressions.
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public Collection<String> getOptimizeTopK() {
+        return properties.getOptimizeTopK();
+    }
+
+    /**
      * @return If you enable this option, then the primary sort columns are always cached in memory. This can improve
      * the performance of queries that utilize the primary sort order. Otherwise, these values are memory-mapped and it
      * is up to the operating system to load them from disk into memory and to evict them from memory.
