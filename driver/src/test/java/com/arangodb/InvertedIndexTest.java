@@ -93,6 +93,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                         .cache(cache)
                 )
                 .storedValues(new StoredValue(Arrays.asList("f3", "f4"), ArangoSearchCompression.none, cache))
+                .optimizeTopK("BM25(@doc) DESC", "TFIDF(@doc) DESC")
                 .analyzer(analyzerName)
                 .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
                 .includeAllFields(false)
@@ -144,6 +145,10 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         assertThat(indexResult.getCache()).isEqualTo(options.getCache());
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
+
+        if (isEnterprise() && isAtLeastVersion(3, 11)) {
+            assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
+        }
     }
 
     @ParameterizedTest(name = "{index}")

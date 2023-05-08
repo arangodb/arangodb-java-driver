@@ -27,7 +27,6 @@ import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.arangosearch.*;
-import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
