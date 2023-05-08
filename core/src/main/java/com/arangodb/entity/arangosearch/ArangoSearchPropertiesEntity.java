@@ -41,6 +41,7 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
     private Collection<CollectionLink> links;
     private ArangoSearchCompression primarySortCompression;
     private Collection<StoredValue> storedValues;
+    private Collection<String> optimizeTopK;
     private Boolean primarySortCache;
     private Boolean primaryKeyCache;
 
@@ -119,6 +120,14 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
      */
     public Collection<StoredValue> getStoredValues() {
         return storedValues;
+    }
+
+    /**
+     * @return An array of strings defining optimized sort expressions.
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
     }
 
     public Boolean getPrimarySortCache() {

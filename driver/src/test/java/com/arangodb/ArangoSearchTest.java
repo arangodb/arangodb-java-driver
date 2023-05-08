@@ -424,7 +424,7 @@ class ArangoSearchTest extends BaseJunit5 {
         // getAnalyzers
         SearchAnalyzer foundAnalyzer =
                 db.getSearchAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
-                .findFirst().get();
+                        .findFirst().get();
         assertThat(foundAnalyzer).isEqualTo(analyzer);
 
         // deleteAnalyzer
@@ -672,6 +672,8 @@ class ArangoSearchTest extends BaseJunit5 {
                 .primaryKeyCache(true);
         StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none, true);
         options.storedValues(storedValue);
+        String[] optimizeTopK = new String[]{"BM25(@doc) DESC", "TFIDF(@doc) DESC"};
+        options.optimizeTopK(optimizeTopK);
 
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(options);
@@ -713,6 +715,11 @@ class ArangoSearchTest extends BaseJunit5 {
             FieldLink nested = fieldLink.getNested().iterator().next();
             assertThat(nested.getName()).isEqualTo("f2");
         }
+
+        if (isEnterprise() && isAtLeastVersion(3, 11)) {
+            assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
+        }
+
     }
 
     @ParameterizedTest(name = "{index}")
