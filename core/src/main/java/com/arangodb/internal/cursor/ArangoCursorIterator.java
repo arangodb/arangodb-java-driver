@@ -64,7 +64,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     @Override
     public T next() {
         if (!arrayIterator.hasNext() && Boolean.TRUE.equals(result.getHasMore())) {
-            result = execute.next(cursor.getId(), result.getMeta());
+            result = execute.next(cursor.getId());
             arrayIterator = result.getResult().iterator();
         }
         if (!hasNext()) {

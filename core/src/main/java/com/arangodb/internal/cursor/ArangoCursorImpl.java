@@ -51,7 +51,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
         this.type = type;
         iterator = createIterator(this, db, execute, result);
         id = result.getId();
-        this.isPontentialDirtyRead = Boolean.parseBoolean(result.getMeta().get("x-arango-potential-dirty-read"));
+        isPontentialDirtyRead = result.isPontentialDirtyRead();
     }
 
     protected ArangoCursorIterator<T> createIterator(
@@ -98,7 +98,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     @Override
     public void close() {
         if (id != null && hasNext()) {
-            execute.close(id, iterator.getResult().getMeta());
+            execute.close(id);
         }
     }
 

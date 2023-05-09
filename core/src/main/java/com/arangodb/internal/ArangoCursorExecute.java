@@ -22,15 +22,14 @@ package com.arangodb.internal;
 
 import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
  */
 public interface ArangoCursorExecute {
 
-    InternalCursorEntity next(String id, Map<String, String> meta);
+    InternalCursorEntity next(String id);
 
-    void close(String id, Map<String, String> meta);
+    void close(String id);
 
 }
