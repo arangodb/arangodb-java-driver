@@ -1013,7 +1013,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
         assertThat(cursor.asListRemaining()).containsExactly("1", "2");
-        cursor.close();
     }
 
     @ParameterizedTest(name = "{index}")

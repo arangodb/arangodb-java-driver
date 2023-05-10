@@ -27,7 +27,7 @@ class RetriableCursorTest extends SingleServerTest {
         return Stream.of(
                 dbBuilder().timeout(1_000).protocol(Protocol.VST).build(),
                 dbBuilder().timeout(1_000).protocol(Protocol.HTTP_JSON).build(),
-                dbBuilder().timeout(1_000).protocol(Protocol.HTTP2_VPACK).build()
+                dbBuilder().timeout(1_000).protocol(Protocol.HTTP_VPACK).build()
         );
     }
 
@@ -45,7 +45,7 @@ class RetriableCursorTest extends SingleServerTest {
             Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
             Throwable thrown = catchThrowable(cursor::next);
             assertThat(thrown).isInstanceOf(ArangoDBException.class);
-            assertThat(thrown.getCause()).isInstanceOfAny(TimeoutException.class, IOException.class);
+            assertThat(thrown.getCause()).isInstanceOfAny(TimeoutException.class);
             toxic.remove();
             assertThat(cursor.next()).isEqualTo("2");
             assertThat(cursor.hasNext()).isFalse();
