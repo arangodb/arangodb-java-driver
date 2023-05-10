@@ -183,8 +183,20 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor
-                .execute(queryNextRequest(cursorId, null), internalCursorEntityDeserializer(), hostHandle);
+        final InternalCursorEntity result = executor.execute(
+                queryNextRequest(cursorId, null),
+                internalCursorEntityDeserializer(),
+                hostHandle);
+        return createCursor(result, type, null, hostHandle);
+    }
+
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
+        final HostHandle hostHandle = new HostHandle();
+        final InternalCursorEntity result = executor.execute(
+                queryNextByBatchIdRequest(cursorId, nextBatchId, null),
+                internalCursorEntityDeserializer(),
+                hostHandle);
         return createCursor(result, type, null, hostHandle);
     }
 
