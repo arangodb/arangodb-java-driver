@@ -42,7 +42,6 @@ public final class AqlQueryOptions implements Cloneable {
     private Options options;
     private Boolean allowDirtyRead;
     private String streamTransactionId;
-    private Boolean allowRetry;
 
     public Boolean getCount() {
         return count;
@@ -487,7 +486,7 @@ public final class AqlQueryOptions implements Cloneable {
     }
 
     public Boolean getAllowRetry() {
-        return allowRetry;
+        return getOptions().allowRetry;
     }
 
     /**
@@ -503,7 +502,7 @@ public final class AqlQueryOptions implements Cloneable {
      * @since ArangoDB 3.11
      */
     public AqlQueryOptions allowRetry(final Boolean allowRetry) {
-        this.allowRetry = allowRetry;
+        getOptions().allowRetry = allowRetry;
         return this;
     }
 
@@ -537,6 +536,7 @@ public final class AqlQueryOptions implements Cloneable {
         private Double maxRuntime;
         private Boolean fillBlockCache;
         private String forceOneShardAttributeValue;
+        private Boolean allowRetry;
 
         public Boolean getFailOnWarning() {
             return failOnWarning;
@@ -603,6 +603,10 @@ public final class AqlQueryOptions implements Cloneable {
 
         public Collection<String> getShardIds() {
             return shardIds;
+        }
+
+        public Boolean getAllowRetry() {
+            return allowRetry;
         }
 
         @Override

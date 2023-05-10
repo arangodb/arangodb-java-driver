@@ -28,6 +28,8 @@ import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +43,7 @@ import java.util.stream.StreamSupport;
  * @author Mark Vollmary
  */
 public class ArangoCursorImpl<T> implements ArangoCursor<T> {
+    private final static Logger LOG = LoggerFactory.getLogger(ArangoCursorImpl.class);
 
     protected final ArangoCursorIterator<T> iterator;
     private final Class<T> type;
@@ -115,6 +118,11 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
         final List<T> remaining = new ArrayList<>();
         while (hasNext()) {
             remaining.add(next());
+        }
+        try {
+            close();
+        } catch (final Exception e) {
+            LOG.warn("Could not close cursor: ", e);
         }
         return remaining;
     }

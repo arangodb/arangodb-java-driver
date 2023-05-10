@@ -1007,6 +1007,56 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetry(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
+        assertThat(cursor.asListRemaining()).containsExactly("1", "2");
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryClose(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryCloseBeforeLatestBatch(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryCloseSingleBatch(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true));
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void explainQuery(ArangoDatabase db) {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return i", null, null);
