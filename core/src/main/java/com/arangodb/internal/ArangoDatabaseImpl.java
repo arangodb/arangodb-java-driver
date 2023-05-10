@@ -196,8 +196,10 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
         final ArangoCursorExecute execute = new ArangoCursorExecute() {
             @Override
-            public InternalCursorEntity next(final String id) {
-                return executor.execute(queryNextRequest(id, options), internalCursorEntityDeserializer(), hostHandle);
+            public InternalCursorEntity next(final String id, final String nextBatchId) {
+                InternalRequest request = nextBatchId == null ?
+                        queryNextRequest(id, options) : queryNextByBatchIdRequest(id, nextBatchId, options);
+                return executor.execute(request, internalCursorEntityDeserializer(), hostHandle);
             }
 
             @Override

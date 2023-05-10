@@ -41,6 +41,7 @@ public final class InternalCursorEntity {
     private Boolean hasMore;
     private JsonNode result;
     private Boolean pontentialDirtyRead;
+    private String nextBatchId;
 
     public String getId() {
         return id;
@@ -97,6 +98,15 @@ public final class InternalCursorEntity {
 
     public void setPontentialDirtyRead(final Boolean pontentialDirtyRead) {
         this.pontentialDirtyRead = pontentialDirtyRead;
+    }
+
+    /**
+     * @return The ID of the batch after the current one. The first batch has an ID of 1 and the value is incremented by
+     * 1 with every batch. Only set if the allowRetry query option is enabled.
+     * @since ArangoDB 3.11
+     */
+    public String getNextBatchId() {
+        return nextBatchId;
     }
 
     public static final class Extras {

@@ -42,10 +42,7 @@ public final class AqlQueryOptions implements Cloneable {
     private Options options;
     private Boolean allowDirtyRead;
     private String streamTransactionId;
-
-    public AqlQueryOptions() {
-        super();
-    }
+    private Boolean allowRetry;
 
     public Boolean getCount() {
         return count;
@@ -486,6 +483,27 @@ public final class AqlQueryOptions implements Cloneable {
      */
     public AqlQueryOptions streamTransactionId(final String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
+    public Boolean getAllowRetry() {
+        return allowRetry;
+    }
+
+    /**
+     * @param allowRetry Set this option to true to make it possible to retry fetching the latest batch from a cursor.
+     *                   This makes possible to safely retry invoking {@link com.arangodb.ArangoCursor#next()} in
+     *                   case of {@link java.io.IOException}.
+     *                   <p>
+     *                   If set to false (default), retry invoking {@link com.arangodb.ArangoCursor#next()} in case of
+     *                   {@link java.io.IOException} is not safe, since the request to fetch the next batch is not
+     *                   idempotent (i.e. the cursor may be advanced multiple times on the server).
+     *
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public AqlQueryOptions allowRetry(final Boolean allowRetry) {
+        this.allowRetry = allowRetry;
         return this;
     }
 

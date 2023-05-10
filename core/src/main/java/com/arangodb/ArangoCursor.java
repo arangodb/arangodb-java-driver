@@ -76,4 +76,11 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
      */
     boolean isPotentialDirtyRead();
 
+    /**
+     * @return The ID of the batch after the current one. The first batch has an ID of 1 and the value is incremented by
+     * 1 with every batch. Only set if the allowRetry query option is enabled.
+     * @since ArangoDB 3.11
+     */
+    String getNextBatchId();
+
 }

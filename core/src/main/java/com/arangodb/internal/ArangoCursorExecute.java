@@ -28,7 +28,7 @@ import com.arangodb.internal.cursor.entity.InternalCursorEntity;
  */
 public interface ArangoCursorExecute {
 
-    InternalCursorEntity next(String id);
+    InternalCursorEntity next(String id, String nextBatchId);
 
     void close(String id);
 
