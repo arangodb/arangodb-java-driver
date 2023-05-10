@@ -22,10 +22,12 @@ package com.arangodb;
 
 import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
+import com.arangodb.model.AqlQueryOptions;
 
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author Mark Vollmary
@@ -83,4 +85,20 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
      */
     String getNextBatchId();
 
+    /**
+     * Returns the next element in the iteration.
+     * <p/>
+     * If the cursor allows retries (see {@link AqlQueryOptions#allowRetry(Boolean)}), then it is safe to retry invoking
+     * this method in case of I/O exceptions (which are actually thrown as {@link com.arangodb.ArangoDBException} with
+     * cause {@link java.io.IOException}).
+     * <p/>
+     * If the cursor does not allow retries (default), then it is not safe to retry invoking this method in case of I/O
+     * exceptions, since the request to fetch the next batch is not idempotent (i.e. the cursor may advance multiple
+     * times on the server).
+     *
+     * @return the next element in the iteration
+     * @throws NoSuchElementException if the iteration has no more elements
+     */
+    @Override
+    T next();
 }

@@ -491,13 +491,15 @@ public final class AqlQueryOptions implements Cloneable {
 
     /**
      * @param allowRetry Set this option to true to make it possible to retry fetching the latest batch from a cursor.
+     *                   <p/>
      *                   This makes possible to safely retry invoking {@link com.arangodb.ArangoCursor#next()} in
-     *                   case of {@link java.io.IOException}.
-     *                   <p>
-     *                   If set to false (default), retry invoking {@link com.arangodb.ArangoCursor#next()} in case of
-     *                   {@link java.io.IOException} is not safe, since the request to fetch the next batch is not
-     *                   idempotent (i.e. the cursor may be advanced multiple times on the server).
-     *
+     *                   case of I/O exceptions (which are actually thrown as {@link com.arangodb.ArangoDBException}
+     *                   with cause {@link java.io.IOException})
+     *                   <p/>
+     *                   If set to false (default), then it is not safe to retry invoking
+     *                   {@link com.arangodb.ArangoCursor#next()} in case of I/O exceptions, since the request to
+     *                   fetch the next batch is not idempotent (i.e. the cursor may advance multiple times on the
+     *                   server).
      * @return options
      * @since ArangoDB 3.11
      */
