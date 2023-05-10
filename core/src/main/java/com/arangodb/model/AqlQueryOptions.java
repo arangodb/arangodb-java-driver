@@ -500,6 +500,10 @@ public final class AqlQueryOptions implements Cloneable {
      *                   {@link com.arangodb.ArangoCursor#next()} in case of I/O exceptions, since the request to
      *                   fetch the next batch is not idempotent (i.e. the cursor may advance multiple times on the
      *                   server).
+     *                   <p/>
+     *                   Note: once you successfully received the last batch, you should call
+     *                   {@link com.arangodb.ArangoCursor#close()} so that the server does not unnecessary keep the
+     *                   batch until the cursor times out ({@link AqlQueryOptions#ttl(Integer)}).
      * @return options
      * @since ArangoDB 3.11
      */
