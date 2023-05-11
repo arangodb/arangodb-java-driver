@@ -20,6 +20,7 @@
 
 package com.arangodb.async;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.DbName;
@@ -330,6 +331,20 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type);
+
+    /**
+     * Return an cursor from the given cursor-ID if still existing
+     *
+     * @param cursorId    The ID of the cursor
+     * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+     * @param nextBatchId The ID of the next cursor batch (set only if cursor allows retries, see
+     *                    {@link AqlQueryOptions#allowRetry(Boolean)}
+     * @return cursor of the results
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors
+     * .html#read-next-batch-from-cursor">API Documentation</a>
+     * @since ArangoDB 3.11
+     */
+    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
 
     /**
      * Explain an AQL query and return information about it
