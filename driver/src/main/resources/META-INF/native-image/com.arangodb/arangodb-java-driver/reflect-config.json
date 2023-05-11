@@ -126,7 +126,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
+    "name": "com.arangodb.entity.QueryExecutionState",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -138,7 +138,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.QueryExecutionState",
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -234,6 +234,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2Format",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.ViewType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -265,6 +271,12 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.ConsolidationType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -330,19 +342,25 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.IndexEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
+    "name": "com.arangodb.entity.AqlParseEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlParseEntity",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -444,13 +462,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -744,6 +762,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2Analyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -840,7 +864,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
+    "name": "com.arangodb.entity.QueryExecutionState",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -852,7 +876,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.QueryExecutionState",
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -948,6 +972,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2Format",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.ViewType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -979,6 +1009,12 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.ConsolidationType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1056,6 +1092,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.LogLevelOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.DBCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1086,13 +1128,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.StreamTransactionOptions",
+    "name": "com.arangodb.model.UserUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserUpdateOptions",
+    "name": "com.arangodb.model.StreamTransactionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1194,13 +1236,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
+    "name": "com.arangodb.model.VertexDeleteOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.VertexDeleteOptions",
+    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1218,7 +1260,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionTruncateOptions",
+    "name": "com.arangodb.model.TransactionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1230,13 +1272,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.TransactionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentImportOptions",
+    "name": "com.arangodb.model.CollectionTruncateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1249,6 +1285,12 @@
   },
   {
     "name": "com.arangodb.model.CollectionSchema",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.DocumentImportOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1284,13 +1326,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.VertexUpdateOptions",
+    "name": "com.arangodb.model.OptionsBuilder",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.OptionsBuilder",
+    "name": "com.arangodb.model.VertexUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1314,13 +1356,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionPropertiesOptions",
+    "name": "com.arangodb.model.UserCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserCreateOptions",
+    "name": "com.arangodb.model.CollectionPropertiesOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
