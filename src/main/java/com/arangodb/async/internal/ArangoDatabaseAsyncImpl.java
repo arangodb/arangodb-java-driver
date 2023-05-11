@@ -230,9 +230,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
             final HostHandle hostHandle) {
         return new ArangoCursorAsyncImpl<>(this, new ArangoCursorExecute() {
             @Override
-            public CursorEntity next(final String id, Map<String, String> meta) {
-                final CompletableFuture<CursorEntity> result = executor.execute(queryNextRequest(id, options, meta),
-                        CursorEntity.class, hostHandle);
+            public CursorEntity next(final String id, Map<String, String> meta, String nextBatchId) {
+                Request request = nextBatchId == null ?
+                        queryNextRequest(id, options, meta) : queryNextByBatchIdRequest(id, nextBatchId, options, meta);
+                final CompletableFuture<CursorEntity> result = executor.execute(request, CursorEntity.class, hostHandle);
                 try {
                     return result.get();
                 } catch (InterruptedException | ExecutionException e) {
