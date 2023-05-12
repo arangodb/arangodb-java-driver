@@ -1119,8 +1119,17 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
         assertThat(currentlyRunningQueries).hasSize(1);
         final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+        assertThat(queryEntity.getId()).isNotNull();
+        assertThat(queryEntity.getDatabase()).isEqualTo(db.name());
+        assertThat(queryEntity.getUser()).isEqualTo("root");
         assertThat(queryEntity.getQuery()).isEqualTo(query);
+        assertThat(queryEntity.getBindVars()).isEmpty();
+        assertThat(queryEntity.getRunTime()).isPositive();
+        if(isAtLeastVersion(3,11)){
+            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
+        }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
+        assertThat(queryEntity.getStream()).isFalse();
         t.join();
     }
 
@@ -1164,11 +1173,22 @@ class ArangoDatabaseTest extends BaseJunit5 {
         properties.setSlowQueryThreshold(1L);
         db.setQueryTrackingProperties(properties);
 
-        db.query("return sleep(1.1)", null, null, Void.class);
+        String query = "return sleep(1.1)";
+        db.query(query, Void.class);
         final Collection<QueryEntity> slowQueries = db.getSlowQueries();
         assertThat(slowQueries).hasSize(1);
         final QueryEntity queryEntity = slowQueries.iterator().next();
-        assertThat(queryEntity.getQuery()).isEqualTo("return sleep(1.1)");
+        assertThat(queryEntity.getId()).isNotNull();
+        assertThat(queryEntity.getDatabase()).isEqualTo(db.name());
+        assertThat(queryEntity.getUser()).isEqualTo("root");
+        assertThat(queryEntity.getQuery()).isEqualTo(query);
+        assertThat(queryEntity.getBindVars()).isEmpty();
+        assertThat(queryEntity.getRunTime()).isPositive();
+        if(isAtLeastVersion(3,11)){
+            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
+        }
+        assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
+        assertThat(queryEntity.getStream()).isFalse();
 
         db.clearSlowQueries();
         assertThat(db.getSlowQueries()).isEmpty();
