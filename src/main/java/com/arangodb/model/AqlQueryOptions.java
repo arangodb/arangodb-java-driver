@@ -34,7 +34,7 @@ import java.util.Collection;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public class AqlQueryOptions implements Serializable {
+public class AqlQueryOptions implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -432,7 +432,18 @@ public class AqlQueryOptions implements Serializable {
         return options;
     }
 
-    public static class Options implements Serializable {
+    @Override
+    public AqlQueryOptions clone() {
+        try {
+            AqlQueryOptions clone = (AqlQueryOptions) super.clone();
+            clone.options = options != null ? options.clone() : null;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public static class Options implements Serializable, Cloneable {
 
         private static final long serialVersionUID = 1L;
 
@@ -467,10 +478,32 @@ public class AqlQueryOptions implements Serializable {
             return shardIds;
         }
 
+        @Override
+        public Options clone() {
+            try {
+                Options clone = (Options) super.clone();
+                clone.optimizer = optimizer != null ? optimizer.clone() : null;
+                clone.shardIds = shardIds != null ? new ArrayList<>(shardIds) : null;
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 
-    public static class Optimizer {
+    public static class Optimizer implements Cloneable {
         private Collection<String> rules;
+
+        @Override
+        public Optimizer clone() {
+            try {
+                Optimizer clone = (Optimizer) super.clone();
+                clone.rules = rules != null ? new ArrayList<>(rules) : null;
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 
     /**
