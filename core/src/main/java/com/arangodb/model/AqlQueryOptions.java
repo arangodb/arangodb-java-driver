@@ -22,9 +22,7 @@ package com.arangodb.model;
 
 import com.arangodb.internal.serde.UserDataInside;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Mark Vollmary
@@ -32,7 +30,7 @@ import java.util.Map;
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public final class AqlQueryOptions {
+public final class AqlQueryOptions implements Cloneable {
 
     private Boolean count;
     private Integer ttl;
@@ -491,7 +489,19 @@ public final class AqlQueryOptions {
         return this;
     }
 
-    public static final class Options {
+    @Override
+    public AqlQueryOptions clone() {
+        try {
+            AqlQueryOptions clone = (AqlQueryOptions) super.clone();
+            clone.bindVars = bindVars != null ? new HashMap<>(bindVars) : null;
+            clone.options = options != null ? options.clone() : null;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public static final class Options implements Cloneable {
 
         private Boolean failOnWarning;
         private Boolean profile;
@@ -577,13 +587,35 @@ public final class AqlQueryOptions {
             return shardIds;
         }
 
+        @Override
+        public Options clone() {
+            try {
+                Options clone = (Options) super.clone();
+                clone.optimizer = optimizer != null ? optimizer.clone() : null;
+                clone.shardIds = shardIds != null ? new ArrayList<>(shardIds) : null;
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 
-    public static final class Optimizer {
+    public static final class Optimizer implements Cloneable {
         private Collection<String> rules;
 
         public Collection<String> getRules() {
             return rules;
+        }
+
+        @Override
+        public Optimizer clone() {
+            try {
+                Optimizer clone = (Optimizer) super.clone();
+                clone.rules = rules != null ? new ArrayList<>(rules) : null;
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
         }
     }
 
