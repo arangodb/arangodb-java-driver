@@ -8,7 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [6.24.0] - 2023-05-16
 
-- made AqlQueryOptions cloneable (#509)
+- cloneable AqlQueryOptions (#509)
+- geo s2 analyzer (#502)
+- serverId query parameter for `/_admin/log/level` (#499)
+- peakMemoryUsage and executionTime explain stats (#497)
+- Index cache refilling (#495)
+- ArangoSearch column cache (#493)
 
 ## [6.23.0] - 2023-04-20
 
