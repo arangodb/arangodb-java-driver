@@ -45,6 +45,7 @@ public final class InvertedIndexEntity {
     private Collection<InvertedIndexField> fields;
     private Boolean searchField;
     private Collection<StoredValue> storedValues;
+    private Collection<String> optimizeTopK;
     private InvertedIndexPrimarySort primarySort;
     private String analyzer;
     private Set<AnalyzerFeature> features;
@@ -102,6 +103,10 @@ public final class InvertedIndexEntity {
 
     public Collection<StoredValue> getStoredValues() {
         return storedValues;
+    }
+
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
     }
 
     public InvertedIndexPrimarySort getPrimarySort() {

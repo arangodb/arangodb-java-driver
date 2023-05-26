@@ -43,6 +43,7 @@ public final class ArangoSearchCreateOptions {
     private Collection<PrimarySort> primarySorts;
     private ArangoSearchCompression primarySortCompression;
     private Collection<StoredValue> storedValues;
+    private Collection<String> optimizeTopK;
     private Boolean primarySortCache;
     private Boolean primaryKeyCache;
 
@@ -57,14 +58,11 @@ public final class ArangoSearchCreateOptions {
     }
 
     /**
-     * @param consolidationIntervalMsec Wait at least this many milliseconds between committing index data changes
-     *                                  and making them visible to
-     *                                  queries (default: 60000, to disable use: 0). For the case where there are a
-     *                                  lot of inserts/updates, a
-     *                                  lower value, until commit, will cause the index not to account for them and
-     *                                  memory usage would
-     *                                  continue to grow. For the case where there are a few inserts/updates, a
-     *                                  higher value will impact
+     * @param consolidationIntervalMsec Wait at least this many milliseconds between committing index data changes and
+     *                                  making them visible to queries (default: 60000, to disable use: 0). For the case
+     *                                  where there are a lot of inserts/updates, a lower value, until commit, will
+     *                                  cause the index not to account for them and memory usage would continue to grow.
+     *                                  For the case where there are a few inserts/updates, a higher value will impact
      *                                  performance and waste disk space for each commit call without any added
      *                                  benefits.
      * @return options
@@ -76,26 +74,19 @@ public final class ArangoSearchCreateOptions {
 
     /**
      * @param commitIntervalMsec Wait at least this many milliseconds between committing view data store changes and
-     *                           making documents visible to
-     *                           queries (default: 1000, to disable use: 0). For the case where there are a lot of
-     *                           inserts/updates, a lower value,
-     *                           until commit, will cause the index not to account for them and memory usage would
-     *                           continue to grow. For the case
-     *                           where there are a few inserts/updates, a higher value will impact performance and
-     *                           waste disk space for each
-     *                           commit call without any added benefits. Background: For data retrieval ArangoSearch
-     *                           views follow the concept of
-     *                           “eventually-consistent”, i.e. eventually all the data in ArangoDB will be matched by
-     *                           corresponding query
-     *                           expressions. The concept of ArangoSearch view “commit” operation is introduced to
-     *                           control the upper-bound on the
-     *                           time until document addition/removals are actually reflected by corresponding query
-     *                           expressions. Once a “commit”
-     *                           operation is complete all documents added/removed prior to the start of the “commit”
-     *                           operation will be reflected
-     *                           by queries invoked in subsequent ArangoDB transactions, in-progress ArangoDB
-     *                           transactions will still continue to
-     *                           return a repeatable-read state.
+     *                           making documents visible to queries (default: 1000, to disable use: 0). For the case
+     *                           where there are a lot of inserts/updates, a lower value, until commit, will cause the
+     *                           index not to account for them and memory usage would continue to grow. For the case
+     *                           where there are a few inserts/updates, a higher value will impact performance and waste
+     *                           disk space for each commit call without any added benefits. Background: For data
+     *                           retrieval ArangoSearch views follow the concept of “eventually-consistent”, i.e.
+     *                           eventually all the data in ArangoDB will be matched by corresponding query expressions.
+     *                           The concept of ArangoSearch view “commit” operation is introduced to control the
+     *                           upper-bound on the time until document addition/removals are actually reflected by
+     *                           corresponding query expressions. Once a “commit” operation is complete all documents
+     *                           added/removed prior to the start of the “commit” operation will be reflected by queries
+     *                           invoked in subsequent ArangoDB transactions, in-progress ArangoDB transactions will
+     *                           still continue to return a repeatable-read state.
      * @return options
      */
     public ArangoSearchCreateOptions commitIntervalMsec(final Long commitIntervalMsec) {
@@ -105,14 +96,11 @@ public final class ArangoSearchCreateOptions {
 
     /**
      * @param cleanupIntervalStep Wait at least this many commits between removing unused files in data directory
-     *                            (default: 10, to
-     *                            disable use: 0). For the case where the consolidation policies merge segments often
-     *                            (i.e. a lot of
-     *                            commit+consolidate), a lower value will cause a lot of disk space to be wasted. For
-     *                            the case where the
-     *                            consolidation policies rarely merge segments (i.e. few inserts/deletes), a higher
-     *                            value will impact
-     *                            performance without any added benefits.
+     *                            (default: 10, to disable use: 0). For the case where the consolidation policies merge
+     *                            segments often (i.e. a lot of commit+consolidate), a lower value will cause a lot of
+     *                            disk space to be wasted. For the case where the consolidation policies rarely merge
+     *                            segments (i.e. few inserts/deletes), a higher value will impact performance without
+     *                            any added benefits.
      * @return options
      */
     public ArangoSearchCreateOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
@@ -161,6 +149,16 @@ public final class ArangoSearchCreateOptions {
      */
     public ArangoSearchCreateOptions storedValues(final StoredValue... storedValues) {
         this.storedValues = Arrays.asList(storedValues);
+        return this;
+    }
+
+    /**
+     * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
+     * @return options
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public ArangoSearchCreateOptions optimizeTopK(final String... optimizeTopK) {
+        this.optimizeTopK = Arrays.asList(optimizeTopK);
         return this;
     }
 
@@ -229,6 +227,10 @@ public final class ArangoSearchCreateOptions {
 
     public Collection<StoredValue> getStoredValues() {
         return storedValues;
+    }
+
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
     }
 
     public Boolean getPrimarySortCache() {
