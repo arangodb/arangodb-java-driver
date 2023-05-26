@@ -29,6 +29,8 @@ import com.arangodb.entity.CursorEntity.Stats;
 import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,12 +40,14 @@ import java.util.List;
  * @author Mark Vollmary
  */
 public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements ArangoCursor<T> {
+    private final static Logger LOG = LoggerFactory.getLogger(ArangoCursorImpl.class);
 
     private final Class<T> type;
     protected final ArangoCursorIterator<T> iterator;
     private final String id;
     private final ArangoCursorExecute execute;
-    private final boolean isPontentialDirtyRead;
+    private final boolean pontentialDirtyRead;
+    private final boolean allowRetry;
 
     public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
                             final Class<T> type, final CursorEntity result) {
@@ -52,7 +56,8 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
         this.type = type;
         iterator = createIterator(this, db, execute, result);
         id = result.getId();
-        this.isPontentialDirtyRead = Boolean.parseBoolean(result.getMeta().get("X-Arango-Potential-Dirty-Read"));
+        this.pontentialDirtyRead = Boolean.parseBoolean(result.getMeta().get("X-Arango-Potential-Dirty-Read"));
+        this.allowRetry = result.getNextBatchId() != null;
     }
 
     protected ArangoCursorIterator<T> createIterator(
@@ -98,7 +103,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 
     @Override
     public void close() {
-        if (id != null && hasNext()) {
+        if (getId() != null && (allowRetry || iterator.getResult().getHasMore())) {
             execute.close(id, iterator.getResult().getMeta());
         }
     }
@@ -119,12 +124,17 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
         while (hasNext()) {
             remaining.add(next());
         }
+        try {
+            close();
+        } catch (final Exception e) {
+            LOG.warn("Could not close cursor: ", e);
+        }
         return remaining;
     }
 
     @Override
     public boolean isPotentialDirtyRead() {
-        return isPontentialDirtyRead;
+        return pontentialDirtyRead;
     }
 
     @Override
@@ -142,6 +152,10 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
         while (hasNext()) {
             action.accept(next());
         }
+    }
+
+    public String getNextBatchId() {
+        return iterator.getResult().getNextBatchId();
     }
 
 }

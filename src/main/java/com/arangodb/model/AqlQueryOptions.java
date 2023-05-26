@@ -425,6 +425,33 @@ public class AqlQueryOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public Boolean getAllowRetry() {
+        return getOptions().allowRetry;
+    }
+
+    /**
+     * @param allowRetry Set this option to true to make it possible to retry fetching the latest batch from a cursor.
+     *                   <p/>
+     *                   This makes possible to safely retry invoking {@link com.arangodb.ArangoCursor#next()} in
+     *                   case of I/O exceptions (which are actually thrown as {@link com.arangodb.ArangoDBException}
+     *                   with cause {@link java.io.IOException})
+     *                   <p/>
+     *                   If set to false (default), then it is not safe to retry invoking
+     *                   {@link com.arangodb.ArangoCursor#next()} in case of I/O exceptions, since the request to
+     *                   fetch the next batch is not idempotent (i.e. the cursor may advance multiple times on the
+     *                   server).
+     *                   <p/>
+     *                   Note: once you successfully received the last batch, you should call
+     *                   {@link com.arangodb.ArangoCursor#close()} so that the server does not unnecessary keep the
+     *                   batch until the cursor times out ({@link AqlQueryOptions#ttl(Integer)}).
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public AqlQueryOptions allowRetry(final Boolean allowRetry) {
+        getOptions().allowRetry = allowRetry;
+        return this;
+    }
+
     private Options getOptions() {
         if (options == null) {
             options = new Options();
@@ -463,6 +490,7 @@ public class AqlQueryOptions implements Serializable, Cloneable {
         private Double maxRuntime;
         private Boolean fillBlockCache;
         private String forceOneShardAttributeValue;
+        private Boolean allowRetry;
 
         protected Optimizer getOptimizer() {
             if (optimizer == null) {

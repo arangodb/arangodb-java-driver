@@ -182,10 +182,17 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return request;
     }
 
-    protected Request queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
-
+    protected Request queryNextRequest(String id, AqlQueryOptions options, Map<String, String> meta) {
         final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR, id);
+        return completeQueryNextRequest(request, options, meta);
+    }
 
+    protected Request queryNextByBatchIdRequest(String id, String nextBatchId, AqlQueryOptions options, Map<String, String> meta) {
+        final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR, id, nextBatchId);
+        return completeQueryNextRequest(request, options, meta);
+    }
+
+    private Request completeQueryNextRequest(Request request, AqlQueryOptions options, Map<String, String> meta) {
         if (meta != null) {
             request.getHeaderParam().putAll(meta);
         }

@@ -20,8 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.DbName;
+import com.arangodb.*;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.*;
 import com.arangodb.entity.AqlParseEntity.AstNode;
@@ -627,28 +626,32 @@ class ArangoDatabaseTest extends BaseTest {
 
     @Test
     void queryCursor() throws InterruptedException, ExecutionException {
-        try {
-            db.createCollection(COLLECTION_NAME, null).get();
-            final int numbDocs = 10;
-            for (int i = 0; i < numbDocs; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null).get();
-            }
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", new AqlQueryOptions().batchSize(1),
+                Integer.class).get();
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class).get();
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+    }
 
-            final int batchSize = 5;
-            final ArangoCursorAsync<String> cursor = db.query("for i in db_test return i._id", null,
-                    new AqlQueryOptions().batchSize(batchSize).count(true), String.class).get();
-            assertThat(cursor.getCount()).isEqualTo(numbDocs);
-
-            final ArangoCursorAsync<String> cursor2 = db.cursor(cursor.getId(), String.class).get();
-            assertThat(cursor2.getCount()).isEqualTo(numbDocs);
-            assertThat(cursor2.hasNext()).isTrue();
-
-            for (int i = 0; i < batchSize; i++, cursor.next()) {
-                assertThat(cursor.hasNext()).isTrue();
-            }
-        } finally {
-            db.collection(COLLECTION_NAME).drop().get();
-        }
+    @Test
+    void queryCursorRetry() throws IOException, ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i",
+                new AqlQueryOptions().batchSize(1).allowRetry(true), Integer.class).get();
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class, cursor.getNextBatchId()).get();
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        cursor2.close();
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
     @Test
@@ -722,6 +725,51 @@ class ArangoDatabaseTest extends BaseTest {
             assertThat(count).isEqualTo(1);
         }
 
+    }
+
+    @Test
+    void queryAllowRetry() throws IOException, ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class).get();
+        assertThat(cursor.asListRemaining()).containsExactly("1", "2");
+    }
+
+    @Test
+    void queryAllowRetryClose() throws IOException, ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class).get();
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
+    }
+
+    @Test
+    void queryAllowRetryCloseBeforeLatestBatch() throws IOException, ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class).get();
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        cursor.close();
+    }
+
+    @Test
+    void queryAllowRetryCloseSingleBatch() throws IOException, ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true), String.class).get();
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
     }
 
     @Test

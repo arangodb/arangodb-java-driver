@@ -44,9 +44,9 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     private final InternalArangoDatabase<?, ?> db;
     private final ArangoCursorExecute execute;
 
-    protected ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
+    protected ArangoCursorIterator(final ArangoCursor<T> cursor,
+                                   final ArangoCursorExecute execute,
                                    final InternalArangoDatabase<?, ?> db, final CursorEntity result) {
-        super();
         this.cursor = cursor;
         this.execute = execute;
         this.db = db;
@@ -66,7 +66,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
     @Override
     public T next() {
         if (!arrayIterator.hasNext() && result.getHasMore()) {
-            result = execute.next(cursor.getId(), result.getMeta());
+            result = execute.next(cursor.getId(), result.getMeta(), result.getNextBatchId());
             arrayIterator = result.getResult().arrayIterator();
         }
         if (!hasNext()) {
