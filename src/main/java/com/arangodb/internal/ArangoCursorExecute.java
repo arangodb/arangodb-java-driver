@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public interface ArangoCursorExecute {
 
-    CursorEntity next(String id, Map<String, String> meta) throws ArangoDBException;
+    CursorEntity next(String id, Map<String, String> meta, String nextBatchId) throws ArangoDBException;
 
     void close(String id, Map<String, String> meta) throws ArangoDBException;
 

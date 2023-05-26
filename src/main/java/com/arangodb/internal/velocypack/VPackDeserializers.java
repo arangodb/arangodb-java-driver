@@ -88,6 +88,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, GeoJSONAnalyzer.class);
             case geopoint:
                 return context.deserialize(vpack, GeoPointAnalyzer.class);
+            case geo_s2:
+                return context.deserialize(vpack, GeoS2Analyzer.class);
             case segmentation:
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
             case collation:
@@ -189,6 +191,16 @@ public class VPackDeserializers {
                     context.deserialize(consolidationPolicy, ConsolidationPolicy.class));
         }
 
+        final VPackSlice primarySortCache = vpack.get("primarySortCache");
+        if (primarySortCache.isBoolean()) {
+            properties.setPrimarySortCache(primarySortCache.getAsBoolean());
+        }
+
+        final VPackSlice primaryKeyCache = vpack.get("primaryKeyCache");
+        if (primaryKeyCache.isBoolean()) {
+            properties.setPrimaryKeyCache(primaryKeyCache.getAsBoolean());
+        }
+
         final VPackSlice links = vpack.get("links");
         if (links.isObject()) {
             final Iterator<Entry<String, VPackSlice>> collectionIterator = links.objectIterator();
@@ -264,6 +276,15 @@ public class VPackDeserializers {
             properties.addStoredValues(sv);
         }
 
+        final VPackSlice optimizeTopK = vpack.get("optimizeTopK");
+        if (optimizeTopK.isArray()) {
+            final Iterator<VPackSlice> optimizeTopKIterator = optimizeTopK.arrayIterator();
+            while (optimizeTopKIterator.hasNext()) {
+                String o = context.deserialize(optimizeTopKIterator.next(), String.class);
+                properties.addOptimizeTopK(o);
+            }
+        }
+
         return properties;
     };
 
@@ -302,6 +323,10 @@ public class VPackDeserializers {
             while (fieldsIterator.hasNext()) {
                 link.nested(deserializeField(fieldsIterator.next()));
             }
+        }
+        final VPackSlice cache = value.get("cache");
+        if (cache.isBoolean()) {
+            link.cache(cache.getAsBoolean());
         }
         return link;
     }

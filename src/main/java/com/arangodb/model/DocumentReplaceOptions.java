@@ -35,6 +35,7 @@ public class DocumentReplaceOptions {
     private Boolean returnOld;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean refillIndexCaches;
 
     public DocumentReplaceOptions() {
         super();
@@ -136,4 +137,18 @@ public class DocumentReplaceOptions {
         return this;
     }
 
+    public Boolean getRefillIndexCaches() {
+        return refillIndexCaches;
+    }
+
+    /**
+     * @param refillIndexCaches Whether to update an existing entry in the in-memory edge cache if an edge document is
+     *                          replaced.
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public DocumentReplaceOptions refillIndexCaches(Boolean refillIndexCaches) {
+        this.refillIndexCaches = refillIndexCaches;
+        return this;
+    }
 }

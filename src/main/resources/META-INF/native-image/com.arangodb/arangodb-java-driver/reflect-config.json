@@ -60,16 +60,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.AqlParseEntity",
     "allDeclaredFields": true,
     "methods": [
@@ -80,7 +70,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.EdgeDefinition",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -90,7 +80,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.CursorEntity$Stats",
+    "name": "com.arangodb.entity.EdgeDefinition",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -111,6 +101,16 @@
   },
   {
     "name": "com.arangodb.entity.MultiDocumentEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity$Stats",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -200,16 +200,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.CursorEntity$Warning",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzer",
     "allDeclaredFields": true,
     "methods": [
@@ -220,7 +210,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
+    "name": "com.arangodb.entity.CursorEntity$Warning",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -231,6 +221,16 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -410,16 +410,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.LogEntriesEntity",
     "allDeclaredFields": true,
     "methods": [
@@ -430,7 +420,27 @@
     ]
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.entity.PathEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2Analyzer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -580,6 +590,16 @@
     ]
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzer",
     "allDeclaredFields": true,
     "methods": [
@@ -710,16 +730,6 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.UserEntity",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.entity.LogEntity",
     "allDeclaredFields": true,
     "methods": [
@@ -730,7 +740,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
+    "name": "com.arangodb.entity.UserEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -741,6 +751,16 @@
   },
   {
     "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -820,7 +840,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -830,7 +850,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -850,7 +870,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer",
+    "name": "com.arangodb.entity.ReplicationFactor",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -860,7 +880,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.ReplicationFactor",
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -930,7 +950,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.CollectionRevisionEntity",
+    "name": "com.arangodb.entity.InvertedIndexPrimarySort",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -940,7 +960,7 @@
     ]
   },
   {
-    "name": "com.arangodb.entity.InvertedIndexPrimarySort",
+    "name": "com.arangodb.entity.CollectionRevisionEntity",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1020,6 +1040,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.LogLevelOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.DBCreateOptions",
     "allDeclaredFields": true,
     "methods": [
@@ -1060,16 +1090,6 @@
     ]
   },
   {
-    "name": "com.arangodb.model.AqlQueryOptions",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "com.arangodb.model.FulltextIndexOptions",
     "allDeclaredFields": true,
     "methods": [
@@ -1080,7 +1100,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.StreamTransactionOptions",
+    "name": "com.arangodb.model.AqlQueryOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1100,7 +1120,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.TraversalOptions$Uniqueness",
+    "name": "com.arangodb.model.StreamTransactionOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1111,6 +1131,16 @@
   },
   {
     "name": "com.arangodb.model.DocumentReplaceOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.TraversalOptions$Uniqueness",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1260,7 +1290,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
+    "name": "com.arangodb.model.VertexDeleteOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1270,7 +1300,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.VertexDeleteOptions",
+    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1310,7 +1340,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.CollectionsReadOptions",
+    "name": "com.arangodb.model.TransactionOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1320,7 +1350,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.TransactionOptions",
+    "name": "com.arangodb.model.CollectionsReadOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1370,6 +1400,16 @@
     ]
   },
   {
+    "name": "com.arangodb.model.DocumentDeleteOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.model.CollectionSchema",
     "allDeclaredFields": true,
     "methods": [
@@ -1381,16 +1421,6 @@
   },
   {
     "name": "com.arangodb.model.DocumentImportOptions",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.model.DocumentDeleteOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1430,7 +1460,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.GraphDocumentReadOptions",
+    "name": "com.arangodb.model.DocumentUpdateOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1440,7 +1470,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.DocumentUpdateOptions",
+    "name": "com.arangodb.model.GraphDocumentReadOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1610,7 +1640,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.AqlFunctionCreateOptions",
+    "name": "java.lang.Object",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -1620,7 +1650,7 @@
     ]
   },
   {
-    "name": "java.lang.Object",
+    "name": "com.arangodb.model.AqlFunctionCreateOptions",
     "allDeclaredFields": true,
     "methods": [
       {

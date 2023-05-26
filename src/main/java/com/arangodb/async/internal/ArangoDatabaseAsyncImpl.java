@@ -223,6 +223,17 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
         return execution.thenApply(result -> createCursor(result, type, null, hostHandle));
     }
 
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type,
+                                                              final String nextBatchId) {
+        final HostHandle hostHandle = new HostHandle();
+        final CompletableFuture<CursorEntity> execution = executor.execute(queryNextByBatchIdRequest(cursorId,
+                        nextBatchId, null,
+                        null),
+                CursorEntity.class, hostHandle);
+        return execution.thenApply(result -> createCursor(result, type, null, hostHandle));
+    }
+
     private <T> ArangoCursorAsync<T> createCursor(
             final CursorEntity result,
             final Class<T> type,
@@ -230,9 +241,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
             final HostHandle hostHandle) {
         return new ArangoCursorAsyncImpl<>(this, new ArangoCursorExecute() {
             @Override
-            public CursorEntity next(final String id, Map<String, String> meta) {
-                final CompletableFuture<CursorEntity> result = executor.execute(queryNextRequest(id, options, meta),
-                        CursorEntity.class, hostHandle);
+            public CursorEntity next(final String id, Map<String, String> meta, String nextBatchId) {
+                Request request = nextBatchId == null ?
+                        queryNextRequest(id, options, meta) : queryNextByBatchIdRequest(id, nextBatchId, options, meta);
+                final CompletableFuture<CursorEntity> result = executor.execute(request, CursorEntity.class, hostHandle);
                 try {
                     return result.get();
                 } catch (InterruptedException | ExecutionException e) {

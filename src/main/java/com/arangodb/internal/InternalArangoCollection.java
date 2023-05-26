@@ -52,6 +52,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String PATH_API_USER = "/_api/user";
 
     private static final String MERGE_OBJECTS = "mergeObjects";
+    private static final String REFILL_INDEX_CACHES = "refillIndexCaches";
     private static final String IGNORE_REVS = "ignoreRevs";
     private static final String RETURN_NEW = "returnNew";
     private static final String NEW = "new";
@@ -90,6 +91,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 
         request.setBody(util(Serializer.CUSTOM).serialize(value));
@@ -130,6 +132,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 
         request.setBody(util(Serializer.CUSTOM)
@@ -266,6 +269,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.setBody(util(Serializer.CUSTOM).serialize(value));
         return request;
     }
@@ -301,6 +305,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.setBody(util(Serializer.CUSTOM)
                 .serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
         return request;
@@ -363,6 +368,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.setBody(util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options()
                 .serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())));
         return request;
@@ -402,6 +408,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.setBody(util(Serializer.CUSTOM).serialize(values, new ArangoSerializer.Options()
                 .serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())
                 .stringAsJson(true)));
@@ -455,6 +462,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         return request;
     }
 
@@ -478,6 +486,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
+        request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
         request.setBody(util().serialize(keys));
         return request;
     }

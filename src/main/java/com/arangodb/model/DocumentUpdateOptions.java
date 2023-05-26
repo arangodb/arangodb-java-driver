@@ -38,6 +38,7 @@ public class DocumentUpdateOptions {
     private Boolean serializeNull;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean refillIndexCaches;
 
     public DocumentUpdateOptions() {
         super();
@@ -182,6 +183,21 @@ public class DocumentUpdateOptions {
      */
     public DocumentUpdateOptions streamTransactionId(final String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
+    public Boolean getRefillIndexCaches() {
+        return refillIndexCaches;
+    }
+
+    /**
+     * @param refillIndexCaches Whether to update an existing entry in the in-memory edge cache if an edge document is
+     *                          updated.
+     * @return options
+     * @since ArangoDB 3.11
+     */
+    public DocumentUpdateOptions refillIndexCaches(Boolean refillIndexCaches) {
+        this.refillIndexCaches = refillIndexCaches;
         return this;
     }
 

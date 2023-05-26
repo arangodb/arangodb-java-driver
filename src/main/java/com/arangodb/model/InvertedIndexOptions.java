@@ -38,6 +38,7 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
     private Integer parallelism;
     private InvertedIndexPrimarySort primarySort;
     private final Collection<StoredValue> storedValues = new ArrayList<>();
+    private final Collection<String> optimizeTopK = new ArrayList<>();
     private String analyzer;
     private final Set<AnalyzerFeature> features = new HashSet<>();
     private Boolean includeAllFields;
@@ -51,6 +52,8 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
     private Long writebufferIdle;
     private Long writebufferActive;
     private Long writebufferSizeMax;
+    private Boolean cache;
+    private Boolean primaryKeyCache;
 
     public InvertedIndexOptions() {
         super();
@@ -107,6 +110,20 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
      */
     public InvertedIndexOptions storedValues(StoredValue... storedValues) {
         Collections.addAll(this.storedValues, storedValues);
+        return this;
+    }
+
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
+    }
+
+    /**
+     * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
+     * @return options
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public InvertedIndexOptions optimizeTopK(String... optimizeTopK) {
+        Collections.addAll(this.optimizeTopK, optimizeTopK);
         return this;
     }
 
@@ -347,16 +364,52 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
         return this;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
+    /**
+     * @param cache Enable this option to always cache the field normalization values in memory for all fields by
+     *              default. This can improve the performance of scoring and ranking queries. Otherwise, these values
+     *              are memory-mapped and it is up to the operating system to load them from disk into memory and to
+     *              evict them from memory.
+     *              <p/>
+     *              Default: `false`. (Enterprise Edition only)
+     * @return this
+     * @since ArangoDB 3.10.2
+     */
+    public InvertedIndexOptions cache(Boolean cache) {
+        this.cache = cache;
+        return this;
+    }
+
+    public Boolean getPrimaryKeyCache() {
+        return primaryKeyCache;
+    }
+
+    /**
+     * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
+     *                        can improve the performance of queries that return many documents. Otherwise, these values
+     *                        are memory-mapped and it is up to the operating system to load them from disk into memory
+     *                        and to evict them from memory (Enterprise Edition only). (default: false)
+     * @return this
+     * @since ArangoDB 3.10.2
+     */
+    public InvertedIndexOptions primaryKeyCache(Boolean primaryKeyCache) {
+        this.primaryKeyCache = primaryKeyCache;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvertedIndexOptions that = (InvertedIndexOptions) o;
-        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax);
+        return type == that.type && Objects.equals(parallelism, that.parallelism) && Objects.equals(primarySort, that.primarySort) && Objects.equals(storedValues, that.storedValues) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(searchField, that.searchField) && Objects.equals(fields, that.fields) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax) && Objects.equals(cache, that.cache) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax);
+        return Objects.hash(type, parallelism, primarySort, storedValues, analyzer, features, includeAllFields, trackListPositions, searchField, fields, consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax, cache, primaryKeyCache);
     }
 }

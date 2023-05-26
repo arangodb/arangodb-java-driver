@@ -43,6 +43,7 @@ public class CursorEntity implements Entity, MetaAware {
     private VPackSlice result;
 
     private Map<String, String> meta;
+    private String nextBatchId;
 
     public String getId() {
         return id;
@@ -92,6 +93,10 @@ public class CursorEntity implements Entity, MetaAware {
     public Map<String, String> getMeta() {
         if (meta == null) return Collections.emptyMap();
         return meta;
+    }
+
+    public String getNextBatchId() {
+        return nextBatchId;
     }
 
     /**

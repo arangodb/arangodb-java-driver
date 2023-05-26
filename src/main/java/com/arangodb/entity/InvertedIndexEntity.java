@@ -45,6 +45,7 @@ public class InvertedIndexEntity implements Entity {
     private Collection<InvertedIndexField> fields;
     private Boolean searchField;
     private Collection<StoredValue> storedValues;
+    private Collection<String> optimizeTopK;
     private InvertedIndexPrimarySort primarySort;
     private String analyzer;
     private Set<AnalyzerFeature> features;
@@ -57,6 +58,8 @@ public class InvertedIndexEntity implements Entity {
     private Long writebufferIdle;
     private Long writebufferActive;
     private Long writebufferSizeMax;
+    private Boolean cache;
+    private Boolean primaryKeyCache;
 
     public String getId() {
         return id;
@@ -100,6 +103,10 @@ public class InvertedIndexEntity implements Entity {
 
     public Collection<StoredValue> getStoredValues() {
         return storedValues;
+    }
+
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
     }
 
     public InvertedIndexPrimarySort getPrimarySort() {
@@ -148,5 +155,13 @@ public class InvertedIndexEntity implements Entity {
 
     public Long getWritebufferSizeMax() {
         return writebufferSizeMax;
+    }
+
+    public Boolean getCache() {
+        return cache;
+    }
+
+    public Boolean getPrimaryKeyCache() {
+        return primaryKeyCache;
     }
 }

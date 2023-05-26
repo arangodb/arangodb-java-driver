@@ -200,6 +200,14 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
         return createCursor(result, type, null, hostHandle);
     }
 
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
+        final HostHandle hostHandle = new HostHandle();
+        final CursorEntity result = executor
+                .execute(queryNextByBatchIdRequest(cursorId, nextBatchId, null, null), CursorEntity.class, hostHandle);
+        return createCursor(result, type, null, hostHandle);
+    }
+
     private <T> ArangoCursor<T> createCursor(
             final CursorEntity result,
             final Class<T> type,
@@ -208,8 +216,10 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
         final ArangoCursorExecute execute = new ArangoCursorExecute() {
             @Override
-            public CursorEntity next(final String id, Map<String, String> meta) {
-                return executor.execute(queryNextRequest(id, options, meta), CursorEntity.class, hostHandle);
+            public CursorEntity next(String id, Map<String, String> meta, String nextBatchId) {
+                Request request = nextBatchId == null ?
+                        queryNextRequest(id, options, meta) : queryNextByBatchIdRequest(id, nextBatchId, options, meta);
+                return executor.execute(request, CursorEntity.class, hostHandle);
             }
 
             @Override

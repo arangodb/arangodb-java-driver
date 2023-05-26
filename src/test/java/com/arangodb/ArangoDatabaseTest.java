@@ -832,25 +832,32 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryCursor(ArangoDatabase db) {
-        final int numbDocs = 10;
-        for (int i = 0; i < numbDocs; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-        }
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", new AqlQueryOptions().batchSize(1), Integer.class);
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class);
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+    }
 
-        final int batchSize = 5;
-        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null,
-                new AqlQueryOptions().batchSize(batchSize).count(true), String.class);
-        assertThat((Object) cursor).isNotNull();
-        assertThat(cursor.getCount()).isGreaterThanOrEqualTo(numbDocs);
-
-        final ArangoCursor<String> cursor2 = db.cursor(cursor.getId(), String.class);
-        assertThat((Object) cursor2).isNotNull();
-        assertThat(cursor2.getCount()).isGreaterThanOrEqualTo(numbDocs);
-        assertThat((Iterator<?>) cursor2).hasNext();
-
-        for (int i = 0; i < batchSize; i++, cursor.next()) {
-            assertThat((Iterator<?>) cursor).hasNext();
-        }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void queryCursorRetry(ArangoDatabase db) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i",
+                new AqlQueryOptions().batchSize(1).allowRetry(true), Integer.class);
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class, cursor.getNextBatchId());
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        cursor2.close();
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -997,6 +1004,55 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetry(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class);
+        assertThat(cursor.asListRemaining()).containsExactly("1", "2");
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryClose(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class);
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryCloseBeforeLatestBatch(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true).batchSize(1), String.class);
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryAllowRetryCloseSingleBatch(ArangoDB arangoDB) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        final ArangoCursor<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", new AqlQueryOptions().allowRetry(true), String.class);
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("1");
+        assertThat(cursor.hasNext()).isTrue();
+        assertThat(cursor.next()).isEqualTo("2");
+        assertThat(cursor.hasNext()).isFalse();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void explainQuery(ArangoDatabase db) {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return i", null, null);
@@ -1009,6 +1065,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(plan.getEstimatedNrItems()).isPositive();
         assertThat(plan.getVariables()).hasSize(2);
         assertThat(plan.getNodes()).isNotEmpty();
+        if (isAtLeastVersion(3, 10)) {
+            assertThat(explain.getStats().getPeakMemoryUsage()).isNotNull();
+            assertThat(explain.getStats().getExecutionTime()).isNotNull();
+        }
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1059,8 +1119,17 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
         assertThat(currentlyRunningQueries).hasSize(1);
         final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+        assertThat(queryEntity.getId()).isNotNull();
+        assertThat(queryEntity.getDatabase()).isEqualTo(db.name());
+        assertThat(queryEntity.getUser()).isEqualTo("root");
         assertThat(queryEntity.getQuery()).isEqualTo(query);
+        assertThat(queryEntity.getBindVars()).isEmpty();
+        assertThat(queryEntity.getRunTime()).isPositive();
+        if(isAtLeastVersion(3,11)){
+            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
+        }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
+        assertThat(queryEntity.getStream()).isFalse();
         t.join();
     }
 
@@ -1104,11 +1173,22 @@ class ArangoDatabaseTest extends BaseJunit5 {
         properties.setSlowQueryThreshold(1L);
         db.setQueryTrackingProperties(properties);
 
-        db.query("return sleep(1.1)", null, null, Void.class);
+        String query = "return sleep(1.1)";
+        db.query(query, Void.class);
         final Collection<QueryEntity> slowQueries = db.getSlowQueries();
         assertThat(slowQueries).hasSize(1);
         final QueryEntity queryEntity = slowQueries.iterator().next();
-        assertThat(queryEntity.getQuery()).isEqualTo("return sleep(1.1)");
+        assertThat(queryEntity.getId()).isNotNull();
+        assertThat(queryEntity.getDatabase()).isEqualTo(db.name());
+        assertThat(queryEntity.getUser()).isEqualTo("root");
+        assertThat(queryEntity.getQuery()).isEqualTo(query);
+        assertThat(queryEntity.getBindVars()).isEmpty();
+        assertThat(queryEntity.getRunTime()).isPositive();
+        if(isAtLeastVersion(3,11)){
+            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
+        }
+        assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
+        assertThat(queryEntity.getStream()).isFalse();
 
         db.clearSlowQueries();
         assertThat(db.getSlowQueries()).isEmpty();
