@@ -161,7 +161,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
             final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor.execute(request, InternalCursorEntity.class, hostHandle);
+        final InternalCursorEntity result = executor.execute(request, internalCursorEntityDeserializer(), hostHandle);
         return createCursor(result, type, options, hostHandle);
     }
 
@@ -183,8 +183,20 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor
-                .execute(queryNextRequest(cursorId, null, null), InternalCursorEntity.class, hostHandle);
+        final InternalCursorEntity result = executor.execute(
+                queryNextRequest(cursorId, null),
+                internalCursorEntityDeserializer(),
+                hostHandle);
+        return createCursor(result, type, null, hostHandle);
+    }
+
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
+        final HostHandle hostHandle = new HostHandle();
+        final InternalCursorEntity result = executor.execute(
+                queryNextByBatchIdRequest(cursorId, nextBatchId, null),
+                internalCursorEntityDeserializer(),
+                hostHandle);
         return createCursor(result, type, null, hostHandle);
     }
 
@@ -196,13 +208,15 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
         final ArangoCursorExecute execute = new ArangoCursorExecute() {
             @Override
-            public InternalCursorEntity next(final String id, Map<String, String> meta) {
-                return executor.execute(queryNextRequest(id, options, meta), InternalCursorEntity.class, hostHandle);
+            public InternalCursorEntity next(final String id, final String nextBatchId) {
+                InternalRequest request = nextBatchId == null ?
+                        queryNextRequest(id, options) : queryNextByBatchIdRequest(id, nextBatchId, options);
+                return executor.execute(request, internalCursorEntityDeserializer(), hostHandle);
             }
 
             @Override
-            public void close(final String id, Map<String, String> meta) {
-                executor.execute(queryCloseRequest(id, options, meta), Void.class, hostHandle);
+            public void close(final String id) {
+                executor.execute(queryCloseRequest(id, options), Void.class, hostHandle);
             }
         };
 

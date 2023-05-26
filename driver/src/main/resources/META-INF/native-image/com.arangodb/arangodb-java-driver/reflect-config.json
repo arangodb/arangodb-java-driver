@@ -336,12 +336,6 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.MetaAware",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1525,12 +1519,6 @@
   },
   {
     "name": "com.arangodb.model.ZKDIndexOptions$FieldValueTypes",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.MetaAware",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

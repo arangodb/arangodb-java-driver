@@ -27,39 +27,52 @@ import com.arangodb.entity.CursorWarning;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.entity.InternalCursorEntity;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity.Extras;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements ArangoCursor<T> {
+public class ArangoCursorImpl<T> implements ArangoCursor<T> {
+    private final static Logger LOG = LoggerFactory.getLogger(ArangoCursorImpl.class);
 
     protected final ArangoCursorIterator<T> iterator;
     private final Class<T> type;
     private final String id;
     private final ArangoCursorExecute execute;
-    private final boolean isPontentialDirtyRead;
+    private final boolean pontentialDirtyRead;
+    private final boolean allowRetry;
 
     public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
                             final Class<T> type, final InternalCursorEntity result) {
         super();
         this.execute = execute;
         this.type = type;
-        iterator = createIterator(this, db, execute, result);
         id = result.getId();
-        this.isPontentialDirtyRead = Boolean.parseBoolean(result.getMeta().get("x-arango-potential-dirty-read"));
+        pontentialDirtyRead = result.isPontentialDirtyRead();
+        iterator = new ArangoCursorIterator<>(id, type, execute, db, result);
+        this.allowRetry = result.getNextBatchId() != null;
     }
 
-    protected ArangoCursorIterator<T> createIterator(
-            final ArangoCursor<T> cursor,
-            final InternalArangoDatabase<?, ?> db,
-            final ArangoCursorExecute execute,
-            final InternalCursorEntity result) {
-        return new ArangoCursorIterator<>(cursor, execute, db, result);
+    @Override
+    public void close() {
+        if (getId() != null && (allowRetry || iterator.result.getHasMore())) {
+            getExecute().close(getId());
+        }
+    }
+
+    @Override
+    public T next() {
+        return iterator.next();
     }
 
     @Override
@@ -74,32 +87,25 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 
     @Override
     public Integer getCount() {
-        return iterator.getResult().getCount();
+        return iterator.result.getCount();
     }
 
     @Override
     public CursorStats getStats() {
-        final Extras extra = iterator.getResult().getExtra();
+        final InternalCursorEntity.Extras extra = iterator.result.getExtra();
         return extra != null ? extra.getStats() : null;
     }
 
     @Override
     public Collection<CursorWarning> getWarnings() {
-        final Extras extra = iterator.getResult().getExtra();
+        final InternalCursorEntity.Extras extra = iterator.result.getExtra();
         return extra != null ? extra.getWarnings() : null;
     }
 
     @Override
     public boolean isCached() {
-        final Boolean cached = iterator.getResult().getCached();
+        final Boolean cached = iterator.result.getCached();
         return Boolean.TRUE.equals(cached);
-    }
-
-    @Override
-    public void close() {
-        if (id != null && hasNext()) {
-            execute.close(id, iterator.getResult().getMeta());
-        }
     }
 
     @Override
@@ -108,27 +114,22 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     }
 
     @Override
-    public T next() {
-        return iterator.next();
-    }
-
-    @Override
     public List<T> asListRemaining() {
         final List<T> remaining = new ArrayList<>();
         while (hasNext()) {
             remaining.add(next());
+        }
+        try {
+            close();
+        } catch (final Exception e) {
+            LOG.warn("Could not close cursor: ", e);
         }
         return remaining;
     }
 
     @Override
     public boolean isPotentialDirtyRead() {
-        return isPontentialDirtyRead;
-    }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
+        return pontentialDirtyRead;
     }
 
     @Override
@@ -136,4 +137,59 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
         return iterator;
     }
 
+    @Override
+    public String getNextBatchId() {
+        return iterator.result.getNextBatchId();
+    }
+
+    protected ArangoCursorExecute getExecute() {
+        return execute;
+    }
+
+    public Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    protected static class ArangoCursorIterator<T> implements ArangoIterator<T> {
+        private final String cursorId;
+        private final Class<T> type;
+        private final InternalArangoDatabase<?, ?> db;
+        private final ArangoCursorExecute execute;
+        private InternalCursorEntity result;
+        private Iterator<JsonNode> arrayIterator;
+
+        protected ArangoCursorIterator(final String cursorId, final Class<T> type, final ArangoCursorExecute execute,
+                                       final InternalArangoDatabase<?, ?> db, final InternalCursorEntity result) {
+            this.cursorId = cursorId;
+            this.type = type;
+            this.execute = execute;
+            this.db = db;
+            this.result = result;
+            arrayIterator = result.getResult().iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return arrayIterator.hasNext() || result.getHasMore();
+        }
+
+        @Override
+        public T next() {
+            if (!arrayIterator.hasNext() && Boolean.TRUE.equals(result.getHasMore())) {
+                result = execute.next(cursorId, result.getNextBatchId());
+                arrayIterator = result.getResult().iterator();
+            }
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return deserialize(db.getSerde().serialize(arrayIterator.next()), type);
+        }
+
+        private <R> R deserialize(final byte[] result, final Class<R> type) {
+            return db.getSerde().deserializeUserData(result, type);
+        }
+
+    }
+
 }
+

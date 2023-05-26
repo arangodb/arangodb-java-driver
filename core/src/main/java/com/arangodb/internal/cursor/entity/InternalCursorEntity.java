@@ -22,20 +22,17 @@ package com.arangodb.internal.cursor.entity;
 
 import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
-import com.arangodb.entity.MetaAware;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
-public final class InternalCursorEntity implements MetaAware {
+public final class InternalCursorEntity {
 
     private final Extras extra = new Extras();
     private String id;
@@ -43,8 +40,8 @@ public final class InternalCursorEntity implements MetaAware {
     private Boolean cached;
     private Boolean hasMore;
     private JsonNode result;
-
-    private Map<String, String> meta;
+    private Boolean pontentialDirtyRead;
+    private String nextBatchId;
 
     public String getId() {
         return id;
@@ -91,25 +88,25 @@ public final class InternalCursorEntity implements MetaAware {
         return result;
     }
 
-    @Override
-    public Map<String, String> getMeta() {
-        if (meta == null) return Collections.emptyMap();
-        return Collections.unmodifiableMap(meta);
+    /**
+     * @return true if the result is a potential dirty read
+     * @since ArangoDB 3.10
+     */
+    public Boolean isPontentialDirtyRead() {
+        return pontentialDirtyRead;
     }
 
-    @Override
-    public void setMeta(Map<String, String> meta) {
-        this.meta = cleanupMeta(new HashMap<>(meta));
+    public void setPontentialDirtyRead(final Boolean pontentialDirtyRead) {
+        this.pontentialDirtyRead = pontentialDirtyRead;
     }
 
     /**
-     * @return remove not allowed (valid storable) meta information
+     * @return The ID of the batch after the current one. The first batch has an ID of 1 and the value is incremented by
+     * 1 with every batch. Only set if the allowRetry query option is enabled.
+     * @since ArangoDB 3.11
      */
-    public Map<String, String> cleanupMeta(Map<String, String> meta) {
-        meta.remove("content-length");
-        meta.remove("transfer-encoding");
-        meta.remove("x-arango-queue-time-seconds");
-        return meta;
+    public String getNextBatchId() {
+        return nextBatchId;
     }
 
     public static final class Extras {

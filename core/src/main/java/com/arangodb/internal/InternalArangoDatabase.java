@@ -23,6 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.*;
@@ -156,13 +157,20 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return request;
     }
 
-    protected InternalRequest queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
-
+    protected InternalRequest queryNextRequest(final String id, final AqlQueryOptions options) {
         final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id);
-        request.putHeaderParams(meta);
+        return completeQueryNextRequest(request, options);
+    }
 
+    protected InternalRequest queryNextByBatchIdRequest(final String id,
+                                                        final String nextBatchId,
+                                                        final AqlQueryOptions options) {
+        final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id, nextBatchId);
+        return completeQueryNextRequest(request, options);
+    }
+
+    private InternalRequest completeQueryNextRequest(final InternalRequest request, final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
-
         if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
@@ -170,13 +178,9 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return request;
     }
 
-    protected InternalRequest queryCloseRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
-
+    protected InternalRequest queryCloseRequest(final String id, final AqlQueryOptions options) {
         final InternalRequest request = request(name, RequestType.DELETE, PATH_API_CURSOR, id);
-        request.putHeaderParams(meta);
-
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
-
         if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
         }
@@ -241,6 +245,15 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
         request.putQueryParam("group", params.getGroup());
         return request;
+    }
+
+    protected ResponseDeserializer<InternalCursorEntity> internalCursorEntityDeserializer() {
+        return response -> {
+            InternalCursorEntity e = getSerde().deserialize(response.getBody(), InternalCursorEntity.class);
+            boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
+            e.setPontentialDirtyRead(potentialDirtyRead);
+            return e;
+        };
     }
 
     protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
