@@ -38,6 +38,7 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
     private Integer parallelism;
     private InvertedIndexPrimarySort primarySort;
     private final Collection<StoredValue> storedValues = new ArrayList<>();
+    private final Collection<String> optimizeTopK = new ArrayList<>();
     private String analyzer;
     private final Set<AnalyzerFeature> features = new HashSet<>();
     private Boolean includeAllFields;
@@ -109,6 +110,20 @@ public class InvertedIndexOptions extends IndexOptions<InvertedIndexOptions> {
      */
     public InvertedIndexOptions storedValues(StoredValue... storedValues) {
         Collections.addAll(this.storedValues, storedValues);
+        return this;
+    }
+
+    public Collection<String> getOptimizeTopK() {
+        return optimizeTopK;
+    }
+
+    /**
+     * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
+     * @return options
+     * @since ArangoDB 3.11, Enterprise Edition only
+     */
+    public InvertedIndexOptions optimizeTopK(String... optimizeTopK) {
+        Collections.addAll(this.optimizeTopK, optimizeTopK);
         return this;
     }
 

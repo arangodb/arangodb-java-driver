@@ -276,6 +276,15 @@ public class VPackDeserializers {
             properties.addStoredValues(sv);
         }
 
+        final VPackSlice optimizeTopK = vpack.get("optimizeTopK");
+        if (optimizeTopK.isArray()) {
+            final Iterator<VPackSlice> optimizeTopKIterator = optimizeTopK.arrayIterator();
+            while (optimizeTopKIterator.hasNext()) {
+                String o = context.deserialize(optimizeTopKIterator.next(), String.class);
+                properties.addOptimizeTopK(o);
+            }
+        }
+
         return properties;
     };
 

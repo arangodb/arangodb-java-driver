@@ -239,6 +239,15 @@ public class VPackSerializers {
             builder.close(); // close array
         }
 
+        final Collection<String> optimizeTopK = value.getOptimizeTopK();
+        if (!optimizeTopK.isEmpty()) {
+            builder.add("optimizeTopK", ValueType.ARRAY); // open array
+            for (final String o : optimizeTopK) {
+                context.serialize(builder, null, o);
+            }
+            builder.close(); // close array
+        }
+
     };
 
     public static final VPackSerializer<SearchAliasProperties> SEARCH_ALIAS_PROPERTIES = (builder, attribute, value, context) -> {
