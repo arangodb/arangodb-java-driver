@@ -28,18 +28,16 @@ import java.util.Map;
  */
 public final class QueryEntity {
 
-    public static final String PROPERTY_STARTED = "started";
-
     private String id;
+    private String database;
+    private String user;
     private String query;
+    private Map<String, Object> bindVars;
     private Date started;
     private Double runTime;
-    private Map<String, Object> bindVars;
+    private Long peakMemoryUsage;
     private QueryExecutionState state;
-
-    public QueryEntity() {
-        super();
-    }
+    private Boolean stream;
 
     /**
      * @return the query's id
@@ -49,10 +47,31 @@ public final class QueryEntity {
     }
 
     /**
+     * @return the name of the database the query runs in
+     */
+    public String getDatabase() {
+        return database;
+    }
+
+    /**
+     * @return the name of the user that started the query
+     */
+    public String getUser() {
+        return user;
+    }
+
+    /**
      * @return the query string (potentially truncated)
      */
     public String getQuery() {
         return query;
+    }
+
+    /**
+     * @return the bind parameter values used by the query
+     */
+    public Map<String, Object> getBindVars() {
+        return bindVars;
     }
 
     /**
@@ -70,10 +89,10 @@ public final class QueryEntity {
     }
 
     /**
-     * @return the bind parameter values used by the query
+     * @return the query’s peak memory usage in bytes (in increments of 32KB)
      */
-    public Map<String, Object> getBindVars() {
-        return bindVars;
+    public Long getPeakMemoryUsage() {
+        return peakMemoryUsage;
     }
 
     /**
@@ -83,4 +102,10 @@ public final class QueryEntity {
         return state;
     }
 
+    /**
+     * @return whether or not the query uses a streaming cursor
+     */
+    public Boolean getStream() {
+        return stream;
+    }
 }
