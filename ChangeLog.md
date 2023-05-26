@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.1.0] - 2023-05-26
+
+- added support to Jackson 2.15
+- changed default Jackson dependencies versions to 2.15
+- updated transitive dependencies versions
+- addeded `peakMemoryUsage` attribute to running and slow queries (ArangoDB 3.11, #507)
+- added support for retriable batch results (ArangoDB 3.11, #505)
+- added support for ArangoSearch WAND optimization (ArangoDB 3.11, #503)
+- added support for cloneable AqlQueryOptions (#510)
+- added support for `geo_s2` analyzer (#501)
+- added support for serverId query parameter for `/_admin/log/level` (#498)
+- added support for peakMemoryUsage and executionTime explain stats (#496)
+- added support for Index cache refilling (#494)
+- added support for ArangoSearch column cache (#492)
+
 ## [7.0.0] - 2023-04-20
 
 Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/main/drivers/java-changes-v7.md).
