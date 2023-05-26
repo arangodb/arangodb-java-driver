@@ -976,7 +976,8 @@ class ArangoSearchTest extends BaseJunit5 {
         }
 
         if (isEnterprise() && isAtLeastVersion(3, 11)) {
-            assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
+            // FIXME: BTS-1428
+            // assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
         }
 
     }
