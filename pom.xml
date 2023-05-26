@@ -37,7 +37,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <adb.jackson.version>2.14.2</adb.jackson.version>
+        <adb.jackson.version>2.15.1</adb.jackson.version>
         <moduleName/>
         <SslTest/>
     </properties>
@@ -104,7 +104,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.9.2</version>
+                <version>5.9.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

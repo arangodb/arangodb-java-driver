@@ -183,13 +183,13 @@
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>22.3.1</version>
+            <version>22.3.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.smallrye.config</groupId>
             <artifactId>smallrye-config-core</artifactId>
-            <version>2.13.1</version>
+            <version>2.13.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
