@@ -1483,6 +1483,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void executeTraversal(ArangoDatabase db) {
+        assumeTrue(isLessThanVersion(3, 12));
+
         String k1 = "key-" + rnd();
         String k2 = "key-" + rnd();
         String k3 = "key-" + rnd();
