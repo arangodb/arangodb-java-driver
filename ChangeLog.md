@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.25.0] - 2023-05-26
+
+- addeded `peakMemoryUsage` attribute to running and slow queries (ArangoDB 3.11, #508)
+- added support for retriable batch results (ArangoDB 3.11, #506)
+- added support for ArangoSearch WAND optimization (ArangoDB 3.11, #504)
+
 ## [6.24.0] - 2023-05-16
 
 - cloneable AqlQueryOptions (#509)

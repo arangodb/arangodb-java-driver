@@ -1016,6 +1016,8 @@ class ArangoDatabaseTest extends BaseTest {
 
     @Test
     void executeTraversal() throws InterruptedException, ExecutionException {
+        assumeTrue(isLessThanVersion(3, 12));
+
         try {
             db.createCollection("person", null).get();
             db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES)).get();
