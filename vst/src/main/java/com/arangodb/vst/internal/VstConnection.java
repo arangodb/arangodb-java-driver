@@ -173,7 +173,7 @@ public abstract class VstConnection<T> implements Connection {
 
         executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
             @Override
-            public Thread newThread(@NotNull Runnable r) {
+            public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r);
                 thread.setName("Arangodb-VstConnection");
                 return thread;
