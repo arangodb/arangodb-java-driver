@@ -303,13 +303,13 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
-    public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions) {
+    public GraphEntity createGraph(final String name, final Iterable<EdgeDefinition> edgeDefinitions) {
         return createGraph(name, edgeDefinitions, new GraphCreateOptions());
     }
 
     @Override
     public GraphEntity createGraph(
-            final String name, final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
+            final String name, final Iterable<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
         return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
     }
 

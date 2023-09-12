@@ -90,7 +90,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> InternalRequest insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions options) {
+    protected <T> InternalRequest insertDocumentsRequest(final Iterable<T> values, final DocumentCreateOptions options) {
         InternalRequest request = createInsertDocumentRequest(options);
         request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
@@ -143,7 +143,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(getSerde().serialize(values));
     }
 
-    protected InternalRequest importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
+    protected InternalRequest importDocumentsRequest(final Iterable<?> values, final DocumentImportOptions options) {
         return importDocumentsRequest(options).putQueryParam("type", ImportType.list)
                 .setBody(getSerde().serializeCollectionUserData(values));
     }
@@ -174,7 +174,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return response -> getSerde().deserializeUserData(response.getBody(), type);
     }
 
-    protected InternalRequest getDocumentsRequest(final Collection<String> keys, final DocumentReadOptions options) {
+    protected InternalRequest getDocumentsRequest(final Iterable<String> keys, final DocumentReadOptions options) {
         final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
         final InternalRequest request = request(db.name(), RequestType.PUT, PATH_API_DOCUMENT, name)
                 .putQueryParam("onlyget", true)
@@ -223,7 +223,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> InternalRequest replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions options) {
+    protected <T> InternalRequest replaceDocumentsRequest(final Iterable<T> values, final DocumentReplaceOptions options) {
         final InternalRequest request = createReplaceDocumentRequest(options, name);
         request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
@@ -283,7 +283,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> InternalRequest updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions options) {
+    protected <T> InternalRequest updateDocumentsRequest(final Iterable<T> values, final DocumentUpdateOptions options) {
         final InternalRequest request = createUpdateDocumentRequest(options, name);
         request.setBody(getSerde().serializeCollectionUserData(values));
         return request;
@@ -343,7 +343,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return createDeleteDocumentRequest(options, DocumentUtil.createDocumentHandle(name, key));
     }
 
-    protected <T> InternalRequest deleteDocumentsRequest(final Collection<T> docs, final DocumentDeleteOptions options) {
+    protected <T> InternalRequest deleteDocumentsRequest(final Iterable<T> docs, final DocumentDeleteOptions options) {
         final InternalRequest request = createDeleteDocumentRequest(options, name);
         request.setBody(getSerde().serializeCollectionUserData(docs));
         return request;

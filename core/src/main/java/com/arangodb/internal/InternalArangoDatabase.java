@@ -272,7 +272,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
                 constructListType(AqlFunctionEntity.class));
     }
 
-    protected InternalRequest createGraphRequest(final String name, final Collection<EdgeDefinition> edgeDefinitions,
+    protected InternalRequest createGraphRequest(final String name, final Iterable<EdgeDefinition> edgeDefinitions,
                                                  final GraphCreateOptions options) {
         GraphCreateOptions opts = options != null ? options : new GraphCreateOptions();
         return request(this.name, RequestType.POST, InternalArangoGraph.PATH_API_GHARIAL)

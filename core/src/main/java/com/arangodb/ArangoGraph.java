@@ -68,7 +68,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity create(Collection<EdgeDefinition> edgeDefinitions);
+    GraphEntity create(Iterable<EdgeDefinition> edgeDefinitions);
 
     /**
      * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
@@ -80,7 +80,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity create(Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
+    GraphEntity create(Iterable<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
 
     /**
      * Deletes the graph from the database.

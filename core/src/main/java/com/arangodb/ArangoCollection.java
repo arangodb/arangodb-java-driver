@@ -122,7 +122,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Collection<?> values);
+    MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Iterable<?> values);
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -135,7 +135,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(
-            Collection<?> values, DocumentCreateOptions options);
+            Iterable<?> values, DocumentCreateOptions options);
 
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -149,7 +149,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-            Collection<? extends T> values, DocumentCreateOptions options, Class<T> type);
+            Iterable<? extends T> values, DocumentCreateOptions options, Class<T> type);
 
     /**
      * Bulk imports the given values into the collection.
@@ -157,7 +157,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the import
      */
-    DocumentImportEntity importDocuments(Collection<?> values);
+    DocumentImportEntity importDocuments(Iterable<?> values);
 
     /**
      * Bulk imports the given values into the collection.
@@ -166,7 +166,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return information about the import
      */
-    DocumentImportEntity importDocuments(Collection<?> values, DocumentImportOptions options);
+    DocumentImportEntity importDocuments(Iterable<?> values, DocumentImportOptions options);
 
     /**
      * Bulk imports the given values into the collection.
@@ -215,7 +215,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type The type of the documents (POJO or {@link com.arangodb.util.RawData})
      * @return the documents and possible errors
      */
-    <T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type);
+    <T> MultiDocumentEntity<T> getDocuments(Iterable<String> keys, Class<T> type);
 
     /**
      * Retrieves multiple documents with the given {@code _key} from the collection.
@@ -225,7 +225,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return the documents and possible errors
      */
-    <T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type, DocumentReadOptions options);
+    <T> MultiDocumentEntity<T> getDocuments(Iterable<String> keys, Class<T> type, DocumentReadOptions options);
 
     /**
      * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -305,7 +305,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Collection<?> values);
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Iterable<?> values);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -319,7 +319,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(
-            Collection<?> values, DocumentReplaceOptions options);
+            Iterable<?> values, DocumentReplaceOptions options);
 
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -334,7 +334,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-            Collection<? extends T> values, DocumentReplaceOptions options, Class<T> type);
+            Iterable<? extends T> values, DocumentReplaceOptions options, Class<T> type);
 
     /**
      * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -421,7 +421,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Collection<?> values);
+    MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Iterable<?> values);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -437,7 +437,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(
-            Collection<?> values, DocumentUpdateOptions options);
+            Iterable<?> values, DocumentUpdateOptions options);
 
     /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -454,7 +454,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            Collection<?> values, DocumentUpdateOptions options, Class<T> returnType);
+            Iterable<?> values, DocumentUpdateOptions options, Class<T> returnType);
 
     /**
      * Deletes the document with the given {@code key} from the collection.
@@ -525,7 +525,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
-    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Collection<?> values);
+    MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Iterable<?> values);
 
     /**
      * Deletes multiple documents from the collection.
@@ -538,7 +538,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(
-            Collection<?> values, DocumentDeleteOptions options);
+            Iterable<?> values, DocumentDeleteOptions options);
 
     /**
      * Deletes multiple documents from the collection.
@@ -552,7 +552,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            Collection<?> values, DocumentDeleteOptions options, Class<T> type);
+            Iterable<?> values, DocumentDeleteOptions options, Class<T> type);
 
     /**
      * Checks if the document exists by reading a single document head

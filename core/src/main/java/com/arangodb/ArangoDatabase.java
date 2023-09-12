@@ -492,7 +492,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions);
+    GraphEntity createGraph(String name, Iterable<EdgeDefinition> edgeDefinitions);
 
     /**
      * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -505,7 +505,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
-    GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
+    GraphEntity createGraph(String name, Iterable<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
 
     /**
      * Lists all graphs known to the graph module

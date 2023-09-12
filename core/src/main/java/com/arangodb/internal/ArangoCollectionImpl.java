@@ -82,20 +82,20 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Collection<?> values) {
+    public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(final Iterable<?> values) {
         return insertDocuments(values, new DocumentCreateOptions());
     }
 
     @Override
     public MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(
-            final Collection<?> values, final DocumentCreateOptions options) {
+            final Iterable<?> values, final DocumentCreateOptions options) {
         return executor
                 .execute(insertDocumentsRequest(values, options),
                         insertDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<? extends T> values,
+    public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Iterable<? extends T> values,
                                                                             DocumentCreateOptions options,
                                                                             Class<T> type) {
         return executor
@@ -103,12 +103,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final Collection<?> values) {
+    public DocumentImportEntity importDocuments(final Iterable<?> values) {
         return importDocuments(values, new DocumentImportOptions());
     }
 
     @Override
-    public DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options) {
+    public DocumentImportEntity importDocuments(final Iterable<?> values, final DocumentImportOptions options) {
         return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
@@ -151,13 +151,13 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public <T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type) {
+    public <T> MultiDocumentEntity<T> getDocuments(final Iterable<String> keys, final Class<T> type) {
         return getDocuments(keys, type, new DocumentReadOptions());
     }
 
     @Override
     public <T> MultiDocumentEntity<T> getDocuments(
-            final Collection<String> keys, final Class<T> type, final DocumentReadOptions options) {
+            final Iterable<String> keys, final Class<T> type, final DocumentReadOptions options) {
         return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type));
     }
 
@@ -196,19 +196,19 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Collection<?> values) {
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(final Iterable<?> values) {
         return replaceDocuments(values, new DocumentReplaceOptions());
     }
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(
-            final Collection<?> values, final DocumentReplaceOptions options) {
+            final Iterable<?> values, final DocumentReplaceOptions options) {
         return executor.execute(replaceDocumentsRequest(values, options),
                 replaceDocumentsResponseDeserializer(Void.class));
     }
 
     @Override
-    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<? extends T> values,
+    public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Iterable<? extends T> values,
                                                                              DocumentReplaceOptions options,
                                                                              Class<T> type) {
         return executor.execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
@@ -250,19 +250,19 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Collection<?> values) {
+    public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(final Iterable<?> values) {
         return updateDocuments(values, new DocumentUpdateOptions());
     }
 
     @Override
     public MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(
-            final Collection<?> values, final DocumentUpdateOptions options) {
+            final Iterable<?> values, final DocumentUpdateOptions options) {
         return updateDocuments(values, options, Void.class);
     }
 
     @Override
     public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-            final Collection<?> values, final DocumentUpdateOptions options, final Class<T> returnType) {
+            final Iterable<?> values, final DocumentUpdateOptions options, final Class<T> returnType) {
         return executor
                 .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
@@ -299,19 +299,19 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values) {
+    public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Iterable<?> values) {
         return deleteDocuments(values, new DocumentDeleteOptions());
     }
 
     @Override
     public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(
-            final Collection<?> values, final DocumentDeleteOptions options) {
+            final Iterable<?> values, final DocumentDeleteOptions options) {
         return deleteDocuments(values, options, Void.class);
     }
 
     @Override
     public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-            final Collection<?> values, final DocumentDeleteOptions options, final Class<T> type) {
+            final Iterable<?> values, final DocumentDeleteOptions options, final Class<T> type) {
         return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }
 

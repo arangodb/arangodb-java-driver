@@ -56,12 +56,12 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
     }
 
     @Override
-    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) {
+    public GraphEntity create(final Iterable<EdgeDefinition> edgeDefinitions) {
         return db().createGraph(name(), edgeDefinitions);
     }
 
     @Override
-    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
+    public GraphEntity create(final Iterable<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
         return db().createGraph(name(), edgeDefinitions, options);
     }
 

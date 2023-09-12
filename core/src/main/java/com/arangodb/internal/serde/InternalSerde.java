@@ -5,7 +5,6 @@ import com.arangodb.ContentType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 
 public interface InternalSerde extends ArangoSerde {
 
@@ -114,7 +113,7 @@ public interface InternalSerde extends ArangoSerde {
      * @param value objects to serialize
      * @return serialized byte array
      */
-    byte[] serializeCollectionUserData(Collection<?> value);
+    byte[] serializeCollectionUserData(Iterable<?> value);
 
     /**
      * Deserializes the content and binds it to the target data type, using the user serde.

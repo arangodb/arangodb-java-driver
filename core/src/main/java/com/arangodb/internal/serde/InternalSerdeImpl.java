@@ -15,9 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 
@@ -111,8 +111,8 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public byte[] serializeCollectionUserData(Collection<?> value) {
-        List<JsonNode> jsonNodeCollection = value.stream()
+    public byte[] serializeCollectionUserData(Iterable<?> value) {
+        List<JsonNode> jsonNodeCollection = StreamSupport.stream(value.spliterator(), false)
                 .map(this::serializeUserData)
                 .map(this::parse)
                 .collect(Collectors.toList());

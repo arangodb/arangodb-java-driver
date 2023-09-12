@@ -24,7 +24,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ViewType;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -85,8 +85,12 @@ public final class OptionsBuilder {
     public static GraphCreateOptions build(
             final GraphCreateOptions options,
             final String name,
-            final Collection<EdgeDefinition> edgeDefinitions) {
-        return options.name(name).edgeDefinitions(edgeDefinitions);
+            final Iterable<EdgeDefinition> edgeDefinitions) {
+        ArrayList<EdgeDefinition> edCol = new ArrayList<>();
+        if (edgeDefinitions != null) {
+            edgeDefinitions.forEach(edCol::add);
+        }
+        return options.name(name).edgeDefinitions(edCol);
     }
 
     public static TransactionOptions build(final TransactionOptions options, final String action) {
