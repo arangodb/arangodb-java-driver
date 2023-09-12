@@ -91,6 +91,7 @@ abstract class AbstractBaseDocument {
         return Collections.unmodifiableMap(properties);
     }
 
+    @JsonIgnore
     public void setProperties(final Map<String, Object> props) {
         for (String f : getMetaProps()) {
             requireString(f, props.get(f));
