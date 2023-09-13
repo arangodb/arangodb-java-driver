@@ -28,22 +28,15 @@ import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoCursorImpl<T> implements ArangoCursor<T> {
-    private final static Logger LOG = LoggerFactory.getLogger(ArangoCursorImpl.class);
 
     protected final ArangoCursorIterator<T> iterator;
     private final Class<T> type;
@@ -114,20 +107,6 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     }
 
     @Override
-    public List<T> asListRemaining() {
-        final List<T> remaining = new ArrayList<>();
-        while (hasNext()) {
-            remaining.add(next());
-        }
-        try {
-            close();
-        } catch (final Exception e) {
-            LOG.warn("Could not close cursor: ", e);
-        }
-        return remaining;
-    }
-
-    @Override
     public boolean isPotentialDirtyRead() {
         return pontentialDirtyRead;
     }
@@ -144,10 +123,6 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
 
     protected ArangoCursorExecute getExecute() {
         return execute;
-    }
-
-    public Stream<T> stream() {
-        return StreamSupport.stream(spliterator(), false);
     }
 
     protected static class ArangoCursorIterator<T> implements ArangoIterator<T> {

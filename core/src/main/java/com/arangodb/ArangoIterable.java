@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Mark Vollmary
@@ -30,6 +31,8 @@ public interface ArangoIterable<T> extends Iterable<T> {
     @Override
     ArangoIterator<T> iterator();
 
-    Stream<T> stream();
+    default Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
 }

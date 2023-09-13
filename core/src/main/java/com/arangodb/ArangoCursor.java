@@ -23,8 +23,10 @@ package com.arangodb;
 import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
 import com.arangodb.model.AqlQueryOptions;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -70,7 +72,18 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
     /**
      * @return the remaining results as a {@code List}
      */
-    List<T> asListRemaining();
+    default List<T> asListRemaining() {
+        final List<T> remaining = new ArrayList<>();
+        while (hasNext()) {
+            remaining.add(next());
+        }
+        try {
+            close();
+        } catch (final Exception e) {
+            LoggerFactory.getLogger(ArangoCursor.class).warn("Could not close cursor: ", e);
+        }
+        return remaining;
+    }
 
     /**
      * @return true if the result is a potential dirty read
