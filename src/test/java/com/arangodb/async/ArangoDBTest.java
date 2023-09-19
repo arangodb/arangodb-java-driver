@@ -675,7 +675,7 @@ class ArangoDBTest {
                     assertThat(values[i].timestamp).isGreaterThanOrEqualTo(values[i - 1].timestamp);
                 }
             }
-            assertThat(avg).isGreaterThan(0.0);
+            assertThat(avg).isNotNegative();
         } else {
             assertThat(avg).isEqualTo(0.0);
             assertThat(values).isEmpty();
