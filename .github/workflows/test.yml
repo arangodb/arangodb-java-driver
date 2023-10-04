@@ -25,12 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.9.10
-          - docker.io/arangodb/arangodb:3.10.6
-          - docker.io/arangodb/arangodb:3.11.0
-          - docker.io/arangodb/enterprise:3.9.10
-          - docker.io/arangodb/enterprise:3.10.6
-          - docker.io/arangodb/enterprise:3.11.0
+          - docker.io/arangodb/arangodb:3.10.10
+          - docker.io/arangodb/arangodb:3.11.3
+          - docker.io/arangodb/enterprise:3.10.10
+          - docker.io/arangodb/enterprise:3.11.3
         topology:
           - single
           - cluster
@@ -41,17 +39,6 @@ jobs:
           - 11
         user-language:
           - en
-        include:
-          - docker-img: docker.io/arangodb/arangodb-preview:3.11.0-beta.1
-            topology: single
-            db-ext-names: true
-            java-version: 11
-            user-language: tr
-          - docker-img: docker.io/arangodb/enterprise-preview:3.11.0-beta.1
-            topology: cluster
-            db-ext-names: true
-            java-version: 17
-            user-language: tr
 
     steps:
       - uses: actions/checkout@v2
@@ -81,7 +68,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.0
+          - docker.io/arangodb/arangodb:3.11.3
         topology:
           - single
         java-version:
@@ -131,7 +118,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.0
+          - docker.io/arangodb/enterprise:3.11.3
         topology:
           - single
           - cluster
@@ -185,7 +172,7 @@ jobs:
           - 2.11.4
           - 2.10.5
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.0
+          - docker.io/arangodb/arangodb:3.11.3
         topology:
           - single
         db-ext-names:
@@ -223,7 +210,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.0
+          - docker.io/arangodb/arangodb:3.11.3
         topology:
           - single
           - cluster
@@ -268,7 +255,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.0
+          - docker.io/arangodb/enterprise:3.11.3
         topology:
           - cluster
         db-ext-names:
