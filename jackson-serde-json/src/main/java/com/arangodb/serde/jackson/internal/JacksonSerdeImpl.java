@@ -18,6 +18,7 @@ public final class JacksonSerdeImpl implements JacksonSerde {
     public JacksonSerdeImpl(final ObjectMapper mapper) {
         this.mapper = mapper;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setAnnotationIntrospector(new ArangoSerdeAnnotationIntrospector());
     }
 
     @Override
