@@ -184,7 +184,7 @@
                             <outputBasedir>${project.build.directory}/generated-test-sources</outputBasedir>
                             <outputDir>replacer</outputDir>
                             <filesToExclude>
-                                **/CustomSerdeTest.**,**/SerdeTest.**,**/SerializableTest.**
+                                **/CustomSerdeTest.**,**/SerdeTest.**,**/SerializableTest.**,**/JacksonInterferenceTest.**
                             </filesToExclude>
                             <replacements>
                                 <replacement>
