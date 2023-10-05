@@ -1,7 +1,12 @@
 [
   {
-    "name":"org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
+    "name": "org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "org.junit.jupiter.engine.extension.TimeoutInvocationFactory$SingleThreadExecutorResource",
@@ -14,19 +19,19 @@
   },
   {
     "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntity",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   },
   {
     "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntitySerializeNullFalse",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   },
   {
     "name": "com.arangodb.ArangoDatabaseTest$TransactionTestEntity",
@@ -168,33 +173,57 @@
     ]
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$Animal",
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredClasses":true
+    "name": "com.arangodb.ArangoCollectionTest$Animal",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$AnnotatedEntity",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
+    "name": "com.arangodb.ArangoCollectionTest$AnnotatedEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$Cat",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
+    "name": "com.arangodb.ArangoCollectionTest$Cat",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   },
   {
-    "name":"com.arangodb.ArangoCollectionTest$Dog",
-    "allDeclaredFields":true,
-    "allDeclaredMethods":true,
-    "allPublicMethods":true,
-    "allDeclaredConstructors":true,
-    "allDeclaredClasses":true
+    "name": "com.arangodb.ArangoCollectionTest$Dog",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.JacksonInterferenceTest",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.JacksonInterferenceTest$FooField",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.JacksonInterferenceTest$FooProp",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   }
 ]
