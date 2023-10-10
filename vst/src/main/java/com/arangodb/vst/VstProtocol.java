@@ -27,6 +27,7 @@ import com.arangodb.internal.InternalResponse;
 import com.arangodb.vst.internal.VstConnectionSync;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
@@ -43,6 +44,12 @@ public class VstProtocol implements CommunicationProtocol {
     @Override
     public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
         return communication.execute(request, hostHandle);
+    }
+
+    @Override
+    public CompletableFuture<InternalResponse> executeAsync(InternalRequest request, HostHandle hostHandle) {
+        // FIXME
+        throw new UnsupportedOperationException();
     }
 
     @Override

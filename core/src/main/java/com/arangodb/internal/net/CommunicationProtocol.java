@@ -20,17 +20,31 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 
 import java.io.Closeable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mark Vollmary
  */
 public interface CommunicationProtocol extends Closeable {
 
-    InternalResponse execute(final InternalRequest request, HostHandle hostHandle);
+    default InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
+        try {
+            return executeAsync(request, hostHandle).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ArangoDBException.wrap(e);
+        } catch (ExecutionException e) {
+            throw ArangoDBException.wrap(e.getCause());
+        }
+    }
+
+    CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle);
 
     void setJwt(String jwt);
 
