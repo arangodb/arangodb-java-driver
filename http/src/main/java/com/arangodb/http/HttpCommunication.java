@@ -23,10 +23,13 @@ package com.arangodb.http;
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.RequestType;
 import com.arangodb.internal.InternalResponse;
+import com.arangodb.internal.RequestType;
 import com.arangodb.internal.config.ArangoConfig;
-import com.arangodb.internal.net.*;
+import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
@@ -38,7 +41,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -65,15 +67,8 @@ public class HttpCommunication implements Closeable {
         hostHandler.close();
     }
 
-    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
-        try {
-            return executeAsync(request, hostHandle, hostHandler.get(hostHandle, RequestUtils.determineAccessType(request)), 0).get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ArangoDBException.wrap(e);
-        } catch (ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
-        }
+    public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle) {
+        return executeAsync(request, hostHandle, hostHandler.get(hostHandle, RequestUtils.determineAccessType(request)), 0);
     }
 
     private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount) {
