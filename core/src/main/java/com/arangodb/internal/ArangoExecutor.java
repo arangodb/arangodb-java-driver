@@ -20,10 +20,13 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.QueueTimeMetrics;
 import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.serde.InternalSerde;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 /**
@@ -31,15 +34,28 @@ import java.lang.reflect.Type;
  */
 public abstract class ArangoExecutor {
 
+    protected final CommunicationProtocol protocol;
     private final QueueTimeMetricsImpl qtMetrics;
     private final InternalSerde serde;
     private final String timeoutS;
 
-    protected ArangoExecutor(final ArangoConfig config) {
-        super();
+    protected ArangoExecutor(final CommunicationProtocol protocol, final ArangoConfig config ) {
+        this.protocol = protocol;
         qtMetrics = new QueueTimeMetricsImpl(config.getResponseQueueTimeSamples());
         serde = config.getInternalSerde();
         timeoutS = config.getTimeout() >= 1000 ? Integer.toString(config.getTimeout() / 1000) : null;
+    }
+
+    public void disconnect() {
+        try {
+            protocol.close();
+        } catch (final IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    public void setJwt(String jwt) {
+        protocol.setJwt(jwt);
     }
 
     protected <T> T createResult(final Type type, final InternalResponse response) {

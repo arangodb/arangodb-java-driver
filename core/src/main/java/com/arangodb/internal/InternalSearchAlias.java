@@ -22,12 +22,11 @@ package com.arangodb.internal;
 
 import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 
-public class InternalSearchAlias<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
-        extends InternalArangoView<A, D, E> {
+public class InternalSearchAlias extends InternalArangoView {
 
     private static final String PROPERTIES_PATH = "properties";
 
-    protected InternalSearchAlias(final D db, final String name) {
+    protected InternalSearchAlias(final ArangoDatabaseImpl db, final String name) {
         super(db, name);
     }
 

@@ -27,14 +27,14 @@ import com.arangodb.internal.util.EncodeUtils;
 /**
  * @author Mark Vollmary
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor> implements ArangoSerdeAccessor {
+public abstract class ArangoExecuteableSync implements ArangoSerdeAccessor {
 
     private static final String SLASH = "/";
 
-    protected final E executor;
+    protected final ArangoExecutorSync executor;
     protected final InternalSerde serde;
 
-    protected ArangoExecuteable(final E executor, final InternalSerde serde) {
+    protected ArangoExecuteableSync(final ArangoExecutorSync executor, final InternalSerde serde) {
         super();
         this.executor = executor;
         this.serde = serde;
@@ -57,7 +57,7 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> implements Ara
         return sb.toString();
     }
 
-    protected E executor() {
+    protected ArangoExecutorSync executor() {
         return executor;
     }
 

@@ -37,8 +37,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-        implements ArangoCollection {
+public class ArangoCollectionImpl extends InternalArangoCollection implements ArangoCollection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollectionImpl.class);
 

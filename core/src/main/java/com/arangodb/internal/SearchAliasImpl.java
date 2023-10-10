@@ -30,8 +30,7 @@ import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 /**
  * @author Michele Rastelli
  */
-public class SearchAliasImpl extends InternalSearchAlias<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-        implements SearchAlias {
+public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias {
 
     protected SearchAliasImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);

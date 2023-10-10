@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.DocumentUtil;
@@ -39,9 +40,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
-        E extends ArangoExecutor>
-        extends ArangoExecuteable<E> {
+public abstract class InternalArangoCollection extends ArangoExecuteableSync {
 
     protected static final String PATH_API_COLLECTION = "/_api/collection";
     private static final String COLLECTION = "collection";
@@ -61,16 +60,16 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
-    private final D db;
+    private final ArangoDatabase db;
     protected final String name;
 
-    protected InternalArangoCollection(final D db, final String name) {
+    protected InternalArangoCollection(final ArangoDatabaseImpl db, final String name) {
         super(db.executor, db.serde);
         this.db = db;
         this.name = name;
     }
 
-    public D db() {
+    public ArangoDatabase db() {
         return db;
     }
 

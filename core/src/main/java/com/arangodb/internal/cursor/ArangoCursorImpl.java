@@ -45,7 +45,7 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     private final boolean pontentialDirtyRead;
     private final boolean allowRetry;
 
-    public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
+    public ArangoCursorImpl(final InternalArangoDatabase db, final ArangoCursorExecute execute,
                             final Class<T> type, final InternalCursorEntity result) {
         super();
         this.execute = execute;
@@ -128,13 +128,13 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     protected static class ArangoCursorIterator<T> implements ArangoIterator<T> {
         private final String cursorId;
         private final Class<T> type;
-        private final InternalArangoDatabase<?, ?> db;
+        private final InternalArangoDatabase db;
         private final ArangoCursorExecute execute;
         private InternalCursorEntity result;
         private Iterator<JsonNode> arrayIterator;
 
         protected ArangoCursorIterator(final String cursorId, final Class<T> type, final ArangoCursorExecute execute,
-                                       final InternalArangoDatabase<?, ?> db, final InternalCursorEntity result) {
+                                       final InternalArangoDatabase db, final InternalCursorEntity result) {
             this.cursorId = cursorId;
             this.type = type;
             this.execute = execute;

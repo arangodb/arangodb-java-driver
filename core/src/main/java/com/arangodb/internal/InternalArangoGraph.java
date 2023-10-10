@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -34,25 +35,23 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
-        E extends ArangoExecutor>
-        extends ArangoExecuteable<E> {
+public abstract class InternalArangoGraph extends ArangoExecuteableSync {
 
     protected static final String PATH_API_GHARIAL = "/_api/gharial";
     private static final String GRAPH = "/graph";
     private static final String VERTEX = "vertex";
     private static final String EDGE = "edge";
 
-    private final D db;
+    private final ArangoDatabaseImpl db;
     private final String name;
 
-    protected InternalArangoGraph(final D db, final String name) {
+    protected InternalArangoGraph(final ArangoDatabaseImpl db, final String name) {
         super(db.executor, db.serde);
         this.db = db;
         this.name = name;
     }
 
-    public D db() {
+    public ArangoDatabase db() {
         return db;
     }
 

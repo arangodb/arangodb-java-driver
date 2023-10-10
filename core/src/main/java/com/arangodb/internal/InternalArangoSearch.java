@@ -25,13 +25,11 @@ import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 /**
  * @author Mark Vollmary
  */
-public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
-        E extends ArangoExecutor>
-        extends InternalArangoView<A, D, E> {
+public class InternalArangoSearch extends InternalArangoView {
 
     private static final String PROPERTIES_PATH = "properties";
 
-    protected InternalArangoSearch(final D db, final String name) {
+    protected InternalArangoSearch(final ArangoDatabaseImpl db, final String name) {
         super(db, name);
     }
 
