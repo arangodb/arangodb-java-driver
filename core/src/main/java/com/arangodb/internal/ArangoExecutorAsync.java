@@ -20,41 +20,50 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 
 import java.lang.reflect.Type;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-public class ArangoExecutorSync extends ArangoExecutor {
+public class ArangoExecutorAsync extends ArangoExecutor {
 
-    public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoConfig config) {
+    public ArangoExecutorAsync(final CommunicationProtocol protocol, final ArangoConfig config) {
         super(protocol, config);
     }
 
-    public <T> T execute(final InternalRequest request, final Type type) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type) {
         return execute(request, type, null);
     }
 
-    public <T> T execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
         return execute(request, response -> createResult(type, response), hostHandle);
     }
 
-    public <T> T execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
+    public <T> CompletableFuture<T> execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
         return execute(request, responseDeserializer, null);
     }
 
-    public <T> T execute(
+    public <T> CompletableFuture<T> execute(
             final InternalRequest request,
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) {
 
-        final InternalResponse response = protocol.execute(interceptRequest(request), hostHandle);
-        interceptResponse(response);
-        return responseDeserializer.deserialize(response);
+        return protocol.executeAsync(interceptRequest(request), hostHandle)
+                .handle((r, e) -> {
+                    if (e != null) {
+                        throw ArangoDBException.wrap(e);
+                    } else {
+                        interceptResponse(r);
+                        return responseDeserializer.deserialize(r);
+                    }
+                });
     }
 
 }

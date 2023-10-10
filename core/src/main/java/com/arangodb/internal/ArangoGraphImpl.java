@@ -35,8 +35,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  */
-public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-        implements ArangoGraph {
+public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph {
 
     protected ArangoGraphImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);

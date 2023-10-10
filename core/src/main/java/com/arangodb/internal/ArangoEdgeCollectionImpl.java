@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Mark Vollmary
  */
-public class ArangoEdgeCollectionImpl
-        extends InternalArangoEdgeCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
-        implements ArangoEdgeCollection {
+public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection implements ArangoEdgeCollection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
 
