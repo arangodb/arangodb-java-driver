@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -78,7 +79,16 @@ public class HttpCommunication implements Closeable {
                         String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
                         LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
                     }
-                    final InternalResponse response = connection.execute(request);
+                    final InternalResponse response;
+                    try {
+                        response = connection.executeAsync(request).get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw ArangoDBException.wrap(e);
+                    } catch (ExecutionException e) {
+                        throw ArangoDBException.wrap(e.getCause());
+                    }
+
                     if (LOGGER.isDebugEnabled()) {
                         String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
                         LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
@@ -87,25 +97,30 @@ public class HttpCommunication implements Closeable {
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;
-                } catch (final SocketTimeoutException e) {
-                    // SocketTimeoutException exceptions are wrapped and rethrown.
-                    TimeoutException te = new TimeoutException(e.getMessage());
-                    te.initCause(e);
-                    throw new ArangoDBException(te, reqId);
-                } catch (final IOException e) {
-                    hostHandler.fail(e);
-                    if (hostHandle != null && hostHandle.getHost() != null) {
-                        hostHandle.setHost(null);
-                    }
-                    final Host failedHost = host;
-                    host = hostHandler.get(hostHandle, accessType);
-                    if (host != null && isSafe(request)) {
-                        LOGGER.warn("Could not connect to {} while executing request [id={}]",
-                                failedHost.getDescription(), reqId, e);
-                        LOGGER.debug("Try connecting to {}", host.getDescription());
+                } catch (final ArangoDBException e) {
+                    Throwable cause = e.getCause();
+                    if (cause instanceof SocketTimeoutException) {
+                        // SocketTimeoutException exceptions are wrapped and rethrown.
+                        TimeoutException te = new TimeoutException(cause.getMessage());
+                        te.initCause(cause);
+                        throw new ArangoDBException(te, reqId);
+                    } else if (cause instanceof IOException) {
+                        hostHandler.fail((IOException) cause);
+                        if (hostHandle != null && hostHandle.getHost() != null) {
+                            hostHandle.setHost(null);
+                        }
+                        final Host failedHost = host;
+                        host = hostHandler.get(hostHandle, accessType);
+                        if (host != null && isSafe(request)) {
+                            LOGGER.warn("Could not connect to {} while executing request [id={}]",
+                                    failedHost.getDescription(), reqId, cause);
+                            LOGGER.debug("Try connecting to {}", host.getDescription());
+                        } else {
+                            LOGGER.error(cause.getMessage(), cause);
+                            throw new ArangoDBException(cause, reqId);
+                        }
                     } else {
-                        LOGGER.error(e.getMessage(), e);
-                        throw new ArangoDBException(e, reqId);
+                        throw e;
                     }
                 }
             }

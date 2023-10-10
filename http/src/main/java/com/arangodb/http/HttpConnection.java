@@ -57,7 +57,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -221,26 +220,21 @@ public class HttpConnection implements Connection {
         }
     }
 
-    public InternalResponse execute(final InternalRequest request) throws IOException {
+    public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
-        InternalResponse resp;
-        try {
-            resp = rfuture.get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ArangoDBException.wrap(e);
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof TimeoutException) {
-                throw ArangoDBException.wrap(cause);
-            } else if (cause instanceof IOException) {
-                throw (IOException) cause;
-            } else {
-                throw new IOException(cause);
+        return rfuture.handle((r, e) -> {
+            if (e instanceof TimeoutException) {
+                throw new ArangoDBException(e);
             }
-        }
-        return resp;
+            if (e instanceof IOException) {
+                throw new ArangoDBException(e);
+            }
+            if (e != null) {
+                throw new ArangoDBException(new IOException(e));
+            }
+            return r;
+        });
     }
 
     public void doExecute(final InternalRequest request, final CompletableFuture<InternalResponse> rfuture) {
