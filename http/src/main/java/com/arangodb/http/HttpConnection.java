@@ -20,15 +20,18 @@
 
 package com.arangodb.http;
 
-import com.arangodb.*;
+import com.arangodb.ArangoDBException;
+import com.arangodb.ContentType;
+import com.arangodb.PackageVersion;
+import com.arangodb.Protocol;
 import com.arangodb.config.HostDescription;
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
+import com.arangodb.internal.RequestType;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.RequestType;
-import com.arangodb.internal.InternalResponse;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.IdentityCipherSuiteFilter;
@@ -51,14 +54,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -223,18 +224,7 @@ public class HttpConnection implements Connection {
     public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
-        return rfuture.handle((r, e) -> {
-            if (e instanceof TimeoutException) {
-                throw new ArangoDBException(e);
-            }
-            if (e instanceof IOException) {
-                throw new ArangoDBException(e);
-            }
-            if (e != null) {
-                throw new ArangoDBException(new IOException(e));
-            }
-            return r;
-        });
+        return rfuture;
     }
 
     public void doExecute(final InternalRequest request, final CompletableFuture<InternalResponse> rfuture) {

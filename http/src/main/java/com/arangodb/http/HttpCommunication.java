@@ -37,12 +37,14 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class HttpCommunication implements Closeable {
 
@@ -64,75 +66,100 @@ public class HttpCommunication implements Closeable {
     }
 
     public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
-        return execute(request, hostHandle, 0);
+        try {
+            return executeAsync(request, hostHandle, 0).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ArangoDBException.wrap(e);
+        } catch (ExecutionException e) {
+            throw ArangoDBException.wrap(e.getCause());
+        }
     }
 
-    private InternalResponse execute(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
+    private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
+        final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {
             while (true) {
                 long reqId = reqCount.getAndIncrement();
-                try {
-                    final HttpConnection connection = (HttpConnection) host.connection();
-                    if (LOGGER.isDebugEnabled()) {
-                        String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
-                        LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
-                    }
-                    final InternalResponse response;
-                    try {
-                        response = connection.executeAsync(request).get();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw ArangoDBException.wrap(e);
-                    } catch (ExecutionException e) {
-                        throw ArangoDBException.wrap(e.getCause());
-                    }
-
-                    if (LOGGER.isDebugEnabled()) {
-                        String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
-                        LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
-                    }
-                    ResponseUtils.checkError(serde, response);
-                    hostHandler.success();
-                    hostHandler.confirm();
-                    return response;
-                } catch (final ArangoDBException e) {
-                    Throwable cause = e.getCause();
-                    if (cause instanceof SocketTimeoutException) {
-                        // SocketTimeoutException exceptions are wrapped and rethrown.
-                        TimeoutException te = new TimeoutException(cause.getMessage());
-                        te.initCause(cause);
-                        throw new ArangoDBException(te, reqId);
-                    } else if (cause instanceof IOException) {
-                        hostHandler.fail((IOException) cause);
-                        if (hostHandle != null && hostHandle.getHost() != null) {
-                            hostHandle.setHost(null);
-                        }
-                        final Host failedHost = host;
-                        host = hostHandler.get(hostHandle, accessType);
-                        if (host != null && isSafe(request)) {
-                            LOGGER.warn("Could not connect to {} while executing request [id={}]",
-                                    failedHost.getDescription(), reqId, cause);
-                            LOGGER.debug("Try connecting to {}", host.getDescription());
-                        } else {
-                            LOGGER.error(cause.getMessage(), cause);
-                            throw new ArangoDBException(cause, reqId);
-                        }
-                    } else {
-                        throw e;
-                    }
+                final HttpConnection connection = (HttpConnection) host.connection();
+                if (LOGGER.isDebugEnabled()) {
+                    String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
+                    LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
                 }
+                connection.executeAsync(request)
+                        .whenComplete((response, e) -> {
+                            if (e != null) {
+                                rfuture.completeExceptionally(mapException(e, reqId, hostHandle));
+                            } else {
+                                if (LOGGER.isDebugEnabled()) {
+                                    String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
+                                    LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
+                                }
+                                ArangoDBException errorEntityEx = ResponseUtils.translateError(serde, response);
+                                if (errorEntityEx != null) {
+                                    rfuture.completeExceptionally(errorEntityEx);
+                                } else {
+                                    hostHandler.success();
+                                    hostHandler.confirm();
+                                    rfuture.complete(response);
+                                }
+                            }
+                        });
+                break;
             }
         } catch (final ArangoDBRedirectException e) {
             if (attemptCount < 3) {
                 final String location = e.getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
                 hostHandler.failIfNotMatch(redirectHost, e);
-                return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
+                return executeAsync(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
             } else {
                 throw e;
             }
+        }
+
+        return rfuture;
+    }
+
+    private ArangoDBException mapException(Throwable e, long reqId, HostHandle hostHandle) {
+        if (e instanceof SocketTimeoutException) {
+            // SocketTimeoutException exceptions are wrapped and rethrown.
+            TimeoutException te = new TimeoutException(e.getMessage());
+            te.initCause(e);
+            return new ArangoDBException(te, reqId);
+        }
+
+        if (e instanceof TimeoutException) {
+            return new ArangoDBException(e, reqId);
+        }
+
+        IOException ioEx = wrapIOEx(e);
+        hostHandler.fail(ioEx);
+        if (hostHandle != null && hostHandle.getHost() != null) {
+            hostHandle.setHost(null);
+        }
+        // FIXME
+//                                            final Host failedHost = host;
+//                                            host = hostHandler.get(hostHandle, accessType);
+//                                            if (host != null && isSafe(request)) {
+//                                                LOGGER.warn("Could not connect to {} while executing request [id={}]",
+//                                                        failedHost.getDescription(), reqId, cause);
+//                                                LOGGER.debug("Try connecting to {}", host.getDescription());
+//                                            } else {
+
+        ArangoDBException aEx = new ArangoDBException(ioEx, reqId);
+        LOGGER.error(aEx.getMessage(), aEx);
+        return aEx;
+//                                            }
+    }
+
+    private static IOException wrapIOEx(Throwable t) {
+        if (t instanceof IOException) {
+            return (IOException) t;
+        } else {
+            return new IOException(t);
         }
     }
 
