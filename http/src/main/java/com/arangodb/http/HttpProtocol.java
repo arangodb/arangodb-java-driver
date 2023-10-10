@@ -20,28 +20,43 @@
 
 package com.arangodb.http;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mark Vollmary
  */
 public class HttpProtocol implements CommunicationProtocol {
 
-    private final HttpCommunication httpCommunitaction;
+    private final HttpCommunication httpCommunication;
 
-    public HttpProtocol(final HttpCommunication httpCommunitaction) {
+    public HttpProtocol(final HttpCommunication httpCommunication) {
         super();
-        this.httpCommunitaction = httpCommunitaction;
+        this.httpCommunication = httpCommunication;
     }
 
     @Override
     public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
-        return httpCommunitaction.execute(request, hostHandle);
+        try {
+            return executeAsync(request, hostHandle).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ArangoDBException.wrap(e);
+        } catch (ExecutionException e) {
+            throw ArangoDBException.wrap(e.getCause());
+        }
+    }
+
+    @Override
+    public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle) {
+        return httpCommunication.executeAsync(request, hostHandle);
     }
 
     @Override
@@ -51,7 +66,7 @@ public class HttpProtocol implements CommunicationProtocol {
 
     @Override
     public void close() throws IOException {
-        httpCommunitaction.close();
+        httpCommunication.close();
     }
 
 }
