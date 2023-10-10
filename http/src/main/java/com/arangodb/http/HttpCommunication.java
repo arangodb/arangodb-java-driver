@@ -78,7 +78,6 @@ public class HttpCommunication implements Closeable {
 
     private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount) {
         final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
-        final AccessType accessType = RequestUtils.determineAccessType(request);
         long reqId = reqCount.getAndIncrement();
         final HttpConnection connection = (HttpConnection) host.connection();
         if (LOGGER.isDebugEnabled()) {
@@ -102,26 +101,15 @@ public class HttpCommunication implements Closeable {
                                 hostHandle.setHost(null);
                             }
 
-                            Host nextHost;
-                            try {
-                                nextHost = hostHandler.get(hostHandle, accessType);
-                            } catch (ArangoDBException aEx) {
-                                rfuture.completeExceptionally(aEx);
-                                return;
-                            }
-
+                            Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
                             if (nextHost != null && isSafe(request)) {
                                 LOGGER.warn("Could not connect to {} while executing request [id={}]",
                                         host.getDescription(), reqId, ioEx);
                                 LOGGER.debug("Try connecting to {}", nextHost.getDescription());
-                                executeAsync(request, hostHandle, nextHost, attemptCount)
-                                        .whenComplete((v, err) -> {
-                                            if (err != null) {
-                                                rfuture.completeExceptionally(err);
-                                            } else {
-                                                rfuture.complete(v);
-                                            }
-                                        });
+                                mirror(
+                                        executeAsync(request, hostHandle, nextHost, attemptCount),
+                                        rfuture
+                                );
                             } else {
                                 ArangoDBException aEx = new ArangoDBException(ioEx, reqId);
                                 LOGGER.error(aEx.getMessage(), aEx);
@@ -140,14 +128,10 @@ public class HttpCommunication implements Closeable {
                                     final String location = ((ArangoDBRedirectException) errorEntityEx).getLocation();
                                     final HostDescription redirectHost = HostUtils.createFromLocation(location);
                                     hostHandler.failIfNotMatch(redirectHost, errorEntityEx);
-                                    executeAsync(request, new HostHandle().setHost(redirectHost), hostHandler.get(hostHandle, accessType), attemptCount + 1)
-                                            .whenComplete((v, err) -> {
-                                                if (err != null) {
-                                                    rfuture.completeExceptionally(err);
-                                                } else {
-                                                    rfuture.complete(v);
-                                                }
-                                            });
+                                    mirror(
+                                            executeAsync(request, new HostHandle().setHost(redirectHost), hostHandler.get(hostHandle, RequestUtils.determineAccessType(request)), attemptCount + 1),
+                                            rfuture
+                                    );
                                 }
                             } else if (errorEntityEx != null) {
                                 rfuture.completeExceptionally(errorEntityEx);
@@ -158,12 +142,20 @@ public class HttpCommunication implements Closeable {
                             }
                         }
                     } catch (Exception ex) {
-                        // FIXME: convert to handle() block
-                        LOGGER.error("FATAL: Unhandled exception", ex);
-                        System.exit(1);
+                        rfuture.completeExceptionally(ex);
                     }
                 });
         return rfuture;
+    }
+
+    private void mirror(CompletableFuture<InternalResponse> up, CompletableFuture<InternalResponse> down) {
+        up.whenComplete((v, err) -> {
+            if (err != null) {
+                down.completeExceptionally(err);
+            } else {
+                down.complete(v);
+            }
+        });
     }
 
     private static IOException wrapIOEx(Throwable t) {
