@@ -48,6 +48,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         await().until(() -> logs.getLoggedEvents().stream()
                 .filter(e -> e.getLevel().equals(Level.ERROR))
+                .filter(e -> e.getMessage() != null)
                 .anyMatch(e -> e.getMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
         arangoDB.getVersion();
