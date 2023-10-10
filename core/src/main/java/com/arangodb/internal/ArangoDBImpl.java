@@ -38,7 +38,7 @@ import java.util.Collection;
  * @author Heiko Kernbach
  * @author Michele Rastelli
  */
-public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
+public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final HostHandler hostHandler;

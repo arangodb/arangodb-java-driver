@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoGraph;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -30,25 +31,23 @@ import com.arangodb.model.*;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A,
-        E>, G extends InternalArangoGraph<A, D, E>, E extends ArangoExecutor>
-        extends ArangoExecuteable<E> {
+public abstract class InternalArangoEdgeCollection extends ArangoExecuteableSync {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
     private static final String TRANSACTION_ID = "x-arango-trx-id";
     private static final String EDGE_PATH = "edge";
     private static final String EDGE_JSON_POINTER = "/edge";
 
-    private final G graph;
+    private final ArangoGraphImpl graph;
     private final String name;
 
-    protected InternalArangoEdgeCollection(final G graph, final String name) {
+    protected InternalArangoEdgeCollection(final ArangoGraphImpl graph, final String name) {
         super(graph.executor, graph.serde);
         this.graph = graph;
         this.name = name;
     }
 
-    public G graph() {
+    public ArangoGraph graph() {
         return graph;
     }
 

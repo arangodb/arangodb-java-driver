@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Mark Vollmary
  */
-public class ArangoVertexCollectionImpl
-        extends InternalArangoVertexCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
-        implements ArangoVertexCollection {
+public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection implements ArangoVertexCollection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollectionImpl.class);
 

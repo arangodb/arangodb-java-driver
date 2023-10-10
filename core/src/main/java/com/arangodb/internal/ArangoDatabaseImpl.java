@@ -41,8 +41,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, ArangoExecutorSync>
-        implements ArangoDatabase {
+public class ArangoDatabaseImpl extends InternalArangoDatabase implements ArangoDatabase {
 
     protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
         super(arangoDB, name);

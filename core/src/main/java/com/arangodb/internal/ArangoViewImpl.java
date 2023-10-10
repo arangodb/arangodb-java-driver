@@ -27,8 +27,7 @@ import com.arangodb.entity.ViewEntity;
 /**
  * @author Mark Vollmary
  */
-public class ArangoViewImpl extends InternalArangoView<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-        implements ArangoView {
+public class ArangoViewImpl extends InternalArangoView implements ArangoView {
 
     protected ArangoViewImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);

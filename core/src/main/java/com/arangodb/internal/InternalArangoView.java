@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDatabase;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.ViewRenameOptions;
 
@@ -27,23 +28,21 @@ import com.arangodb.model.ViewRenameOptions;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>,
-        E extends ArangoExecutor>
-        extends ArangoExecuteable<E> {
+public abstract class InternalArangoView extends ArangoExecuteableSync {
 
     protected static final String PATH_API_VIEW = "/_api/view";
     protected static final String PATH_API_ANALYZER = "/_api/analyzer";
 
-    protected final D db;
+    protected final ArangoDatabaseImpl db;
     protected final String name;
 
-    protected InternalArangoView(final D db, final String name) {
+    protected InternalArangoView(final ArangoDatabaseImpl db, final String name) {
         super(db.executor, db.serde);
         this.db = db;
         this.name = name;
     }
 
-    public D db() {
+    public ArangoDatabase db() {
         return db;
     }
 
