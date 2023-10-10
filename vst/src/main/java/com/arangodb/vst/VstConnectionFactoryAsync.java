@@ -24,15 +24,16 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.vst.internal.VstConnectionSync;
+import com.arangodb.vst.internal.VstConnectionAsync;
 
 /**
  * @author Mark Vollmary
  */
-public class VstConnectionFactorySync implements ConnectionFactory {
+public class VstConnectionFactoryAsync implements ConnectionFactory {
 
     @Override
     public Connection create(final ArangoConfig config, final HostDescription host) {
-        return new VstConnectionSync(config, host);
+        return new VstConnectionAsync(config, host);
     }
+
 }

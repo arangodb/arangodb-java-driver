@@ -20,44 +20,47 @@
 
 package com.arangodb.vst.internal;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.vst.internal.utils.CompletableFutureUtils;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mark Vollmary
  */
-public class VstConnectionSync extends VstConnection<Message> {
+public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    public VstConnectionSync(final ArangoConfig config, final HostDescription host) {
+    public VstConnectionAsync(final ArangoConfig config, final HostDescription host) {
         super(config, host);
     }
 
     @Override
-    public Message write(final Message message, final Collection<Chunk> chunks) {
-        final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
+    public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
+        final CompletableFuture<Message> future = new CompletableFuture<>();
+        final FutureTask<Message> task = new FutureTask<>(() -> {
+            try {
+                future.complete(messageStore.get(message.getId()));
+            } catch (final Exception e) {
+                future.completeExceptionally(e);
+            }
+            return null;
+        });
         messageStore.storeMessage(message.getId(), task);
         super.writeIntern(message, chunks);
-        try {
-            return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (final ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ArangoDBException(e);
-        } catch (final Exception e) {
-            throw ArangoDBException.wrap(e);
+        if (timeout == null || timeout == 0L) {
+            return future;
+        } else {
+            return CompletableFutureUtils.orTimeout(future, timeout, TimeUnit.MILLISECONDS);
         }
     }
 
     @Override
     protected void doKeepAlive() {
-        sendKeepAlive();
+        sendKeepAlive().join();
     }
 
 }

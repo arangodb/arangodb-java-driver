@@ -16,12 +16,12 @@ public class VstProtocolProvider implements ProtocolProvider {
 
     @Override
     public ConnectionFactory createConnectionFactory() {
-        return new VstConnectionFactorySync();
+        return new VstConnectionFactoryAsync();
     }
 
     @Override
     public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
-        return new VstProtocol(new VstCommunicationSync(config, hostHandler));
+        return new VstProtocol(new VstCommunicationAsync(config, hostHandler));
     }
 
     @Override

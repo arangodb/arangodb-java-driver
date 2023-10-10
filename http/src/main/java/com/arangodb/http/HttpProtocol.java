@@ -20,15 +20,13 @@
 
 package com.arangodb.http;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
+import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.HostHandle;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mark Vollmary
@@ -40,18 +38,6 @@ public class HttpProtocol implements CommunicationProtocol {
     public HttpProtocol(final HttpCommunication httpCommunication) {
         super();
         this.httpCommunication = httpCommunication;
-    }
-
-    @Override
-    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
-        try {
-            return executeAsync(request, hostHandle).get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw ArangoDBException.wrap(e);
-        } catch (ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
-        }
     }
 
     @Override

@@ -20,11 +20,10 @@
 
 package com.arangodb.vst;
 
-import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
-import com.arangodb.vst.internal.VstConnectionSync;
+import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.HostHandle;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -34,22 +33,16 @@ import java.util.concurrent.CompletableFuture;
  */
 public class VstProtocol implements CommunicationProtocol {
 
-    private final VstCommunication<InternalResponse, VstConnectionSync> communication;
+    private final VstCommunicationAsync communication;
 
-    public VstProtocol(final VstCommunication<InternalResponse, VstConnectionSync> communication) {
+    public VstProtocol(final VstCommunicationAsync communication) {
         super();
         this.communication = communication;
     }
 
     @Override
-    public InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {
-        return communication.execute(request, hostHandle);
-    }
-
-    @Override
     public CompletableFuture<InternalResponse> executeAsync(InternalRequest request, HostHandle hostHandle) {
-        // FIXME
-        throw new UnsupportedOperationException();
+        return communication.execute(request, hostHandle);
     }
 
     @Override
