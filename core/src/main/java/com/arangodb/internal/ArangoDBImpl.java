@@ -53,6 +53,11 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
     }
 
     @Override
+    public ArangoDBAsync async() {
+        return new ArangoDBAsyncImpl(this);
+    }
+
+    @Override
     public void shutdown() {
         executorSync().disconnect();
     }

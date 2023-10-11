@@ -54,6 +54,10 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
         super(protocol, config, util);
     }
 
+    protected InternalArangoDB(final ArangoExecuteable other) {
+        super(other);
+    }
+
     protected InternalRequest getRoleRequest() {
         return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ROLE);
     }
