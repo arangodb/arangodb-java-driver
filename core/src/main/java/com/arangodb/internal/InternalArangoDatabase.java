@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDB;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -60,16 +59,10 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
     private final String name;
-    private final ArangoDBImpl arango;
 
-    protected InternalArangoDatabase(final ArangoDBImpl arango, final String name) {
-        super(arango);
-        this.arango = arango;
+    protected InternalArangoDatabase(final ArangoExecuteable executeable, final String name) {
+        super(executeable);
         this.name = name;
-    }
-
-    public ArangoDB arango() {
-        return arango;
     }
 
     public String name() {
@@ -77,7 +70,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return arango.getDatabaseResponseDeserializer();
+        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(String.class));
     }
 
     protected InternalRequest getAccessibleDatabasesRequest() {

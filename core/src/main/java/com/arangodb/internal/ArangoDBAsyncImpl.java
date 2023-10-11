@@ -39,9 +39,20 @@ import java.util.concurrent.CompletableFuture;
 public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync {
 
     private final ArangoDB arangoDB;
+
     public ArangoDBAsyncImpl(final ArangoDBImpl arangoDB) {
         super(arangoDB);
         this.arangoDB = arangoDB;
+    }
+
+    @Override
+    public void shutdown() {
+        arangoDB.shutdown();
+    }
+
+    @Override
+    public void updateJwt(String jwt) {
+        arangoDB.updateJwt(jwt);
     }
 
 //    @Override
@@ -58,11 +69,6 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 //    public ArangoMetrics metrics() {
 //        return new ArangoMetricsImpl(executorAsync().getQueueTimeMetrics());
 //    }
-
-    @Override
-    public ArangoDB sync() {
-        return arangoDB;
-    }
 
     @Override
     public CompletableFuture<Boolean> createDatabase(final String dbName) {
