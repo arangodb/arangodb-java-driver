@@ -48,17 +48,17 @@ public class ArangoViewImpl extends InternalArangoView implements ArangoView {
 
     @Override
     public void drop() {
-        executor.execute(dropRequest(), Void.class);
+        executorSync().execute(dropRequest(), Void.class);
     }
 
     @Override
     public ViewEntity rename(final String newName) {
-        return executor.execute(renameRequest(newName), ViewEntity.class);
+        return executorSync().execute(renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public ViewEntity getInfo() {
-        return executor.execute(getInfoRequest(), ViewEntity.class);
+        return executorSync().execute(getInfoRequest(), ViewEntity.class);
     }
 
 }

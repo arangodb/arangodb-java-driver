@@ -46,21 +46,21 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
     public ArangoDBImpl(final ArangoConfig config,
                         final HostResolver hostResolver, final ProtocolProvider protocolProvider,
                         final HostHandler hostHandler) {
-        super(new ArangoExecutorSync(protocolProvider.createProtocol(config, hostHandler), config), config.getInternalSerde());
+        super(protocolProvider.createProtocol(config, hostHandler), config, config.getInternalSerde());
         this.hostHandler = hostHandler;
-        hostResolver.init(this.executor(), getSerde());
+        hostResolver.init(executorSync(), getSerde());
         LOGGER.debug("ArangoDB Client is ready to use");
     }
 
     @Override
     public void shutdown() {
-        executor.disconnect();
+        executorSync().disconnect();
     }
 
     @Override
     public void updateJwt(String jwt) {
         hostHandler.setJwt(jwt);
-        executor.setJwt(jwt);
+        executorSync().setJwt(jwt);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public ArangoMetrics metrics() {
-        return new ArangoMetricsImpl(executor.getQueueTimeMetrics());
+        return new ArangoMetricsImpl(executorSync().getQueueTimeMetrics());
     }
 
     @Override
@@ -85,12 +85,12 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public Boolean createDatabase(DBCreateOptions options) {
-        return executor.execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
+        return executorSync().execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
     }
 
     @Override
     public Collection<String> getDatabases() {
-        return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
+        return executorSync().execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public Collection<String> getAccessibleDatabasesFor(final String user) {
-        return executor.execute(getAccessibleDatabasesForRequest(db().name(), user),
+        return executorSync().execute(getAccessibleDatabasesForRequest(db().name(), user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
@@ -116,68 +116,68 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public ServerRole getRole() {
-        return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
+        return executorSync().execute(getRoleRequest(), getRoleResponseDeserializer());
     }
 
     @Override
     public String getServerId() {
-        return executor.execute(getServerIdRequest(), getServerIdResponseDeserializer());
+        return executorSync().execute(getServerIdRequest(), getServerIdResponseDeserializer());
     }
 
     @Override
     public UserEntity createUser(final String user, final String passwd) {
-        return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
+        return executorSync().execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
     @Override
     public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options) {
-        return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
+        return executorSync().execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
     }
 
     @Override
     public void deleteUser(final String user) {
-        executor.execute(deleteUserRequest(db().name(), user), Void.class);
+        executorSync().execute(deleteUserRequest(db().name(), user), Void.class);
     }
 
     @Override
     public UserEntity getUser(final String user) {
-        return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
+        return executorSync().execute(getUserRequest(db().name(), user), UserEntity.class);
     }
 
     @Override
     public Collection<UserEntity> getUsers() {
-        return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
+        return executorSync().execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
     }
 
     @Override
     public UserEntity updateUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
+        return executorSync().execute(updateUserRequest(db().name(), user, options), UserEntity.class);
     }
 
     @Override
     public UserEntity replaceUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
+        return executorSync().execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
     }
 
     @Override
     public void grantDefaultDatabaseAccess(final String user, final Permissions permissions) {
-        executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
+        executorSync().execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public void grantDefaultCollectionAccess(final String user, final Permissions permissions) {
-        executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+        executorSync().execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public <T> Response<T> execute(Request<?> request, Class<T> type) {
-        return executor.execute(executeRequest(request), responseDeserializer(type));
+        return executorSync().execute(executeRequest(request), responseDeserializer(type));
     }
 
     @Override
     public LogEntriesEntity getLogEntries(final LogOptions options) {
-        return executor.execute(getLogEntriesRequest(options), LogEntriesEntity.class);
+        return executorSync().execute(getLogEntriesRequest(options), LogEntriesEntity.class);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public LogLevelEntity getLogLevel(final LogLevelOptions options) {
-        return executor.execute(getLogLevelRequest(options), LogLevelEntity.class);
+        return executorSync().execute(getLogLevelRequest(options), LogLevelEntity.class);
     }
 
     @Override
@@ -197,12 +197,12 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     @Override
     public LogLevelEntity setLogLevel(final LogLevelEntity entity, final LogLevelOptions options) {
-        return executor.execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
+        return executorSync().execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
     }
 
     @Override
     public Collection<QueryOptimizerRule> getQueryOptimizerRules() {
-        return executor.execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
+        return executorSync().execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
 }

@@ -46,24 +46,24 @@ public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection i
 
     @Override
     public void drop(final VertexCollectionDropOptions options) {
-        executor.execute(dropRequest(options), Void.class);
+        executorSync().execute(dropRequest(options), Void.class);
     }
 
     @Override
     public VertexEntity insertVertex(final Object value) {
-        return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
+        return executorSync().execute(insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer());
     }
 
     @Override
     public VertexEntity insertVertex(final Object value, final VertexCreateOptions options) {
-        return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer());
+        return executorSync().execute(insertVertexRequest(value, options), insertVertexResponseDeserializer());
     }
 
     @Override
     public <T> T getVertex(final String key, final Class<T> type) {
         try {
-            return executor.execute(getVertexRequest(key, new GraphDocumentReadOptions()),
+            return executorSync().execute(getVertexRequest(key, new GraphDocumentReadOptions()),
                     getVertexResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -76,7 +76,7 @@ public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection i
     @Override
     public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
         try {
-            return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+            return executorSync().execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(e.getMessage(), e);
@@ -87,34 +87,34 @@ public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection i
 
     @Override
     public VertexUpdateEntity replaceVertex(final String key, final Object value) {
-        return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
+        return executorSync().execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity replaceVertex(final String key, final Object value, final VertexReplaceOptions options) {
-        return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer());
+        return executorSync().execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity updateVertex(final String key, final Object value) {
-        return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
+        return executorSync().execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer());
     }
 
     @Override
     public VertexUpdateEntity updateVertex(final String key, final Object value, final VertexUpdateOptions options) {
-        return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer());
+        return executorSync().execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer());
     }
 
     @Override
     public void deleteVertex(final String key) {
-        executor.execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
+        executorSync().execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
     }
 
     @Override
     public void deleteVertex(final String key, final VertexDeleteOptions options) {
-        executor.execute(deleteVertexRequest(key, options), Void.class);
+        executorSync().execute(deleteVertexRequest(key, options), Void.class);
     }
 
 }

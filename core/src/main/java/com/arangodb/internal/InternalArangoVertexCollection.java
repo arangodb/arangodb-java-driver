@@ -31,7 +31,7 @@ import com.arangodb.model.*;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoVertexCollection extends ArangoExecuteableSync {
+public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
     private static final String VERTEX_PATH = "vertex";
@@ -42,7 +42,7 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteableSy
     private final String name;
 
     protected InternalArangoVertexCollection(final ArangoGraphImpl graph, final String name) {
-        super(graph.executor, graph.serde);
+        super(graph);
         this.graph = graph;
         this.name = name;
     }
