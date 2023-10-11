@@ -48,6 +48,11 @@ import java.util.Collection;
 public interface ArangoDB extends ArangoSerdeAccessor {
 
     /**
+     * @return the asynchronous version of this class
+     */
+    ArangoDBAsync async();
+
+    /**
      * Releases all connections to the server and clear the connection pool.
      */
     void shutdown();
