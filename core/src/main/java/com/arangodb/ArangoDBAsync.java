@@ -34,9 +34,17 @@ import java.util.concurrent.CompletableFuture;
 public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
     /**
-     * @return the synchronous version of this class
+     * Releases all connections to the server and clear the connection pool.
      */
-    ArangoDB sync();
+    void shutdown();
+
+    /**
+     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
+     * connections are authenticated during the initialization phase.
+     *
+     * @param jwt token to use
+     */
+    void updateJwt(String jwt);
 
 //    /**
 //     * Returns a {@code ArangoDatabase} instance for the {@code _system} database.

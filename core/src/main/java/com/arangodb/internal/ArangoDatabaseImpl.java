@@ -43,8 +43,16 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  */
 public class ArangoDatabaseImpl extends InternalArangoDatabase implements ArangoDatabase {
 
+    private final ArangoDB arangoDB;
+
     protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
         super(arangoDB, name);
+        this.arangoDB = arangoDB;
+    }
+
+    @Override
+    public ArangoDB arango() {
+        return arangoDB;
     }
 
     @Override
