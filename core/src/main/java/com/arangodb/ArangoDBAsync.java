@@ -33,6 +33,11 @@ import java.util.concurrent.CompletableFuture;
 @ThreadSafe
 public interface ArangoDBAsync extends ArangoSerdeAccessor {
 
+    /**
+     * @return the synchronous version of this class
+     */
+    ArangoDB sync();
+
 //    /**
 //     * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
 //     *
@@ -68,25 +73,25 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<String>> getDatabases();
 
-    /**
-     * Asynchronous version of {@link ArangoDB#getAccessibleDatabases()}
-     */
-    CompletableFuture<Collection<String>> getAccessibleDatabases();
+//    /**
+//     * Asynchronous version of {@link ArangoDB#getAccessibleDatabases()}
+//     */
+//    CompletableFuture<Collection<String>> getAccessibleDatabases();
 
     /**
      * Asynchronous version of {@link ArangoDB#getAccessibleDatabasesFor(String)}
      */
     CompletableFuture<Collection<String>> getAccessibleDatabasesFor(String user);
 
-    /**
-     * Asynchronous version of {@link ArangoDB#getVersion()}
-     */
-    CompletableFuture<ArangoDBVersion> getVersion();
+//    /**
+//     * Asynchronous version of {@link ArangoDB#getVersion()}
+//     */
+//    CompletableFuture<ArangoDBVersion> getVersion();
 
-    /**
-     * Asynchronous version of {@link ArangoDB#getEngine()}
-     */
-    CompletableFuture<ArangoDBEngine> getEngine();
+//    /**
+//     * Asynchronous version of {@link ArangoDB#getEngine()}
+//     */
+//    CompletableFuture<ArangoDBEngine> getEngine();
 
     /**
      * Asynchronous version of {@link ArangoDB#getRole()}
