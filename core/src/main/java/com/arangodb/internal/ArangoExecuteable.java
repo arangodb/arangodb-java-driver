@@ -21,24 +21,40 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoSerdeAccessor;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.EncodeUtils;
 
 /**
  * @author Mark Vollmary
  */
-public abstract class ArangoExecuteableSync implements ArangoSerdeAccessor {
+public abstract class ArangoExecuteable implements ArangoSerdeAccessor {
 
     private static final String SLASH = "/";
 
-    protected final ArangoExecutorSync executor;
-    protected final InternalSerde serde;
+    private final ArangoExecutorSync executorSync;
+    private final ArangoExecutorAsync executorAsync;
+    private final InternalSerde serde;
 
-    protected ArangoExecuteableSync(final ArangoExecutorSync executor, final InternalSerde serde) {
-        super();
-        this.executor = executor;
+    protected ArangoExecuteable(final CommunicationProtocol protocol,
+                                final ArangoConfig config,
+                                final InternalSerde serde) {
+        this(new ArangoExecutorSync(protocol, config), new ArangoExecutorAsync(protocol, config), serde);
+    }
+
+    protected ArangoExecuteable(final ArangoExecuteable other) {
+        this(other.executorSync, other.executorAsync, other.serde);
+    }
+
+    private ArangoExecuteable(final ArangoExecutorSync executorSync,
+                              final ArangoExecutorAsync executorAsync,
+                              final InternalSerde serde) {
+        this.executorSync = executorSync;
+        this.executorAsync = executorAsync;
         this.serde = serde;
     }
+
 
     protected static String createPath(final String... params) {
         final StringBuilder sb = new StringBuilder();
@@ -57,8 +73,12 @@ public abstract class ArangoExecuteableSync implements ArangoSerdeAccessor {
         return sb.toString();
     }
 
-    protected ArangoExecutorSync executor() {
-        return executor;
+    protected ArangoExecutorSync executorSync() {
+        return executorSync;
+    }
+
+    protected ArangoExecutorAsync executorAsync() {
+        return executorAsync;
     }
 
     @Override

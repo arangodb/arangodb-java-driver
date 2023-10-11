@@ -66,22 +66,22 @@ public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph 
 
     @Override
     public void drop() {
-        executor.execute(dropRequest(), Void.class);
+        executorSync().execute(dropRequest(), Void.class);
     }
 
     @Override
     public void drop(final boolean dropCollections) {
-        executor.execute(dropRequest(dropCollections), Void.class);
+        executorSync().execute(dropRequest(dropCollections), Void.class);
     }
 
     @Override
     public GraphEntity getInfo() {
-        return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
+        return executorSync().execute(getInfoRequest(), getInfoResponseDeserializer());
     }
 
     @Override
     public Collection<String> getVertexCollections() {
-        return executor.execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
+        return executorSync().execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph 
 
     @Override
     public GraphEntity addVertexCollection(final String name, final VertexCollectionCreateOptions options) {
-        return executor.execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
+        return executorSync().execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 
     @Override
@@ -106,12 +106,12 @@ public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph 
 
     @Override
     public Collection<String> getEdgeDefinitions() {
-        return executor.execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
+        return executorSync().execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
     }
 
     @Override
     public GraphEntity addEdgeDefinition(final EdgeDefinition definition) {
-        return executor.execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
+        return executorSync().execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph 
 
     @Override
     public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
-        return executor.execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
+        return executorSync().execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
     }
 
 }

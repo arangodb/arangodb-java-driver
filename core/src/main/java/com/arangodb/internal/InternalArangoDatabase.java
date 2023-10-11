@@ -38,7 +38,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoDatabase extends ArangoExecuteableSync {
+public abstract class InternalArangoDatabase extends ArangoExecuteable {
 
     protected static final String PATH_API_DATABASE = "/_api/database";
     private static final String PATH_API_VERSION = "/_api/version";
@@ -63,7 +63,7 @@ public abstract class InternalArangoDatabase extends ArangoExecuteableSync {
     private final ArangoDBImpl arango;
 
     protected InternalArangoDatabase(final ArangoDBImpl arango, final String name) {
-        super(arango.executor, arango.serde);
+        super(arango);
         this.arango = arango;
         this.name = name;
     }

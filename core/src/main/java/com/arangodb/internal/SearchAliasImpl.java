@@ -51,17 +51,17 @@ public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias 
 
     @Override
     public void drop() {
-        executor.execute(dropRequest(), Void.class);
+        executorSync().execute(dropRequest(), Void.class);
     }
 
     @Override
     public ViewEntity rename(final String newName) {
-        return executor.execute(renameRequest(newName), ViewEntity.class);
+        return executorSync().execute(renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public ViewEntity getInfo() {
-        return executor.execute(getInfoRequest(), ViewEntity.class);
+        return executorSync().execute(getInfoRequest(), ViewEntity.class);
     }
 
     @Override
@@ -76,17 +76,17 @@ public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias 
 
     @Override
     public SearchAliasPropertiesEntity getProperties() {
-        return executor.execute(getPropertiesRequest(), SearchAliasPropertiesEntity.class);
+        return executorSync().execute(getPropertiesRequest(), SearchAliasPropertiesEntity.class);
     }
 
     @Override
     public SearchAliasPropertiesEntity updateProperties(final SearchAliasPropertiesOptions options) {
-        return executor.execute(updatePropertiesRequest(options), SearchAliasPropertiesEntity.class);
+        return executorSync().execute(updatePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 
     @Override
     public SearchAliasPropertiesEntity replaceProperties(final SearchAliasPropertiesOptions options) {
-        return executor.execute(replacePropertiesRequest(options), SearchAliasPropertiesEntity.class);
+        return executorSync().execute(replacePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 
 }

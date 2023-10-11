@@ -46,24 +46,24 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
 
     @Override
     public void drop(final EdgeCollectionDropOptions options) {
-        executor.execute(removeEdgeDefinitionRequest(options), Void.class);
+        executorSync().execute(removeEdgeDefinitionRequest(options), Void.class);
     }
 
     @Override
     public EdgeEntity insertEdge(final Object value) {
-        return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
+        return executorSync().execute(insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeEntity insertEdge(final Object value, final EdgeCreateOptions options) {
-        return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer());
+        return executorSync().execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer());
     }
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type) {
         try {
-            return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
+            return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
                     getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -76,7 +76,7 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
     @Override
     public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
         try {
-            return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+            return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(e.getMessage(), e);
@@ -87,34 +87,34 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
 
     @Override
     public EdgeUpdateEntity replaceEdge(final String key, final Object value) {
-        return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+        return executorSync().execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
                 replaceEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity replaceEdge(final String key, final Object value, final EdgeReplaceOptions options) {
-        return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer());
+        return executorSync().execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity updateEdge(final String key, final Object value) {
-        return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+        return executorSync().execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
                 updateEdgeResponseDeserializer());
     }
 
     @Override
     public EdgeUpdateEntity updateEdge(final String key, final Object value, final EdgeUpdateOptions options) {
-        return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer());
+        return executorSync().execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer());
     }
 
     @Override
     public void deleteEdge(final String key) {
-        executor.execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
+        executorSync().execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
     }
 
     @Override
     public void deleteEdge(final String key, final EdgeDeleteOptions options) {
-        executor.execute(deleteEdgeRequest(key, options), Void.class);
+        executorSync().execute(deleteEdgeRequest(key, options), Void.class);
     }
 
 }

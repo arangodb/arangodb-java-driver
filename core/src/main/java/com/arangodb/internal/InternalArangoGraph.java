@@ -35,7 +35,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoGraph extends ArangoExecuteableSync {
+public abstract class InternalArangoGraph extends ArangoExecuteable {
 
     protected static final String PATH_API_GHARIAL = "/_api/gharial";
     private static final String GRAPH = "/graph";
@@ -46,7 +46,7 @@ public abstract class InternalArangoGraph extends ArangoExecuteableSync {
     private final String name;
 
     protected InternalArangoGraph(final ArangoDatabaseImpl db, final String name) {
-        super(db.executor, db.serde);
+        super(db);
         this.db = db;
         this.name = name;
     }

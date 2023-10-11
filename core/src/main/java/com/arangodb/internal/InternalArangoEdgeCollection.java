@@ -31,7 +31,7 @@ import com.arangodb.model.*;
 /**
  * @author Mark Vollmary
  */
-public abstract class InternalArangoEdgeCollection extends ArangoExecuteableSync {
+public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
 
     private static final String PATH_API_GHARIAL = "/_api/gharial";
     private static final String TRANSACTION_ID = "x-arango-trx-id";
@@ -42,7 +42,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteableSync
     private final String name;
 
     protected InternalArangoEdgeCollection(final ArangoGraphImpl graph, final String name) {
-        super(graph.executor, graph.serde);
+        super(graph);
         this.graph = graph;
         this.name = name;
     }
