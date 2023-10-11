@@ -27,6 +27,8 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 
@@ -40,7 +42,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructListType;
  * @author Mark Vollmary
  * @author Heiko Kernbach
  */
-public abstract class InternalArangoDB extends ArangoExecuteableSync {
+public abstract class InternalArangoDB extends ArangoExecuteable {
     private static final String PATH_API_ADMIN_LOG_ENTRIES = "/_admin/log/entries";
     private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
     private static final String PATH_API_ROLE = "/_admin/server/role";
@@ -48,8 +50,8 @@ public abstract class InternalArangoDB extends ArangoExecuteableSync {
     private static final String PATH_API_USER = "/_api/user";
     private static final String PATH_API_QUERY_RULES = "/_api/query/rules";
 
-    protected InternalArangoDB(final ArangoExecutorSync executor, final InternalSerde util) {
-        super(executor, util);
+    protected InternalArangoDB(final CommunicationProtocol protocol, final ArangoConfig config, final InternalSerde util) {
+        super(protocol, config, util);
     }
 
     protected InternalRequest getRoleRequest() {
@@ -163,7 +165,7 @@ public abstract class InternalArangoDB extends ArangoExecuteableSync {
         InternalRequest ireq = new InternalRequest(request.getDb(), RequestType.from(request.getMethod()), request.getPath());
         ireq.putHeaderParams(request.getHeaders());
         ireq.putQueryParams(request.getQueryParams());
-        ireq.setBody(serde.serializeUserData(request.getBody()));
+        ireq.setBody(getSerde().serializeUserData(request.getBody()));
         return ireq;
     }
 
@@ -171,7 +173,7 @@ public abstract class InternalArangoDB extends ArangoExecuteableSync {
         return response -> new Response<>(
                 response.getResponseCode(),
                 response.getMeta(),
-                serde.deserializeUserData(response.getBody(), type)
+                getSerde().deserializeUserData(response.getBody(), type)
         );
     }
 

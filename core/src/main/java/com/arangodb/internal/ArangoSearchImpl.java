@@ -51,17 +51,17 @@ public class ArangoSearchImpl extends InternalArangoSearch implements ArangoSear
 
     @Override
     public void drop() {
-        executor.execute(dropRequest(), Void.class);
+        executorSync().execute(dropRequest(), Void.class);
     }
 
     @Override
     public ViewEntity rename(final String newName) {
-        return executor.execute(renameRequest(newName), ViewEntity.class);
+        return executorSync().execute(renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public ViewEntity getInfo() {
-        return executor.execute(getInfoRequest(), ViewEntity.class);
+        return executorSync().execute(getInfoRequest(), ViewEntity.class);
     }
 
     @Override
@@ -76,17 +76,17 @@ public class ArangoSearchImpl extends InternalArangoSearch implements ArangoSear
 
     @Override
     public ArangoSearchPropertiesEntity getProperties() {
-        return executor.execute(getPropertiesRequest(), ArangoSearchPropertiesEntity.class);
+        return executorSync().execute(getPropertiesRequest(), ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public ArangoSearchPropertiesEntity updateProperties(final ArangoSearchPropertiesOptions options) {
-        return executor.execute(updatePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
+        return executorSync().execute(updatePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public ArangoSearchPropertiesEntity replaceProperties(final ArangoSearchPropertiesOptions options) {
-        return executor.execute(replacePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
+        return executorSync().execute(replacePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 
 }

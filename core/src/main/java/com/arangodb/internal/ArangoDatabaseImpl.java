@@ -49,12 +49,12 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public ArangoDBVersion getVersion() {
-        return executor.execute(getVersionRequest(), ArangoDBVersion.class);
+        return executorSync().execute(getVersionRequest(), ArangoDBVersion.class);
     }
 
     @Override
     public ArangoDBEngine getEngine() {
-        return executor.execute(getEngineRequest(), ArangoDBEngine.class);
+        return executorSync().execute(getEngineRequest(), ArangoDBEngine.class);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public Collection<String> getAccessibleDatabases() {
-        return executor.execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
+        return executorSync().execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -82,23 +82,23 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public CollectionEntity createCollection(final String name) {
-        return executor.execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
+        return executorSync().execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
     }
 
     @Override
     public CollectionEntity createCollection(final String name, final CollectionCreateOptions options) {
-        return executor.execute(createCollectionRequest(name, options), CollectionEntity.class);
+        return executorSync().execute(createCollectionRequest(name, options), CollectionEntity.class);
     }
 
     @Override
     public Collection<CollectionEntity> getCollections() {
-        return executor
+        return executorSync()
                 .execute(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
     }
 
     @Override
     public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) {
-        return executor.execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
+        return executorSync().execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
     }
 
     @Override
@@ -122,37 +122,37 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public Boolean drop() {
-        return executor.execute(dropRequest(), createDropResponseDeserializer());
+        return executorSync().execute(dropRequest(), createDropResponseDeserializer());
     }
 
     @Override
     public void grantAccess(final String user, final Permissions permissions) {
-        executor.execute(grantAccessRequest(user, permissions), Void.class);
+        executorSync().execute(grantAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public void grantAccess(final String user) {
-        executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
+        executorSync().execute(grantAccessRequest(user, Permissions.RW), Void.class);
     }
 
     @Override
     public void revokeAccess(final String user) {
-        executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
+        executorSync().execute(grantAccessRequest(user, Permissions.NONE), Void.class);
     }
 
     @Override
     public void resetAccess(final String user) {
-        executor.execute(resetAccessRequest(user), Void.class);
+        executorSync().execute(resetAccessRequest(user), Void.class);
     }
 
     @Override
     public void grantDefaultCollectionAccess(final String user, final Permissions permissions) {
-        executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+        executorSync().execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public Permissions getPermissions(final String user) {
-        return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
+        return executorSync().execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
             final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor.execute(request, internalCursorEntityDeserializer(), hostHandle);
+        final InternalCursorEntity result = executorSync().execute(request, internalCursorEntityDeserializer(), hostHandle);
         return createCursor(result, type, options, hostHandle);
     }
 
@@ -182,7 +182,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor.execute(
+        final InternalCursorEntity result = executorSync().execute(
                 queryNextRequest(cursorId, null),
                 internalCursorEntityDeserializer(),
                 hostHandle);
@@ -192,7 +192,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executor.execute(
+        final InternalCursorEntity result = executorSync().execute(
                 queryNextByBatchIdRequest(cursorId, nextBatchId, null),
                 internalCursorEntityDeserializer(),
                 hostHandle);
@@ -210,12 +210,12 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
             public InternalCursorEntity next(final String id, final String nextBatchId) {
                 InternalRequest request = nextBatchId == null ?
                         queryNextRequest(id, options) : queryNextByBatchIdRequest(id, nextBatchId, options);
-                return executor.execute(request, internalCursorEntityDeserializer(), hostHandle);
+                return executorSync().execute(request, internalCursorEntityDeserializer(), hostHandle);
             }
 
             @Override
             public void close(final String id) {
-                executor.execute(queryCloseRequest(id, options), Void.class, hostHandle);
+                executorSync().execute(queryCloseRequest(id, options), Void.class, hostHandle);
             }
         };
 
@@ -225,75 +225,75 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public AqlExecutionExplainEntity explainQuery(
             final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
-        return executor.execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
+        return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
     }
 
     @Override
     public AqlParseEntity parseQuery(final String query) {
-        return executor.execute(parseQueryRequest(query), AqlParseEntity.class);
+        return executorSync().execute(parseQueryRequest(query), AqlParseEntity.class);
     }
 
     @Override
     public void clearQueryCache() {
-        executor.execute(clearQueryCacheRequest(), Void.class);
+        executorSync().execute(clearQueryCacheRequest(), Void.class);
     }
 
     @Override
     public QueryCachePropertiesEntity getQueryCacheProperties() {
-        return executor.execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
+        return executorSync().execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
     }
 
     @Override
     public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties) {
-        return executor.execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
+        return executorSync().execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
     }
 
     @Override
     public QueryTrackingPropertiesEntity getQueryTrackingProperties() {
-        return executor.execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
+        return executorSync().execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
     }
 
     @Override
     public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties) {
-        return executor.execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
+        return executorSync().execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
     }
 
     @Override
     public Collection<QueryEntity> getCurrentlyRunningQueries() {
-        return executor.execute(getCurrentlyRunningQueriesRequest(),
+        return executorSync().execute(getCurrentlyRunningQueriesRequest(),
                 constructListType(QueryEntity.class));
     }
 
     @Override
     public Collection<QueryEntity> getSlowQueries() {
-        return executor.execute(getSlowQueriesRequest(),
+        return executorSync().execute(getSlowQueriesRequest(),
                 constructListType(QueryEntity.class));
     }
 
     @Override
     public void clearSlowQueries() {
-        executor.execute(clearSlowQueriesRequest(), Void.class);
+        executorSync().execute(clearSlowQueriesRequest(), Void.class);
     }
 
     @Override
     public void killQuery(final String id) {
-        executor.execute(killQueryRequest(id), Void.class);
+        executorSync().execute(killQueryRequest(id), Void.class);
     }
 
     @Override
     public void createAqlFunction(
             final String name, final String code, final AqlFunctionCreateOptions options) {
-        executor.execute(createAqlFunctionRequest(name, code, options), Void.class);
+        executorSync().execute(createAqlFunctionRequest(name, code, options), Void.class);
     }
 
     @Override
     public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) {
-        return executor.execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
+        return executorSync().execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
     }
 
     @Override
     public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) {
-        return executor.execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
+        return executorSync().execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
     }
 
     @Override
@@ -309,57 +309,57 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public GraphEntity createGraph(
             final String name, final Iterable<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options) {
-        return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
+        return executorSync().execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
     }
 
     @Override
     public Collection<GraphEntity> getGraphs() {
-        return executor.execute(getGraphsRequest(), getGraphsResponseDeserializer());
+        return executorSync().execute(getGraphsRequest(), getGraphsResponseDeserializer());
     }
 
     @Override
     public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options) {
-        return executor.execute(transactionRequest(action, options), transactionResponseDeserializer(type));
+        return executorSync().execute(transactionRequest(action, options), transactionResponseDeserializer(type));
     }
 
     @Override
     public StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) {
-        return executor.execute(beginStreamTransactionRequest(options), streamTransactionResponseDeserializer());
+        return executorSync().execute(beginStreamTransactionRequest(options), streamTransactionResponseDeserializer());
     }
 
     @Override
     public StreamTransactionEntity abortStreamTransaction(String id) {
-        return executor.execute(abortStreamTransactionRequest(id), streamTransactionResponseDeserializer());
+        return executorSync().execute(abortStreamTransactionRequest(id), streamTransactionResponseDeserializer());
     }
 
     @Override
     public StreamTransactionEntity getStreamTransaction(String id) {
-        return executor.execute(getStreamTransactionRequest(id), streamTransactionResponseDeserializer());
+        return executorSync().execute(getStreamTransactionRequest(id), streamTransactionResponseDeserializer());
     }
 
     @Override
     public Collection<TransactionEntity> getStreamTransactions() {
-        return executor.execute(getStreamTransactionsRequest(), transactionsResponseDeserializer());
+        return executorSync().execute(getStreamTransactionsRequest(), transactionsResponseDeserializer());
     }
 
     @Override
     public StreamTransactionEntity commitStreamTransaction(String id) {
-        return executor.execute(commitStreamTransactionRequest(id), streamTransactionResponseDeserializer());
+        return executorSync().execute(commitStreamTransactionRequest(id), streamTransactionResponseDeserializer());
     }
 
     @Override
     public DatabaseEntity getInfo() {
-        return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
+        return executorSync().execute(getInfoRequest(), getInfoResponseDeserializer());
     }
 
     @Override
     public void reloadRouting() {
-        executor.execute(reloadRoutingRequest(), Void.class);
+        executorSync().execute(reloadRoutingRequest(), Void.class);
     }
 
     @Override
     public Collection<ViewEntity> getViews() {
-        return executor.execute(getViewsRequest(), getViewsResponseDeserializer());
+        return executorSync().execute(getViewsRequest(), getViewsResponseDeserializer());
     }
 
     @Override
@@ -379,32 +379,32 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public ViewEntity createView(final String name, final ViewType type) {
-        return executor.execute(createViewRequest(name, type), ViewEntity.class);
+        return executorSync().execute(createViewRequest(name, type), ViewEntity.class);
     }
 
     @Override
     public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options) {
-        return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+        return executorSync().execute(createArangoSearchRequest(name, options), ViewEntity.class);
     }
 
     @Override
     public ViewEntity createSearchAlias(String name, SearchAliasCreateOptions options) {
-        return executor.execute(createSearchAliasRequest(name, options), ViewEntity.class);
+        return executorSync().execute(createSearchAliasRequest(name, options), ViewEntity.class);
     }
 
     @Override
     public SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer) {
-        return executor.execute(createAnalyzerRequest(analyzer), SearchAnalyzer.class);
+        return executorSync().execute(createAnalyzerRequest(analyzer), SearchAnalyzer.class);
     }
 
     @Override
     public SearchAnalyzer getSearchAnalyzer(String name) {
-        return executor.execute(getAnalyzerRequest(name), SearchAnalyzer.class);
+        return executorSync().execute(getAnalyzerRequest(name), SearchAnalyzer.class);
     }
 
     @Override
     public Collection<SearchAnalyzer> getSearchAnalyzers() {
-        return executor.execute(getAnalyzersRequest(), getSearchAnalyzersResponseDeserializer());
+        return executorSync().execute(getAnalyzersRequest(), getSearchAnalyzersResponseDeserializer());
     }
 
     @Override
@@ -414,7 +414,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public void deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options) {
-        executor.execute(deleteAnalyzerRequest(name, options), Void.class);
+        executorSync().execute(deleteAnalyzerRequest(name, options), Void.class);
     }
 
 }

@@ -28,7 +28,7 @@ import com.arangodb.model.ViewRenameOptions;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoView extends ArangoExecuteableSync {
+public abstract class InternalArangoView extends ArangoExecuteable {
 
     protected static final String PATH_API_VIEW = "/_api/view";
     protected static final String PATH_API_ANALYZER = "/_api/analyzer";
@@ -37,7 +37,7 @@ public abstract class InternalArangoView extends ArangoExecuteableSync {
     protected final String name;
 
     protected InternalArangoView(final ArangoDatabaseImpl db, final String name) {
-        super(db.executor, db.serde);
+        super(db);
         this.db = db;
         this.name = name;
     }

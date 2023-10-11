@@ -40,7 +40,7 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoCollection extends ArangoExecuteableSync {
+public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected static final String PATH_API_COLLECTION = "/_api/collection";
     private static final String COLLECTION = "collection";
@@ -64,7 +64,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteableSync {
     protected final String name;
 
     protected InternalArangoCollection(final ArangoDatabaseImpl db, final String name) {
-        super(db.executor, db.serde);
+        super(db);
         this.db = db;
         this.name = name;
     }
