@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
@@ -41,8 +42,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollectionImpl.class);
 
+    private final ArangoDatabase db;
+
     protected ArangoCollectionImpl(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
+        this.db = db;
+    }
+
+    @Override
+    public ArangoDatabase db() {
+        return db;
     }
 
     @Override

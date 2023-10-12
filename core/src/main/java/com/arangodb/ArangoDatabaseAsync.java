@@ -68,13 +68,13 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<String>> getAccessibleDatabases();
 
-//    /**
-//     * Returns a {@code ArangoCollection} instance for the given collection name.
-//     *
-//     * @param name Name of the collection
-//     * @return collection handler
-//     */
-//    ArangoCollection collection(String name);
+    /**
+     * Returns a {@code ArangoCollectionAsync} instance for the given collection name.
+     *
+     * @param name Name of the collection
+     * @return collection handler
+     */
+    ArangoCollectionAsync collection(String name);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#createCollection(String)}
@@ -96,15 +96,15 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<CollectionEntity>> getCollections(CollectionsReadOptions options);
 
-//    /**
-//     * Asynchronous version of {@link ArangoDatabase#getIndex(String)}
-//     */
-//    CompletableFuture<IndexEntity> getIndex(String id);
-//
-//    /**
-//     * Asynchronous version of {@link ArangoDatabase#deleteIndex(String)}
-//     */
-//    CompletableFuture<String> deleteIndex(String id);
+    /**
+     * Asynchronous version of {@link ArangoDatabase#getIndex(String)}
+     */
+    CompletableFuture<IndexEntity> getIndex(String id);
+
+    /**
+     * Asynchronous version of {@link ArangoDatabase#deleteIndex(String)}
+     */
+    CompletableFuture<String> deleteIndex(String id);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#create()}
