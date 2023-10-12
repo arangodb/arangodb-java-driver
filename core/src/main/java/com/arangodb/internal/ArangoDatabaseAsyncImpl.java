@@ -33,6 +33,7 @@ import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
@@ -66,21 +67,20 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public CompletableFuture<Boolean> exists() {
-        return getInfo()
-                .handle((result, ex) -> {
-                    if (result != null) {
-                        return true;
-                    }
+        return getInfo().handle((result, ex) -> {
+            if (result != null) {
+                return true;
+            }
 
-                    if (ex instanceof ArangoDBException) {
-                        ArangoDBException e = (ArangoDBException) ex.getCause();
-                        if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
-                            return false;
-                        }
-                    }
+            if (ex instanceof CompletionException && ex.getCause() instanceof ArangoDBException) {
+                ArangoDBException e = (ArangoDBException) ex.getCause();
+                if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+                    return false;
+                }
+            }
 
-                    throw ArangoDBException.wrap(ex);
-                });
+            throw new CompletionException(ex);
+        });
     }
 
     @Override

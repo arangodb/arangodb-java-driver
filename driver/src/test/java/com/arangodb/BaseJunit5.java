@@ -30,20 +30,33 @@ class BaseJunit5 {
     private static Boolean extendedDbNames;
     private static Boolean extendedNames;
 
+    protected static Stream<ArangoDB> adbsStream() {
+        return adbs.stream();
+    }
     protected static Stream<ArangoDatabase> dbsStream() {
-        return adbs.stream().map(adb -> adb.db(TEST_DB));
+        return adbsStream().map(adb -> adb.db(TEST_DB));
+    }
+    protected static Stream<ArangoDBAsync> asyncAdbsStream() {
+        return adbs.stream().map(ArangoDB::async);
+    }
+    protected static Stream<ArangoDatabaseAsync> asyncDbsStream() {
+        return asyncAdbsStream().map(adb -> adb.db(TEST_DB));
     }
 
     protected static Stream<Arguments> arangos() {
-        return adbs.stream().map(Arguments::of);
+        return adbsStream().map(Arguments::of);
     }
 
     protected static Stream<Arguments> asyncArangos() {
-        return adbs.stream().map(ArangoDB::async).map(Arguments::of);
+        return asyncAdbsStream().map(Arguments::of);
     }
 
     protected static Stream<Arguments> dbs() {
         return dbsStream().map(Arguments::of);
+    }
+
+    protected static Stream<Arguments> asyncDbs() {
+        return asyncDbsStream().map(Arguments::of);
     }
 
     static ArangoDatabase initDB(String name) {
