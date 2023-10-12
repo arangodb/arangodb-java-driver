@@ -20,10 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBAsync;
-import com.arangodb.Request;
-import com.arangodb.Response;
+import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
@@ -55,16 +52,16 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
         arangoDB.updateJwt(jwt);
     }
 
-//    @Override
-//    public ArangoDatabase db() {
-//        return db(ArangoRequestParam.SYSTEM);
-//    }
-//
-//    @Override
-//    public ArangoDatabase db(final String dbName) {
-//        return new ArangoDatabaseImpl(this, dbName);
-//    }
-//
+    @Override
+    public ArangoDatabaseAsync db() {
+        return db(ArangoRequestParam.SYSTEM);
+    }
+
+    @Override
+    public ArangoDatabaseAsync db(final String dbName) {
+        return new ArangoDatabaseAsyncImpl(this, dbName);
+    }
+
 //    @Override
 //    public ArangoMetrics metrics() {
 //        return new ArangoMetricsImpl(executorAsync().getQueueTimeMetrics());
@@ -85,10 +82,10 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
         return executorAsync().execute(getDatabasesRequest(ArangoRequestParam.SYSTEM), getDatabaseResponseDeserializer());
     }
 
-//    @Override
-//    public CompletableFuture<Collection<String>> getAccessibleDatabases() {
-//        return db().getAccessibleDatabases();
-//    }
+    @Override
+    public CompletableFuture<Collection<String>> getAccessibleDatabases() {
+        return db().getAccessibleDatabases();
+    }
 
     @Override
     public CompletableFuture<Collection<String>> getAccessibleDatabasesFor(final String user) {
@@ -96,15 +93,15 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
-//    @Override
-//    public CompletableFuture<ArangoDBVersion> getVersion() {
-//        return db().getVersion();
-//    }
+    @Override
+    public CompletableFuture<ArangoDBVersion> getVersion() {
+        return db().getVersion();
+    }
 
-//    @Override
-//    public CompletableFuture<ArangoDBEngine> getEngine() {
-//        return db().getEngine();
-//    }
+    @Override
+    public CompletableFuture<ArangoDBEngine> getEngine() {
+        return db().getEngine();
+    }
 
     @Override
     public CompletableFuture<ServerRole> getRole() {

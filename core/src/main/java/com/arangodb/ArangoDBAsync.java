@@ -46,21 +46,21 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     void updateJwt(String jwt);
 
-//    /**
-//     * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
-//     *
-//     * @return database handler
-//     */
-//    ArangoDatabase db();
-//
-//    /**
-//     * Returns a {@code ArangoDatabase} instance for the given database name.
-//     *
-//     * @param name Name of the database
-//     * @return database handler
-//     */
-//    ArangoDatabase db(String name);
-//
+    /**
+     * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
+     *
+     * @return database handler
+     */
+    ArangoDatabaseAsync db();
+
+    /**
+     * Returns a {@code ArangoDatabase} instance for the given database name.
+     *
+     * @param name Name of the database
+     * @return database handler
+     */
+    ArangoDatabaseAsync db(String name);
+
 //    /**
 //     * @return entry point for accessing client metrics
 //     */
@@ -81,25 +81,25 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<String>> getDatabases();
 
-//    /**
-//     * Asynchronous version of {@link ArangoDB#getAccessibleDatabases()}
-//     */
-//    CompletableFuture<Collection<String>> getAccessibleDatabases();
+    /**
+     * Asynchronous version of {@link ArangoDB#getAccessibleDatabases()}
+     */
+    CompletableFuture<Collection<String>> getAccessibleDatabases();
 
     /**
      * Asynchronous version of {@link ArangoDB#getAccessibleDatabasesFor(String)}
      */
     CompletableFuture<Collection<String>> getAccessibleDatabasesFor(String user);
 
-//    /**
-//     * Asynchronous version of {@link ArangoDB#getVersion()}
-//     */
-//    CompletableFuture<ArangoDBVersion> getVersion();
+    /**
+     * Asynchronous version of {@link ArangoDB#getVersion()}
+     */
+    CompletableFuture<ArangoDBVersion> getVersion();
 
-//    /**
-//     * Asynchronous version of {@link ArangoDB#getEngine()}
-//     */
-//    CompletableFuture<ArangoDBEngine> getEngine();
+    /**
+     * Asynchronous version of {@link ArangoDB#getEngine()}
+     */
+    CompletableFuture<ArangoDBEngine> getEngine();
 
     /**
      * Asynchronous version of {@link ArangoDB#getRole()}
