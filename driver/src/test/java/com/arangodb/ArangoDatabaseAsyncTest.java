@@ -34,10 +34,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -124,8 +121,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .createCollection(name, new CollectionCreateOptions().replicationFactor(2)).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -139,9 +136,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 new CollectionCreateOptions().replicationFactor(2).writeConcern(2)).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
-//        assertThat(props.getWriteConcern()).isEqualTo(2);
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getReplicationFactor().get()).isEqualTo(2);
+        assertThat(props.getWriteConcern()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -156,8 +153,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
     @ParameterizedTest(name = "{index}")
@@ -170,8 +167,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getNumberOfShards()).isEqualTo(2);
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getNumberOfShards()).isEqualTo(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -186,27 +183,27 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getShardingStrategy()).isEqualTo(ShardingStrategy.COMMUNITY_COMPAT.getInternalName());
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getShardingStrategy()).isEqualTo(ShardingStrategy.COMMUNITY_COMPAT.getInternalName());
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void createCollectionWithSmartJoinAttribute(ArangoDatabaseAsync db) {
-//        assumeTrue(isAtLeastVersion(3, 5));
-//        assumeTrue(isEnterprise());
-//        assumeTrue(isCluster());
-//
-//        String fooName = rndName();
-//        db.collection(fooName).create();
-//
-//        String name = rndName();
-//        final CollectionEntity result = db.createCollection(name,
-//                new CollectionCreateOptions().smartJoinAttribute("test123").distributeShardsLike(fooName).shardKeys("_key:"));
-//        assertThat(result).isNotNull();
-//        assertThat(result.getId()).isNotNull();
-//        assertThat(db.collection(name).getProperties().getSmartJoinAttribute()).isEqualTo("test123");
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void createCollectionWithSmartJoinAttribute(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+
+        String fooName = rndName();
+        db.collection(fooName).create();
+
+        String name = rndName();
+        final CollectionEntity result = db.createCollection(name,
+                new CollectionCreateOptions().smartJoinAttribute("test123").distributeShardsLike(fooName).shardKeys("_key:")).get();
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(db.collection(name).getProperties().get().getSmartJoinAttribute()).isEqualTo("test123");
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
@@ -233,9 +230,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .createCollection(name, new CollectionCreateOptions().numberOfShards(2).shardKeys("a")).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        final CollectionPropertiesEntity properties = db.collection(name).getProperties();
-//        assertThat(properties.getNumberOfShards()).isEqualTo(2);
-//        assertThat(properties.getShardKeys()).hasSize(1);
+        final CollectionPropertiesEntity properties = db.collection(name).getProperties().get();
+        assertThat(properties.getNumberOfShards()).isEqualTo(2);
+        assertThat(properties.getShardKeys()).hasSize(1);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -247,9 +244,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b")).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
-//        final CollectionPropertiesEntity properties = db.collection(name).getProperties();
-//        assertThat(properties.getNumberOfShards()).isEqualTo(2);
-//        assertThat(properties.getShardKeys()).hasSize(2);
+        final CollectionPropertiesEntity properties = db.collection(name).getProperties().get();
+        assertThat(properties.getNumberOfShards()).isEqualTo(2);
+        assertThat(properties.getShardKeys()).hasSize(2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -265,8 +262,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.createCollection(name1, new CollectionCreateOptions().numberOfShards(numberOfShards)).get();
         db.createCollection(name2, new CollectionCreateOptions().distributeShardsLike(name1)).get();
 
-//        assertThat(db.collection(name1).getProperties().getNumberOfShards()).isEqualTo(numberOfShards);
-//        assertThat(db.collection(name2).getProperties().getNumberOfShards()).isEqualTo(numberOfShards);
+        assertThat(db.collection(name1).getProperties().get().getNumberOfShards()).isEqualTo(numberOfShards);
+        assertThat(db.collection(name2).getProperties().get().getNumberOfShards()).isEqualTo(numberOfShards);
     }
 
     private void createCollectionWithKeyType(ArangoDatabaseAsync db, KeyType keyType) throws ExecutionException, InterruptedException {
@@ -277,7 +274,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 null,
                 null
         )).get();
-//        assertThat(db.collection(name).getProperties().getKeyOptions().getType()).isEqualTo(keyType);
+        assertThat(db.collection(name).getProperties().get().getKeyOptions().getType()).isEqualTo(keyType);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -335,24 +332,24 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.getSchema().getRule()).isEqualTo(rule);
         assertThat(result.getSchema().getMessage()).isEqualTo(message);
 
-//        CollectionPropertiesEntity props = db.collection(name).getProperties();
-//        assertThat(props.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
-//        assertThat(props.getSchema().getRule()).isEqualTo(rule);
-//        assertThat(props.getSchema().getMessage()).isEqualTo(message);
+        CollectionPropertiesEntity props = db.collection(name).getProperties().get();
+        assertThat(props.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
+        assertThat(props.getSchema().getRule()).isEqualTo(rule);
+        assertThat(props.getSchema().getMessage()).isEqualTo(message);
 
-//        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
-//        doc.addAttribute("number", 33);
-//        db.collection(name).insertDocument(doc);
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("number", 33);
+        db.collection(name).insertDocument(doc);
 
-//        BaseDocument wrongDoc = new BaseDocument(UUID.randomUUID().toString());
-//        wrongDoc.addAttribute("number", "notANumber");
-//        Throwable thrown = catchThrowable(() -> db.collection(name).insertDocument(wrongDoc));
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-//        ArangoDBException e = (ArangoDBException) thrown;
+        BaseDocument wrongDoc = new BaseDocument(UUID.randomUUID().toString());
+        wrongDoc.addAttribute("number", "notANumber");
+        Throwable thrown = catchThrowable(() -> db.collection(name).insertDocument(wrongDoc).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
 
-//        assertThat(e).hasMessageContaining(message);
-//        assertThat(e.getResponseCode()).isEqualTo(400);
-//        assertThat(e.getErrorNum()).isEqualTo(1620);
+        assertThat(e).hasMessageContaining(message);
+        assertThat(e.getResponseCode()).isEqualTo(400);
+        assertThat(e.getErrorNum()).isEqualTo(1620);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -383,12 +380,12 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .keepNull(true)
                 .failOnWarning(false);
 
-//        db.collection(cName).changeProperties(new CollectionPropertiesOptions().computedValues(cv2));
-//
-//        CollectionPropertiesEntity props = db.collection(cName).getProperties();
-//        assertThat(props.getComputedValues())
-//                .hasSize(1)
-//                .contains(cv2);
+        db.collection(cName).changeProperties(new CollectionPropertiesOptions().computedValues(cv2)).get();
+
+        CollectionPropertiesEntity props = db.collection(cName).getProperties().get();
+        assertThat(props.getComputedValues())
+                .hasSize(1)
+                .contains(cv2);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -396,72 +393,63 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void deleteCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
         db.createCollection(name, null).get();
-//        db.collection(name).drop();
-//        Throwable thrown = catchThrowable(() -> db.collection(name).getInfo());
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        db.collection(name).drop().get();
+        Throwable thrown = catchThrowable(() -> db.collection(name).getInfo().get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void deleteSystemCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-//        final String name = "_system_test";
-//        db.createCollection(name, new CollectionCreateOptions().isSystem(true)).get();
-//        db.collection(name).drop(true);
-//        Throwable thrown = catchThrowable(() -> db.collection(name).getInfo());
-//        assertThat(thrown)
-//                .isInstanceOf(ArangoDBException.class)
-//                .extracting(it -> ((ArangoDBException) it).getResponseCode())
-//                .isEqualTo(404);
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void deleteSystemCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final String name = "_system_test";
+        db.createCollection(name, new CollectionCreateOptions().isSystem(true)).get();
+        db.collection(name).drop(true).get();
+        Throwable thrown = catchThrowable(() -> db.collection(name).getInfo().get()).getCause();
+        assertThat(thrown)
+                .isInstanceOf(ArangoDBException.class)
+                .extracting(it -> ((ArangoDBException) it).getResponseCode())
+                .isEqualTo(404);
+    }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void deleteSystemCollectionFail(ArangoDatabaseAsync db) {
-//        final String name = "_system_test";
-//        ArangoCollection collection = db.collection(name);
-//        if (collection.exists())
-//            collection.drop(true);
-//
-//        db.createCollection(name, new CollectionCreateOptions().isSystem(true));
-//        try {
-//            collection.drop();
-//            fail();
-//        } catch (final ArangoDBException e) {
-//            assertThat(e.getResponseCode()).isEqualTo(403);
-//        }
-//        collection.drop(true);
-//        try {
-//            collection.getInfo();
-//            fail();
-//        } catch (final ArangoDBException e) {
-//            assertThat(e.getResponseCode()).isEqualTo(404);
-//        }
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void deleteSystemCollectionFail(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final String name = "_system_test";
+        ArangoCollectionAsync collection = db.collection(name);
+        if (collection.exists().get())
+            collection.drop(true).get();
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void getIndex(ArangoDatabaseAsync db) {
-//        final Collection<String> fields = Collections.singletonList("field-" + rnd());
-//        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null);
-//        final IndexEntity readResult = db.getIndex(createResult.getId());
-//        assertThat(readResult.getId()).isEqualTo(createResult.getId());
-//        assertThat(readResult.getType()).isEqualTo(createResult.getType());
-//    }
+        db.createCollection(name, new CollectionCreateOptions().isSystem(true)).get();
+        Throwable thrown = catchThrowable(() -> collection.drop().get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(403);
+        collection.drop(true).get();
+        assertThat(collection.exists().get()).isFalse();
+    }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void deleteIndex(ArangoDatabaseAsync db) {
-//        final Collection<String> fields = Collections.singletonList("field-" + rnd());
-//        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null);
-//        final String id = db.deleteIndex(createResult.getId());
-//        assertThat(id).isEqualTo(createResult.getId());
-//        try {
-//            db.getIndex(id);
-//            fail();
-//        } catch (final ArangoDBException e) {
-//            assertThat(e.getResponseCode()).isEqualTo(404);
-//        }
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void getIndex(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final Collection<String> fields = Collections.singletonList("field-" + rnd());
+        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null).get();
+        final IndexEntity readResult = db.getIndex(createResult.getId()).get();
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getType()).isEqualTo(createResult.getType());
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void deleteIndex(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final Collection<String> fields = Collections.singletonList("field-" + rnd());
+        final IndexEntity createResult = db.collection(CNAME1).ensurePersistentIndex(fields, null).get();
+        final String id = db.deleteIndex(createResult.getId()).get();
+        assertThat(id).isEqualTo(createResult.getId());
+        Throwable thrown = catchThrowable(() -> db.getIndex(id).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(404);
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
@@ -779,7 +767,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 //        properties2.setMode(CacheMode.off);
 //        db.setQueryCacheProperties(properties2);
 //    }
-
+//
 //    @ParameterizedTest(name = "{index}")
 //    @MethodSource("asyncDbs")
 //    void queryWithMemoryLimit(ArangoDatabaseAsync db) {
@@ -1308,10 +1296,10 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
         final GraphEntity result = db.createGraph(name, edgeDefinitions, new GraphCreateOptions().replicationFactor(2)).get();
         assertThat(result).isNotNull();
-//        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
-//            final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-//            assertThat(properties.getReplicationFactor().get()).isEqualTo(2);
-//        }
+        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+            final CollectionPropertiesEntity properties = db.collection(collection).getProperties().get();
+            assertThat(properties.getReplicationFactor().get()).isEqualTo(2);
+        }
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1327,10 +1315,10 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         final GraphEntity result = db
                 .createGraph(name, edgeDefinitions, new GraphCreateOptions().numberOfShards(2)).get();
         assertThat(result).isNotNull();
-//        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
-//            final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-//            assertThat(properties.getNumberOfShards()).isEqualTo(2);
-//        }
+        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+            final CollectionPropertiesEntity properties = db.collection(collection).getProperties().get();
+            assertThat(properties.getNumberOfShards()).isEqualTo(2);
+        }
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1423,32 +1411,32 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void transactionInsertJson(ArangoDatabaseAsync db) {
-//        String key = "key-" + rnd();
-//        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-//                .writeCollections(CNAME1);
-//        db.transaction("function (params) { "
-//                + "var db = require('internal').db;"
-//                + "db." + CNAME1 + ".save(JSON.parse(params));"
-//                + "}", Void.class, options);
-//        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void transactionExclusiveWrite(ArangoDatabaseAsync db) {
-//        assumeTrue(isAtLeastVersion(3, 4));
-//        String key = "key-" + rnd();
-//        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-//                .exclusiveCollections(CNAME1);
-//        db.transaction("function (params) { "
-//                + "var db = require('internal').db;"
-//                + "db." + CNAME1 + ".save(JSON.parse(params));"
-//                + "}", Void.class, options);
-//        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void transactionInsertJson(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        String key = "key-" + rnd();
+        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
+                .writeCollections(CNAME1);
+        db.transaction("function (params) { "
+                + "var db = require('internal').db;"
+                + "db." + CNAME1 + ".save(JSON.parse(params));"
+                + "}", Void.class, options).get();
+        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void transactionExclusiveWrite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 4));
+        String key = "key-" + rnd();
+        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
+                .exclusiveCollections(CNAME1);
+        db.transaction("function (params) { "
+                + "var db = require('internal').db;"
+                + "db." + CNAME1 + ".save(JSON.parse(params));"
+                + "}", Void.class, options).get();
+        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
