@@ -26,6 +26,7 @@ import com.arangodb.internal.InternalResponse;
 
 import java.io.Closeable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -40,7 +41,12 @@ public interface CommunicationProtocol extends Closeable {
             Thread.currentThread().interrupt();
             throw ArangoDBException.wrap(e);
         } catch (ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
+            Throwable cause = e.getCause();
+            if (cause instanceof CompletionException) {
+                throw ArangoDBException.wrap(cause.getCause());
+            } else {
+                throw ArangoDBException.wrap(cause);
+            }
         }
     }
 

@@ -185,17 +185,16 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         // needed for active-failover tests only
         Thread.sleep(2_000);
 
-        // FIXME
-//        ArangoDBAsync arangoDBTestUser = new ArangoDB.Builder()
-//                .loadProperties(config)
-//                .user("testUser")
-//                .password("testPasswd")
-//                .build()
-//                .async();
-        // check if testUser has been created and can access the created db
-//        ArangoCollectionAsync collection = arangoDBTestUser.db(dbName).collection("col-" + UUID.randomUUID());
-//        collection.create().get();
-//        arangoDBTestUser.shutdown();
+        ArangoDBAsync arangoDBTestUser = new ArangoDB.Builder()
+                .loadProperties(config)
+                .user("testUser")
+                .password("testPasswd")
+                .build()
+                .async();
+// check if testUser has been created and can access the created db
+        ArangoCollectionAsync collection = arangoDBTestUser.db(dbName).collection("col-" + UUID.randomUUID());
+        collection.create().get();
+        arangoDBTestUser.shutdown();
 
         final Boolean resultDelete = arangoDB.db(dbName).drop().get();
         assertThat(resultDelete).isTrue();
@@ -299,7 +298,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         String username = "user-" + UUID.randomUUID();
         final Map<String, Object> extra = new HashMap<>();
         extra.put("hund", false);
-        arangoDB.createUser(username, PW, new UserCreateOptions().extra(extra));
+        arangoDB.createUser(username, PW, new UserCreateOptions().extra(extra)).get();
         extra.put("hund", true);
         extra.put("mund", true);
         final UserEntity user = arangoDB.updateUser(username, new UserUpdateOptions().extra(extra)).get();

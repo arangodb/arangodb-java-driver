@@ -20,11 +20,13 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoCollectionAsync;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabaseAsync;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
@@ -88,10 +90,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return executorAsync().execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
     }
 
-//    @Override
-//    public ArangoCollection collection(final String name) {
-//        return new ArangoCollectionImpl(this, name);
-//    }
+    @Override
+    public ArangoCollectionAsync collection(String name) {
+        return new ArangoCollectionAsyncImpl(this, name);
+    }
 
     @Override
     public CompletableFuture<CollectionEntity> createCollection(final String name) {
@@ -114,19 +116,19 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return executorAsync().execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
     }
 
-//    @Override
-//    public CompletableFuture<IndexEntity> getIndex(final String id) {
-//        DocumentUtil.validateIndexId(id);
-//        final String[] split = id.split("/");
-//        return collection(split[0]).getIndex(split[1]);
-//    }
+    @Override
+    public CompletableFuture<IndexEntity> getIndex(final String id) {
+        DocumentUtil.validateIndexId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).getIndex(split[1]);
+    }
 
-//    @Override
-//    public CompletableFuture<String> deleteIndex(final String id) {
-//        DocumentUtil.validateIndexId(id);
-//        final String[] split = id.split("/");
-//        return collection(split[0]).deleteIndex(split[1]);
-//    }
+    @Override
+    public CompletableFuture<String> deleteIndex(final String id) {
+        DocumentUtil.validateIndexId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).deleteIndex(split[1]);
+    }
 
     @Override
     public CompletableFuture<Boolean> create() {
