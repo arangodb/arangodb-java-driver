@@ -38,6 +38,10 @@ class BaseJunit5 {
         return adbs.stream().map(Arguments::of);
     }
 
+    protected static Stream<Arguments> asyncArangos() {
+        return adbs.stream().map(ArangoDB::async).map(Arguments::of);
+    }
+
     protected static Stream<Arguments> dbs() {
         return dbsStream().map(Arguments::of);
     }
