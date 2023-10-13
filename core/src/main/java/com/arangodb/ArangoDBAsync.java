@@ -61,10 +61,10 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      */
     ArangoDatabaseAsync db(String name);
 
-//    /**
-//     * @return entry point for accessing client metrics
-//     */
-//    ArangoMetrics metrics();
+    /**
+     * @return entry point for accessing client metrics
+     */
+    ArangoMetrics metrics();
 
     /**
      * Asynchronous version of {@link ArangoDB#createDatabase(String)}
