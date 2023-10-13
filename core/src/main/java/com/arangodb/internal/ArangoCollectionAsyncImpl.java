@@ -140,22 +140,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options) {
         DocumentUtil.validateDocumentKey(key);
         return executorAsync().execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
-                .exceptionally(e -> {
-                    if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
-                        ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
-
-                        // handle Response: 404, Error: 1655 - transaction not found
-                        if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
-                            throw (CompletionException) e;
-                        }
-
-                        if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
-                                || arangoDBException.getResponseCode() == 412))) {
-                            return null;
-                        }
-                    }
-                    throw new CompletionException(e);
-                });
+                .exceptionally(this::catchGetDocumentExceptions);
     }
 
     @Override
@@ -331,23 +316,26 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options) {
         return executorAsync().execute(documentExistsRequest(key, options), Void.class)
-                .thenApply(Objects::nonNull)
-                .exceptionally(e -> {
-                    if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
-                        ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
+                .thenApply(it -> true)
+                .exceptionally(this::catchGetDocumentExceptions)
+                .thenApply(Objects::nonNull);
+    }
 
-                        // handle Response: 404, Error: 1655 - transaction not found
-                        if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
-                            throw (CompletionException) e;
-                        }
+    <T> T catchGetDocumentExceptions(Throwable e) {
+        if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
+            ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
 
-                        if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
-                                || arangoDBException.getResponseCode() == 412))) {
-                            return null;
-                        }
-                    }
-                    throw new CompletionException(e);
-                });
+            // handle Response: 404, Error: 1655 - transaction not found
+            if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
+                throw (CompletionException) e;
+            }
+
+            if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
+                    || arangoDBException.getResponseCode() == 412))) {
+                return null;
+            }
+        }
+        throw new CompletionException(e);
     }
 
     @Override
