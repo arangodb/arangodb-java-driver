@@ -62,10 +62,10 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
         return new ArangoDatabaseAsyncImpl(this, dbName);
     }
 
-//    @Override
-//    public ArangoMetrics metrics() {
-//        return new ArangoMetricsImpl(executorAsync().getQueueTimeMetrics());
-//    }
+    @Override
+    public ArangoMetrics metrics() {
+        return new ArangoMetricsImpl(executorAsync().getQueueTimeMetrics());
+    }
 
     @Override
     public CompletableFuture<Boolean> createDatabase(final String dbName) {
