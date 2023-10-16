@@ -20,10 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoCollectionAsync;
-import com.arangodb.ArangoDBAsync;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabaseAsync;
+import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.util.DocumentUtil;
@@ -311,10 +308,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return executorAsync().execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
     }
 
-//    @Override
-//    public ArangoGraph graph(final String name) {
-//        return new ArangoGraphImpl(this, name);
-//    }
+    @Override
+    public ArangoGraphAsync graph(final String name) {
+        return new ArangoGraphAsyncImpl(this, name);
+    }
 
     @Override
     public CompletableFuture<GraphEntity> createGraph(final String name, final Iterable<EdgeDefinition> edgeDefinitions) {
