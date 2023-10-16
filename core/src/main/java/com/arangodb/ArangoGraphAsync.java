@@ -91,14 +91,14 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<GraphEntity> addVertexCollection(String name, VertexCollectionCreateOptions options);
 
-//    /**
-//     * Returns a {@code ArangoVertexCollectionAsync} instance for the given vertex collection name.
-//     *
-//     * @param name Name of the vertex collection
-//     * @return collection handler
-//     */
-//    ArangoVertexCollectionAsync vertexCollection(String name);
-//
+    /**
+     * Returns a {@code ArangoVertexCollectionAsync} instance for the given vertex collection name.
+     *
+     * @param name Name of the vertex collection
+     * @return collection handler
+     */
+    ArangoVertexCollectionAsync vertexCollection(String name);
+
 //    /**
 //     * Returns a {@code ArangoEdgeCollectionAsync} instance for the given edge collection name.
 //     *

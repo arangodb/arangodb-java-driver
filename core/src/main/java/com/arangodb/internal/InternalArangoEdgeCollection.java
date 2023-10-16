@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoGraph;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -38,17 +37,18 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     private static final String EDGE_PATH = "edge";
     private static final String EDGE_JSON_POINTER = "/edge";
 
-    private final ArangoGraphImpl graph;
+    private final String dbName;
+    private final String graphName;
     private final String name;
 
-    protected InternalArangoEdgeCollection(final ArangoGraphImpl graph, final String name) {
-        super(graph);
-        this.graph = graph;
+    protected InternalArangoEdgeCollection(final ArangoExecuteable executeable,
+                                           final String dbName,
+                                           final String graphName,
+                                           final String name) {
+        super(executeable);
+        this.dbName = dbName;
+        this.graphName = graphName;
         this.name = name;
-    }
-
-    public ArangoGraph graph() {
-        return graph;
     }
 
     public String name() {
@@ -56,13 +56,13 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected InternalRequest removeEdgeDefinitionRequest(final EdgeCollectionDropOptions options) {
-        return request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), "edge", name)
+        return request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, "edge", name)
                 .putQueryParam("waitForSync", options.getWaitForSync())
                 .putQueryParam("dropCollections", options.getDropCollections());
     }
 
     protected <T> InternalRequest insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-        final InternalRequest request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
+        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_GHARIAL, graphName, EDGE_PATH,
                 name);
         final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -76,7 +76,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected InternalRequest getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
-        final InternalRequest request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
+        final InternalRequest request = request(dbName, RequestType.GET, PATH_API_GHARIAL, graphName, EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -93,7 +93,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected <T> InternalRequest replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-        final InternalRequest request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
+        final InternalRequest request = request(dbName, RequestType.PUT, PATH_API_GHARIAL, graphName, EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -109,7 +109,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
 
     protected <T> InternalRequest updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
         final InternalRequest request;
-        request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
+        request = request(dbName, RequestType.PATCH, PATH_API_GHARIAL, graphName, EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -125,7 +125,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected InternalRequest deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-        final InternalRequest request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE_PATH,
+        final InternalRequest request = request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, EDGE_PATH,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
