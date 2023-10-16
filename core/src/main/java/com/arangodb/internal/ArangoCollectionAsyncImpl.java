@@ -20,13 +20,13 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.*;
+import com.arangodb.ArangoCollectionAsync;
+import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabaseAsync;
 import com.arangodb.entity.*;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -40,8 +40,6 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Michele Rastelli
  */
 public class ArangoCollectionAsyncImpl extends InternalArangoCollection implements ArangoCollectionAsync {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollectionAsyncImpl.class);
 
     private final ArangoDatabaseAsync db;
 
