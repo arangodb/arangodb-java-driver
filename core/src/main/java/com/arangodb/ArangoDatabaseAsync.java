@@ -228,13 +228,13 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctions(AqlFunctionGetOptions options);
 
-//    /**
-//     * Returns a {@code ArangoGraph} instance for the given graph name.
-//     *
-//     * @param name Name of the graph
-//     * @return graph handler
-//     */
-//    ArangoGraph graph(String name);
+    /**
+     * Returns a {@code ArangoGraphAsync} instance for the given graph name.
+     *
+     * @param name Name of the graph
+     * @return graph handler
+     */
+    ArangoGraphAsync graph(String name);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#createGraph(String, Iterable)}

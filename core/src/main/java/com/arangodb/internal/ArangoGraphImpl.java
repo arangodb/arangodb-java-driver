@@ -20,10 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoEdgeCollection;
-import com.arangodb.ArangoGraph;
-import com.arangodb.ArangoVertexCollection;
+import com.arangodb.*;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
@@ -37,8 +34,16 @@ import java.util.Collection;
  */
 public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph {
 
+    private final ArangoDatabase db;
+
     protected ArangoGraphImpl(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
+        this.db = db;
+    }
+
+    @Override
+    public ArangoDatabase db() {
+        return db;
     }
 
     @Override
