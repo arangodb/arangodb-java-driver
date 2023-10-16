@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
@@ -34,9 +35,16 @@ import org.slf4j.LoggerFactory;
 public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection implements ArangoVertexCollection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollectionImpl.class);
+    private final ArangoGraph graph;
 
     protected ArangoVertexCollectionImpl(final ArangoGraphImpl graph, final String name) {
-        super(graph, name);
+        super(graph, graph.db().name(), graph.name(), name);
+        this.graph = graph;
+    }
+
+    @Override
+    public ArangoGraph graph() {
+        return graph;
     }
 
     @Override
