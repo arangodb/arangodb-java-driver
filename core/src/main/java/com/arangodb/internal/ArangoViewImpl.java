@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoView;
 import com.arangodb.entity.ViewEntity;
 
@@ -28,9 +29,15 @@ import com.arangodb.entity.ViewEntity;
  * @author Mark Vollmary
  */
 public class ArangoViewImpl extends InternalArangoView implements ArangoView {
-
+    private final ArangoDatabase db;
     protected ArangoViewImpl(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
+        this.db = db;
+    }
+
+    @Override
+    public ArangoDatabase db() {
+        return db;
     }
 
     @Override

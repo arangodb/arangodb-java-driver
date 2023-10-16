@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDatabase;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.ViewRenameOptions;
 
@@ -33,17 +32,15 @@ public abstract class InternalArangoView extends ArangoExecuteable {
     protected static final String PATH_API_VIEW = "/_api/view";
     protected static final String PATH_API_ANALYZER = "/_api/analyzer";
 
-    protected final ArangoDatabaseImpl db;
+    protected final String dbName;
     protected final String name;
 
-    protected InternalArangoView(final ArangoDatabaseImpl db, final String name) {
-        super(db);
-        this.db = db;
+    protected InternalArangoView(final ArangoExecuteable executeable,
+                                 final String dbName,
+                                 final String name) {
+        super(executeable);
+        this.dbName = dbName;
         this.name = name;
-    }
-
-    public ArangoDatabase db() {
-        return db;
     }
 
     public String name() {
@@ -51,17 +48,17 @@ public abstract class InternalArangoView extends ArangoExecuteable {
     }
 
     protected InternalRequest dropRequest() {
-        return request(db.name(), RequestType.DELETE, PATH_API_VIEW, name);
+        return request(dbName, RequestType.DELETE, PATH_API_VIEW, name);
     }
 
     protected InternalRequest renameRequest(final String newName) {
-        final InternalRequest request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "rename");
+        final InternalRequest request = request(dbName, RequestType.PUT, PATH_API_VIEW, name, "rename");
         request.setBody(getSerde().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
         return request;
     }
 
     protected InternalRequest getInfoRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_VIEW, name);
+        return request(dbName, RequestType.GET, PATH_API_VIEW, name);
     }
 
 }

@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.SearchAlias;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.arangosearch.SearchAliasPropertiesEntity;
@@ -31,9 +32,15 @@ import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
  * @author Michele Rastelli
  */
 public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias {
-
+    private final ArangoDatabase db;
     protected SearchAliasImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);
+        this.db = db;
+    }
+
+    @Override
+    public ArangoDatabase db() {
+        return db;
     }
 
     @Override

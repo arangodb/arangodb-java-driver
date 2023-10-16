@@ -25,23 +25,25 @@ import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 public class InternalSearchAlias extends InternalArangoView {
 
     private static final String PROPERTIES_PATH = "properties";
+    private final String dbName;
 
     protected InternalSearchAlias(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
+        dbName = db.name();
     }
 
     protected InternalRequest getPropertiesRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
+        return request(dbName, RequestType.GET, PATH_API_VIEW, name, PROPERTIES_PATH);
     }
 
     protected InternalRequest replacePropertiesRequest(final SearchAliasPropertiesOptions options) {
-        final InternalRequest request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
+        final InternalRequest request = request(dbName, RequestType.PUT, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new SearchAliasPropertiesOptions()));
         return request;
     }
 
     protected InternalRequest updatePropertiesRequest(final SearchAliasPropertiesOptions options) {
-        final InternalRequest request = request(db.name(), RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
+        final InternalRequest request = request(dbName, RequestType.PATCH, PATH_API_VIEW, name, PROPERTIES_PATH);
         request.setBody(getSerde().serialize(options != null ? options : new SearchAliasPropertiesOptions()));
         return request;
     }

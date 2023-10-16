@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoSearch;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
@@ -31,9 +32,16 @@ import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
  * @author Mark Vollmary
  */
 public class ArangoSearchImpl extends InternalArangoSearch implements ArangoSearch {
+    private final ArangoDatabase db;
 
     protected ArangoSearchImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, name);
+        this.db = db;
+    }
+
+    @Override
+    public ArangoDatabase db() {
+        return db;
     }
 
     @Override
