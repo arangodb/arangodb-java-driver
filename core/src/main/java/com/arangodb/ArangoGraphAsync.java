@@ -99,13 +99,13 @@ public interface ArangoGraphAsync extends ArangoSerdeAccessor {
      */
     ArangoVertexCollectionAsync vertexCollection(String name);
 
-//    /**
-//     * Returns a {@code ArangoEdgeCollectionAsync} instance for the given edge collection name.
-//     *
-//     * @param name Name of the edge collection
-//     * @return collection handler
-//     */
-//    ArangoEdgeCollectionAsync edgeCollection(String name);
+    /**
+     * Returns a {@code ArangoEdgeCollectionAsync} instance for the given edge collection name.
+     *
+     * @param name Name of the edge collection
+     * @return collection handler
+     */
+    ArangoEdgeCollectionAsync edgeCollection(String name);
 
     /**
      * Asynchronous version of {@link ArangoGraph#getEdgeDefinitions()}

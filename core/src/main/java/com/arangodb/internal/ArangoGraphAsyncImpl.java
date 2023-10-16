@@ -106,10 +106,10 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
         return new ArangoVertexCollectionAsyncImpl(this, name);
     }
 
-//    @Override
-//    public ArangoEdgeCollection edgeCollection(final String name) {
-//        return new ArangoEdgeCollectionImpl(this, name);
-//    }
+    @Override
+    public ArangoEdgeCollectionAsync edgeCollection(final String name) {
+        return new ArangoEdgeCollectionAsyncImpl(this, name);
+    }
 
     @Override
     public CompletableFuture<Collection<String>> getEdgeDefinitions() {
