@@ -20,23 +20,27 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
+import com.arangodb.ArangoGraph;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection implements ArangoEdgeCollection {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
+    private final ArangoGraphImpl graph;
 
     protected ArangoEdgeCollectionImpl(final ArangoGraphImpl graph, final String name) {
-        super(graph, name);
+        super(graph, graph.db().name(), graph.name(), name);
+        this.graph = graph;
+    }
+
+    @Override
+    public ArangoGraph graph() {
+        return graph;
     }
 
     @Override
@@ -62,27 +66,13 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type) {
-        try {
-            return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
-                    getEdgeResponseDeserializer(type));
-        } catch (final ArangoDBException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-            return null;
-        }
+        return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
+                getEdgeResponseDeserializer(type));
     }
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        try {
-            return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
-        } catch (final ArangoDBException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-            return null;
-        }
+        return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
     }
 
     @Override

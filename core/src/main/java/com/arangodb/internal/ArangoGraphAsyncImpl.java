@@ -101,11 +101,11 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
         return executorAsync().execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 
-//    @Override
-//    public ArangoVertexCollection vertexCollection(final String name) {
-//        return new ArangoVertexCollectionImpl(this, name);
-//    }
-//
+    @Override
+    public ArangoVertexCollectionAsync vertexCollection(final String name) {
+        return new ArangoVertexCollectionAsyncImpl(this, name);
+    }
+
 //    @Override
 //    public ArangoEdgeCollection edgeCollection(final String name) {
 //        return new ArangoEdgeCollectionImpl(this, name);
