@@ -374,10 +374,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return executorAsync().execute(getViewsRequest(), getViewsResponseDeserializer());
     }
 
-//    @Override
-//    public CompletableFuture<ArangoView> view(final String name) {
-//        return new ArangoViewImpl(this, name);
-//    }
+    @Override
+    public ArangoViewAsync view(final String name) {
+        return new ArangoViewAsyncImpl(this, name);
+    }
 
 //    @Override
 //    public ArangoSearch arangoSearch(final String name) {

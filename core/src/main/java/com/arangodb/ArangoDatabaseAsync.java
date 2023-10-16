@@ -296,20 +296,24 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<ViewEntity>> getViews();
 
-//    /**
-//     * Asynchronous version of {@link ArangoDatabase#view(String)}
-//     */
-//    CompletableFuture<ArangoView> view(String name);
-//
+    /**
+     * Returns a {@code ArangoViewAsync} instance for the given view name.
+     *
+     * @param name Name of the view
+     * @return view handler
+     * @since ArangoDB 3.4.0
+     */
+    ArangoViewAsync view(String name);
+
 //    /**
 //     * Asynchronous version of {@link ArangoDatabase#arangoSearch(String)}
 //     */
-//    CompletableFuture<ArangoSearch> arangoSearch(String name);
+//    ArangoSearchAsync arangoSearch(String name);
 //
 //    /**
 //     * Asynchronous version of {@link ArangoDatabase#searchAlias(String)}
 //     */
-//    CompletableFuture<SearchAlias> searchAlias(String name);
+//    SearchAliasAsync searchAlias(String name);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#createView(String, ViewType)}
