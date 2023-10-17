@@ -116,7 +116,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         VertexEntity inserted = vertices.insertVertex(RawJson.of("{\"field\": 99}")).get();
 
         try {
-            vertices.insertVertex(RawJson.of("{\"field\": 99}"));
+            vertices.insertVertex(RawJson.of("{\"field\": 99}")).get();
         } catch (ArangoDBException e) {
             assertThat(e.getResponseCode()).isEqualTo(409);
             assertThat(e.getErrorNum()).isEqualTo(1210);
