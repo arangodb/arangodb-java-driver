@@ -30,9 +30,9 @@ public class InternalArangoSearch extends InternalArangoView {
     private static final String PROPERTIES_PATH = "properties";
     private final String dbName;
 
-    protected InternalArangoSearch(final ArangoDatabaseImpl db, final String name) {
-        super(db, db.name(), name);
-        dbName = db.name();
+    protected InternalArangoSearch(final ArangoExecuteable executeable, final String dbName, final String name) {
+        super(executeable, dbName, name);
+        this.dbName = dbName;
     }
 
     protected InternalRequest getPropertiesRequest() {

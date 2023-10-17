@@ -35,7 +35,7 @@ public class ArangoSearchImpl extends InternalArangoSearch implements ArangoSear
     private final ArangoDatabase db;
 
     protected ArangoSearchImpl(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
         this.db = db;
     }
 
