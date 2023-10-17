@@ -331,7 +331,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(graph.db().collection(EDGE_COL_1).exists().get()).isTrue();
 
         //revert
-        graph.addEdgeDefinition(ed1);
+        graph.addEdgeDefinition(ed1).get();
     }
 
     @ParameterizedTest(name = "{index}")

@@ -71,12 +71,27 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type) {
         return executorAsync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
-                getEdgeResponseDeserializer(type));
+                        getEdgeResponseDeserializer(type))
+                .exceptionally(e -> {
+                    // FIXME
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(e.getMessage(), e);
+                    }
+                    return null;
+                });
+
     }
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executorAsync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+        return executorAsync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
+                .exceptionally(e -> {
+                    // FIXME
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(e.getMessage(), e);
+                    }
+                    return null;
+                });
     }
 
     @Override

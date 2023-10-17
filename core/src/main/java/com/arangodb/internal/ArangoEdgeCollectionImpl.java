@@ -20,16 +20,21 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection implements ArangoEdgeCollection {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
 
     private final ArangoGraphImpl graph;
 
@@ -66,13 +71,29 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type) {
-        return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
-                getEdgeResponseDeserializer(type));
+        // FIXME
+        try {
+            return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
+                    getEdgeResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
     }
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+        // FIXME
+        try {
+            return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
     }
 
     @Override

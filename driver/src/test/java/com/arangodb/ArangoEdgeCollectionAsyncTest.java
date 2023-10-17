@@ -112,12 +112,11 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         BaseEdgeDocument edge = createEdgeValue(vertices);
         edges.insertEdge(edge).get();
 
-        try {
-            edges.insertEdge(edge).get();
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode()).isEqualTo(409);
-            assertThat(e.getErrorNum()).isEqualTo(1210);
-        }
+        Throwable t = catchThrowable(() -> edges.insertEdge(edge).get()).getCause();
+        assertThat(t).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) t;
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -409,7 +408,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
         final EdgeEntity createResult = edges.insertEdge(doc).get();
         final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch(createResult.getRev());
-        edges.deleteEdge(createResult.getKey(), options);
+        edges.deleteEdge(createResult.getKey(), options).get();
         final BaseEdgeDocument edge = edges
                 .getEdge(createResult.getKey(), BaseEdgeDocument.class).get();
         assertThat(edge).isNull();

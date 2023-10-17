@@ -20,16 +20,21 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection implements ArangoVertexCollection {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollectionImpl.class);
 
     private final ArangoGraph graph;
 
@@ -66,13 +71,29 @@ public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection i
 
     @Override
     public <T> T getVertex(final String key, final Class<T> type) {
-        return executorSync().execute(getVertexRequest(key, new GraphDocumentReadOptions()),
-                getVertexResponseDeserializer(type));
+        // FIXME
+        try {
+            return executorSync().execute(getVertexRequest(key, new GraphDocumentReadOptions()),
+                    getVertexResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
     }
 
     @Override
     public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executorSync().execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+        // FIXME
+        try {
+            return executorSync().execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
     }
 
     @Override
