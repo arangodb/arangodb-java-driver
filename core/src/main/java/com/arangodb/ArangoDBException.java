@@ -75,9 +75,20 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = requestId;
     }
 
+    private ArangoDBException(final ArangoDBException e) {
+        super(e.getMessage(), e);
+        this.entity = e.entity;
+        this.responseCode = e.responseCode;
+        this.requestId = e.requestId;
+    }
+
     public static ArangoDBException wrap(Throwable t) {
         if (t instanceof ArangoDBException) {
-            return (ArangoDBException) t;
+            if (t.getCause() == null) {
+                return new ArangoDBException((ArangoDBException) t);
+            } else {
+                return wrap(t.getCause());
+            }
         } else {
             return new ArangoDBException(t);
         }
