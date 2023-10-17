@@ -334,7 +334,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.getDocument(txDoc.getKey(), BaseDocument.class,
                 new DocumentReadOptions().streamTransactionId(tx.getId())).get()).isNotNull();
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the document is found after commit
         assertThat(collection.getDocument(txDoc.getKey(), BaseDocument.class, null).get()).isNotNull();
@@ -529,7 +529,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
                 .getDocuments().stream().map(it -> ((String) it.getAttribute("test")))
                 .forEach(it -> assertThat(it).isEqualTo("bar"));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the document has been updated after commit
         collection.getDocuments(keys, BaseDocument.class, null).get().getDocuments().stream()
