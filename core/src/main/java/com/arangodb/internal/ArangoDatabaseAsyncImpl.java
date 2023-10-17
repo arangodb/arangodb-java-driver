@@ -384,10 +384,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return new ArangoSearchAsyncImpl(this, name);
     }
 
-//    @Override
-//    public SearchAlias searchAlias(String name) {
-//        return new SearchAliasImpl(this, name);
-//    }
+    @Override
+    public SearchAliasAsync searchAlias(String name) {
+        return new SearchAliasAsyncImpl(this, name);
+    }
 
     @Override
     public CompletableFuture<ViewEntity> createView(final String name, final ViewType type) {

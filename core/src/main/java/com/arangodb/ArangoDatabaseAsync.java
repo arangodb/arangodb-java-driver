@@ -314,10 +314,14 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     ArangoSearchAsync arangoSearch(String name);
 
-//    /**
-//     * Asynchronous version of {@link ArangoDatabase#searchAlias(String)}
-//     */
-//    SearchAliasAsync searchAlias(String name);
+    /**
+     * Returns a {@link SearchAliasAsync} instance for the given view name.
+     *
+     * @param name Name of the view
+     * @return SearchAlias view handler
+     * @since ArangoDB 3.10
+     */
+    SearchAliasAsync searchAlias(String name);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#createView(String, ViewType)}
