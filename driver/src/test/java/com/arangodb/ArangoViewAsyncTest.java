@@ -69,7 +69,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getInfo(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
-        db.createView(name, ViewType.ARANGO_SEARCH);
+        db.createView(name, ViewType.ARANGO_SEARCH).get();
         final ViewEntity info = db.view(name).getInfo().get();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();

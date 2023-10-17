@@ -123,7 +123,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         }
 
         // revert
-        vertices.deleteVertex(inserted.getKey());
+        vertices.deleteVertex(inserted.getKey()).get();
     }
 
     @ParameterizedTest(name = "{index}")
