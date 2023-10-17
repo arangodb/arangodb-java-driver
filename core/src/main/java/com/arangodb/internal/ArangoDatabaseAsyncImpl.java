@@ -379,10 +379,10 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return new ArangoViewAsyncImpl(this, name);
     }
 
-//    @Override
-//    public ArangoSearch arangoSearch(final String name) {
-//        return new ArangoSearchImpl(this, name);
-//    }
+    @Override
+    public ArangoSearchAsync arangoSearch(final String name) {
+        return new ArangoSearchAsyncImpl(this, name);
+    }
 
 //    @Override
 //    public SearchAlias searchAlias(String name) {
