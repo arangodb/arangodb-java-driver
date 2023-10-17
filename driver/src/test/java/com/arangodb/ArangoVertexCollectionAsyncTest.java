@@ -111,7 +111,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         ArangoCollectionAsync collection = vertices.graph().db().collection(vertices.name());
         collection
                 .ensurePersistentIndex(Collections.singletonList("field"),
-                        new PersistentIndexOptions().unique(true).sparse(true));
+                        new PersistentIndexOptions().unique(true).sparse(true)).get();
 
         VertexEntity inserted = vertices.insertVertex(RawJson.of("{\"field\": 99}")).get();
 

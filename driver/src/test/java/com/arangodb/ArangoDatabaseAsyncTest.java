@@ -1082,33 +1082,33 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(plan.getNodes()).isNotEmpty();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void explainQueryWithIndexNode(ArangoDatabaseAsync db) {
-//        ArangoCollection character = db.collection("got_characters");
-//        ArangoCollection actor = db.collection("got_actors");
-//
-//        if (!character.exists())
-//            character.create();
-//
-//        if (!actor.exists())
-//            actor.create();
-//
-//        String query = "" +
-//                "FOR `character` IN `got_characters` " +
-//                "   FOR `actor` IN `got_actors` " +
-//                "       FILTER `character`.`actor` == `actor`.`_id` " +
-//                "       RETURN `character`";
-//
-//        final ExecutionPlan plan = db.explainQuery(query, null, null).getPlan();
-//        plan.getNodes().stream()
-//                .filter(it -> "IndexNode".equals(it.getType()))
-//                .flatMap(it -> it.getIndexes().stream())
-//                .forEach(it -> {
-//                    assertThat(it.getType()).isEqualTo(IndexType.primary);
-//                    assertThat(it.getFields()).contains("_key");
-//                });
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void explainQueryWithIndexNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync character = db.collection("got_characters");
+        ArangoCollectionAsync actor = db.collection("got_actors");
+
+        if (!character.exists().get())
+            character.create().get();
+
+        if (!actor.exists().get())
+            actor.create().get();
+
+        String query = "" +
+                "FOR `character` IN `got_characters` " +
+                "   FOR `actor` IN `got_actors` " +
+                "       FILTER `character`.`actor` == `actor`.`_id` " +
+                "       RETURN `character`";
+
+        final ExecutionPlan plan = db.explainQuery(query, null, null).get().getPlan();
+        plan.getNodes().stream()
+                .filter(it -> "IndexNode".equals(it.getType()))
+                .flatMap(it -> it.getIndexes().stream())
+                .forEach(it -> {
+                    assertThat(it.getType()).isEqualTo(IndexType.primary);
+                    assertThat(it.getFields()).contains("_key");
+                });
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
@@ -1277,11 +1277,11 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().replicationFactor(ReplicationFactor.ofSatellite())).get();
         assertThat(result.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
-//        GraphEntity info = db.graph(name).getInfo();
-//        assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
-//
-//        GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().get();
-//        assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
+        GraphEntity info = db.graph(name).getInfo().get();
+        assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
+
+        GraphEntity graph = db.getGraphs().get().stream().filter(g -> name.equals(g.getName())).findFirst().get();
+        assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
     @ParameterizedTest(name = "{index}")
