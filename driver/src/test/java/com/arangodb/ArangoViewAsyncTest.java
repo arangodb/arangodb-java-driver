@@ -119,7 +119,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         String oldName = rndName();
         String newName = rndName();
 
-        db.createView(oldName, ViewType.ARANGO_SEARCH);
+        db.createView(oldName, ViewType.ARANGO_SEARCH).get();
         db.view(oldName).rename(newName).get();
         assertThat(db.view(oldName).exists().get()).isFalse();
         assertThat(db.view(newName).exists().get()).isTrue();

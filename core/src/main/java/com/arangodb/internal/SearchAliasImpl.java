@@ -34,7 +34,7 @@ import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias {
     private final ArangoDatabase db;
     protected SearchAliasImpl(final ArangoDatabaseImpl db, final String name) {
-        super(db, name);
+        super(db, db.name(), name);
         this.db = db;
     }
 
