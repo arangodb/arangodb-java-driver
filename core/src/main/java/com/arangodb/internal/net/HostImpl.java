@@ -60,7 +60,7 @@ public class HostImpl implements Host {
         try {
             connectionPool.close();
         } catch (final IOException e) {
-            throw new ArangoDBException(e);
+            throw ArangoDBException.wrap(e);
         }
     }
 

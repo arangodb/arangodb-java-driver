@@ -66,19 +66,20 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public CompletableFuture<Boolean> exists() {
-        return getInfo().handle((result, ex) -> {
+        return getInfo().handle((result, err) -> {
             if (result != null) {
                 return true;
             }
 
-            if (ex instanceof CompletionException && ex.getCause() instanceof ArangoDBException) {
-                ArangoDBException e = (ArangoDBException) ex.getCause();
-                if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+            Throwable e = err instanceof CompletionException ? err.getCause() : err;
+            if (e instanceof ArangoDBException) {
+                ArangoDBException aEx = (ArangoDBException) e;
+                if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(aEx.getErrorNum())) {
                     return false;
                 }
             }
 
-            throw new CompletionException(ex);
+            throw ArangoDBException.wrap(e);
         });
     }
 

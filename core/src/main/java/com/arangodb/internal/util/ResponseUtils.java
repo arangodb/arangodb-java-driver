@@ -53,7 +53,7 @@ public final class ResponseUtils {
                 final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
                 ArangoDBException e = new ArangoDBException(errorEntity);
                 if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
-                    throw new ArangoDBException(new TimeoutException().initCause(e));
+                    throw ArangoDBException.wrap(new TimeoutException().initCause(e));
                 }
                 throw e;
             } else {
@@ -72,7 +72,7 @@ public final class ResponseUtils {
                 final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
                 ArangoDBException e = new ArangoDBException(errorEntity);
                 if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
-                    return new ArangoDBException(new TimeoutException().initCause(e));
+                    return ArangoDBException.wrap(new TimeoutException().initCause(e));
                 }
                 return e;
             } else {
