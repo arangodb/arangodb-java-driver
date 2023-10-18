@@ -195,7 +195,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assumeTrue(isCluster());
 
         String fooName = rndName();
-        db.collection(fooName).create();
+        db.collection(fooName).create().get();
 
         String name = rndName();
         final CollectionEntity result = db.createCollection(name,
