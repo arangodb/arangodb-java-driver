@@ -159,7 +159,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .returnNew(true)
                 .returnOld(true)
                 .overwriteMode(OverwriteMode.replace);
-        collection.insertDocument(dog, options);
+        collection.insertDocument(dog, options).get();
         final DocumentCreateEntity<Animal> doc = collection.insertDocument(cat, options, Animal.class).get();
         assertThat(doc).isNotNull();
         assertThat(doc.getId()).isNotNull();
@@ -284,7 +284,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "bar");
-        collection.insertDocument(doc);
+        collection.insertDocument(doc).get();
 
         doc.updateAttribute("foo", null);
         final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
@@ -541,7 +541,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void getDocumentsWithCustomShardingKey(ArangoCollectionAsync c) throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = c.db().collection("customShardingKeyCollection");
-        if (collection.exists().get()) collection.drop();
+        if (collection.exists().get()) collection.drop().get();
 
         collection.create(new CollectionCreateOptions().shardKeys("customField").numberOfShards(10)).get();
 
@@ -635,7 +635,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("a", "test");
-        collection.insertDocument(doc);
+        collection.insertDocument(doc).get();
 
         final DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(key,
                 Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
