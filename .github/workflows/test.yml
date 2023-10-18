@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - devel
     paths-ignore:
       - 'docker/**'
       - 'tutorial/**'
@@ -14,6 +15,7 @@ on:
     types: [ opened, synchronize, reopened ]
     branches:
       - main
+      - devel
 
 jobs:
 
@@ -26,9 +28,9 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/arangodb:3.10.10
-          - docker.io/arangodb/arangodb:3.11.3
+          - docker.io/arangodb/arangodb:3.11.4
           - docker.io/arangodb/enterprise:3.10.10
-          - docker.io/arangodb/enterprise:3.11.3
+          - docker.io/arangodb/enterprise:3.11.4
         topology:
           - single
           - cluster
@@ -68,7 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.3
+          - docker.io/arangodb/arangodb:3.11.4
         topology:
           - single
         java-version:
@@ -118,7 +120,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.3
+          - docker.io/arangodb/enterprise:3.11.4
         topology:
           - single
           - cluster
@@ -172,7 +174,7 @@ jobs:
           - 2.11.4
           - 2.10.5
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.3
+          - docker.io/arangodb/arangodb:3.11.4
         topology:
           - single
         db-ext-names:
@@ -210,7 +212,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.3
+          - docker.io/arangodb/arangodb:3.11.4
         topology:
           - single
           - cluster
@@ -255,7 +257,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.3
+          - docker.io/arangodb/enterprise:3.11.4
         topology:
           - cluster
         db-ext-names:
