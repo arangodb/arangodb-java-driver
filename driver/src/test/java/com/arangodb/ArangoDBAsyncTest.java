@@ -532,7 +532,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
             assertThat(retrievedLevels.getAgency()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
         } finally {
             entity.setAll(LogLevelEntity.LogLevel.INFO);
-            arangoDB.setLogLevel(entity);
+            arangoDB.setLogLevel(entity).get();
         }
     }
 

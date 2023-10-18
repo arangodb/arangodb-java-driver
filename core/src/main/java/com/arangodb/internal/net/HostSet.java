@@ -15,10 +15,6 @@ public class HostSet {
     private final ArrayList<Host> hosts = new ArrayList<>();
     private volatile String jwt = null;
 
-    public HostSet() {
-        super();
-    }
-
     public HostSet(List<Host> hosts) {
         super();
 

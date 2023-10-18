@@ -27,6 +27,7 @@ import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,7 +66,7 @@ class HostHandlerTest {
         @Override
         public HostSet resolve(final boolean initial, final boolean closeConnections) {
 
-            HostSet set = new HostSet();
+            HostSet set = new HostSet(Collections.emptyList());
             set.addHost(HOST_0);
             return set;
         }
@@ -83,7 +84,7 @@ class HostHandlerTest {
         @Override
         public HostSet resolve(final boolean initial, final boolean closeConnections) {
 
-            HostSet set = new HostSet();
+            HostSet set = new HostSet(Collections.emptyList());
             set.addHost(HOST_0);
             set.addHost(HOST_1);
             set.addHost(HOST_2);
