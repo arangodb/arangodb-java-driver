@@ -50,14 +50,15 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
     public CompletableFuture<Boolean> exists() {
         return getInfo()
                 .thenApply(Objects::nonNull)
-                .exceptionally(e -> {
-                    if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
-                        ArangoDBException aEx = (ArangoDBException) e.getCause();
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
                         if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(aEx.getErrorNum())) {
                             return false;
                         }
                     }
-                    throw new CompletionException(e);
+                    throw ArangoDBException.wrap(e);
                 });
     }
 

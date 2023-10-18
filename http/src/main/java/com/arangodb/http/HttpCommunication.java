@@ -41,6 +41,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -146,7 +147,7 @@ public class HttpCommunication implements Closeable {
     private void mirror(CompletableFuture<InternalResponse> up, CompletableFuture<InternalResponse> down) {
         up.whenComplete((v, err) -> {
             if (err != null) {
-                down.completeExceptionally(err);
+                down.completeExceptionally(err instanceof CompletionException ? err.getCause() : err);
             } else {
                 down.complete(v);
             }

@@ -65,7 +65,7 @@ public enum SerdeUtils {
         try {
             return jsonMapper.readTree(json);
         } catch (JsonProcessingException e) {
-            throw new ArangoDBException(e);
+            throw ArangoDBException.wrap(e);
         }
     }
 
@@ -77,7 +77,7 @@ public enum SerdeUtils {
         try {
             return jsonMapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
-            throw new ArangoDBException(e);
+            throw ArangoDBException.wrap(e);
         }
     }
 

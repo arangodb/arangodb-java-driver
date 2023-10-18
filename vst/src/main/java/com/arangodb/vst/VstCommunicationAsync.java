@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -88,7 +89,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
                                     if (v != null) {
                                         rfuture.complete(v);
                                     } else if (err != null) {
-                                        rfuture.completeExceptionally(err);
+                                        rfuture.completeExceptionally(err instanceof CompletionException ? err.getCause() : err);
                                     } else {
                                         rfuture.cancel(true);
                                     }
@@ -99,8 +100,9 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
                     }
                     rfuture.complete(response);
                 } else if (ex != null) {
-                    LOGGER.error(ex.getMessage(), ex);
-                    rfuture.completeExceptionally(ex);
+                    Throwable e = ex instanceof CompletionException ? ex.getCause() : ex;
+                    LOGGER.error(e.getMessage(), e);
+                    rfuture.completeExceptionally(e);
                 } else {
                     rfuture.cancel(true);
                 }
@@ -132,13 +134,11 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
         InternalResponse response;
         try {
             response = execute(authRequest, connection).get();
-        } catch (final InterruptedException | ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof ArangoDBException) {
-                throw (ArangoDBException) cause;
-            } else {
-                throw new ArangoDBException(e.getCause());
-            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ArangoDBException.wrap(e);
+        } catch (ExecutionException e) {
+            throw ArangoDBException.wrap(e.getCause());
         }
         checkError(response);
     }

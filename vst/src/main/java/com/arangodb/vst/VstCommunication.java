@@ -114,7 +114,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
                                         failedHost.getDescription(), host.getDescription()));
                     } else {
                         LOGGER.error(e.getMessage(), e);
-                        throw new ArangoDBException(e);
+                        throw ArangoDBException.wrap(e);
                     }
                 }
             }
