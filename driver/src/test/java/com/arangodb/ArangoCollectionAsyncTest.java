@@ -566,7 +566,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("3"));
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(Arrays.asList("1", "2", "3"),
                 BaseDocument.class, new DocumentReadOptions().allowDirtyRead(true)).get();
         assertThat(documents).isNotNull();
