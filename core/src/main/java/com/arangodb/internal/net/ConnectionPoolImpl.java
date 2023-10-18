@@ -80,9 +80,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     @Override
     public void setJwt(String jwt) {
-        this.jwt = jwt;
-        for (Connection connection : connections) {
-            connection.setJwt(jwt);
+        if (jwt != null) {
+            this.jwt = jwt;
+            for (Connection connection : connections) {
+                connection.setJwt(jwt);
+            }
         }
     }
 
