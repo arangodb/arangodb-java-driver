@@ -109,7 +109,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(graph.getName()).isEqualTo(GRAPH_NAME + "_1");
         assertThat(graph.getWriteConcern()).isEqualTo(2);
         assertThat(graph.getReplicationFactor().get()).isEqualTo(2);
-        db.graph(GRAPH_NAME + "_1").drop();
+        db.graph(GRAPH_NAME + "_1").drop().get();
     }
 
     @ParameterizedTest(name = "{index}")
