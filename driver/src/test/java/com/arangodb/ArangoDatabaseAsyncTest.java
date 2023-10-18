@@ -734,7 +734,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
         properties2.setMode(CacheMode.off);
-        db.setQueryCacheProperties(properties2);
+        db.setQueryCacheProperties(properties2).get();
     }
 
 //    @ParameterizedTest(name = "{index}")

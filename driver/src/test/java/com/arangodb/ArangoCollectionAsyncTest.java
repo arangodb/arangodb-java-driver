@@ -280,19 +280,19 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
+            assumeTrue(isAtLeastVersion(3, 7));
 
-        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
-        doc.addAttribute("foo", "bar");
-        collection.insertDocument(doc).get();
+            final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+            doc.addAttribute("foo", "bar");
+            collection.insertDocument(doc).get();
 
-        doc.updateAttribute("foo", null);
-        final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
-                .overwriteMode(OverwriteMode.update)
-                .keepNull(true)
-                .returnNew(true)).get().getNew();
+            doc.updateAttribute("foo", null);
+            final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
+                    .overwriteMode(OverwriteMode.update)
+                    .keepNull(true)
+                    .returnNew(true)).get().getNew();
 
-        assertThat(updated.getProperties()).containsEntry("foo", null);
+            assertThat(updated.getProperties()).containsEntry("foo", null);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1774,7 +1774,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
 
         // revert changes
-        collection.deleteIndex(indexResult.getId());
+        collection.deleteIndex(indexResult.getId()).get();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -2922,11 +2922,11 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         ArangoDatabaseAsync db = collection.db();
 
         if (!db.collection("c1").exists().get()) {
-            db.collection("c1").create();
+            db.collection("c1").create().get();
         }
 
         if (db.collection("c2").exists().get()) {
-            db.collection("c2").drop();
+            db.collection("c2").drop().get();
         }
 
         final CollectionEntity result = db.collection("c1").rename("c2").get();
