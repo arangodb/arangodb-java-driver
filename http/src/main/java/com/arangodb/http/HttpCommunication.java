@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -90,27 +91,10 @@ public class HttpCommunication implements Closeable {
                             rfuture.completeExceptionally(new ArangoDBException(te, reqId));
                         } else if (e instanceof TimeoutException) {
                             rfuture.completeExceptionally(new ArangoDBException(e, reqId));
+                        } else if (e instanceof ConnectException) {
+                            handleException(true, e, hostHandle, request, host, reqId, attemptCount, rfuture);
                         } else if (e != null) {
-                            IOException ioEx = wrapIOEx(e);
-                            hostHandler.fail(ioEx);
-                            if (hostHandle != null && hostHandle.getHost() != null) {
-                                hostHandle.setHost(null);
-                            }
-
-                            Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
-                            if (nextHost != null && isSafe(request)) {
-                                LOGGER.warn("Could not connect to {} while executing request [id={}]",
-                                        host.getDescription(), reqId, ioEx);
-                                LOGGER.debug("Try connecting to {}", nextHost.getDescription());
-                                mirror(
-                                        executeAsync(request, hostHandle, nextHost, attemptCount),
-                                        rfuture
-                                );
-                            } else {
-                                ArangoDBException aEx = new ArangoDBException(ioEx, reqId);
-                                LOGGER.error(aEx.getMessage(), aEx);
-                                rfuture.completeExceptionally(aEx);
-                            }
+                            handleException(isSafe(request), e, hostHandle, request, host, reqId, attemptCount, rfuture);
                         } else {
                             if (LOGGER.isDebugEnabled()) {
                                 String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
@@ -142,6 +126,29 @@ public class HttpCommunication implements Closeable {
                     }
                 });
         return rfuture;
+    }
+
+    private void handleException(boolean isSafe, Throwable e, HostHandle hostHandle, InternalRequest request, Host host,
+                                 long reqId, int attemptCount, CompletableFuture<InternalResponse> rfuture) {
+        IOException ioEx = wrapIOEx(e);
+        hostHandler.fail(ioEx);
+        if (hostHandle != null && hostHandle.getHost() != null) {
+            hostHandle.setHost(null);
+        }
+        Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
+        if (nextHost != null && isSafe) {
+            LOGGER.warn("Could not connect to {} while executing request [id={}]",
+                    host.getDescription(), reqId, ioEx);
+            LOGGER.debug("Try connecting to {}", nextHost.getDescription());
+            mirror(
+                    executeAsync(request, hostHandle, nextHost, attemptCount),
+                    rfuture
+            );
+        } else {
+            ArangoDBException aEx = new ArangoDBException(ioEx, reqId);
+            LOGGER.error(aEx.getMessage(), aEx);
+            rfuture.completeExceptionally(aEx);
+        }
     }
 
     private void mirror(CompletableFuture<InternalResponse> up, CompletableFuture<InternalResponse> down) {
