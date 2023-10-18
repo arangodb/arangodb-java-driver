@@ -319,13 +319,14 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                 .thenApply(Objects::nonNull);
     }
 
-    <T> T catchGetDocumentExceptions(Throwable e) {
-        if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
-            ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
+    <T> T catchGetDocumentExceptions(Throwable err) {
+        Throwable e = err instanceof CompletionException ? err.getCause() : err;
+        if (e instanceof ArangoDBException) {
+            ArangoDBException arangoDBException = (ArangoDBException) e;
 
             // handle Response: 404, Error: 1655 - transaction not found
             if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
-                throw (CompletionException) e;
+                throw (ArangoDBException) e;
             }
 
             if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
@@ -333,7 +334,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                 return null;
             }
         }
-        throw new CompletionException(e);
+        throw ArangoDBException.wrap(e);
     }
 
     @Override
@@ -396,14 +397,15 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public CompletableFuture<Boolean> exists() {
         return getInfo()
                 .thenApply(Objects::nonNull)
-                .exceptionally(e -> {
-                    if (e instanceof CompletionException && e.getCause() instanceof ArangoDBException) {
-                        ArangoDBException aEx = (ArangoDBException) e.getCause();
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
                         if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(aEx.getErrorNum())) {
                             return false;
                         }
                     }
-                    throw new CompletionException(e);
+                    throw ArangoDBException.wrap(e);
                 });
     }
 

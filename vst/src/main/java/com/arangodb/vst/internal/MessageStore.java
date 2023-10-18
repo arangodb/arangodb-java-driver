@@ -64,7 +64,7 @@ public class MessageStore {
         if (result == null) {
             final Exception e = error.remove(messageId);
             if (e != null) {
-                throw new ArangoDBException(e);
+                throw ArangoDBException.wrap(e);
             }
         }
         return result;

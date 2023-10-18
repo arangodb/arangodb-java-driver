@@ -22,6 +22,8 @@ package com.arangodb;
 
 import com.arangodb.entity.ErrorEntity;
 
+import java.util.concurrent.CompletionException;
+
 /**
  * @author Mark Vollmary
  */
@@ -89,6 +91,8 @@ public class ArangoDBException extends RuntimeException {
             } else {
                 return wrap(t.getCause());
             }
+        } else if (t instanceof CompletionException) {
+            return wrap(t.getCause());
         } else {
             return new ArangoDBException(t);
         }
