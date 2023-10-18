@@ -181,8 +181,8 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         String v1Name = "vertex-" + rnd();
 
         ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
-        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
-        g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name));
+        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name)).get();
 
         Collection<String> vertexCollections = g.getVertexCollections().get();
         assertThat(vertexCollections).contains(v1Name);
@@ -245,8 +245,8 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         EdgeDefinition ed = new EdgeDefinition().collection(eName).from(v1Name).to(v2Name).satellites(v1Name);
 
         ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
-        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
-        g.addEdgeDefinition(ed);
+        g.create(null, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.addEdgeDefinition(ed).get();
         final GraphEntity ge = g.getInfo().get();
         assertThat(ge).isNotNull();
         final Collection<EdgeDefinition> edgeDefinitions = ge.getEdgeDefinitions();
