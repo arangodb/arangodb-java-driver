@@ -136,9 +136,9 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<In
             response = execute(authRequest, connection).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         } catch (ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
+            throw ArangoDBException.of(e.getCause());
         }
         checkError(response);
     }

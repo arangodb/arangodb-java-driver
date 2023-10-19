@@ -48,7 +48,7 @@ public class EncodeUtils {
                     .replace("%29", ")")
                     .replace("%7E", "~");
         } catch (UnsupportedEncodingException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 

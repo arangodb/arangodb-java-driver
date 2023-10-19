@@ -58,7 +58,7 @@ public class SearchAliasAsyncImpl extends InternalSearchAlias implements SearchA
                             return false;
                         }
                     }
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 });
     }
 
