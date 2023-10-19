@@ -58,7 +58,7 @@ public class ArangoSearchAsyncImpl extends InternalArangoSearch implements Arang
                             return false;
                         }
                     }
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 });
     }
 

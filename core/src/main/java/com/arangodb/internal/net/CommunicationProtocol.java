@@ -38,9 +38,9 @@ public interface CommunicationProtocol extends Closeable {
             return executeAsync(request, hostHandle).get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         } catch (ExecutionException e) {
-            throw ArangoDBException.wrap(e.getCause());
+            throw ArangoDBException.of(e.getCause());
         }
     }
 

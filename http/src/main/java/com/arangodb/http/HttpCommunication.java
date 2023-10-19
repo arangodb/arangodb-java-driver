@@ -88,9 +88,9 @@ public class HttpCommunication implements Closeable {
                             // SocketTimeoutException exceptions are wrapped and rethrown.
                             TimeoutException te = new TimeoutException(e.getMessage());
                             te.initCause(e);
-                            rfuture.completeExceptionally(new ArangoDBException(te, reqId));
+                            rfuture.completeExceptionally(ArangoDBException.of(te, reqId));
                         } else if (e instanceof TimeoutException) {
-                            rfuture.completeExceptionally(new ArangoDBException(e, reqId));
+                            rfuture.completeExceptionally(ArangoDBException.of(e, reqId));
                         } else if (e instanceof ConnectException) {
                             handleException(true, e, hostHandle, request, host, reqId, attemptCount, rfuture);
                         } else if (e != null) {
@@ -145,7 +145,7 @@ public class HttpCommunication implements Closeable {
                     rfuture
             );
         } else {
-            ArangoDBException aEx = new ArangoDBException(ioEx, reqId);
+            ArangoDBException aEx = ArangoDBException.of(ioEx, reqId);
             LOGGER.error(aEx.getMessage(), aEx);
             rfuture.completeExceptionally(aEx);
         }

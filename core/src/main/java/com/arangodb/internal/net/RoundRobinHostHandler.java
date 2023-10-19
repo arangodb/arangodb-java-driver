@@ -54,7 +54,7 @@ public class RoundRobinHostHandler implements HostHandler {
         final int size = hosts.getHostsList().size();
 
         if (fails > size) {
-            ArangoDBException e = new ArangoDBException("Cannot contact any host!",
+            ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
                     new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
             reset();
             throw e;

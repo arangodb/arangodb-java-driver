@@ -54,7 +54,7 @@ public class ArangoViewAsyncImpl extends InternalArangoView implements ArangoVie
                             return false;
                         }
                     }
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 });
     }
 

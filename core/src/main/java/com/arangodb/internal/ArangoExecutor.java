@@ -50,7 +50,7 @@ public abstract class ArangoExecutor {
         try {
             protocol.close();
         } catch (final IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 

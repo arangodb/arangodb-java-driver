@@ -334,7 +334,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                 return null;
             }
         }
-        throw ArangoDBException.wrap(e);
+        throw ArangoDBException.of(e);
     }
 
     @Override
@@ -405,7 +405,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                             return false;
                         }
                     }
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 });
     }
 
