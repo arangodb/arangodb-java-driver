@@ -51,7 +51,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return mapper.writeValueAsBytes(value);
         } catch (JsonProcessingException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -65,7 +65,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -75,7 +75,7 @@ final class InternalSerdeImpl implements InternalSerde {
             JsonNode target = parse(content).at(jsonPointer);
             return mapper.writeValueAsBytes(target);
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -84,7 +84,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return mapper.readTree(content);
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -93,7 +93,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return mapper.readTree(content).at(jsonPointer);
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -153,7 +153,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return mapper.readerFor(mapper.constructType(type)).readValue(node);
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -165,7 +165,7 @@ final class InternalSerdeImpl implements InternalSerde {
         try {
             return mapper.readerFor(mapper.constructType(type)).readValue(content);
         } catch (IOException e) {
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         }
     }
 

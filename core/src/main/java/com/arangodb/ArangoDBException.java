@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.ErrorEntity;
 
+import java.util.Objects;
 import java.util.concurrent.CompletionException;
 
 /**
@@ -56,6 +57,10 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = null;
     }
 
+    /**
+     * @deprecated use {@link com.arangodb.ArangoDBException#of(java.lang.Throwable)} instead
+     */
+    @Deprecated
     public ArangoDBException(final Throwable cause) {
         super(cause);
         this.entity = null;
@@ -63,6 +68,10 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = null;
     }
 
+    /**
+     * @deprecated use {@link com.arangodb.ArangoDBException#of(String, Throwable)} instead
+     */
+    @Deprecated
     public ArangoDBException(final String message, final Throwable cause) {
         super(message, cause);
         this.entity = null;
@@ -70,6 +79,10 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = null;
     }
 
+    /**
+     * @deprecated use {@link com.arangodb.ArangoDBException#of(Throwable, Long)} instead
+     */
+    @Deprecated
     public ArangoDBException(Throwable cause, long requestId) {
         super(cause);
         this.entity = null;
@@ -77,25 +90,61 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = requestId;
     }
 
-    private ArangoDBException(final ArangoDBException e) {
-        super(e.getMessage(), e);
-        this.entity = e.entity;
-        this.responseCode = e.responseCode;
-        this.requestId = e.requestId;
+    private ArangoDBException(
+            String message,
+            Throwable cause,
+            ErrorEntity entity,
+            Integer responseCode,
+            Long requestId
+    ) {
+        super(message, cause);
+        this.entity = entity;
+        this.responseCode = responseCode;
+        this.requestId = requestId;
     }
 
-    public static ArangoDBException wrap(Throwable t) {
+    public static ArangoDBException of(Throwable t) {
+        return of(null, t);
+    }
+
+    public static ArangoDBException of(String message, Throwable t) {
+        return of(message, t, null);
+    }
+
+    public static ArangoDBException of(Throwable t, Long requestId) {
+        return of(null, t, requestId);
+    }
+
+    private static ArangoDBException of(String message, Throwable t, Long requestId) {
+        Objects.requireNonNull(t);
+        Throwable cause = unwrapCause(t);
+        String msg = message != null ? message
+                : t.getMessage() != null ? t.getMessage()
+                : cause.getMessage();
+        ErrorEntity entity = null;
+        Integer responseCode = null;
+        Long reqId = requestId;
+
         if (t instanceof ArangoDBException) {
-            if (t.getCause() == null) {
-                return new ArangoDBException((ArangoDBException) t);
-            } else {
-                return wrap(t.getCause());
-            }
-        } else if (t instanceof CompletionException) {
-            return wrap(t.getCause());
-        } else {
-            return new ArangoDBException(t);
+            entity = ((ArangoDBException) t).entity;
+            responseCode = ((ArangoDBException) t).responseCode;
+            reqId = reqId != null ? reqId : ((ArangoDBException) t).requestId;
         }
+
+        return new ArangoDBException(
+                msg,
+                cause,
+                entity,
+                responseCode,
+                reqId
+        );
+    }
+
+    private static Throwable unwrapCause(Throwable t) {
+        if (t instanceof ArangoDBException || t instanceof CompletionException) {
+            return unwrapCause(t.getCause());
+        }
+        return t;
     }
 
     /**

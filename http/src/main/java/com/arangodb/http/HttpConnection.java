@@ -134,7 +134,7 @@ public class HttpConnection implements Connection {
                 try {
                     ctx = SSLContext.getDefault();
                 } catch (NoSuchAlgorithmException e) {
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 }
             }
 

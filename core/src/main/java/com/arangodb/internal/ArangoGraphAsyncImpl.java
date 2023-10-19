@@ -58,7 +58,7 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
                             return false;
                         }
                     }
-                    throw ArangoDBException.wrap(e);
+                    throw ArangoDBException.of(e);
                 });
     }
 

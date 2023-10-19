@@ -232,7 +232,7 @@ public abstract class VstConnection<T> implements Connection {
                 }
                 socket.close();
             } catch (final IOException e) {
-                throw ArangoDBException.wrap(e);
+                throw ArangoDBException.of(e);
             }
         }
     }
@@ -271,7 +271,7 @@ public abstract class VstConnection<T> implements Connection {
                 outputStream.flush();
             } catch (final IOException e) {
                 LOGGER.error("Error on Connection " + connectionName);
-                throw ArangoDBException.wrap(e);
+                throw ArangoDBException.of(e);
             }
         }
     }

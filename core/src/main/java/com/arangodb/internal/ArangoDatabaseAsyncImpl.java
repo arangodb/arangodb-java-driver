@@ -79,7 +79,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
                 }
             }
 
-            throw ArangoDBException.wrap(e);
+            throw ArangoDBException.of(e);
         });
     }
 

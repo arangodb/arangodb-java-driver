@@ -54,7 +54,7 @@ public class FallbackHostHandler implements HostHandler {
         if (current != lastSuccess || iterations < 3) {
             return current;
         } else {
-            ArangoDBException e = new ArangoDBException("Cannot contact any host!",
+            ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
                     new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
             reset();
             throw e;

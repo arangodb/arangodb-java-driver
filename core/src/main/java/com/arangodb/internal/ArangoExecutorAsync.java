@@ -58,7 +58,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
         return protocol.executeAsync(interceptRequest(request), hostHandle)
                 .handle((r, e) -> {
                     if (e != null) {
-                        throw ArangoDBException.wrap(e);
+                        throw ArangoDBException.of(e);
                     } else {
                         interceptResponse(r);
                         return responseDeserializer.deserialize(r);

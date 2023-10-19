@@ -48,7 +48,7 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(fileName)) {
             p.load(is);
         } catch (Exception e) {
-            throw new ArangoDBException("Got exception while reading properties file " + fileName, e);
+            throw ArangoDBException.of("Got exception while reading properties file " + fileName, e);
         }
         return p;
     }
