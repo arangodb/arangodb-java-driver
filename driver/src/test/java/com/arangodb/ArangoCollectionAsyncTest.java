@@ -280,19 +280,19 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-            assumeTrue(isAtLeastVersion(3, 7));
+        assumeTrue(isAtLeastVersion(3, 7));
 
-            final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
-            doc.addAttribute("foo", "bar");
-            collection.insertDocument(doc).get();
+        final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("foo", "bar");
+        collection.insertDocument(doc).get();
 
-            doc.updateAttribute("foo", null);
-            final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
-                    .overwriteMode(OverwriteMode.update)
-                    .keepNull(true)
-                    .returnNew(true)).get().getNew();
+        doc.updateAttribute("foo", null);
+        final BaseDocument updated = collection.insertDocument(doc, new DocumentCreateOptions()
+                .overwriteMode(OverwriteMode.update)
+                .keepNull(true)
+                .returnNew(true)).get().getNew();
 
-            assertThat(updated.getProperties()).containsEntry("foo", null);
+        assertThat(updated.getProperties()).containsEntry("foo", null);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1593,7 +1593,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void createZKDIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
-        collection.truncate();
+        collection.truncate().get();
 
         String name = "ZKDIndex-" + rnd();
         final ZKDIndexOptions options =
@@ -1614,7 +1614,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getType()).isEqualTo(IndexType.zkd);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getName()).isEqualTo(name);
-        collection.deleteIndex(indexResult.getId());
+        collection.deleteIndex(indexResult.getId()).get();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -2845,7 +2845,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void replaceDocumentsRawDataReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
                 "\"foo\":\"bar\"}]");
