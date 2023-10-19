@@ -225,5 +225,59 @@
     "allPublicMethods": true,
     "allDeclaredConstructors": true,
     "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$TestUpdateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$TestUpdateEntitySerializeNullFalse",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoDatabaseAsyncTest$TransactionTestEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$Animal",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$AnnotatedEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$Cat",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionAsyncTest$Dog",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
   }
 ]
