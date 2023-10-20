@@ -554,115 +554,90 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(db.getPermissions("root").get()).isEqualTo(Permissions.RW);
     }
 
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void query(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        ArangoCursorAsync<Integer> cursor = db.query("for i in 0..9 return i", Integer.class).get();
+        List<Integer> res = cursor.getResult();
+        assertThat(res).hasSize(10);
+        for (int i = 0; i < 10; i++) {
+            assertThat(res.get(i)).isEqualTo(i);
+        }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithNullBindVar(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final ArangoCursorAsync<Object> cursor = db.query("return @foo", Object.class, Collections.singletonMap("foo", null)).get();
+        assertThat(cursor.getResult()).containsExactly((Object) null);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryForEach(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+        final ArangoCursorAsync<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class).get();
+        assertThat(cursor.getResult()).hasSizeGreaterThanOrEqualTo(10);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursorAsync<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 6 return i._id", String.class, new AqlQueryOptions().count(true)).get();
+        assertThat(cursor.getCount()).isEqualTo(6);
+        assertThat(cursor.getResult()).hasSize(6);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithLimitAndFullCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursorAsync<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 5 return i._id", String.class, new AqlQueryOptions().fullCount(true)).get();
+        assertThat(cursor.getResult()).hasSize(5);
+        assertThat(cursor.getExtra().getStats()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getExecutionTime()).isPositive();
+        assertThat((cursor.getExtra().getStats().getFullCount())).isGreaterThanOrEqualTo(10);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryStats(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursorAsync<Object> cursor = db.query("for i in " + CNAME1 + " return i", Object.class).get();
+        assertThat(cursor.getResult()).hasSizeGreaterThanOrEqualTo(10);
+        assertThat(cursor.getExtra().getStats()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getWritesExecuted()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getWritesIgnored()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getScannedFull()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getScannedIndex()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getFiltered()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getExecutionTime()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getPeakMemoryUsage()).isNotNull();
+    }
+
 //    @ParameterizedTest(name = "{index}")
 //    @MethodSource("asyncDbs")
-//    void query(ArangoDatabaseAsync db) {
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class);
-//        assertThat((Object) cursor).isNotNull();
-//        for (int i = 0; i < 10; i++, cursor.next()) {
-//            assertThat((Iterator<?>) cursor).hasNext();
-//        }
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithNullBindVar(ArangoDatabaseAsync db) {
-//        final ArangoCursor<Object> cursor = db.query("return @foo", Object.class, Collections.singletonMap("foo", null));
-//        assertThat(cursor.hasNext()).isTrue();
-//        assertThat(cursor.next()).isNull();
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryForEach(ArangoDatabaseAsync db) {
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class);
-//        assertThat((Object) cursor).isNotNull();
-//
-//        int i = 0;
-//        while (cursor.hasNext()) {
-//            cursor.next();
-//            i++;
-//        }
-//        assertThat(i).isGreaterThanOrEqualTo(10);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithCount(ArangoDatabaseAsync db) {
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//
-//        final ArangoCursor<String> cursor = db
-//                .query("for i in " + CNAME1 + " Limit 6 return i._id", String.class, new AqlQueryOptions().count(true));
-//        assertThat((Object) cursor).isNotNull();
-//        for (int i = 1; i <= 6; i++, cursor.next()) {
-//            assertThat(cursor.hasNext()).isTrue();
-//        }
-//        assertThat(cursor.getCount()).isEqualTo(6);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithLimitAndFullCount(ArangoDatabaseAsync db) {
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//
-//        final ArangoCursor<String> cursor = db
-//                .query("for i in " + CNAME1 + " Limit 5 return i._id", String.class, new AqlQueryOptions().fullCount(true));
-//        assertThat((Object) cursor).isNotNull();
-//        for (int i = 0; i < 5; i++, cursor.next()) {
-//            assertThat((Iterator<?>) cursor).hasNext();
-//        }
-//        assertThat(cursor.getStats()).isNotNull();
-//        assertThat(cursor.getStats().getExecutionTime()).isPositive();
-//        assertThat((cursor.getStats().getFullCount())).isGreaterThanOrEqualTo(10);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryStats(ArangoDatabaseAsync db) {
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//
-//        final ArangoCursor<Object> cursor = db.query("for i in " + CNAME1 + " return i", Object.class);
-//        assertThat((Object) cursor).isNotNull();
-//        for (int i = 0; i < 5; i++, cursor.next()) {
-//            assertThat((Iterator<?>) cursor).hasNext();
-//        }
-//        assertThat(cursor.getStats()).isNotNull();
-//        assertThat(cursor.getStats().getWritesExecuted()).isNotNull();
-//        assertThat(cursor.getStats().getWritesIgnored()).isNotNull();
-//        assertThat(cursor.getStats().getScannedFull()).isNotNull();
-//        assertThat(cursor.getStats().getScannedIndex()).isNotNull();
-//        assertThat(cursor.getStats().getFiltered()).isNotNull();
-//        assertThat(cursor.getStats().getExecutionTime()).isNotNull();
-//        assertThat(cursor.getStats().getPeakMemoryUsage()).isNotNull();
-//        if (isAtLeastVersion(3, 10)) {
-//            assertThat(cursor.getStats().getCursorsCreated()).isNotNull();
-//            assertThat(cursor.getStats().getCursorsRearmed()).isNotNull();
-//            assertThat(cursor.getStats().getCacheHits()).isNotNull();
-//            assertThat(cursor.getStats().getCacheMisses()).isNotNull();
-//        }
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithBatchSize(ArangoDatabaseAsync db) {
+//    void queryWithBatchSize(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
 //        for (int i = 0; i < 10; i++) {
 //            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
 //        }
 //
-//        final ArangoCursor<String> cursor = db
-//                .query("for i in " + CNAME1 + " return i._id", String.class, new AqlQueryOptions().batchSize(5).count(true));
+//        final ArangoCursorAsync<String> cursor = db
+//                .query("for i in " + CNAME1 + " return i._id", String.class, new AqlQueryOptions().batchSize(5).count(true)).get();
 //
 //        assertThat((Object) cursor).isNotNull();
 //        for (int i = 0; i < 10; i++, cursor.next()) {
@@ -737,89 +712,89 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties2).get();
     }
 
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isSingleServer());
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+        properties.setMode(CacheMode.on);
+        db.setQueryCacheProperties(properties);
+
+        final ArangoCursorAsync<String> cursor = db
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
+                        new AqlQueryOptions().cache(true)).get();
+
+        assertThat((Object) cursor).isNotNull();
+        assertThat(cursor.isCached()).isFalse();
+
+        final ArangoCursorAsync<String> cachedCursor = db
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
+                        new AqlQueryOptions().cache(true)).get();
+
+        assertThat((Object) cachedCursor).isNotNull();
+        assertThat(cachedCursor.isCached()).isTrue();
+
+        final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
+        properties2.setMode(CacheMode.off);
+        db.setQueryCacheProperties(properties2);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithMemoryLimit(ArangoDatabaseAsync db) {
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", String.class,
+                new AqlQueryOptions().memoryLimit(32 * 1024L)).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithFailOnWarningTrue(ArangoDatabaseAsync db) {
+        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", String.class,
+                new AqlQueryOptions().failOnWarning(true)).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithFailOnWarningFalse(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final ArangoCursorAsync<String> cursor = db
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().failOnWarning(false)).get();
+        assertThat(cursor.getResult()).containsExactly((String) null);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithTimeout(ArangoDatabaseAsync db) {
+        assumeTrue(isAtLeastVersion(3, 6));
+        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", String.class,
+                new AqlQueryOptions().maxRuntime(0.1)).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryWithMaxWarningCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final ArangoCursorAsync<String> cursorWithWarnings = db
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions()).get();
+        assertThat(cursorWithWarnings.getExtra().getWarnings()).hasSize(1);
+        final ArangoCursorAsync<String> cursorWithLimitedWarnings = db
+                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().maxWarningCount(0L)).get();
+        final Collection<CursorWarning> warnings = cursorWithLimitedWarnings.getExtra().getWarnings();
+        assertThat(warnings).isNullOrEmpty();
+    }
+
 //    @ParameterizedTest(name = "{index}")
 //    @MethodSource("asyncDbs")
-//    void queryWithCache(ArangoDatabaseAsync db) {
-//        assumeTrue(isSingleServer());
-//        for (int i = 0; i < 10; i++) {
-//            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
-//        }
-//
-//        final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-//        properties.setMode(CacheMode.on);
-//        db.setQueryCacheProperties(properties);
-//
-//        final ArangoCursor<String> cursor = db
-//                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
-//                        new AqlQueryOptions().cache(true));
-//
-//        assertThat((Object) cursor).isNotNull();
-//        assertThat(cursor.isCached()).isFalse();
-//
-//        final ArangoCursor<String> cachedCursor = db
-//                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
-//                        new AqlQueryOptions().cache(true));
-//
-//        assertThat((Object) cachedCursor).isNotNull();
-//        assertThat(cachedCursor.isCached()).isTrue();
-//
-//        final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
-//        properties2.setMode(CacheMode.off);
-//        db.setQueryCacheProperties(properties2);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithMemoryLimit(ArangoDatabaseAsync db) {
-//        Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", String.class,
-//                new AqlQueryOptions().memoryLimit(32 * 1024L)));
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-//        assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithFailOnWarningTrue(ArangoDatabaseAsync db) {
-//        Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", String.class,
-//                new AqlQueryOptions().failOnWarning(true)));
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithFailOnWarningFalse(ArangoDatabaseAsync db) {
-//        final ArangoCursor<String> cursor = db
-//                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().failOnWarning(false));
-//        assertThat(cursor.next()).isNull();
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithTimeout(ArangoDatabaseAsync db) {
-//        assumeTrue(isAtLeastVersion(3, 6));
-//        Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", String.class,
-//                new AqlQueryOptions().maxRuntime(0.1)).next());
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-//        assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryWithMaxWarningCount(ArangoDatabaseAsync db) {
-//        final ArangoCursor<String> cursorWithWarnings = db
-//                .query("RETURN 1 / 0", String.class, new AqlQueryOptions());
-//        assertThat(cursorWithWarnings.getWarnings()).hasSize(1);
-//        final ArangoCursor<String> cursorWithLimitedWarnings = db
-//                .query("RETURN 1 / 0", String.class, new AqlQueryOptions().maxWarningCount(0L));
-//        final Collection<CursorWarning> warnings = cursorWithLimitedWarnings.getWarnings();
-//        assertThat(warnings).isNullOrEmpty();
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryCursor(ArangoDatabaseAsync db) {
-//        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
-//                new AqlQueryOptions().batchSize(1));
+//    void queryCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+//        ArangoCursorAsync<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
+//                new AqlQueryOptions().batchSize(1)).get();
 //        List<Integer> result = new ArrayList<>();
 //        result.add(cursor.next());
 //        result.add(cursor.next());

@@ -23,6 +23,8 @@ package com.arangodb.internal;
 import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.internal.cursor.ArangoCursorAsyncImpl;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
@@ -168,30 +170,36 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         return executorAsync().execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
     }
 
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> query(
+            final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
+        final InternalRequest request = queryRequest(query, bindVars, options);
+        final HostHandle hostHandle = new HostHandle();
+        return executorAsync().execute(request, cursorEntityDeserializer(type), hostHandle)
+                .thenApply(res -> new ArangoCursorAsyncImpl<>(res, options, hostHandle));
+    }
+
+    @Override
+    public   <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, AqlQueryOptions options){
+        return query(query,type,null,options);
+    }
+
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars){
+        return query(query,type,bindVars, new AqlQueryOptions());
+    }
+
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type) {
+        return query(query, type, null, new AqlQueryOptions());
+    }
+
 //    @Override
-//    public <T> ArangoCursor<T> query(
-//            final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
-//        final InternalRequest request = queryRequest(query, bindVars, options);
-//        final HostHandle hostHandle = new HostHandle();
-//        final InternalCursorEntity result = executorAsync().execute(request, internalCursorEntityDeserializer(), hostHandle);
-//        return createCursor(result, type, options, hostHandle);
-//    }
+//    public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type);
 //
 //    @Override
-//    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final Map<String, Object> bindVars) {
-//        return query(query, type, bindVars, new AqlQueryOptions());
-//    }
-//
-//    @Override
-//    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final AqlQueryOptions options) {
-//        return query(query, type, null, options);
-//    }
-//
-//    @Override
-//    public <T> ArangoCursor<T> query(final String query, final Class<T> type) {
-//        return query(query, type, null, new AqlQueryOptions());
-//    }
-//
+//    public<T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
+
 //    @Override
 //    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
 //        final HostHandle hostHandle = new HostHandle();
