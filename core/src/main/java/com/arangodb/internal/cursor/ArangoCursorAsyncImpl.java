@@ -2,66 +2,25 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursorAsync;
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.ArangoDatabaseAsyncImpl;
+import com.arangodb.internal.InternalArangoCursor;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.model.AqlQueryOptions;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ArangoCursorAsyncImpl<T> implements ArangoCursorAsync<T> {
+public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements ArangoCursorAsync<T> {
 
-    private final CursorEntity<T> entity;
-    private final AqlQueryOptions options;
     private final HostHandle hostHandle;
 
     public ArangoCursorAsyncImpl(
+            final ArangoDatabaseAsyncImpl db,
             final CursorEntity<T> entity,
             final AqlQueryOptions options,
             final HostHandle hostHandle
     ) {
-        this.entity = entity;
-        this.options = options;
+        super(db, db.name(), entity, options);
         this.hostHandle = hostHandle;
-    }
-
-    @Override
-    public String getId() {
-        return entity.getId();
-    }
-
-    @Override
-    public Long getCount() {
-        return entity.getCount();
-    }
-
-    @Override
-    public Boolean isCached() {
-        return entity.getCached();
-    }
-
-    @Override
-    public Boolean hasMore() {
-        return entity.getHasMore();
-    }
-
-    @Override
-    public List<T> getResult() {
-        return entity.getResult();
-    }
-
-    @Override
-    public Boolean isPotentialDirtyRead() {
-        return entity.isPotentialDirtyRead();
-    }
-
-    @Override
-    public String getNextBatchId() {
-        return entity.getNextBatchId();
-    }
-
-    @Override
-    public CursorEntity.Extra getExtra() {
-        return entity.getExtra();
     }
 
     @Override
@@ -71,7 +30,11 @@ public class ArangoCursorAsyncImpl<T> implements ArangoCursorAsync<T> {
 
     @Override
     public CompletableFuture<Void> close() {
-        throw new UnsupportedOperationException("TODO");
+        if (getId() != null && (allowRetry() || Boolean.TRUE.equals(hasMore()))) {
+            return executorAsync().execute(queryCloseRequest(), Void.class, hostHandle);
+        } else {
+            return CompletableFuture.completedFuture(null);
+        }
     }
 
 }

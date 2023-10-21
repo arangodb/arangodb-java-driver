@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -927,23 +928,16 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(c2.hasNext()).isFalse();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncArangos")
-//    void queryClose(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-//        final ArangoCursor<String> cursor = arangoDB.db()
-//                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().batchSize(1)).get();
-//        cursor.close();
-//        AtomicInteger count = new AtomicInteger();
-//        Throwable thrown = catchThrowable(() -> {
-//            while (cursor.hasNext()) {
-//                cursor.next();
-//                count.incrementAndGet();
-//            }
-//        });
-//
-//        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-//        assertThat(count).hasValue(1);
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangos")
+    void queryClose(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        final ArangoCursorAsync<String> cursor = arangoDB.db()
+                .query("for i in 1..2 return i", String.class, new AqlQueryOptions().batchSize(1)).get();
+        cursor.close().get();
+        assertThat(cursor.getResult()).hasSize(1);
+        Throwable thrown = catchThrowable(() -> cursor.next().get());
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
