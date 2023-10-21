@@ -26,10 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -675,35 +672,35 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isZero();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void createCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-//        assumeTrue(isSingleServer());
-//        assumeTrue(isAtLeastVersion(3, 5));
-//        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
-//
-//        StreamTransactionEntity tx = db
-//                .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
-//        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
-//
-//        // insert a document from outside the tx
-//        DocumentCreateEntity<BaseDocument> externalDoc = collection
-//                .insertDocument(new BaseDocument(), null).get();
-//
-//        final Map<String, Object> bindVars = new HashMap<>();
-//        bindVars.put("@collection", COLLECTION_NAME);
-//        bindVars.put("key", externalDoc.getKey());
-//
-//        ArangoCursor<BaseDocument> cursor = db
-//                .query("FOR doc IN @@collection FILTER doc._key == @key RETURN doc", BaseDocument.class, bindVars,
-//                        new AqlQueryOptions().streamTransactionId(tx.getId()));
-//
-//        // assert that the document is not found from within the tx
-//        assertThat(cursor.hasNext()).isFalse();
-//
-//        db.abortStreamTransaction(tx.getId());
-//    }
-//
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void createCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+
+        // insert a document from outside the tx
+        DocumentCreateEntity<BaseDocument> externalDoc = collection
+                .insertDocument(new BaseDocument(), null).get();
+
+        final Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("@collection", COLLECTION_NAME);
+        bindVars.put("key", externalDoc.getKey());
+
+        ArangoCursorAsync<BaseDocument> cursor = db
+                .query("FOR doc IN @@collection FILTER doc._key == @key RETURN doc", BaseDocument.class, bindVars,
+                        new AqlQueryOptions().streamTransactionId(tx.getId())).get();
+
+        // assert that the document is not found from within the tx
+        assertThat(cursor.getResult()).isEmpty();
+
+        db.abortStreamTransaction(tx.getId()).get();
+    }
+
 //    @ParameterizedTest(name = "{index}")
 //    @MethodSource("asyncDbs")
 //    void nextCursor(ArangoDatabaseAsync db) {
@@ -786,34 +783,33 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void transactionDirtyRead(ArangoDatabaseAsync db) throws IOException, ExecutionException, InterruptedException {
-//        assumeTrue(isCluster());
-//        assumeTrue(isAtLeastVersion(3, 10));
-//
-//        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
-//        DocumentCreateEntity<?> doc = collection.insertDocument(new BaseDocument()).get();
-//
-//        StreamTransactionEntity tx = db
-//                .beginStreamTransaction(new StreamTransactionOptions()
-//                        .readCollections(COLLECTION_NAME)
-//                        .allowDirtyRead(true)).get();
-//
-//        MultiDocumentEntity<BaseDocument> readDocs = collection.getDocuments(Collections.singletonList(doc.getKey()),
-//                BaseDocument.class,
-//                new DocumentReadOptions().streamTransactionId(tx.getId())).get();
-//
-//        assertThat(readDocs.isPotentialDirtyRead()).isTrue();
-//        assertThat(readDocs.getDocuments()).hasSize(1);
-//
-//        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i", BaseDocument.class,
-//                Collections.singletonMap("@col", COLLECTION_NAME),
-//                new AqlQueryOptions().streamTransactionId(tx.getId()));
-//            assertThat(cursor.isPotentialDirtyRead()).isTrue();
-//            cursor.close();
-//
-//        db.abortStreamTransaction(tx.getId());
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void transactionDirtyRead(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster());
+        assumeTrue(isAtLeastVersion(3, 10));
+
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        DocumentCreateEntity<?> doc = collection.insertDocument(new BaseDocument()).get();
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions()
+                        .readCollections(COLLECTION_NAME)
+                        .allowDirtyRead(true)).get();
+
+        MultiDocumentEntity<BaseDocument> readDocs = collection.getDocuments(Collections.singletonList(doc.getKey()),
+                BaseDocument.class,
+                new DocumentReadOptions().streamTransactionId(tx.getId())).get();
+
+        assertThat(readDocs.isPotentialDirtyRead()).isTrue();
+        assertThat(readDocs.getDocuments()).hasSize(1);
+
+        final ArangoCursorAsync<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i", BaseDocument.class,
+                Collections.singletonMap("@col", COLLECTION_NAME),
+                new AqlQueryOptions().streamTransactionId(tx.getId())).get();
+        assertThat(cursor.isPotentialDirtyRead()).isTrue();
+
+        db.abortStreamTransaction(tx.getId()).get();
+    }
 
 }

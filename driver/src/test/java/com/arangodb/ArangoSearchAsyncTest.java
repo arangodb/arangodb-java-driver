@@ -768,37 +768,37 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, pipelineAnalyzer);
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void stopwordsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-//        assumeTrue(isAtLeastVersion(3, 8));
-//
-//        Set<AnalyzerFeature> features = new HashSet<>();
-//        features.add(AnalyzerFeature.frequency);
-//        features.add(AnalyzerFeature.norm);
-//        features.add(AnalyzerFeature.position);
-//
-//        StopwordsAnalyzerProperties properties = new StopwordsAnalyzerProperties()
-//                .addStopwordAsHex("616e64")
-//                .addStopwordAsString("the");
-//
-//        assertThat(properties.getStopwordsAsStringList()).contains("and");
-//        assertThat(properties.getStopwordsAsHexList()).contains("746865");
-//
-//        StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
-//        String name = "test-" + UUID.randomUUID();
-//        analyzer.setName(name);
-//        analyzer.setProperties(properties);
-//        analyzer.setFeatures(features);
-//
-//        createGetAndDeleteTypedAnalyzer(db, analyzer);
-//        db.createSearchAnalyzer(analyzer);
-//        Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), " +
-//                        "@aName))", Collection.class,
-//                Collections.singletonMap("aName", name)).next();
-//        assertThat(res).containsExactly("fox", "dog", "a", "theater");
-//        db.deleteSearchAnalyzer(name);
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void stopwordsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        StopwordsAnalyzerProperties properties = new StopwordsAnalyzerProperties()
+                .addStopwordAsHex("616e64")
+                .addStopwordAsString("the");
+
+        assertThat(properties.getStopwordsAsStringList()).contains("and");
+        assertThat(properties.getStopwordsAsHexList()).contains("746865");
+
+        StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
+        String name = "test-" + UUID.randomUUID();
+        analyzer.setName(name);
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+        db.createSearchAnalyzer(analyzer);
+        Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), " +
+                        "@aName))", Collection.class,
+                Collections.singletonMap("aName", name)).get().getResult().get(0);
+        assertThat(res).containsExactly("fox", "dog", "a", "theater");
+        db.deleteSearchAnalyzer(name).get();
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
