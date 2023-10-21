@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.BaseArangoCursor;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.AqlQueryOptions;
@@ -30,61 +31,80 @@ import java.util.List;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public abstract class InternalArangoCursor<T> extends ArangoExecuteable {
+public abstract class InternalArangoCursor<T> extends ArangoExecuteable implements BaseArangoCursor<T> {
 
     private static final String PATH_API_CURSOR = "/_api/cursor";
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
     private final String dbName;
     private final CursorEntity<T> entity;
+    private final Class<T> type;
     private final AqlQueryOptions options;
 
     protected InternalArangoCursor(
             final ArangoExecuteable executeable,
             final String dbName,
             final CursorEntity<T> entity,
+            final Class<T> type,
             final AqlQueryOptions options
     ) {
         super(executeable);
         this.dbName = dbName;
         this.entity = entity;
+        this.type = type;
         this.options = options;
     }
 
+    @Override
     public String getId() {
         return entity.getId();
     }
 
+    @Override
     public Long getCount() {
         return entity.getCount();
     }
 
+    @Override
     public Boolean isCached() {
         return entity.getCached();
     }
 
+    @Override
     public Boolean hasMore() {
         return entity.getHasMore();
     }
 
+    @Override
     public List<T> getResult() {
         return entity.getResult();
     }
 
+    @Override
     public Boolean isPotentialDirtyRead() {
         return entity.isPotentialDirtyRead();
     }
 
+    @Override
     public String getNextBatchId() {
         return entity.getNextBatchId();
     }
 
+    @Override
     public CursorEntity.Extra getExtra() {
         return entity.getExtra();
     }
 
     protected boolean allowRetry() {
         return Boolean.TRUE.equals(options.getAllowRetry());
+    }
+
+    protected Class<T> getType() {
+        return type;
+    }
+
+    protected AqlQueryOptions getOptions() {
+        return options;
     }
 
     protected InternalRequest queryNextRequest() {

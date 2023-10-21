@@ -20,30 +20,11 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.CursorEntity;
-
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface ArangoCursorAsync<T> {
+public interface ArangoCursorAsync<T> extends BaseArangoCursor<T> {
 
-    String getId();
-
-    Long getCount();
-
-    Boolean isCached();
-
-    Boolean hasMore();
-
-    List<T> getResult();
-
-    Boolean isPotentialDirtyRead();
-
-    String getNextBatchId();
-
-    CursorEntity.Extra getExtra();
-
-    CompletableFuture<ArangoCursorAsync<T>> next();
+    CompletableFuture<ArangoCursorAsync<T>> nextBatch();
 
     CompletableFuture<Void> close();
 }

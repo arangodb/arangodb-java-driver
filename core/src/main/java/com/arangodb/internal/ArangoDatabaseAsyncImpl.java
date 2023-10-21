@@ -176,7 +176,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
         return executorAsync().execute(request, cursorEntityDeserializer(type), hostHandle)
-                .thenApply(res -> new ArangoCursorAsyncImpl<>(this, res, options, hostHandle));
+                .thenApply(res -> new ArangoCursorAsyncImpl<>(this, res, type, options, hostHandle));
     }
 
     @Override

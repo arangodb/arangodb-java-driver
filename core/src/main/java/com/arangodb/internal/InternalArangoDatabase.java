@@ -252,7 +252,7 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         };
     }
 
-    protected <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
+    public <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
         return response -> {
             CursorEntity<T> e = getSerde().deserialize(response.getBody(), constructParametricType(CursorEntity.class, type));
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
