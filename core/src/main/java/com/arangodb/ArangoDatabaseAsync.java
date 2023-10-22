@@ -154,9 +154,9 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type);
 
-//    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type);
-//
-//    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
+    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#explainQuery(String, Map, AqlQueryExplainOptions)}

@@ -4,9 +4,7 @@ import com.arangodb.ArangoCursorAsync;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.ArangoDatabaseAsyncImpl;
 import com.arangodb.internal.InternalArangoCursor;
-import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.model.AqlQueryOptions;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
@@ -20,10 +18,10 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
             final ArangoDatabaseAsyncImpl db,
             final CursorEntity<T> entity,
             final Class<T> type,
-            final AqlQueryOptions options,
-            final HostHandle hostHandle
+            final HostHandle hostHandle,
+            final Boolean allowRetry
     ) {
-        super(db, db.name(), entity, type, options);
+        super(db, db.name(), entity, type, allowRetry);
         this.db = db;
         this.hostHandle = hostHandle;
     }
@@ -31,9 +29,8 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
     @Override
     public CompletableFuture<ArangoCursorAsync<T>> nextBatch() {
         if (Boolean.TRUE.equals(hasMore())) {
-            InternalRequest request = getNextBatchId() == null ? queryNextRequest() : queryNextByBatchIdRequest();
-            return executorAsync().execute(request, db.cursorEntityDeserializer(getType()), hostHandle)
-                    .thenApply(r -> new ArangoCursorAsyncImpl<>(db, r, getType(), getOptions(), hostHandle));
+            return executorAsync().execute(queryNextRequest(), db.cursorEntityDeserializer(getType()), hostHandle)
+                    .thenApply(r -> new ArangoCursorAsyncImpl<>(db, r, getType(), hostHandle, allowRetry()));
         } else {
             return CompletableFuture.supplyAsync(() -> {
                 throw new NoSuchElementException();

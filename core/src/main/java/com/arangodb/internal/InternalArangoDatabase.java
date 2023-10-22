@@ -153,19 +153,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         return request;
     }
 
-    protected InternalRequest queryNextRequest(final String id, final AqlQueryOptions options) {
-        final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id);
-        return completeQueryNextRequest(request, options);
-    }
-
-    protected InternalRequest queryNextByBatchIdRequest(final String id,
-                                                        final String nextBatchId,
-                                                        final AqlQueryOptions options) {
+    protected InternalRequest queryNextRequest(String id, AqlQueryOptions options, String nextBatchId) {
         final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id, nextBatchId);
-        return completeQueryNextRequest(request, options);
-    }
-
-    private InternalRequest completeQueryNextRequest(final InternalRequest request, final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);

@@ -758,37 +758,41 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(warnings).isNullOrEmpty();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-//        ArangoCursorAsync<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
-//                new AqlQueryOptions().batchSize(1)).get();
-//        List<Integer> result = new ArrayList<>();
-//        result.add(cursor.next());
-//        result.add(cursor.next());
-//        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class);
-//        result.add(cursor2.next());
-//        result.add(cursor2.next());
-//        assertThat(cursor2.hasNext()).isFalse();
-//        assertThat(result).containsExactly(1, 2, 3, 4);
-//    }
-//
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncDbs")
-//    void queryCursorRetry(ArangoDatabaseAsync db) throws IOException {
-//        assumeTrue(isAtLeastVersion(3, 11));
-//        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
-//                new AqlQueryOptions().batchSize(1).allowRetry(true));
-//        List<Integer> result = new ArrayList<>();
-//        result.add(cursor.next());
-//        result.add(cursor.next());
-//        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class, cursor.getNextBatchId());
-//        result.add(cursor2.next());
-//        result.add(cursor2.next());
-//        cursor2.close();
-//        assertThat(cursor2.hasNext()).isFalse();
-//        assertThat(result).containsExactly(1, 2, 3, 4);
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1)).get();
+        List<Integer> result = new ArrayList<>();
+        result.addAll(c1.getResult());
+        ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
+        result.addAll(c2.getResult());
+        ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class).get();
+        result.addAll(c3.getResult());
+        ArangoCursorAsync<Integer> c4 = c3.nextBatch().get();
+        result.addAll(c4.getResult());
+        assertThat(c4.hasMore()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncDbs")
+    void queryCursorRetry(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1).allowRetry(true)).get();
+        List<Integer> result = new ArrayList<>();
+        result.addAll(c1.getResult());
+        ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
+        result.addAll(c2.getResult());
+        ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class, c2.getNextBatchId()).get();
+        result.addAll(c3.getResult());
+        ArangoCursorAsync<Integer> c4 = c3.nextBatch().get();
+        result.addAll(c4.getResult());
+        c4.close();
+        assertThat(c4.hasMore()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+    }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
