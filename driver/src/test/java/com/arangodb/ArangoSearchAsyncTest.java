@@ -792,7 +792,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         analyzer.setFeatures(features);
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
-        db.createSearchAnalyzer(analyzer);
+        db.createSearchAnalyzer(analyzer).get();
         Collection<String> res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), " +
                         "@aName))", Collection.class,
                 Collections.singletonMap("aName", name)).get().getResult().get(0);

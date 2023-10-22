@@ -341,7 +341,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("number", 33);
-        db.collection(name).insertDocument(doc);
+        db.collection(name).insertDocument(doc).get();
 
         BaseDocument wrongDoc = new BaseDocument(UUID.randomUUID().toString());
         wrongDoc.addAttribute("number", "notANumber");
@@ -578,7 +578,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void queryForEach(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
         final ArangoCursorAsync<String> cursor = db.query("for i in " + CNAME1 + " return i._id", String.class).get();
         assertThat(cursor.getResult()).hasSizeGreaterThanOrEqualTo(10);
@@ -588,7 +588,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void queryWithCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
 
         final ArangoCursorAsync<String> cursor = db
@@ -601,7 +601,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void queryWithLimitAndFullCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
 
         final ArangoCursorAsync<String> cursor = db
@@ -616,7 +616,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void queryStats(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
 
         final ArangoCursorAsync<Object> cursor = db.query("for i in " + CNAME1 + " return i", Object.class).get();
@@ -685,7 +685,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void queryWithCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         for (int i = 0; i < 10; i++) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
 
         final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
@@ -820,7 +820,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         for (int i = 0; i < 10; i++) {
             final BaseDocument baseDocument = new BaseDocument(UUID.randomUUID().toString());
             baseDocument.addAttribute("age", 20 + i);
-            db.collection(CNAME1).insertDocument(baseDocument, null);
+            db.collection(CNAME1).insertDocument(baseDocument, null).get();
         }
         final Map<String, Object> bindVars = new HashMap<>();
         bindVars.put("@coll", CNAME1);
