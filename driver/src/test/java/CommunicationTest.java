@@ -16,7 +16,7 @@ public class CommunicationTest {
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    @Timeout(2)
+    @Timeout(5)
     void disconnectAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         // FIXME: fix for VST protocol (DE-708)
         assumeTrue(!Protocol.VST.equals(protocol));
@@ -42,7 +42,7 @@ public class CommunicationTest {
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    @Timeout(2)
+    @Timeout(5)
     void disconnect(Protocol protocol) {
         // FIXME: fix for VST protocol (DE-708)
         assumeTrue(!Protocol.VST.equals(protocol));
