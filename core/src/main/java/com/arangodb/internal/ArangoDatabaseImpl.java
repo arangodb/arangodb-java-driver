@@ -189,19 +189,14 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
-        final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executorSync().execute(
-                queryNextRequest(cursorId, null),
-                internalCursorEntityDeserializer(),
-                hostHandle);
-        return createCursor(result, type, null, hostHandle);
+        return cursor(cursorId, type, null);
     }
 
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
         final HostHandle hostHandle = new HostHandle();
         final InternalCursorEntity result = executorSync().execute(
-                queryNextByBatchIdRequest(cursorId, nextBatchId, null),
+                queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
                 internalCursorEntityDeserializer(),
                 hostHandle);
         return createCursor(result, type, null, hostHandle);
@@ -216,9 +211,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
         final ArangoCursorExecute execute = new ArangoCursorExecute() {
             @Override
             public InternalCursorEntity next(final String id, final String nextBatchId) {
-                InternalRequest request = nextBatchId == null ?
-                        queryNextRequest(id, options) : queryNextByBatchIdRequest(id, nextBatchId, options);
-                return executorSync().execute(request, internalCursorEntityDeserializer(), hostHandle);
+                return executorSync().execute(queryNextRequest(id, options, nextBatchId), internalCursorEntityDeserializer(), hostHandle);
             }
 
             @Override

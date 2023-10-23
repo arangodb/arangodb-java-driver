@@ -31,13 +31,16 @@ import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -191,7 +194,8 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .password("testPasswd")
                 .build()
                 .async();
-// check if testUser has been created and can access the created db
+
+        // check if testUser has been created and can access the created db
         ArangoCollectionAsync collection = arangoDBTestUser.db(dbName).collection("col-" + UUID.randomUUID());
         collection.create().get();
         arangoDBTestUser.shutdown();
@@ -616,44 +620,41 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version2).isNotNull();
     }
 
-//    @ParameterizedTest(name = "{index}")
-//    @MethodSource("asyncArangos")
-//    @Disabled("Manual execution only")
-//    void queueTime(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {
-//        List<CompletableFuture<Void>> futures = IntStream.range(0, 80)
-//                .mapToObj(i -> CompletableFuture.runAsync(
-//                        () -> arangoDB.db().query("RETURN SLEEP(1)", Void.class),
-//                        Executors.newFixedThreadPool(80))
-//                )
-//                .collect(Collectors.toList());
-//        for (CompletableFuture<Void> f : futures) {
-//            f.get();
-//        }
-//
-//        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
-//        double avg = qt.getAvg();
-//        QueueTimeSample[] values = qt.getValues();
-//        if (isAtLeastVersion(3, 9)) {
-//            assertThat(values).hasSize(20);
-//            for (int i = 0; i < values.length; i++) {
-//                assertThat(values[i].value).isNotNegative();
-//                if (i > 0) {
-//                    assertThat(values[i].timestamp).isGreaterThanOrEqualTo(values[i - 1].timestamp);
-//                }
-//            }
-//
-//            if (avg < 0.0) {
-//                System.err.println("avg < 0: " + avg);
-//                System.err.println("got values:");
-//                for (QueueTimeSample v : values) {
-//                    System.err.println(v.value);
-//                }
-//            }
-//            assertThat(avg).isNotNegative();
-//        } else {
-//            assertThat(avg).isEqualTo(0.0);
-//            assertThat(values).isEmpty();
-//        }
-//
-//    }
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangos")
+    @Disabled("Manual execution only")
+    void queueTime(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {
+        List<CompletableFuture<?>> futures = IntStream.range(0, 80)
+                .mapToObj(i -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))
+                .collect(Collectors.toList());
+        for (CompletableFuture<?> f : futures) {
+            f.get();
+        }
+
+        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
+        double avg = qt.getAvg();
+        QueueTimeSample[] values = qt.getValues();
+        if (isAtLeastVersion(3, 9)) {
+            assertThat(values).hasSize(20);
+            for (int i = 0; i < values.length; i++) {
+                assertThat(values[i].value).isNotNegative();
+                if (i > 0) {
+                    assertThat(values[i].timestamp).isGreaterThanOrEqualTo(values[i - 1].timestamp);
+                }
+            }
+
+            if (avg < 0.0) {
+                System.err.println("avg < 0: " + avg);
+                System.err.println("got values:");
+                for (QueueTimeSample v : values) {
+                    System.err.println(v.value);
+                }
+            }
+            assertThat(avg).isNotNegative();
+        } else {
+            assertThat(avg).isEqualTo(0.0);
+            assertThat(values).isEmpty();
+        }
+
+    }
 }
