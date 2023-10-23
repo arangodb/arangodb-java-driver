@@ -63,6 +63,7 @@ public class CommunicationTest {
         }).start();
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", null, null, null));
+        thrown.printStackTrace();
         assertThat(thrown)
                 .isNotNull()
                 .isInstanceOf(ArangoDBException.class);
