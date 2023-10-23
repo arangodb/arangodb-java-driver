@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -16,7 +17,7 @@ public class CommunicationTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     @Timeout(2)
-    void disconnectAsync(Protocol protocol) throws InterruptedException {
+    void disconnectAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         // FIXME: fix for VST protocol (DE-708)
         assumeTrue(!Protocol.VST.equals(protocol));
 
@@ -25,8 +26,10 @@ public class CommunicationTest {
                 .protocol(protocol)
                 .build()
                 .async();
+        arangoDB.getVersion().get();
+
         CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null, null);
-        Thread.sleep(200);
+        Thread.sleep(50);
         arangoDB.shutdown();
         Throwable thrown = catchThrowable(result::get).getCause();
         assertThat(thrown)
@@ -48,10 +51,11 @@ public class CommunicationTest {
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
                 .build();
+        arangoDB.getVersion();
 
         new Thread(() -> {
             try {
-                Thread.sleep(200);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
