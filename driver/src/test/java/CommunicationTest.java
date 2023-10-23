@@ -29,7 +29,7 @@ public class CommunicationTest {
         arangoDB.getVersion().get();
 
         CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null, null);
-        Thread.sleep(50);
+        Thread.sleep(500);
         arangoDB.shutdown();
         Throwable thrown = catchThrowable(result::get).getCause();
         assertThat(thrown)
@@ -55,7 +55,7 @@ public class CommunicationTest {
 
         new Thread(() -> {
             try {
-                Thread.sleep(50);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -63,7 +63,6 @@ public class CommunicationTest {
         }).start();
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", null, null, null));
-        thrown.printStackTrace();
         assertThat(thrown)
                 .isNotNull()
                 .isInstanceOf(ArangoDBException.class);
