@@ -146,17 +146,17 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Permissions> getPermissions(String user);
 
-//    <T> CompletableFuture<ArangoCursor<T>> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
-//
-//    <T> CompletableFuture<ArangoCursor<T>> query(String query, Class<T> type, AqlQueryOptions options);
-//
-//    <T> CompletableFuture<ArangoCursor<T>> query(String query, Class<T> type, Map<String, Object> bindVars);
-//
-//    <T> CompletableFuture<ArangoCursor<T>> query(String query, Class<T> type);
-//
-//    <T> CompletableFuture<ArangoCursor<T>> cursor(String cursorId, Class<T> type);
-//
-//    <T> CompletableFuture<ArangoCursor<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, AqlQueryOptions options);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type);
+
+    <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#explainQuery(String, Map, AqlQueryExplainOptions)}

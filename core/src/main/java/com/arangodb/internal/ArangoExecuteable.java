@@ -59,6 +59,7 @@ public abstract class ArangoExecuteable implements ArangoSerdeAccessor {
     protected static String createPath(final String... params) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < params.length; i++) {
+            if (params[i] == null) continue;
             if (i > 0) {
                 sb.append(SLASH);
             }

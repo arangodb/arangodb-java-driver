@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
+import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
  * @author Mark Vollmary
@@ -152,19 +153,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         return request;
     }
 
-    protected InternalRequest queryNextRequest(final String id, final AqlQueryOptions options) {
-        final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id);
-        return completeQueryNextRequest(request, options);
-    }
-
-    protected InternalRequest queryNextByBatchIdRequest(final String id,
-                                                        final String nextBatchId,
-                                                        final AqlQueryOptions options) {
+    protected InternalRequest queryNextRequest(String id, AqlQueryOptions options, String nextBatchId) {
         final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR, id, nextBatchId);
-        return completeQueryNextRequest(request, options);
-    }
-
-    private InternalRequest completeQueryNextRequest(final InternalRequest request, final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         if (Boolean.TRUE.equals(opt.getAllowDirtyRead())) {
             RequestUtils.allowDirtyRead(request);
@@ -247,6 +237,15 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
             InternalCursorEntity e = getSerde().deserialize(response.getBody(), InternalCursorEntity.class);
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
             e.setPontentialDirtyRead(potentialDirtyRead);
+            return e;
+        };
+    }
+
+    public <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
+        return response -> {
+            CursorEntity<T> e = getSerde().deserialize(response.getBody(), constructParametricType(CursorEntity.class, type));
+            boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
+            e.setPotentialDirtyRead(potentialDirtyRead);
             return e;
         };
     }
