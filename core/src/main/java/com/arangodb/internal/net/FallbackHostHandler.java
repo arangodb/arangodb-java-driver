@@ -94,6 +94,7 @@ public class FallbackHostHandler implements HostHandler {
     @Override
     public void close() {
         hosts.close();
+        resolver.close();
     }
 
     @Override

@@ -28,7 +28,11 @@ import com.arangodb.internal.serde.InternalSerde;
  */
 public interface HostResolver {
 
-    void init(ArangoExecutorSync executorSync, InternalSerde arangoSerialization);
+    default void init(ArangoExecutorSync executorSync, InternalSerde arangoSerialization) {
+    }
+
+    default void close() {
+    }
 
     HostSet getHosts();
 

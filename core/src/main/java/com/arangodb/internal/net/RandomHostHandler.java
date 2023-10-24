@@ -84,6 +84,7 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public void close() {
         hosts.close();
+        resolver.close();
     }
 
     @Override

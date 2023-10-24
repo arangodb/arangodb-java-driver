@@ -104,6 +104,7 @@ public class RoundRobinHostHandler implements HostHandler {
     @Override
     public void close() {
         hosts.close();
+        resolver.close();
     }
 
     @Override

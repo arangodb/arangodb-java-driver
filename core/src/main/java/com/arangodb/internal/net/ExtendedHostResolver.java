@@ -33,6 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
@@ -48,10 +52,10 @@ public class ExtendedHostResolver implements HostResolver {
     private final ArangoConfig config;
     private final ConnectionFactory connectionFactory;
     private final Integer acquireHostListInterval;
-    private long lastUpdate;
+    private final ScheduledExecutorService scheduler;
     private ArangoExecutorSync executor;
     private InternalSerde arangoSerialization;
-
+    private ScheduledFuture<?> schedule;
 
     public ExtendedHostResolver(final List<Host> hosts, final ArangoConfig config,
                                 final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
@@ -61,7 +65,12 @@ public class ExtendedHostResolver implements HostResolver {
         this.config = config;
         this.connectionFactory = connectionFactory;
 
-        lastUpdate = 0;
+        scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+                    Thread t = Executors.defaultThreadFactory().newThread(r);
+                    t.setDaemon(true);
+                    return t;
+                }
+        );
     }
 
     @Override
@@ -69,6 +78,13 @@ public class ExtendedHostResolver implements HostResolver {
         this.executor = executor;
         this.arangoSerialization = arangoSerialization;
         resolve();
+        schedule = scheduler.scheduleAtFixedRate(this::resolve, acquireHostListInterval, acquireHostListInterval, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void close() {
+        schedule.cancel(false);
+        scheduler.shutdown();
     }
 
     @Override
@@ -76,13 +92,7 @@ public class ExtendedHostResolver implements HostResolver {
         return hosts;
     }
 
-    // TODO: invoke at scheduled intervals
-    private HostSet resolve() {
-
-        if (isExpired()) {
-
-            lastUpdate = System.currentTimeMillis();
-
+    private void resolve() {
             final Collection<String> endpoints = resolveFromServer();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Resolve {} Endpoints", endpoints.size());
@@ -116,17 +126,11 @@ public class ExtendedHostResolver implements HostResolver {
                 }
             }
             hosts.clearAllMarkedForDeletion();
-        }
-
-        return hosts;
     }
 
     private Collection<String> resolveFromServer() {
-
         Collection<String> response;
-
         try {
-
             response = executor.execute(
                     new InternalRequest(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
@@ -142,7 +146,6 @@ public class ExtendedHostResolver implements HostResolver {
                     }, null);
         } catch (final ArangoDBException e) {
             final Integer responseCode = e.getResponseCode();
-
             // responseCode == 403: single server < 3.7
             // responseCode == 501: single server >= 3.7
             if (responseCode != null && (responseCode == 403 || responseCode == 501)) {
@@ -151,12 +154,6 @@ public class ExtendedHostResolver implements HostResolver {
                 throw e;
             }
         }
-
         return response;
     }
-
-    private boolean isExpired() {
-        return System.currentTimeMillis() > (lastUpdate + acquireHostListInterval);
-    }
-
 }
