@@ -122,6 +122,31 @@
     ]
   },
   {
+    "name": "com.arangodb.serde.CustomSerdeAsyncTest$Person",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomSerdeAsyncTest$PersonDeserializer",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.serde.CustomSerdeAsyncTest$PersonSerializer",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredClasses": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.serde.CustomTypeHintTest$Animal",
     "allDeclaredMethods": true,
     "allPublicMethods": true,
