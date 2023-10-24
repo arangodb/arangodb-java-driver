@@ -117,7 +117,6 @@ public class HttpCommunication implements Closeable {
                                 rfuture.completeExceptionally(errorEntityEx);
                             } else {
                                 hostHandler.success();
-                                hostHandler.confirm();
                                 rfuture.complete(response);
                             }
                         }

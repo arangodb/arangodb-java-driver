@@ -27,6 +27,8 @@ import com.arangodb.internal.net.HostHandle;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Mark Vollmary
@@ -34,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
 public class VstProtocol implements CommunicationProtocol {
 
     private final VstCommunicationAsync communication;
+    private final ExecutorService outgoingExecutor = Executors.newCachedThreadPool();
 
     public VstProtocol(final VstCommunicationAsync communication) {
         super();
@@ -42,7 +45,8 @@ public class VstProtocol implements CommunicationProtocol {
 
     @Override
     public CompletableFuture<InternalResponse> executeAsync(InternalRequest request, HostHandle hostHandle) {
-        return communication.execute(request, hostHandle);
+        return CompletableFuture.completedFuture(null)
+                .thenComposeAsync(__ -> communication.execute(request, hostHandle), outgoingExecutor);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class VstProtocol implements CommunicationProtocol {
     @Override
     public void close() throws IOException {
         communication.close();
+        outgoingExecutor.shutdown();
     }
 
 }

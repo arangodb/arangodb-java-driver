@@ -37,10 +37,8 @@ public abstract class ArangoExecuteable implements ArangoSerdeAccessor {
     private final ArangoExecutorAsync executorAsync;
     private final InternalSerde serde;
 
-    protected ArangoExecuteable(final CommunicationProtocol protocol,
-                                final ArangoConfig config,
-                                final InternalSerde serde) {
-        this(new ArangoExecutorSync(protocol, config), new ArangoExecutorAsync(protocol, config), serde);
+    protected ArangoExecuteable(final CommunicationProtocol protocol, final ArangoConfig config) {
+        this(new ArangoExecutorSync(protocol, config), new ArangoExecutorAsync(protocol, config), config.getInternalSerde());
     }
 
     protected ArangoExecuteable(final ArangoExecuteable other) {

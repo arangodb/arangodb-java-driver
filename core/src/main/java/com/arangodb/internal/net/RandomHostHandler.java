@@ -39,13 +39,15 @@ public class RandomHostHandler implements HostHandler {
         super();
         this.resolver = resolver;
         this.fallback = fallback;
-        current = getRandomHost(true, false);
+        hosts = resolver.getHosts();
+        current = getRandomHost();
     }
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
         if (current == null) {
-            current = getRandomHost(false, true);
+            hosts = resolver.getHosts();
+            current = getRandomHost();
         }
         return current;
     }
@@ -68,8 +70,7 @@ public class RandomHostHandler implements HostHandler {
         }
     }
 
-    private Host getRandomHost(final boolean initial, final boolean closeConnections) {
-        hosts = resolver.resolve(initial, closeConnections);
+    private Host getRandomHost() {
         final ArrayList<Host> hostList = new ArrayList<>(hosts.getHostsList());
         Collections.shuffle(hostList);
         return hostList.get(0);
@@ -81,24 +82,9 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
-    public void confirm() {
-    }
-
-    @Override
     public void close() {
         hosts.close();
-    }
-
-    @Override
-    public void closeCurrentOnError() {
-        current.closeOnError();
-    }
-
-    @Override
-    public synchronized void closeCurrentOnErrorIfNotMatch(HostDescription host) {
-        if (!host.equals(current.getDescription())) {
-            closeCurrentOnError();
-        }
+        resolver.close();
     }
 
     @Override

@@ -39,7 +39,7 @@ public class ArangoDBException extends RuntimeException {
         super(String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
                 errorEntity.getErrorMessage()));
         this.entity = errorEntity;
-        this.responseCode = null;
+        this.responseCode = errorEntity.getCode();
         this.requestId = null;
     }
 
@@ -117,6 +117,9 @@ public class ArangoDBException extends RuntimeException {
 
     private static ArangoDBException of(String message, Throwable t, Long requestId) {
         Objects.requireNonNull(t);
+        if (t instanceof CompletionException) {
+            return of(message, t.getCause(), requestId);
+        }
         Throwable cause = unwrapCause(t);
         String msg = message != null ? message
                 : t.getMessage() != null ? t.getMessage()
@@ -141,7 +144,7 @@ public class ArangoDBException extends RuntimeException {
     }
 
     private static Throwable unwrapCause(Throwable t) {
-        if (t instanceof ArangoDBException || t instanceof CompletionException) {
+        if (t instanceof ArangoDBException) {
             return unwrapCause(t.getCause());
         }
         return t;

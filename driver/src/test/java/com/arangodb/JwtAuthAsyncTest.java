@@ -50,7 +50,7 @@ class JwtAuthAsyncTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
-        ArangoDBAsync arangoDB = getBuilder(protocol).build().async();
+        ArangoDBAsync arangoDB = getBuilder(protocol).acquireHostList(false).build().async();
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
