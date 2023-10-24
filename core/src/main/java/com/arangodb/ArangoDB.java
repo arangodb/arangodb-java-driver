@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
+import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.*;
 import com.arangodb.model.*;
@@ -363,10 +364,13 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             HostHandler hostHandler = createHostHandler(hostResolver);
             hostHandler.setJwt(config.getJwt());
 
+            CommunicationProtocol protocol = protocolProvider.createProtocol(config, hostHandler);
+            ArangoExecutorSync executor = new ArangoExecutorSync(protocol, config);
+            hostResolver.init(executor, config.getInternalSerde());
+
             return new ArangoDBImpl(
                     config,
-                    hostResolver,
-                    protocolProvider,
+                    protocol,
                     hostHandler
             );
         }

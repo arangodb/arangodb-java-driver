@@ -337,10 +337,9 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
             LOG.debug("Use SimpleHostResolver");
             return new SimpleHostResolver(new ArrayList<>(hosts));
         }
-
     }
 
-    protected <C extends Connection> Collection<Host> createHostList(final ConnectionFactory connectionFactory) {
+    protected Collection<Host> createHostList(final ConnectionFactory connectionFactory) {
         final Collection<Host> hostList = new ArrayList<>();
         for (final HostDescription host : config.getHosts()) {
             hostList.add(HostUtils.createHost(host, config, connectionFactory));
