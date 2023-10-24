@@ -43,14 +43,14 @@ public class RoundRobinHostHandler implements HostHandler {
         super();
         this.resolver = resolver;
         lastFailExceptions = new ArrayList<>();
-        hosts = resolver.resolve(true, false);
+        hosts = resolver.resolve(true);
         current = 0L;
         reset();
     }
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-        hosts = resolver.resolve(false, false);
+        hosts = resolver.resolve(false);
         final int size = hosts.getHostsList().size();
 
         if (fails > size) {

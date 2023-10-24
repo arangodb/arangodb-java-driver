@@ -43,7 +43,7 @@ public class SimpleHostResolver implements HostResolver {
     }
 
     @Override
-    public HostSet resolve(final boolean initial, final boolean closeConnections) {
+    public HostSet resolve(final boolean initial) {
         return new HostSet(hosts);
     }
 

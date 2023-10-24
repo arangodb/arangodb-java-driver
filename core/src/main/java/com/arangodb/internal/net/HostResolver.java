@@ -30,6 +30,6 @@ public interface HostResolver {
 
     void init(ArangoExecutorSync executorSync, InternalSerde arangoSerialization);
 
-    HostSet resolve(boolean initial, boolean closeConnections);
+    HostSet resolve(boolean initial);
 
 }

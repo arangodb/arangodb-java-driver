@@ -71,7 +71,7 @@ public class ExtendedHostResolver implements HostResolver {
     }
 
     @Override
-    public HostSet resolve(boolean initial, boolean closeConnections) {
+    public HostSet resolve(boolean initial) {
 
         if (!initial && isExpired()) {
 

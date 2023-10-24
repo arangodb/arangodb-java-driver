@@ -64,7 +64,7 @@ class HostHandlerTest {
     private static final HostResolver SINGLE_HOST = new HostResolver() {
 
         @Override
-        public HostSet resolve(final boolean initial, final boolean closeConnections) {
+        public HostSet resolve(final boolean initial) {
 
             HostSet set = new HostSet(Collections.emptyList());
             set.addHost(HOST_0);
@@ -82,7 +82,7 @@ class HostHandlerTest {
     private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
 
         @Override
-        public HostSet resolve(final boolean initial, final boolean closeConnections) {
+        public HostSet resolve(final boolean initial) {
 
             HostSet set = new HostSet(Collections.emptyList());
             set.addHost(HOST_0);
