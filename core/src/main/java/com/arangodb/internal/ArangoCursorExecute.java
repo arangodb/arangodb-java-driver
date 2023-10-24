@@ -20,15 +20,15 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
+import com.arangodb.entity.CursorEntity;
 
 
 /**
  * @author Mark Vollmary
  */
-public interface ArangoCursorExecute {
+public interface ArangoCursorExecute<T> {
 
-    InternalCursorEntity next(String id, String nextBatchId);
+    CursorEntity<T> next(String id, String nextBatchId);
 
     void close(String id);
 

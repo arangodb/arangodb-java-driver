@@ -1542,7 +1542,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.CursorEntity$Extra",
+    "name": "com.arangodb.entity.CursorEntity$Extras",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

@@ -24,7 +24,6 @@ import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
@@ -168,7 +167,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
             final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executorSync().execute(request, internalCursorEntityDeserializer(), hostHandle);
+        final CursorEntity<T> result = executorSync().execute(request, cursorEntityDeserializer(type), hostHandle);
         return createCursor(result, type, options, hostHandle);
     }
 
@@ -195,23 +194,23 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
         final HostHandle hostHandle = new HostHandle();
-        final InternalCursorEntity result = executorSync().execute(
+        final CursorEntity<T> result = executorSync().execute(
                 queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
-                internalCursorEntityDeserializer(),
+                cursorEntityDeserializer(type),
                 hostHandle);
         return createCursor(result, type, null, hostHandle);
     }
 
     private <T> ArangoCursor<T> createCursor(
-            final InternalCursorEntity result,
+            final CursorEntity<T> result,
             final Class<T> type,
             final AqlQueryOptions options,
             final HostHandle hostHandle) {
 
-        final ArangoCursorExecute execute = new ArangoCursorExecute() {
+        final ArangoCursorExecute<T> execute = new ArangoCursorExecute<T>() {
             @Override
-            public InternalCursorEntity next(final String id, final String nextBatchId) {
-                return executorSync().execute(queryNextRequest(id, options, nextBatchId), internalCursorEntityDeserializer(), hostHandle);
+            public CursorEntity<T> next(final String id, final String nextBatchId) {
+                return executorSync().execute(queryNextRequest(id, options, nextBatchId), cursorEntityDeserializer(type), hostHandle);
             }
 
             @Override
@@ -220,7 +219,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
             }
         };
 
-        return new ArangoCursorImpl<>(this, execute, type, result);
+        return new ArangoCursorImpl<>(execute, type, result);
     }
 
     @Override

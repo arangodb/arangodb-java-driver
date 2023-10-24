@@ -23,7 +23,6 @@ package com.arangodb.internal;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.*;
@@ -230,15 +229,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
         request.putQueryParam("group", params.getGroup());
         return request;
-    }
-
-    protected ResponseDeserializer<InternalCursorEntity> internalCursorEntityDeserializer() {
-        return response -> {
-            InternalCursorEntity e = getSerde().deserialize(response.getBody(), InternalCursorEntity.class);
-            boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
-            e.setPontentialDirtyRead(potentialDirtyRead);
-            return e;
-        };
     }
 
     public <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
