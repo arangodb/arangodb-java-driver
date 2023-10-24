@@ -58,7 +58,7 @@ public abstract class InternalArangoCursor<T> extends ArangoExecuteable implemen
     }
 
     @Override
-    public Long getCount() {
+    public Integer getCount() {
         return entity.getCount();
     }
 
@@ -88,7 +88,7 @@ public abstract class InternalArangoCursor<T> extends ArangoExecuteable implemen
     }
 
     @Override
-    public CursorEntity.Extra getExtra() {
+    public CursorEntity.Extras getExtra() {
         return entity.getExtra();
     }
 

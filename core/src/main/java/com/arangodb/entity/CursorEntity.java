@@ -33,16 +33,14 @@ import java.util.List;
  */
 public final class CursorEntity<T> {
     private String id;
-    private Long count;
+    private Integer count;
     private Boolean cached;
     private Boolean hasMore;
-
-    // TODO: test whether user-serde is used for result elements
     @UserDataInside
     private List<T> result;
     private Boolean potentialDirtyRead;
     private String nextBatchId;
-    private final Extra extra = new Extra();
+    private final Extras extra = new Extras();
 
     public String getId() {
         return id;
@@ -52,7 +50,7 @@ public final class CursorEntity<T> {
      * @return the total number of result documents available (only available if the query was executed with the count
      * attribute set)
      */
-    public Long getCount() {
+    public Integer getCount() {
         return count;
     }
 
@@ -62,7 +60,7 @@ public final class CursorEntity<T> {
      * documents and the number of documents that could not be modified due to an error (if ignoreErrors query
      * option is specified)
      */
-    public Extra getExtra() {
+    public Extras getExtra() {
         return extra;
     }
 
@@ -110,7 +108,7 @@ public final class CursorEntity<T> {
         return nextBatchId;
     }
 
-    public static final class Extra {
+    public static final class Extras {
         private final Collection<CursorWarning> warnings = Collections.emptyList();
         private CursorStats stats;
 
@@ -121,7 +119,6 @@ public final class CursorEntity<T> {
         public Collection<CursorWarning> getWarnings() {
             return warnings;
         }
-
     }
 
 }

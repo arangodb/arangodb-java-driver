@@ -22,12 +22,10 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.CursorStats;
 import com.arangodb.entity.CursorWarning;
 import com.arangodb.internal.ArangoCursorExecute;
-import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.cursor.entity.InternalCursorEntity;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,18 +39,18 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     protected final ArangoCursorIterator<T> iterator;
     private final Class<T> type;
     private final String id;
-    private final ArangoCursorExecute execute;
+    private final ArangoCursorExecute<T> execute;
     private final boolean pontentialDirtyRead;
     private final boolean allowRetry;
 
-    public ArangoCursorImpl(final InternalArangoDatabase db, final ArangoCursorExecute execute,
-                            final Class<T> type, final InternalCursorEntity result) {
+    public ArangoCursorImpl(final ArangoCursorExecute<T> execute,
+                            final Class<T> type, final CursorEntity<T> result) {
         super();
         this.execute = execute;
         this.type = type;
         id = result.getId();
-        pontentialDirtyRead = result.isPontentialDirtyRead();
-        iterator = new ArangoCursorIterator<>(id, type, execute, db, result);
+        pontentialDirtyRead = result.isPotentialDirtyRead();
+        iterator = new ArangoCursorIterator<>(id, execute, result);
         this.allowRetry = result.getNextBatchId() != null;
     }
 
@@ -85,13 +83,13 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
 
     @Override
     public CursorStats getStats() {
-        final InternalCursorEntity.Extras extra = iterator.result.getExtra();
+        final CursorEntity.Extras extra = iterator.result.getExtra();
         return extra != null ? extra.getStats() : null;
     }
 
     @Override
     public Collection<CursorWarning> getWarnings() {
-        final InternalCursorEntity.Extras extra = iterator.result.getExtra();
+        final CursorEntity.Extras extra = iterator.result.getExtra();
         return extra != null ? extra.getWarnings() : null;
     }
 
@@ -121,24 +119,20 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
         return iterator.result.getNextBatchId();
     }
 
-    protected ArangoCursorExecute getExecute() {
+    protected ArangoCursorExecute<T> getExecute() {
         return execute;
     }
 
     protected static class ArangoCursorIterator<T> implements ArangoIterator<T> {
         private final String cursorId;
-        private final Class<T> type;
-        private final InternalArangoDatabase db;
-        private final ArangoCursorExecute execute;
-        private InternalCursorEntity result;
-        private Iterator<JsonNode> arrayIterator;
+        private final ArangoCursorExecute<T> execute;
+        private CursorEntity<T> result;
+        private Iterator<T> arrayIterator;
 
-        protected ArangoCursorIterator(final String cursorId, final Class<T> type, final ArangoCursorExecute execute,
-                                       final InternalArangoDatabase db, final InternalCursorEntity result) {
+        protected ArangoCursorIterator(final String cursorId, final ArangoCursorExecute<T> execute,
+                                       final CursorEntity<T> result) {
             this.cursorId = cursorId;
-            this.type = type;
             this.execute = execute;
-            this.db = db;
             this.result = result;
             arrayIterator = result.getResult().iterator();
         }
@@ -157,13 +151,8 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return deserialize(db.getSerde().serialize(arrayIterator.next()), type);
+            return arrayIterator.next();
         }
-
-        private <R> R deserialize(final byte[] result, final Class<R> type) {
-            return db.getSerde().deserializeUserData(result, type);
-        }
-
     }
 
 }

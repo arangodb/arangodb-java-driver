@@ -7,7 +7,7 @@ import java.util.List;
 public interface BaseArangoCursor<T> {
     String getId();
 
-    Long getCount();
+    Integer getCount();
 
     Boolean isCached();
 
@@ -19,5 +19,5 @@ public interface BaseArangoCursor<T> {
 
     String getNextBatchId();
 
-    CursorEntity.Extra getExtra();
+    CursorEntity.Extras getExtra();
 }

@@ -1524,25 +1524,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.internal.cursor.entity.InternalCursorEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.internal.cursor.entity.InternalCursorEntity$Extras",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.entity.CursorEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.CursorEntity$Extra",
+    "name": "com.arangodb.entity.CursorEntity$Extras",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
