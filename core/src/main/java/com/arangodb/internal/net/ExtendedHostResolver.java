@@ -71,9 +71,14 @@ public class ExtendedHostResolver implements HostResolver {
     }
 
     @Override
-    public HostSet resolve(boolean initial) {
+    public HostSet getHosts() {
+        return hosts;
+    }
 
-        if (!initial && isExpired()) {
+    @Override
+    public HostSet resolve() {
+
+        if (isExpired()) {
 
             lastUpdate = System.currentTimeMillis();
 

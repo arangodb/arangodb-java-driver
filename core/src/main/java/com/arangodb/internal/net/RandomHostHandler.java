@@ -39,13 +39,15 @@ public class RandomHostHandler implements HostHandler {
         super();
         this.resolver = resolver;
         this.fallback = fallback;
-        current = getRandomHost(true);
+        hosts = resolver.getHosts();
+        current = getRandomHost();
     }
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
         if (current == null) {
-            current = getRandomHost(false);
+            hosts = resolver.resolve();
+            current = getRandomHost();
         }
         return current;
     }
@@ -68,8 +70,7 @@ public class RandomHostHandler implements HostHandler {
         }
     }
 
-    private Host getRandomHost(final boolean initial) {
-        hosts = resolver.resolve(initial);
+    private Host getRandomHost() {
         final ArrayList<Host> hostList = new ArrayList<>(hosts.getHostsList());
         Collections.shuffle(hostList);
         return hostList.get(0);

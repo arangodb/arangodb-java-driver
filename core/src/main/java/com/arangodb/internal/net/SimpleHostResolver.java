@@ -43,7 +43,12 @@ public class SimpleHostResolver implements HostResolver {
     }
 
     @Override
-    public HostSet resolve(final boolean initial) {
+    public HostSet getHosts() {
+        return new HostSet(hosts);
+    }
+
+    @Override
+    public HostSet resolve() {
         return new HostSet(hosts);
     }
 
