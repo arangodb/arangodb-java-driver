@@ -46,7 +46,7 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
         if (current == null) {
-            hosts = resolver.resolve();
+            hosts = resolver.getHosts();
             current = getRandomHost();
         }
         return current;
@@ -79,10 +79,6 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public void reset() {
         fallback.reset();
-    }
-
-    @Override
-    public void confirm() {
     }
 
     @Override

@@ -92,7 +92,6 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
                     if (jwt != null || user != null) {
                         tryAuthenticate(connection);
                     }
-                    hostHandler.confirm();
                     if (!connection.isOpen()) {
                         // see https://github.com/arangodb/arangodb-java-driver/issues/384
                         hostHandler.fail(new IOException("The connection is closed."));

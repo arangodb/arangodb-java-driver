@@ -73,11 +73,6 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
-    public void confirm() {
-        determineHostHandler().confirm();
-    }
-
-    @Override
     public void close() throws IOException {
         master.close();
         follower.close();

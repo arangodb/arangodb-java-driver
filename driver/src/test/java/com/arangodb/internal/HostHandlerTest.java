@@ -64,13 +64,6 @@ class HostHandlerTest {
     private static final HostResolver SINGLE_HOST = new HostResolver() {
 
         @Override
-        public HostSet resolve() {
-            HostSet set = new HostSet(Collections.emptyList());
-            set.addHost(HOST_0);
-            return set;
-        }
-
-        @Override
         public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {
 
         }
@@ -86,15 +79,6 @@ class HostHandlerTest {
     private static final Host HOST_1 = new HostImpl(mockCP, new HostDescription("127.0.0.2", 8529));
     private static final Host HOST_2 = new HostImpl(mockCP, new HostDescription("127.0.0.3", 8529));
     private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
-
-        @Override
-        public HostSet resolve() {
-            HostSet set = new HostSet(Collections.emptyList());
-            set.addHost(HOST_0);
-            set.addHost(HOST_1);
-            set.addHost(HOST_2);
-            return set;
-        }
 
         @Override
         public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {

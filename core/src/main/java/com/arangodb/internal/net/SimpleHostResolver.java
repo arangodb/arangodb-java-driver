@@ -47,9 +47,4 @@ public class SimpleHostResolver implements HostResolver {
         return new HostSet(hosts);
     }
 
-    @Override
-    public HostSet resolve() {
-        return new HostSet(hosts);
-    }
-
 }

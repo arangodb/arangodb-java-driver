@@ -50,7 +50,7 @@ public class RoundRobinHostHandler implements HostHandler {
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-        hosts = resolver.resolve();
+        hosts = resolver.getHosts();
         final int size = hosts.getHostsList().size();
 
         if (fails > size) {
@@ -99,10 +99,6 @@ public class RoundRobinHostHandler implements HostHandler {
     public void reset() {
         fails = 0;
         lastFailExceptions.clear();
-    }
-
-    @Override
-    public void confirm() {
     }
 
     @Override

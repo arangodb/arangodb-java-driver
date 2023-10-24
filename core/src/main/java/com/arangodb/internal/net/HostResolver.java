@@ -32,6 +32,4 @@ public interface HostResolver {
 
     HostSet getHosts();
 
-    HostSet resolve();
-
 }

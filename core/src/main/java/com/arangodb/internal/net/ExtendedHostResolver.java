@@ -68,6 +68,7 @@ public class ExtendedHostResolver implements HostResolver {
     public void init(ArangoExecutorSync executor, InternalSerde arangoSerialization) {
         this.executor = executor;
         this.arangoSerialization = arangoSerialization;
+        resolve();
     }
 
     @Override
@@ -75,8 +76,8 @@ public class ExtendedHostResolver implements HostResolver {
         return hosts;
     }
 
-    @Override
-    public HostSet resolve() {
+    // TODO: invoke at scheduled intervals
+    private HostSet resolve() {
 
         if (isExpired()) {
 
