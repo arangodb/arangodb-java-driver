@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
@@ -350,10 +351,13 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         arangoDB.grantDefaultCollectionAccess(username, Permissions.RW);
     }
 
-    @Test
-    void authenticationFailPassword() {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void authenticationFailPassword(Protocol protocol) {
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
+                .protocol(protocol)
+                .acquireHostList(false)
                 .password("no").jwt(null)
                 .build()
                 .async();
@@ -362,11 +366,13 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangos")
-    void authenticationFailUser() {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void authenticationFailUser(Protocol protocol) {
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
+                .protocol(protocol)
+                .acquireHostList(false)
                 .user("no").jwt(null)
                 .build()
                 .async();

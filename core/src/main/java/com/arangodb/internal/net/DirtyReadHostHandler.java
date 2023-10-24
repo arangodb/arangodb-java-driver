@@ -73,24 +73,9 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
-    public void confirm() {
-        determineHostHandler().confirm();
-    }
-
-    @Override
     public void close() throws IOException {
         master.close();
         follower.close();
-    }
-
-    @Override
-    public void closeCurrentOnError() {
-        determineHostHandler().closeCurrentOnError();
-    }
-
-    @Override
-    public void closeCurrentOnErrorIfNotMatch(HostDescription host) {
-        determineHostHandler().closeCurrentOnErrorIfNotMatch(host);
     }
 
     @Override

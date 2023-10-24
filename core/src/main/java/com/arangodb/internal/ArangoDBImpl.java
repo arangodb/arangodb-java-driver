@@ -23,9 +23,8 @@ package com.arangodb.internal;
 import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.net.ProtocolProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import org.slf4j.Logger;
@@ -44,11 +43,10 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
     private final HostHandler hostHandler;
 
     public ArangoDBImpl(final ArangoConfig config,
-                        final HostResolver hostResolver, final ProtocolProvider protocolProvider,
+                        final CommunicationProtocol protocol,
                         final HostHandler hostHandler) {
-        super(protocolProvider.createProtocol(config, hostHandler), config, config.getInternalSerde());
+        super(protocol, config);
         this.hostHandler = hostHandler;
-        hostResolver.init(executorSync(), getSerde());
         LOGGER.debug("ArangoDB Client is ready to use");
     }
 

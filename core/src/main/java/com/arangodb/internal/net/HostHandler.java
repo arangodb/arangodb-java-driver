@@ -39,13 +39,7 @@ public interface HostHandler {
 
     void reset();
 
-    void confirm();
-
     void close() throws IOException;
-
-    void closeCurrentOnError();
-
-    void closeCurrentOnErrorIfNotMatch(HostDescription host);
 
     void setJwt(String jwt);
 

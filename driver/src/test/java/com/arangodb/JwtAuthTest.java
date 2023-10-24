@@ -49,7 +49,7 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
-        ArangoDB arangoDB = getBuilder(protocol).build();
+        ArangoDB arangoDB = getBuilder(protocol).acquireHostList(false).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;

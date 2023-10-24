@@ -50,8 +50,8 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     private static final String PATH_API_USER = "/_api/user";
     private static final String PATH_API_QUERY_RULES = "/_api/query/rules";
 
-    protected InternalArangoDB(final CommunicationProtocol protocol, final ArangoConfig config, final InternalSerde util) {
-        super(protocol, config, util);
+    protected InternalArangoDB(final CommunicationProtocol protocol, final ArangoConfig config) {
+        super(protocol, config);
     }
 
     protected InternalArangoDB(final ArangoExecuteable other) {

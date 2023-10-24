@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
@@ -352,21 +353,26 @@ class ArangoDBTest extends BaseJunit5 {
         arangoDB.grantDefaultCollectionAccess(username, Permissions.RW);
     }
 
-    @Test
-    void authenticationFailPassword() {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void authenticationFailPassword(Protocol protocol) {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
+                .protocol(protocol)
+                .acquireHostList(false)
                 .password("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
     }
 
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void authenticationFailUser() {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void authenticationFailUser(Protocol protocol) {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
+                .protocol(protocol)
+                .acquireHostList(false)
                 .user("no").jwt(null).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
