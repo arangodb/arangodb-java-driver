@@ -41,12 +41,6 @@ public interface HostHandler {
 
     void close() throws IOException;
 
-    // TODO: check if used
-    void closeCurrentOnError();
-
-    // TODO: check if used
-    void closeCurrentOnErrorIfNotMatch(HostDescription host);
-
     void setJwt(String jwt);
 
 }

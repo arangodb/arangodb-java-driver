@@ -98,18 +98,6 @@ public class FallbackHostHandler implements HostHandler {
     }
 
     @Override
-    public void closeCurrentOnError() {
-        current.closeOnError();
-    }
-
-    @Override
-    public synchronized void closeCurrentOnErrorIfNotMatch(HostDescription host) {
-        if (!host.equals(current.getDescription())) {
-            closeCurrentOnError();
-        }
-    }
-
-    @Override
     public void setJwt(String jwt) {
         hosts.setJwt(jwt);
     }

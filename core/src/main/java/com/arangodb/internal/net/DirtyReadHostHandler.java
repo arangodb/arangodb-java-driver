@@ -79,16 +79,6 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
-    public void closeCurrentOnError() {
-        determineHostHandler().closeCurrentOnError();
-    }
-
-    @Override
-    public void closeCurrentOnErrorIfNotMatch(HostDescription host) {
-        determineHostHandler().closeCurrentOnErrorIfNotMatch(host);
-    }
-
-    @Override
     public void setJwt(String jwt) {
         master.setJwt(jwt);
         follower.setJwt(jwt);

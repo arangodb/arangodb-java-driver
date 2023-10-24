@@ -108,16 +108,6 @@ public class RoundRobinHostHandler implements HostHandler {
     }
 
     @Override
-    public void closeCurrentOnError() {
-        currentHost.closeOnError();
-    }
-
-    @Override
-    public void closeCurrentOnErrorIfNotMatch(HostDescription host) {
-        closeCurrentOnError();
-    }
-
-    @Override
     public void setJwt(String jwt) {
         hosts.setJwt(jwt);
     }
