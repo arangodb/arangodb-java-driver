@@ -64,17 +64,17 @@ public class ArangoSearchAsyncImpl extends InternalArangoSearch implements Arang
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executorAsync().execute(dropRequest(), Void.class);
+        return executorAsync().execute(this::dropRequest, Void.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> rename(final String newName) {
-        return executorAsync().execute(renameRequest(newName), ViewEntity.class);
+        return executorAsync().execute(() -> renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> getInfo() {
-        return executorAsync().execute(getInfoRequest(), ViewEntity.class);
+        return executorAsync().execute(this::getInfoRequest, ViewEntity.class);
     }
 
     @Override
@@ -89,17 +89,17 @@ public class ArangoSearchAsyncImpl extends InternalArangoSearch implements Arang
 
     @Override
     public CompletableFuture<ArangoSearchPropertiesEntity> getProperties() {
-        return executorAsync().execute(getPropertiesRequest(), ArangoSearchPropertiesEntity.class);
+        return executorAsync().execute(this::getPropertiesRequest, ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<ArangoSearchPropertiesEntity> updateProperties(final ArangoSearchPropertiesOptions options) {
-        return executorAsync().execute(updatePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
+        return executorAsync().execute(() -> updatePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<ArangoSearchPropertiesEntity> replaceProperties(final ArangoSearchPropertiesOptions options) {
-        return executorAsync().execute(replacePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
+        return executorAsync().execute(() -> replacePropertiesRequest(options), ArangoSearchPropertiesEntity.class);
     }
 
 }

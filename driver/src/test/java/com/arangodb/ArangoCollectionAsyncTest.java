@@ -504,7 +504,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncCols")
     void getDocumentWrongKey(ArangoCollectionAsync collection) {
-        Throwable thrown = catchThrowable(() -> collection.getDocument("no/no", BaseDocument.class).get());
+        Throwable thrown = catchThrowable(() -> collection.getDocument("no/no", BaseDocument.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 

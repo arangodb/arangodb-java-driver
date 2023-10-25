@@ -56,23 +56,23 @@ public class ArangoVertexCollectionAsyncImpl extends InternalArangoVertexCollect
 
     @Override
     public CompletableFuture<Void> drop(final VertexCollectionDropOptions options) {
-        return executorAsync().execute(dropRequest(options), Void.class);
+        return executorAsync().execute(() -> dropRequest(options), Void.class);
     }
 
     @Override
     public CompletableFuture<VertexEntity> insertVertex(final Object value) {
-        return executorAsync().execute(insertVertexRequest(value, new VertexCreateOptions()),
+        return executorAsync().execute(() -> insertVertexRequest(value, new VertexCreateOptions()),
                 insertVertexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<VertexEntity> insertVertex(final Object value, final VertexCreateOptions options) {
-        return executorAsync().execute(insertVertexRequest(value, options), insertVertexResponseDeserializer());
+        return executorAsync().execute(() -> insertVertexRequest(value, options), insertVertexResponseDeserializer());
     }
 
     @Override
     public <T> CompletableFuture<T> getVertex(final String key, final Class<T> type) {
-        return executorAsync().execute(getVertexRequest(key, new GraphDocumentReadOptions()),
+        return executorAsync().execute(() -> getVertexRequest(key, new GraphDocumentReadOptions()),
                         getVertexResponseDeserializer(type))
                 .exceptionally(e -> {
                     // FIXME
@@ -86,7 +86,7 @@ public class ArangoVertexCollectionAsyncImpl extends InternalArangoVertexCollect
 
     @Override
     public <T> CompletableFuture<T> getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executorAsync().execute(getVertexRequest(key, options), getVertexResponseDeserializer(type))
+        return executorAsync().execute(() -> getVertexRequest(key, options), getVertexResponseDeserializer(type))
                 .exceptionally(e -> {
                     // FIXME
                     if (LOGGER.isDebugEnabled()) {
@@ -98,34 +98,34 @@ public class ArangoVertexCollectionAsyncImpl extends InternalArangoVertexCollect
 
     @Override
     public CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final Object value) {
-        return executorAsync().execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
+        return executorAsync().execute(() -> replaceVertexRequest(key, value, new VertexReplaceOptions()),
                 replaceVertexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final Object value, final VertexReplaceOptions options) {
-        return executorAsync().execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer());
+        return executorAsync().execute(() -> replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final Object value) {
-        return executorAsync().execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
+        return executorAsync().execute(() -> updateVertexRequest(key, value, new VertexUpdateOptions()),
                 updateVertexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final Object value, final VertexUpdateOptions options) {
-        return executorAsync().execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer());
+        return executorAsync().execute(() -> updateVertexRequest(key, value, options), updateVertexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<Void> deleteVertex(final String key) {
-        return executorAsync().execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
+        return executorAsync().execute(() -> deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> deleteVertex(final String key, final VertexDeleteOptions options) {
-        return executorAsync().execute(deleteVertexRequest(key, options), Void.class);
+        return executorAsync().execute(() -> deleteVertexRequest(key, options), Void.class);
     }
 
 }

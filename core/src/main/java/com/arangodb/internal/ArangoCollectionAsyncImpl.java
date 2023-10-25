@@ -24,7 +24,6 @@ import com.arangodb.ArangoCollectionAsync;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabaseAsync;
 import com.arangodb.entity.*;
-import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
 
@@ -55,7 +54,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<DocumentCreateEntity<Void>> insertDocument(final Object value) {
-        return executorAsync().execute(insertDocumentRequest(value, new DocumentCreateOptions()),
+        return executorAsync().execute(() -> insertDocumentRequest(value, new DocumentCreateOptions()),
                 constructParametricType(DocumentCreateEntity.class, Void.class));
     }
 
@@ -68,14 +67,14 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value, final DocumentCreateOptions options,
                                                                          final Class<T> type) {
-        return executorAsync().execute(insertDocumentRequest(value, options),
+        return executorAsync().execute(() -> insertDocumentRequest(value, options),
                 constructParametricType(DocumentCreateEntity.class, type));
     }
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(RawData values) {
         return executorAsync()
-                .execute(insertDocumentsRequest(values, new DocumentCreateOptions()),
+                .execute(() -> insertDocumentsRequest(values, new DocumentCreateOptions()),
                         insertDocumentsResponseDeserializer(Void.class));
     }
 
@@ -84,7 +83,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<RawData>>> insertDocuments(RawData values,
                                                                                                  DocumentCreateOptions options) {
         return executorAsync()
-                .execute(insertDocumentsRequest(values, options),
+                .execute(() -> insertDocumentsRequest(values, options),
                         insertDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
@@ -97,7 +96,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<Void>>> insertDocuments(
             final Iterable<?> values, final DocumentCreateOptions options) {
         return executorAsync()
-                .execute(insertDocumentsRequest(values, options),
+                .execute(() -> insertDocumentsRequest(values, options),
                         insertDocumentsResponseDeserializer(Void.class));
     }
 
@@ -106,7 +105,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                                                                                                DocumentCreateOptions options,
                                                                                                Class<T> type) {
         return executorAsync()
-                .execute(insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
+                .execute(() -> insertDocumentsRequest(values, options), insertDocumentsResponseDeserializer(type));
     }
 
     @Override
@@ -116,7 +115,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<DocumentImportEntity> importDocuments(final Iterable<?> values, final DocumentImportOptions options) {
-        return executorAsync().execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
+        return executorAsync().execute(() -> importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
     @Override
@@ -126,7 +125,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<DocumentImportEntity> importDocuments(RawData values, DocumentImportOptions options) {
-        return executorAsync().execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
+        return executorAsync().execute(() -> importDocumentsRequest(values, options), DocumentImportEntity.class);
     }
 
     @Override
@@ -136,8 +135,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options) {
-        DocumentUtil.validateDocumentKey(key);
-        return executorAsync().execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
+        return executorAsync().execute(() -> getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
                 .exceptionally(this::catchGetDocumentExceptions);
     }
 
@@ -149,12 +147,12 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<T>> getDocuments(
             final Iterable<String> keys, final Class<T> type, final DocumentReadOptions options) {
-        return executorAsync().execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type));
+        return executorAsync().execute(() -> getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type));
     }
 
     @Override
     public CompletableFuture<DocumentUpdateEntity<Void>> replaceDocument(final String key, final Object value) {
-        return executorAsync().execute(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
+        return executorAsync().execute(() -> replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
                 constructParametricType(DocumentUpdateEntity.class, Void.class));
     }
 
@@ -168,13 +166,13 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(String key, T value, DocumentReplaceOptions options,
                                                                           Class<T> type) {
-        return executorAsync().execute(replaceDocumentRequest(key, value, options),
+        return executorAsync().execute(() -> replaceDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, type));
     }
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(RawData values) {
-        return executorAsync().execute(replaceDocumentsRequest(values, new DocumentReplaceOptions()),
+        return executorAsync().execute(() -> replaceDocumentsRequest(values, new DocumentReplaceOptions()),
                 replaceDocumentsResponseDeserializer(Void.class));
     }
 
@@ -182,7 +180,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @SuppressWarnings("unchecked")
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> replaceDocuments(RawData values,
                                                                                                   DocumentReplaceOptions options) {
-        return executorAsync().execute(replaceDocumentsRequest(values, options),
+        return executorAsync().execute(() -> replaceDocumentsRequest(values, options),
                 replaceDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
@@ -194,7 +192,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> replaceDocuments(
             final Iterable<?> values, final DocumentReplaceOptions options) {
-        return executorAsync().execute(replaceDocumentsRequest(values, options),
+        return executorAsync().execute(() -> replaceDocumentsRequest(values, options),
                 replaceDocumentsResponseDeserializer(Void.class));
     }
 
@@ -202,7 +200,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(Iterable<? extends T> values,
                                                                                                 DocumentReplaceOptions options,
                                                                                                 Class<T> type) {
-        return executorAsync().execute(replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
+        return executorAsync().execute(() -> replaceDocumentsRequest(values, options), replaceDocumentsResponseDeserializer(type));
     }
 
     @Override
@@ -220,14 +218,14 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(
             final String key, final Object value, final DocumentUpdateOptions options, final Class<T> returnType) {
-        return executorAsync().execute(updateDocumentRequest(key, value, options),
+        return executorAsync().execute(() -> updateDocumentRequest(key, value, options),
                 constructParametricType(DocumentUpdateEntity.class, returnType));
     }
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<Void>>> updateDocuments(RawData values) {
         return executorAsync()
-                .execute(updateDocumentsRequest(values, new DocumentUpdateOptions()),
+                .execute(() -> updateDocumentsRequest(values, new DocumentUpdateOptions()),
                         updateDocumentsResponseDeserializer(Void.class));
     }
 
@@ -236,7 +234,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<RawData>>> updateDocuments(RawData values,
                                                                                                  DocumentUpdateOptions options) {
         return executorAsync()
-                .execute(updateDocumentsRequest(values, options),
+                .execute(() -> updateDocumentsRequest(values, options),
                         updateDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
@@ -255,7 +253,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Iterable<?> values, final DocumentUpdateOptions options, final Class<T> returnType) {
         return executorAsync()
-                .execute(updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
+                .execute(() -> updateDocumentsRequest(values, options), updateDocumentsResponseDeserializer(returnType));
     }
 
     @Override
@@ -271,13 +269,13 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
             final String key, final DocumentDeleteOptions options, final Class<T> type) {
-        return executorAsync().execute(deleteDocumentRequest(key, options),
+        return executorAsync().execute(() -> deleteDocumentRequest(key, options),
                 constructParametricType(DocumentDeleteEntity.class, type));
     }
 
     @Override
     public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(RawData values) {
-        return executorAsync().execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
+        return executorAsync().execute(() -> deleteDocumentsRequest(values, new DocumentDeleteOptions()),
                 deleteDocumentsResponseDeserializer(Void.class));
     }
 
@@ -285,7 +283,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @SuppressWarnings("unchecked")
     public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<RawData>>> deleteDocuments(RawData values,
                                                                                                  DocumentDeleteOptions options) {
-        return executorAsync().execute(deleteDocumentsRequest(values, options),
+        return executorAsync().execute(() -> deleteDocumentsRequest(values, options),
                 deleteDocumentsResponseDeserializer((Class<RawData>) values.getClass()));
     }
 
@@ -303,7 +301,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
             final Iterable<?> values, final DocumentDeleteOptions options, final Class<T> type) {
-        return executorAsync().execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
+        return executorAsync().execute(() -> deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
     }
 
     @Override
@@ -313,7 +311,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options) {
-        return executorAsync().execute(documentExistsRequest(key, options), Void.class)
+        return executorAsync().execute(() -> documentExistsRequest(key, options), Void.class)
                 .thenApply(it -> true)
                 .exceptionally(this::catchGetDocumentExceptions)
                 .thenApply(Objects::nonNull);
@@ -339,58 +337,58 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<IndexEntity> getIndex(final String id) {
-        return executorAsync().execute(getIndexRequest(id), IndexEntity.class);
+        return executorAsync().execute(() -> getIndexRequest(id), IndexEntity.class);
     }
 
     @Override
     public CompletableFuture<InvertedIndexEntity> getInvertedIndex(String id) {
-        return executorAsync().execute(getIndexRequest(id), InvertedIndexEntity.class);
+        return executorAsync().execute(() -> getIndexRequest(id), InvertedIndexEntity.class);
     }
 
     @Override
     public CompletableFuture<String> deleteIndex(final String id) {
-        return executorAsync().execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
+        return executorAsync().execute(() -> deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<IndexEntity> ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options) {
-        return executorAsync().execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
+        return executorAsync().execute(() -> createPersistentIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override
     public CompletableFuture<InvertedIndexEntity> ensureInvertedIndex(final InvertedIndexOptions options) {
-        return executorAsync().execute(createInvertedIndexRequest(options), InvertedIndexEntity.class);
+        return executorAsync().execute(() -> createInvertedIndexRequest(options), InvertedIndexEntity.class);
     }
 
     @Override
     public CompletableFuture<IndexEntity> ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options) {
-        return executorAsync().execute(createGeoIndexRequest(fields, options), IndexEntity.class);
+        return executorAsync().execute(() -> createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Deprecated
     @Override
     public CompletableFuture<IndexEntity> ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options) {
-        return executorAsync().execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
+        return executorAsync().execute(() -> createFulltextIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override
     public CompletableFuture<IndexEntity> ensureTtlIndex(final Iterable<String> fields, final TtlIndexOptions options) {
-        return executorAsync().execute(createTtlIndexRequest(fields, options), IndexEntity.class);
+        return executorAsync().execute(() -> createTtlIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override
     public CompletableFuture<IndexEntity> ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options) {
-        return executorAsync().execute(createZKDIndexRequest(fields, options), IndexEntity.class);
+        return executorAsync().execute(() -> createZKDIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override
     public CompletableFuture<Collection<IndexEntity>> getIndexes() {
-        return executorAsync().execute(getIndexesRequest(), getIndexesResponseDeserializer());
+        return executorAsync().execute(this::getIndexesRequest, getIndexesResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<Collection<InvertedIndexEntity>> getInvertedIndexes() {
-        return executorAsync().execute(getIndexesRequest(), getInvertedIndexesResponseDeserializer());
+        return executorAsync().execute(this::getIndexesRequest, getInvertedIndexesResponseDeserializer());
     }
 
     @Override
@@ -416,7 +414,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<CollectionEntity> truncate(CollectionTruncateOptions options) {
-        return executorAsync().execute(truncateRequest(options), CollectionEntity.class);
+        return executorAsync().execute(() -> truncateRequest(options), CollectionEntity.class);
     }
 
     @Override
@@ -426,7 +424,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<CollectionPropertiesEntity> count(CollectionCountOptions options) {
-        return executorAsync().execute(countRequest(options), CollectionPropertiesEntity.class);
+        return executorAsync().execute(() -> countRequest(options), CollectionPropertiesEntity.class);
     }
 
     @Override
@@ -441,62 +439,62 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executorAsync().execute(dropRequest(null), Void.class);
+        return executorAsync().execute(() -> dropRequest(null), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> drop(final boolean isSystem) {
-        return executorAsync().execute(dropRequest(isSystem), Void.class);
+        return executorAsync().execute(() -> dropRequest(isSystem), Void.class);
     }
 
     @Override
     public CompletableFuture<CollectionEntity> getInfo() {
-        return executorAsync().execute(getInfoRequest(), CollectionEntity.class);
+        return executorAsync().execute(this::getInfoRequest, CollectionEntity.class);
     }
 
     @Override
     public CompletableFuture<CollectionPropertiesEntity> getProperties() {
-        return executorAsync().execute(getPropertiesRequest(), CollectionPropertiesEntity.class);
+        return executorAsync().execute(this::getPropertiesRequest, CollectionPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<CollectionPropertiesEntity> changeProperties(final CollectionPropertiesOptions options) {
-        return executorAsync().execute(changePropertiesRequest(options), CollectionPropertiesEntity.class);
+        return executorAsync().execute(() -> changePropertiesRequest(options), CollectionPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<CollectionEntity> rename(final String newName) {
-        return executorAsync().execute(renameRequest(newName), CollectionEntity.class);
+        return executorAsync().execute(() -> renameRequest(newName), CollectionEntity.class);
     }
 
     @Override
     public CompletableFuture<ShardEntity> getResponsibleShard(final Object value) {
-        return executorAsync().execute(responsibleShardRequest(value), ShardEntity.class);
+        return executorAsync().execute(() -> responsibleShardRequest(value), ShardEntity.class);
     }
 
     @Override
     public CompletableFuture<CollectionRevisionEntity> getRevision() {
-        return executorAsync().execute(getRevisionRequest(), CollectionRevisionEntity.class);
+        return executorAsync().execute(this::getRevisionRequest, CollectionRevisionEntity.class);
     }
 
     @Override
     public CompletableFuture<Void> grantAccess(final String user, final Permissions permissions) {
-        return executorAsync().execute(grantAccessRequest(user, permissions), Void.class);
+        return executorAsync().execute(() -> grantAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> revokeAccess(final String user) {
-        return executorAsync().execute(grantAccessRequest(user, Permissions.NONE), Void.class);
+        return executorAsync().execute(() -> grantAccessRequest(user, Permissions.NONE), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> resetAccess(final String user) {
-        return executorAsync().execute(resetAccessRequest(user), Void.class);
+        return executorAsync().execute(() -> resetAccessRequest(user), Void.class);
     }
 
     @Override
     public CompletableFuture<Permissions> getPermissions(final String user) {
-        return executorAsync().execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
+        return executorAsync().execute(() -> getPermissionsRequest(user), getPermissionsResponseDeserialzer());
     }
 
 }

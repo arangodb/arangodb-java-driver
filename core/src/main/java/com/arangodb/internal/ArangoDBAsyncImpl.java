@@ -74,12 +74,12 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 
     @Override
     public CompletableFuture<Boolean> createDatabase(DBCreateOptions options) {
-        return executorAsync().execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
+        return executorAsync().execute(() -> createDatabaseRequest(options), createDatabaseResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<Collection<String>> getDatabases() {
-        return executorAsync().execute(getDatabasesRequest(ArangoRequestParam.SYSTEM), getDatabaseResponseDeserializer());
+        return executorAsync().execute(() -> getDatabasesRequest(ArangoRequestParam.SYSTEM), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 
     @Override
     public CompletableFuture<Collection<String>> getAccessibleDatabasesFor(final String user) {
-        return executorAsync().execute(getAccessibleDatabasesForRequest(ArangoRequestParam.SYSTEM, user),
+        return executorAsync().execute(() -> getAccessibleDatabasesForRequest(ArangoRequestParam.SYSTEM, user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
@@ -105,68 +105,68 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 
     @Override
     public CompletableFuture<ServerRole> getRole() {
-        return executorAsync().execute(getRoleRequest(), getRoleResponseDeserializer());
+        return executorAsync().execute(this::getRoleRequest, getRoleResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<String> getServerId() {
-        return executorAsync().execute(getServerIdRequest(), getServerIdResponseDeserializer());
+        return executorAsync().execute(this::getServerIdRequest, getServerIdResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<UserEntity> createUser(final String user, final String passwd) {
-        return executorAsync().execute(createUserRequest(ArangoRequestParam.SYSTEM, user, passwd, new UserCreateOptions()),
+        return executorAsync().execute(() -> createUserRequest(ArangoRequestParam.SYSTEM, user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
     @Override
     public CompletableFuture<UserEntity> createUser(final String user, final String passwd, final UserCreateOptions options) {
-        return executorAsync().execute(createUserRequest(ArangoRequestParam.SYSTEM, user, passwd, options), UserEntity.class);
+        return executorAsync().execute(() -> createUserRequest(ArangoRequestParam.SYSTEM, user, passwd, options), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<Void> deleteUser(final String user) {
-        return executorAsync().execute(deleteUserRequest(ArangoRequestParam.SYSTEM, user), Void.class);
+        return executorAsync().execute(() -> deleteUserRequest(ArangoRequestParam.SYSTEM, user), Void.class);
     }
 
     @Override
     public CompletableFuture<UserEntity> getUser(final String user) {
-        return executorAsync().execute(getUserRequest(ArangoRequestParam.SYSTEM, user), UserEntity.class);
+        return executorAsync().execute(() -> getUserRequest(ArangoRequestParam.SYSTEM, user), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<Collection<UserEntity>> getUsers() {
-        return executorAsync().execute(getUsersRequest(ArangoRequestParam.SYSTEM), getUsersResponseDeserializer());
+        return executorAsync().execute(() -> getUsersRequest(ArangoRequestParam.SYSTEM), getUsersResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<UserEntity> updateUser(final String user, final UserUpdateOptions options) {
-        return executorAsync().execute(updateUserRequest(ArangoRequestParam.SYSTEM, user, options), UserEntity.class);
+        return executorAsync().execute(() -> updateUserRequest(ArangoRequestParam.SYSTEM, user, options), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<UserEntity> replaceUser(final String user, final UserUpdateOptions options) {
-        return executorAsync().execute(replaceUserRequest(ArangoRequestParam.SYSTEM, user, options), UserEntity.class);
+        return executorAsync().execute(() -> replaceUserRequest(ArangoRequestParam.SYSTEM, user, options), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<Void> grantDefaultDatabaseAccess(final String user, final Permissions permissions) {
-        return executorAsync().execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
+        return executorAsync().execute(() -> updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> grantDefaultCollectionAccess(final String user, final Permissions permissions) {
-        return executorAsync().execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+        return executorAsync().execute(() -> updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
     }
 
     @Override
     public <T> CompletableFuture<Response<T>> execute(Request<?> request, Class<T> type) {
-        return executorAsync().execute(executeRequest(request), responseDeserializer(type));
+        return executorAsync().execute(() -> executeRequest(request), responseDeserializer(type));
     }
 
     @Override
     public CompletableFuture<LogEntriesEntity> getLogEntries(final LogOptions options) {
-        return executorAsync().execute(getLogEntriesRequest(options), LogEntriesEntity.class);
+        return executorAsync().execute(() -> getLogEntriesRequest(options), LogEntriesEntity.class);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 
     @Override
     public CompletableFuture<LogLevelEntity> getLogLevel(final LogLevelOptions options) {
-        return executorAsync().execute(getLogLevelRequest(options), LogLevelEntity.class);
+        return executorAsync().execute(() -> getLogLevelRequest(options), LogLevelEntity.class);
     }
 
     @Override
@@ -186,12 +186,12 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
 
     @Override
     public CompletableFuture<LogLevelEntity> setLogLevel(final LogLevelEntity entity, final LogLevelOptions options) {
-        return executorAsync().execute(setLogLevelRequest(entity, options), LogLevelEntity.class);
+        return executorAsync().execute(() -> setLogLevelRequest(entity, options), LogLevelEntity.class);
     }
 
     @Override
     public CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules() {
-        return executorAsync().execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
+        return executorAsync().execute(this::getQueryOptimizerRulesRequest, SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
 }
