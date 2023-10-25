@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import static org.awaitility.Awaitility.await;
 
@@ -51,6 +52,27 @@ class VstKeepAliveCloseTest extends SingleServerTest {
                 .filter(e -> e.getMessage() != null)
                 .anyMatch(e -> e.getMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
+        toxic.remove();
         arangoDB.getVersion();
     }
+
+    /**
+     * after 3 consecutive VST keepAlive failures:
+     * - log ERROR Connection unresponsive
+     * - reconnect on next request
+     */
+    @Test
+    @Timeout(10)
+    void keepAliveCloseAndReconnectAsync() throws IOException, ExecutionException, InterruptedException {
+        arangoDB.async().getVersion().get();
+        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        await().until(() -> logs.getLoggedEvents().stream()
+                .filter(e -> e.getLevel().equals(Level.ERROR))
+                .filter(e -> e.getMessage() != null)
+                .anyMatch(e -> e.getMessage().contains("Connection unresponsive!")));
+        toxic.setLatency(0);
+        toxic.remove();
+        arangoDB.async().getVersion().get();
+    }
+
 }
