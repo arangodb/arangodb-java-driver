@@ -62,8 +62,8 @@ public class VstProtocol implements CommunicationProtocol {
 
     @Override
     public void close() throws IOException {
-        communication.close();
         outgoingExecutor.shutdown();
+        communication.close();
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CommunicationTest {
 
@@ -18,9 +17,6 @@ public class CommunicationTest {
     @EnumSource(Protocol.class)
     @Timeout(5)
     void disconnectAsync(Protocol protocol) throws InterruptedException, ExecutionException {
-        // FIXME: fix for VST protocol (DE-708)
-        assumeTrue(!Protocol.VST.equals(protocol));
-
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
@@ -28,7 +24,7 @@ public class CommunicationTest {
                 .async();
         arangoDB.getVersion().get();
 
-        CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null, null);
+        CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null);
         Thread.sleep(500);
         arangoDB.shutdown();
         Throwable thrown = catchThrowable(result::get).getCause();
@@ -44,9 +40,6 @@ public class CommunicationTest {
     @EnumSource(Protocol.class)
     @Timeout(5)
     void disconnect(Protocol protocol) {
-        // FIXME: fix for VST protocol (DE-708)
-        assumeTrue(!Protocol.VST.equals(protocol));
-
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
@@ -62,7 +55,7 @@ public class CommunicationTest {
             arangoDB.shutdown();
         }).start();
 
-        Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", null, null, null));
+        Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", null));
         assertThat(thrown)
                 .isNotNull()
                 .isInstanceOf(ArangoDBException.class);

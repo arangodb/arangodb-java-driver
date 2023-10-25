@@ -219,9 +219,9 @@ public abstract class VstConnection<T> implements Connection {
     @Override
     public synchronized void close() {
         if (keepAliveScheduler != null) {
-            keepAliveScheduler.shutdownNow();
+            keepAliveScheduler.shutdown();
         }
-        messageStore.clear();
+        messageStore.clear(new IOException("Connection closed"));
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();
         }
@@ -331,10 +331,6 @@ public abstract class VstConnection<T> implements Connection {
                 readed += read;
             }
         }
-    }
-
-    public String getConnectionName() {
-        return this.connectionName;
     }
 
     @Override
