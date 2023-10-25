@@ -42,7 +42,8 @@ public class HttpProtocol implements CommunicationProtocol {
 
     @Override
     public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle) {
-        return httpCommunication.executeAsync(request, hostHandle);
+        return CompletableFuture.completedFuture(null)
+                .thenCompose(__ -> httpCommunication.executeAsync(request, hostHandle));
     }
 
     @Override
