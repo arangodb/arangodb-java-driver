@@ -25,7 +25,6 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
@@ -110,14 +109,12 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public IndexEntity getIndex(final String id) {
-        DocumentUtil.validateIndexId(id);
         final String[] split = id.split("/");
         return collection(split[0]).getIndex(split[1]);
     }
 
     @Override
     public String deleteIndex(final String id) {
-        DocumentUtil.validateIndexId(id);
         final String[] split = id.split("/");
         return collection(split[0]).deleteIndex(split[1]);
     }

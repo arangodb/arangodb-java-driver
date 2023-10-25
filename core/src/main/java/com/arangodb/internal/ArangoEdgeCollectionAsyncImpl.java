@@ -54,23 +54,23 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
 
     @Override
     public CompletableFuture<Void> drop(final EdgeCollectionDropOptions options) {
-        return executorAsync().execute(removeEdgeDefinitionRequest(options), Void.class);
+        return executorAsync().execute(() -> removeEdgeDefinitionRequest(options), Void.class);
     }
 
     @Override
     public CompletableFuture<EdgeEntity> insertEdge(final Object value) {
-        return executorAsync().execute(insertEdgeRequest(value, new EdgeCreateOptions()),
+        return executorAsync().execute(() -> insertEdgeRequest(value, new EdgeCreateOptions()),
                 insertEdgeResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<EdgeEntity> insertEdge(final Object value, final EdgeCreateOptions options) {
-        return executorAsync().execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer());
+        return executorAsync().execute(() -> insertEdgeRequest(value, options), insertEdgeResponseDeserializer());
     }
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type) {
-        return executorAsync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
+        return executorAsync().execute(() -> getEdgeRequest(key, new GraphDocumentReadOptions()),
                         getEdgeResponseDeserializer(type))
                 .exceptionally(e -> {
                     // FIXME
@@ -84,7 +84,7 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executorAsync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
+        return executorAsync().execute(() -> getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
                 .exceptionally(e -> {
                     // FIXME
                     if (LOGGER.isDebugEnabled()) {
@@ -96,34 +96,34 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
 
     @Override
     public CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final Object value) {
-        return executorAsync().execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+        return executorAsync().execute(() -> replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
                 replaceEdgeResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final Object value, final EdgeReplaceOptions options) {
-        return executorAsync().execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer());
+        return executorAsync().execute(() -> replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final Object value) {
-        return executorAsync().execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+        return executorAsync().execute(() -> updateEdgeRequest(key, value, new EdgeUpdateOptions()),
                 updateEdgeResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final Object value, final EdgeUpdateOptions options) {
-        return executorAsync().execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer());
+        return executorAsync().execute(() -> updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<Void> deleteEdge(final String key) {
-        return executorAsync().execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
+        return executorAsync().execute(() -> deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
     }
 
     @Override
     public CompletableFuture<Void> deleteEdge(final String key, final EdgeDeleteOptions options) {
-        return executorAsync().execute(deleteEdgeRequest(key, options), Void.class);
+        return executorAsync().execute(() -> deleteEdgeRequest(key, options), Void.class);
     }
 
 }

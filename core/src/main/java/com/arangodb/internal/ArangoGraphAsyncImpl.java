@@ -74,22 +74,22 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executorAsync().execute(dropRequest(), Void.class);
+        return executorAsync().execute(this::dropRequest, Void.class);
     }
 
     @Override
     public CompletableFuture<Void> drop(final boolean dropCollections) {
-        return executorAsync().execute(dropRequest(dropCollections), Void.class);
+        return executorAsync().execute(() -> dropRequest(dropCollections), Void.class);
     }
 
     @Override
     public CompletableFuture<GraphEntity> getInfo() {
-        return executorAsync().execute(getInfoRequest(), getInfoResponseDeserializer());
+        return executorAsync().execute(this::getInfoRequest, getInfoResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<Collection<String>> getVertexCollections() {
-        return executorAsync().execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
+        return executorAsync().execute(this::getVertexCollectionsRequest, getVertexCollectionsResponseDeserializer());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
 
     @Override
     public CompletableFuture<GraphEntity> addVertexCollection(final String name, final VertexCollectionCreateOptions options) {
-        return executorAsync().execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
+        return executorAsync().execute(() -> addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 
     @Override
@@ -114,12 +114,12 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
 
     @Override
     public CompletableFuture<Collection<String>> getEdgeDefinitions() {
-        return executorAsync().execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
+        return executorAsync().execute(this::getEdgeDefinitionsRequest, getEdgeDefinitionsDeserializer());
     }
 
     @Override
     public CompletableFuture<GraphEntity> addEdgeDefinition(final EdgeDefinition definition) {
-        return executorAsync().execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
+        return executorAsync().execute(() -> addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
 
     @Override
     public CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
-        return executorAsync().execute(replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
+        return executorAsync().execute(() -> replaceEdgeDefinitionRequest(definition, options), replaceEdgeDefinitionResponseDeserializer());
     }
 
 }

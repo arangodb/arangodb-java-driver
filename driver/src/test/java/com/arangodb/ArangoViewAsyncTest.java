@@ -58,7 +58,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
     void createWithNotNormalizedName(ArangoDatabaseAsync db) {
         assumeTrue(supportsExtendedNames());
         final String name = "view-\u006E\u0303\u00f1";
-        Throwable thrown = catchThrowable(() -> db.createView(name, ViewType.ARANGO_SEARCH));
+        Throwable thrown = catchThrowable(() -> db.createView(name, ViewType.ARANGO_SEARCH).get()).getCause();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .hasMessageContaining("normalized")

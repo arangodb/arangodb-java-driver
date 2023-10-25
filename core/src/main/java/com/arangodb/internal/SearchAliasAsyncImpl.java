@@ -64,17 +64,17 @@ public class SearchAliasAsyncImpl extends InternalSearchAlias implements SearchA
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executorAsync().execute(dropRequest(), Void.class);
+        return executorAsync().execute(this::dropRequest, Void.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> rename(final String newName) {
-        return executorAsync().execute(renameRequest(newName), ViewEntity.class);
+        return executorAsync().execute(() -> renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> getInfo() {
-        return executorAsync().execute(getInfoRequest(), ViewEntity.class);
+        return executorAsync().execute(this::getInfoRequest, ViewEntity.class);
     }
 
     @Override
@@ -89,17 +89,17 @@ public class SearchAliasAsyncImpl extends InternalSearchAlias implements SearchA
 
     @Override
     public CompletableFuture<SearchAliasPropertiesEntity> getProperties() {
-        return executorAsync().execute(getPropertiesRequest(), SearchAliasPropertiesEntity.class);
+        return executorAsync().execute(this::getPropertiesRequest, SearchAliasPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<SearchAliasPropertiesEntity> updateProperties(final SearchAliasPropertiesOptions options) {
-        return executorAsync().execute(updatePropertiesRequest(options), SearchAliasPropertiesEntity.class);
+        return executorAsync().execute(() -> updatePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 
     @Override
     public CompletableFuture<SearchAliasPropertiesEntity> replaceProperties(final SearchAliasPropertiesOptions options) {
-        return executorAsync().execute(replacePropertiesRequest(options), SearchAliasPropertiesEntity.class);
+        return executorAsync().execute(() -> replacePropertiesRequest(options), SearchAliasPropertiesEntity.class);
     }
 
 }

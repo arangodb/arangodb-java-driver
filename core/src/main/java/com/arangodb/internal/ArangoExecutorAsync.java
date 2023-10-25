@@ -27,6 +27,7 @@ import com.arangodb.internal.net.HostHandle;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
  * @author Mark Vollmary
@@ -38,32 +39,35 @@ public class ArangoExecutorAsync extends ArangoExecutor {
         super(protocol, config);
     }
 
-    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type) {
-        return execute(request, type, null);
+    public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type) {
+        return execute(requestSupplier, type, null);
     }
 
-    public <T> CompletableFuture<T> execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
-        return execute(request, response -> createResult(type, response), hostHandle);
+    public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type, final HostHandle hostHandle) {
+        return execute(requestSupplier, response -> createResult(type, response), hostHandle);
     }
 
-    public <T> CompletableFuture<T> execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
-        return execute(request, responseDeserializer, null);
+    public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final ResponseDeserializer<T> responseDeserializer) {
+        return execute(requestSupplier, responseDeserializer, null);
     }
 
     public <T> CompletableFuture<T> execute(
-            final InternalRequest request,
+            final Supplier<InternalRequest> requestSupplier,
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) {
 
-        return protocol.executeAsync(interceptRequest(request), hostHandle)
-                .handle((r, e) -> {
-                    if (e != null) {
-                        throw ArangoDBException.of(e);
-                    } else {
-                        interceptResponse(r);
-                        return responseDeserializer.deserialize(r);
-                    }
-                });
+        return CompletableFuture.completedFuture(requestSupplier)
+                .thenApply(Supplier::get)
+                .thenCompose(request -> protocol.executeAsync(interceptRequest(request), hostHandle)
+                        .handle((r, e) -> {
+                            if (e != null) {
+                                throw ArangoDBException.of(e);
+                            } else {
+                                interceptResponse(r);
+                                return responseDeserializer.deserialize(r);
+                            }
+                        })
+                );
     }
 
 }

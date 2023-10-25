@@ -60,17 +60,17 @@ public class ArangoViewAsyncImpl extends InternalArangoView implements ArangoVie
 
     @Override
     public CompletableFuture<Void> drop() {
-        return executorAsync().execute(dropRequest(), Void.class);
+        return executorAsync().execute(this::dropRequest, Void.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> rename(final String newName) {
-        return executorAsync().execute(renameRequest(newName), ViewEntity.class);
+        return executorAsync().execute(() -> renameRequest(newName), ViewEntity.class);
     }
 
     @Override
     public CompletableFuture<ViewEntity> getInfo() {
-        return executorAsync().execute(getInfoRequest(), ViewEntity.class);
+        return executorAsync().execute(this::getInfoRequest, ViewEntity.class);
     }
 
 }

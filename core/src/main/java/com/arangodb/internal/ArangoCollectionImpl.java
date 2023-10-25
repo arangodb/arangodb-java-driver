@@ -24,7 +24,6 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.*;
-import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
 import org.slf4j.Logger;
@@ -137,7 +136,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
 
     @Override
     public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options) {
-        DocumentUtil.validateDocumentKey(key);
         try {
             return executorSync().execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type));
         } catch (final ArangoDBException e) {

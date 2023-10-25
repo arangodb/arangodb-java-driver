@@ -29,19 +29,19 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
     @Override
     public CompletableFuture<ArangoCursorAsync<T>> nextBatch() {
         if (Boolean.TRUE.equals(hasMore())) {
-            return executorAsync().execute(queryNextRequest(), db.cursorEntityDeserializer(getType()), hostHandle)
+            return executorAsync().execute(this::queryNextRequest, db.cursorEntityDeserializer(getType()), hostHandle)
                     .thenApply(r -> new ArangoCursorAsyncImpl<>(db, r, getType(), hostHandle, allowRetry()));
         } else {
-            return CompletableFuture.supplyAsync(() -> {
-                throw new NoSuchElementException();
-            });
+            CompletableFuture<ArangoCursorAsync<T>> cf = new CompletableFuture<>();
+            cf.completeExceptionally(new NoSuchElementException());
+            return cf;
         }
     }
 
     @Override
     public CompletableFuture<Void> close() {
         if (getId() != null && (allowRetry() || Boolean.TRUE.equals(hasMore()))) {
-            return executorAsync().execute(queryCloseRequest(), Void.class, hostHandle);
+            return executorAsync().execute(this::queryCloseRequest, Void.class, hostHandle);
         } else {
             return CompletableFuture.completedFuture(null);
         }
