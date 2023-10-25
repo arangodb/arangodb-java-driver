@@ -27,6 +27,8 @@ import com.arangodb.internal.net.HostHandle;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -34,9 +36,11 @@ import java.util.function.Supplier;
  * @author Michele Rastelli
  */
 public class ArangoExecutorAsync extends ArangoExecutor {
+    private final Executor downstreamExecutor;
 
     public ArangoExecutorAsync(final CommunicationProtocol protocol, final ArangoConfig config) {
         super(protocol, config);
+        downstreamExecutor = config.getAsyncExecutor();
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type) {
@@ -56,18 +60,23 @@ public class ArangoExecutorAsync extends ArangoExecutor {
             final ResponseDeserializer<T> responseDeserializer,
             final HostHandle hostHandle) {
 
-        return CompletableFuture.completedFuture(requestSupplier)
+        CompletableFuture<T> cf = CompletableFuture.completedFuture(requestSupplier)
                 .thenApply(Supplier::get)
-                .thenCompose(request -> protocol.executeAsync(interceptRequest(request), hostHandle)
-                        .handle((r, e) -> {
-                            if (e != null) {
-                                throw ArangoDBException.of(e);
-                            } else {
-                                interceptResponse(r);
-                                return responseDeserializer.deserialize(r);
-                            }
-                        })
-                );
+                .thenCompose(request -> protocol.executeAsync(interceptRequest(request), hostHandle))
+                .handle((r, e) -> {
+                    if (e != null) {
+                        throw ArangoDBException.of(e);
+                    } else {
+                        interceptResponse(r);
+                        return responseDeserializer.deserialize(r);
+                    }
+                });
+
+        if (downstreamExecutor != null) {
+            return cf.thenApplyAsync(Function.identity(), downstreamExecutor);
+        } else {
+            return cf;
+        }
     }
 
 }

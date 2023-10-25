@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 public class ArangoConfig {
@@ -41,6 +42,7 @@ public class ArangoConfig {
     private ArangoSerde userDataSerde;
     private Integer responseQueueTimeSamples;
     private Module protocolModule;
+    private Executor asyncExecutor;
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
@@ -274,5 +276,13 @@ public class ArangoConfig {
 
     public void setProtocolModule(Module m) {
         protocolModule = m;
+    }
+
+    public Executor getAsyncExecutor() {
+        return asyncExecutor;
+    }
+
+    public void setAsyncExecutor(Executor asyncExecutor) {
+        this.asyncExecutor = asyncExecutor;
     }
 }
