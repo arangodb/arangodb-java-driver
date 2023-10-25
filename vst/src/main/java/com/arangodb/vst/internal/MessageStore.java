@@ -92,16 +92,6 @@ public class MessageStore {
         task.clear();
     }
 
-    public synchronized void clear() {
-        for (final Entry<Long, FutureTask<Message>> entry : task.entrySet()) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Cancel Message (id=%s).", entry.getKey()));
-            }
-            entry.getValue().cancel(true);
-        }
-        task.clear();
-    }
-
     public boolean isEmpty() {
         return task.isEmpty();
     }

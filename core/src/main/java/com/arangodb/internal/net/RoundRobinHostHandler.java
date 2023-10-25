@@ -36,7 +36,6 @@ public class RoundRobinHostHandler implements HostHandler {
     private final List<Exception> lastFailExceptions;
     private long current;
     private int fails;
-    private Host currentHost;
     private HostSet hosts;
 
     public RoundRobinHostHandler(final HostResolver resolver) {
@@ -75,7 +74,6 @@ public class RoundRobinHostHandler implements HostHandler {
                 hostHandle.setHost(host.getDescription());
             }
         }
-        currentHost = host;
         return host;
     }
 

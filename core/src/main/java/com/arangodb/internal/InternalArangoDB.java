@@ -29,7 +29,6 @@ import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 
 import java.util.ArrayList;
