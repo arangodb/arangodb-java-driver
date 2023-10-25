@@ -2800,7 +2800,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         {
             values.add(new BaseDocument("1"));
         }
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
