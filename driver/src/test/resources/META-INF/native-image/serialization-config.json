@@ -15,6 +15,12 @@
     "name": "java.lang.String"
   },
   {
+    "name":"java.lang.Integer"
+  },
+  {
+    "name":"java.lang.Number"
+  },
+  {
     "name": "java.lang.Throwable"
   },
   {
