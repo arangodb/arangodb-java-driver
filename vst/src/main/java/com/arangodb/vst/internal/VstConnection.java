@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -55,6 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class VstConnection<T> implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
+    private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
     protected final MessageStore messageStore = new MessageStore();
     protected final Integer timeout;
@@ -171,7 +173,12 @@ public abstract class VstConnection<T> implements Connection {
         }
         sendProtocolHeader();
 
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newSingleThreadExecutor(r -> {
+            Thread t = Executors.defaultThreadFactory().newThread(r);
+            t.setDaemon(true);
+            t.setName("adb-vst-" + THREAD_COUNT.getAndIncrement());
+            return t;
+        });
         executor.submit((Callable<Void>) () -> {
             LOGGER.debug("[" + connectionName + "]: Start Callable");
 

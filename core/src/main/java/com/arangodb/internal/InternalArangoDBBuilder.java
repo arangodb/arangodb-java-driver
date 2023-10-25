@@ -38,6 +38,7 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ServiceLoader;
+import java.util.concurrent.Executor;
 
 
 /**
@@ -50,6 +51,12 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
     @SuppressWarnings("unchecked")
     public T loadProperties(final ArangoConfigProperties properties) {
         config.loadProperties(properties);
+        return (T) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T protocol(final Protocol protocol) {
+        config.setProtocol(protocol);
         return (T) this;
     }
 
@@ -286,6 +293,19 @@ public abstract class InternalArangoDBBuilder<T extends InternalArangoDBBuilder<
     @SuppressWarnings("unchecked")
     public T serde(final ArangoSerde serde) {
         config.setUserDataSerde(serde);
+        return (T) this;
+    }
+
+    /**
+     * Sets the downstream async executor that will be used to consume the responses of the async API, that are returned
+     * as {@link java.util.concurrent.CompletableFuture}
+     *
+     * @param executor async downstream executor
+     * @return {@link ArangoDB.Builder}
+     */
+    @SuppressWarnings("unchecked")
+    public T asyncExecutor(final Executor executor) {
+        config.setAsyncExecutor(executor);
         return (T) this;
     }
 

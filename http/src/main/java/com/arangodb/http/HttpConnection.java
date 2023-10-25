@@ -90,7 +90,7 @@ public class HttpConnection implements Connection {
         timeout = config.getTimeout();
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> {
-            Thread.currentThread().setName("adb-eventloop-" + THREAD_COUNT.getAndIncrement());
+            Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement());
             auth = new UsernamePasswordCredentials(
                     config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
             ).toHttpAuthorization();
