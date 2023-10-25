@@ -150,7 +150,7 @@ class CustomSerdeAsyncTest {
         doc.put("arr", Collections.singletonList("hello"));
         doc.put("int", 10);
 
-        collection.insertDocument(doc);
+        collection.insertDocument(doc).get();
 
         final Map<String, Object> result = db.query(
                 "RETURN DOCUMENT(@docId)",
