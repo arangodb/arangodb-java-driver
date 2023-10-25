@@ -1,9 +1,6 @@
 package resilience.connection;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDBMultipleException;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import resilience.SingleServerTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,9 +33,13 @@ class ConnectionTest extends SingleServerTest {
         );
     }
 
+    static Stream<ArangoDBAsync> asyncArangoProvider() {
+        return arangoProvider().map(ArangoDB::async);
+    }
+
     @ParameterizedTest
     @MethodSource("protocolProvider")
-    void nameResolutionFailTest(Protocol protocol) {
+    void nameResolutionFail(Protocol protocol) {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
                 .protocol(protocol)
@@ -57,11 +58,48 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest
+    @MethodSource("protocolProvider")
+    void nameResolutionFailAsync(Protocol protocol) {
+        ArangoDBAsync arangoDB = new ArangoDB.Builder()
+                .host("wrongHost", 8529)
+                .protocol(protocol)
+                .build()
+                .async();
+
+        Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getMessage()).contains("Cannot contact any host!");
+        assertThat(thrown.getCause()).isNotNull();
+        assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
+        ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e -> {
+            assertThat(e).isInstanceOf(UnknownHostException.class);
+            assertThat(e.getMessage()).contains("wrongHost");
+        });
+        arangoDB.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
-    void connectionFailTest(ArangoDB arangoDB) {
+    void connectionFail(ArangoDB arangoDB) {
         disableEndpoint();
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getMessage()).contains("Cannot contact any host");
+        assertThat(thrown.getCause()).isNotNull();
+        assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
+        ((ArangoDBMultipleException) thrown.getCause()).getExceptions().forEach(e ->
+                assertThat(e).isInstanceOf(ConnectException.class));
+        arangoDB.shutdown();
+        enableEndpoint();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void connectionFailAsync(ArangoDBAsync arangoDB) {
+        disableEndpoint();
+
+        Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getMessage()).contains("Cannot contact any host");
         assertThat(thrown.getCause()).isNotNull();

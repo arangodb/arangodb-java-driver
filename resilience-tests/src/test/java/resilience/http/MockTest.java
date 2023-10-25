@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndServer;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
@@ -53,6 +55,28 @@ class MockTest extends SingleServerTest {
                 );
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
+        assertThat(thrown)
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("boom");
+    }
+
+    @Test
+    void doTestAsync() throws ExecutionException, InterruptedException {
+        arangoDB.async().getVersion().get();
+
+        mockServer
+                .when(
+                        request()
+                                .withMethod("GET")
+                                .withPath("/.*/_api/version")
+                )
+                .respond(
+                        response()
+                                .withStatusCode(503)
+                                .withBody("{\"error\":true,\"errorNum\":503,\"errorMessage\":\"boom\",\"code\":503}")
+                );
+
+        Throwable thrown = catchThrowable(() -> arangoDB.async().getVersion().get()).getCause();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .hasMessageContaining("boom");
