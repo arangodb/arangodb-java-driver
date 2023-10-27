@@ -1,6 +1,5 @@
 package resilience.utils;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -12,11 +11,10 @@ import java.util.List;
 
 public class MemoryAppender extends ListAppender<ILoggingEvent> {
 
-    public MemoryAppender(Level level) {
+    public MemoryAppender() {
         setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         start();
         Logger logger = (Logger) LoggerFactory.getLogger("root");
-        logger.setLevel(level);
         logger.addAppender(this);
     }
 

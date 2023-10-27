@@ -1,6 +1,5 @@
 package resilience;
 
-import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import resilience.utils.MemoryAppender;
 import eu.rekawek.toxiproxy.Proxy;
@@ -19,7 +18,7 @@ public abstract class ActiveFailoverTest {
 
     protected static final String HOST = "127.0.0.1";
     protected static final String PASSWORD = "test";
-    protected static final MemoryAppender logs = new MemoryAppender(Level.WARN);
+    protected static final MemoryAppender logs = new MemoryAppender();
     private static final List<Endpoint> endpoints = Arrays.asList(
             new Endpoint("activeFailover1", HOST, 18529, "172.28.0.1:8529"),
             new Endpoint("activeFailover2", HOST, 18539, "172.28.0.1:8539"),
