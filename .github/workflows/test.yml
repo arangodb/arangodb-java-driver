@@ -263,7 +263,7 @@ jobs:
         db-ext-names:
           - false
         java-version:
-          - 11
+          - 17
 
     steps:
       - uses: actions/checkout@v2
@@ -294,4 +294,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn --no-transfer-progress -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+        run: mvn --no-transfer-progress -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true
