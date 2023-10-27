@@ -150,7 +150,8 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
     protected abstract R execute(final InternalRequest request, C connection, final int attemptCount);
 
     protected void checkError(final InternalResponse response) {
-        ResponseUtils.checkError(serde, response);
+        ArangoDBException e = ResponseUtils.translateError(serde, response);
+        if (e != null) throw e;
     }
 
     protected InternalResponse createResponse(final Message message) throws VPackParserException {
