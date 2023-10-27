@@ -28,11 +28,15 @@ import com.arangodb.entity.arangosearch.SearchAliasPropertiesEntity;
 import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
+
 /**
  * @author Michele Rastelli
  */
 public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias {
     private final ArangoDatabase db;
+
     protected SearchAliasImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, db.name(), name);
         this.db = db;
@@ -49,7 +53,7 @@ public class SearchAliasImpl extends InternalSearchAlias implements SearchAlias 
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
+            if (matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
                 return false;
             }
             throw e;

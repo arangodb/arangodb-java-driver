@@ -30,6 +30,9 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
+
 /**
  * @author Michele Rastelli
  */
@@ -54,7 +57,7 @@ public class SearchAliasAsyncImpl extends InternalSearchAlias implements SearchA
                     Throwable e = err instanceof CompletionException ? err.getCause() : err;
                     if (e instanceof ArangoDBException) {
                         ArangoDBException aEx = (ArangoDBException) e;
-                        if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(aEx.getErrorNum())) {
+                        if (matches(aEx, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
                             return false;
                         }
                     }
