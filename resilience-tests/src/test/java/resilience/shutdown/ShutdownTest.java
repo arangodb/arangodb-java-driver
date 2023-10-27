@@ -64,7 +64,7 @@ class ShutdownTest extends SingleServerTest {
                 .build();
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(arangoDB::shutdown, 200, TimeUnit.MILLISECONDS);
+        es.schedule(arangoDB::shutdown, 500, TimeUnit.MILLISECONDS);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", Void.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -82,7 +82,7 @@ class ShutdownTest extends SingleServerTest {
                 .async();
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(arangoDB::shutdown, 200, TimeUnit.MILLISECONDS);
+        es.schedule(arangoDB::shutdown, 500, TimeUnit.MILLISECONDS);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return sleep(1)", Void.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
