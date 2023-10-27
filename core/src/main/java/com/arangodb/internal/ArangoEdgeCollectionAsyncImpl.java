@@ -20,21 +20,23 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.*;
+import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoEdgeCollectionAsync;
+import com.arangodb.ArangoGraphAsync;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
+import static com.arangodb.internal.ArangoErrors.*;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection implements ArangoEdgeCollectionAsync {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionAsyncImpl.class);
     private final ArangoGraphAsync graph;
 
     protected ArangoEdgeCollectionAsyncImpl(final ArangoGraphAsyncImpl graph, final String name) {
@@ -70,27 +72,24 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type) {
-        return executorAsync().execute(() -> getEdgeRequest(key, new GraphDocumentReadOptions()),
-                        getEdgeResponseDeserializer(type))
-                .exceptionally(e -> {
-                    // FIXME
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(e.getMessage(), e);
-                    }
-                    return null;
-                });
-
+        return getEdge(key, type, null);
     }
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
         return executorAsync().execute(() -> getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
-                .exceptionally(e -> {
-                    // FIXME
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug(e.getMessage(), e);
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
+                        if (matches(aEx, 304)
+                                || matches(aEx, 404, ERROR_ARANGO_DOCUMENT_NOT_FOUND)
+                                || matches(aEx, 412, ERROR_ARANGO_CONFLICT)
+                        ) {
+                            return null;
+                        }
                     }
-                    return null;
+                    throw ArangoDBException.of(e);
                 });
     }
 
