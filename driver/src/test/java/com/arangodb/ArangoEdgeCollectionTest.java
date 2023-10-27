@@ -22,7 +22,6 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
-import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

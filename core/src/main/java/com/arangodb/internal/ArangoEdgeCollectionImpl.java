@@ -26,15 +26,13 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static com.arangodb.internal.ArangoErrors.*;
 
 /**
  * @author Mark Vollmary
  */
 public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection implements ArangoEdgeCollection {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
 
     private final ArangoGraphImpl graph;
 
@@ -71,28 +69,21 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type) {
-        // FIXME
-        try {
-            return executorSync().execute(getEdgeRequest(key, new GraphDocumentReadOptions()),
-                    getEdgeResponseDeserializer(type));
-        } catch (final ArangoDBException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-            return null;
-        }
+        return getEdge(key, type, null);
     }
 
     @Override
     public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        // FIXME
         try {
             return executorSync().execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
         } catch (final ArangoDBException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
+            if (matches(e, 304)
+                    || matches(e, 404, ERROR_ARANGO_DOCUMENT_NOT_FOUND)
+                    || matches(e, 412, ERROR_ARANGO_CONFLICT)
+            ) {
+                return null;
             }
-            return null;
+            throw e;
         }
     }
 
