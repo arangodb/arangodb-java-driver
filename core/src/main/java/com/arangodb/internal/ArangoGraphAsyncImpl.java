@@ -32,6 +32,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_GRAPH_NOT_FOUND;
+
 public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoGraphAsync {
 
     private final ArangoDatabaseAsync db;
@@ -54,7 +56,7 @@ public class ArangoGraphAsyncImpl extends InternalArangoGraph implements ArangoG
                     Throwable e = err instanceof CompletionException ? err.getCause() : err;
                     if (e instanceof ArangoDBException) {
                         ArangoDBException aEx = (ArangoDBException) e;
-                        if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(aEx.getErrorNum())) {
+                        if (ArangoErrors.matches(aEx, 404, ERROR_GRAPH_NOT_FOUND)) {
                             return false;
                         }
                     }
