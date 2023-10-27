@@ -394,10 +394,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (!matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
-                throw e;
+            if (matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
+                return false;
             }
-            return false;
+            throw e;
         }
     }
 

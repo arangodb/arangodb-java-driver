@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import static com.arangodb.internal.ArangoErrors.*;
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
@@ -136,7 +137,19 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     @Override
     public <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options) {
         return executorAsync().execute(() -> getDocumentRequest(key, options), getDocumentResponseDeserializer(type))
-                .exceptionally(this::catchGetDocumentExceptions);
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
+                        if (matches(aEx, 304)
+                                || matches(aEx, 404, ERROR_ARANGO_DOCUMENT_NOT_FOUND)
+                                || matches(aEx, 412, ERROR_ARANGO_CONFLICT)
+                        ) {
+                            return null;
+                        }
+                    }
+                    throw ArangoDBException.of(e);
+                });
     }
 
     @Override
@@ -313,26 +326,19 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     public CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options) {
         return executorAsync().execute(() -> documentExistsRequest(key, options), Void.class)
                 .thenApply(it -> true)
-                .exceptionally(this::catchGetDocumentExceptions)
-                .thenApply(Objects::nonNull);
-    }
-
-    <T> T catchGetDocumentExceptions(Throwable err) {
-        Throwable e = err instanceof CompletionException ? err.getCause() : err;
-        if (e instanceof ArangoDBException) {
-            ArangoDBException arangoDBException = (ArangoDBException) e;
-
-            // handle Response: 404, Error: 1655 - transaction not found
-            if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
-                throw (ArangoDBException) e;
-            }
-
-            if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
-                    || arangoDBException.getResponseCode() == 412))) {
-                return null;
-            }
-        }
-        throw ArangoDBException.of(e);
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
+                        if (matches(aEx, 304)
+                                || matches(aEx, 404)
+                                || matches(aEx, 412)
+                        ) {
+                            return false;
+                        }
+                    }
+                    throw ArangoDBException.of(e);
+                });
     }
 
     @Override
@@ -399,7 +405,7 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
                     Throwable e = err instanceof CompletionException ? err.getCause() : err;
                     if (e instanceof ArangoDBException) {
                         ArangoDBException aEx = (ArangoDBException) e;
-                        if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(aEx.getErrorNum())) {
+                        if (matches(aEx, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
                             return false;
                         }
                     }
