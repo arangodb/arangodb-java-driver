@@ -42,26 +42,6 @@ public final class ResponseUtils {
         super();
     }
 
-    // FIXME: remove
-    public static void checkError(final InternalSerde util, final InternalResponse response) {
-        final int responseCode = response.getResponseCode();
-        if (responseCode >= ERROR_STATUS) {
-            if (responseCode == ERROR_INTERNAL && response.containsMeta(HEADER_ENDPOINT)) {
-                throw new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
-                        response.getMeta(HEADER_ENDPOINT));
-            } else if (response.getBody() != null) {
-                final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-                ArangoDBException e = new ArangoDBException(errorEntity);
-                if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
-                    throw ArangoDBException.of(new TimeoutException().initCause(e));
-                }
-                throw e;
-            } else {
-                throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
-            }
-        }
-    }
-
     public static ArangoDBException translateError(final InternalSerde util, final InternalResponse response) {
         final int responseCode = response.getResponseCode();
         if (responseCode >= ERROR_STATUS) {

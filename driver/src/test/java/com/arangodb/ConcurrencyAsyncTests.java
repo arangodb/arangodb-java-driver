@@ -19,11 +19,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class ConcurrencyAsyncTests {
 
-    /**
-     * FIXME:   make the user executor configurable in com.arangodb.internal.ArangoExecutorAsync::execute
-     * (eg. this test passes using a CachedThreadPool)
-     */
-    @Disabled
     @ParameterizedTest
     @EnumSource(Protocol.class)
     @Timeout(2)
@@ -31,7 +26,9 @@ class ConcurrencyAsyncTests {
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .maxConnections(1)
-                .protocol(protocol).build().async();
+                .protocol(protocol)
+                .asyncExecutor(Executors.newCachedThreadPool())
+                .build().async();
 
         List<CompletableFuture<ArangoDBVersion>> futures = IntStream.range(0, 20)
                 .mapToObj(i -> adb.getVersion()
@@ -64,6 +61,7 @@ class ConcurrencyAsyncTests {
     void outgoingRequestsParallelismTest(Protocol protocol) {
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
+                .maxConnections(20)
                 .protocol(protocol).build().async();
 
         for (int i = 0; i < 50_000; i++) {

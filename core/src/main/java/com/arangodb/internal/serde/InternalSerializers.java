@@ -30,7 +30,7 @@ public final class InternalSerializers {
         @Override
         public void serialize(RawBytes value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             // TODO: find a way to append raw bytes directly
-            // see https://github.com/FasterXML/jackson-dataformats-binary/issues/331
+            // see https://github.com/FasterXML/jackson-core/issues/914
             try (JsonParser parser = gen.getCodec().getFactory().createParser(value.get())) {
                 gen.writeTree(parser.readValueAsTree());
             }

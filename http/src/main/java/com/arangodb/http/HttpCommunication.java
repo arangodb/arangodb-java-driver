@@ -121,7 +121,7 @@ public class HttpCommunication implements Closeable {
                             }
                         }
                     } catch (Exception ex) {
-                        rfuture.completeExceptionally(ex);
+                        rfuture.completeExceptionally(ArangoDBException.of(ex));
                     }
                 });
         return rfuture;
