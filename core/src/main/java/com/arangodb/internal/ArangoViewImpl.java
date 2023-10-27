@@ -25,11 +25,15 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoView;
 import com.arangodb.entity.ViewEntity;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
+
 /**
  * @author Mark Vollmary
  */
 public class ArangoViewImpl extends InternalArangoView implements ArangoView {
     private final ArangoDatabase db;
+
     protected ArangoViewImpl(final ArangoDatabaseImpl db, final String name) {
         super(db, db.name(), name);
         this.db = db;
@@ -46,7 +50,7 @@ public class ArangoViewImpl extends InternalArangoView implements ArangoView {
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
+            if (matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
                 return false;
             }
             throw e;
