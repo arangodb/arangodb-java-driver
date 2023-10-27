@@ -29,6 +29,9 @@ import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_GRAPH_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
+
 /**
  * @author Mark Vollmary
  */
@@ -52,7 +55,7 @@ public class ArangoGraphImpl extends InternalArangoGraph implements ArangoGraph 
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(e.getErrorNum())) {
+            if (matches(e, 404, ERROR_GRAPH_NOT_FOUND)) {
                 return false;
             }
             throw e;
