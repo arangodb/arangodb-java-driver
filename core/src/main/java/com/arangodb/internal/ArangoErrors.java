@@ -20,15 +20,28 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.ArangoDBException;
+
 /**
  * @author Mark Vollmary
  */
 public final class ArangoErrors {
 
+    public static final Integer ERROR_ARANGO_CONFLICT = 1200;
+    public static final Integer ERROR_ARANGO_DOCUMENT_NOT_FOUND = 1202;
     public static final Integer ERROR_ARANGO_DATA_SOURCE_NOT_FOUND = 1203;
     public static final Integer ERROR_ARANGO_DATABASE_NOT_FOUND = 1228;
     public static final Integer ERROR_GRAPH_NOT_FOUND = 1924;
     public static final Integer QUEUE_TIME_VIOLATED = 21004;
+
+    public static boolean matches(ArangoDBException e, int responseCode, int errorNum) {
+        return matches(e, responseCode)
+                && e.getErrorNum() != null && e.getErrorNum() == errorNum;
+    }
+
+    public static boolean matches(ArangoDBException e, int responseCode) {
+        return e.getResponseCode() != null && e.getResponseCode() == responseCode;
+    }
 
     private ArangoErrors() {
         super();

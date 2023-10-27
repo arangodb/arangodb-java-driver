@@ -26,11 +26,10 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+import static com.arangodb.internal.ArangoErrors.*;
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
 /**
@@ -38,8 +37,6 @@ import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
  * @author Michele Rastelli
  */
 public class ArangoCollectionImpl extends InternalArangoCollection implements ArangoCollection {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollectionImpl.class);
 
     private final ArangoDatabase db;
 
@@ -139,17 +136,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
         try {
             return executorSync().execute(getDocumentRequest(key, options), getDocumentResponseDeserializer(type));
         } catch (final ArangoDBException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-
-            // handle Response: 404, Error: 1655 - transaction not found
-            if (e.getErrorNum() != null && e.getErrorNum() == 1655) {
-                throw e;
-            }
-
-            if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
-                    || e.getResponseCode() == 412))) {
+            if (matches(e, 304)
+                    || matches(e, 404, ERROR_ARANGO_DOCUMENT_NOT_FOUND)
+                    || matches(e, 412, ERROR_ARANGO_CONFLICT)
+            ) {
                 return null;
             }
             throw e;
@@ -332,14 +322,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
             executorSync().execute(documentExistsRequest(key, options), Void.class);
             return true;
         } catch (final ArangoDBException e) {
-
-            // handle Response: 404, Error: 1655 - transaction not found
-            if (e.getErrorNum() != null && e.getErrorNum() == 1655) {
-                throw e;
-            }
-
-            if ((e.getResponseCode() != null &&
-                    (e.getResponseCode() == 404 || e.getResponseCode() == 304 || e.getResponseCode() == 412))) {
+            if (matches(e, 304)
+                    || matches(e, 404)
+                    || matches(e, 412)
+            ) {
                 return false;
             }
             throw e;
@@ -408,10 +394,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
-                return false;
+            if (!matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
+                throw e;
             }
-            throw e;
+            return false;
         }
     }
 
