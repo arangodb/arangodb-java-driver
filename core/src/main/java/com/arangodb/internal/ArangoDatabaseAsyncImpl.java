@@ -32,9 +32,12 @@ import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
@@ -67,21 +70,18 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public CompletableFuture<Boolean> exists() {
-        return getInfo().handle((result, err) -> {
-            if (result != null) {
-                return true;
-            }
-
-            Throwable e = err instanceof CompletionException ? err.getCause() : err;
-            if (e instanceof ArangoDBException) {
-                ArangoDBException aEx = (ArangoDBException) e;
-                if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(aEx.getErrorNum())) {
-                    return false;
-                }
-            }
-
-            throw ArangoDBException.of(e);
-        });
+        return getInfo()
+                .thenApply(Objects::nonNull)
+                .exceptionally(err -> {
+                    Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                    if (e instanceof ArangoDBException) {
+                        ArangoDBException aEx = (ArangoDBException) e;
+                        if (matches(aEx, 404, ERROR_ARANGO_DATABASE_NOT_FOUND)) {
+                            return false;
+                        }
+                    }
+                    throw ArangoDBException.of(e);
+                });
     }
 
     @Override
@@ -201,7 +201,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
         final HostHandle hostHandle = new HostHandle();
         return executorAsync()
                 .execute(() ->
-                        queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
+                                queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
                         cursorEntityDeserializer(type),
                         hostHandle)
                 .thenApply(res -> new ArangoCursorAsyncImpl<>(this, res, type, hostHandle, nextBatchId != null));

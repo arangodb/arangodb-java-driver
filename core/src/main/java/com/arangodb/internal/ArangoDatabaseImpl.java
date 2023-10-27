@@ -33,6 +33,7 @@ import com.arangodb.model.arangosearch.SearchAliasCreateOptions;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.arangodb.internal.ArangoErrors.*;
 import static com.arangodb.internal.serde.SerdeUtils.constructListType;
 
 /**
@@ -69,7 +70,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+            if (matches(e, 404, ERROR_ARANGO_DATABASE_NOT_FOUND)) {
                 return false;
             }
             throw e;
