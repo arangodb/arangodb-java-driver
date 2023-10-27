@@ -28,6 +28,9 @@ import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 
+import static com.arangodb.internal.ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND;
+import static com.arangodb.internal.ArangoErrors.matches;
+
 /**
  * @author Mark Vollmary
  */
@@ -50,7 +53,7 @@ public class ArangoSearchImpl extends InternalArangoSearch implements ArangoSear
             getInfo();
             return true;
         } catch (final ArangoDBException e) {
-            if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
+            if (matches(e, 404, ERROR_ARANGO_DATA_SOURCE_NOT_FOUND)) {
                 return false;
             }
             throw e;
