@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added asynchronous API, accessible via `ArangoDB.async()` (DE-496, #523)
+- added configuration option to specify the asynchronous downstream executor via `ArangoDB.Builder#asyncExecutor(Executor)` (DE-697)
+- added missing asynchronous API to ensure parity with synchronous API
+- changed behavior for acquiring the host list to be asynchronous (#521)
+- changed internal communication to be asynchronous
+- fixed swallowed exceptions in `ArangoCollection.getDocument()`, `ArangoCollection#documentExists()`, `ArangoCollection#exists()`, `ArangoEdgeCollection.getEdge()` and `ArangoVertexCollection#getVertex()`
+- fixed `ArangoCursorAsync` API to be fully asynchronous (#433, #520)
+- fixed interference of Jackson annotations with other Jackson instances (DE-636, #513)
+- fixed nested properties deserialization in `BaseDocument` (#517)
+
 ## [7.1.0] - 2023-05-26
 
 - added support to Jackson 2.15
