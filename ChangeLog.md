@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.2.0] - 2023-11-02
+
 - added asynchronous API, accessible via `ArangoDB.async()` (DE-496, #523)
 - added configuration option to specify the asynchronous downstream executor via `ArangoDB.Builder#asyncExecutor(Executor)` (DE-697)
 - added missing asynchronous API to ensure parity with synchronous API
