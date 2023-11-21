@@ -410,6 +410,25 @@ new DocumentCreateOptions().silent(true), BaseDocument.class);
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void insertDocumentsWithErrors(ArangoCollection collection) {
+        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> res =
+                collection.insertDocuments(Arrays.asList(
+                                new BaseDocument(),
+                                new BaseDocument("<<illegalId>>"),
+                                new BaseDocument()
+                        ),
+                        new DocumentCreateOptions(), BaseDocument.class);
+        assertThat(res).isNotNull();
+        assertThat(res.getDocuments()).hasSize(2);
+        assertThat(res.getErrors()).hasSize(1);
+        assertThat(res.getDocumentsAndErrors()).hasSize(3);
+        assertThat(res.getDocumentsAndErrors().get(0)).isSameAs(res.getDocuments().get(0));
+        assertThat(res.getDocumentsAndErrors().get(1)).isSameAs(res.getErrors().get(0));
+        assertThat(res.getDocumentsAndErrors().get(2)).isSameAs(res.getDocuments().get(1));
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void insertDocumentsRefillIndexCaches(ArangoCollection collection) {
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info =
                 collection.insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument()),

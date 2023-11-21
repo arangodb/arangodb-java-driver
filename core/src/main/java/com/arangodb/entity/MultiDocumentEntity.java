@@ -20,16 +20,16 @@
 
 package com.arangodb.entity;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
  */
 public final class MultiDocumentEntity<E> {
 
-    private Collection<E> documents;
-    private Collection<ErrorEntity> errors;
-    private Collection<Object> documentsAndErrors;
+    private List<E> documents;
+    private List<ErrorEntity> errors;
+    private List<Object> documentsAndErrors;
     private boolean isPotentialDirtyRead = false;
 
     public MultiDocumentEntity() {
@@ -39,33 +39,33 @@ public final class MultiDocumentEntity<E> {
     /**
      * @return all successfully processed documents
      */
-    public Collection<E> getDocuments() {
+    public List<E> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(final Collection<E> documents) {
+    public void setDocuments(final List<E> documents) {
         this.documents = documents;
     }
 
     /**
      * @return all errors
      */
-    public Collection<ErrorEntity> getErrors() {
+    public List<ErrorEntity> getErrors() {
         return errors;
     }
 
-    public void setErrors(final Collection<ErrorEntity> errors) {
+    public void setErrors(final List<ErrorEntity> errors) {
         this.errors = errors;
     }
 
     /**
      * @return all successfully processed documents and all errors in the same order they are processed
      */
-    public Collection<Object> getDocumentsAndErrors() {
+    public List<Object> getDocumentsAndErrors() {
         return documentsAndErrors;
     }
 
-    public void setDocumentsAndErrors(final Collection<Object> documentsAndErrors) {
+    public void setDocumentsAndErrors(final List<Object> documentsAndErrors) {
         this.documentsAndErrors = documentsAndErrors;
     }
 

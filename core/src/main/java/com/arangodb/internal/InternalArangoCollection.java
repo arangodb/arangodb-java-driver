@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.arangodb.internal.serde.SerdeUtils.constructParametricType;
 
@@ -109,9 +110,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(Class<T> userDataClass) {
         return response -> {
             final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-            final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
-            final Collection<ErrorEntity> errors = new ArrayList<>();
-            final Collection<Object> documentsAndErrors = new ArrayList<>();
+            final List<DocumentCreateEntity<T>> docs = new ArrayList<>();
+            final List<ErrorEntity> errors = new ArrayList<>();
+            final List<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
@@ -187,9 +188,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<>();
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
             multiDocument.setPotentialDirtyRead(potentialDirtyRead);
-            final Collection<T> docs = new ArrayList<>();
-            final Collection<ErrorEntity> errors = new ArrayList<>();
-            final Collection<Object> documentsAndErrors = new ArrayList<>();
+            final List<T> docs = new ArrayList<>();
+            final List<ErrorEntity> errors = new ArrayList<>();
+            final List<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
@@ -247,9 +248,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             final Class<T> returnType) {
         return response -> {
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-            final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
-            final Collection<ErrorEntity> errors = new ArrayList<>();
-            final Collection<Object> documentsAndErrors = new ArrayList<>();
+            final List<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+            final List<ErrorEntity> errors = new ArrayList<>();
+            final List<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
@@ -309,9 +310,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             final Class<T> returnType) {
         return response -> {
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-            final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
-            final Collection<ErrorEntity> errors = new ArrayList<>();
-            final Collection<Object> documentsAndErrors = new ArrayList<>();
+            final List<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+            final List<ErrorEntity> errors = new ArrayList<>();
+            final List<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
@@ -365,9 +366,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             final Class<T> userDataClass) {
         return response -> {
             final MultiDocumentEntity<DocumentDeleteEntity<T>> multiDocument = new MultiDocumentEntity<>();
-            final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
-            final Collection<ErrorEntity> errors = new ArrayList<>();
-            final Collection<Object> documentsAndErrors = new ArrayList<>();
+            final List<DocumentDeleteEntity<T>> docs = new ArrayList<>();
+            final List<ErrorEntity> errors = new ArrayList<>();
+            final List<Object> documentsAndErrors = new ArrayList<>();
             final JsonNode body = getSerde().parse(response.getBody());
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
