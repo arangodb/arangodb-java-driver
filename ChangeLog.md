@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.3.0] - 2023-11-22
+
+- changed types of documents and errors in `com.arangodb.entity.MultiDocumentEntity` to `java.util.List`
+
 ## [7.2.0] - 2023-11-02
 
 - added asynchronous API, accessible via `ArangoDB.async()` (DE-496, #523)
