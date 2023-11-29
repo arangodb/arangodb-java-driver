@@ -2,6 +2,8 @@ package resilience;
 
 import eu.rekawek.toxiproxy.Proxy;
 
+import java.io.IOException;
+
 /**
  * class representing a proxied db endpoint
  */
@@ -41,5 +43,23 @@ public class Endpoint {
 
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
+    }
+
+    public void enable() {
+        try {
+            getProxy().enable();
+            Thread.sleep(100);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void disable() {
+        try {
+            getProxy().disable();
+            Thread.sleep(100);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

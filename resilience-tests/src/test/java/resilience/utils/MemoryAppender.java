@@ -6,8 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.stream.Stream;
 
 public class MemoryAppender extends ListAppender<ILoggingEvent> {
 
@@ -19,10 +18,10 @@ public class MemoryAppender extends ListAppender<ILoggingEvent> {
     }
 
     public void reset() {
-        this.list.clear();
+        list.clear();
     }
 
-    public List<ILoggingEvent> getLoggedEvents() {
-        return Collections.unmodifiableList(this.list);
+    public Stream<ILoggingEvent> getLogs() {
+        return list.stream();
     }
 }

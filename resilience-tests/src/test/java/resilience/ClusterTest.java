@@ -28,26 +28,26 @@ public abstract class ClusterTest {
     @BeforeAll
     static void beforeAll() throws IOException {
         ToxiproxyClient client = new ToxiproxyClient(HOST, 8474);
-        for (Endpoint ph : endpoints) {
-            Proxy p = client.getProxyOrNull(ph.getName());
+        for (Endpoint endpoint : endpoints) {
+            Proxy p = client.getProxyOrNull(endpoint.getName());
             if (p != null) {
                 p.delete();
             }
-            ph.setProxy(client.createProxy(ph.getName(), ph.getHost() + ":" + ph.getPort(), ph.getUpstream()));
+            endpoint.setProxy(client.createProxy(endpoint.getName(), endpoint.getHost() + ":" + endpoint.getPort(), endpoint.getUpstream()));
         }
     }
 
     @AfterAll
     static void afterAll() throws IOException {
-        for (Endpoint ph : endpoints) {
-            ph.getProxy().delete();
+        for (Endpoint endpoint : endpoints) {
+            endpoint.getProxy().delete();
         }
     }
 
     @BeforeEach
     void beforeEach() throws IOException {
-        for (Endpoint ph : endpoints) {
-            ph.getProxy().enable();
+        for (Endpoint endpoint : endpoints) {
+            endpoint.getProxy().enable();
         }
     }
 
@@ -56,11 +56,23 @@ public abstract class ClusterTest {
     }
 
     protected static ArangoDB.Builder dbBuilder() {
-        ArangoDB.Builder builder = new ArangoDB.Builder().password(PASSWORD);
-        for (Endpoint ph : endpoints) {
-            builder.host(ph.getHost(), ph.getPort());
+        ArangoDB.Builder builder = new ArangoDB.Builder();
+        for (Endpoint endpoint : endpoints) {
+            builder.host(endpoint.getHost(), endpoint.getPort());
         }
-        return builder;
+        return builder.password(PASSWORD);
+    }
+
+    protected void enableAllEndpoints(){
+        for (Endpoint endpoint : endpoints) {
+            endpoint.enable();
+        }
+    }
+
+    protected void disableAllEndpoints(){
+        for (Endpoint endpoint : endpoints) {
+            endpoint.disable();
+        }
     }
 
 }

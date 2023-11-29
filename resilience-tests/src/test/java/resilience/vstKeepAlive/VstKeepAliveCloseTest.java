@@ -47,10 +47,10 @@ class VstKeepAliveCloseTest extends SingleServerTest {
     void keepAliveCloseAndReconnect() throws IOException {
         arangoDB.getVersion();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
-        await().until(() -> logs.getLoggedEvents().stream()
+        await().until(() -> logs.getLogs()
                 .filter(e -> e.getLevel().equals(Level.ERROR))
-                .filter(e -> e.getMessage() != null)
-                .anyMatch(e -> e.getMessage().contains("Connection unresponsive!")));
+                .filter(e -> e.getFormattedMessage() != null)
+                .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
         toxic.remove();
         arangoDB.getVersion();
@@ -66,10 +66,10 @@ class VstKeepAliveCloseTest extends SingleServerTest {
     void keepAliveCloseAndReconnectAsync() throws IOException, ExecutionException, InterruptedException {
         arangoDB.async().getVersion().get();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
-        await().until(() -> logs.getLoggedEvents().stream()
+        await().until(() -> logs.getLogs()
                 .filter(e -> e.getLevel().equals(Level.ERROR))
-                .filter(e -> e.getMessage() != null)
-                .anyMatch(e -> e.getMessage().contains("Connection unresponsive!")));
+                .filter(e -> e.getFormattedMessage() != null)
+                .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
         toxic.remove();
         arangoDB.async().getVersion().get();
