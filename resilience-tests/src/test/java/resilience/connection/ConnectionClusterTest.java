@@ -184,5 +184,36 @@ class ConnectionClusterTest extends ClusterTest {
         enableAllEndpoints();
     }
 
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangoProvider")
+    void connectionFailoverPost(ArangoDB arangoDB) {
+        getEndpoints().get(0).disable();
+        getEndpoints().get(1).disable();
+
+        arangoDB.db().query("RETURN 1", Integer.class);
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        arangoDB.shutdown();
+        enableAllEndpoints();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void connectionFailoverPostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        getEndpoints().get(0).disable();
+        getEndpoints().get(1).disable();
+
+        arangoDB.db().query("RETURN 1", Integer.class).get();
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        arangoDB.shutdown();
+        enableAllEndpoints();
+    }
 
 }
