@@ -2,17 +2,16 @@ package resilience.retry;
 
 import ch.qos.logback.classic.Level;
 import com.arangodb.*;
-import io.vertx.core.http.HttpClosedException;
-import org.junit.jupiter.params.provider.EnumSource;
-import resilience.SingleServerTest;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
+import io.vertx.core.http.HttpClosedException;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import resilience.ClusterTest;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
 
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 /**
  * @author Michele Rastelli
  */
-class RetryTest extends SingleServerTest {
+class RetryClusterTest extends ClusterTest {
 
     static Stream<ArangoDB> arangoProvider() {
         return Stream.of(
@@ -47,7 +46,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("arangoProvider")
     void unreachableHost(ArangoDB arangoDB) {
         arangoDB.getVersion();
-        getEndpoint().disable();
+        disableAllEndpoints();
 
         for (int i = 0; i < 10; i++) {
             Throwable thrown = catchThrowable(arangoDB::getVersion);
@@ -65,7 +64,7 @@ class RetryTest extends SingleServerTest {
                 .count();
         assertThat(warnsCount).isGreaterThanOrEqualTo(3);
 
-        getEndpoint().enable();
+        enableAllEndpoints();
         arangoDB.getVersion();
         arangoDB.shutdown();
     }
@@ -80,7 +79,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("asyncArangoProvider")
     void unreachableHostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
-        getEndpoint().disable();
+        disableAllEndpoints();
 
         for (int i = 0; i < 10; i++) {
             Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
@@ -98,8 +97,42 @@ class RetryTest extends SingleServerTest {
                 .count();
         assertThat(warnsCount).isGreaterThanOrEqualTo(3);
 
-        getEndpoint().enable();
+        enableAllEndpoints();
         arangoDB.getVersion().get();
+        arangoDB.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangoProvider")
+    void unreachableHostFailover(ArangoDB arangoDB) {
+        arangoDB.getVersion();
+        getEndpoints().get(0).disable();
+        getEndpoints().get(1).disable();
+
+        arangoDB.getVersion();
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        enableAllEndpoints();
+        arangoDB.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void unreachableHostFailoverAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        arangoDB.getVersion().get();
+        getEndpoints().get(0).disable();
+        getEndpoints().get(1).disable();
+
+        arangoDB.getVersion().get();
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        enableAllEndpoints();
         arangoDB.shutdown();
     }
 
@@ -126,15 +159,18 @@ class RetryTest extends SingleServerTest {
         arangoDB.getVersion();
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .extracting(Throwable::getCause)
-                .isInstanceOf(TimeoutException.class);
+        // no failover for TimeoutException
+        for (int i = 0; i < 2; i++) {
+            Throwable thrown = catchThrowable(arangoDB::getVersion);
+            thrown.printStackTrace();
+            assertThat(thrown)
+                    .isInstanceOf(ArangoDBException.class)
+                    .extracting(Throwable::getCause)
+                    .isInstanceOf(TimeoutException.class);
+        }
 
         toxic.remove();
         Thread.sleep(100);
@@ -167,15 +203,18 @@ class RetryTest extends SingleServerTest {
         arangoDB.getVersion().get();
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .extracting(Throwable::getCause)
-                .isInstanceOf(TimeoutException.class);
+        // no failover for TimeoutException
+        for (int i = 0; i < 2; i++) {
+            Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
+            thrown.printStackTrace();
+            assertThat(thrown)
+                    .isInstanceOf(ArangoDBException.class)
+                    .extracting(Throwable::getCause)
+                    .isInstanceOf(TimeoutException.class);
+        }
 
         toxic.remove();
         Thread.sleep(100);
@@ -185,16 +224,6 @@ class RetryTest extends SingleServerTest {
     }
 
 
-    /**
-     * on closed pending requests of safe HTTP methods:
-     * <p>
-     * - retry 3 times
-     * - ArangoDBMultipleException with 3 exceptions
-     * <p>
-     * once restored:
-     * <p>
-     * - the subsequent requests should be successful
-     */
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
@@ -206,42 +235,24 @@ class RetryTest extends SingleServerTest {
         arangoDB.getVersion();
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
-        Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-        assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
-        List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
-        assertThat(exceptions).hasSize(3);
-        assertThat(exceptions.get(0)).isInstanceOf(IOException.class);
-        assertThat(exceptions.get(0).getCause()).isInstanceOf(HttpClosedException.class);
-        assertThat(exceptions.get(1)).isInstanceOf(ConnectException.class);
-        assertThat(exceptions.get(2)).isInstanceOf(ConnectException.class);
-
-        toxic.remove();
-        Thread.sleep(100);
-        getEndpoint().enable();
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         arangoDB.getVersion();
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        toxic.remove();
+        enableAllEndpoints();
         arangoDB.shutdown();
         es.shutdown();
     }
 
-    /**
-     * on closed pending requests of safe HTTP methods:
-     * <p>
-     * - retry 3 times
-     * - ArangoDBMultipleException with 3 exceptions
-     * <p>
-     * once restored:
-     * <p>
-     * - the subsequent requests should be successful
-     */
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void retryGetOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
@@ -254,28 +265,20 @@ class RetryTest extends SingleServerTest {
         arangoDB.getVersion().get();
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
-        Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-        assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
-        List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
-        assertThat(exceptions).hasSize(3);
-        assertThat(exceptions.get(0)).isInstanceOf(IOException.class);
-        assertThat(exceptions.get(0).getCause()).isInstanceOf(HttpClosedException.class);
-        assertThat(exceptions.get(1)).isInstanceOf(ConnectException.class);
-        assertThat(exceptions.get(2)).isInstanceOf(ConnectException.class);
-
-        toxic.remove();
-        Thread.sleep(100);
-        getEndpoint().enable();
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         arangoDB.getVersion().get();
+
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
+
+        toxic.remove();
+        enableAllEndpoints();
         arangoDB.shutdown();
         es.shutdown();
     }
@@ -284,7 +287,7 @@ class RetryTest extends SingleServerTest {
     /**
      * on closed pending requests of unsafe HTTP methods: - no retry should happen
      * <p>
-     * once restored: - the subsequent requests should be successful
+     * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
     @EnumSource(Protocol.class)
@@ -296,11 +299,11 @@ class RetryTest extends SingleServerTest {
         arangoDB.db().query("return null", Void.class);
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
         thrown.printStackTrace();
@@ -310,11 +313,11 @@ class RetryTest extends SingleServerTest {
             assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
         }
 
-        toxic.remove();
-        Thread.sleep(100);
-        getEndpoint().enable();
-
         arangoDB.db().query("return null", Void.class);
+
+        toxic.remove();
+        enableAllEndpoints();
+
         arangoDB.shutdown();
         es.shutdown();
     }
@@ -322,7 +325,7 @@ class RetryTest extends SingleServerTest {
     /**
      * on closed pending requests of unsafe HTTP methods: - no retry should happen
      * <p>
-     * once restored: - the subsequent requests should be successful
+     * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
     @EnumSource(Protocol.class)
@@ -335,11 +338,11 @@ class RetryTest extends SingleServerTest {
         arangoDB.db().query("return null", Void.class).get();
 
         // slow down the driver connection
-        Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
         thrown.printStackTrace();
@@ -349,11 +352,11 @@ class RetryTest extends SingleServerTest {
             assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
         }
 
-        toxic.remove();
-        Thread.sleep(100);
-        getEndpoint().enable();
-
         arangoDB.db().query("return null", Void.class).get();
+
+        toxic.remove();
+        enableAllEndpoints();
+
         arangoDB.shutdown();
         es.shutdown();
     }

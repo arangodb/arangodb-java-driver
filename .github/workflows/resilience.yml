@@ -3,7 +3,19 @@ name: Resilience Tests
 on:
   workflow_dispatch:
   push:
-    tags: [ v** ]
+    branches:
+      - main
+      - devel
+    paths-ignore:
+      - 'docker/**'
+      - 'tutorial/**'
+      - 'ChangeLog.md'
+      - 'README.md'
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - main
+
 
 jobs:
   test:
@@ -26,6 +38,8 @@ jobs:
           cache: maven
       - name: Start Database
         run: ./docker/start_db.sh
+        env:
+          STARTER_MODE: cluster
       - name: Info
         run: mvn -version
       - name: Start Toxiproxy

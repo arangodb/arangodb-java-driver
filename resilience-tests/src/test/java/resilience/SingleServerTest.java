@@ -36,7 +36,7 @@ public abstract class SingleServerTest {
 
     @BeforeEach
     void beforeEach() {
-        enableEndpoint();
+        getEndpoint().enable();
     }
 
     protected static Endpoint getEndpoint() {
@@ -47,24 +47,6 @@ public abstract class SingleServerTest {
         return new ArangoDB.Builder()
                 .host(endpoint.getHost(), endpoint.getPort())
                 .password(PASSWORD);
-    }
-
-    protected void enableEndpoint(){
-        try {
-            getEndpoint().getProxy().enable();
-            Thread.sleep(100);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected void disableEndpoint(){
-        try {
-            getEndpoint().getProxy().disable();
-            Thread.sleep(100);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
