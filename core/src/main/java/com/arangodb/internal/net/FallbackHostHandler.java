@@ -49,7 +49,7 @@ public class FallbackHostHandler implements HostHandler {
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-        if (current != lastSuccess || iterations < 3) {
+        if (hasNext(hostHandle, accessType)) {
             return current;
         } else {
             ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
@@ -57,6 +57,11 @@ public class FallbackHostHandler implements HostHandler {
             reset();
             throw e;
         }
+    }
+
+    @Override
+    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
+        return current != lastSuccess || iterations < 3;
     }
 
     @Override

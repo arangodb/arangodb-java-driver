@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TOXIPROXY_VERSION: v2.5.0
+      TOXIPROXY_VERSION: v2.7.0
 
     strategy:
       fail-fast: false

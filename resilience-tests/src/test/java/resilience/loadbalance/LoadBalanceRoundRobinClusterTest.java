@@ -79,7 +79,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
     }
 
-    // FIXME: this only passes for HTTP, while fails for VST and HTTP2
+    // FIXME: this fails for VST
     @Disabled
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
@@ -105,12 +105,11 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         es.shutdown();
     }
 
-    // FIXME: this only passes for VST, while fails for HTTP and HTTP2:
-    // for HTTP and HTTP2 it skips 2 hosts instead of skipping only the failing one
+    // FIXME: this fails for VST
     @Disabled
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
-    void retryPOST(ArangoDB arangoDB) throws IOException, InterruptedException {
+    @MethodSource("asyncArangoProvider")
+    void retryGETAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
         List<Endpoint> endpoints = getEndpoints();
 
         // slow down the driver connection
@@ -120,7 +119,34 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
         es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
-        Throwable thrown = catchThrowable(()->serverIdPOST(arangoDB));
+        assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
+        assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
+
+        toxic.remove();
+        enableAllEndpoints();
+        Thread.sleep(100);
+
+        assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
+
+        es.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangoProvider")
+    void retryPOST(ArangoDB arangoDB) throws IOException, InterruptedException {
+        List<Endpoint> endpoints = getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            System.out.println(endpoint.getServerId());
+        }
+
+        // slow down the driver connection
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Thread.sleep(100);
+
+        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
+
+        Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
 
@@ -129,7 +155,36 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
+
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
+
+        es.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
+        List<Endpoint> endpoints = getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            System.out.println(endpoint.getServerId());
+        }
+
+        // slow down the driver connection
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
+
+        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
+
+        Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
+
+        toxic.remove();
+        enableAllEndpoints();
 
         assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
 

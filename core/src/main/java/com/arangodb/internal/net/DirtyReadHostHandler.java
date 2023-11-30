@@ -53,6 +53,12 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
+    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
+        this.currentAccessType = accessType;
+        return determineHostHandler().hasNext(hostHandle, accessType);
+    }
+
+    @Override
     public void success() {
         determineHostHandler().success();
     }

@@ -53,6 +53,11 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
+    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
+        return true;
+    }
+
+    @Override
     public void success() {
         fallback.success();
     }

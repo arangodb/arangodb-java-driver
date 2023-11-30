@@ -121,7 +121,7 @@ public class HttpCommunication implements Closeable {
                             }
                         }
                     } catch (Exception ex) {
-                        rfuture.completeExceptionally(ArangoDBException.of(ex));
+                        rfuture.completeExceptionally(ArangoDBException.of(ex, reqId));
                     }
                 });
         return rfuture;
@@ -134,8 +134,9 @@ public class HttpCommunication implements Closeable {
         if (hostHandle != null && hostHandle.getHost() != null) {
             hostHandle.setHost(null);
         }
-        Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
-        if (nextHost != null && isSafe) {
+        boolean hasNextHost = hostHandler.hasNext(hostHandle, RequestUtils.determineAccessType(request));
+        if (hasNextHost && isSafe) {
+            Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
             LOGGER.warn("Could not connect to {} while executing request [id={}]",
                     host.getDescription(), reqId, ioEx);
             LOGGER.debug("Try connecting to {}", nextHost.getDescription());
@@ -145,7 +146,6 @@ public class HttpCommunication implements Closeable {
             );
         } else {
             ArangoDBException aEx = ArangoDBException.of(ioEx, reqId);
-            LOGGER.error(aEx.getMessage(), aEx);
             rfuture.completeExceptionally(aEx);
         }
     }

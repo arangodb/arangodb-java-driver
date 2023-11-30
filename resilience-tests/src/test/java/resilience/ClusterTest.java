@@ -4,13 +4,13 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.Request;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import resilience.utils.MemoryAppender;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import resilience.utils.MemoryAppender;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -117,7 +117,14 @@ public abstract class ClusterTest {
                     .get("serverInfo")
                     .get("serverId")
                     .textValue();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else {
+                throw new RuntimeException(e);
+            }
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

@@ -23,6 +23,8 @@ package com.arangodb.internal.net;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.config.HostDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,8 @@ import java.util.List;
  * @author Mark Vollmary
  */
 public class RoundRobinHostHandler implements HostHandler {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoundRobinHostHandler.class);
 
     private final HostResolver resolver;
     private final List<Exception> lastFailExceptions;
@@ -74,7 +78,15 @@ public class RoundRobinHostHandler implements HostHandler {
                 hostHandle.setHost(host.getDescription());
             }
         }
+        LOGGER.debug("Returning host: {}", host);
         return host;
+    }
+
+    @Override
+    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
+        hosts = resolver.getHosts();
+        int size = hosts.getHostsList().size();
+        return  fails <= size;
     }
 
     @Override
