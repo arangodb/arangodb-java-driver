@@ -53,8 +53,7 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
-    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
-        return true;
+    public void checkNext(HostHandle hostHandle, AccessType accessType) {
     }
 
     @Override

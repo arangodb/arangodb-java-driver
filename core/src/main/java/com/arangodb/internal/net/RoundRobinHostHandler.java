@@ -53,16 +53,8 @@ public class RoundRobinHostHandler implements HostHandler {
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-        hosts = resolver.getHosts();
+        checkNext(hostHandle, accessType);
         final int size = hosts.getHostsList().size();
-
-        if (fails > size) {
-            ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
-                    new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
-            reset();
-            throw e;
-        }
-
         final int index = (int) ((current++) % size);
         Host host = hosts.getHostsList().get(index);
         if (hostHandle != null) {
@@ -83,10 +75,16 @@ public class RoundRobinHostHandler implements HostHandler {
     }
 
     @Override
-    public boolean hasNext(HostHandle hostHandle, AccessType accessType) {
+    public void checkNext(HostHandle hostHandle, AccessType accessType) {
         hosts = resolver.getHosts();
-        int size = hosts.getHostsList().size();
-        return  fails <= size;
+        final int size = hosts.getHostsList().size();
+
+        if (fails > size) {
+            ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
+                    new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
+            reset();
+            throw e;
+        }
     }
 
     @Override

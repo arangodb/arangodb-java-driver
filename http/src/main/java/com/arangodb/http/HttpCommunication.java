@@ -134,8 +134,8 @@ public class HttpCommunication implements Closeable {
         if (hostHandle != null && hostHandle.getHost() != null) {
             hostHandle.setHost(null);
         }
-        boolean hasNextHost = hostHandler.hasNext(hostHandle, RequestUtils.determineAccessType(request));
-        if (hasNextHost && isSafe) {
+        hostHandler.checkNext(hostHandle, RequestUtils.determineAccessType(request));
+        if (isSafe) {
             Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
             LOGGER.warn("Could not connect to {} while executing request [id={}]",
                     host.getDescription(), reqId, ioEx);

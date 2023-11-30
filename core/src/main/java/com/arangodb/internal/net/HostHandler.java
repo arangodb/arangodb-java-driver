@@ -31,7 +31,7 @@ public interface HostHandler {
 
     Host get(HostHandle hostHandle, AccessType accessType);
 
-    boolean hasNext(HostHandle hostHandle, AccessType accessType);
+    void checkNext(HostHandle hostHandle, AccessType accessType);
 
     void success();
 
