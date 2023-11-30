@@ -13,6 +13,7 @@ public class Endpoint {
     private final int port;
     private final String upstream;
     private Proxy proxy;
+    private String serverId;
 
     public Endpoint(String name, String host, int port, String upstream) {
         this.name = name;
@@ -43,6 +44,14 @@ public class Endpoint {
 
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public void enable() {

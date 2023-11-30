@@ -1,6 +1,9 @@
 package resilience;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBAsync;
+import com.arangodb.Request;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import resilience.utils.MemoryAppender;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Tag("cluster")
 public abstract class ClusterTest {
@@ -34,6 +38,7 @@ public abstract class ClusterTest {
                 p.delete();
             }
             endpoint.setProxy(client.createProxy(endpoint.getName(), endpoint.getHost() + ":" + endpoint.getPort(), endpoint.getUpstream()));
+            initServerId(endpoint);
         }
     }
 
@@ -63,13 +68,77 @@ public abstract class ClusterTest {
         return builder.password(PASSWORD);
     }
 
-    protected void enableAllEndpoints(){
+    protected static String serverIdGET(ArangoDB adb) {
+        return adb.execute(Request.builder()
+                        .method(Request.Method.GET)
+                        .path("/_admin/status")
+                        .build(), ObjectNode.class)
+                .getBody()
+                .get("serverInfo")
+                .get("serverId")
+                .textValue();
+    }
+
+    protected static String serverIdGET(ArangoDBAsync adb) {
+        try {
+            return adb.execute(Request.builder()
+                            .method(Request.Method.GET)
+                            .path("/_admin/status")
+                            .build(), ObjectNode.class)
+                    .get()
+                    .getBody()
+                    .get("serverInfo")
+                    .get("serverId")
+                    .textValue();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected static String serverIdPOST(ArangoDB adb) {
+        return adb.execute(Request.builder()
+                        .method(Request.Method.POST)
+                        .path("/_admin/status")
+                        .build(), ObjectNode.class)
+                .getBody()
+                .get("serverInfo")
+                .get("serverId")
+                .textValue();
+    }
+
+    protected static String serverIdPOST(ArangoDBAsync adb) {
+        try {
+            return adb.execute(Request.builder()
+                            .method(Request.Method.POST)
+                            .path("/_admin/status")
+                            .build(), ObjectNode.class)
+                    .get()
+                    .getBody()
+                    .get("serverInfo")
+                    .get("serverId")
+                    .textValue();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void initServerId(Endpoint endpoint) {
+        ArangoDB adb = new ArangoDB.Builder()
+                .host(endpoint.getHost(), endpoint.getPort())
+                .password(PASSWORD)
+                .build();
+        String serverId = serverIdGET(adb);
+        endpoint.setServerId(serverId);
+        adb.shutdown();
+    }
+
+    protected void enableAllEndpoints() {
         for (Endpoint endpoint : endpoints) {
             endpoint.enable();
         }
     }
 
-    protected void disableAllEndpoints(){
+    protected void disableAllEndpoints() {
         for (Endpoint endpoint : endpoints) {
             endpoint.disable();
         }
