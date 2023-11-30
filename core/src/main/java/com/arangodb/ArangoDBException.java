@@ -144,7 +144,7 @@ public class ArangoDBException extends RuntimeException {
     }
 
     private static Throwable unwrapCause(Throwable t) {
-        if (t instanceof ArangoDBException) {
+        if (t instanceof ArangoDBException && t.getCause() != null) {
             return unwrapCause(t.getCause());
         }
         return t;
