@@ -21,7 +21,6 @@
 package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.PackageVersion;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
@@ -31,21 +30,17 @@ import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.vst.internal.*;
+import com.arangodb.vst.internal.AuthenticationRequest;
+import com.arangodb.vst.internal.JwtAuthenticationRequest;
+import com.arangodb.vst.internal.VstConnectionAsync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
@@ -54,13 +49,10 @@ public final class VstCommunication implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
     private static final String ENCRYPTION_PLAIN = "plain";
     private static final String ENCRYPTION_JWT = "jwt";
-    private static final AtomicLong mId = new AtomicLong(0L);
     private final InternalSerde serde;
-    private static final String X_ARANGO_DRIVER = "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
 
     private final String user;
     private final String password;
-    private final Integer chunkSize;
     private final HostHandler hostHandler;
     private volatile String jwt;
 
@@ -69,7 +61,6 @@ public final class VstCommunication implements Closeable {
         password = config.getPassword();
         jwt = config.getJwt();
         serde = config.getInternalSerde();
-        chunkSize = config.getChunkSize();
         this.hostHandler = hostHandler;
     }
 
@@ -168,108 +159,45 @@ public final class VstCommunication implements Closeable {
 
     private CompletableFuture<InternalResponse> execute(final InternalRequest request, VstConnectionAsync connection, final int attemptCount) {
         final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
-        try {
-            final Message message = createMessage(request);
-            send(message, connection).whenComplete((m, ex) -> {
-                if (m != null) {
-                    final InternalResponse response;
-                    try {
-                        response = createResponse(m);
-                    } catch (final VPackParserException e) {
-                        LOGGER.error(e.getMessage(), e);
+        connection.executeAsync(request).whenComplete((m, ex) -> {
+            if (m != null) {
+                try {
+                    checkError(m);
+                    rfuture.complete(m);
+                } catch (final ArangoDBRedirectException e) {
+                    if (attemptCount >= 3) {
                         rfuture.completeExceptionally(e);
                         return;
                     }
-
-                    try {
-                        checkError(response);
-                    } catch (final ArangoDBRedirectException e) {
-                        if (attemptCount >= 3) {
-                            rfuture.completeExceptionally(e);
-                            return;
-                        }
-                        final String location = e.getLocation();
-                        final HostDescription redirectHost = HostUtils.createFromLocation(location);
-                        hostHandler.failIfNotMatch(redirectHost, e);
-                        execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1)
-                                .whenComplete((v, err) -> {
-                                    if (v != null) {
-                                        rfuture.complete(v);
-                                    } else if (err != null) {
-                                        rfuture.completeExceptionally(err instanceof CompletionException ? err.getCause() : err);
-                                    } else {
-                                        rfuture.cancel(true);
-                                    }
-                                });
-                        return;
-                    } catch (ArangoDBException e) {
-                        rfuture.completeExceptionally(e);
-                    }
-                    rfuture.complete(response);
-                } else if (ex != null) {
-                    Throwable e = ex instanceof CompletionException ? ex.getCause() : ex;
-                    LOGGER.error(e.getMessage(), e);
+                    final String location = e.getLocation();
+                    final HostDescription redirectHost = HostUtils.createFromLocation(location);
+                    hostHandler.failIfNotMatch(redirectHost, e);
+                    execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1)
+                            .whenComplete((v, err) -> {
+                                if (v != null) {
+                                    rfuture.complete(v);
+                                } else if (err != null) {
+                                    rfuture.completeExceptionally(err instanceof CompletionException ? err.getCause() : err);
+                                } else {
+                                    rfuture.cancel(true);
+                                }
+                            });
+                } catch (ArangoDBException e) {
                     rfuture.completeExceptionally(e);
-                } else {
-                    rfuture.cancel(true);
                 }
-            });
-        } catch (final VPackException e) {
-            LOGGER.error(e.getMessage(), e);
-            rfuture.completeExceptionally(e);
-        }
+            } else {
+                Throwable e = ex instanceof CompletionException ? ex.getCause() : ex;
+                rfuture.completeExceptionally(e);
+            }
+        });
+
         return rfuture;
     }
 
-    private CompletableFuture<Message> send(final Message message, final VstConnectionAsync connection) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-                    message.getBody() != null ? message.getBody() : "{}"));
-        }
-        return connection.write(message, buildChunks(message));
-    }
 
     private void checkError(final InternalResponse response) {
         ArangoDBException e = ResponseUtils.translateError(serde, response);
         if (e != null) throw e;
-    }
-
-    private InternalResponse createResponse(final Message message) throws VPackParserException {
-        final InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class);
-        if (message.getBody() != null) {
-            response.setBody(message.getBody().toByteArray());
-        }
-        return response;
-    }
-
-    private Message createMessage(final InternalRequest request) throws VPackParserException {
-        request.putHeaderParam("accept", "application/x-velocypack");
-        request.putHeaderParam("content-type", "application/x-velocypack");
-        request.putHeaderParam("x-arango-driver", X_ARANGO_DRIVER);
-        final long id = mId.incrementAndGet();
-        return new Message(id, serde.serialize(request), request.getBody());
-    }
-
-    private Collection<Chunk> buildChunks(final Message message) {
-        final Collection<Chunk> chunks = new ArrayList<>();
-        final VPackSlice head = message.getHead();
-        int size = head.getByteSize();
-        final VPackSlice body = message.getBody();
-        if (body != null) {
-            size += body.getByteSize();
-        }
-        final int n = size / chunkSize;
-        final int numberOfChunks = (size % chunkSize != 0) ? (n + 1) : n;
-        int off = 0;
-        for (int i = 0; size > 0; i++) {
-            final int len = Math.min(chunkSize, size);
-            final long messageLength = (i == 0 && numberOfChunks > 1) ? size : -1L;
-            final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, messageLength, off, len);
-            size -= len;
-            off += len;
-            chunks.add(chunk);
-        }
-        return chunks;
     }
 
     public void setJwt(String jwt) {
