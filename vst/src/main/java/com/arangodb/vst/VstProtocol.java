@@ -52,7 +52,7 @@ public class VstProtocol implements CommunicationProtocol {
             return cf;
         }
         return CompletableFuture.completedFuture(null)
-                .thenComposeAsync(__ -> communication.execute(request, hostHandle), outgoingExecutor);
+                .thenComposeAsync(__ -> communication.executeAsync(request, hostHandle), outgoingExecutor);
     }
 
     @Override

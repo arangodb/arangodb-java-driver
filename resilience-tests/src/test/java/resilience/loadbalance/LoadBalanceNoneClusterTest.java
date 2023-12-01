@@ -96,8 +96,6 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
     }
 
 
-    // FIXME: this fails for VST
-    @Disabled
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void retryGET(ArangoDB arangoDB) throws IOException, InterruptedException {

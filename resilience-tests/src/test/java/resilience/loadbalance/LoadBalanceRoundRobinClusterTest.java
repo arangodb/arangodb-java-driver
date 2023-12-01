@@ -7,7 +7,6 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
@@ -79,8 +78,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
     }
 
-    // FIXME: this fails for VST
-    @Disabled
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void retryGET(ArangoDB arangoDB) throws IOException, InterruptedException {
@@ -104,8 +101,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         es.shutdown();
     }
 
-    // FIXME: this fails for VST
-    @Disabled
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
     void retryGETAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
