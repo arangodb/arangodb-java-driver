@@ -317,7 +317,6 @@ class RetryClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-
         arangoDB.shutdown();
         es.shutdown();
     }
@@ -356,7 +355,6 @@ class RetryClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-
         arangoDB.shutdown();
         es.shutdown();
     }

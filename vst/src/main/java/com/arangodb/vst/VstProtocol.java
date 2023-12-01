@@ -36,10 +36,10 @@ import java.util.concurrent.Executors;
  */
 public class VstProtocol implements CommunicationProtocol {
 
-    private final VstCommunicationAsync communication;
+    private final VstCommunication communication;
     private final ExecutorService outgoingExecutor = Executors.newCachedThreadPool();
 
-    public VstProtocol(final VstCommunicationAsync communication) {
+    public VstProtocol(final VstCommunication communication) {
         super();
         this.communication = communication;
     }
@@ -52,7 +52,7 @@ public class VstProtocol implements CommunicationProtocol {
             return cf;
         }
         return CompletableFuture.completedFuture(null)
-                .thenComposeAsync(__ -> communication.execute(request, hostHandle), outgoingExecutor);
+                .thenComposeAsync(__ -> communication.executeAsync(request, hostHandle), outgoingExecutor);
     }
 
     @Override

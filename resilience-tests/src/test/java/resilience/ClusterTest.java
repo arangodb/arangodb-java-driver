@@ -140,14 +140,24 @@ public abstract class ClusterTest {
     }
 
     protected void enableAllEndpoints() {
-        for (Endpoint endpoint : endpoints) {
-            endpoint.enable();
+        try {
+            for (Endpoint endpoint : endpoints) {
+                endpoint.getProxy().enable();
+            }
+            Thread.sleep(100);
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     protected void disableAllEndpoints() {
-        for (Endpoint endpoint : endpoints) {
-            endpoint.disable();
+        try {
+            for (Endpoint endpoint : endpoints) {
+                endpoint.getProxy().disable();
+            }
+            Thread.sleep(100);
+        } catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

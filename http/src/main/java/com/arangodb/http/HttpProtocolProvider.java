@@ -25,7 +25,7 @@ public class HttpProtocolProvider implements ProtocolProvider {
 
     @Override
     public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
-        return new HttpProtocol(new HttpCommunication(hostHandler, config));
+        return new HttpProtocol(new HttpCommunication(config, hostHandler));
     }
 
     @Override

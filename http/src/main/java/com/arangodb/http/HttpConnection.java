@@ -221,6 +221,7 @@ public class HttpConnection implements Connection {
         }
     }
 
+    @Override
     public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));

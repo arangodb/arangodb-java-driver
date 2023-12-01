@@ -224,7 +224,6 @@ class RetryTest extends SingleServerTest {
         assertThat(exceptions.get(2)).isInstanceOf(ConnectException.class);
 
         toxic.remove();
-        Thread.sleep(100);
         getEndpoint().enable();
 
         arangoDB.getVersion();
@@ -272,7 +271,6 @@ class RetryTest extends SingleServerTest {
         assertThat(exceptions.get(2)).isInstanceOf(ConnectException.class);
 
         toxic.remove();
-        Thread.sleep(100);
         getEndpoint().enable();
 
         arangoDB.getVersion().get();
@@ -311,7 +309,6 @@ class RetryTest extends SingleServerTest {
         }
 
         toxic.remove();
-        Thread.sleep(100);
         getEndpoint().enable();
 
         arangoDB.db().query("return null", Void.class);
@@ -350,7 +347,6 @@ class RetryTest extends SingleServerTest {
         }
 
         toxic.remove();
-        Thread.sleep(100);
         getEndpoint().enable();
 
         arangoDB.db().query("return null", Void.class).get();

@@ -20,11 +20,17 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.internal.InternalRequest;
+import com.arangodb.internal.InternalResponse;
+
 import java.io.Closeable;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
  */
 public interface Connection extends Closeable {
     void setJwt(String jwt);
+
+    CompletableFuture<InternalResponse> executeAsync(InternalRequest request);
 }

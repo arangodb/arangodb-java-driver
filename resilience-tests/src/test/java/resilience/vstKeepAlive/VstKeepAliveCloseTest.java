@@ -44,7 +44,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
      */
     @Test
     @Timeout(10)
-    void keepAliveCloseAndReconnect() throws IOException {
+    void keepAliveCloseAndReconnect() throws IOException, InterruptedException {
         arangoDB.getVersion();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         await().until(() -> logs.getLogs()
@@ -53,6 +53,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
                 .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
         toxic.remove();
+        Thread.sleep(100);
         arangoDB.getVersion();
     }
 
@@ -72,6 +73,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
                 .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));
         toxic.setLatency(0);
         toxic.remove();
+        Thread.sleep(100);
         arangoDB.async().getVersion().get();
     }
 
