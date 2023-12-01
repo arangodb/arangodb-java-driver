@@ -98,7 +98,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-        Thread.sleep(100);
 
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
 
@@ -124,7 +123,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-        Thread.sleep(100);
 
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
 

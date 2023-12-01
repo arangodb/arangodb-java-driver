@@ -35,7 +35,7 @@ class RetriableCursorTest extends SingleServerTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
-    void retryCursor(ArangoDB arangoDB) throws IOException {
+    void retryCursor(ArangoDB arangoDB) throws IOException, InterruptedException {
         try (ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i",
                         String.class,
@@ -45,6 +45,7 @@ class RetriableCursorTest extends SingleServerTest {
             assertThat(cursor.next()).isEqualTo("1");
             assertThat(cursor.hasNext()).isTrue();
             Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+            Thread.sleep(100);
             Throwable thrown = catchThrowable(cursor::next);
             assertThat(thrown).isInstanceOf(ArangoDBException.class);
             assertThat(thrown.getCause()).isInstanceOfAny(TimeoutException.class);
@@ -66,10 +67,12 @@ class RetriableCursorTest extends SingleServerTest {
         assertThat(c1.getResult()).containsExactly("1");
         assertThat(c1.hasMore()).isTrue();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Thread.sleep(100);
         Throwable thrown = catchThrowable(() -> c1.nextBatch().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOfAny(TimeoutException.class);
         toxic.remove();
+        Thread.sleep(100);
         ArangoCursorAsync<String> c2 = c1.nextBatch().get();
         assertThat(c2.getResult()).containsExactly("2");
         assertThat(c2.hasMore()).isFalse();
