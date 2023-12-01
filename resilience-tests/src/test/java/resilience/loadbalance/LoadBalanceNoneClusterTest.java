@@ -76,7 +76,7 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
-    void failoverAsymc(ArangoDBAsync arangoDB) throws IOException {
+    void failoverAsync(ArangoDBAsync arangoDB) throws IOException {
         List<Endpoint> endpoints = getEndpoints();
 
         endpoints.get(0).getProxy().disable();
@@ -124,6 +124,33 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void retryPOST(ArangoDB arangoDB) throws IOException, InterruptedException {
+        List<Endpoint> endpoints = getEndpoints();
+
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
+
+        // slow down the driver connection
+        Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
+        Thread.sleep(100);
+
+        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
+
+        Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
+
+        toxic.remove();
+        enableAllEndpoints();
+        es.shutdown();
+    }
+
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
         List<Endpoint> endpoints = getEndpoints();
 
         assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());

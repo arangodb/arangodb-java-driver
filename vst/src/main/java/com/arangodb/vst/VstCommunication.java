@@ -22,21 +22,19 @@ package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.PackageVersion;
+import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
-import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.*;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.vst.internal.Chunk;
-import com.arangodb.vst.internal.Message;
-import com.arangodb.vst.internal.VstConnection;
+import com.arangodb.vst.internal.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,27 +42,29 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
  */
-public abstract class VstCommunication<R, C extends VstConnection<?>> implements Closeable {
-
-    protected static final String ENCRYPTION_PLAIN = "plain";
-    protected static final String ENCRYPTION_JWT = "jwt";
-    protected static final AtomicLong mId = new AtomicLong(0L);
+public final class VstCommunication implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
-    protected final InternalSerde serde;
+    private static final String ENCRYPTION_PLAIN = "plain";
+    private static final String ENCRYPTION_JWT = "jwt";
+    private static final AtomicLong mId = new AtomicLong(0L);
+    private final InternalSerde serde;
     private static final String X_ARANGO_DRIVER = "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
 
-    protected final String user;
-    protected final String password;
-    protected final Integer chunkSize;
-    protected final HostHandler hostHandler;
-    protected volatile String jwt;
+    private final String user;
+    private final String password;
+    private final Integer chunkSize;
+    private final HostHandler hostHandler;
+    private volatile String jwt;
 
-    protected VstCommunication(final ArangoConfig config, final HostHandler hostHandler) {
+    public VstCommunication(final ArangoConfig config, final HostHandler hostHandler) {
         user = config.getUser();
         password = config.getPassword();
         jwt = config.getJwt();
@@ -73,15 +73,14 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         this.hostHandler = hostHandler;
     }
 
-    @SuppressWarnings("unchecked")
-    protected synchronized C connect(final HostHandle hostHandle, final AccessType accessType) {
+    private synchronized VstConnectionAsync connect(final HostHandle hostHandle, final AccessType accessType) {
         Host host = hostHandler.get(hostHandle, accessType);
         while (true) {
             if (host == null) {
                 hostHandler.reset();
                 throw new ArangoDBException("Was not able to connect to any host");
             }
-            final C connection = (C) host.connection();
+            final VstConnectionAsync connection = (VstConnectionAsync) host.connection();
             if (connection.isOpen()) {
                 hostHandler.success();
                 return connection;
@@ -120,7 +119,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         }
     }
 
-    private void tryAuthenticate(final C connection) {
+    private void tryAuthenticate(final VstConnectionAsync connection) {
         try {
             authenticate(connection);
         } catch (final ArangoDBException authException) {
@@ -129,32 +128,113 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         }
     }
 
-    protected abstract void authenticate(final C connection);
+    private void authenticate(final VstConnectionAsync connection) {
+        InternalRequest authRequest;
+        if (jwt != null) {
+            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        } else {
+            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        }
+
+        InternalResponse response;
+        try {
+            response = execute(authRequest, connection).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw ArangoDBException.of(e);
+        } catch (ExecutionException e) {
+            throw ArangoDBException.of(e.getCause());
+        }
+        checkError(response);
+    }
 
     @Override
     public void close() throws IOException {
         hostHandler.close();
     }
 
-    public R execute(final InternalRequest request, final HostHandle hostHandle) {
+    public CompletableFuture<InternalResponse> execute(final InternalRequest request, final HostHandle hostHandle) {
         return execute(request, hostHandle, 0);
     }
 
-    protected R execute(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
-        final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
+    private CompletableFuture<InternalResponse> execute(final InternalRequest request, final HostHandle hostHandle, final int attemptCount) {
+        final VstConnectionAsync connection = connect(hostHandle, RequestUtils.determineAccessType(request));
         return execute(request, connection, attemptCount);
     }
 
-    protected abstract R execute(final InternalRequest request, C connection);
+    private CompletableFuture<InternalResponse> execute(final InternalRequest request, VstConnectionAsync connection) {
+        return execute(request, connection, 0);
+    }
 
-    protected abstract R execute(final InternalRequest request, C connection, final int attemptCount);
+    private CompletableFuture<InternalResponse> execute(final InternalRequest request, VstConnectionAsync connection, final int attemptCount) {
+        final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
+        try {
+            final Message message = createMessage(request);
+            send(message, connection).whenComplete((m, ex) -> {
+                if (m != null) {
+                    final InternalResponse response;
+                    try {
+                        response = createResponse(m);
+                    } catch (final VPackParserException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        rfuture.completeExceptionally(e);
+                        return;
+                    }
 
-    protected void checkError(final InternalResponse response) {
+                    try {
+                        checkError(response);
+                    } catch (final ArangoDBRedirectException e) {
+                        if (attemptCount >= 3) {
+                            rfuture.completeExceptionally(e);
+                            return;
+                        }
+                        final String location = e.getLocation();
+                        final HostDescription redirectHost = HostUtils.createFromLocation(location);
+                        hostHandler.failIfNotMatch(redirectHost, e);
+                        execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1)
+                                .whenComplete((v, err) -> {
+                                    if (v != null) {
+                                        rfuture.complete(v);
+                                    } else if (err != null) {
+                                        rfuture.completeExceptionally(err instanceof CompletionException ? err.getCause() : err);
+                                    } else {
+                                        rfuture.cancel(true);
+                                    }
+                                });
+                        return;
+                    } catch (ArangoDBException e) {
+                        rfuture.completeExceptionally(e);
+                    }
+                    rfuture.complete(response);
+                } else if (ex != null) {
+                    Throwable e = ex instanceof CompletionException ? ex.getCause() : ex;
+                    LOGGER.error(e.getMessage(), e);
+                    rfuture.completeExceptionally(e);
+                } else {
+                    rfuture.cancel(true);
+                }
+            });
+        } catch (final VPackException e) {
+            LOGGER.error(e.getMessage(), e);
+            rfuture.completeExceptionally(e);
+        }
+        return rfuture;
+    }
+
+    private CompletableFuture<Message> send(final Message message, final VstConnectionAsync connection) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+                    message.getBody() != null ? message.getBody() : "{}"));
+        }
+        return connection.write(message, buildChunks(message));
+    }
+
+    private void checkError(final InternalResponse response) {
         ArangoDBException e = ResponseUtils.translateError(serde, response);
         if (e != null) throw e;
     }
 
-    protected InternalResponse createResponse(final Message message) throws VPackParserException {
+    private InternalResponse createResponse(final Message message) throws VPackParserException {
         final InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class);
         if (message.getBody() != null) {
             response.setBody(message.getBody().toByteArray());
@@ -162,7 +242,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         return response;
     }
 
-    protected final Message createMessage(final InternalRequest request) throws VPackParserException {
+    private Message createMessage(final InternalRequest request) throws VPackParserException {
         request.putHeaderParam("accept", "application/x-velocypack");
         request.putHeaderParam("content-type", "application/x-velocypack");
         request.putHeaderParam("x-arango-driver", X_ARANGO_DRIVER);
@@ -170,7 +250,7 @@ public abstract class VstCommunication<R, C extends VstConnection<?>> implements
         return new Message(id, serde.serialize(request), request.getBody());
     }
 
-    protected Collection<Chunk> buildChunks(final Message message) {
+    private Collection<Chunk> buildChunks(final Message message) {
         final Collection<Chunk> chunks = new ArrayList<>();
         final VPackSlice head = message.getHead();
         int size = head.getByteSize();

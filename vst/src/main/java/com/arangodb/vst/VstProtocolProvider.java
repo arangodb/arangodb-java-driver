@@ -21,7 +21,7 @@ public class VstProtocolProvider implements ProtocolProvider {
 
     @Override
     public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
-        return new VstProtocol(new VstCommunicationAsync(config, hostHandler));
+        return new VstProtocol(new VstCommunication(config, hostHandler));
     }
 
     @Override
