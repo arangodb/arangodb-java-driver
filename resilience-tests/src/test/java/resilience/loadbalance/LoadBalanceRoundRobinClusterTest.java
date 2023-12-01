@@ -14,6 +14,7 @@ import resilience.Endpoint;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -127,9 +128,9 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void retryPOST(ArangoDB arangoDB) throws IOException, InterruptedException {
-        List<Endpoint> endpoints = getEndpoints();
-        for (Endpoint endpoint : endpoints) {
-            System.out.println(endpoint.getServerId());
+        // create VST connections
+        for (int i = 0; i < getEndpoints().size(); i++) {
+            arangoDB.getVersion();
         }
 
         // slow down the driver connection
@@ -143,23 +144,23 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
 
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(1).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(2).getServerId());
 
         toxic.remove();
         enableAllEndpoints();
 
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(0).getServerId());
 
         es.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
-    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
-        List<Endpoint> endpoints = getEndpoints();
-        for (Endpoint endpoint : endpoints) {
-            System.out.println(endpoint.getServerId());
+    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException, ExecutionException {
+        // create VST connections
+        for (int i = 0; i < getEndpoints().size(); i++) {
+            arangoDB.getVersion().get();
         }
 
         // slow down the driver connection
@@ -173,13 +174,13 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
 
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(1).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(2).getServerId());
 
         toxic.remove();
         enableAllEndpoints();
 
-        assertThat(serverIdPOST(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
+        assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(0).getServerId());
 
         es.shutdown();
     }
