@@ -2,6 +2,7 @@ package resilience.connection;
 
 import com.arangodb.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
 
@@ -108,6 +109,39 @@ class ConnectionTest extends SingleServerTest {
                 assertThat(e).isInstanceOf(ConnectException.class));
         arangoDB.shutdown();
         getEndpoint().enable();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @EnumSource(Protocol.class)
+    void authFail(Protocol protocol) {
+        ArangoDB adb = new ArangoDB.Builder()
+                .host(getEndpoint().getHost(), getEndpoint().getPort())
+                .protocol(protocol)
+                .password("wrong")
+                .build();
+
+        Throwable thrown = catchThrowable(adb::getVersion);
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException aEx = (ArangoDBException) thrown;
+        assertThat(aEx.getResponseCode()).isEqualTo(401);
+        adb.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @EnumSource(Protocol.class)
+    void authFailAsync(Protocol protocol) {
+        ArangoDBAsync adb = new ArangoDB.Builder()
+                .host(getEndpoint().getHost(), getEndpoint().getPort())
+                .protocol(protocol)
+                .password("wrong")
+                .build()
+                .async();
+
+        Throwable thrown = catchThrowable(() -> adb.getVersion().get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException aEx = (ArangoDBException) thrown;
+        assertThat(aEx.getResponseCode()).isEqualTo(401);
+        adb.shutdown();
     }
 
 }
