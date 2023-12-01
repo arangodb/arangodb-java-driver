@@ -20,6 +20,7 @@ on:
 jobs:
 
   test:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -63,6 +64,7 @@ jobs:
         run: mvn --no-transfer-progress -am -pl driver test -DargLine="-Duser.language=${{matrix.user-language}}"
 
   test-ssl:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
@@ -98,6 +100,7 @@ jobs:
 
   # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
   test-graalvm:
+    if: '! github.event.pull_request.draft'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -113,6 +116,7 @@ jobs:
         run: mvn -e --no-transfer-progress -am -pl driver test -Dtest=graalvm.UnicodeUtilsTest -Dsurefire.failIfNoSpecifiedTests=false
 
   test-jwt:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -160,6 +164,7 @@ jobs:
         run: mvn --no-transfer-progress -am -pl driver test -DargLine="-Duser.language=${{matrix.user-language}}"
 
   jackson-test:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -205,6 +210,7 @@ jobs:
         run: mvn --no-transfer-progress -am -pl driver test -Dadb.jackson.version=${{matrix.jackson-version}}
 
   integration-tests:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -250,6 +256,7 @@ jobs:
         run: mvn --no-transfer-progress -Pplain test
 
   sonar:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 10
     runs-on: ubuntu-latest
 

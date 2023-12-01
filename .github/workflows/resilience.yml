@@ -25,9 +25,6 @@ jobs:
     env:
       TOXIPROXY_VERSION: v2.7.0
 
-    strategy:
-      fail-fast: false
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
