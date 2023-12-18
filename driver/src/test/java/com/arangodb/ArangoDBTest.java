@@ -27,13 +27,12 @@ import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.RawJson;
-import com.arangodb.util.TestUtils;
 import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -397,6 +396,20 @@ class ArangoDBTest extends BaseJunit5 {
             String header = response.getHeaders().get("x-arango-queue-time-seconds");
             assertThat(header).isNotNull();
         }
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void executeJS(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 11));
+        Request<?> request = Request.builder()
+                .db(ArangoRequestParam.SYSTEM)
+                .method(Request.Method.POST)
+                .path("/_admin/execute")
+                .body(JsonNodeFactory.instance.textNode("return 11;"))
+                .build();
+        final Response<Integer> response = arangoDB.execute(request, Integer.class);
+        assertThat(response.getBody()).isEqualTo(11);
     }
 
     @ParameterizedTest(name = "{index}")
