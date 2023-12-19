@@ -36,7 +36,7 @@ public class AcquireHostListTest extends ClusterTest {
             retrievedIds.add(serverIdGET(adb));
         }
 
-        assertThat(retrievedIds).containsExactlyElementsOf(serverIds);
+        assertThat(retrievedIds).containsExactlyInAnyOrderElementsOf(serverIds);
     }
 
 

@@ -59,7 +59,11 @@ public class RequestLoggingTest extends SingleServerTest {
     }
 
     private String meta(String log) {
-        return log.substring(log.indexOf("]: ") + 3, log.indexOf("} {") + 1);
+        int endIdx = log.indexOf("} {") + 1;
+        if (endIdx == 0) {
+            endIdx = log.length();
+        }
+        return log.substring(log.indexOf("]: ") + 3, endIdx);
     }
 
     @SuppressWarnings("unchecked")
