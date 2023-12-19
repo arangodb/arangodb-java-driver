@@ -98,6 +98,8 @@ public abstract class Communication implements Closeable {
                                             rfuture
                                     );
                                 }
+                            } else if (errorEntityEx instanceof ArangoDBUnavailableException) {
+                                handleException(true, errorEntityEx, hostHandle, request, host, reqId, attemptCount, rfuture);
                             } else if (errorEntityEx != null) {
                                 rfuture.completeExceptionally(errorEntityEx);
                             } else {

@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.ArangoDBUnavailableException;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.InternalResponse;
 
@@ -44,21 +45,24 @@ public final class ResponseUtils {
 
     public static ArangoDBException translateError(final InternalSerde util, final InternalResponse response) {
         final int responseCode = response.getResponseCode();
-        if (responseCode >= ERROR_STATUS) {
-            if (responseCode == ERROR_INTERNAL && response.containsMeta(HEADER_ENDPOINT)) {
-                return new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
-                        response.getMeta(HEADER_ENDPOINT));
-            } else if (response.getBody() != null) {
-                final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-                ArangoDBException e = new ArangoDBException(errorEntity);
-                if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
-                    return ArangoDBException.of(new TimeoutException().initCause(e));
-                }
-                return e;
-            } else {
-                return new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
-            }
+        if (responseCode < ERROR_STATUS) {
+            return null;
         }
-        return null;
+        if (responseCode == ERROR_INTERNAL && response.containsMeta(HEADER_ENDPOINT)) {
+            return new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
+                    response.getMeta(HEADER_ENDPOINT));
+        }
+        if (response.getBody() != null) {
+            final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
+            if (errorEntity.getCode() == ERROR_INTERNAL && errorEntity.getErrorNum() == ERROR_INTERNAL) {
+                return ArangoDBUnavailableException.from(errorEntity);
+            }
+            ArangoDBException e = new ArangoDBException(errorEntity);
+            if (ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())) {
+                return ArangoDBException.of(new TimeoutException().initCause(e));
+            }
+            return e;
+        }
+        return new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
     }
 }

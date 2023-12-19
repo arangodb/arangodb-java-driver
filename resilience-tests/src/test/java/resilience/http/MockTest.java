@@ -1,18 +1,18 @@
 package resilience.http;
 
+import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import resilience.SingleServerTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndServer;
+import org.mockserver.matchers.Times;
+import resilience.SingleServerTest;
 
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
@@ -39,14 +39,15 @@ class MockTest extends SingleServerTest {
     }
 
     @Test
-    void doTest() {
+    void retryOn503() {
         arangoDB.getVersion();
 
         mockServer
                 .when(
                         request()
                                 .withMethod("GET")
-                                .withPath("/.*/_api/version")
+                                .withPath("/.*/_api/version"),
+                        Times.exactly(2)
                 )
                 .respond(
                         response()
@@ -54,21 +55,23 @@ class MockTest extends SingleServerTest {
                                 .withBody("{\"error\":true,\"errorNum\":503,\"errorMessage\":\"boom\",\"code\":503}")
                 );
 
-        Throwable thrown = catchThrowable(arangoDB::getVersion);
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .hasMessageContaining("boom");
+        logs.reset();
+        arangoDB.getVersion();
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
     }
 
     @Test
-    void doTestAsync() throws ExecutionException, InterruptedException {
+    void retryOn503Async() throws ExecutionException, InterruptedException {
         arangoDB.async().getVersion().get();
 
         mockServer
                 .when(
                         request()
                                 .withMethod("GET")
-                                .withPath("/.*/_api/version")
+                                .withPath("/.*/_api/version"),
+                        Times.exactly(2)
                 )
                 .respond(
                         response()
@@ -76,9 +79,10 @@ class MockTest extends SingleServerTest {
                                 .withBody("{\"error\":true,\"errorNum\":503,\"errorMessage\":\"boom\",\"code\":503}")
                 );
 
-        Throwable thrown = catchThrowable(() -> arangoDB.async().getVersion().get()).getCause();
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .hasMessageContaining("boom");
+        logs.reset();
+        arangoDB.async().getVersion().get();
+        assertThat(logs.getLogs())
+                .filteredOn(e -> e.getLevel().equals(Level.WARN))
+                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
     }
 }
