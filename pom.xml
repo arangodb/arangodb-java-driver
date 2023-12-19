@@ -38,7 +38,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <adb.jackson.version>2.15.2</adb.jackson.version>
+        <adb.jackson.version>2.16.0</adb.jackson.version>
         <moduleName/>
         <SslTest/>
     </properties>
@@ -157,7 +157,7 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.1.0</version>
+                <version>4.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
