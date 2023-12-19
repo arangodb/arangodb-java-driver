@@ -987,6 +987,23 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryCloseShouldBeIdempotent(ArangoDB arangoDB) throws IOException {
+        ArangoCursor<Integer> cursor = arangoDB.db().query("for i in 1..2 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1));
+        cursor.close();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangos")
+    void queryCloseOnCursorWithoutId(ArangoDB arangoDB) throws IOException {
+        ArangoCursor<Integer> cursor = arangoDB.db().query("return 1", Integer.class);
+        cursor.close();
+        cursor.close();
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void queryNoResults(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db
@@ -1153,7 +1170,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if(isAtLeastVersion(3,11)){
+        if (isAtLeastVersion(3, 11)) {
             assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
@@ -1213,7 +1230,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if(isAtLeastVersion(3,11)){
+        if (isAtLeastVersion(3, 11)) {
             assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);

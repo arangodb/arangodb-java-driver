@@ -1,6 +1,7 @@
 package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursorAsync;
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.internal.ArangoDatabaseAsyncImpl;
 import com.arangodb.internal.InternalArangoCursor;
@@ -8,6 +9,9 @@ import com.arangodb.internal.net.HostHandle;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
+import static com.arangodb.internal.ArangoErrors.matches;
 
 public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements ArangoCursorAsync<T> {
 
@@ -41,7 +45,19 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
     @Override
     public CompletableFuture<Void> close() {
         if (getId() != null && (allowRetry() || Boolean.TRUE.equals(hasMore()))) {
-            return executorAsync().execute(this::queryCloseRequest, Void.class, hostHandle);
+            return executorAsync().execute(this::queryCloseRequest, Void.class, hostHandle)
+                    .exceptionally(err -> {
+                        Throwable e = err instanceof CompletionException ? err.getCause() : err;
+                        if (e instanceof ArangoDBException) {
+                            ArangoDBException aEx = (ArangoDBException) e;
+                            // ignore errors Response: 404, Error: 1600 - cursor not found
+                            if (matches(aEx, 404, 1600)) {
+                                return null;
+                            }
+                        }
+                        throw ArangoDBException.of(e);
+                    })
+                    .thenApply(__ -> null);
         } else {
             return CompletableFuture.completedFuture(null);
         }

@@ -213,7 +213,14 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
             @Override
             public void close(final String id) {
-                executorSync().execute(queryCloseRequest(id, options), Void.class, hostHandle);
+                try {
+                    executorSync().execute(queryCloseRequest(id, options), Void.class, hostHandle);
+                } catch (final ArangoDBException e) {
+                    // ignore errors Response: 404, Error: 1600 - cursor not found
+                    if (!matches(e, 404, 1600)) {
+                        throw e;
+                    }
+                }
             }
         };
 

@@ -912,6 +912,23 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     }
 
     @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangos")
+    void queryCloseShouldBeIdempotent(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        ArangoCursorAsync<Integer> cursor = arangoDB.db().query("for i in 1..2 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1)).get();
+        cursor.close().get();
+        cursor.close().get();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangos")
+    void queryCloseOnCursorWithoutId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        ArangoCursorAsync<Integer> cursor = arangoDB.db().query("return 1", Integer.class).get();
+        cursor.close().get();
+        cursor.close().get();
+    }
+
+    @ParameterizedTest(name = "{index}")
     @MethodSource("asyncDbs")
     void queryNoResults(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         db.query("FOR i IN @@col RETURN i", BaseDocument.class, new MapBuilder().put("@col", CNAME1).get()).get();
