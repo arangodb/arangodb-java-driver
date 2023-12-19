@@ -50,6 +50,9 @@ public class FallbackHostHandler implements HostHandler {
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
         checkNext(hostHandle, accessType);
+        if (current.isMarkforDeletion()) {
+            fail(new ArangoDBException("Host marked for deletion"));
+        }
         return current;
     }
 

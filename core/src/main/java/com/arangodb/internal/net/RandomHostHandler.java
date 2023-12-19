@@ -45,7 +45,7 @@ public class RandomHostHandler implements HostHandler {
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-        if (current == null) {
+        if (current == null || current.isMarkforDeletion()) {
             hosts = resolver.getHosts();
             current = getRandomHost();
         }
