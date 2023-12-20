@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -23,23 +24,23 @@ class ConcurrencyAsyncTests {
     @EnumSource(Protocol.class)
     @Timeout(2)
     void executorLimit(Protocol protocol) {
+        ExecutorService asyncExecutor = Executors.newCachedThreadPool();
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .maxConnections(1)
                 .protocol(protocol)
-                .asyncExecutor(Executors.newCachedThreadPool())
                 .build().async();
 
         List<CompletableFuture<ArangoDBVersion>> futures = IntStream.range(0, 20)
                 .mapToObj(i -> adb.getVersion()
-                        .whenComplete((dbVersion, ex) -> {
+                        .whenCompleteAsync((dbVersion, ex) -> {
                             System.out.println(Thread.currentThread().getName());
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                        }))
+                        }, asyncExecutor))
                 .collect(Collectors.toList());
 
         futures.forEach(future -> {
@@ -51,21 +52,26 @@ class ConcurrencyAsyncTests {
             }
         });
         adb.shutdown();
+        asyncExecutor.shutdown();
     }
 
 
     @Disabled
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    @Timeout(1)
-    void outgoingRequestsParallelismTest(Protocol protocol) {
+    @Timeout(2)
+    void outgoingRequestsParallelismTest(Protocol protocol) throws ExecutionException, InterruptedException {
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .maxConnections(20)
                 .protocol(protocol).build().async();
 
+        List<CompletableFuture<?>> reqs = new ArrayList<>();
         for (int i = 0; i < 50_000; i++) {
-            adb.getVersion();
+            reqs.add(adb.getVersion());
+        }
+        for (CompletableFuture<?> req : reqs) {
+            req.get();
         }
         adb.shutdown();
     }

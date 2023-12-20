@@ -617,7 +617,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param executor async downstream executor
          * @return {@link ArangoDB.Builder}
+         *
+         * @deprecated for removal. To consume the responses in a custom executor use async CompletableFuture methods.
          */
+        @Deprecated
         public Builder asyncExecutor(final Executor executor) {
             config.setAsyncExecutor(executor);
             return this;
