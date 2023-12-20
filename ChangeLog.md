@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.4.0] - 2023-12-20
+
+### Added
+
+- added new methods to remove graph definitions and vertex collections, to align the naming with the documentation (DE-729)
+- added support to Jackson 2.16 (DE-735)
+
+### Changed
+
+- deprecated ArangoDB.Builder.asyncExecutor() (DE-726)
+- retry requests on response code 503 (DE-55, #530)
+- changed `ArangoCursor#close()` and `ArangoCursorAsync#close()` to be idempotent (DE-727, #528)
+- changed default Jackson dependencies versions to 2.16 (DE-735)
+
+### Fixed
+ 
+- fixed exception handling on sending HTTP requests
+- fixed management of hosts marked for deletion (DE-723, #384)
+- fixed VST resilience (#529, DE-725)
+- fixed failover with round-robin load balancing (DE-724)
+- fixed init cause of `ArangoDBException` 
+
+
 ## [7.3.0] - 2023-11-22
 
 - changed types of documents and errors in `com.arangodb.entity.MultiDocumentEntity` to `java.util.List`
