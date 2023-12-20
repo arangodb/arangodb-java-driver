@@ -28,10 +28,10 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.10.10
-          - docker.io/arangodb/arangodb:3.11.4
-          - docker.io/arangodb/enterprise:3.10.10
-          - docker.io/arangodb/enterprise:3.11.4
+          - docker.io/arangodb/arangodb:3.10.11
+          - docker.io/arangodb/arangodb:3.11.6
+          - docker.io/arangodb/enterprise:3.10.11
+          - docker.io/arangodb/enterprise:3.11.6
         topology:
           - single
           - cluster
@@ -39,7 +39,7 @@ jobs:
         db-ext-names:
           - false
         java-version:
-          - 11
+          - 21
         user-language:
           - en
 
@@ -72,11 +72,11 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.4
+          - docker.io/arangodb/arangodb:3.11.6
         topology:
           - single
         java-version:
-          - 17
+          - 21
 
     steps:
       - uses: actions/checkout@v2
@@ -107,7 +107,7 @@ jobs:
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
-          java-version: '11'
+          java-version: '17'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           components: 'js'
       - name: Info
@@ -124,7 +124,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.4
+          - docker.io/arangodb/enterprise:3.11.6
         topology:
           - single
           - cluster
@@ -132,7 +132,7 @@ jobs:
         db-ext-names:
           - false
         java-version:
-          - 17
+          - 8
         user-language:
           - en
 
@@ -172,20 +172,21 @@ jobs:
       fail-fast: false
       matrix:
         jackson-version:
-          - 2.15.2
+          - 2.16.0
+          - 2.15.3
           - 2.14.3
           - 2.13.5
           - 2.12.7
           - 2.11.4
           - 2.10.5
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.4
+          - docker.io/arangodb/arangodb:3.11.6
         topology:
           - single
         db-ext-names:
           - false
         java-version:
-          - 17
+          - 21
         user-language:
           - en
 
@@ -218,7 +219,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.4
+          - docker.io/arangodb/arangodb:3.11.6
         topology:
           - single
           - cluster
@@ -264,7 +265,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.4
+          - docker.io/arangodb/enterprise:3.11.6
         topology:
           - cluster
         db-ext-names:
