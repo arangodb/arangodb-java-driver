@@ -253,10 +253,14 @@ public class HttpConnection implements Connection {
             buffer = Buffer.buffer();
         }
 
-        httpRequest.sendBuffer(buffer)
-                .map(this::buildResponse)
-                .onSuccess(rfuture::complete)
-                .onFailure(rfuture::completeExceptionally);
+        try {
+            httpRequest.sendBuffer(buffer)
+                    .map(this::buildResponse)
+                    .onSuccess(rfuture::complete)
+                    .onFailure(rfuture::completeExceptionally);
+        } catch (Exception e) {
+            rfuture.completeExceptionally(e);
+        }
     }
 
     private InternalResponse buildResponse(final HttpResponse<Buffer> httpResponse) {
