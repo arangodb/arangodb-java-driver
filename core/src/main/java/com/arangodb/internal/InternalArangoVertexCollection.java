@@ -55,7 +55,13 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
         return name;
     }
 
+    @Deprecated
     protected InternalRequest dropRequest(final VertexCollectionDropOptions options) {
+        return request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, VERTEX_PATH, name)
+                .putQueryParam("dropCollection", options.getDropCollection());
+    }
+
+    protected InternalRequest removeVertexCollectionRequest(final VertexCollectionRemoveOptions options) {
         return request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, VERTEX_PATH, name)
                 .putQueryParam("dropCollection", options.getDropCollection());
     }

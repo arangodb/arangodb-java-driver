@@ -55,7 +55,14 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
         return name;
     }
 
+    @Deprecated
     protected InternalRequest removeEdgeDefinitionRequest(final EdgeCollectionDropOptions options) {
+        return request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, "edge", name)
+                .putQueryParam("waitForSync", options.getWaitForSync())
+                .putQueryParam("dropCollections", options.getDropCollections());
+    }
+
+    protected InternalRequest removeEdgeDefinitionRequest(final EdgeCollectionRemoveOptions options) {
         return request(dbName, RequestType.DELETE, PATH_API_GHARIAL, graphName, "edge", name)
                 .putQueryParam("waitForSync", options.getWaitForSync())
                 .putQueryParam("dropCollections", options.getDropCollections());

@@ -55,7 +55,10 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
      * Documentation</a>
+     *
+     * @deprecated use {@link #remove()} instead
      */
+    @Deprecated
     void drop();
 
     /**
@@ -65,8 +68,30 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
      * Documentation</a>
+     *
+     * @deprecated use {@link #remove(EdgeCollectionRemoveOptions)} instead
      */
+    @Deprecated
     void drop(EdgeCollectionDropOptions options);
+
+    /**
+     * Remove one edge definition from the graph.
+     *
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * Documentation</a>
+     */
+    void remove();
+
+    /**
+     * Remove one edge definition from the graph.
+     *
+     * @param options options
+     * @see <a href=
+     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * Documentation</a>
+     */
+    void remove(EdgeCollectionRemoveOptions options);
 
     /**
      * Creates a new edge in the collection

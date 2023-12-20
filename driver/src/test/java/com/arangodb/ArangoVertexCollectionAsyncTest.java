@@ -69,7 +69,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void dropVertexCollection(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         ArangoGraphAsync graph = vertices.graph();
-        vertices.drop().get();
+        vertices.remove().get();
         final Collection<String> vertexCollections = graph.getVertexCollections().get();
         assertThat(vertexCollections).isEmpty();
         assertThat(graph.db().collection(COLLECTION_NAME).exists().get()).isTrue();
@@ -82,7 +82,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void dropVertexCollectionDropCollectionTrue(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         ArangoGraphAsync graph = vertices.graph();
-        vertices.drop(new VertexCollectionDropOptions().dropCollection(true)).get();
+        vertices.remove(new VertexCollectionRemoveOptions().dropCollection(true)).get();
         final Collection<String> vertexCollections = graph.getVertexCollections().get();
         assertThat(vertexCollections).isEmpty();
         assertThat(graph.db().collection(COLLECTION_NAME).exists().get()).isFalse();

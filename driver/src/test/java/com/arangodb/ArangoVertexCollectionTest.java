@@ -69,7 +69,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @MethodSource("vertices")
     void dropVertexCollection(ArangoVertexCollection vertices) {
         ArangoGraph graph = vertices.graph();
-        vertices.drop();
+        vertices.remove();
         final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections).isEmpty();
         assertThat(graph.db().collection(COLLECTION_NAME).exists()).isTrue();
@@ -82,7 +82,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
     @MethodSource("vertices")
     void dropVertexCollectionDropCollectionTrue(ArangoVertexCollection vertices) {
         ArangoGraph graph = vertices.graph();
-        vertices.drop(new VertexCollectionDropOptions().dropCollection(true));
+        vertices.remove(new VertexCollectionRemoveOptions().dropCollection(true));
         final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections).isEmpty();
         assertThat(graph.db().collection(COLLECTION_NAME).exists()).isFalse();

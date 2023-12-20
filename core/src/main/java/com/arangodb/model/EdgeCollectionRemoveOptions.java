@@ -1,10 +1,6 @@
 package com.arangodb.model;
 
-/**
- * @deprecated use {@link EdgeCollectionRemoveOptions} instead
- */
-@Deprecated
-public class EdgeCollectionDropOptions {
+public class EdgeCollectionRemoveOptions {
     private Boolean waitForSync;
     private Boolean dropCollections;
 
@@ -16,7 +12,7 @@ public class EdgeCollectionDropOptions {
      * @param waitForSync Define if the request should wait until synced to disk.
      * @return this
      */
-    public EdgeCollectionDropOptions waitForSync(Boolean waitForSync) {
+    public EdgeCollectionRemoveOptions waitForSync(Boolean waitForSync) {
         this.waitForSync = waitForSync;
         return this;
     }
@@ -30,7 +26,7 @@ public class EdgeCollectionDropOptions {
      *                        graphs.
      * @return this
      */
-    public EdgeCollectionDropOptions dropCollections(Boolean dropCollections) {
+    public EdgeCollectionRemoveOptions dropCollections(Boolean dropCollections) {
         this.dropCollections = dropCollections;
         return this;
     }

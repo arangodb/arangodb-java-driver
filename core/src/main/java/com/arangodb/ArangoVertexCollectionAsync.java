@@ -49,13 +49,29 @@ public interface ArangoVertexCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoVertexCollection#drop()}
+     *
+     * @deprecated use {@link #remove()} instead
      */
+    @Deprecated
     CompletableFuture<Void> drop();
 
     /**
      * Asynchronous version of {@link ArangoVertexCollection#drop(VertexCollectionDropOptions)}
+     *
+     * @deprecated use {@link #remove(VertexCollectionRemoveOptions)} instead
      */
+    @Deprecated
     CompletableFuture<Void> drop(VertexCollectionDropOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoVertexCollection#remove()}
+     */
+    CompletableFuture<Void> remove();
+
+    /**
+     * Asynchronous version of {@link ArangoVertexCollection#remove(VertexCollectionRemoveOptions)}
+     */
+    CompletableFuture<Void> remove(VertexCollectionRemoveOptions options);
 
     /**
      * Asynchronous version of {@link ArangoVertexCollection#insertVertex(Object)}

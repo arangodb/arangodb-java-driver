@@ -24,10 +24,7 @@ import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.model.EdgeCollectionDropOptions;
-import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.model.ReplaceEdgeDefinitionOptions;
-import com.arangodb.model.VertexCollectionCreateOptions;
+import com.arangodb.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -168,7 +165,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(vertexCollections).contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4, VERTEX_COL_5);
 
         // revert
-        graph.vertexCollection(VERTEX_COL_4).drop().get();
+        graph.vertexCollection(VERTEX_COL_4).remove().get();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -229,7 +226,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         }
 
         // revert
-        graph.edgeCollection(EDGE_COL_3).drop().get();
+        graph.edgeCollection(EDGE_COL_3).remove().get();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -285,8 +282,8 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(graph.db().collection(VERTEX_COL_1).exists().get()).isTrue();
 
         // revert
-        graph.edgeCollection(EDGE_COL_1).drop().get();
-        graph.vertexCollection(VERTEX_COL_4).drop().get();
+        graph.edgeCollection(EDGE_COL_1).remove().get();
+        graph.vertexCollection(VERTEX_COL_4).remove().get();
         graph.addEdgeDefinition(ed1).get();
     }
 
@@ -316,15 +313,15 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(graph.db().collection(VERTEX_COL_5).exists().get()).isFalse();
 
         // revert
-        graph.edgeCollection(EDGE_COL_1).drop().get();
-        graph.vertexCollection(VERTEX_COL_4).drop().get();
+        graph.edgeCollection(EDGE_COL_1).remove().get();
+        graph.vertexCollection(VERTEX_COL_4).remove().get();
         graph.addEdgeDefinition(ed1).get();
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncGraphs")
     void removeEdgeDefinition(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
-        graph.edgeCollection(EDGE_COL_1).drop().get();
+        graph.edgeCollection(EDGE_COL_1).remove().get();
         Collection<String> edgeDefinitions = graph.getEdgeDefinitions().get();
         assertThat(edgeDefinitions).hasSize(1);
         assertThat(edgeDefinitions.iterator().next()).isEqualTo(EDGE_COL_2);
@@ -337,7 +334,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncGraphs")
     void removeEdgeDefinitionDropCollections(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
-        graph.edgeCollection(EDGE_COL_1).drop(new EdgeCollectionDropOptions()
+        graph.edgeCollection(EDGE_COL_1).remove(new EdgeCollectionRemoveOptions()
                 .dropCollections(true)
                 .waitForSync(true)).get();
         Collection<String> edgeDefinitions = graph.getEdgeDefinitions().get();

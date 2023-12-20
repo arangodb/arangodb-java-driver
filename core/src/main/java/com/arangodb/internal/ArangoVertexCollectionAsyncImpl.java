@@ -49,14 +49,26 @@ public class ArangoVertexCollectionAsyncImpl extends InternalArangoVertexCollect
         return graph;
     }
 
+    @Deprecated
     @Override
     public CompletableFuture<Void> drop() {
         return drop(new VertexCollectionDropOptions());
     }
 
+    @Deprecated
     @Override
     public CompletableFuture<Void> drop(final VertexCollectionDropOptions options) {
         return executorAsync().execute(() -> dropRequest(options), Void.class);
+    }
+
+    @Override
+    public CompletableFuture<Void> remove() {
+        return remove(new VertexCollectionRemoveOptions());
+    }
+
+    @Override
+    public CompletableFuture<Void> remove(final VertexCollectionRemoveOptions options) {
+        return executorAsync().execute(() -> removeVertexCollectionRequest(options), Void.class);
     }
 
     @Override

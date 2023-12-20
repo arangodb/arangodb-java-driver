@@ -49,13 +49,29 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoEdgeCollection#drop()}
+     *
+     * @deprecated use {@link #remove()} instead
      */
+    @Deprecated
     CompletableFuture<Void> drop();
 
     /**
      * Asynchronous version of {@link ArangoEdgeCollection#drop(EdgeCollectionDropOptions)}
+     *
+     * @deprecated use {@link #remove(EdgeCollectionRemoveOptions)} instead
      */
+    @Deprecated
     CompletableFuture<Void> drop(EdgeCollectionDropOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoEdgeCollection#remove()}
+     */
+    CompletableFuture<Void> remove();
+
+    /**
+     * Asynchronous version of {@link ArangoEdgeCollection#remove(EdgeCollectionRemoveOptions)}
+     */
+    CompletableFuture<Void> remove(EdgeCollectionRemoveOptions options);
 
     /**
      * Asynchronous version of {@link ArangoEdgeCollection#insertEdge(Object)}
