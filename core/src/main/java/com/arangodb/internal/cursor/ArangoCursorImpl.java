@@ -44,14 +44,14 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     private final boolean allowRetry;
 
     public ArangoCursorImpl(final ArangoCursorExecute<T> execute,
-                            final Class<T> type, final CursorEntity<T> result) {
+                            final Class<T> type, final CursorEntity<T> result, final Boolean allowRetry) {
         super();
         this.execute = execute;
         this.type = type;
         id = result.getId();
         pontentialDirtyRead = result.isPotentialDirtyRead();
         iterator = new ArangoCursorIterator<>(id, execute, result);
-        this.allowRetry = result.getNextBatchId() != null;
+        this.allowRetry = Boolean.TRUE.equals(allowRetry);
     }
 
     @Override
