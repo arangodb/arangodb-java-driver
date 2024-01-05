@@ -202,8 +202,9 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     private <T> ArangoCursor<T> createCursor(
             final CursorEntity<T> result,
             final Class<T> type,
-            final AqlQueryOptions options,
+            final AqlQueryOptions opts,
             final HostHandle hostHandle) {
+        AqlQueryOptions options = opts != null ? opts : new AqlQueryOptions();
 
         final ArangoCursorExecute<T> execute = new ArangoCursorExecute<T>() {
             @Override
@@ -223,8 +224,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
                 }
             }
         };
-
-        return new ArangoCursorImpl<>(execute, type, result);
+        return new ArangoCursorImpl<>(execute, type, result, options.getAllowRetry());
     }
 
     @Override
