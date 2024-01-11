@@ -625,6 +625,44 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return this;
         }
 
+        /**
+         * Sets the {@code content-encoding} and {@code accept-encoding} to use for HTTP requests and the related
+         * algorithm to encode and decode the transferred data. (default: {@link Compression#NONE})
+         *
+         * @param compression format
+         * @return {@link ArangoDB.Builder}
+         * @since ArangoDB 3.12
+         */
+        public Builder compression(final Compression compression) {
+            config.setCompression(compression);
+            return this;
+        }
+
+        /**
+         * Sets the minimum HTTP request body size (in bytes) to trigger compression.
+         * (default: {@code 1024})
+         *
+         * @param threshold body size (in bytes)
+         * @return {@link ArangoDB.Builder}
+         * @since ArangoDB 3.12
+         */
+        public Builder compressionThreshold(Integer threshold) {
+            config.setCompressionThreshold(threshold);
+            return this;
+        }
+
+        /**
+         * Sets the compression level. (default: {@code 6})
+         *
+         * @param level compression level
+         * @return {@link ArangoDB.Builder}
+         * @since ArangoDB 3.12
+         */
+        public Builder compressionLevel(Integer level) {
+            config.setCompressionLevel(level);
+            return this;
+        }
+
         @UnstableApi
         protected ProtocolProvider protocolProvider(Protocol protocol) {
             ServiceLoader<ProtocolProvider> loader = ServiceLoader.load(ProtocolProvider.class);

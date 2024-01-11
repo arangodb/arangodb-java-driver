@@ -1,5 +1,6 @@
 package com.arangodb.config;
 
+import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.config.ArangoConfigPropertiesImpl;
@@ -94,6 +95,18 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Integer> getResponseQueueTimeSamples() {
+        return Optional.empty();
+    }
+
+    default Optional<Compression> getCompression() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getCompressionThreshold() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getCompressionLevel() {
         return Optional.empty();
     }
 

@@ -1,6 +1,7 @@
 package com.arangodb.internal.config;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Compression;
 import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.arch.UsedInApi;
@@ -45,6 +46,9 @@ public class ArangoConfig {
     private Integer responseQueueTimeSamples;
     private Module protocolModule;
     private Executor asyncExecutor;
+    private Compression compression;
+    private Integer compressionThreshold;
+    private Integer compressionLevel;
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
@@ -105,6 +109,9 @@ public class ArangoConfig {
         acquireHostListInterval = properties.getAcquireHostListInterval().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
         loadBalancingStrategy = properties.getLoadBalancingStrategy().orElse(ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY);
         responseQueueTimeSamples = properties.getResponseQueueTimeSamples().orElse(ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
+        compression = properties.getCompression().orElse(ArangoDefaults.DEFAULT_COMPRESSION);
+        compressionThreshold = properties.getCompressionThreshold().orElse(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
+        compressionLevel = properties.getCompressionLevel().orElse(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
     }
 
     public List<HostDescription> getHosts() {
@@ -297,5 +304,29 @@ public class ArangoConfig {
 
     public void setAsyncExecutor(Executor asyncExecutor) {
         this.asyncExecutor = asyncExecutor;
+    }
+
+    public Compression getCompression() {
+        return compression;
+    }
+
+    public void setCompression(Compression compression) {
+        this.compression = compression;
+    }
+
+    public Integer getCompressionThreshold() {
+        return compressionThreshold;
+    }
+
+    public void setCompressionThreshold(Integer compressionThreshold) {
+        this.compressionThreshold = compressionThreshold;
+    }
+
+    public Integer getCompressionLevel() {
+        return compressionLevel;
+    }
+
+    public void setCompressionLevel(Integer compressionLevel) {
+        this.compressionLevel = compressionLevel;
     }
 }
