@@ -19,6 +19,7 @@ on:
 
 jobs:
   test:
+    if: '! github.event.pull_request.draft'
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
@@ -37,6 +38,8 @@ jobs:
         run: ./docker/start_db.sh
         env:
           STARTER_MODE: cluster
+          DOCKER_IMAGE: docker.io/arangodb-preview:devel-nightly
+          COMPRESSION: true
       - name: Info
         run: mvn -version
       - name: Start Toxiproxy

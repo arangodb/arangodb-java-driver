@@ -12,6 +12,7 @@
 STARTER_MODE=${STARTER_MODE:=single}
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/arangodb:latest}
 SSL=${SSL:=false}
+COMPRESSION=${COMPRESSION:=false}
 
 STARTER_DOCKER_IMAGE=docker.io/arangodb/arangodb-starter:latest
 GW=172.28.0.1
@@ -44,6 +45,10 @@ if [ "$SSL" == "true" ]; then
     ARANGOSH_SCHEME=http+ssl
 fi
 
+if [ "$COMPRESSION" == "true" ]; then
+    STARTER_ARGS="${STARTER_ARGS} --all.http.compress-response-threshold=1"
+fi
+
 if [ "$USE_MOUNTED_DATA" == "true" ]; then
     STARTER_ARGS="${STARTER_ARGS} --starter.data-dir=/data"
     MOUNT_DATA="-v $LOCATION/data:/data"
@@ -65,7 +70,7 @@ docker run -d \
     --starter.address="${GW}" \
     --docker.image="${DOCKER_IMAGE}" \
     --starter.local --starter.mode=${STARTER_MODE} --all.log.level=debug --all.log.output=+ --log.verbose \
-    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true --all.http.compress-response-threshold=1
+    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true
 
 
 wait_server() {
