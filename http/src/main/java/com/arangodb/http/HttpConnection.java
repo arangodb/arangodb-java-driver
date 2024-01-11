@@ -20,12 +20,10 @@
 
 package com.arangodb.http;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.ContentType;
-import com.arangodb.PackageVersion;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
+import com.arangodb.http.compression.Encoder;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.RequestType;
@@ -37,6 +35,7 @@ import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.JdkSslContext;
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
@@ -75,10 +74,12 @@ public class HttpConnection implements Connection {
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
-    private final ContentType contentType;
     private String auth;
+    private final int compressionThreshold;
+    private final Encoder encoder;
     private final WebClient client;
     private final Integer timeout;
+    private final MultiMap commonHeaders = MultiMap.caseInsensitiveMultiMap();
     private final Vertx vertx;
 
     private static String getUserAgent() {
@@ -88,7 +89,23 @@ public class HttpConnection implements Connection {
     HttpConnection(final ArangoConfig config, final HostDescription host) {
         super();
         Protocol protocol = config.getProtocol();
-        contentType = ContentTypeFactory.of(protocol);
+        ContentType contentType = ContentTypeFactory.of(protocol);
+        if (contentType == ContentType.VPACK) {
+            commonHeaders.add(HttpHeaders.ACCEPT.toString(), CONTENT_TYPE_VPACK);
+            commonHeaders.add(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK);
+        } else if (contentType == ContentType.JSON) {
+            commonHeaders.add(HttpHeaders.ACCEPT.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
+            commonHeaders.add(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
+        } else {
+            throw new IllegalArgumentException("Unsupported protocol: " + protocol);
+        }
+        compressionThreshold = config.getCompressionThreshold();
+        Compression compression = config.getCompression();
+        encoder = Encoder.of(compression, config.getCompressionLevel());
+        if (encoder.getFormat() != null) {
+            commonHeaders.add(HttpHeaders.ACCEPT_ENCODING.toString(), encoder.getFormat());
+        }
+        commonHeaders.add("x-arango-driver", USER_AGENT);
         timeout = config.getTimeout();
         vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
         vertx.runOnContext(e -> {
@@ -127,6 +144,9 @@ public class HttpConnection implements Connection {
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort());
 
+        if (compression != Compression.NONE) {
+            webClientOptions.setTryUseCompression(true);
+        }
 
         if (Boolean.TRUE.equals(config.getUseSsl())) {
             SSLContext ctx;
@@ -236,24 +256,20 @@ public class HttpConnection implements Connection {
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
                 .timeout(timeout);
-        if (contentType == ContentType.VPACK) {
-            httpRequest.putHeader("Accept", CONTENT_TYPE_VPACK);
-        }
+
+        httpRequest.putHeaders(commonHeaders);
         addHeader(request, httpRequest);
         httpRequest.putHeader(HttpHeaders.AUTHORIZATION.toString(), auth);
-        httpRequest.putHeader("x-arango-driver", USER_AGENT);
 
         byte[] reqBody = request.getBody();
         Buffer buffer;
-        if (reqBody != null) {
-            buffer = Buffer.buffer(reqBody);
-            if (contentType == ContentType.VPACK) {
-                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK);
-            } else {
-                httpRequest.putHeader(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
-            }
-        } else {
+        if (reqBody == null) {
             buffer = Buffer.buffer();
+        } else if (reqBody.length > compressionThreshold) {
+            httpRequest.putHeader(HttpHeaders.CONTENT_ENCODING.toString(), encoder.getFormat());
+            buffer = encoder.encode(reqBody);
+        } else {
+            buffer = Buffer.buffer(reqBody);
         }
 
         try {
