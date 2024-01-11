@@ -1,5 +1,6 @@
 package mp;
 
+import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
@@ -29,6 +30,9 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<Integer> acquireHostListInterval;
     private Optional<LoadBalancingStrategy> loadBalancingStrategy;
     private Optional<Integer> responseQueueTimeSamples;
+    private Optional<Compression> compression;
+    private Optional<Integer> compressionThreshold;
+    private Optional<Integer> compressionLevel;
 
     @Override
     public Optional<List<HostDescription>> getHosts() {
@@ -111,16 +115,31 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     }
 
     @Override
+    public Optional<Compression> getCompression() {
+        return compression;
+    }
+
+    @Override
+    public Optional<Integer> getCompressionThreshold() {
+        return compressionThreshold;
+    }
+
+    @Override
+    public Optional<Integer> getCompressionLevel() {
+        return compressionLevel;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArangoConfigPropertiesMPImpl that = (ArangoConfigPropertiesMPImpl) o;
-        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples);
+        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples);
+        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel);
     }
 
     @Override
@@ -142,6 +161,9 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
                 ", acquireHostListInterval=" + acquireHostListInterval +
                 ", loadBalancingStrategy=" + loadBalancingStrategy +
                 ", responseQueueTimeSamples=" + responseQueueTimeSamples +
+                ", compression=" + compression +
+                ", compressionThreshold=" + compressionThreshold +
+                ", compressionLevel=" + compressionLevel +
                 '}';
     }
 }

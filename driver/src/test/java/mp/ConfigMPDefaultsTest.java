@@ -32,6 +32,9 @@ class ConfigMPDefaultsTest {
         assertThat(config.getAcquireHostListInterval()).isEmpty();
         assertThat(config.getLoadBalancingStrategy()).isEmpty();
         assertThat(config.getResponseQueueTimeSamples()).isEmpty();
+        assertThat(config.getCompression()).isEmpty();
+        assertThat(config.getCompressionThreshold()).isNotPresent();
+        assertThat(config.getCompressionLevel()).isNotPresent();
     }
 
 }

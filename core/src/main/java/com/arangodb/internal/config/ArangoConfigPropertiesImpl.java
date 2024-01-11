@@ -1,6 +1,7 @@
 package com.arangodb.internal.config;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
@@ -143,6 +144,21 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     @Override
     public Optional<Integer> getResponseQueueTimeSamples() {
         return Optional.ofNullable(getProperty("responseQueueTimeSamples")).map(Integer::valueOf);
+    }
+
+    @Override
+    public Optional<Compression> getCompression() {
+        return Optional.ofNullable(getProperty("compression")).map(Compression::valueOf);
+    }
+
+    @Override
+    public Optional<Integer> getCompressionThreshold() {
+        return Optional.ofNullable(getProperty("compressionThreshold")).map(Integer::valueOf);
+    }
+
+    @Override
+    public Optional<Integer> getCompressionLevel() {
+        return Optional.ofNullable(getProperty("compressionLevel")).map(Integer::valueOf);
     }
 
 }
