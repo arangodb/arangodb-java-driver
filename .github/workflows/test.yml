@@ -38,8 +38,6 @@ jobs:
           - single
           - cluster
           - activefailover
-        db-ext-names:
-          - false
         java-version:
           - 21
         user-language:
@@ -135,8 +133,6 @@ jobs:
           - single
           - cluster
           - activefailover
-        db-ext-names:
-          - false
         java-version:
           - 21
         user-language:
@@ -188,8 +184,6 @@ jobs:
           - docker.io/arangodb/arangodb:3.11.7
         topology:
           - single
-        db-ext-names:
-          - false
         java-version:
           - 21
         user-language:
@@ -272,8 +266,6 @@ jobs:
           - docker.io/arangodb/enterprise:3.11.7
         topology:
           - cluster
-        db-ext-names:
-          - false
         java-version:
           - 17
 
