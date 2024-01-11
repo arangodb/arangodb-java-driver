@@ -1,5 +1,6 @@
 package mp;
 
+import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
@@ -29,6 +30,9 @@ class ConfigMPTest {
     private final Integer acquireHostListInterval = 1234567;
     private final LoadBalancingStrategy loadBalancingStrategy = LoadBalancingStrategy.ROUND_ROBIN;
     private final Integer responseQueueTimeSamples = 12345678;
+    private final Compression compression = Compression.GZIP;
+    private final Integer compressionThreshold = 123456789;
+    private final Integer compressionLevel = 9;
 
     @Test
     void readConfig() {
@@ -66,5 +70,8 @@ class ConfigMPTest {
         assertThat(config.getAcquireHostListInterval()).hasValue(acquireHostListInterval);
         assertThat(config.getLoadBalancingStrategy()).hasValue(loadBalancingStrategy);
         assertThat(config.getResponseQueueTimeSamples()).hasValue(responseQueueTimeSamples);
+        assertThat(config.getCompression()).hasValue(compression);
+        assertThat(config.getCompressionThreshold()).hasValue(compressionThreshold);
+        assertThat(config.getCompressionLevel()).hasValue(compressionLevel);
     }
 }
