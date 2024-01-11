@@ -52,6 +52,7 @@ public abstract class ClusterTest {
     @BeforeEach
     void beforeEach() {
         enableAllEndpoints();
+        logs.reset();
     }
 
     protected static List<Endpoint> getEndpoints() {

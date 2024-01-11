@@ -37,6 +37,7 @@ public abstract class SingleServerTest {
     @BeforeEach
     void beforeEach() {
         getEndpoint().enable();
+        logs.reset();
     }
 
     protected static Endpoint getEndpoint() {
