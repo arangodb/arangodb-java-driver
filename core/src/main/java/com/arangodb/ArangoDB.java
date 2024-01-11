@@ -656,7 +656,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         /**
          * Sets the compression level. (default: {@code 6})
          *
-         * @param level compression level
+         * @param level compression level between 0 and 9
          * @return {@link ArangoDB.Builder}
          * @since ArangoDB 3.12
          */
