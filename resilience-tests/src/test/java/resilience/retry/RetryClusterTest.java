@@ -160,7 +160,6 @@ class RetryClusterTest extends ClusterTest {
         // no failover for TimeoutException
         for (int i = 0; i < 2; i++) {
             Throwable thrown = catchThrowable(arangoDB::getVersion);
-            thrown.printStackTrace();
             assertThat(thrown)
                     .isInstanceOf(ArangoDBException.class)
                     .extracting(Throwable::getCause)
@@ -199,7 +198,6 @@ class RetryClusterTest extends ClusterTest {
         // no failover for TimeoutException
         for (int i = 0; i < 2; i++) {
             Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-            thrown.printStackTrace();
             assertThat(thrown)
                     .isInstanceOf(ArangoDBException.class)
                     .extracting(Throwable::getCause)
@@ -296,7 +294,6 @@ class RetryClusterTest extends ClusterTest {
         es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {
@@ -334,7 +331,6 @@ class RetryClusterTest extends ClusterTest {
         es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {

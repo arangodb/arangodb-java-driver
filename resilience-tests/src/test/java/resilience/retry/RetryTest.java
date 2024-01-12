@@ -125,7 +125,6 @@ class RetryTest extends SingleServerTest {
         Thread.sleep(100);
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .extracting(Throwable::getCause)
@@ -161,7 +160,6 @@ class RetryTest extends SingleServerTest {
         Thread.sleep(100);
 
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .extracting(Throwable::getCause)
@@ -203,7 +201,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
         List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
@@ -250,7 +247,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
         List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
@@ -291,7 +287,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {
@@ -329,7 +324,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {
