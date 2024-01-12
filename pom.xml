@@ -405,7 +405,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <version>0.9.27</version>
+                        <version>0.9.28</version>
                         <extensions>true</extensions>
                         <executions>
                             <execution>
@@ -432,12 +432,6 @@
                 </plugins>
             </build>
             <dependencies>
-                <dependency>
-                    <groupId>com.aayushatharva.brotli4j</groupId>
-                    <artifactId>brotli4j</artifactId>
-                    <version>1.11.0</version>
-                    <scope>test</scope>
-                </dependency>
                 <dependency>
                     <groupId>javax.annotation</groupId>
                     <artifactId>javax.annotation-api</artifactId>

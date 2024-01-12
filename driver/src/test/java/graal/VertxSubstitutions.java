@@ -82,7 +82,7 @@ final class Target_io_vertx_core_eventbus_impl_clustered_ClusteredEventBusCluste
     }
 
     @Substitute
-    public MessageImpl createMessage(boolean send, String address, MultiMap headers, Object body, String codecName) {
+    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body, String codecName) {
         throw new RuntimeException("Not Implemented");
     }
 
