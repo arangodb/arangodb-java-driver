@@ -59,22 +59,22 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
-    void failover(ArangoDB arangoDB) throws IOException {
+    void failover(ArangoDB arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
-        endpoints.get(0).getProxy().disable();
+        endpoints.get(0).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
-        endpoints.get(0).getProxy().enable();
+        endpoints.get(0).enable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
     }
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
-    void failoverAsync(ArangoDBAsync arangoDB) throws IOException {
+    void failoverAsync(ArangoDBAsync arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
-        endpoints.get(0).getProxy().disable();
+        endpoints.get(0).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
-        endpoints.get(0).getProxy().enable();
+        endpoints.get(0).enable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
     }

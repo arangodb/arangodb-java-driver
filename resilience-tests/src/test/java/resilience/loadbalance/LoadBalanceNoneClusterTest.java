@@ -7,7 +7,6 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
@@ -55,20 +54,20 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
-    void failover(ArangoDB arangoDB) throws IOException {
+    void failover(ArangoDB arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
 
-        endpoints.get(0).getProxy().disable();
+        endpoints.get(0).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(1).getProxy().disable();
+        endpoints.get(1).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(2).getProxy().disable();
+        endpoints.get(2).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         enableAllEndpoints();
@@ -76,20 +75,20 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
-    void failoverAsync(ArangoDBAsync arangoDB) throws IOException {
+    void failoverAsync(ArangoDBAsync arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
 
-        endpoints.get(0).getProxy().disable();
+        endpoints.get(0).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(1).getProxy().disable();
+        endpoints.get(1).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(2).getProxy().disable();
+        endpoints.get(2).disable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         enableAllEndpoints();
