@@ -113,11 +113,6 @@ class RetryTest extends SingleServerTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
-        // https://github.com/vert-x3/vertx-web/issues/2296
-        // WebClient: HTTP/2 request timeout does not throw TimeoutException
-        assumeTrue(protocol != Protocol.HTTP2_VPACK);
-        assumeTrue(protocol != Protocol.HTTP2_JSON);
-
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
                 .protocol(protocol)
@@ -153,11 +148,6 @@ class RetryTest extends SingleServerTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectionTimeoutAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
-        // https://github.com/vert-x3/vertx-web/issues/2296
-        // WebClient: HTTP/2 request timeout does not throw TimeoutException
-        assumeTrue(protocol != Protocol.HTTP2_VPACK);
-        assumeTrue(protocol != Protocol.HTTP2_JSON);
-
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(1_000)
                 .protocol(protocol)
