@@ -38,7 +38,7 @@ jobs:
         run: ./docker/start_db.sh
         env:
           STARTER_MODE: cluster
-          DOCKER_IMAGE: docker.io/arangodb-preview:devel-nightly
+          DOCKER_IMAGE: docker.io/arangodb/arangodb-preview:devel-nightly
           COMPRESSION: true
       - name: Info
         run: mvn -version
