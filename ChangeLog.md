@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.1.1] - 2024-01-15
+
+- fixed returning `com.arangodb.internal.InternalArangoDBBuilder` from public API
+
 ## [7.1.0] - 2023-05-26
 
 - added support to Jackson 2.15
