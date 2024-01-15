@@ -113,11 +113,6 @@ class RetryTest extends SingleServerTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
-        // https://github.com/vert-x3/vertx-web/issues/2296
-        // WebClient: HTTP/2 request timeout does not throw TimeoutException
-        assumeTrue(protocol != Protocol.HTTP2_VPACK);
-        assumeTrue(protocol != Protocol.HTTP2_JSON);
-
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
                 .protocol(protocol)
@@ -130,7 +125,6 @@ class RetryTest extends SingleServerTest {
         Thread.sleep(100);
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .extracting(Throwable::getCause)
@@ -153,11 +147,6 @@ class RetryTest extends SingleServerTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectionTimeoutAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
-        // https://github.com/vert-x3/vertx-web/issues/2296
-        // WebClient: HTTP/2 request timeout does not throw TimeoutException
-        assumeTrue(protocol != Protocol.HTTP2_VPACK);
-        assumeTrue(protocol != Protocol.HTTP2_JSON);
-
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(1_000)
                 .protocol(protocol)
@@ -171,7 +160,6 @@ class RetryTest extends SingleServerTest {
         Thread.sleep(100);
 
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .extracting(Throwable::getCause)
@@ -213,7 +201,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(arangoDB::getVersion);
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
         List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
@@ -260,7 +247,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
         List<Throwable> exceptions = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
@@ -301,7 +287,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {
@@ -339,7 +324,6 @@ class RetryTest extends SingleServerTest {
         es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
 
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
-        thrown.printStackTrace();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
         if (protocol != Protocol.VST) {

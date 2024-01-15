@@ -82,7 +82,7 @@ final class Target_com_arangodb_shaded_vertx_core_eventbus_impl_clustered_Cluste
     }
 
     @Substitute
-    public MessageImpl createMessage(boolean send, String address, MultiMap headers, Object body, String codecName) {
+    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body, String codecName) {
         throw new RuntimeException("Not Implemented");
     }
 

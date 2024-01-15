@@ -2987,7 +2987,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         ArangoDBAsync arangoDB = collection.db().arango();
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            collection.grantAccess("user1", Permissions.RW);
+            collection.grantAccess("user1", Permissions.RW).get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }

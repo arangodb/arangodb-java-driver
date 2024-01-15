@@ -50,10 +50,8 @@ public abstract class ClusterTest {
     }
 
     @BeforeEach
-    void beforeEach() throws IOException {
-        for (Endpoint endpoint : endpoints) {
-            endpoint.getProxy().enable();
-        }
+    void beforeEach() {
+        enableAllEndpoints();
     }
 
     protected static List<Endpoint> getEndpoints() {
