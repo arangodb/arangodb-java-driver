@@ -20,13 +20,16 @@
 
 package com.arangodb;
 
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.net.*;
 import com.arangodb.model.*;
+import com.arangodb.serde.ArangoSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
+import javax.net.ssl.SSLContext;
 import java.util.Collection;
 
 /**
@@ -333,6 +336,111 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder<Builder> {
+
+        @Override
+        public Builder loadProperties(ArangoConfigProperties properties) {
+            return super.loadProperties(properties);
+        }
+
+        @Override
+        public Builder host(String host, int port) {
+            return super.host(host, port);
+        }
+
+        @Override
+        public Builder timeout(Integer timeout) {
+            return super.timeout(timeout);
+        }
+
+        @Override
+        public Builder user(String user) {
+            return super.user(user);
+        }
+
+        @Override
+        public Builder password(String password) {
+            return super.password(password);
+        }
+
+        @Override
+        public Builder jwt(String jwt) {
+            return super.jwt(jwt);
+        }
+
+        @Override
+        public Builder useSsl(Boolean useSsl) {
+            return super.useSsl(useSsl);
+        }
+
+        @Override
+        public Builder sslContext(SSLContext sslContext) {
+            return super.sslContext(sslContext);
+        }
+
+        @Override
+        public Builder verifyHost(Boolean verifyHost) {
+            return super.verifyHost(verifyHost);
+        }
+
+        @Override
+        public Builder chunkSize(Integer chunkSize) {
+            return super.chunkSize(chunkSize);
+        }
+
+        @Override
+        public Builder maxConnections(Integer maxConnections) {
+            return super.maxConnections(maxConnections);
+        }
+
+        @Override
+        public Builder connectionTtl(Long connectionTtl) {
+            return super.connectionTtl(connectionTtl);
+        }
+
+        @Override
+        public Builder keepAliveInterval(Integer keepAliveInterval) {
+            return super.keepAliveInterval(keepAliveInterval);
+        }
+
+        @Override
+        public Builder acquireHostList(Boolean acquireHostList) {
+            return super.acquireHostList(acquireHostList);
+        }
+
+        @Override
+        public Builder acquireHostListInterval(Integer acquireHostListInterval) {
+            return super.acquireHostListInterval(acquireHostListInterval);
+        }
+
+        @Override
+        public Builder loadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) {
+            return super.loadBalancingStrategy(loadBalancingStrategy);
+        }
+
+        @Override
+        public Builder responseQueueTimeSamples(Integer responseQueueTimeSamples) {
+            return super.responseQueueTimeSamples(responseQueueTimeSamples);
+        }
+
+        @Override
+        public Builder serde(ArangoSerde serde) {
+            return super.serde(serde);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
 
         public Builder protocol(final Protocol protocol) {
             config.setProtocol(protocol);
