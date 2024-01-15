@@ -186,7 +186,7 @@
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
-            <version>22.3.2</version>
+            <version>23.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
