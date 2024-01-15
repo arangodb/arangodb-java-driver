@@ -36,9 +36,9 @@ class CompressionTest extends ClusterTest {
     }
 
     void doTest(Protocol protocol, Compression compression) {
-        assumeTrue(protocol != Protocol.VST);
-        assumeTrue(protocol != Protocol.HTTP_VPACK);
-        assumeTrue(protocol != Protocol.HTTP_JSON);
+        assumeTrue(protocol != Protocol.VST, "VST does not support compression");
+        assumeTrue(protocol != Protocol.HTTP_VPACK, "hex dumps logs");
+        assumeTrue(protocol != Protocol.HTTP_JSON, "hex dumps logs");
 
         ArangoDB adb = dbBuilder()
                 .protocol(protocol)
