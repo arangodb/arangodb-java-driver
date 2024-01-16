@@ -9,11 +9,13 @@ import org.graalvm.polyglot.Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
+@DisabledInNativeImage
 class UnicodeUtilsTest {
 
     private static final String encodeFn = "(function encode(x){return encodeURIComponent(x);})";
