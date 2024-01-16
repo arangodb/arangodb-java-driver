@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     tags: [ v** ]
-    branches:
-      - bugfix/native_ci
 
 jobs:
   test-native:
