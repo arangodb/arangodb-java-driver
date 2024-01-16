@@ -32,7 +32,6 @@ jobs:
           cache: 'maven'
           native-image-job-reports: 'true'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: 'native-image,js'
       - name: Start Database
         run: ./docker/start_db.sh
         env:
@@ -71,7 +70,6 @@ jobs:
           cache: 'maven'
           native-image-job-reports: 'true'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: 'native-image,js'
       - name: Start Database
         run: ./docker/start_db.sh
         env:

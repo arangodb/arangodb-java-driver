@@ -4,7 +4,6 @@ import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.TestUtils;
 import com.arangodb.util.UnicodeUtils;
 import org.graalvm.home.Version;
-import org.graalvm.nativeimage.ImageInfo;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.junit.jupiter.api.AfterAll;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
@@ -26,7 +24,6 @@ class UnicodeUtilsTest {
 
     @BeforeAll
     static void beforeClass() {
-        assumeFalse(ImageInfo.inImageCode(), "skipped in native mode");
         assumeTrue(Version.getCurrent().isRelease(), "This test requires GraalVM");
         context = Context.create();
         jsEncoder = context.eval("js", encodeFn);
