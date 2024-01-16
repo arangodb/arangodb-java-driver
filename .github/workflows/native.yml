@@ -17,8 +17,6 @@ jobs:
           - docker.io/arangodb/enterprise:3.11.6
         topology:
           - single
-        java-version:
-          - 17
         module:
           - driver
           - integration-tests
@@ -27,10 +25,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: 'latest'
-          java-version: ${{matrix.java-version}}
+          java-version: '21.0.1'
+          distribution: 'graalvm'
+          cache: 'maven'
+          native-image-job-reports: 'true'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: 'native-image,js'
       - name: Start Database
         run: ./docker/start_db.sh
         env:
@@ -56,8 +55,6 @@ jobs:
           - docker.io/arangodb/enterprise:3.11.6
         topology:
           - single
-        java-version:
-          - 17
         module:
           - driver
           - integration-tests
@@ -66,10 +63,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: 'latest'
-          java-version: ${{matrix.java-version}}
+          java-version: '21.0.1'
+          distribution: 'graalvm'
+          cache: 'maven'
+          native-image-job-reports: 'true'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: 'native-image,js'
       - name: Start Database
         run: ./docker/start_db.sh
         env:

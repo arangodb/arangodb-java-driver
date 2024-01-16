@@ -15,7 +15,6 @@ import org.reflections.util.FilterBuilder;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
