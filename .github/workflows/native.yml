@@ -18,7 +18,7 @@ jobs:
         topology:
           - single
         java-version:
-          - 17
+          - 21
         module:
           - driver
           - integration-tests
@@ -57,7 +57,7 @@ jobs:
         topology:
           - single
         java-version:
-          - 17
+          - 21
         module:
           - driver
           - integration-tests

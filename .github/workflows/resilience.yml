@@ -11,17 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TOXIPROXY_VERSION: v2.5.0
-
-    strategy:
-      fail-fast: false
+      TOXIPROXY_VERSION: v2.7.0
 
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: 19
+          java-version: 21
           distribution: 'adopt'
           cache: maven
       - name: Start Database
