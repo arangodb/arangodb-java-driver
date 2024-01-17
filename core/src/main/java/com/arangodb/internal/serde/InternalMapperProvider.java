@@ -25,7 +25,9 @@ class InternalMapperProvider {
         ServiceLoader<JsonFactory> sl = ServiceLoader.load(JsonFactory.class);
         for (JsonFactory jf : sl) {
             if (formatName.equals(jf.getFormatName())) {
-                JacksonUtils.tryConfigureJsonFactory(jf);
+                if (contentType == ContentType.JSON) {
+                    JacksonUtils.tryConfigureJsonFactory(jf);
+                }
                 return new ObjectMapper(jf);
             }
             LOG.debug("Required format ({}) not supported by JsonFactory: {}", formatName, jf.getClass().getName());
