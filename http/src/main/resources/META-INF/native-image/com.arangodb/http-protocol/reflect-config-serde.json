@@ -1,0 +1,112 @@
+[
+  {
+    "name": "com.fasterxml.jackson.core.JsonFactory",
+    "methods": [
+      {
+        "name": "setStreamReadConstraints",
+        "parameterTypes": [
+          "com.fasterxml.jackson.core.StreamReadConstraints"
+        ]
+      },
+      {
+        "name": "setStreamWriteConstraints",
+        "parameterTypes": [
+          "com.fasterxml.jackson.core.StreamWriteConstraints"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.StreamReadConstraints",
+    "methods": [
+      {
+        "name": "builder",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.StreamReadConstraints$Builder",
+    "methods": [
+      {
+        "name": "build",
+        "parameterTypes": []
+      },
+      {
+        "name": "maxDocumentLength",
+        "parameterTypes": [
+          "long"
+        ]
+      },
+      {
+        "name": "maxNameLength",
+        "parameterTypes": [
+          "int"
+        ]
+      },
+      {
+        "name": "maxNestingDepth",
+        "parameterTypes": [
+          "int"
+        ]
+      },
+      {
+        "name": "maxNumberLength",
+        "parameterTypes": [
+          "int"
+        ]
+      },
+      {
+        "name": "maxStringLength",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.StreamWriteConstraints",
+    "methods": [
+      {
+        "name": "builder",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.StreamWriteConstraints$Builder",
+    "methods": [
+      {
+        "name": "build",
+        "parameterTypes": []
+      },
+      {
+        "name": "maxNestingDepth",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.Version",
+    "methods": [
+      {
+        "name": "getMajorVersion",
+        "parameterTypes": []
+      },
+      {
+        "name": "getMinorVersion",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.fasterxml.jackson.core.json.PackageVersion",
+    "fields": [
+      {
+        "name": "VERSION"
+      }
+    ]
+  }
+]
