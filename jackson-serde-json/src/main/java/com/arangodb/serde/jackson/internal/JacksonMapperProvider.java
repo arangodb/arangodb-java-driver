@@ -2,6 +2,7 @@ package com.arangodb.serde.jackson.internal;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
+import com.arangodb.internal.serde.JacksonUtils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -28,7 +29,10 @@ public interface JacksonMapperProvider extends Supplier<ObjectMapper> {
 
         ServiceLoader<JsonFactory> sl = ServiceLoader.load(JsonFactory.class);
         for (JsonFactory jf : sl) {
-            if(formatName.equals(jf.getFormatName())){
+            if (formatName.equals(jf.getFormatName())) {
+                if (contentType == ContentType.JSON) {
+                    JacksonUtils.tryConfigureJsonFactory(jf);
+                }
                 return new ObjectMapper(jf);
             }
             LOG.debug("Required format ({}) not supported by JsonFactory: {}", formatName, jf.getClass().getName());
