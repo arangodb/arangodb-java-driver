@@ -20,11 +20,14 @@
 
 package com.arangodb.model;
 
+import com.arangodb.arch.NoRawTypesInspection;
+
 /**
  * @author Heiko Kernbach
  * <p>
  * This final class is used for all index similarities
  */
+@NoRawTypesInspection
 public abstract class IndexOptions<T extends IndexOptions<T>> {
 
     private Boolean inBackground;

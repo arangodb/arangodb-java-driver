@@ -12,15 +12,12 @@ import com.tngtech.archunit.lang.ArchRule;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.tngtech.archunit.base.DescribedPredicate.and;
-import static com.tngtech.archunit.base.DescribedPredicate.not;
-import static com.tngtech.archunit.base.DescribedPredicate.or;
+import static arch.ArchUtils.*;
+import static com.tngtech.archunit.base.DescribedPredicate.*;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.core.domain.properties.CanBeAnnotated.Predicates.annotatedWith;
-import static com.tngtech.archunit.core.domain.properties.HasReturnType.Predicates.rawReturnType;
-import static com.tngtech.archunit.core.domain.properties.HasType.Predicates.rawType;
-import static com.tngtech.archunit.lang.conditions.ArchConditions.*;
+import static com.tngtech.archunit.lang.conditions.ArchConditions.be;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 @AnalyzeClasses(packages = "com.arangodb..", importOptions = {ImportOption.DoNotIncludeTests.class})
@@ -41,15 +38,21 @@ public class InternalsTest {
             );
 
     /**
+     * Tests whether the type and all its raw generic types do not extend or implement internal classes
+     */
+    private static final DescribedPredicate<JavaType> typePredicate =
+            JavaTypeExt.rawTypes(not(assignableTo(resideInAPackage("..internal.."))));
+
+    /**
      * Superclasses of types used in public API must either:
      * - not reside in internal packages, or
      * - be annotated with {@link UsedInApi}
      */
-    private static final DescribedPredicate<? super JavaClass> superclassesPredicate =
-            haveSuperclasses(or(
+    private static final DescribedPredicate<JavaType> superclassesPredicate =
+            JavaTypeExt.rawTypes(superclasses(or(
                     not(resideInAPackage("..internal..")),
                     annotatedWith(UsedInApi.class)
-            ));
+            )));
 
     /**
      * Classes in the public API must either:
@@ -58,7 +61,7 @@ public class InternalsTest {
      */
     private static final DescribedPredicate<JavaClass> classPredicate =
             or(
-                    not(assignableTo(resideInAPackage("..internal.."))),
+                    typePredicate,
                     and(
                             annotatedWith(UnstableApi.class),
                             superclassesPredicate
@@ -72,10 +75,10 @@ public class InternalsTest {
      */
     private static final DescribedPredicate<JavaField> fieldPredicate =
             or(
-                    rawType(not(assignableTo(resideInAPackage("..internal..")))),
+                    HasTypeExt.type(typePredicate),
                     and(
                             annotatedWith(UnstableApi.class),
-                            rawType(superclassesPredicate)
+                            HasTypeExt.type(superclassesPredicate)
                     )
             );
 
@@ -86,10 +89,10 @@ public class InternalsTest {
      */
     private static final DescribedPredicate<JavaMethod> methodReturnTypePredicate =
             or(
-                    rawReturnType(not(assignableTo(resideInAPackage("..internal..")))),
+                    HasReturnTypeExt.returnType(typePredicate),
                     and(
                             annotatedWith(UnstableApi.class),
-                            rawReturnType(superclassesPredicate)
+                            HasReturnTypeExt.returnType(superclassesPredicate)
                     )
             );
 
@@ -99,10 +102,13 @@ public class InternalsTest {
      * - be annotated with {@link UnstableApi} and have type annotated with {@link UsedInApi}
      */
     private static final DescribedPredicate<JavaCodeUnit> paramPredicate = haveParams(or(
-            ofType(not(resideInAPackage("..internal.."))),
+            HasTypeExt.rawTypes(not(resideInAPackage("..internal.."))),
             and(
                     annotatedWith(UnstableApi.class),
-                    ofType(annotatedWith(UsedInApi.class))
+                    HasTypeExt.rawTypes(or(
+                            not(resideInAPackage("..internal..")),
+                            annotatedWith(UsedInApi.class)
+                    ))
             )
     ));
 
@@ -139,29 +145,17 @@ public class InternalsTest {
             .and().areDeclaredInClassesThat(packageFilter)
             .should(be(paramPredicate));
 
-    private static DescribedPredicate<? super JavaClass> haveSuperclasses(
-            DescribedPredicate<? super JavaClass> matchingPredicate
-    ) {
-        return new DescribedPredicate<JavaClass>("have self, superclasses or implemented interfaces "
-                + matchingPredicate.getDescription()) {
+    private static DescribedPredicate<JavaClass> superclasses(DescribedPredicate<? super JavaClass> predicate) {
+        return new DescribedPredicate<JavaClass>("superclasses " + predicate.getDescription()) {
             @Override
-            public boolean test(JavaClass javaClass) {
+            public boolean test(JavaClass clazz) {
                 return Stream.of(
-                                Stream.of(javaClass),
-                                javaClass.getAllRawSuperclasses().stream(),
-                                javaClass.getAllRawInterfaces().stream()
+                                Stream.of(clazz),
+                                clazz.getAllRawSuperclasses().stream(),
+                                clazz.getAllRawInterfaces().stream()
                         )
                         .flatMap(Function.identity())
-                        .allMatch(matchingPredicate);
-            }
-        };
-    }
-
-    private static DescribedPredicate<? super JavaParameter> ofType(DescribedPredicate<? super JavaClass> predicate) {
-        return new DescribedPredicate<JavaParameter>("of type " + predicate.getDescription()) {
-            @Override
-            public boolean test(JavaParameter javaParameter) {
-                return predicate.test(javaParameter.getRawType());
+                        .allMatch(predicate);
             }
         };
     }
