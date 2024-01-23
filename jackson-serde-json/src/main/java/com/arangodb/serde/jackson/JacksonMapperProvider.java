@@ -1,4 +1,4 @@
-package com.arangodb.serde.jackson.internal;
+package com.arangodb.serde.jackson;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
@@ -9,15 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ServiceLoader;
-import java.util.function.Supplier;
 
 /**
  * Not shaded in arangodb-java-driver-shaded.
  */
-public interface JacksonMapperProvider extends Supplier<ObjectMapper> {
-    Logger LOG = LoggerFactory.getLogger(JacksonMapperProvider.class);
+public class JacksonMapperProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(JacksonMapperProvider.class);
 
-    static ObjectMapper of(final ContentType contentType) {
+    public static ObjectMapper of(final ContentType contentType) {
         String formatName;
         if (contentType == ContentType.JSON) {
             formatName = "JSON";
