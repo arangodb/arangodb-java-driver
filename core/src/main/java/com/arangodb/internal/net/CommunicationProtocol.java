@@ -21,6 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface CommunicationProtocol extends Closeable {
 
     default InternalResponse execute(final InternalRequest request, final HostHandle hostHandle) {

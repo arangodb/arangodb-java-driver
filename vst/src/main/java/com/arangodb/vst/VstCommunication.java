@@ -21,6 +21,7 @@
 package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
@@ -38,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public final class VstCommunication extends Communication {
     private static final String ENCRYPTION_PLAIN = "plain";
     private static final String ENCRYPTION_JWT = "jwt";

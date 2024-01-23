@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
 import com.arangodb.PackageVersion;
 import com.arangodb.Protocol;
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
@@ -67,6 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@UnstableApi
 public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";

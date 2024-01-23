@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 
@@ -29,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface Connection extends Closeable {
     void setJwt(String jwt);
 

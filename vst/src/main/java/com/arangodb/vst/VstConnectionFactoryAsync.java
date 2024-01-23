@@ -20,6 +20,7 @@
 
 package com.arangodb.vst;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
@@ -29,6 +30,7 @@ import com.arangodb.vst.internal.VstConnectionAsync;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public class VstConnectionFactoryAsync implements ConnectionFactory {
 
     @Override

@@ -1,6 +1,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
+@UsedInApi
 public abstract class Communication implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
     protected final HostHandler hostHandler;

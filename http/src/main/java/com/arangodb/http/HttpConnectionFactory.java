@@ -20,6 +20,7 @@
 
 package com.arangodb.http;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
@@ -28,6 +29,7 @@ import com.arangodb.internal.net.ConnectionFactory;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public class HttpConnectionFactory implements ConnectionFactory {
     @Override
     public Connection create(final ArangoConfig config, final HostDescription host) {
