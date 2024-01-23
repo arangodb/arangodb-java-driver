@@ -20,12 +20,14 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface ConnectionFactory {
     Connection create(ArangoConfig config, HostDescription host);
 }

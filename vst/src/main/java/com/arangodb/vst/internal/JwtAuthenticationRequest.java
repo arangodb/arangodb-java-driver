@@ -1,7 +1,9 @@
 package com.arangodb.vst.internal;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.internal.InternalRequest;
 
+@UsedInApi
 public class JwtAuthenticationRequest extends InternalRequest {
 
     private final String token;

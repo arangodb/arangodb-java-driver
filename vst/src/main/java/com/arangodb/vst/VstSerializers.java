@@ -1,5 +1,6 @@
 package com.arangodb.vst;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.vst.internal.AuthenticationRequest;
 import com.arangodb.vst.internal.JwtAuthenticationRequest;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -13,7 +14,7 @@ public final class VstSerializers {
     static final JsonSerializer<AuthenticationRequest> AUTHENTICATION_REQUEST =
             new JsonSerializer<AuthenticationRequest>() {
                 @Override
-                public void serialize(AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                public void serialize(@UnstableApi AuthenticationRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
                     gen.writeStartArray();
                     gen.writeNumber(value.getVersion());
                     gen.writeNumber(value.getType());
@@ -26,7 +27,7 @@ public final class VstSerializers {
     static final JsonSerializer<JwtAuthenticationRequest> JWT_AUTHENTICATION_REQUEST =
             new JsonSerializer<JwtAuthenticationRequest>() {
                 @Override
-                public void serialize(JwtAuthenticationRequest value, JsonGenerator gen,
+                public void serialize(@UnstableApi JwtAuthenticationRequest value, JsonGenerator gen,
                                       SerializerProvider serializers) throws IOException {
                     gen.writeStartArray();
                     gen.writeNumber(value.getVersion());

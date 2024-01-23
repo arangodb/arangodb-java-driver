@@ -3,6 +3,7 @@ package com.arangodb.internal.config;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
 import com.arangodb.Protocol;
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
 import com.arangodb.entity.LoadBalancingStrategy;
@@ -21,6 +22,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+@UsedInApi
 public class ArangoConfig {
     private final List<HostDescription> hosts = new ArrayList<>();
     private Protocol protocol;

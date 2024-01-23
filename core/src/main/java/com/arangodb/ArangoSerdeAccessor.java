@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.serde.InternalSerde;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -35,6 +36,7 @@ public interface ArangoSerdeAccessor {
      *
      * @return ArangoSerde
      */
+    @UnstableApi
     InternalSerde getSerde();
 
 }

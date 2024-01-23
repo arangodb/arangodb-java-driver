@@ -1,11 +1,13 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 
+@UsedInApi
 public interface InternalSerde extends ArangoSerde {
 
     /**

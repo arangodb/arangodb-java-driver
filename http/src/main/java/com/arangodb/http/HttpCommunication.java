@@ -20,6 +20,7 @@
 
 package com.arangodb.http;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Connection;
@@ -31,6 +32,7 @@ import java.io.IOException;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@UnstableApi
 public class HttpCommunication extends Communication {
 
     HttpCommunication(final ArangoConfig config, final HostHandler hostHandler) {
@@ -38,7 +40,7 @@ public class HttpCommunication extends Communication {
     }
 
     @Override
-    protected void connect(Connection conn) throws IOException {
+    protected void connect(@UnstableApi Connection conn) throws IOException {
         // no-op
     }
 

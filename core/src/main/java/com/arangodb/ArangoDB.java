@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
 import com.arangodb.entity.*;
@@ -626,6 +627,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return this;
         }
 
+        @UnstableApi
         protected ProtocolProvider protocolProvider(Protocol protocol) {
             ServiceLoader<ProtocolProvider> loader = ServiceLoader.load(ProtocolProvider.class);
             for (ProtocolProvider p : loader) {
@@ -637,7 +639,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             throw new ArangoDBException("No ProtocolProvider found for protocol: " + protocol);
         }
 
-        protected HostHandler createHostHandler(final HostResolver hostResolver) {
+        @UnstableApi
+        protected HostHandler createHostHandler(@UnstableApi final HostResolver hostResolver) {
 
             final HostHandler hostHandler;
 
@@ -664,7 +667,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
         }
 
-        protected HostResolver createHostResolver(final Collection<Host> hosts, final ConnectionFactory connectionFactory) {
+        @UnstableApi
+        protected HostResolver createHostResolver(@UnstableApi final Collection<Host> hosts, @UnstableApi final ConnectionFactory connectionFactory) {
             Boolean acquireHostList = config.getAcquireHostList();
             if (acquireHostList != null && acquireHostList) {
                 LOG.debug("acquireHostList -> Use ExtendedHostResolver");
@@ -676,7 +680,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
         }
 
-        protected Collection<Host> createHostList(final ConnectionFactory connectionFactory) {
+        @UnstableApi
+        protected Collection<Host> createHostList(@UnstableApi final ConnectionFactory connectionFactory) {
             final Collection<Host> hostList = new ArrayList<>();
             for (final HostDescription host : config.getHosts()) {
                 hostList.add(HostUtils.createHost(host, config, connectionFactory));

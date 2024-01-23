@@ -20,11 +20,13 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.HostDescription;
 
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public class HostHandle {
 
     private HostDescription host;

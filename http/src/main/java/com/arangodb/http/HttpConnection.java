@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ContentType;
 import com.arangodb.PackageVersion;
 import com.arangodb.Protocol;
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
@@ -67,6 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@UnstableApi
 public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
@@ -222,13 +224,14 @@ public class HttpConnection implements Connection {
     }
 
     @Override
-    public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request) {
+    @UnstableApi
+    public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
         return rfuture;
     }
 
-    public void doExecute(final InternalRequest request, final CompletableFuture<InternalResponse> rfuture) {
+    public void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)

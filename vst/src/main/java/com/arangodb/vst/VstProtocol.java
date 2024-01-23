@@ -21,6 +21,7 @@
 package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.net.CommunicationProtocol;
@@ -34,6 +35,7 @@ import java.util.concurrent.Executors;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public class VstProtocol implements CommunicationProtocol {
 
     private final VstCommunication communication;
@@ -45,7 +47,8 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public CompletableFuture<InternalResponse> executeAsync(InternalRequest request, HostHandle hostHandle) {
+    @UnstableApi
+    public CompletableFuture<InternalResponse> executeAsync(@UnstableApi InternalRequest request, @UnstableApi HostHandle hostHandle) {
         if (outgoingExecutor.isShutdown()) {
             CompletableFuture<InternalResponse> cf = new CompletableFuture<>();
             cf.completeExceptionally(new ArangoDBException("VstProtocol already closed!"));

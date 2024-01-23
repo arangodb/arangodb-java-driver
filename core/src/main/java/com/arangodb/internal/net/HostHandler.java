@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.HostDescription;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.io.IOException;
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface HostHandler {
 
     Host get(HostHandle hostHandle, AccessType accessType);

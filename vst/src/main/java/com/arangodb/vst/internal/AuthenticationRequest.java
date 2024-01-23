@@ -20,11 +20,13 @@
 
 package com.arangodb.vst.internal;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.internal.InternalRequest;
 
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public class AuthenticationRequest extends InternalRequest {
 
     private final String user;

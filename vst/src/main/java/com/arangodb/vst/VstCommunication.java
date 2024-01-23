@@ -21,6 +21,7 @@
 package com.arangodb.vst;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
@@ -38,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public final class VstCommunication extends Communication {
     private static final String ENCRYPTION_PLAIN = "plain";
     private static final String ENCRYPTION_JWT = "jwt";
@@ -46,7 +48,7 @@ public final class VstCommunication extends Communication {
     private final String password;
     private volatile String jwt;
 
-    public VstCommunication(final ArangoConfig config, final HostHandler hostHandler) {
+    public VstCommunication(@UnstableApi final ArangoConfig config, @UnstableApi final HostHandler hostHandler) {
         super(config, hostHandler);
         user = config.getUser();
         password = config.getPassword();
@@ -54,7 +56,7 @@ public final class VstCommunication extends Communication {
     }
 
     @Override
-    protected void connect(Connection conn) throws IOException {
+    protected void connect(@UnstableApi Connection conn) throws IOException {
         VstConnectionAsync connection = (VstConnectionAsync) conn;
         if (!connection.isOpen()) {
             connection.open();

@@ -20,6 +20,7 @@
 
 package com.arangodb.http;
 
+import com.arangodb.arch.UnstableApi;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.net.CommunicationProtocol;
@@ -31,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author Mark Vollmary
  */
+@UnstableApi
 public class HttpProtocol implements CommunicationProtocol {
 
     private final HttpCommunication httpCommunication;
@@ -41,7 +43,8 @@ public class HttpProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle) {
+    @UnstableApi
+    public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request, @UnstableApi final HostHandle hostHandle) {
         return httpCommunication.executeAsync(request, hostHandle);
     }
 
