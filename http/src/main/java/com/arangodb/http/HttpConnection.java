@@ -224,13 +224,14 @@ public class HttpConnection implements Connection {
     }
 
     @Override
+    @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         vertx.runOnContext(e -> doExecute(request, rfuture));
         return rfuture;
     }
 
-    public void doExecute(@UnstableApi final InternalRequest request, final CompletableFuture<InternalResponse> rfuture) {
+    public void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)

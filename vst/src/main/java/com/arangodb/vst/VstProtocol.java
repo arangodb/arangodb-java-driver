@@ -47,6 +47,7 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
+    @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi InternalRequest request, @UnstableApi HostHandle hostHandle) {
         if (outgoingExecutor.isShutdown()) {
             CompletableFuture<InternalResponse> cf = new CompletableFuture<>();

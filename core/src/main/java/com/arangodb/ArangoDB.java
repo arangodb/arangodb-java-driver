@@ -668,7 +668,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         @UnstableApi
-        protected HostResolver createHostResolver(final Collection<Host> hosts, @UnstableApi final ConnectionFactory connectionFactory) {
+        protected HostResolver createHostResolver(@UnstableApi final Collection<Host> hosts, @UnstableApi final ConnectionFactory connectionFactory) {
             Boolean acquireHostList = config.getAcquireHostList();
             if (acquireHostList != null && acquireHostList) {
                 LOG.debug("acquireHostList -> Use ExtendedHostResolver");
@@ -680,6 +680,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
         }
 
+        @UnstableApi
         protected Collection<Host> createHostList(@UnstableApi final ConnectionFactory connectionFactory) {
             final Collection<Host> hostList = new ArrayList<>();
             for (final HostDescription host : config.getHosts()) {

@@ -43,6 +43,7 @@ public class HttpProtocol implements CommunicationProtocol {
     }
 
     @Override
+    @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request, @UnstableApi final HostHandle hostHandle) {
         return httpCommunication.executeAsync(request, hostHandle);
     }

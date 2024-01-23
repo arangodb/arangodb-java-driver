@@ -20,6 +20,8 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.arch.UsedInApi;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,6 +30,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public class InternalResponse {
 
     private int version = 1;
