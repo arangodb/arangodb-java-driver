@@ -56,7 +56,7 @@ public final class VstCommunication extends Communication {
     }
 
     @Override
-    protected void connect(Connection conn) throws IOException {
+    protected void connect(@UnstableApi Connection conn) throws IOException {
         VstConnectionAsync connection = (VstConnectionAsync) conn;
         if (!connection.isOpen()) {
             connection.open();

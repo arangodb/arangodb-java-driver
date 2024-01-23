@@ -47,7 +47,7 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
-    public CompletableFuture<InternalResponse> executeAsync(InternalRequest request, HostHandle hostHandle) {
+    public CompletableFuture<InternalResponse> executeAsync(@UnstableApi InternalRequest request, @UnstableApi HostHandle hostHandle) {
         if (outgoingExecutor.isShutdown()) {
             CompletableFuture<InternalResponse> cf = new CompletableFuture<>();
             cf.completeExceptionally(new ArangoDBException("VstProtocol already closed!"));

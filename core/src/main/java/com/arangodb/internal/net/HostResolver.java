@@ -20,12 +20,14 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.arch.UsedInApi;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.serde.InternalSerde;
 
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface HostResolver {
 
     default void init(ArangoExecutorSync executorSync, InternalSerde arangoSerialization) {

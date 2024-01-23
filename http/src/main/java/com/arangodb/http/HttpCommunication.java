@@ -40,7 +40,7 @@ public class HttpCommunication extends Communication {
     }
 
     @Override
-    protected void connect(Connection conn) throws IOException {
+    protected void connect(@UnstableApi Connection conn) throws IOException {
         // no-op
     }
 

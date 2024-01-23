@@ -34,7 +34,8 @@ import com.arangodb.vst.internal.VstConnectionAsync;
 public class VstConnectionFactoryAsync implements ConnectionFactory {
 
     @Override
-    public Connection create(final ArangoConfig config, final HostDescription host) {
+    @UnstableApi
+    public Connection create(@UnstableApi final ArangoConfig config, final HostDescription host) {
         return new VstConnectionAsync(config, host);
     }
 

@@ -32,7 +32,8 @@ import com.arangodb.internal.net.ConnectionFactory;
 @UnstableApi
 public class HttpConnectionFactory implements ConnectionFactory {
     @Override
-    public Connection create(final ArangoConfig config, final HostDescription host) {
+    @UnstableApi
+    public Connection create(@UnstableApi final ArangoConfig config, final HostDescription host) {
         return new HttpConnection(config, host);
     }
 }

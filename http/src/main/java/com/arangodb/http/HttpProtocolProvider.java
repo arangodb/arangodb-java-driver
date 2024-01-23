@@ -21,12 +21,14 @@ public class HttpProtocolProvider implements ProtocolProvider {
     }
 
     @Override
+    @UnstableApi
     public ConnectionFactory createConnectionFactory() {
         return new HttpConnectionFactory();
     }
 
     @Override
-    public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
+    @UnstableApi
+    public CommunicationProtocol createProtocol(@UnstableApi ArangoConfig config, @UnstableApi HostHandler hostHandler) {
         return new HttpProtocol(new HttpCommunication(config, hostHandler));
     }
 

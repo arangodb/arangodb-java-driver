@@ -17,12 +17,14 @@ public class VstProtocolProvider implements ProtocolProvider {
     }
 
     @Override
+    @UnstableApi
     public ConnectionFactory createConnectionFactory() {
         return new VstConnectionFactoryAsync();
     }
 
     @Override
-    public CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler) {
+    @UnstableApi
+    public CommunicationProtocol createProtocol(@UnstableApi ArangoConfig config, @UnstableApi HostHandler hostHandler) {
         return new VstProtocol(new VstCommunication(config, hostHandler));
     }
 
