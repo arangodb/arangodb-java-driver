@@ -48,7 +48,7 @@ public final class VstCommunication extends Communication {
     private final String password;
     private volatile String jwt;
 
-    public VstCommunication(final ArangoConfig config, final HostHandler hostHandler) {
+    public VstCommunication(@UnstableApi final ArangoConfig config, @UnstableApi final HostHandler hostHandler) {
         super(config, hostHandler);
         user = config.getUser();
         password = config.getPassword();
