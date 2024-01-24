@@ -23,22 +23,27 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>http-protocol</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>vst-protocol</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-dataformat-velocypack</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <!-- build arangodb-java-driver before so that we can use the javadoc artifact -->

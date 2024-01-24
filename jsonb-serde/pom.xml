@@ -29,6 +29,7 @@
             <groupId>jakarta.json.bind</groupId>
             <artifactId>jakarta.json.bind-api</artifactId>
             <version>3.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
