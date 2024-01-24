@@ -42,7 +42,7 @@ jobs:
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
         working-directory: ${{matrix.module}}
-        run: mvn --no-transfer-progress -Pnative test
+        run: mvn --no-transfer-progress -Pnative -P'!arch-test' test
 
   test-native-ssl:
     timeout-minutes: 20
@@ -81,4 +81,4 @@ jobs:
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test Native
         working-directory: ${{matrix.module}}
-        run: mvn --no-transfer-progress -Pnative -Dgroups=ssl -DSslTest=true test
+        run: mvn --no-transfer-progress -Pnative -P'!arch-test' -Dgroups=ssl -DSslTest=true test

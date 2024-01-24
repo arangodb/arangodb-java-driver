@@ -56,7 +56,7 @@ mvn test
 ```shell
 mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
 cd driver
-mvn -Pnative test
+mvn -Pnative -P'!arch-test' test
 ```
 
 
@@ -64,7 +64,7 @@ mvn -Pnative test
 ```shell
 mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
 cd integration-tests
-mvn -Pnative test
+mvn -Pnative -P'!arch-test' test
 ```
 
 
