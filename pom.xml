@@ -323,6 +323,7 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <requireExplicitDependencyScope/>
                                 <requireMavenVersion>
                                     <version>3.6</version>
                                 </requireMavenVersion>

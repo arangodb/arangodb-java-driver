@@ -27,6 +27,7 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>velocypack</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

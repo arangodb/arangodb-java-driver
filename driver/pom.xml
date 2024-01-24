@@ -168,14 +168,17 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>http-protocol</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-serde-json</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
