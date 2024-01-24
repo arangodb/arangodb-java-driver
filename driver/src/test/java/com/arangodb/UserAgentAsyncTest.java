@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserAgentAsyncTest extends BaseJunit5 {
 
-    private static final String EXPECTED_VERSION = "7.5.0";
+    private static final String EXPECTED_VERSION = "7.5.1";
 
     @Test
     void packageVersion() {

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.5.1] - 2024-01-24
+
+- fixed inclusion of transitive dependency on `com.tngtech.archunit:archunit-junit5`
+
+
 ## [7.5.0] - 2024-01-23
 
 - updated Vert.x to version 4.5 (#532)
