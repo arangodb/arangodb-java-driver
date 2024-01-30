@@ -1,6 +1,39 @@
 [
   {
+    "name": "com.arangodb.internal.serde.JacksonUtils$JsonFactory",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints$Builder",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints$Static",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints$Builder",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints$Static",
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.internal.serde.JacksonUtils$Version",
+    "queryAllDeclaredMethods": true
+  },
+  {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.JsonFactory",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "setStreamReadConstraints",
@@ -13,11 +46,16 @@
         "parameterTypes": [
           "com.arangodb.shaded.fasterxml.jackson.core.StreamWriteConstraints"
         ]
+      },
+      {
+        "name": "version",
+        "parameterTypes": []
       }
     ]
   },
   {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.StreamReadConstraints",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "builder",
@@ -27,6 +65,7 @@
   },
   {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.StreamReadConstraints$Builder",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "build",
@@ -66,6 +105,7 @@
   },
   {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.StreamWriteConstraints",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "builder",
@@ -75,6 +115,7 @@
   },
   {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.StreamWriteConstraints$Builder",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "build",
@@ -90,6 +131,7 @@
   },
   {
     "name": "com.arangodb.shaded.fasterxml.jackson.core.Version",
+    "queryAllPublicMethods": true,
     "methods": [
       {
         "name": "getMajorVersion",
@@ -98,14 +140,6 @@
       {
         "name": "getMinorVersion",
         "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.arangodb.shaded.fasterxml.jackson.core.json.PackageVersion",
-    "fields": [
-      {
-        "name": "VERSION"
       }
     ]
   }

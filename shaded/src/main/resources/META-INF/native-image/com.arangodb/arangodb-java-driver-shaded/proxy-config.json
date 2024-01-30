@@ -1,0 +1,26 @@
+[
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$JsonFactory"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints$Builder"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamReadConstraints$Static"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints$Builder"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$StreamWriteConstraints$Static"]
+  },
+  {
+    "interfaces":["com.arangodb.internal.serde.JacksonUtils$Version"]
+  }
+]
