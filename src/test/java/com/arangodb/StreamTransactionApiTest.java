@@ -47,6 +47,7 @@ public class StreamTransactionApiTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "stream_transactions_api_test";
     private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+            .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
             .map(p -> new ArangoDB.Builder()
                     .useProtocol(p)
                     .serializer(new ArangoJack())
