@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -33,6 +34,7 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
         ArangoDB arangoDB = getBuilder(protocol).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -44,6 +46,7 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void authenticated(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
         ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();
@@ -54,6 +57,7 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void updateJwt(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
         ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();
