@@ -16,10 +16,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class BaseJunit5 {
+public class BaseJunit5 {
     protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
 
+    private static final ArangoDB adb = new ArangoDB.Builder()
+            .useProtocol(Protocol.HTTP_JSON)
+            .serializer(new ArangoJack())
+            .build();
+
+    private static final ArangoDBVersion version = adb.getVersion();
+
     private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+            .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
             .map(p -> new ArangoDB.Builder()
                     .useProtocol(p)
                     .serializer(new ArangoJack())
@@ -39,7 +47,7 @@ class BaseJunit5 {
     }
 
     static ArangoDatabase initDB(DbName name) {
-        ArangoDatabase database = adbs.get(0).db(name);
+        ArangoDatabase database = adb.db(name);
         if (!database.exists())
             database.create();
         return database;
@@ -50,7 +58,7 @@ class BaseJunit5 {
     }
 
     static void dropDB(DbName name) {
-        ArangoDatabase database = adbs.get(0).db(name);
+        ArangoDatabase database = adb.db(name);
         if (database.exists())
             database.drop();
     }
@@ -87,43 +95,43 @@ class BaseJunit5 {
     static void shutdown() {
         dropDB(TEST_DB);
         adbs.forEach(ArangoDB::shutdown);
+        adb.shutdown();
     }
 
     static String rnd() {
         return UUID.randomUUID().toString();
     }
 
-    boolean isAtLeastVersion(final int major, final int minor) {
+    public static boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
     }
 
-    boolean isAtLeastVersion(final int major, final int minor, final int patch) {
-        return TestUtils.isAtLeastVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
+    public static boolean isAtLeastVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isAtLeastVersion(version.getVersion(), major, minor, patch);
     }
 
-    boolean isLessThanVersion(final int major, final int minor) {
+    public static boolean isLessThanVersion(final int major, final int minor) {
         return isLessThanVersion(major, minor, 0);
     }
 
-    boolean isLessThanVersion(final int major, final int minor, final int patch) {
-        return TestUtils.isLessThanVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
+    public static boolean isLessThanVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
     }
 
-    boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(adbs.get(0).getEngine().getName());
+    public static boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
+        return name.equals(adb.getEngine().getName());
     }
 
-    boolean isSingleServer() {
-        return adbs.get(0).getRole() == ServerRole.SINGLE;
+    public static boolean isSingleServer() {
+        return adb.getRole() == ServerRole.SINGLE;
     }
 
-    boolean isCluster() {
-        return adbs.get(0).getRole() == ServerRole.COORDINATOR;
+    public static boolean isCluster() {
+        return adb.getRole() == ServerRole.COORDINATOR;
     }
 
-    boolean isEnterprise() {
-        return adbs.get(0).getVersion().getLicense() == License.ENTERPRISE;
+    public static boolean isEnterprise() {
+        return adb.getVersion().getLicense() == License.ENTERPRISE;
     }
-
 
 }

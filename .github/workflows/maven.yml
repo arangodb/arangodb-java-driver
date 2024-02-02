@@ -20,12 +20,12 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.9.10
-          - docker.io/arangodb/arangodb:3.10.6
-          - docker.io/arangodb/arangodb:3.11.0
-          - docker.io/arangodb/enterprise:3.9.10
-          - docker.io/arangodb/enterprise:3.10.6
-          - docker.io/arangodb/enterprise:3.11.0
+          - docker.io/arangodb/arangodb:3.10.13
+          - docker.io/arangodb/arangodb:3.11.6
+          - docker.io/arangodb/arangodb-preview:devel-nightly
+          - docker.io/arangodb/enterprise:3.10.13
+          - docker.io/arangodb/enterprise:3.11.6
+          - docker.io/arangodb/enterprise-preview:devel-nightly
         topology:
           - single
           - cluster
@@ -36,17 +36,11 @@ jobs:
           - 8
         user-language:
           - en
-        include:
-          - docker-img: docker.io/arangodb/arangodb-preview:3.11.0-beta.1
-            topology: single
-            db-ext-names: true
-            java-version: 11
-            user-language: tr
-          - docker-img: docker.io/arangodb/enterprise-preview:3.11.0-beta.1
-            topology: cluster
-            db-ext-names: true
-            java-version: 17
-            user-language: tr
+        exclude:
+          - docker-img: docker.io/arangodb/arangodb-preview:devel-nightly
+            topology: activefailover
+          - docker-img: docker.io/arangodb/enterprise-preview:devel-nightly
+            topology: activefailover
 
     steps:
       - uses: actions/checkout@v2
@@ -92,7 +86,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.0
+          - docker.io/arangodb/arangodb:3.11.6
         topology:
           - single
           - cluster
@@ -130,57 +124,4 @@ jobs:
         run: mvn -version
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
-
-  sonar:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        docker-img:
-          - docker.io/arangodb/enterprise:3.11.0
-        topology:
-          - cluster
-        db-ext-names:
-          - false
-        java-version:
-          - 11
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{matrix.java-version}}
-          distribution: 'adopt'
-          cache: maven
-      - name: Start Database
-        run: ./docker/start_db.sh
-        env:
-          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
-          STARTER_MODE: ${{matrix.topology}}
-          DOCKER_IMAGE: ${{matrix.docker-img}}
-          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
-      - name: Info
-        run: mvn -version
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B --no-transfer-progress -Dgpg.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
 
