@@ -129,10 +129,10 @@ class ArangoDBTest extends BaseTest {
 
     @Test
     void createDatabase() throws InterruptedException, ExecutionException {
-        arangoDB.createDatabase(BaseTest.TEST_DB)
+        arangoDB.createDatabase("foo")
                 .whenComplete((result, ex) -> assertThat(result).isEqualTo(true))
                 .get();
-        arangoDB.db(BaseTest.TEST_DB).drop().get();
+        arangoDB.db("foo").drop().get();
     }
 
     @Test
@@ -190,9 +190,9 @@ class ArangoDBTest extends BaseTest {
 
     @Test
     void deleteDatabase() throws InterruptedException, ExecutionException {
-        final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB).get();
+        final Boolean resultCreate = arangoDB.createDatabase("baz").get();
         assertThat(resultCreate).isTrue();
-        arangoDB.db(BaseTest.TEST_DB).drop()
+        arangoDB.db("baz").drop()
                 .whenComplete((resultDelete, ex) -> assertThat(resultDelete).isEqualTo(true))
                 .get();
     }
@@ -204,12 +204,12 @@ class ArangoDBTest extends BaseTest {
         assertThat(dbs).isNotEmpty();
         final int dbCount = dbs.size();
         assertThat(dbs).contains("_system");
-        arangoDB.createDatabase(BaseTest.TEST_DB).get();
+        arangoDB.createDatabase("bar").get();
         dbs = arangoDB.getDatabases().get();
         assertThat(dbs).hasSizeGreaterThan(dbCount);
         assertThat(dbs).contains("_system");
-        assertThat(dbs).contains(BaseTest.TEST_DB.get());
-        arangoDB.db(BaseTest.TEST_DB).drop().get();
+        assertThat(dbs).contains("bar");
+        arangoDB.db("bar").drop().get();
     }
 
     @Test
