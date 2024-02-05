@@ -20,8 +20,11 @@
 
 package com.arangodb.async;
 
-import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.ArangoDB;
 import com.arangodb.DbName;
+import com.arangodb.Protocol;
+import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.mapping.ArangoJack;
@@ -30,7 +33,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -41,72 +45,72 @@ public abstract class BaseTest {
     static final DbName TEST_DB = DbName.of("java_driver_test_db");
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
+    private static final ArangoDB adb = new ArangoDB.Builder()
+            .useProtocol(Protocol.HTTP_JSON)
+            .serializer(new ArangoJack())
+            .build();
+    private static final ArangoDBVersion version = adb.getVersion();
 
     @BeforeAll
-    static void init() throws InterruptedException, ExecutionException {
+    public static void init() {
+        assumeTrue(isLessThanVersion(3, 12), "VST not supported");
+
         if (arangoDB == null) {
             arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         }
 
-        if (arangoDB.db(TEST_DB).exists().get()) {
-            arangoDB.db(TEST_DB).drop().get();
+        if (adb.db(TEST_DB).exists()) {
+            adb.db(TEST_DB).drop();
         }
 
-        arangoDB.createDatabase(TEST_DB).get();
+        adb.createDatabase(TEST_DB);
         BaseTest.db = arangoDB.db(TEST_DB);
     }
 
     @AfterAll
-    static void shutdown() throws InterruptedException, ExecutionException {
-        arangoDB.db(TEST_DB).drop().get();
-        arangoDB.shutdown();
-        arangoDB = null;
+    public static void shutdown() {
+        if (arangoDB != null) { // test not skipped
+            adb.db(TEST_DB).drop();
+            arangoDB.shutdown();
+            arangoDB = null;
+        }
+        adb.shutdown();
     }
 
     static String rnd() {
         return UUID.randomUUID().toString();
     }
 
-    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor, final int patch)
-            throws InterruptedException, ExecutionException {
-        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, patch);
+    protected static boolean isAtLeastVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isAtLeastVersion(version.getVersion(), major, minor, patch);
     }
 
-    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
-            throws InterruptedException, ExecutionException {
-        return isAtLeastVersion(arangoDB, major, minor, 0);
-    }
-
-    protected boolean isAtLeastVersion(final int major, final int minor, final int patch) throws InterruptedException, ExecutionException {
-        return isAtLeastVersion(arangoDB, major, minor, patch);
-    }
-
-    protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
+    protected static boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
     }
 
-    boolean isLessThanVersion(final int major, final int minor) throws ExecutionException, InterruptedException {
+    protected static boolean isLessThanVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
+    }
+
+    protected static boolean isLessThanVersion(final int major, final int minor) {
         return isLessThanVersion(major, minor, 0);
     }
 
-    boolean isLessThanVersion(final int major, final int minor, final int patch) throws ExecutionException, InterruptedException {
-        return TestUtils.isLessThanVersion(db.getVersion().get().getVersion(), major, minor, patch);
+    boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
+        return name.equals(adb.getEngine().getName());
     }
 
-    boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) throws ExecutionException, InterruptedException {
-        return name.equals(db.getEngine().get().getName());
+    boolean isSingleServer() {
+        return (adb.getRole() == ServerRole.SINGLE);
     }
 
-    boolean isSingleServer() throws ExecutionException, InterruptedException {
-        return (arangoDB.getRole().get() == ServerRole.SINGLE);
+    boolean isCluster() {
+        return adb.getRole() == ServerRole.COORDINATOR;
     }
 
-    boolean isCluster() throws ExecutionException, InterruptedException {
-        return arangoDB.getRole().get() == ServerRole.COORDINATOR;
-    }
-
-    boolean isEnterprise() throws ExecutionException, InterruptedException {
-        return arangoDB.getVersion().get().getLicense() == License.ENTERPRISE;
+    boolean isEnterprise() {
+        return version.getLicense() == License.ENTERPRISE;
     }
 
 }

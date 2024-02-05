@@ -21,13 +21,13 @@ import java.util.concurrent.ExecutionException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class JwtAuthTest {
+class JwtAuthTest extends BaseTest {
 
     private static String jwt;
     private ArangoDBAsync arangoDB;
 
     @BeforeAll
-    static void init() {
+    static void beforeAll() {
         ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();

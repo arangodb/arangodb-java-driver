@@ -23,6 +23,7 @@ package com.arangodb.async.example.graph;
 import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.BaseTest;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.mapping.ArangoJack;
@@ -36,7 +37,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
-public abstract class BaseGraphTest {
+public abstract class BaseGraphTest extends BaseTest {
 
     private static final DbName TEST_DB = DbName.of("java_driver_graph_test_db");
     private static final String GRAPH_NAME = "traversalGraph";
@@ -46,7 +47,7 @@ public abstract class BaseGraphTest {
     private static ArangoDBAsync arangoDB;
 
     @BeforeAll
-    static void init() throws InterruptedException, ExecutionException {
+    static void beforeAll() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
             arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         }
@@ -65,10 +66,12 @@ public abstract class BaseGraphTest {
     }
 
     @AfterAll
-    static void shutdown() throws InterruptedException, ExecutionException {
-        arangoDB.db(TEST_DB).drop().get();
-        arangoDB.shutdown();
-        arangoDB = null;
+    static void afterAll() throws InterruptedException, ExecutionException {
+        if (arangoDB != null) { // test not skipped
+            arangoDB.db(TEST_DB).drop().get();
+            arangoDB.shutdown();
+            arangoDB = null;
+        }
     }
 
     private static void addExampleElements() throws InterruptedException, ExecutionException {

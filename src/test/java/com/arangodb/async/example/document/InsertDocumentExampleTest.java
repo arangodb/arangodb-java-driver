@@ -20,7 +20,7 @@
 
 package com.arangodb.async.example.document;
 
-import com.arangodb.async.example.ExampleBase;
+import com.arangodb.async.example.ExampleBaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.ValueType;
@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
-class InsertDocumentExampleTest extends ExampleBase {
+class InsertDocumentExampleTest extends ExampleBaseTest {
 
     @Test
     void insertBean() throws ExecutionException, InterruptedException {

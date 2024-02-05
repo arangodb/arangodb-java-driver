@@ -24,6 +24,7 @@ import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.BaseTest;
 import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
-public class ExampleBase {
+public abstract class ExampleBaseTest extends BaseTest {
 
     protected static final String COLLECTION_NAME = "json_example_collection";
     private static final DbName DB_NAME = DbName.of("json_example_db");
@@ -42,7 +43,7 @@ public class ExampleBase {
     private static ArangoDBAsync arangoDB;
 
     @BeforeAll
-    static void setUp() throws InterruptedException, ExecutionException {
+    public static void setUp() throws InterruptedException, ExecutionException {
         arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         if (arangoDB.db(DB_NAME).exists().get()) {
             arangoDB.db(DB_NAME).drop().get();
@@ -54,9 +55,11 @@ public class ExampleBase {
     }
 
     @AfterAll
-    static void tearDown() throws InterruptedException, ExecutionException {
-        db.drop().get();
-        arangoDB.shutdown();
+    public static void tearDown() throws InterruptedException, ExecutionException {
+        if (db != null) { // test not skipped
+            db.drop().get();
+            arangoDB.shutdown();
+        }
     }
 
 }

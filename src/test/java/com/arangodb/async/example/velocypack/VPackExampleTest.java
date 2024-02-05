@@ -20,6 +20,7 @@
 
 package com.arangodb.async.example.velocypack;
 
+import com.arangodb.async.BaseTest;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
@@ -36,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
-class VPackExampleTest {
+class VPackExampleTest extends BaseTest {
 
     @Test
     void buildObject() throws VPackException {

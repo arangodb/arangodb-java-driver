@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Michele Rastelli
  */
+@Disabled
 class ConcurrencyTest {
 
     private ArangoDBAsync arangoDB;

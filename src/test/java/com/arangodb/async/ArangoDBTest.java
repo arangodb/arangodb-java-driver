@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-class ArangoDBTest {
+class ArangoDBTest extends BaseTest {
 
     private static final String ROOT = "root";
     private static final String USER = "mit dem mund";
@@ -57,23 +57,6 @@ class ArangoDBTest {
     private static Boolean extendedNames;
 
     private final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
-    private final ArangoDB arangoDBSync = new ArangoDB.Builder().serializer(new ArangoJack()).build();
-
-    private boolean isEnterprise() {
-        return arangoDBSync.getVersion().getLicense() == License.ENTERPRISE;
-    }
-
-    private boolean isCluster() {
-        return arangoDBSync.getRole() == ServerRole.COORDINATOR;
-    }
-
-    private boolean isAtLeastVersion(final int major, final int minor) {
-        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDBSync.getVersion().getVersion(), major, minor, 0);
-    }
-
-    private boolean isLessThanVersion(final int major, final int minor) {
-        return com.arangodb.util.TestUtils.isLessThanVersion(arangoDBSync.getVersion().getVersion(), major, minor, 0);
-    }
 
     private boolean supportsExtendedNames() {
         final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();

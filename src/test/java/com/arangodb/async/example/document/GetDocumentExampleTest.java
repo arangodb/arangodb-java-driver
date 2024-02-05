@@ -20,7 +20,7 @@
 
 package com.arangodb.async.example.document;
 
-import com.arangodb.async.example.ExampleBase;
+import com.arangodb.async.example.ExampleBaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.velocypack.VPackSlice;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
-class GetDocumentExampleTest extends ExampleBase {
+class GetDocumentExampleTest extends ExampleBaseTest {
 
     private static String key = null;
 

@@ -40,7 +40,7 @@ class ArangoViewTest extends BaseTest {
 
     @BeforeAll
     static void setup() throws InterruptedException, ExecutionException {
-        if (!isAtLeastVersion(arangoDB, 3, 4))
+        if (!isAtLeastVersion(3, 4))
             return;
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH).get();
     }

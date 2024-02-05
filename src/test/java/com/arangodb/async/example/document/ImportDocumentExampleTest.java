@@ -20,7 +20,7 @@
 
 package com.arangodb.async.example.document;
 
-import com.arangodb.async.example.ExampleBase;
+import com.arangodb.async.example.ExampleBaseTest;
 import com.arangodb.entity.DocumentImportEntity;
 import com.arangodb.model.DocumentImportOptions;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @author Michele Rastelli
  */
-class ImportDocumentExampleTest extends ExampleBase {
+class ImportDocumentExampleTest extends ExampleBaseTest {
 
     private static final int MAX_PENDING_REQUESTS = 10;
 
