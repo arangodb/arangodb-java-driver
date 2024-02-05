@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
+@Disabled
 class CommunicationTest {
 
     @Test

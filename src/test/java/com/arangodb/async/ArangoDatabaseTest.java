@@ -998,18 +998,11 @@ class ArangoDatabaseTest extends BaseTest {
             assertThat(info.getName()).isEqualTo(TEST_DB.get());
             assertThat(info.getPath()).isNotNull();
             assertThat(info.getIsSystem()).isFalse();
-
-            try {
-                if (isAtLeastVersion(3, 6) && isCluster()) {
-                    assertThat(info.getSharding()).isNotNull();
-                    assertThat(info.getWriteConcern()).isNotNull();
-                    assertThat(info.getReplicationFactor()).isNotNull();
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                fail();
+            if (isCluster()) {
+                assertThat(info.getSharding()).isNotNull();
+                assertThat(info.getWriteConcern()).isNotNull();
+                assertThat(info.getReplicationFactor()).isNotNull();
             }
-
         });
         f.get();
     }

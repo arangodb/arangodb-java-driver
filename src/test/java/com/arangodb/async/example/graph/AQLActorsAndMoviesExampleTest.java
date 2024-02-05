@@ -21,10 +21,7 @@
 package com.arangodb.async.example.graph;
 
 import com.arangodb.DbName;
-import com.arangodb.async.ArangoCollectionAsync;
-import com.arangodb.async.ArangoCursorAsync;
-import com.arangodb.async.ArangoDBAsync;
-import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.*;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
@@ -47,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Actors and Movies Database</a>
  */
 @SuppressWarnings("JavaDoc")
-class AQLActorsAndMoviesExampleTest {
+class AQLActorsAndMoviesExampleTest extends BaseTest {
 
     private static final DbName TEST_DB = DbName.of("actors_movies_test_db");
     private static ArangoDBAsync arangoDB;
@@ -65,9 +62,11 @@ class AQLActorsAndMoviesExampleTest {
     }
 
     @AfterAll
-    static void tearDown() throws InterruptedException, ExecutionException {
-        db.drop().get();
-        arangoDB.shutdown();
+    static void tearDown() throws ExecutionException, InterruptedException {
+        if (db != null) { // test not skipped
+            db.drop().get();
+            arangoDB.shutdown();
+        }
     }
 
     private static DocumentCreateEntity<BaseDocument> saveMovie(

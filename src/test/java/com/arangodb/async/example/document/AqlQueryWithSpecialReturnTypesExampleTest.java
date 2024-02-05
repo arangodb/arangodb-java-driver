@@ -20,7 +20,7 @@
 
 package com.arangodb.async.example.document;
 
-import com.arangodb.async.example.ExampleBase;
+import com.arangodb.async.example.ExampleBaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  */
-class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
+class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBaseTest {
 
     @BeforeAll
     static void before() throws InterruptedException, ExecutionException {

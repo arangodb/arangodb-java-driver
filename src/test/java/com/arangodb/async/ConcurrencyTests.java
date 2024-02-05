@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class ConcurrencyTests {
+class ConcurrencyTests extends BaseTest {
 
     @Test
     void concurrentPendingRequests() throws ExecutionException, InterruptedException {

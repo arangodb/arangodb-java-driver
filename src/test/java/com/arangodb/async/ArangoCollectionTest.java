@@ -907,16 +907,7 @@ class ArangoCollectionTest extends BaseTest {
             assertThat(indexResult.getMinLength()).isNull();
             assertThat(indexResult.getSparse()).isEqualTo(true);
             assertThat(indexResult.getUnique()).isEqualTo(false);
-            try {
-                if (isAtLeastVersion(3, 4)) {
-                    assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-                } else {
-                    assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                fail();
-            }
+            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         }).get();
     }
 

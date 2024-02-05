@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserAgentTest {
+class UserAgentTest extends BaseTest {
     @Test
     void userAgentHeader() throws ExecutionException, InterruptedException {
         ArangoDBAsync adb = new ArangoDBAsync.Builder().build();

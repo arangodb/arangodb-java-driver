@@ -25,6 +25,7 @@ import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.BaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
@@ -47,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Michele Rastelli
  */
-class CustomSerdeTest {
+class CustomSerdeTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "collection";
 
@@ -55,7 +56,7 @@ class CustomSerdeTest {
     private ArangoCollectionAsync collection;
 
     @BeforeEach
-    void init() throws ExecutionException, InterruptedException {
+    void beforeEach() throws ExecutionException, InterruptedException {
         ArangoJack arangoJack = new ArangoJack();
         arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
@@ -76,7 +77,7 @@ class CustomSerdeTest {
     }
 
     @AfterEach
-    void shutdown() throws ExecutionException, InterruptedException {
+    void afterEach() throws ExecutionException, InterruptedException {
         db.drop().get();
     }
 
