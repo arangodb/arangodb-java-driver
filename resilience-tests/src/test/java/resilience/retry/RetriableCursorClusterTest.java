@@ -10,9 +10,6 @@ import resilience.ClusterTest;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,8 +49,7 @@ class RetriableCursorClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
+        getEndpoints().get(0).disable(300);
 
         Throwable thrown = catchThrowable(cursor::next);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -65,7 +61,6 @@ class RetriableCursorClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -84,8 +79,7 @@ class RetriableCursorClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
+        getEndpoints().get(0).disable(300);
 
         Throwable thrown = catchThrowable(() -> cursor.nextBatch().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -98,6 +92,5 @@ class RetriableCursorClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 }

@@ -14,9 +14,6 @@ import resilience.Endpoint;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,17 +54,17 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
     void failover(ArangoDB arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
 
-        endpoints.get(0).disable();
+        endpoints.get(0).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(1).disable();
+        endpoints.get(1).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(2).disable();
+        endpoints.get(2).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         enableAllEndpoints();
@@ -78,17 +75,17 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
     void failoverAsync(ArangoDBAsync arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
 
-        endpoints.get(0).disable();
+        endpoints.get(0).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(1).disable();
+        endpoints.get(1).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
         enableAllEndpoints();
 
-        endpoints.get(2).disable();
+        endpoints.get(2).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
         enableAllEndpoints();
@@ -106,15 +103,12 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
 
         toxic.remove();
         enableAllEndpoints();
-        es.shutdown();
     }
 
 
@@ -129,9 +123,7 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -141,7 +133,6 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-        es.shutdown();
     }
 
 
@@ -156,9 +147,7 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -168,7 +157,6 @@ public class LoadBalanceNoneClusterTest extends ClusterTest {
 
         toxic.remove();
         enableAllEndpoints();
-        es.shutdown();
     }
 
 }

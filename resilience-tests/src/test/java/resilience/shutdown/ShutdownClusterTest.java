@@ -8,7 +8,6 @@ import io.vertx.core.http.HttpClosedException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import resilience.ClusterTest;
-import resilience.SingleServerTest;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

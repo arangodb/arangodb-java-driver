@@ -106,8 +106,8 @@ class RetryClusterTest extends ClusterTest {
     @MethodSource("arangoProvider")
     void unreachableHostFailover(ArangoDB arangoDB) {
         arangoDB.getVersion();
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.getVersion();
 
@@ -123,8 +123,8 @@ class RetryClusterTest extends ClusterTest {
     @MethodSource("asyncArangoProvider")
     void unreachableHostFailoverAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.getVersion().get();
 
@@ -151,9 +151,7 @@ class RetryClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         arangoDB.getVersion();
 
         assertThat(logs.getLogs())
@@ -163,7 +161,6 @@ class RetryClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
     @ParameterizedTest
@@ -181,9 +178,7 @@ class RetryClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         arangoDB.getVersion().get();
 
         assertThat(logs.getLogs())
@@ -193,7 +188,6 @@ class RetryClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
 
@@ -215,9 +209,7 @@ class RetryClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -230,7 +222,6 @@ class RetryClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
     /**
@@ -252,9 +243,7 @@ class RetryClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -267,7 +256,6 @@ class RetryClusterTest extends ClusterTest {
         toxic.remove();
         enableAllEndpoints();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
 }

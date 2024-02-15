@@ -15,9 +15,6 @@ import resilience.Endpoint;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +58,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
     @MethodSource("arangoProvider")
     void failover(ArangoDB arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
-        endpoints.get(0).disable();
+        endpoints.get(0).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         endpoints.get(0).enable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
@@ -72,7 +69,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
     @MethodSource("asyncArangoProvider")
     void failoverAsync(ArangoDBAsync arangoDB) {
         List<Endpoint> endpoints = getEndpoints();
-        endpoints.get(0).disable();
+        endpoints.get(0).disableNow();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         endpoints.get(0).enable();
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
@@ -88,9 +85,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
 
@@ -98,8 +93,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         enableAllEndpoints();
 
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
-
-        es.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -111,9 +104,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(1).getServerId());
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(2).getServerId());
 
@@ -121,8 +112,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         enableAllEndpoints();
 
         assertThat(serverIdGET(arangoDB)).isEqualTo(endpoints.get(0).getServerId());
-
-        es.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -137,9 +126,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -151,8 +138,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         enableAllEndpoints();
 
         assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(0).getServerId());
-
-        es.shutdown();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -167,9 +152,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoints().get(0).disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoints().get(0).disable(300);
         Throwable thrown = catchThrowable(() -> serverIdPOST(arangoDB));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -181,8 +164,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
         enableAllEndpoints();
 
         assertThat(serverIdPOST(arangoDB)).isEqualTo(getEndpoints().get(0).getServerId());
-
-        es.shutdown();
     }
 
 }

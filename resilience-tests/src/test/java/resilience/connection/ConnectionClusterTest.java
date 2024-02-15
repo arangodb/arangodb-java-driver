@@ -155,8 +155,8 @@ class ConnectionClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void connectionFailover(ArangoDB arangoDB) {
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.getVersion();
 
@@ -171,8 +171,8 @@ class ConnectionClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
     void connectionFailoverAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.getVersion().get();
 
@@ -187,8 +187,8 @@ class ConnectionClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void connectionFailoverPost(ArangoDB arangoDB) {
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.db().query("RETURN 1", Integer.class);
 
@@ -203,8 +203,8 @@ class ConnectionClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
     void connectionFailoverPostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        getEndpoints().get(0).disable();
-        getEndpoints().get(1).disable();
+        getEndpoints().get(0).disableNow();
+        getEndpoints().get(1).disableNow();
 
         arangoDB.db().query("RETURN 1", Integer.class).get();
 

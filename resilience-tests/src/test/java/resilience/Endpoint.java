@@ -3,6 +3,9 @@ package resilience;
 import eu.rekawek.toxiproxy.Proxy;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * class representing a proxied db endpoint
@@ -63,12 +66,19 @@ public class Endpoint {
         }
     }
 
-    public void disable() {
+    public void disableNow() {
         try {
             getProxy().disable();
             Thread.sleep(100);
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public void disable(long delay) {
+        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+        es.schedule(this::disableNow, delay, TimeUnit.MILLISECONDS);
+        es.shutdown();
     }
 }

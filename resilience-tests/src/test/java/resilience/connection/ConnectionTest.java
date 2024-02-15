@@ -1,17 +1,21 @@
 package resilience.connection;
 
 import com.arangodb.*;
+import eu.rekawek.toxiproxy.model.ToxicDirection;
+import eu.rekawek.toxiproxy.model.toxic.ResetPeer;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -82,8 +86,7 @@ class ConnectionTest extends SingleServerTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void connectionFail(ArangoDB arangoDB) {
-        getEndpoint().disable();
-
+        getEndpoint().disableNow();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getMessage()).contains("Cannot contact any host");
@@ -98,7 +101,7 @@ class ConnectionTest extends SingleServerTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
     void connectionFailAsync(ArangoDBAsync arangoDB) {
-        getEndpoint().disable();
+        getEndpoint().disableNow();
 
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -142,6 +145,67 @@ class ConnectionTest extends SingleServerTest {
         ArangoDBException aEx = (ArangoDBException) thrown;
         assertThat(aEx.getResponseCode()).isEqualTo(401);
         adb.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("arangoProvider")
+    void connClose(ArangoDB adb) {
+        getEndpoint().disable(500);
+        Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+        adb.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("asyncArangoProvider")
+    void connCloseAsync(ArangoDBAsync adb) {
+        getEndpoint().disable(500);
+        Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+        adb.shutdown();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @EnumSource(Protocol.class)
+    void connReset(Protocol protocol) throws IOException, InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
+        ArangoDB adb = new ArangoDB.Builder()
+                .host(getEndpoint().getHost(), getEndpoint().getPort())
+                .protocol(protocol)
+                .password("test")
+                .build();
+
+        ResetPeer toxic = getEndpoint().getProxy().toxics().resetPeer("reset", ToxicDirection.DOWNSTREAM, 500);
+        Thread.sleep(100);
+
+        Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+        adb.shutdown();
+        toxic.remove();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @EnumSource(Protocol.class)
+    void connResetAsync(Protocol protocol) throws IOException, InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
+        ArangoDBAsync adb = new ArangoDB.Builder()
+                .host(getEndpoint().getHost(), getEndpoint().getPort())
+                .protocol(protocol)
+                .password("test")
+                .build()
+                .async();
+
+        ResetPeer toxic = getEndpoint().getProxy().toxics().resetPeer("reset", ToxicDirection.DOWNSTREAM, 500);
+        Thread.sleep(100);
+
+        Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class).get()).getCause();
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        assertThat(thrown.getCause()).isInstanceOf(IOException.class);
+        adb.shutdown();
+        toxic.remove();
     }
 
 }

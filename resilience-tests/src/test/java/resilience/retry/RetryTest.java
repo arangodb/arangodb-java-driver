@@ -47,7 +47,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("arangoProvider")
     void unreachableHost(ArangoDB arangoDB) {
         arangoDB.getVersion();
-        getEndpoint().disable();
+        getEndpoint().disableNow();
 
         for (int i = 0; i < 10; i++) {
             Throwable thrown = catchThrowable(arangoDB::getVersion);
@@ -80,7 +80,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("asyncArangoProvider")
     void unreachableHostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
-        getEndpoint().disable();
+        getEndpoint().disableNow();
 
         for (int i = 0; i < 10; i++) {
             Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
@@ -197,9 +197,7 @@ class RetryTest extends SingleServerTest {
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoint().disable(300);
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
@@ -215,7 +213,6 @@ class RetryTest extends SingleServerTest {
 
         arangoDB.getVersion();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
     /**
@@ -243,9 +240,7 @@ class RetryTest extends SingleServerTest {
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoint().disable(300);
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(ArangoDBMultipleException.class);
@@ -261,7 +256,6 @@ class RetryTest extends SingleServerTest {
 
         arangoDB.getVersion().get();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
 
@@ -283,9 +277,7 @@ class RetryTest extends SingleServerTest {
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoint().disable(300);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -298,7 +290,6 @@ class RetryTest extends SingleServerTest {
 
         arangoDB.db().query("return null", Void.class);
         arangoDB.shutdown();
-        es.shutdown();
     }
 
     /**
@@ -320,9 +311,7 @@ class RetryTest extends SingleServerTest {
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
 
-        ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
-        es.schedule(() -> getEndpoint().disable(), 300, TimeUnit.MILLISECONDS);
-
+        getEndpoint().disable(300);
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
@@ -335,7 +324,6 @@ class RetryTest extends SingleServerTest {
 
         arangoDB.db().query("return null", Void.class).get();
         arangoDB.shutdown();
-        es.shutdown();
     }
 
 }
