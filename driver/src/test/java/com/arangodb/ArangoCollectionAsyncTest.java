@@ -1571,7 +1571,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void createZKDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
-        collection.truncate();
+        collection.truncate().get();
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
