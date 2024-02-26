@@ -45,7 +45,7 @@ class DocumentTest extends BaseJunit5 {
 
     private static Stream<Arguments> cols() {
         return dbsStream()
-                .map(db -> db.collection(COLLECTION_NAME))
+                .map(mapNamedPayload(db -> db.collection(COLLECTION_NAME)))
                 .map(Arguments::of);
     }
 
@@ -55,7 +55,7 @@ class DocumentTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertAsJson(ArangoCollection collection) {
         //@formatter:off
@@ -92,7 +92,7 @@ class DocumentTest extends BaseJunit5 {
         assertThat(artist.toString()).isEqualTo("PREGARDIEN/RHEINISCHE KANTOREI/DAS");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertAsBaseDocument(ArangoCollection collection) {
         final BaseDocument document = new BaseDocument(UUID.randomUUID().toString());
@@ -124,7 +124,7 @@ class DocumentTest extends BaseJunit5 {
         assertThat(artist.toString()).isEqualTo("PREGARDIEN/RHEINISCHE KANTOREI/DAS");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentKeyWithSpecialChars(ArangoCollection collection) {
         final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();

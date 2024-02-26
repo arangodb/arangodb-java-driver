@@ -49,13 +49,13 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
 
     private static Stream<Arguments> asyncVertices() {
         return asyncDbsStream()
-                .map(db -> db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_1))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_1)))
                 .map(Arguments::of);
     }
 
     private static Stream<Arguments> asyncEdges() {
         return asyncDbsStream()
-                .map(db -> db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION)))
                 .map(Arguments::of);
     }
 
@@ -80,7 +80,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
         return value;
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -104,7 +104,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void createVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -134,7 +134,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null).get()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void replaceVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -173,7 +173,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -212,7 +212,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void deleteVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -244,7 +244,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncEdges")
     void getEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -268,7 +268,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncEdges")
     void createEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -298,7 +298,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null).get()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncEdges")
     void replaceEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -337,7 +337,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncEdges")
     void updateEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -375,7 +375,7 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncEdges")
     void deleteEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());

@@ -44,7 +44,7 @@ class ArangoCursorTest extends BaseJunit5 {
         initDB();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void firstStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
@@ -54,7 +54,7 @@ class ArangoCursorTest extends BaseJunit5 {
         assertThat(first.get().asLong()).isZero();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void next(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class, new AqlQueryOptions().batchSize(5));
@@ -63,7 +63,7 @@ class ArangoCursorTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void mapFilterCountStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
@@ -71,7 +71,7 @@ class ArangoCursorTest extends BaseJunit5 {
         assertThat(count).isEqualTo(50L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void mapFilterCollectIntoSetStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
@@ -81,7 +81,7 @@ class ArangoCursorTest extends BaseJunit5 {
                 .hasSize(50);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void forEach(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
@@ -89,7 +89,7 @@ class ArangoCursorTest extends BaseJunit5 {
         cursor.forEach(t -> assertThat(t.asLong()).isEqualTo(i.getAndIncrement()));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void mapForeachStream(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
@@ -97,7 +97,7 @@ class ArangoCursorTest extends BaseJunit5 {
         cursor.stream().map(JsonNode::asLong).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void mapFilterForEachStream(ArangoDatabase db) {
         final AtomicLong i = new AtomicLong(0L);
@@ -105,7 +105,7 @@ class ArangoCursorTest extends BaseJunit5 {
         cursor.stream().map(JsonNode::asLong).filter(t -> t < 50).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void anyMatchStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
@@ -113,7 +113,7 @@ class ArangoCursorTest extends BaseJunit5 {
         assertThat(match).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void noneMatchStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);
@@ -121,7 +121,7 @@ class ArangoCursorTest extends BaseJunit5 {
         assertThat(match).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void allMatchStream(ArangoDatabase db) {
         final ArangoCursor<JsonNode> cursor = db.query("FOR i IN 0..99 RETURN i", JsonNode.class);

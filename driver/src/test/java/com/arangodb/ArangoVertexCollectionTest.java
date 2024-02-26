@@ -51,7 +51,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
 
     private static Stream<Arguments> vertices() {
         return dbsStream()
-                .map(db -> db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)))
                 .map(Arguments::of);
     }
 
@@ -65,7 +65,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         );
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void dropVertexCollection(ArangoVertexCollection vertices) {
         ArangoGraph graph = vertices.graph();
@@ -78,7 +78,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         graph.addVertexCollection(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void dropVertexCollectionDropCollectionTrue(ArangoVertexCollection vertices) {
         ArangoGraph graph = vertices.graph();
@@ -92,7 +92,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         graph.addVertexCollection(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void insertVertex(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -105,7 +105,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void insertVertexViolatingUniqueConstraint(ArangoVertexCollection vertices) {
         ArangoCollection collection = vertices.graph().db().collection(vertices.name());
@@ -126,7 +126,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         vertices.deleteVertex(inserted.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void duplicateInsertSameObjectVertex(ArangoVertexCollection vertices) {
 
@@ -149,7 +149,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         vertices.insertVertex(bd2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void insertVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -158,7 +158,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(vertex.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertex(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -169,7 +169,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertexIfMatch(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -181,7 +181,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertexIfMatchFail(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -192,7 +192,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(vertex2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertexIfNoneMatch(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -204,7 +204,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertexIfNoneMatchFail(ArangoVertexCollection vertices) {
         final VertexEntity vertex = vertices
@@ -215,7 +215,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(vertex2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void replaceVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -240,7 +240,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void replaceVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -255,7 +255,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void replaceVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -281,7 +281,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void replaceVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -298,7 +298,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -327,7 +327,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertexUpdateRev(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -343,7 +343,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -373,7 +373,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -393,7 +393,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertexKeepNullTrue(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -416,7 +416,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertexKeepNullFalse(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -440,7 +440,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void deleteVertex(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -452,7 +452,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(vertex).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void deleteVertexIfMatch(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -465,7 +465,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(vertex).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void deleteVertexIfMatchFail(ArangoVertexCollection vertices) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -479,7 +479,7 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void vertexKeyWithSpecialChars(ArangoVertexCollection vertices) {
         final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();

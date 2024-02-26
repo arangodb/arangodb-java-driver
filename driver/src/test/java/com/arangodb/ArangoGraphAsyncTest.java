@@ -70,7 +70,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
 
     private static Stream<Arguments> asyncGraphs() {
         return asyncDbsStream()
-                .map(db -> db.graph(GRAPH_NAME))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME)))
                 .map(Arguments::of);
     }
 
@@ -86,14 +86,14 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void exists(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         assertThat(graph.exists().get()).isTrue();
         assertThat(graph.db().graph(GRAPH_NAME + "no").exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createWithReplicationAndWriteConcern(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -109,14 +109,14 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         db.graph(GRAPH_NAME + "_1").drop().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getGraphs(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<GraphEntity> graphs = db.getGraphs().get();
         assertThat(graphs.stream().anyMatch(it -> it.getName().equals(GRAPH_NAME))).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void getInfo(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         final GraphEntity info = graph.getInfo().get();
@@ -147,7 +147,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void getVertexCollections(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         final Collection<String> vertexCollections = graph.getVertexCollections().get();
@@ -156,7 +156,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
                 .contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_5);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void addVertexCollection(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         final GraphEntity g = graph.addVertexCollection(VERTEX_COL_4).get();
@@ -168,7 +168,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.vertexCollection(VERTEX_COL_4).remove().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void addSatelliteVertexCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster() || isAtLeastVersion(3, 10));
@@ -189,7 +189,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         g.drop().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void getEdgeCollections(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         final Collection<String> edgeCollections = graph.getEdgeDefinitions().get();
@@ -198,7 +198,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
                 .contains(EDGE_COL_1, EDGE_COL_2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void addEdgeDefinition(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         EdgeDefinition ed = new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2);
@@ -229,7 +229,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.edgeCollection(EDGE_COL_3).remove().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void addSatelliteEdgeDefinition(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster() || isAtLeastVersion(3, 10));
@@ -259,7 +259,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         g.drop().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void replaceEdgeDefinition(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         final GraphEntity g = graph
@@ -287,7 +287,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     @Disabled
         // FIXME: with dropCollections=true the vertex collections remain in the graph as orphan and not dropped
@@ -318,7 +318,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void removeEdgeDefinition(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         graph.edgeCollection(EDGE_COL_1).remove().get();
@@ -331,7 +331,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncGraphs")
     void removeEdgeDefinitionDropCollections(ArangoGraphAsync graph) throws ExecutionException, InterruptedException {
         graph.edgeCollection(EDGE_COL_1).remove(new EdgeCollectionRemoveOptions()
@@ -346,7 +346,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void smartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -365,7 +365,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(g.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void hybridSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -393,7 +393,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void disjointSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -414,7 +414,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(g.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void hybridDisjointSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -442,7 +442,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void enterpriseGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -464,7 +464,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void drop(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String edgeCollection = "edge_" + rnd();
@@ -478,7 +478,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(db.collection(vertexCollection).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void dropPlusDropCollections(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String edgeCollection = "edge_dropC" + rnd();

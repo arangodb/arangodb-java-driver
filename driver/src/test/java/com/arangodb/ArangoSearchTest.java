@@ -51,7 +51,7 @@ class ArangoSearchTest extends BaseJunit5 {
         initCollections(COLL_1, COLL_2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void exists(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -60,7 +60,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createAndExistsSearchAlias(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -69,7 +69,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -82,7 +82,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -93,7 +93,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(view.exists()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -106,7 +106,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchView(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -119,7 +119,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasView(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -132,7 +132,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.searchAlias(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -146,7 +146,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithPrimarySort(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -182,7 +182,7 @@ class ArangoSearchTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithCommitIntervalMsec(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -203,7 +203,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(properties.getCommitIntervalMsec()).isEqualTo(666666L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasViewWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -217,7 +217,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(db.searchAlias(viewName).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -256,7 +256,7 @@ class ArangoSearchTest extends BaseJunit5 {
                 .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName1));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -276,7 +276,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(links).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void updateArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -309,7 +309,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(next.getStoreValues()).isEqualTo(StoreValuesType.ID);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void updateSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -349,7 +349,7 @@ class ArangoSearchTest extends BaseJunit5 {
                 .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void replaceArangoSearchViewProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -368,7 +368,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void replaceSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -439,7 +439,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void identityAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -458,7 +458,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void delimiterAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -481,7 +481,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void stemAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -504,7 +504,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void normAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -529,7 +529,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void ngramAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -555,7 +555,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void enhancedNgramAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -583,7 +583,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void textAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -610,7 +610,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void enhancedTextAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -642,7 +642,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -722,7 +722,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void pipelineAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -767,7 +767,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, pipelineAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void stopwordsAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -799,7 +799,7 @@ class ArangoSearchTest extends BaseJunit5 {
         db.deleteSearchAnalyzer(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void aqlAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -825,7 +825,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, aqlAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void geoJsonAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -853,7 +853,7 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void geoS2Analyzer(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -883,7 +883,7 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void geoPointAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -912,7 +912,7 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void segmentationAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -934,7 +934,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, segmentationAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void collationAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -956,7 +956,7 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void classificationAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -980,7 +980,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void nearestNeighborsAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1003,7 +1003,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void MinHashAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1033,7 +1033,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));

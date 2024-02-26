@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ParallelTest {
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectionParallelism(Protocol protocol) throws InterruptedException {
         assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));

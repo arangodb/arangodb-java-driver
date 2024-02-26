@@ -63,11 +63,15 @@ class ArangoCollectionTest extends BaseJunit5 {
     private final ObjectMapper mapper = new ObjectMapper();
 
     private static Stream<Arguments> cols() {
-        return dbsStream().map(db -> db.collection(COLLECTION_NAME)).map(Arguments::of);
+        return dbsStream()
+                .map(mapNamedPayload(db -> db.collection(COLLECTION_NAME)))
+                .map(Arguments::of);
     }
 
     private static Stream<Arguments> edges() {
-        return dbsStream().map(db -> db.collection(EDGE_COLLECTION_NAME)).map(Arguments::of);
+        return dbsStream()
+                .map(mapNamedPayload(db -> db.collection(EDGE_COLLECTION_NAME)))
+                .map(Arguments::of);
     }
 
     @BeforeAll
@@ -76,7 +80,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         initEdgeCollections(EDGE_COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocument(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument(), null);
@@ -88,7 +92,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getId()).isEqualTo(COLLECTION_NAME + "/" + doc.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentWithArrayWithNullValues(ArangoCollection collection) {
         List<String> arr = Arrays.asList("a", null);
@@ -106,7 +110,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat((List<String>) insertedDoc.getNew().getAttribute("arr")).containsAll(Arrays.asList("a", null));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentWithNullValues(ArangoCollection collection) {
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -122,7 +126,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(insertedDoc.getNew().getProperties()).containsKey("null");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -131,7 +135,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(createResult.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentReturnNew(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
@@ -143,7 +147,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentWithTypeOverwriteModeReplace(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -178,7 +182,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getNew().getName()).isEqualTo("Luna");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeIgnore(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -197,7 +201,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(insertIgnore.getRev()).isEqualTo(meta.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeConflict(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -216,7 +220,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplace(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -237,7 +241,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(repsert.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -256,7 +260,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updated.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -276,7 +280,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updated.getNew().getAttribute("foo")).isEqualTo(fieldB);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -294,7 +298,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updated.getProperties()).containsEntry("foo", null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateKeepNullFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -312,7 +316,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updated.getProperties()).doesNotContainKey("foo");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentWaitForSync(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
@@ -324,7 +328,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentRefillIndexCaches(ArangoCollection collection) {
         final DocumentCreateOptions options = new DocumentCreateOptions().refillIndexCaches(true);
@@ -336,7 +340,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentAsJson(ArangoCollection collection) {
         String key = "doc-" + UUID.randomUUID();
@@ -348,7 +352,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentAsBytes(ArangoCollection collection) {
         String key = "doc-" + UUID.randomUUID();
@@ -369,7 +373,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -381,7 +385,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -395,7 +399,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -408,7 +412,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsWithErrors(ArangoCollection collection) {
         // BTS-615
@@ -430,7 +434,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(res.getDocumentsAndErrors().get(2)).isSameAs(res.getDocuments().get(1));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsRefillIndexCaches(ArangoCollection collection) {
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info =
@@ -439,7 +443,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocument(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
@@ -449,7 +453,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentIfMatch(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
@@ -460,7 +464,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentIfMatchFail(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
@@ -470,7 +474,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentIfNoneMatch(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
@@ -481,7 +485,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentIfNoneMatchFail(ArangoCollection collection) {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null);
@@ -491,7 +495,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentAsJson(ArangoCollection collection) {
         String key = rnd();
@@ -501,35 +505,35 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.get()).contains("\"_key\":\"" + key + "\"").contains("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentNotFound(ArangoCollection collection) {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class);
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentNotFoundOptionsDefault(ArangoCollection collection) {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class, new DocumentReadOptions());
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentNotFoundOptionsNull(ArangoCollection collection) {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class, null);
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentWrongKey(ArangoCollection collection) {
         Throwable thrown = catchThrowable(() -> collection.getDocument("no/no", BaseDocument.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentDirtyRead(ArangoCollection collection) throws InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -540,7 +544,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -558,7 +562,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsWithCustomShardingKey(ArangoCollection c) {
         ArangoCollection collection = c.db().collection("customShardingKeyCollection");
@@ -580,7 +584,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(documents).hasSize(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsDirtyRead(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -601,7 +605,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsNotFound(ArangoCollection collection) {
         final MultiDocumentEntity<BaseDocument> readResult = collection.getDocuments(Collections.singleton("no"),
@@ -611,7 +615,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsWrongKey(ArangoCollection collection) {
         final MultiDocumentEntity<BaseDocument> readResult = collection.getDocuments(Collections.singleton("no/no"),
@@ -621,7 +625,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -650,7 +654,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentWithDifferentReturnType(ArangoCollection collection) {
         final String key = "key-" + UUID.randomUUID();
@@ -668,7 +672,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updated.getAttribute("b")).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -683,7 +687,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -711,7 +715,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -727,7 +731,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentReturnNew(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -750,7 +754,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(updateResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -772,7 +776,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentKeepNullTrue(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -792,7 +796,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentKeepNullFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -814,7 +818,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentSerializeNullTrue(ArangoCollection collection) {
         final TestUpdateEntity doc = new TestUpdateEntity();
@@ -833,7 +837,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getAttribute("a")).isEqualTo("bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentSerializeNullFalse(ArangoCollection collection) {
         final TestUpdateEntitySerializeNullFalse doc = new TestUpdateEntitySerializeNullFalse();
@@ -853,7 +857,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getAttribute("b")).isEqualTo("foo");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentMergeObjectsTrue(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -880,7 +884,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(aMap).containsKeys("a", "b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentMergeObjectsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -908,7 +912,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(aMap).containsKey("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentIgnoreRevsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -922,7 +926,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -935,7 +939,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -949,7 +953,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateNonExistingDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
@@ -963,7 +967,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentPreconditionFailed(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
@@ -984,7 +988,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readDocument.getAttribute("foo")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentRefillIndexCaches(ArangoCollection collection) {
         BaseDocument doc = new BaseDocument();
@@ -997,7 +1001,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsRefillIndexCaches(ArangoCollection collection) {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
@@ -1007,7 +1011,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1032,7 +1036,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentUpdateRev(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1046,7 +1050,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1070,7 +1074,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1085,7 +1089,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentIgnoreRevsFalse(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1100,7 +1104,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentReturnNew(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1122,7 +1126,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(replaceResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1144,7 +1148,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(replaceResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1157,7 +1161,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1170,7 +1174,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(createResult.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1184,7 +1188,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentRefillIndexCaches(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1196,7 +1200,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsRefillIndexCaches(ArangoCollection collection) {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
@@ -1206,7 +1210,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocument(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1216,7 +1220,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentReturnOld(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1231,7 +1235,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(deleteResult.getOld().getAttribute("a"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentIfMatch(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1242,7 +1246,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentIfMatchFail(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1252,7 +1256,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1265,7 +1269,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsSilent(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1280,7 +1284,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentRefillIndexCaches(ArangoCollection collection) {
         DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument());
@@ -1291,7 +1295,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .isEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsRefillIndexCaches(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -1303,7 +1307,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
@@ -1314,7 +1318,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
@@ -1325,7 +1329,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteIndex(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
@@ -1337,7 +1341,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteIndexByKey(ArangoCollection collection) {
         final Collection<String> fields = new ArrayList<>();
@@ -1349,7 +1353,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createGeoIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
@@ -1372,7 +1376,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createGeoIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1402,7 +1406,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createGeoIndexLegacyPolygons(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1433,7 +1437,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createGeo2Index(ArangoCollection collection) {
         String f1 = "field-" + rnd();
@@ -1456,7 +1460,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createGeo2IndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1486,7 +1490,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
@@ -1510,7 +1514,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexCacheEnabled(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1534,7 +1538,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getCacheEnabled()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexStoredValues(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1561,7 +1565,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .contains("v1", "v2");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1588,7 +1592,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createZKDIndex(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -1610,7 +1614,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createZKDIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -1638,7 +1642,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void indexEstimates(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1659,7 +1663,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getSelectivityEstimate()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void indexEstimatesFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1680,7 +1684,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getSelectivityEstimate()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void indexDeduplicate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1699,7 +1703,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getDeduplicate()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void indexDeduplicateFalse(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1718,7 +1722,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getDeduplicate()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createFulltextIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
@@ -1734,7 +1738,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getUnique()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createFulltextIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1757,7 +1761,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createTtlIndexWithoutOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1772,7 +1776,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getMessage()).contains("expireAfter attribute must be a number");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void createTtlIndexWithOptions(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1798,7 +1802,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getIndexes(ArangoCollection collection) {
         String f1 = "field-" + rnd();
@@ -1809,7 +1813,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(matchingIndexes).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void getEdgeIndex(ArangoCollection edgeCollection) {
         Collection<IndexEntity> indexes = edgeCollection.getIndexes();
@@ -1819,14 +1823,14 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(edgeIndexes).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void exists(ArangoCollection collection) {
         assertThat(collection.exists()).isTrue();
         assertThat(collection.db().collection(COLLECTION_NAME + "no").exists()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void truncate(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1840,7 +1844,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getCount(ArangoCollection collection) {
         Long initialCount = collection.count().getCount();
@@ -1849,7 +1853,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(count.getCount()).isEqualTo(initialCount + 1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentExists(ArangoCollection collection) {
         final Boolean existsNot = collection.documentExists(rnd(), null);
@@ -1862,7 +1866,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentExistsIfMatch(ArangoCollection collection) {
         String key = rnd();
@@ -1873,7 +1877,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentExistsIfMatchFail(ArangoCollection collection) {
         String key = rnd();
@@ -1884,7 +1888,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentExistsIfNoneMatch(ArangoCollection collection) {
         String key = rnd();
@@ -1895,7 +1899,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void documentExistsIfNoneMatchFail(ArangoCollection collection) {
         String key = rnd();
@@ -1906,7 +1910,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(exists).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(), new BaseDocument(),
@@ -1920,7 +1924,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -1950,7 +1954,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsJson(ArangoCollection collection) {
         final Collection<RawJson> values = new ArrayList<>();
@@ -1965,7 +1969,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsRawData(ArangoCollection collection) {
         final RawData values = RawJson.of("[{},{},{}]");
@@ -1977,7 +1981,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsRawDataReturnNew(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
@@ -2001,7 +2005,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2014,7 +2018,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2026,7 +2030,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsReturnNew(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2049,7 +2053,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsFail(ArangoCollection collection) {
         String k1 = rnd();
@@ -2066,7 +2070,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getErrors().iterator().next().getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(), new BaseDocument(),
@@ -2082,7 +2086,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonList(ArangoCollection collection) {
         final Collection<RawJson> values = Arrays.asList(
@@ -2101,7 +2105,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDuplicateDefaultError(ArangoCollection collection) {
         String k1 = rnd();
@@ -2120,7 +2124,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDuplicateError(ArangoCollection collection) {
         String k1 = rnd();
@@ -2140,7 +2144,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDuplicateIgnore(ArangoCollection collection) {
         String k1 = rnd();
@@ -2160,7 +2164,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDuplicateReplace(ArangoCollection collection) {
         String k1 = rnd();
@@ -2180,7 +2184,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDuplicateUpdate(ArangoCollection collection) {
         String k1 = rnd();
@@ -2200,7 +2204,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsCompleteFail(ArangoCollection collection) {
         String k1 = rnd();
@@ -2216,7 +2220,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsDetails(ArangoCollection collection) {
         String k1 = rnd();
@@ -2236,7 +2240,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsOverwriteFalse(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
@@ -2249,7 +2253,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsOverwriteTrue(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
@@ -2261,7 +2265,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void importDocumentsFromToPrefix(ArangoCollection edgeCollection) {
         final Collection<BaseEdgeDocument> values = new ArrayList<>();
@@ -2283,7 +2287,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJson(ArangoCollection collection) throws JsonProcessingException {
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
@@ -2299,7 +2303,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDuplicateDefaultError(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2318,7 +2322,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDuplicateError(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2338,7 +2342,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDuplicateIgnore(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2357,7 +2361,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDuplicateReplace(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2377,7 +2381,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDuplicateUpdate(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2397,7 +2401,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonCompleteFail(ArangoCollection collection) {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
@@ -2408,7 +2412,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonDetails(ArangoCollection collection) throws JsonProcessingException {
         String k1 = rnd();
@@ -2429,7 +2433,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonOverwriteFalse(ArangoCollection collection) throws JsonProcessingException {
         collection.insertDocument(new BaseDocument());
@@ -2441,7 +2445,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(collection.count().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void importDocumentsJsonOverwriteTrue(ArangoCollection collection) throws JsonProcessingException {
         collection.insertDocument(new BaseDocument());
@@ -2452,7 +2456,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(collection.count().getCount()).isEqualTo(2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) throws JsonProcessingException {
         String k1 = UUID.randomUUID().toString();
@@ -2475,7 +2479,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2502,7 +2506,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsRawDataByKeyReturnOld(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
@@ -2521,7 +2525,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2545,7 +2549,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByKeyOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2566,7 +2570,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByDocumentOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2585,7 +2589,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2597,7 +2601,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByKeyNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2610,7 +2614,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void deleteDocumentsByDocumentsNotExisting(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2630,7 +2634,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(rnd()), new BaseDocument(rnd()));
@@ -2642,7 +2646,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithDifferentReturnType(ArangoCollection collection) {
         List<String> keys =
@@ -2667,7 +2671,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getDocuments().stream()).map(DocumentUpdateEntity::getNew).allMatch(it -> it.getAttribute("a").equals("test")).allMatch(it -> it.getAttribute("b").equals("test"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2686,7 +2690,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2695,7 +2699,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithoutKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2714,7 +2718,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsJson(ArangoCollection collection) {
         final Collection<RawJson> values = new ArrayList<>();
@@ -2730,7 +2734,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsRawData(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2743,7 +2747,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsRawDataReturnNew(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2767,7 +2771,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocuments(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2786,7 +2790,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsOne(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2805,7 +2809,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsEmpty(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2814,7 +2818,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsWithoutKey(ArangoCollection collection) {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2833,7 +2837,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsJson(ArangoCollection collection) {
         final Collection<RawJson> values = new ArrayList<>();
@@ -2849,7 +2853,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsRawData(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2862,7 +2866,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsRawDataReturnNew(ArangoCollection collection) {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2886,14 +2890,14 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getInfo(ArangoCollection collection) {
         final CollectionEntity result = collection.getInfo();
         assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getPropeties(ArangoCollection collection) {
         final CollectionPropertiesEntity result = collection.getProperties();
@@ -2901,7 +2905,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void changeProperties(ArangoCollection collection) {
         final CollectionPropertiesEntity properties = collection.getProperties();
@@ -2936,7 +2940,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void rename(ArangoCollection collection) {
         assumeTrue(isSingleServer());
@@ -2963,7 +2967,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(e.getResponseCode()).isEqualTo(404);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void responsibleShard(ArangoCollection collection) {
         assumeTrue(isCluster());
@@ -2973,7 +2977,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(shard.getShardId()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getRevision(ArangoCollection collection) {
         final CollectionRevisionEntity result = collection.getRevision();
@@ -2982,7 +2986,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(result.getRevision()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void keyWithSpecialCharacter(ArangoCollection collection) {
         final String key = "myKey_-:.@()+,=;$!*'%-" + UUID.randomUUID();
@@ -2992,7 +2996,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void alreadyUrlEncodedkey(ArangoCollection collection) {
         final String key = "http%3A%2F%2Fexample.com%2F-" + UUID.randomUUID();
@@ -3002,7 +3006,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void grantAccessRW(ArangoCollection collection) {
         ArangoDB arangoDB = collection.db().arango();
@@ -3014,7 +3018,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void grantAccessRO(ArangoCollection collection) {
         ArangoDB arangoDB = collection.db().arango();
@@ -3026,7 +3030,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void grantAccessNONE(ArangoCollection collection) {
         ArangoDB arangoDB = collection.db().arango();
@@ -3038,14 +3042,14 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void grantAccessUserNotFound(ArangoCollection collection) {
         Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.RW));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void revokeAccess(ArangoCollection collection) {
         ArangoDB arangoDB = collection.db().arango();
@@ -3057,14 +3061,14 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void revokeAccessUserNotFound(ArangoCollection collection) {
         Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.NONE));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void resetAccess(ArangoCollection collection) {
         ArangoDB arangoDB = collection.db().arango();
@@ -3076,20 +3080,20 @@ class ArangoCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void resetAccessUserNotFound(ArangoCollection collection) {
         Throwable thrown = catchThrowable(() -> collection.resetAccess("user1"));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void getPermissions(ArangoCollection collection) {
         assertThat(collection.getPermissions("root")).isEqualTo(Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("cols")
     void annotationsInParamsAndMethods(ArangoCollection collection) {
         assumeTrue(collection.getSerde().getUserSerde() instanceof JacksonSerde, "JacksonSerde only");

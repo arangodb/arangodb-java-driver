@@ -23,7 +23,7 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
     private static final String COLLECTION_NAME = "InvertedIndexTest_collection";
 
     private static Stream<Arguments> asyncCols() {
-        return asyncDbsStream().map(db -> db.collection(COLLECTION_NAME)).map(Arguments::of);
+        return asyncDbsStream().map(mapNamedPayload(db -> db.collection(COLLECTION_NAME))).map(Arguments::of);
     }
 
     @BeforeAll
@@ -153,7 +153,7 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createAndGetInvertedIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -166,7 +166,7 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
         assertCorrectIndexEntity(loadedIndex, options);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getInvertedIndexesShouldNotReturnOtherIndexTypes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -186,7 +186,7 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
                 .contains(created.getName());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getIndexesShouldNotReturnInvertedIndexes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));

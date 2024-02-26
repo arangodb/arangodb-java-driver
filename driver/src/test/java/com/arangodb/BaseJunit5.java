@@ -8,12 +8,14 @@ import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,31 +30,31 @@ public class BaseJunit5 {
     private static final ArangoDBVersion version = adb.getVersion();
     private static final ServerRole role = adb.getRole();
 
-    private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+    private static final List<Named<ArangoDB>> adbs = Arrays.stream(Protocol.values())
             .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
-            .map(p -> new ArangoDB.Builder()
+            .map(p -> Named.of(p.toString(), new ArangoDB.Builder()
                     .loadProperties(config)
                     .protocol(p)
-                    .build())
+                    .build()))
             .collect(Collectors.toList());
 
     private static Boolean extendedDbNames;
     private static Boolean extendedNames;
 
-    protected static Stream<ArangoDB> adbsStream() {
+    protected static Stream<Named<ArangoDB>> adbsStream() {
         return adbs.stream();
     }
 
-    protected static Stream<ArangoDatabase> dbsStream() {
-        return adbsStream().map(it -> it.db(TEST_DB));
+    protected static Stream<Named<ArangoDatabase>> dbsStream() {
+        return adbsStream().map(mapNamedPayload(p -> p.db(TEST_DB)));
     }
 
-    protected static Stream<ArangoDBAsync> asyncAdbsStream() {
-        return adbs.stream().map(ArangoDB::async);
+    protected static Stream<Named<ArangoDBAsync>> asyncAdbsStream() {
+        return adbs.stream().map(mapNamedPayload(ArangoDB::async));
     }
 
-    protected static Stream<ArangoDatabaseAsync> asyncDbsStream() {
-        return asyncAdbsStream().map(it -> it.db(TEST_DB));
+    protected static Stream<Named<ArangoDatabaseAsync>> asyncDbsStream() {
+        return asyncAdbsStream().map(mapNamedPayload(p -> p.db(TEST_DB)));
     }
 
     protected static Stream<Arguments> arangos() {
@@ -69,6 +71,10 @@ public class BaseJunit5 {
 
     protected static Stream<Arguments> asyncDbs() {
         return asyncDbsStream().map(Arguments::of);
+    }
+
+    protected static <T, U> Function<Named<T>, Named<U>> mapNamedPayload(Function<T, U> mapper) {
+        return named -> Named.of(named.getName(), mapper.apply(named.getPayload()));
     }
 
     static ArangoDatabase initDB(String name) {

@@ -23,12 +23,14 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -48,9 +50,9 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
 
     private static Stream<Arguments> args() {
         return dbsStream()
-                .map(db -> new Object[]{
-                        db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME),
-                        db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .map(it -> new Object[]{
+                        Named.of(it.getName(), it.getPayload().graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)),
+                        Named.of(it.getName(), it.getPayload().graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME))
                 })
                 .map(Arguments::of);
     }
@@ -80,7 +82,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         return value;
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void insertEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -93,7 +95,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(document.getTo()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void insertEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -102,7 +104,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(edge.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void insertEdgeViolatingUniqueConstraint(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         edges.graph().db().collection(EDGE_COLLECTION_NAME)
@@ -119,7 +121,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void getEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -132,7 +134,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(document.getTo()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void getEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -144,7 +146,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void getEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -155,7 +157,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(edge2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void getEdgeIfNoneMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -167,7 +169,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void getEdgeIfNoneMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -178,7 +180,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(edge2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void replaceEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -202,7 +204,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void replaceEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -216,7 +218,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void replaceEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -241,7 +243,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void replaceEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -257,7 +259,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -285,7 +287,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -299,7 +301,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -328,7 +330,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -346,7 +348,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdgeKeepNullTrue(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -368,7 +370,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void updateEdgeKeepNullFalse(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -391,7 +393,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void deleteEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -402,7 +404,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(edge).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void deleteEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -414,7 +416,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(edge).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void deleteEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -427,7 +429,7 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("args")
     void edgeKeyWithSpecialChars(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
         final BaseEdgeDocument value = createEdgeValue(vertices);

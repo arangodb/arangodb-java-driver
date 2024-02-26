@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -72,7 +71,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         dropDB(DB2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getVersion(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final ArangoDBVersion version = arangoDB.getVersion().get();
@@ -80,7 +79,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version.getVersion()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createAndDeleteDatabase(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final String dbName = rndDbName();
@@ -90,7 +89,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createWithNotNormalizedName(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(supportsExtendedDbNames());
@@ -106,7 +105,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .hasMessageContaining("normalized");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithOptions(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -131,7 +130,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithOptionsSatellite(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -158,7 +157,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithUsers(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {
         final String dbName = rndDbName();
@@ -205,28 +204,28 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getDatabases(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         Collection<String> dbs = arangoDB.getDatabases().get();
         assertThat(dbs).contains("_system", DB1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getAccessibleDatabases(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final Collection<String> dbs = arangoDB.getAccessibleDatabases().get();
         assertThat(dbs).contains("_system");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getAccessibleDatabasesFor(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final Collection<String> dbs = arangoDB.getAccessibleDatabasesFor("root").get();
         assertThat(dbs).contains("_system");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void createUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
@@ -234,7 +233,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(result.getUser()).isEqualTo(username);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void deleteUser(ArangoDBAsync arangoDB) {
         String username = "user-" + UUID.randomUUID();
@@ -242,14 +241,14 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         arangoDB.deleteUser(username);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getUserRoot(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final UserEntity user = arangoDB.getUser(ROOT).get();
         assertThat(user.getUser()).isEqualTo(ROOT);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
@@ -258,14 +257,14 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(user.getUser()).isEqualTo(username);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getUsersOnlyRoot(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final Collection<UserEntity> users = arangoDB.getUsers().get();
         assertThat(users).isNotEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getUsers(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
@@ -289,7 +288,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void updateUserNoOptions(ArangoDBAsync arangoDB) {
         String username = "user-" + UUID.randomUUID();
@@ -297,7 +296,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         arangoDB.updateUser(username, null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void updateUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
@@ -316,7 +315,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("hund")))).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void replaceUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
@@ -335,7 +334,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("mund")))).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void updateUserDefaultDatabaseAccess(ArangoDBAsync arangoDB) {
         String username = "user-" + UUID.randomUUID();
@@ -343,7 +342,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         arangoDB.grantDefaultDatabaseAccess(username, Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void updateUserDefaultCollectionAccess(ArangoDBAsync arangoDB) {
         String username = "user-" + UUID.randomUUID();
@@ -385,7 +384,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void executeGetVersion(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         Request<?> request = Request.builder()
@@ -405,7 +404,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntries(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -414,7 +413,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(logs.getMessages()).hasSize(logs.getTotal().intValue());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesUpto(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -424,7 +423,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .doesNotContain("INFO");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -434,7 +433,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .containsOnly("INFO");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesStart(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -446,7 +445,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .doesNotContain(firstId);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSize(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -457,7 +456,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(logsSize.getMessages()).hasSize(count - 1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesOffset(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -470,7 +469,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .doesNotContain(firstId);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSearch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -479,7 +478,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotal());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSortAsc(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -494,7 +493,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSortDesc(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -509,7 +508,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
@@ -517,7 +516,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(logLevel.getAgency()).isEqualTo(LogLevelEntity.LogLevel.INFO);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void setLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
@@ -532,7 +531,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void setAllLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -550,7 +549,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void logLevelWithServerId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -569,7 +568,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void getQueryOptimizerRules(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -588,7 +587,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void arangoDBException(ArangoDBAsync arangoDB) {
         Throwable thrown = catchThrowable(() -> arangoDB.db("no").getInfo().get()).getCause();
@@ -598,7 +597,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1228);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void fallbackHost() throws ExecutionException, InterruptedException {
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
@@ -610,7 +609,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void loadpropertiesWithPrefix() throws ExecutionException, InterruptedException {
         ArangoDBAsync adb = new ArangoDB.Builder()
@@ -621,7 +620,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         adb.shutdown();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void accessMultipleDatabases(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final ArangoDBVersion version1 = arangoDB.db(DB1).getVersion().get();
@@ -630,7 +629,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version2).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     @Disabled("Manual execution only")
     void queueTime(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {

@@ -64,7 +64,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         BaseJunit5.initEdgeCollections(ENAMES);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getVersion(ArangoDatabase db) {
         final ArangoDBVersion version = db.getVersion();
@@ -73,7 +73,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(version.getVersion()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getEngine(ArangoDatabase db) {
         final ArangoDBEngine engine = db.getEngine();
@@ -81,21 +81,21 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(engine.getName()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void exists(ArangoDB arangoDB) {
         assertThat(arangoDB.db(TEST_DB).exists()).isTrue();
         assertThat(arangoDB.db("no").exists()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getAccessibleDatabases(ArangoDatabase db) {
         final Collection<String> dbs = db.getAccessibleDatabases();
         assertThat(dbs).contains("_system");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollection(ArangoDatabase db) {
         String name = rndName();
@@ -104,7 +104,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.getId()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithNotNormalizedName(ArangoDatabase db) {
         assumeTrue(supportsExtendedNames());
@@ -117,7 +117,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithReplicationFactor(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -130,7 +130,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithWriteConcern(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -146,7 +146,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getWriteConcern()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createSatelliteCollection(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -162,7 +162,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithNumberOfShards(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -176,7 +176,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithShardingStrategys(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -192,7 +192,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(props.getShardingStrategy()).isEqualTo(ShardingStrategy.COMMUNITY_COMPAT.getInternalName());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithSmartJoinAttribute(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -210,7 +210,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(db.collection(name).getProperties().getSmartJoinAttribute()).isEqualTo("test123");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithSmartJoinAttributeWrong(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -227,7 +227,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithNumberOfShardsAndShardKey(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -242,7 +242,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(properties.getShardKeys()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithNumberOfShardsAndShardKeys(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -256,7 +256,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(properties.getShardKeys()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithDistributeShardsLike(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -284,34 +284,34 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(db.collection(name).getProperties().getKeyOptions().getType()).isEqualTo(keyType);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypeAutoincrement(ArangoDatabase db) {
         assumeTrue(isSingleServer());
         createCollectionWithKeyType(db, KeyType.autoincrement);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypePadded(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.padded);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypeTraditional(ArangoDatabase db) {
         createCollectionWithKeyType(db, KeyType.traditional);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypeUuid(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.uuid);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithJsonSchema(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -359,7 +359,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1620);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithComputedFields(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -395,7 +395,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .contains(cv2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteCollection(ArangoDatabase db) {
         String name = rndName();
@@ -405,7 +405,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteSystemCollection(ArangoDatabase db) {
         final String name = "_system_test";
@@ -418,7 +418,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .isEqualTo(404);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteSystemCollectionFail(ArangoDatabase db) {
         final String name = "_system_test";
@@ -442,7 +442,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getIndex(ArangoDatabase db) {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
@@ -452,7 +452,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteIndex(ArangoDatabase db) {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
@@ -467,7 +467,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getCollections(ArangoDatabase db) {
         final Collection<CollectionEntity> collections = db.getCollections(null);
@@ -475,7 +475,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getCollectionsExcludeSystem(ArangoDatabase db) {
         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
@@ -484,7 +484,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(allCollections).hasSizeGreaterThan(nonSystemCollections.size());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void grantAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -492,7 +492,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void grantAccessRW(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -500,7 +500,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void grantAccessRO(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -508,7 +508,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.RO);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void grantAccessNONE(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -516,7 +516,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.NONE);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void grantAccessUserNotFound(ArangoDatabase db) {
         String user = "user-" + rnd();
@@ -524,7 +524,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void revokeAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -532,7 +532,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).revokeAccess(user);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void revokeAccessUserNotFound(ArangoDatabase db) {
         String user = "user-" + rnd();
@@ -540,7 +540,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void resetAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -548,7 +548,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).resetAccess(user);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void resetAccessUserNotFound(ArangoDatabase db) {
         String user = "user-" + rnd();
@@ -556,7 +556,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void grantDefaultCollectionAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
@@ -564,13 +564,13 @@ class ArangoDatabaseTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantDefaultCollectionAccess(user, Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getPermissions(ArangoDatabase db) {
         assertThat(db.getPermissions("root")).isEqualTo(Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void query(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -583,7 +583,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithNullBindVar(ArangoDatabase db) {
         final ArangoCursor<Object> cursor = db.query("return @foo", Object.class, Collections.singletonMap("foo", null));
@@ -591,7 +591,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.next()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryForEach(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -608,7 +608,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(i).isGreaterThanOrEqualTo(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithCount(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -624,7 +624,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.getCount()).isEqualTo(6);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithLimitAndFullCount(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -642,7 +642,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat((cursor.getStats().getFullCount())).isGreaterThanOrEqualTo(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryStats(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -670,7 +670,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithBatchSize(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -686,7 +686,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryIterateWithBatchSize(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -704,7 +704,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(i.get()).isGreaterThanOrEqualTo(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithTTL(ArangoDatabase db) throws InterruptedException {
         // set TTL to 1 seconds and get the second batch after 2 seconds!
@@ -732,7 +732,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void changeQueryCache(ArangoDatabase db) {
         QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
@@ -753,7 +753,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithCache(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -784,7 +784,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithMemoryLimit(ArangoDatabase db) {
         Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", String.class,
@@ -793,7 +793,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithFailOnWarningTrue(ArangoDatabase db) {
         Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", String.class,
@@ -801,7 +801,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithFailOnWarningFalse(ArangoDatabase db) {
         final ArangoCursor<String> cursor = db
@@ -809,7 +809,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.next()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -819,7 +819,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithMaxWarningCount(ArangoDatabase db) {
         final ArangoCursor<String> cursorWithWarnings = db
@@ -831,7 +831,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(warnings).isNullOrEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryCursor(ArangoDatabase db) {
         ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
@@ -846,7 +846,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryCursorRetry(ArangoDatabase db) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -863,7 +863,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void changeQueryTrackingProperties(ArangoDatabase db) {
         try {
@@ -887,7 +887,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithBindVars(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
@@ -909,7 +909,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithRawBindVars(ArangoDatabase db) {
         final Map<String, Object> bindVars = new HashMap<>();
@@ -922,7 +922,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(res.get("bar").intValue()).isEqualTo(11);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryWithWarning(ArangoDB arangoDB) {
         final ArangoCursor<String> cursor = arangoDB.db().query("return 1/0", String.class);
@@ -931,7 +931,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.getWarnings()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryStream(ArangoDatabase db) {
         final ArangoCursor<Void> cursor = db
@@ -940,7 +940,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.getCount()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryForceOneShardAttributeValue(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -968,7 +968,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(c2.hasNext()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryClose(ArangoDB arangoDB) throws IOException {
         final ArangoCursor<String> cursor = arangoDB.db()
@@ -986,7 +986,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(count).hasValue(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryCloseShouldBeIdempotent(ArangoDB arangoDB) throws IOException {
         ArangoCursor<Integer> cursor = arangoDB.db().query("for i in 1..2 return i", Integer.class,
@@ -995,7 +995,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryCloseOnCursorWithoutId(ArangoDB arangoDB) throws IOException {
         ArangoCursor<Integer> cursor = arangoDB.db().query("return 1", Integer.class);
@@ -1003,7 +1003,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryNoResults(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db
@@ -1011,7 +1011,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryWithNullBindParam(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
@@ -1019,7 +1019,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void queryAllowDirtyRead(ArangoDatabase db) throws IOException {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
@@ -1031,7 +1031,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetry(ArangoDB arangoDB) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -1040,7 +1040,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.asListRemaining()).containsExactly("1", "2");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryClose(ArangoDB arangoDB) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -1054,7 +1054,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryCloseBeforeLatestBatch(ArangoDB arangoDB) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -1066,7 +1066,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryCloseSingleBatch(ArangoDB arangoDB) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -1080,7 +1080,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void explainQuery(ArangoDatabase db) {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return i", null, null);
@@ -1099,7 +1099,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void explainQueryWithBindVars(ArangoDatabase db) {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return @value",
@@ -1115,7 +1115,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(plan.getNodes()).isNotEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void explainQueryWithIndexNode(ArangoDatabase db) {
         ArangoCollection character = db.collection("got_characters");
@@ -1143,7 +1143,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 });
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void parseQuery(ArangoDatabase db) {
         final AqlParseEntity parse = db.parseQuery("for i in 1..1 return i");
@@ -1153,7 +1153,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(parse.getAst()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getCurrentlyRunningQueries(ArangoDatabase db) throws InterruptedException {
         String query = "return sleep(1)";
@@ -1178,7 +1178,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         t.join();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void killQuery(ArangoDatabase db) throws InterruptedException, ExecutionException {
         ExecutorService es = Executors.newSingleThreadExecutor();
@@ -1208,7 +1208,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         es.shutdown();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getAndClearSlowQueries(ArangoDatabase db) {
         db.clearSlowQueries();
@@ -1242,7 +1242,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         db.setQueryTrackingProperties(properties);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGetDeleteAqlFunction(ArangoDatabase db) {
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
@@ -1266,7 +1266,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGetDeleteAqlFunctionWithNamespace(ArangoDatabase db) {
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
@@ -1291,7 +1291,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGraph(ArangoDatabase db) {
         String name = "graph-" + rnd();
@@ -1299,7 +1299,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGraphSatellite(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -1317,7 +1317,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGraphReplicationFaktor(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -1335,7 +1335,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createGraphNumberOfShards(ArangoDatabase db) {
         assumeTrue(isCluster());
@@ -1354,7 +1354,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getGraphs(ArangoDatabase db) {
         String name = "graph-" + rnd();
@@ -1365,7 +1365,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionString(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params("test");
@@ -1373,7 +1373,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"test\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionNumber(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params(5);
@@ -1381,7 +1381,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result).isEqualTo(5);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonNode(ArangoDatabase db) {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
@@ -1390,7 +1390,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.asText()).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonObject(ArangoDatabase db) {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
@@ -1401,7 +1401,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonArray(ArangoDatabase db) {
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
@@ -1411,7 +1411,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionMap(ArangoDatabase db) {
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
@@ -1422,7 +1422,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionArray(ArangoDatabase db) {
         final String[] params = new String[]{"hello", "world"};
@@ -1432,7 +1432,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionCollection(ArangoDatabase db) {
         final Collection<String> params = new ArrayList<>();
@@ -1444,7 +1444,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionInsertJson(ArangoDatabase db) {
         String key = "key-" + rnd();
@@ -1457,7 +1457,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionExclusiveWrite(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -1471,13 +1471,13 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionEmpty(ArangoDatabase db) {
         db.transaction("function () {}", Void.class, null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionAllowImplicit(ArangoDatabase db) {
         final String action = "function (params) {" + "var db = require('internal').db;"
@@ -1493,7 +1493,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 .isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionPojoReturn(ArangoDatabase db) {
         final String action = "function() { return {'value':'hello world'}; }";
@@ -1502,7 +1502,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(res.value).isEqualTo("hello world");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
         final DatabaseEntity info = db.getInfo();
@@ -1519,7 +1519,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void shouldIncludeExceptionMessage(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -1534,7 +1534,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void reloadRouting(ArangoDatabase db) {
         db.reloadRouting();

@@ -61,7 +61,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         BaseJunit5.initEdgeCollections(ENAMES);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getVersion(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoDBVersion version = db.getVersion().get();
@@ -70,7 +70,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(version.getVersion()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getEngine(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoDBEngine engine = db.getEngine().get();
@@ -78,21 +78,21 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(engine.getName()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void exists(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assertThat(arangoDB.db(TEST_DB).exists().get()).isTrue();
         assertThat(arangoDB.db("no").exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getAccessibleDatabases(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<String> dbs = db.getAccessibleDatabases().get();
         assertThat(dbs).contains("_system");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
@@ -101,7 +101,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.getId()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithNotNormalizedName(ArangoDatabaseAsync db) {
         assumeTrue(supportsExtendedNames());
@@ -114,7 +114,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithReplicationFactor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -127,7 +127,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(props.getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithWriteConcern(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -143,7 +143,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(props.getWriteConcern()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createSatelliteCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -159,7 +159,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(props.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithNumberOfShards(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -173,7 +173,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(props.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithShardingStrategys(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -189,7 +189,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(props.getShardingStrategy()).isEqualTo(ShardingStrategy.COMMUNITY_COMPAT.getInternalName());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithSmartJoinAttribute(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -207,7 +207,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(db.collection(name).getProperties().get().getSmartJoinAttribute()).isEqualTo("test123");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithSmartJoinAttributeWrong(ArangoDatabaseAsync db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -222,7 +222,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithNumberOfShardsAndShardKey(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -237,7 +237,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(properties.getShardKeys()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithNumberOfShardsAndShardKeys(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -251,7 +251,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(properties.getShardKeys()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithDistributeShardsLike(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -279,34 +279,34 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(db.collection(name).getProperties().get().getKeyOptions().getType()).isEqualTo(keyType);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypeAutoincrement(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         createCollectionWithKeyType(db, KeyType.autoincrement);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypePadded(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.padded);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypeTraditional(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         createCollectionWithKeyType(db, KeyType.traditional);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypeUuid(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.uuid);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithJsonSchema(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -354,7 +354,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1620);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithComputedFields(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -390,7 +390,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .contains(cv2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
@@ -400,7 +400,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteSystemCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String name = "_system_test";
@@ -413,7 +413,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .isEqualTo(404);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteSystemCollectionFail(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String name = "_system_test";
@@ -430,7 +430,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(collection.exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getIndex(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
@@ -440,7 +440,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteIndex(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<String> fields = Collections.singletonList("field-" + rnd());
@@ -453,7 +453,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(e.getResponseCode()).isEqualTo(404);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getCollections(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<CollectionEntity> collections = db.getCollections(null).get();
@@ -461,7 +461,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getCollectionsExcludeSystem(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
@@ -470,7 +470,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(allCollections).hasSizeGreaterThan(nonSystemCollections.size());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void grantAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
@@ -478,7 +478,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void grantAccessRW(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -486,7 +486,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void grantAccessRO(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -494,7 +494,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.RO);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void grantAccessNONE(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -502,7 +502,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantAccess(user, Permissions.NONE);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void grantAccessUserNotFound(ArangoDatabaseAsync db) {
         String user = "user-" + rnd();
@@ -510,7 +510,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void revokeAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -518,7 +518,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).revokeAccess(user);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void revokeAccessUserNotFound(ArangoDatabaseAsync db) {
         String user = "user-" + rnd();
@@ -526,7 +526,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void resetAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -534,7 +534,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).resetAccess(user);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void resetAccessUserNotFound(ArangoDatabaseAsync db) {
         String user = "user-" + rnd();
@@ -542,7 +542,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void grantDefaultCollectionAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
@@ -550,13 +550,13 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         arangoDB.db(TEST_DB).grantDefaultCollectionAccess(user, Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getPermissions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assertThat(db.getPermissions("root").get()).isEqualTo(Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void query(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> cursor = db.query("for i in 0..9 return i", Integer.class).get();
@@ -567,14 +567,14 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithNullBindVar(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<Object> cursor = db.query("return @foo", Object.class, Collections.singletonMap("foo", null)).get();
         assertThat(cursor.getResult()).containsExactly((Object) null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryForEach(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -584,7 +584,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getResult()).hasSizeGreaterThanOrEqualTo(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -597,7 +597,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getResult()).hasSize(6);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithLimitAndFullCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -612,7 +612,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat((cursor.getExtra().getStats().getFullCount())).isGreaterThanOrEqualTo(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryStats(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -631,7 +631,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getExtra().getStats().getPeakMemoryUsage()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithBatchSize(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<Integer> cursor = db
@@ -645,7 +645,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(c2.hasMore()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithTTL(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
         final ArangoCursorAsync<Integer> cursor = db
@@ -659,7 +659,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(ex.getMessage()).isEqualTo("Response: 404, Error: 1600 - cursor not found");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void changeQueryCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         QueryCachePropertiesEntity properties = db.getQueryCacheProperties().get();
@@ -680,7 +680,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties2).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -711,7 +711,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.setQueryCacheProperties(properties2).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithMemoryLimit(ArangoDatabaseAsync db) {
         Throwable thrown = catchThrowable(() -> db.query("RETURN 1..100000", String.class,
@@ -720,7 +720,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getErrorNum()).isEqualTo(32);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithFailOnWarningTrue(ArangoDatabaseAsync db) {
         Throwable thrown = catchThrowable(() -> db.query("RETURN 1 / 0", String.class,
@@ -728,7 +728,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithFailOnWarningFalse(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<String> cursor = db
@@ -736,7 +736,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getResult()).containsExactly((String) null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithTimeout(ArangoDatabaseAsync db) {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -746,7 +746,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(410);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithMaxWarningCount(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<String> cursorWithWarnings = db
@@ -758,7 +758,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(warnings).isNullOrEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
@@ -775,7 +775,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryCursorRetry(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -794,7 +794,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result).containsExactly(1, 2, 3, 4);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void changeQueryTrackingProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         try {
@@ -818,7 +818,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithBindVars(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -836,7 +836,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getResult()).hasSizeGreaterThanOrEqualTo(5);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithRawBindVars(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Map<String, Object> bindVars = new HashMap<>();
@@ -850,7 +850,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(res.get("bar").intValue()).isEqualTo(11);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryWithWarning(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<String> cursor = arangoDB.db().query("return 1/0", String.class).get();
@@ -860,7 +860,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .allSatisfy(w -> assertThat(w.getMessage()).contains("division by zero"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryStream(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<Void> cursor = db
@@ -869,7 +869,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getCount()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryForceOneShardAttributeValue(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -897,7 +897,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(c2.hasNext()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryClose(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<String> cursor = arangoDB.db()
@@ -911,7 +911,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(ex.getMessage()).contains("cursor not found");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryCloseShouldBeIdempotent(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> cursor = arangoDB.db().query("for i in 1..2 return i", Integer.class,
@@ -920,7 +920,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         cursor.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryCloseOnCursorWithoutId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> cursor = arangoDB.db().query("return 1", Integer.class).get();
@@ -928,20 +928,20 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         cursor.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryNoResults(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         db.query("FOR i IN @@col RETURN i", BaseDocument.class, new MapBuilder().put("@col", CNAME1).get()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithNullBindParam(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         db.query("FOR i IN @@col FILTER i.test == @test RETURN i", BaseDocument.class,
                 new MapBuilder().put("@col", CNAME1).put("test", null).get()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryAllowDirtyRead(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final ArangoCursorAsync<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
@@ -950,7 +950,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.isPotentialDirtyRead()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetry(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -968,7 +968,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         cursor.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryClose(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -982,7 +982,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         c2.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryCloseBeforeLatestBatch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -993,7 +993,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         cursor.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryCloseSingleBatch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
@@ -1004,7 +1004,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         cursor.close().get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void explainQuery(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return i", null, null).get();
@@ -1023,7 +1023,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void explainQueryWithBindVars(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return @value",
@@ -1039,7 +1039,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(plan.getNodes()).isNotEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void explainQueryWithIndexNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCollectionAsync character = db.collection("got_characters");
@@ -1067,7 +1067,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 });
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void parseQuery(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final AqlParseEntity parse = db.parseQuery("for i in 1..1 return i").get();
@@ -1077,7 +1077,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(parse.getAst()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getCurrentlyRunningQueries(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
         String query = "return sleep(1)";
@@ -1101,7 +1101,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         q.get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void killQuery(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
         CompletableFuture<ArangoCursorAsync<Void>> c = db.query("return sleep(5)", Void.class);
@@ -1125,7 +1125,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorMessage()).contains("query killed");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getAndClearSlowQueries(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         db.clearSlowQueries().get();
@@ -1159,7 +1159,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.setQueryTrackingProperties(properties).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGetDeleteAqlFunction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
@@ -1183,7 +1183,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGetDeleteAqlFunctionWithNamespace(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
@@ -1208,7 +1208,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = "graph-" + rnd();
@@ -1216,7 +1216,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraphSatellite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -1234,7 +1234,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraphReplicationFaktor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -1252,7 +1252,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraphNumberOfShards(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -1271,7 +1271,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getGraphs(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = "graph-" + rnd();
@@ -1282,7 +1282,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionString(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final TransactionOptions options = new TransactionOptions().params("test");
@@ -1290,7 +1290,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"test\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionNumber(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final TransactionOptions options = new TransactionOptions().params(5);
@@ -1298,7 +1298,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result).isEqualTo(5);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
@@ -1307,7 +1307,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.asText()).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonObject(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
@@ -1318,7 +1318,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
@@ -1328,7 +1328,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionMap(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
@@ -1339,7 +1339,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String[] params = new String[]{"hello", "world"};
@@ -1349,7 +1349,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final Collection<String> params = new ArrayList<>();
@@ -1361,7 +1361,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(result.get()).isEqualTo("\"hello world\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionInsertJson(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String key = "key-" + rnd();
@@ -1374,7 +1374,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionExclusiveWrite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -1388,13 +1388,13 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionEmpty(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         db.transaction("function () {}", Void.class, null).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionAllowImplicit(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String action = "function (params) {" + "var db = require('internal').db;"
@@ -1410,7 +1410,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 .isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionPojoReturn(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final String action = "function() { return {'value':'hello world'}; }";
@@ -1419,7 +1419,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(res.value).isEqualTo("hello world");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfo(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         final DatabaseEntity info = db.getInfo().get();
@@ -1436,7 +1436,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void shouldIncludeExceptionMessage(ArangoDatabaseAsync db) {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -1448,7 +1448,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(((ArangoDBException) thrown).getErrorMessage()).isEqualTo(exceptionMessage);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void reloadRouting(ArangoDatabaseAsync db) {
         db.reloadRouting();

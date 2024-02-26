@@ -47,13 +47,13 @@ class StreamTransactionGraphTest extends BaseJunit5 {
 
     private static Stream<Arguments> vertices() {
         return dbsStream()
-                .map(db -> db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_1))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_1)))
                 .map(Arguments::of);
     }
 
     private static Stream<Arguments> edges() {
         return dbsStream()
-                .map(db -> db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION)))
                 .map(Arguments::of);
     }
 
@@ -78,7 +78,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
         return value;
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void getVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
@@ -102,7 +102,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void createVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
@@ -132,7 +132,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null)).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void replaceVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
@@ -171,7 +171,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void updateVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
@@ -210,7 +210,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("vertices")
     void deleteVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
@@ -242,7 +242,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void getEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
@@ -266,7 +266,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void createEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
@@ -296,7 +296,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null)).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void replaceEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
@@ -335,7 +335,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void updateEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
@@ -373,7 +373,7 @@ class StreamTransactionGraphTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void deleteEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
