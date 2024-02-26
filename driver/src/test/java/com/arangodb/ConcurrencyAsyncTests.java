@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ConcurrencyAsyncTests {
 
@@ -24,6 +25,8 @@ class ConcurrencyAsyncTests {
     @EnumSource(Protocol.class)
     @Timeout(2)
     void executorLimit(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ExecutorService asyncExecutor = Executors.newCachedThreadPool();
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
@@ -79,6 +82,8 @@ class ConcurrencyAsyncTests {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void concurrentPendingRequests(Protocol protocol) throws ExecutionException, InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .protocol(protocol).build().async();

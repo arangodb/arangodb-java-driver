@@ -14,18 +14,27 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class BaseJunit5 {
+public class BaseJunit5 {
     protected static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
-    private static final List<ArangoDB> adbs = Arrays.asList(
-            new ArangoDB.Builder().loadProperties(config).protocol(Protocol.VST).build(),
-            new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP_VPACK).build(),
-            new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP2_VPACK).build(),
-            new ArangoDB.Builder().loadProperties(config).protocol(Protocol.HTTP2_JSON).build()
-    );
+    private static final ArangoDB adb = new ArangoDB.Builder()
+            .loadProperties(config)
+            .protocol(Protocol.HTTP_JSON)
+            .build();
+
+    private static final ArangoDBVersion version = adb.getVersion();
+    private static final ServerRole role = adb.getRole();
+
+    private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+            .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
+            .map(p -> new ArangoDB.Builder()
+                    .loadProperties(config)
+                    .protocol(p)
+                    .build())
+            .collect(Collectors.toList());
 
     private static Boolean extendedDbNames;
     private static Boolean extendedNames;
@@ -33,14 +42,17 @@ class BaseJunit5 {
     protected static Stream<ArangoDB> adbsStream() {
         return adbs.stream();
     }
+
     protected static Stream<ArangoDatabase> dbsStream() {
-        return adbsStream().map(adb -> adb.db(TEST_DB));
+        return adbsStream().map(it -> it.db(TEST_DB));
     }
+
     protected static Stream<ArangoDBAsync> asyncAdbsStream() {
         return adbs.stream().map(ArangoDB::async);
     }
+
     protected static Stream<ArangoDatabaseAsync> asyncDbsStream() {
-        return asyncAdbsStream().map(adb -> adb.db(TEST_DB));
+        return asyncAdbsStream().map(it -> it.db(TEST_DB));
     }
 
     protected static Stream<Arguments> arangos() {
@@ -60,7 +72,7 @@ class BaseJunit5 {
     }
 
     static ArangoDatabase initDB(String name) {
-        ArangoDatabase database = adbs.get(0).db(name);
+        ArangoDatabase database = adb.db(name);
         if (!database.exists())
             database.create();
         return database;
@@ -71,7 +83,7 @@ class BaseJunit5 {
     }
 
     static void dropDB(String name) {
-        ArangoDatabase database = adbs.get(0).db(name);
+        ArangoDatabase database = adb.db(name);
         if (database.exists())
             database.drop();
     }
@@ -109,14 +121,14 @@ class BaseJunit5 {
         dropDB(TEST_DB);
     }
 
-    static String rnd() {
+    public static String rnd() {
         return UUID.randomUUID().toString();
     }
 
-    static synchronized boolean supportsExtendedDbNames() {
+    public static synchronized boolean supportsExtendedDbNames() {
         if (extendedDbNames == null) {
             try {
-                ArangoDatabase testDb = adbs.get(0)
+                ArangoDatabase testDb = adb
                         .db("test-" + TestUtils.generateRandomName(true, 20));
                 testDb.create();
                 extendedDbNames = true;
@@ -128,10 +140,10 @@ class BaseJunit5 {
         return extendedDbNames;
     }
 
-    static synchronized boolean supportsExtendedNames() {
+    public static synchronized boolean supportsExtendedNames() {
         if (extendedNames == null) {
             try {
-                ArangoCollection testCol = adbs.get(0).db()
+                ArangoCollection testCol = adb.db()
                         .collection("test-" + TestUtils.generateRandomName(true, 20));
                 testCol.create();
                 extendedNames = true;
@@ -143,44 +155,44 @@ class BaseJunit5 {
         return extendedNames;
     }
 
-    static String rndDbName() {
+    public static String rndDbName() {
         return "testDB-" + TestUtils.generateRandomName(supportsExtendedDbNames(), 20);
     }
 
-    static String rndName() {
+    public static String rndName() {
         return "dd-" + TestUtils.generateRandomName(supportsExtendedNames(), 20);
     }
 
-    boolean isAtLeastVersion(final int major, final int minor) {
+    public static boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
     }
 
-    boolean isAtLeastVersion(final int major, final int minor, final int patch) {
-        return TestUtils.isAtLeastVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
+    public static boolean isAtLeastVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isAtLeastVersion(version.getVersion(), major, minor, patch);
     }
 
-    boolean isLessThanVersion(final int major, final int minor) {
+    public static boolean isLessThanVersion(final int major, final int minor) {
         return isLessThanVersion(major, minor, 0);
     }
 
-    boolean isLessThanVersion(final int major, final int minor, final int patch) {
-        return TestUtils.isLessThanVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
+    public static boolean isLessThanVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
     }
 
-    boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(adbs.get(0).getEngine().getName());
+    public static boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
+        return name.equals(adb.getEngine().getName());
     }
 
-    boolean isSingleServer() {
-        return adbs.get(0).getRole() == ServerRole.SINGLE;
+    public static boolean isSingleServer() {
+        return role == ServerRole.SINGLE;
     }
 
-    boolean isCluster() {
-        return adbs.get(0).getRole() == ServerRole.COORDINATOR;
+    public static boolean isCluster() {
+        return role == ServerRole.COORDINATOR;
     }
 
-    boolean isEnterprise() {
-        return adbs.get(0).getVersion().getLicense() == License.ENTERPRISE;
+    public static boolean isEnterprise() {
+        return version.getLicense() == License.ENTERPRISE;
     }
 
 }

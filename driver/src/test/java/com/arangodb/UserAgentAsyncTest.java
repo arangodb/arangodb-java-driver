@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UserAgentAsyncTest extends BaseJunit5 {
 
@@ -21,6 +22,8 @@ class UserAgentAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void userAgentHeader(Protocol protocol) throws ExecutionException, InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)

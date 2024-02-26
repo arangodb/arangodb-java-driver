@@ -355,6 +355,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void authenticationFailPassword(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)
@@ -368,6 +370,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void authenticationFailUser(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)

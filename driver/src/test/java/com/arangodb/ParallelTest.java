@@ -18,6 +18,8 @@ class ParallelTest {
     @ParameterizedTest(name = "{index}")
     @EnumSource(Protocol.class)
     void connectionParallelism(Protocol protocol) throws InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         // test that connections are internally async and can have multiple pending requests
         // BTS-1102: the server does not run pipelined HTTP/1.1 requests in parallel
         assumeTrue(protocol != Protocol.HTTP_JSON && protocol != Protocol.HTTP_VPACK);

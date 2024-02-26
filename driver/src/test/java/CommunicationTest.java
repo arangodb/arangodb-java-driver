@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CommunicationTest {
 
@@ -17,6 +18,8 @@ public class CommunicationTest {
     @EnumSource(Protocol.class)
     @Timeout(5)
     void disconnectAsync(Protocol protocol) throws InterruptedException, ExecutionException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
@@ -40,6 +43,8 @@ public class CommunicationTest {
     @EnumSource(Protocol.class)
     @Timeout(5)
     void disconnect(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
