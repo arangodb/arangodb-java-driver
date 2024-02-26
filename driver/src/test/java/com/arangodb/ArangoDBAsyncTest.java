@@ -97,10 +97,10 @@ class ArangoDBAsyncTest extends BaseJunit5 {
 
         final String dbName = "testDB-\u006E\u0303\u00f1";
         String normalized = UnicodeUtils.normalize(dbName);
-        arangoDB.createDatabase(normalized);
+        arangoDB.createDatabase(normalized).get();
         arangoDB.db(normalized).drop().get();
 
-        Throwable thrown = catchThrowable(() -> arangoDB.createDatabase(dbName));
+        Throwable thrown = catchThrowable(() -> arangoDB.createDatabase(dbName).get()).getCause();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .hasMessageContaining("normalized");

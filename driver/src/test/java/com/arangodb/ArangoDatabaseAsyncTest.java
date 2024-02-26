@@ -107,7 +107,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assumeTrue(supportsExtendedNames());
         final String colName = "testCol-\u006E\u0303\u00f1";
 
-        Throwable thrown = catchThrowable(() -> db.createCollection(colName));
+        Throwable thrown = catchThrowable(() -> db.createCollection(colName).get()).getCause();
         assertThat(thrown)
                 .isInstanceOf(ArangoDBException.class)
                 .hasMessageContaining("normalized")

@@ -4,7 +4,6 @@
 #   STARTER_MODE:             (single|cluster|activefailover), default single
 #   DOCKER_IMAGE:             ArangoDB docker image, default docker.io/arangodb/arangodb:latest
 #   SSL:                      (true|false), default false
-#   EXTENDED_NAMES:  (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
 
 # EXAMPLE:
@@ -13,7 +12,6 @@
 STARTER_MODE=${STARTER_MODE:=single}
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/arangodb:latest}
 SSL=${SSL:=false}
-EXTENDED_NAMES=${EXTENDED_NAMES:=false}
 
 STARTER_DOCKER_IMAGE=docker.io/arangodb/arangodb-starter:latest
 GW=172.28.0.1
@@ -44,10 +42,6 @@ if [ "$SSL" == "true" ]; then
     STARTER_ARGS="$STARTER_ARGS --ssl.keyfile=server.pem"
     SCHEME=https
     ARANGOSH_SCHEME=http+ssl
-fi
-
-if [ "$EXTENDED_NAMES" == "true" ]; then
-    STARTER_ARGS="${STARTER_ARGS} --all.database.extended-names=true"
 fi
 
 if [ "$USE_MOUNTED_DATA" == "true" ]; then
