@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class RetriableCursorTest extends SingleServerTest {
 
     static Stream<ArangoDB> arangoProvider() {
-        return builderProvider().map(it -> it.timeout(1_000).build());
+        return builderProvider().map(it -> it.timeout(500).build());
     }
 
     static Stream<ArangoDBAsync> asyncArangoProvider() {
