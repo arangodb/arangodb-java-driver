@@ -6,14 +6,12 @@ import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
 import io.vertx.core.http.HttpClosedException;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.concurrent.*;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -24,18 +22,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class RetryClusterTest extends ClusterTest {
 
-    static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().protocol(Protocol.VST).build(),
-                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().protocol(Protocol.HTTP2_VPACK).build()
-        );
-    }
-
-    static Stream<ArangoDBAsync> asyncArangoProvider() {
-        return arangoProvider().map(ArangoDB::async);
-    }
-
     /**
      * on reconnection failure: - 3x logs WARN Could not connect to host[addr=127.0.0.1,port=8529] -
      * ArangoDBException("Cannot contact any host")
@@ -43,7 +29,7 @@ class RetryClusterTest extends ClusterTest {
      * once the proxy is re-enabled: - the subsequent requests should be successful
      */
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void unreachableHost(ArangoDB arangoDB) {
         arangoDB.getVersion();
         disableAllEndpoints();
@@ -76,7 +62,7 @@ class RetryClusterTest extends ClusterTest {
      * once the proxy is re-enabled: - the subsequent requests should be successful
      */
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void unreachableHostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
         disableAllEndpoints();
@@ -103,7 +89,7 @@ class RetryClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void unreachableHostFailover(ArangoDB arangoDB) {
         arangoDB.getVersion();
         getEndpoints().get(0).disableNow();
@@ -120,7 +106,7 @@ class RetryClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void unreachableHostFailoverAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
         getEndpoints().get(0).disableNow();
@@ -138,7 +124,7 @@ class RetryClusterTest extends ClusterTest {
 
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
@@ -164,7 +150,7 @@ class RetryClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void retryGetOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         assumeTrue(protocol != Protocol.VST);
         ArangoDBAsync arangoDB = dbBuilder()
@@ -197,7 +183,7 @@ class RetryClusterTest extends ClusterTest {
      * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -230,7 +216,7 @@ class RetryClusterTest extends ClusterTest {
      * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void notRetryPostOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)

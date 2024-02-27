@@ -2,6 +2,7 @@ package resilience;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
+import com.arangodb.Protocol;
 import com.arangodb.Request;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.rekawek.toxiproxy.Proxy;
@@ -10,23 +11,20 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import resilience.utils.MemoryAppender;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 @Tag("cluster")
-public abstract class ClusterTest {
+public abstract class ClusterTest extends TestUtils {
 
-    protected static final String HOST = "127.0.0.1";
-    protected static final String PASSWORD = "test";
-    protected static final MemoryAppender logs = new MemoryAppender();
     private static final List<Endpoint> endpoints = Arrays.asList(
-            new Endpoint("cluster1", HOST, 18529, "172.28.0.1:8529"),
-            new Endpoint("cluster2", HOST, 18539, "172.28.0.1:8539"),
-            new Endpoint("cluster3", HOST, 18549, "172.28.0.1:8549")
+            new Endpoint("cluster1", HOST, 18529, UPSTREAM_GW + ":8529"),
+            new Endpoint("cluster2", HOST, 18539, UPSTREAM_GW + ":8539"),
+            new Endpoint("cluster3", HOST, 18549, UPSTREAM_GW + ":8549")
     );
 
     @BeforeAll
@@ -61,10 +59,27 @@ public abstract class ClusterTest {
 
     protected static ArangoDB.Builder dbBuilder() {
         ArangoDB.Builder builder = new ArangoDB.Builder();
-        for (Endpoint endpoint : endpoints) {
+        for (Endpoint endpoint : getEndpoints()) {
             builder.host(endpoint.getHost(), endpoint.getPort());
         }
         return builder.password(PASSWORD);
+    }
+
+    protected static Stream<Protocol> protocolProvider() {
+        return Stream.of(Protocol.values())
+                .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12));
+    }
+
+    protected static Stream<ArangoDB.Builder> builderProvider() {
+        return protocolProvider().map(p -> dbBuilder().protocol(p));
+    }
+
+    protected static Stream<ArangoDB> adbProvider() {
+        return builderProvider().map(ArangoDB.Builder::build);
+    }
+
+    protected static Stream<ArangoDBAsync> asyncAdbProvider() {
+        return adbProvider().map(ArangoDB::async);
     }
 
     protected static String serverIdGET(ArangoDB adb) {

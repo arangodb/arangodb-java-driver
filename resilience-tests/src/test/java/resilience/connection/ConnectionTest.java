@@ -3,15 +3,14 @@ package resilience.connection;
 import com.arangodb.*;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.ResetPeer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -22,29 +21,11 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class ConnectionTest extends SingleServerTest {
 
-    static Stream<Protocol> protocolProvider() {
-        return Stream.of(
-                Protocol.VST,
-                Protocol.HTTP_VPACK,
-                Protocol.HTTP2_VPACK
-        );
-    }
-
-    static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().protocol(Protocol.VST).build(),
-                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().protocol(Protocol.HTTP2_VPACK).build()
-        );
-    }
-
-    static Stream<ArangoDBAsync> asyncArangoProvider() {
-        return arangoProvider().map(ArangoDB::async);
-    }
-
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFail(Protocol protocol) {
+        // FIXME: make this test faster and re-enable
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
                 .protocol(protocol)
@@ -64,7 +45,9 @@ class ConnectionTest extends SingleServerTest {
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFailAsync(Protocol protocol) {
+        // FIXME: make this test faster and re-enable
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
                 .protocol(protocol)
@@ -84,7 +67,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void connectionFail(ArangoDB arangoDB) {
         getEndpoint().disableNow();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
@@ -99,7 +82,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void connectionFailAsync(ArangoDBAsync arangoDB) {
         getEndpoint().disableNow();
 
@@ -115,7 +98,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void authFail(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
@@ -131,7 +114,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void authFailAsync(Protocol protocol) {
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
@@ -148,7 +131,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void connClose(ArangoDB adb) {
         getEndpoint().disable(500);
         Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class));
@@ -158,7 +141,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void connCloseAsync(ArangoDBAsync adb) {
         getEndpoint().disable(500);
         Throwable thrown = catchThrowable(() -> adb.db().query("RETURN SLEEP(1)", Void.class).get()).getCause();
@@ -168,7 +151,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void connReset(Protocol protocol) throws IOException, InterruptedException {
         assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
         ArangoDB adb = new ArangoDB.Builder()
@@ -188,7 +171,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void connResetAsync(Protocol protocol) throws IOException, InterruptedException {
         assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
         ArangoDBAsync adb = new ArangoDB.Builder()
