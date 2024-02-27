@@ -1,5 +1,6 @@
 import com.arangodb.*;
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.util.SlowTest;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CommunicationTest {
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(Protocol.class)
     @Timeout(5)
@@ -39,6 +41,7 @@ public class CommunicationTest {
                 .hasMessageContaining("closed");
     }
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(Protocol.class)
     @Timeout(5)

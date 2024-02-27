@@ -27,6 +27,7 @@ import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
+import com.arangodb.util.SlowTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -81,7 +82,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void exists(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assertThat(arangoDB.db(TEST_DB).exists().get()).isTrue();
+        assertThat(arangoDB.db(getTestDb()).exists().get()).isTrue();
         assertThat(arangoDB.db("no").exists().get()).isFalse();
     }
 
@@ -475,7 +476,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null).get();
-        arangoDB.db(TEST_DB).grantAccess(user).get();
+        arangoDB.db(getTestDb()).grantAccess(user).get();
     }
 
     @ParameterizedTest
@@ -483,7 +484,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantAccessRW(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.RW);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW);
     }
 
     @ParameterizedTest
@@ -491,7 +492,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantAccessRO(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.RO);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO);
     }
 
     @ParameterizedTest
@@ -499,7 +500,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantAccessNONE(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.NONE);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE);
     }
 
     @ParameterizedTest
@@ -515,7 +516,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void revokeAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).revokeAccess(user);
+        arangoDB.db(getTestDb()).revokeAccess(user);
     }
 
     @ParameterizedTest
@@ -531,7 +532,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void resetAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).resetAccess(user);
+        arangoDB.db(getTestDb()).resetAccess(user);
     }
 
     @ParameterizedTest
@@ -547,7 +548,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantDefaultCollectionAccess(ArangoDBAsync arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234");
-        arangoDB.db(TEST_DB).grantDefaultCollectionAccess(user, Permissions.RW);
+        arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW);
     }
 
     @ParameterizedTest
@@ -645,6 +646,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(c2.hasMore()).isFalse();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithTTL(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
@@ -736,6 +738,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getResult()).containsExactly((String) null);
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithTimeout(ArangoDatabaseAsync db) {
@@ -1077,6 +1080,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(parse.getAst()).hasSize(1);
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getCurrentlyRunningQueries(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
@@ -1101,6 +1105,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         q.get();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void killQuery(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
@@ -1125,6 +1130,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorMessage()).contains("query killed");
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getAndClearSlowQueries(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
@@ -1425,7 +1431,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         final DatabaseEntity info = db.getInfo().get();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
-        assertThat(info.getName()).isEqualTo(TEST_DB);
+        assertThat(info.getName()).isEqualTo(getTestDb());
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 

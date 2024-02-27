@@ -27,6 +27,7 @@ import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.RawJson;
+import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
@@ -79,6 +80,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version.getVersion()).isNotNull();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createAndDeleteDatabase(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
@@ -89,6 +91,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createWithNotNormalizedName(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
@@ -105,6 +108,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
                 .hasMessageContaining("normalized");
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithOptions(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
@@ -130,6 +134,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithOptionsSatellite(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
@@ -157,6 +162,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createDatabaseWithUsers(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {
@@ -474,7 +480,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     void getLogEntriesSearch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
-        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(TEST_DB)).get();
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(getTestDb())).get();
         assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotal());
     }
 

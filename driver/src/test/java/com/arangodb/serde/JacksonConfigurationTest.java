@@ -3,6 +3,7 @@ package com.arangodb.serde;
 import com.arangodb.ContentType;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.jackson.JacksonSerde;
+import com.arangodb.util.SlowTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonConfigurationTest {
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(ContentType.class)
     void bigStringInternalSerde(ContentType type) {
@@ -27,6 +29,7 @@ public class JacksonConfigurationTest {
         assertThat(out).isEqualTo(in);
     }
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(ContentType.class)
     void bigStringUserSerde(ContentType type) {

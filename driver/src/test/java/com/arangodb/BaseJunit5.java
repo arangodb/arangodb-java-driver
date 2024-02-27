@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BaseJunit5 {
-    protected static final String TEST_DB = "java_driver_test_db";
+    private static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final ArangoDB adb = new ArangoDB.Builder()
             .loadProperties(config)
@@ -125,6 +125,10 @@ public class BaseJunit5 {
     @AfterAll
     static void shutdown() {
         dropDB(TEST_DB);
+    }
+
+    protected String getTestDb() {
+        return TEST_DB;
     }
 
     public static String rnd() {

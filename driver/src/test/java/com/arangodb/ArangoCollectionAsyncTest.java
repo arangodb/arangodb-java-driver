@@ -28,10 +28,7 @@ import com.arangodb.serde.jackson.Id;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.serde.jackson.Key;
 import com.arangodb.serde.jackson.Rev;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.util.RawBytes;
-import com.arangodb.util.RawData;
-import com.arangodb.util.RawJson;
+import com.arangodb.util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -508,6 +505,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentDirtyRead(ArangoCollectionAsync collection) throws InterruptedException, ExecutionException {

@@ -84,7 +84,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void exists(ArangoDB arangoDB) {
-        assertThat(arangoDB.db(TEST_DB).exists()).isTrue();
+        assertThat(arangoDB.db(getTestDb()).exists()).isTrue();
         assertThat(arangoDB.db("no").exists()).isFalse();
     }
 
@@ -489,7 +489,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user);
+        arangoDB.db(getTestDb()).grantAccess(user);
     }
 
     @ParameterizedTest
@@ -497,7 +497,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessRW(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.RW);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW);
     }
 
     @ParameterizedTest
@@ -505,7 +505,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessRO(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.RO);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO);
     }
 
     @ParameterizedTest
@@ -513,7 +513,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessNONE(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).grantAccess(user, Permissions.NONE);
+        arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE);
     }
 
     @ParameterizedTest
@@ -529,7 +529,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void revokeAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).revokeAccess(user);
+        arangoDB.db(getTestDb()).revokeAccess(user);
     }
 
     @ParameterizedTest
@@ -545,7 +545,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void resetAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(TEST_DB).resetAccess(user);
+        arangoDB.db(getTestDb()).resetAccess(user);
     }
 
     @ParameterizedTest
@@ -561,7 +561,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantDefaultCollectionAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234");
-        arangoDB.db(TEST_DB).grantDefaultCollectionAccess(user, Permissions.RW);
+        arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW);
     }
 
     @ParameterizedTest
@@ -704,6 +704,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(i.get()).isGreaterThanOrEqualTo(10);
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithTTL(ArangoDatabase db) throws InterruptedException {
@@ -809,6 +810,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.next()).isNull();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
@@ -1153,6 +1155,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(parse.getAst()).hasSize(1);
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("dbs")
     void getCurrentlyRunningQueries(ArangoDatabase db) throws InterruptedException {
@@ -1178,6 +1181,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         t.join();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("dbs")
     void killQuery(ArangoDatabase db) throws InterruptedException, ExecutionException {
@@ -1208,6 +1212,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         es.shutdown();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("dbs")
     void getAndClearSlowQueries(ArangoDatabase db) {
@@ -1508,7 +1513,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final DatabaseEntity info = db.getInfo();
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
-        assertThat(info.getName()).isEqualTo(TEST_DB);
+        assertThat(info.getName()).isEqualTo(getTestDb());
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 

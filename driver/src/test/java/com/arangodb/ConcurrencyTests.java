@@ -1,6 +1,7 @@
 package com.arangodb;
 
 import com.arangodb.config.ConfigUtils;
+import com.arangodb.util.SlowTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ConcurrencyTests {
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void concurrentPendingRequests(Protocol protocol) throws ExecutionException, InterruptedException {

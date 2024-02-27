@@ -27,6 +27,7 @@ import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.RawJson;
+import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -81,6 +82,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(version.getVersion()).isNotNull();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
     void createAndDeleteDatabase(ArangoDB arangoDB) {
@@ -92,6 +94,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
     void createWithNotNormalizedName(ArangoDB arangoDB) {
@@ -108,6 +111,7 @@ class ArangoDBTest extends BaseJunit5 {
                 .hasMessageContaining("normalized");
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
     void createDatabaseWithOptions(ArangoDB arangoDB) {
@@ -133,6 +137,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
     void createDatabaseWithOptionsSatellite(ArangoDB arangoDB) {
@@ -160,6 +165,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(resultDelete).isTrue();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
     void createDatabaseWithUsers(ArangoDB arangoDB) throws InterruptedException {
@@ -486,7 +492,7 @@ class ArangoDBTest extends BaseJunit5 {
     void getLogEntriesSearch(ArangoDB arangoDB) {
         assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
-        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(TEST_DB));
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(getTestDb()));
         assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotal());
     }
 

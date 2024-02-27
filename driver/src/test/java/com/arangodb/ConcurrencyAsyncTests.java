@@ -2,6 +2,7 @@ package com.arangodb;
 
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.util.SlowTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ConcurrencyAsyncTests {
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(Protocol.class)
     @Timeout(2)
@@ -79,6 +81,7 @@ class ConcurrencyAsyncTests {
         adb.shutdown();
     }
 
+    @SlowTest
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void concurrentPendingRequests(Protocol protocol) throws ExecutionException, InterruptedException {
