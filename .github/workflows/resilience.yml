@@ -23,6 +23,15 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - docker-img: docker.io/arangodb/enterprise:3.11.7
+            compression: false
+          - docker-img: docker.io/arangodb/arangodb-preview:devel-nightly
+            compression: true
+
     env:
       TOXIPROXY_VERSION: v2.7.0
 
@@ -38,8 +47,8 @@ jobs:
         run: ./docker/start_db.sh
         env:
           STARTER_MODE: cluster
-          DOCKER_IMAGE: docker.io/arangodb/arangodb-preview:devel-nightly
-          COMPRESSION: true
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          COMPRESSION: ${{matrix.compression}}
       - name: Info
         run: mvn -version
       - name: Start Toxiproxy
