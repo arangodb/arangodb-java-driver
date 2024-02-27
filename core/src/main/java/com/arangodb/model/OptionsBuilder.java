@@ -62,7 +62,7 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
-    public static MDIndexOptions build(final MDIndexOptions options, final Iterable<String> fields) {
+    public static AbstractMDIndexOptions<?> build(final AbstractMDIndexOptions<?> options, final Iterable<String> fields) {
         return options.fields(fields);
     }
 

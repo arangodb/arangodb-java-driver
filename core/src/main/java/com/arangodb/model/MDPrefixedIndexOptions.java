@@ -28,19 +28,34 @@ import com.arangodb.entity.IndexType;
  * @see <a href="https://docs.arangodb.com/devel/develop/http-api/indexes/multi-dimensional">API Documentation</a>
  * @since ArangoDB 3.12
  */
-public final class MDIndexOptions extends AbstractMDIndexOptions<MDIndexOptions> {
+public final class MDPrefixedIndexOptions extends AbstractMDIndexOptions<MDPrefixedIndexOptions> {
 
-    public MDIndexOptions() {
+    private Iterable<String> prefixFields;
+
+    public MDPrefixedIndexOptions() {
         super();
+    }
+
+    public Iterable<String> getPrefixFields() {
+        return prefixFields;
+    }
+
+    /**
+     * @param prefixFields An array of attribute names used as search prefix. Array expansions are not allowed.
+     * @return options
+     */
+    public MDPrefixedIndexOptions prefixFields(final Iterable<String> prefixFields) {
+        this.prefixFields = prefixFields;
+        return this;
     }
 
     @Override
     public IndexType getType() {
-        return IndexType.mdi;
+        return IndexType.mdiPrefixed;
     }
 
     @Override
-    MDIndexOptions getThis() {
+    MDPrefixedIndexOptions getThis() {
         return this;
     }
 

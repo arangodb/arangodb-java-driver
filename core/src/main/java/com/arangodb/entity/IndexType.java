@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  * @author Heiko Kernbach
@@ -52,7 +54,20 @@ public enum IndexType {
 
     zkd,
 
+    /**
+     * Multi Dimensional Index
+     * @see <a href="https://docs.arangodb.com/devel/index-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
+     * @since ArangoDB 3.12
+     */
     mdi,
+
+    /**
+     * Multi Dimensional Prefixed Index
+     * @see <a href="https://docs.arangodb.com/devel/index-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
+     * @since ArangoDB 3.12
+     */
+    @JsonProperty("mdi-prefixed")
+    mdiPrefixed,
 
     /**
      * @since ArangoDB 3.10

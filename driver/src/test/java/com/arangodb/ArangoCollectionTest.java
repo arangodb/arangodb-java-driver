@@ -1672,7 +1672,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final MDIndexOptions options = new MDIndexOptions()
                 .name(name)
                 .unique(false)
-                .fieldValueTypes(MDIndexOptions.FieldValueTypes.DOUBLE)
+                .fieldValueTypes(MDIFieldValueTypes.DOUBLE)
                 .estimates(false)
                 .sparse(true)
                 .storedValues(Arrays.asList("v1", "v2"));
@@ -1682,6 +1682,42 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), options);
         assertThat(indexResult.getType()).isEqualTo(IndexType.mdi);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getName()).isEqualTo(name);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getEstimates()).isFalse();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getStoredValues())
+                .hasSize(2)
+                .contains("v1", "v2");
+        assertThat(indexResult.getFields())
+                .contains(f1)
+                .contains(f2);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        collection.deleteIndex(indexResult.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void createMDPrefixedIndexWithOptions(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        collection.truncate();
+
+        String name = "MDPrefixedIndex-" + rnd();
+        final MDPrefixedIndexOptions options = new MDPrefixedIndexOptions()
+                .name(name)
+                .unique(false)
+                .fieldValueTypes(MDIFieldValueTypes.DOUBLE)
+                .estimates(false)
+                .sparse(true)
+                .storedValues(Arrays.asList("v1", "v2"))
+                .prefixFields(Arrays.asList("p1", "p2"));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), options);
+        assertThat(indexResult.getType()).isEqualTo(IndexType.mdiPrefixed);
         assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
         assertThat(indexResult.getName()).isEqualTo(name);
         assertThat(indexResult.getUnique()).isFalse();

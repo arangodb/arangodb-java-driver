@@ -476,11 +476,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected InternalRequest createMDIndexRequest(
-            final Iterable<String> fields, final MDIndexOptions options) {
+            final Iterable<String> fields, final AbstractMDIndexOptions<?> options) {
         final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
-        request.setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options :
-                new MDIndexOptions().fieldValueTypes(MDIndexOptions.FieldValueTypes.DOUBLE), fields)));
+        AbstractMDIndexOptions<?> opts = options != null ? options : new MDIndexOptions().fieldValueTypes(MDIFieldValueTypes.DOUBLE);
+        request.setBody(getSerde().serialize(OptionsBuilder.build(opts, fields)));
         return request;
     }
 

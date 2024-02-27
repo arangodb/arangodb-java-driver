@@ -312,9 +312,9 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     CompletableFuture<IndexEntity> ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
 
     /**
-     * Asynchronous version of {@link ArangoCollection#ensureMDIndex(Iterable, MDIndexOptions)}
+     * Asynchronous version of {@link ArangoCollection#ensureMDIndex(Iterable, AbstractMDIndexOptions)}
      */
-    CompletableFuture<IndexEntity> ensureMDIndex(Iterable<String> fields, MDIndexOptions options);
+    CompletableFuture<IndexEntity> ensureMDIndex(Iterable<String> fields, AbstractMDIndexOptions<?> options);
 
     /**
      * Asynchronous version of {@link ArangoCollection#ensureInvertedIndex(InvertedIndexOptions)}
