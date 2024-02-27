@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -49,9 +50,9 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
 
     private static Stream<Arguments> asyncArgs() {
         return asyncDbsStream()
-                .map(db -> new Object[]{
-                        db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME),
-                        db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                .map(it -> new Object[]{
+                        Named.of(it.getName(), it.getPayload().graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)),
+                        Named.of(it.getName(), it.getPayload().graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME))
                 })
                 .map(Arguments::of);
     }
@@ -81,7 +82,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         return value;
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void insertEdge(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -94,7 +95,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getTo()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void insertEdgeUpdateRev(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -103,7 +104,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(edge.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void insertEdgeViolatingUniqueConstraint(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         edges.graph().db().collection(EDGE_COLLECTION_NAME)
@@ -119,7 +120,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void getEdge(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -132,7 +133,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getTo()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void getEdgeIfMatch(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -144,7 +145,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void getEdgeIfMatchFail(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -155,7 +156,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(edge2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void getEdgeIfNoneMatch(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -167,7 +168,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void getEdgeIfNoneMatchFail(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);
@@ -178,7 +179,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(edge2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void replaceEdge(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -202,7 +203,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void replaceEdgeUpdateRev(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -216,7 +217,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void replaceEdgeIfMatch(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -241,7 +242,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void replaceEdgeIfMatchFail(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -257,7 +258,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdge(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -285,7 +286,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdgeUpdateRev(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -299,7 +300,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdgeIfMatch(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -328,7 +329,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdgeIfMatchFail(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -346,7 +347,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdgeKeepNullTrue(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -368,7 +369,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void updateEdgeKeepNullFalse(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -391,7 +392,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void deleteEdge(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -402,7 +403,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(edge).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void deleteEdgeIfMatch(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -414,7 +415,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(edge).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void deleteEdgeIfMatchFail(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument doc = createEdgeValue(vertices);
@@ -427,7 +428,7 @@ class ArangoEdgeCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest(name = "{1}")
     @MethodSource("asyncArgs")
     void edgeKeyWithSpecialChars(ArangoVertexCollectionAsync vertices, ArangoEdgeCollectionAsync edges) throws ExecutionException, InterruptedException {
         final BaseEdgeDocument value = createEdgeValue(vertices);

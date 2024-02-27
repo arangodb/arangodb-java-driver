@@ -66,7 +66,7 @@ class ArangoGraphTest extends BaseJunit5 {
 
     private static Stream<Arguments> graphs() {
         return dbsStream()
-                .map(db -> db.graph(GRAPH_NAME))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME)))
                 .map(Arguments::of);
     }
 
@@ -82,14 +82,14 @@ class ArangoGraphTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void exists(ArangoGraph graph) {
         assertThat(graph.exists()).isTrue();
         assertThat(graph.db().graph(GRAPH_NAME + "no").exists()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createWithReplicationAndWriteConcern(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -105,14 +105,14 @@ class ArangoGraphTest extends BaseJunit5 {
         db.graph(GRAPH_NAME + "_1").drop();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getGraphs(ArangoDatabase db) {
         final Collection<GraphEntity> graphs = db.getGraphs();
         assertThat(graphs.stream().anyMatch(it -> it.getName().equals(GRAPH_NAME))).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void getInfo(ArangoGraph graph) {
         final GraphEntity info = graph.getInfo();
@@ -143,7 +143,7 @@ class ArangoGraphTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void getVertexCollections(ArangoGraph graph) {
         final Collection<String> vertexCollections = graph.getVertexCollections();
@@ -152,7 +152,7 @@ class ArangoGraphTest extends BaseJunit5 {
                 .contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_5);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void addVertexCollection(ArangoGraph graph) {
         final GraphEntity g = graph.addVertexCollection(VERTEX_COL_4);
@@ -164,7 +164,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.vertexCollection(VERTEX_COL_4).remove();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void addSatelliteVertexCollection(ArangoDatabase db) {
         assumeTrue(isCluster() || isAtLeastVersion(3, 10));
@@ -185,7 +185,7 @@ class ArangoGraphTest extends BaseJunit5 {
         g.drop();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void getEdgeCollections(ArangoGraph graph) {
         final Collection<String> edgeCollections = graph.getEdgeDefinitions();
@@ -194,7 +194,7 @@ class ArangoGraphTest extends BaseJunit5 {
                 .contains(EDGE_COL_1, EDGE_COL_2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void addEdgeDefinition(ArangoGraph graph) {
         EdgeDefinition ed = new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2);
@@ -225,7 +225,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.edgeCollection(EDGE_COL_3).remove();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void addSatelliteEdgeDefinition(ArangoDatabase db) {
         assumeTrue(isCluster() || isAtLeastVersion(3, 10));
@@ -255,7 +255,7 @@ class ArangoGraphTest extends BaseJunit5 {
         g.drop();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void replaceEdgeDefinition(ArangoGraph graph) {
         final GraphEntity g = graph
@@ -283,7 +283,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     @Disabled
     // FIXME: with dropCollections=true the vertex collections remain in the graph as orphan and not dropped
@@ -314,7 +314,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void removeEdgeDefinition(ArangoGraph graph) {
         graph.edgeCollection(EDGE_COL_1).remove();
@@ -327,7 +327,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("graphs")
     void removeEdgeDefinitionDropCollections(ArangoGraph graph) {
         graph.edgeCollection(EDGE_COL_1).remove(new EdgeCollectionRemoveOptions()
@@ -342,7 +342,7 @@ class ArangoGraphTest extends BaseJunit5 {
         graph.addEdgeDefinition(ed1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void smartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -361,7 +361,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(g.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void hybridSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -389,7 +389,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(db.collection(v2Name).getProperties().getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void disjointSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -410,7 +410,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(g.getNumberOfShards()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void hybridDisjointSmartGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -438,7 +438,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(db.collection(v2Name).getProperties().getReplicationFactor().get()).isEqualTo(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void enterpriseGraph(ArangoDatabase db) {
         assumeTrue(isEnterprise());
@@ -460,7 +460,7 @@ class ArangoGraphTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
         final String edgeCollection = "edge_" + rnd();
@@ -474,7 +474,7 @@ class ArangoGraphTest extends BaseJunit5 {
         assertThat(db.collection(vertexCollection).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void dropPlusDropCollections(ArangoDatabase db) {
         final String edgeCollection = "edge_dropC" + rnd();

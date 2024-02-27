@@ -46,4 +46,4 @@ jobs:
         run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
       - name: Test
         working-directory: resilience-tests
-        run: mvn --no-transfer-progress test
+        run: mvn --no-transfer-progress -DenableSlowTests=true test

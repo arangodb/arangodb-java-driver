@@ -48,7 +48,7 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void conflictOnInsertDocumentWithNotYetCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -82,7 +82,7 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
         db.abortStreamTransaction(tx2.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void conflictOnInsertDocumentWithAlreadyCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());

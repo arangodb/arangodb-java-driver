@@ -49,6 +49,8 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDB arangoDB = getBuilder(protocol).acquireHostList(false).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -60,6 +62,8 @@ class JwtAuthTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void authenticated(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();

@@ -24,6 +24,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.util.SlowTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -49,6 +50,7 @@ class CommunicationTest {
         assertThat(version).isNotNull();
     }
 
+    @SlowTest
     @Test
     void multiThread() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
@@ -77,6 +79,7 @@ class CommunicationTest {
         assertThat(iterator.next()).isEqualTo(SLOW);
     }
 
+    @SlowTest
     @Test
     void multiThreadSameDatabases() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()

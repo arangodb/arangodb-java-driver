@@ -47,7 +47,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void beginStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -60,7 +60,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void beginStreamTransactionWithNonExistingCollectionsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -71,7 +71,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void abortStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -86,7 +86,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(abortedTx.getStatus()).isEqualTo(StreamTransactionStatus.aborted);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void abortStreamTransactionTwice(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -98,7 +98,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(begunTx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -108,7 +108,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void abortStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -118,7 +118,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void abortCommittedStreamTransactionShouldThrow(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -131,7 +131,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -148,7 +148,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(createdTx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -159,7 +159,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -170,7 +170,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void commitStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -185,7 +185,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(committedTx.getStatus()).isEqualTo(StreamTransactionStatus.committed);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void commitStreamTransactionTwice(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -197,7 +197,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.commitStreamTransaction(createdTx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -208,7 +208,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void commitStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -219,7 +219,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void commitAbortedStreamTransactionShouldThrow(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -232,7 +232,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -254,7 +254,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getDocumentWithNonExistingTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -268,7 +268,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getDocumentWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
@@ -281,7 +281,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -309,7 +309,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void insertDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -337,7 +337,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.getDocument(txDoc.getKey(), BaseDocument.class, null).get()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void insertDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -369,7 +369,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.getDocuments(keys, BaseDocument.class, null).get().getDocuments()).hasSize(keys.size());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void replaceDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -406,7 +406,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void replaceDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -451,7 +451,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
                 .forEach(it -> assertThat(it).isEqualTo("bar"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void updateDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -489,7 +489,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void updateDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -534,7 +534,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
                 .forEach(it -> assertThat(it).isEqualTo("bar"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -565,7 +565,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class, null).get()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void deleteDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -598,7 +598,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.getDocuments(keys, BaseDocument.class, null).get().getDocuments()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void documentExists(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -620,7 +620,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void count(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -643,7 +643,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void truncate(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -672,7 +672,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isZero();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -701,7 +701,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void nextCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -737,7 +737,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getStreamTransactions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -759,7 +759,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx2.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionAllowImplicitFalse(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -786,7 +786,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionDirtyRead(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());

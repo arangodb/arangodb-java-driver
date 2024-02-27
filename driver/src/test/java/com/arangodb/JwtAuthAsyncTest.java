@@ -50,6 +50,8 @@ class JwtAuthAsyncTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void notAuthenticated(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDBAsync arangoDB = getBuilder(protocol).acquireHostList(false).build().async();
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -61,6 +63,8 @@ class JwtAuthAsyncTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void authenticated(Protocol protocol) throws ExecutionException, InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDBAsync arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build()

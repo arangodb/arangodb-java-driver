@@ -49,7 +49,7 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void conflictOnInsertDocumentWithNotYetCommittedTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -83,7 +83,7 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
         db.abortStreamTransaction(tx2.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void conflictOnInsertDocumentWithAlreadyCommittedTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());

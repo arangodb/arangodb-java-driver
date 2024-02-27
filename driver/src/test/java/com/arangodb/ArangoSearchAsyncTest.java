@@ -52,7 +52,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         initCollections(COLL_1, COLL_2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void exists(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -61,7 +61,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createAndExistsSearchAlias(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -70,7 +70,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfo(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -83,7 +83,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void drop(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -94,7 +94,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(view.exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void rename(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -107,7 +107,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createArangoSearchView(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -120,7 +120,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createSearchAliasView(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -133,7 +133,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.searchAlias(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createArangoSearchViewWithOptions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -147,7 +147,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.arangoSearch(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createArangoSearchViewWithPrimarySort(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -183,7 +183,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createArangoSearchViewWithCommitIntervalMsec(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -204,7 +204,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(properties.getCommitIntervalMsec()).isEqualTo(666666L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createSearchAliasViewWithOptions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -218,7 +218,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(db.searchAlias(viewName).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -257,7 +257,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
                 .anyMatch(i -> i.getCollection().equals(COLL_1) && i.getIndex().equals(idxName1));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getArangoSearchViewProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -277,7 +277,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(links).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void updateArangoSearchViewProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -310,7 +310,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(next.getStoreValues()).isEqualTo(StoreValuesType.ID);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void updateSearchAliasViewWithIndexesAndGetProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -350,7 +350,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
                 .anyMatch(i -> i.getCollection().equals(COLL_2) && i.getIndex().equals(idxName2));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void replaceArangoSearchViewProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -369,7 +369,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void replaceSearchAliasViewWithIndexesAndGetProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -440,7 +440,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void identityAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -459,7 +459,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void delimiterAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -482,7 +482,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void stemAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -505,7 +505,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void normAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -530,7 +530,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void ngramAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -556,7 +556,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void enhancedNgramAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -584,7 +584,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void textAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -611,7 +611,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void enhancedTextAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 6));
@@ -643,7 +643,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void arangoSearchOptions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
@@ -723,7 +723,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void pipelineAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -768,7 +768,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, pipelineAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void stopwordsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -800,7 +800,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         db.deleteSearchAnalyzer(name).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void aqlAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -826,7 +826,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, aqlAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void geoJsonAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -854,7 +854,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void geoS2Analyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
@@ -884,7 +884,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void geoPointAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -913,7 +913,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void segmentationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -935,7 +935,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, segmentationAnalyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void collationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -957,7 +957,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void classificationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -981,7 +981,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void nearestNeighborsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1004,7 +1004,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void MinHashAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1034,7 +1034,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void offsetFeature(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));

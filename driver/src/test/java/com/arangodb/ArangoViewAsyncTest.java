@@ -45,7 +45,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         initDB();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void create(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
@@ -53,7 +53,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         assertThat(db.view(name).exists().get()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void createWithNotNormalizedName(ArangoDatabaseAsync db) {
         assumeTrue(supportsExtendedNames());
@@ -65,7 +65,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
                 .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfo(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
@@ -77,7 +77,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfoSearchAlias(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -90,7 +90,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void getViews(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -102,7 +102,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         assertThat(views).extracting(ViewEntity::getName).contains(name1, name2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void drop(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
@@ -112,7 +112,7 @@ class ArangoViewAsyncTest extends BaseJunit5 {
         assertThat(view.exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncDbs")
     void rename(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());

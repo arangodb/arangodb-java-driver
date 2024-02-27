@@ -45,7 +45,7 @@ class ArangoViewTest extends BaseJunit5 {
         initDB();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void create(ArangoDatabase db) {
         String name = rndName();
@@ -53,7 +53,7 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(db.view(name).exists()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createWithNotNormalizedName(ArangoDatabase db) {
         assumeTrue(supportsExtendedNames());
@@ -65,7 +65,7 @@ class ArangoViewTest extends BaseJunit5 {
                 .extracting(it -> ((ArangoDBException) it).getResponseCode()).isEqualTo(400);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
         String name = rndName();
@@ -77,7 +77,7 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getInfoSearchAlias(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -90,7 +90,7 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.SEARCH_ALIAS);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getViews(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -102,7 +102,7 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(views).extracting(ViewEntity::getName).contains(name1, name2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
         String name = rndName();
@@ -112,7 +112,7 @@ class ArangoViewTest extends BaseJunit5 {
         assertThat(view.exists()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());

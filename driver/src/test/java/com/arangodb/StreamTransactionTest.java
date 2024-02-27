@@ -47,7 +47,7 @@ class StreamTransactionTest extends BaseJunit5 {
         initCollections(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void beginStreamTransaction(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -60,7 +60,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void beginStreamTransactionWithNonExistingCollectionsShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -71,7 +71,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void abortStreamTransaction(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -86,7 +86,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(abortedTx.getStatus()).isEqualTo(StreamTransactionStatus.aborted);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void abortStreamTransactionTwice(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -98,7 +98,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(begunTx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -108,7 +108,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void abortStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -118,7 +118,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void abortCommittedStreamTransactionShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -131,7 +131,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getStreamTransaction(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -148,7 +148,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(createdTx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -159,7 +159,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -170,7 +170,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void commitStreamTransaction(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -185,7 +185,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(committedTx.getStatus()).isEqualTo(StreamTransactionStatus.committed);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void commitStreamTransactionTwice(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -197,7 +197,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.commitStreamTransaction(createdTx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -208,7 +208,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void commitStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -219,7 +219,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void commitAbortedStreamTransactionShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -232,7 +232,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getDocument(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -254,7 +254,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getDocumentWithNonExistingTransactionIdShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -268,7 +268,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getDocumentWithInvalidTransactionIdShouldThrow(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -281,7 +281,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getDocuments(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -309,7 +309,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void insertDocument(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -337,7 +337,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(collection.getDocument(txDoc.getKey(), BaseDocument.class, null)).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void insertDocuments(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -369,7 +369,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(collection.getDocuments(keys, BaseDocument.class, null).getDocuments()).hasSize(keys.size());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void replaceDocument(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -406,7 +406,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 .getProperties()).containsEntry("test", "bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void replaceDocuments(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -453,7 +453,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 .forEach(it -> assertThat(it).isEqualTo("bar"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void updateDocument(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -491,7 +491,7 @@ class StreamTransactionTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void updateDocuments(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -538,7 +538,7 @@ class StreamTransactionTest extends BaseJunit5 {
                 .forEach(it -> assertThat(it).isEqualTo("bar"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteDocument(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -569,7 +569,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class, null)).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void deleteDocuments(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -602,7 +602,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(collection.getDocuments(keys, BaseDocument.class, null).getDocuments()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void documentExists(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -624,7 +624,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void count(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -647,7 +647,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void truncate(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -676,7 +676,7 @@ class StreamTransactionTest extends BaseJunit5 {
         assertThat(collection.count().getCount()).isZero();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void createCursor(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -705,7 +705,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void nextCursor(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -738,7 +738,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void getStreamTransactions(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -760,7 +760,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx2.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionAllowImplicitFalse(ArangoDatabase db) {
         assumeTrue(isSingleServer());
@@ -787,7 +787,7 @@ class StreamTransactionTest extends BaseJunit5 {
         db.abortStreamTransaction(tx.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("dbs")
     void transactionDirtyRead(ArangoDatabase db) throws IOException {
         assumeTrue(isCluster());

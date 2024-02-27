@@ -28,10 +28,7 @@ import com.arangodb.serde.jackson.Id;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.serde.jackson.Key;
 import com.arangodb.serde.jackson.Rev;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.util.RawBytes;
-import com.arangodb.util.RawData;
-import com.arangodb.util.RawJson;
+import com.arangodb.util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,11 +61,11 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     private final ObjectMapper mapper = new ObjectMapper();
 
     private static Stream<Arguments> asyncCols() {
-        return asyncDbsStream().map(db -> db.collection(COLLECTION_NAME)).map(Arguments::of);
+        return asyncDbsStream().map(mapNamedPayload(db -> db.collection(COLLECTION_NAME))).map(Arguments::of);
     }
 
     private static Stream<Arguments> edges() {
-        return dbsStream().map(db -> db.collection(EDGE_COLLECTION_NAME)).map(Arguments::of);
+        return dbsStream().map(mapNamedPayload(db -> db.collection(EDGE_COLLECTION_NAME))).map(Arguments::of);
     }
 
     @BeforeAll
@@ -77,7 +74,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         initEdgeCollections(EDGE_COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocument(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument(), null).get();
@@ -89,7 +86,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getId()).isEqualTo(COLLECTION_NAME + "/" + doc.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentWithArrayWithNullValues(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         List<String> arr = Arrays.asList("a", null);
@@ -107,7 +104,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat((List<String>) insertedDoc.getNew().getAttribute("arr")).containsAll(Arrays.asList("a", null));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentWithNullValues(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -123,7 +120,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(insertedDoc.getNew().getProperties()).containsKey("null");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentUpdateRev(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -132,7 +129,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(createResult.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
@@ -144,7 +141,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentWithTypeOverwriteModeReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -179,7 +176,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getNew().getName()).isEqualTo("Luna");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeIgnore(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -198,7 +195,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(insertIgnore.getRev()).isEqualTo(meta.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeConflict(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -217,7 +214,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -238,7 +235,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(repsert.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -257,7 +254,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updated.getNew().getAttribute("bar")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -277,7 +274,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updated.getNew().getAttribute("foo")).isEqualTo(fieldB);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -295,7 +292,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updated.getProperties()).containsEntry("foo", null);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -313,7 +310,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updated.getProperties()).doesNotContainKey("foo");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentWaitForSync(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
@@ -325,7 +322,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateOptions options = new DocumentCreateOptions().refillIndexCaches(true);
@@ -337,7 +334,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getNew()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentAsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = "doc-" + UUID.randomUUID();
@@ -349,7 +346,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentAsBytes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = "doc-" + UUID.randomUUID();
@@ -370,7 +367,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -382,7 +379,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentSilentDontTouchInstance(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -396,7 +393,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -409,7 +406,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info =
@@ -418,7 +415,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocument(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null).get();
@@ -428,7 +425,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentIfMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null).get();
@@ -439,7 +436,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentIfMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null).get();
@@ -449,7 +446,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentIfNoneMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null).get();
@@ -460,7 +457,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getId()).isEqualTo(COLLECTION_NAME + "/" + createResult.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentIfNoneMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(new BaseDocument(), null).get();
@@ -470,7 +467,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentAsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = rnd();
@@ -480,35 +477,36 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.get()).contains("\"_key\":\"" + key + "\"").contains("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\"");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentNotFound(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class).get();
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentNotFoundOptionsDefault(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class, new DocumentReadOptions()).get();
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentNotFoundOptionsNull(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument document = collection.getDocument("no", BaseDocument.class, null).get();
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentWrongKey(ArangoCollectionAsync collection) {
         Throwable thrown = catchThrowable(() -> collection.getDocument("no/no", BaseDocument.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @SlowTest
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentDirtyRead(ArangoCollectionAsync collection) throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -519,7 +517,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -537,7 +535,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsWithCustomShardingKey(ArangoCollectionAsync c) throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = c.db().collection("customShardingKeyCollection");
@@ -559,7 +557,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(documents).hasSize(10);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsDirtyRead(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -580,7 +578,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsNotFound(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final MultiDocumentEntity<BaseDocument> readResult = collection.getDocuments(Collections.singleton("no"),
@@ -590,7 +588,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsWrongKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final MultiDocumentEntity<BaseDocument> readResult = collection.getDocuments(Collections.singleton("no/no"),
@@ -600,7 +598,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocument(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -629,7 +627,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentWithDifferentReturnType(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final String key = "key-" + UUID.randomUUID();
@@ -647,7 +645,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updated.getAttribute("b")).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentUpdateRev(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -662,7 +660,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentIfMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -690,7 +688,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentIfMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -706,7 +704,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -729,7 +727,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(updateResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentReturnOld(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -751,7 +749,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentKeepNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -771,7 +769,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentKeepNullFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -793,7 +791,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentSerializeNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final TestUpdateEntity doc = new TestUpdateEntity();
@@ -812,7 +810,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getAttribute("a")).isEqualTo("bar");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentSerializeNullFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final TestUpdateEntitySerializeNullFalse doc = new TestUpdateEntitySerializeNullFalse();
@@ -832,7 +830,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getAttribute("b")).isEqualTo("foo");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentMergeObjectsTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -859,7 +857,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(aMap).containsKeys("a", "b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentMergeObjectsFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -887,7 +885,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(aMap).containsKey("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentIgnoreRevsFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -901,7 +899,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -914,7 +912,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -928,7 +926,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateNonExistingDocument(ArangoCollectionAsync collection) {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
@@ -942,7 +940,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentPreconditionFailed(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument("test-" + rnd());
@@ -963,7 +961,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readDocument.getAttribute("foo")).isEqualTo("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         BaseDocument doc = new BaseDocument();
@@ -976,7 +974,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument()).get();
@@ -986,7 +984,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocument(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1011,7 +1009,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentUpdateRev(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1025,7 +1023,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentIfMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1049,7 +1047,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentIfMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1064,7 +1062,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentIgnoreRevsFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1079,7 +1077,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1101,7 +1099,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(replaceResult.getNew().getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentReturnOld(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1123,7 +1121,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(replaceResult.getOld().getProperties().keySet()).doesNotContain("b");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1136,7 +1134,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentSilentDontTouchInstance(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1149,7 +1147,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(createResult.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1163,7 +1161,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1175,7 +1173,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument()).get();
@@ -1185,7 +1183,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocument(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1195,7 +1193,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentReturnOld(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1210,7 +1208,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(deleteResult.getOld().getAttribute("a"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentIfMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1221,7 +1219,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentIfMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1231,7 +1229,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1244,7 +1242,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(meta.getRev()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsSilent(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1259,7 +1257,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         DocumentCreateEntity<?> createResult = collection.insertDocument(new BaseDocument()).get();
@@ -1270,7 +1268,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .isEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsRefillIndexCaches(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -1282,7 +1280,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(info.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<String> fields = new ArrayList<>();
@@ -1293,7 +1291,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getIndexByKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<String> fields = new ArrayList<>();
@@ -1304,7 +1302,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getType()).isEqualTo(createResult.getType());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<String> fields = new ArrayList<>();
@@ -1316,7 +1314,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteIndexByKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<String> fields = new ArrayList<>();
@@ -1328,7 +1326,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeoIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String f1 = "field-" + rnd();
@@ -1351,7 +1349,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeoIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1381,7 +1379,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeoIndexLegacyPolygons(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1412,7 +1410,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeo2Index(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String f1 = "field-" + rnd();
@@ -1435,7 +1433,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeo2IndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1465,7 +1463,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String f1 = "field-" + rnd();
@@ -1489,7 +1487,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexCacheEnabled(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1513,7 +1511,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getCacheEnabled()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexStoredValues(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
@@ -1540,7 +1538,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .contains("v1", "v2");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1567,7 +1565,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createZKDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -1589,7 +1587,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createZKDIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
@@ -1617,7 +1615,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void indexEstimates(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1638,7 +1636,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getSelectivityEstimate()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void indexEstimatesFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1659,7 +1657,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getSelectivityEstimate()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void indexDeduplicate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1678,7 +1676,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getDeduplicate()).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void indexDeduplicateFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
@@ -1697,7 +1695,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getDeduplicate()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createFulltextIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String f1 = "field-" + rnd();
@@ -1713,7 +1711,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getUnique()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createFulltextIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1736,7 +1734,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createTtlIndexWithoutOptions(ArangoCollectionAsync collection) {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1751,7 +1749,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getMessage()).contains("expireAfter attribute must be a number");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void createTtlIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -1777,7 +1775,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         collection.deleteIndex(indexResult.getId()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getIndexes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String f1 = "field-" + rnd();
@@ -1788,7 +1786,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(matchingIndexes).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void getEdgeIndex(ArangoCollection edgeCollection) {
         Collection<IndexEntity> indexes = edgeCollection.getIndexes();
@@ -1798,14 +1796,14 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(edgeIndexes).isEqualTo(1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void exists(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assertThat(collection.exists().get()).isTrue();
         assertThat(collection.db().collection(COLLECTION_NAME + "no").exists().get()).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void truncate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -1819,7 +1817,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(document).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getCount(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         Long initialCount = collection.count().get().getCount();
@@ -1828,7 +1826,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(count.getCount()).isEqualTo(initialCount + 1L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void documentExists(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Boolean existsNot = collection.documentExists(rnd(), null).get();
@@ -1841,7 +1839,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void documentExistsIfMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = rnd();
@@ -1852,7 +1850,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void documentExistsIfMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = rnd();
@@ -1863,7 +1861,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(exists).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void documentExistsIfNoneMatch(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = rnd();
@@ -1874,7 +1872,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(exists).isTrue();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void documentExistsIfNoneMatchFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String key = rnd();
@@ -1885,7 +1883,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(exists).isFalse();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(), new BaseDocument(),
@@ -1899,7 +1897,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7));
@@ -1929,7 +1927,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<RawJson> values = new ArrayList<>();
@@ -1944,7 +1942,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{},{},{}]");
@@ -1956,7 +1954,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsRawDataReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"aaa\":33},{\"aaa\":33},{\"aaa\":33}]");
@@ -1980,7 +1978,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOne(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -1993,7 +1991,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2005,7 +2003,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2028,7 +2026,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2045,7 +2043,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getErrors().iterator().next().getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(), new BaseDocument(),
@@ -2061,7 +2059,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonList(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<RawJson> values = Arrays.asList(
@@ -2080,7 +2078,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDuplicateDefaultError(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2099,7 +2097,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDuplicateError(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2119,7 +2117,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDuplicateIgnore(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2139,7 +2137,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDuplicateReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2159,7 +2157,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDuplicateUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2179,7 +2177,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsCompleteFail(ArangoCollectionAsync collection) {
         String k1 = rnd();
@@ -2195,7 +2193,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsDetails(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2215,7 +2213,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsOverwriteFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
@@ -2228,7 +2226,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsOverwriteTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
@@ -2240,7 +2238,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isEqualTo(2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void importDocumentsFromToPrefix(ArangoCollection edgeCollection) {
         final Collection<BaseEdgeDocument> values = new ArrayList<>();
@@ -2262,7 +2260,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJson(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
@@ -2278,7 +2276,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDuplicateDefaultError(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2297,7 +2295,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDuplicateError(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2317,7 +2315,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDuplicateIgnore(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2336,7 +2334,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDuplicateReplace(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2356,7 +2354,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDuplicateUpdate(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2376,7 +2374,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonCompleteFail(ArangoCollectionAsync collection) {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
@@ -2387,7 +2385,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1210);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonDetails(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         String k1 = rnd();
@@ -2408,7 +2406,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDetails().iterator().next()).contains("unique constraint violated");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonOverwriteFalse(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
@@ -2420,7 +2418,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isEqualTo(initialCount + 2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void importDocumentsJsonOverwriteTrue(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
@@ -2431,7 +2429,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(collection.count().get().getCount()).isEqualTo(2L);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("edges")
     void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) throws JsonProcessingException {
         String k1 = UUID.randomUUID().toString();
@@ -2454,7 +2452,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2481,7 +2479,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsRawDataByKeyReturnOld(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"},{\"_key\":\"2\"}]");
@@ -2500,7 +2498,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2524,7 +2522,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByKeyOne(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2545,7 +2543,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByDocumentOne(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2564,7 +2562,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2576,7 +2574,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByKeyNotExisting(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2589,7 +2587,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void deleteDocumentsByDocumentsNotExisting(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2609,7 +2607,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(deleteResult.getErrors()).hasSize(2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = Arrays.asList(new BaseDocument(rnd()), new BaseDocument(rnd()));
@@ -2621,7 +2619,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithDifferentReturnType(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         List<String> keys =
@@ -2646,7 +2644,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getDocuments().stream()).map(DocumentUpdateEntity::getNew).allMatch(it -> it.getAttribute("a").equals("test")).allMatch(it -> it.getAttribute("b").equals("test"));
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsOne(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2665,7 +2663,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2674,7 +2672,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithoutKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2693,7 +2691,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<RawJson> values = new ArrayList<>();
@@ -2709,7 +2707,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2722,7 +2720,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsRawDataReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2746,7 +2744,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2765,7 +2763,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsOne(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2784,7 +2782,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2793,7 +2791,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsWithoutKey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
@@ -2812,7 +2810,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).hasSize(1);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<RawJson> values = new ArrayList<>();
@@ -2828,7 +2826,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2841,7 +2839,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(updateResult.getErrors()).isEmpty();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsRawDataReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
@@ -2865,14 +2863,14 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getInfo(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final CollectionEntity result = collection.getInfo().get();
         assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getPropeties(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final CollectionPropertiesEntity result = collection.getProperties().get();
@@ -2880,7 +2878,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void changeProperties(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final CollectionPropertiesEntity properties = collection.getProperties().get();
@@ -2915,7 +2913,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void rename(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
@@ -2942,7 +2940,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getResponseCode()).isEqualTo(404);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void responsibleShard(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
@@ -2952,7 +2950,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(shard.getShardId()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getRevision(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final CollectionRevisionEntity result = collection.getRevision().get();
@@ -2961,7 +2959,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(result.getRevision()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void keyWithSpecialCharacter(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final String key = "myKey_-:.@()+,=;$!*'%-" + UUID.randomUUID();
@@ -2971,7 +2969,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void alreadyUrlEncodedkey(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final String key = "http%3A%2F%2Fexample.com%2F-" + UUID.randomUUID();
@@ -2981,7 +2979,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(doc.getKey()).isEqualTo(key);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void grantAccessRW(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         ArangoDBAsync arangoDB = collection.db().arango();
@@ -2993,7 +2991,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void grantAccessRO(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         ArangoDBAsync arangoDB = collection.db().arango();
@@ -3005,7 +3003,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void grantAccessNONE(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         ArangoDBAsync arangoDB = collection.db().arango();
@@ -3017,14 +3015,14 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void grantAccessUserNotFound(ArangoCollectionAsync collection) {
         Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.RW).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void revokeAccess(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         ArangoDBAsync arangoDB = collection.db().arango();
@@ -3036,14 +3034,14 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void revokeAccessUserNotFound(ArangoCollectionAsync collection) {
         Throwable thrown = catchThrowable(() -> collection.grantAccess("user1", Permissions.NONE).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void resetAccess(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         ArangoDBAsync arangoDB = collection.db().arango();
@@ -3055,20 +3053,20 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void resetAccessUserNotFound(ArangoCollectionAsync collection) {
         Throwable thrown = catchThrowable(() -> collection.resetAccess("user1").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void getPermissions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assertThat(collection.getPermissions("root").get()).isEqualTo(Permissions.RW);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncCols")
     void annotationsInParamsAndMethods(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(collection.getSerde().getUserSerde() instanceof JacksonSerde, "JacksonSerde only");

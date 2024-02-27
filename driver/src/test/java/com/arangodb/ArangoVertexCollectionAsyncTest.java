@@ -51,7 +51,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
 
     private static Stream<Arguments> asyncVertices() {
         return asyncDbsStream()
-                .map(db -> db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME))
+                .map(mapNamedPayload(db -> db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)))
                 .map(Arguments::of);
     }
 
@@ -65,7 +65,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         );
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void dropVertexCollection(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         ArangoGraphAsync graph = vertices.graph();
@@ -78,7 +78,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         graph.addVertexCollection(COLLECTION_NAME).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void dropVertexCollectionDropCollectionTrue(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         ArangoGraphAsync graph = vertices.graph();
@@ -92,7 +92,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         graph.addVertexCollection(COLLECTION_NAME).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void insertVertex(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -105,7 +105,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void insertVertexViolatingUniqueConstraint(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         ArangoCollectionAsync collection = vertices.graph().db().collection(vertices.name());
@@ -125,7 +125,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         vertices.deleteVertex(inserted.getKey()).get();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void duplicateInsertSameObjectVertex(ArangoVertexCollectionAsync vertices) {
 
@@ -148,7 +148,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         vertices.insertVertex(bd2);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void insertVertexUpdateRev(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -157,7 +157,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(vertex.getRev()).isNotNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertex(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -168,7 +168,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertexIfMatch(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -180,7 +180,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertexIfMatchFail(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -191,7 +191,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(vertex2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertexIfNoneMatch(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -203,7 +203,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(document.getKey()).isEqualTo(vertex.getKey());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void getVertexIfNoneMatchFail(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final VertexEntity vertex = vertices
@@ -214,7 +214,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(vertex2).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void replaceVertex(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -239,7 +239,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void replaceVertexUpdateRev(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -254,7 +254,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void replaceVertexIfMatch(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -280,7 +280,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void replaceVertexIfMatchFail(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -297,7 +297,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertex(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -326,7 +326,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertexUpdateRev(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -342,7 +342,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
                 .isNotEqualTo(createResult.getRev());
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertexIfMatch(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -372,7 +372,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertexIfMatchFail(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -392,7 +392,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertexKeepNullTrue(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -415,7 +415,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void updateVertexKeepNullFalse(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -439,7 +439,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void deleteVertex(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -451,7 +451,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(vertex).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void deleteVertexIfMatch(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -464,7 +464,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(vertex).isNull();
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void deleteVertexIfMatchFail(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
@@ -478,7 +478,7 @@ class ArangoVertexCollectionAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @ParameterizedTest(name = "{index}")
+    @ParameterizedTest
     @MethodSource("asyncVertices")
     void vertexKeyWithSpecialChars(ArangoVertexCollectionAsync vertices) throws ExecutionException, InterruptedException {
         final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();
