@@ -21,11 +21,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class RetriableCursorClusterTest extends ClusterTest {
 
     static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().timeout(1_000).protocol(Protocol.VST).build(),
-                dbBuilder().timeout(1_000).protocol(Protocol.HTTP_JSON).build(),
-                dbBuilder().timeout(1_000).protocol(Protocol.HTTP_VPACK).build()
-        );
+        return builderProvider().map(it -> it.timeout(1_000).build());
     }
 
     static Stream<ArangoDBAsync> asyncArangoProvider() {

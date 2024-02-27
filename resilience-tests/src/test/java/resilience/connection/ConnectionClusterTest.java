@@ -9,7 +9,6 @@ import resilience.ClusterTest;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -18,26 +17,6 @@ import static org.assertj.core.api.Assertions.catchThrowable;
  * @author Michele Rastelli
  */
 class ConnectionClusterTest extends ClusterTest {
-
-    static Stream<Protocol> protocolProvider() {
-        return Stream.of(
-                Protocol.VST,
-                Protocol.HTTP_VPACK,
-                Protocol.HTTP2_VPACK
-        );
-    }
-
-    static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().protocol(Protocol.VST).build(),
-                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().protocol(Protocol.HTTP2_JSON).build()
-        );
-    }
-
-    static Stream<ArangoDBAsync> asyncArangoProvider() {
-        return arangoProvider().map(ArangoDB::async);
-    }
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
@@ -120,7 +99,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void connectionFail(ArangoDB arangoDB) {
         disableAllEndpoints();
 
@@ -137,7 +116,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void connectionFailAsync(ArangoDBAsync arangoDB) {
         disableAllEndpoints();
 
@@ -153,7 +132,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void connectionFailover(ArangoDB arangoDB) {
         getEndpoints().get(0).disableNow();
         getEndpoints().get(1).disableNow();
@@ -169,7 +148,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void connectionFailoverAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         getEndpoints().get(0).disableNow();
         getEndpoints().get(1).disableNow();
@@ -185,7 +164,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void connectionFailoverPost(ArangoDB arangoDB) {
         getEndpoints().get(0).disableNow();
         getEndpoints().get(1).disableNow();
@@ -201,7 +180,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void connectionFailoverPostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         getEndpoints().get(0).disableNow();
         getEndpoints().get(1).disableNow();

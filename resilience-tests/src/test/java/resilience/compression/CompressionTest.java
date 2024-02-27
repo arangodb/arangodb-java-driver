@@ -5,7 +5,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
 
 import java.util.Collections;
@@ -24,21 +24,27 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class CompressionTest extends ClusterTest {
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void gzip(Protocol protocol) {
         doTest(protocol, Compression.GZIP);
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void deflate(Protocol protocol) {
         doTest(protocol, Compression.DEFLATE);
     }
 
     void doTest(Protocol protocol, Compression compression) {
-        assumeTrue(protocol != Protocol.VST, "VST does not support compression");
-        assumeTrue(protocol != Protocol.HTTP_VPACK, "hex dumps logs");
-        assumeTrue(protocol != Protocol.HTTP_JSON, "hex dumps logs");
+        assumeTrue(isAtLeastVersion(3, 12));
+        assumeTrue(protocol != Protocol.VST);
+
+        assumeTrue(protocol != Protocol.HTTP_VPACK, "hex dumps logs"); // FIXME
+        assumeTrue(protocol != Protocol.HTTP_JSON, "hex dumps logs");  // FIXME
+
+        // FIXME:
+        // When using HTTP_VPACK or HTTP_JSON, the logs are hex dumps.
+        // Implement a way to check the content-encoding and accept-encoding headers from these logs.
 
         ArangoDB adb = dbBuilder()
                 .protocol(protocol)
