@@ -716,9 +716,8 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
             assertThat(nested.getName()).isEqualTo("f2");
         }
 
-        if (isEnterprise() && isAtLeastVersion(3, 11)) {
-            // FIXME: BTS-1428
-            // assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
+        if (isEnterprise() && isAtLeastVersion(3, 12)) {
+             assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
         }
 
     }
