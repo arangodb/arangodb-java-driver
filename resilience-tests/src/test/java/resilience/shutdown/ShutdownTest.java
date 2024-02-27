@@ -33,7 +33,7 @@ class ShutdownTest extends SingleServerTest {
 
         arangoDB.getVersion();
         arangoDB.shutdown();
-        Thread.sleep(1_000);
+        Thread.sleep(500);
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getMessage()).contains("closed");
@@ -49,7 +49,7 @@ class ShutdownTest extends SingleServerTest {
 
         arangoDB.getVersion().get();
         arangoDB.shutdown();
-        Thread.sleep(1_000);
+        Thread.sleep(500);
         Throwable thrown = catchThrowable(() -> arangoDB.getVersion().get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getMessage()).contains("closed");

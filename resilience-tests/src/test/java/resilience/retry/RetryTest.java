@@ -100,7 +100,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("protocolProvider")
     void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
-                .timeout(1_000)
+                .timeout(500)
                 .protocol(protocol)
                 .build();
 
@@ -134,7 +134,7 @@ class RetryTest extends SingleServerTest {
     @MethodSource("protocolProvider")
     void connectionTimeoutAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
-                .timeout(1_000)
+                .timeout(500)
                 .protocol(protocol)
                 .build()
                 .async();
