@@ -6,7 +6,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import io.vertx.core.http.HttpClosedException;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ShutdownTest extends SingleServerTest {
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void shutdown(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -40,7 +40,7 @@ class ShutdownTest extends SingleServerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void shutdownAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -56,7 +56,7 @@ class ShutdownTest extends SingleServerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void shutdownWithPendingRequests(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
@@ -73,7 +73,7 @@ class ShutdownTest extends SingleServerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void shutdownWithPendingRequestsAsync(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
         ArangoDBAsync arangoDB = dbBuilder()

@@ -3,7 +3,6 @@ package resilience.retry;
 import ch.qos.logback.classic.Level;
 import com.arangodb.*;
 import io.vertx.core.http.HttpClosedException;
-import org.junit.jupiter.params.provider.EnumSource;
 import resilience.SingleServerTest;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -25,18 +23,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class RetryTest extends SingleServerTest {
 
-    static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().protocol(Protocol.VST).build(),
-                dbBuilder().protocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().protocol(Protocol.HTTP2_VPACK).build()
-        );
-    }
-
-    static Stream<ArangoDBAsync> asyncArangoProvider() {
-        return arangoProvider().map(ArangoDB::async);
-    }
-
     /**
      * on reconnection failure: - 3x logs WARN Could not connect to host[addr=127.0.0.1,port=8529] -
      * ArangoDBException("Cannot contact any host")
@@ -44,7 +30,7 @@ class RetryTest extends SingleServerTest {
      * once the proxy is re-enabled: - the subsequent requests should be successful
      */
     @ParameterizedTest(name = "{index}")
-    @MethodSource("arangoProvider")
+    @MethodSource("adbProvider")
     void unreachableHost(ArangoDB arangoDB) {
         arangoDB.getVersion();
         getEndpoint().disableNow();
@@ -77,7 +63,7 @@ class RetryTest extends SingleServerTest {
      * once the proxy is re-enabled: - the subsequent requests should be successful
      */
     @ParameterizedTest(name = "{index}")
-    @MethodSource("asyncArangoProvider")
+    @MethodSource("asyncAdbProvider")
     void unreachableHostAsync(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         arangoDB.getVersion().get();
         getEndpoint().disableNow();
@@ -111,7 +97,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
@@ -145,7 +131,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void connectionTimeoutAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(1_000)
@@ -184,7 +170,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
@@ -226,7 +212,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void retryGetOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         assumeTrue(protocol != Protocol.VST);
         ArangoDBAsync arangoDB = dbBuilder()
@@ -265,7 +251,7 @@ class RetryTest extends SingleServerTest {
      * once restored: - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -298,7 +284,7 @@ class RetryTest extends SingleServerTest {
      * once restored: - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void notRetryPostOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)

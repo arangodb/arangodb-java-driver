@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -25,6 +26,7 @@ class VstKeepAliveCloseTest extends SingleServerTest {
 
     @BeforeEach
     void init() {
+        assumeTrue(isLessThanVersion(3, 12));
         arangoDB = dbBuilder()
                 .protocol(Protocol.VST)
                 .timeout(1000)
@@ -34,7 +36,9 @@ class VstKeepAliveCloseTest extends SingleServerTest {
 
     @AfterEach
     void shutDown() {
-        arangoDB.shutdown();
+        if (arangoDB != null) {
+            arangoDB.shutdown();
+        }
     }
 
     /**
