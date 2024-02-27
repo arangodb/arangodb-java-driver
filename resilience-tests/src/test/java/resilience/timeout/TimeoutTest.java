@@ -31,7 +31,7 @@ class TimeoutTest extends SingleServerTest {
     @MethodSource("protocolProvider")
     void requestTimeout(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = dbBuilder()
-                .timeout(1_000)
+                .timeout(500)
                 .protocol(protocol)
                 .build();
 
@@ -42,7 +42,7 @@ class TimeoutTest extends SingleServerTest {
         col.truncate();
 
         Throwable thrown = catchThrowable(() -> arangoDB.db()
-                .query("INSERT {value:sleep(2)} INTO @@col RETURN NEW",
+                .query("INSERT {value:sleep(1)} INTO @@col RETURN NEW",
                         Map.class,
                         Collections.singletonMap("@col", colName))
         );
@@ -54,7 +54,7 @@ class TimeoutTest extends SingleServerTest {
 
         arangoDB.getVersion();
 
-        Thread.sleep(2_000);
+        Thread.sleep(1_000);
         assertThat(col.count().getCount()).isEqualTo(1);
 
         arangoDB.shutdown();
@@ -72,7 +72,7 @@ class TimeoutTest extends SingleServerTest {
     @MethodSource("protocolProvider")
     void requestTimeoutAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
-                .timeout(1_000)
+                .timeout(500)
                 .protocol(protocol)
                 .build()
                 .async();
@@ -84,7 +84,7 @@ class TimeoutTest extends SingleServerTest {
         col.truncate().get();
 
         Throwable thrown = catchThrowable(() -> arangoDB.db()
-                .query("INSERT {value:sleep(2)} INTO @@col RETURN NEW",
+                .query("INSERT {value:sleep(1)} INTO @@col RETURN NEW",
                         Map.class,
                         Collections.singletonMap("@col", colName)).get()
         ).getCause();
@@ -96,7 +96,7 @@ class TimeoutTest extends SingleServerTest {
 
         arangoDB.getVersion().get();
 
-        Thread.sleep(2_000);
+        Thread.sleep(1_000);
         assertThat(col.count().get().getCount()).isEqualTo(1);
 
         arangoDB.shutdown();

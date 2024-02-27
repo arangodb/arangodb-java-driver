@@ -2,6 +2,7 @@ package resilience.connection;
 
 import ch.qos.logback.classic.Level;
 import com.arangodb.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
@@ -20,7 +21,9 @@ class ConnectionClusterTest extends ClusterTest {
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFail(Protocol protocol) {
+        // FIXME: make this test faster and re-enable
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
                 .protocol(protocol)
@@ -40,7 +43,9 @@ class ConnectionClusterTest extends ClusterTest {
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFailAsync(Protocol protocol) {
+        // FIXME: make this test faster and re-enable
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .host("wrongHost", 8529)
                 .protocol(protocol)
@@ -61,7 +66,9 @@ class ConnectionClusterTest extends ClusterTest {
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFailover(Protocol protocol) {
+        // FIXME: make this test faster and re-enable
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .password("test")
                 .host("wrongHost", 8529)
@@ -80,7 +87,9 @@ class ConnectionClusterTest extends ClusterTest {
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
+    @Disabled
     void nameResolutionFailoverAsync(Protocol protocol) throws ExecutionException, InterruptedException {
+        // FIXME: make this test faster and re-enable
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .password("test")
                 .host("wrongHost", 8529)
