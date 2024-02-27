@@ -1617,6 +1617,63 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
+    void createMDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        collection.truncate().get();
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), null).get();
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.mdi);
+        assertThat(indexResult.getUnique()).isFalse();
+        collection.deleteIndex(indexResult.getId()).get();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void createMDIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        collection.truncate().get();
+
+        String name = "MDIndex-" + rnd();
+        final MDIndexOptions options = new MDIndexOptions()
+                .name(name)
+                .unique(false)
+                .fieldValueTypes(MDIndexOptions.FieldValueTypes.DOUBLE)
+                .estimates(false)
+                .sparse(true)
+                .storedValues(Arrays.asList("v1", "v2"));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), options).get();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.mdi);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getName()).isEqualTo(name);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getEstimates()).isFalse();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getStoredValues())
+                .hasSize(2)
+                .contains("v1", "v2");
+        assertThat(indexResult.getFields())
+                .contains(f1)
+                .contains(f2);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        collection.deleteIndex(indexResult.getId()).get();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
     void indexEstimates(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());

@@ -379,6 +379,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
     }
 
     @Override
+    public IndexEntity ensureMDIndex(final Iterable<String> fields, final MDIndexOptions options) {
+        return executorSync().execute(createMDIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public Collection<IndexEntity> getIndexes() {
         return executorSync().execute(getIndexesRequest(), getIndexesResponseDeserializer());
     }

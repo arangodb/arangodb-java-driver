@@ -665,8 +665,21 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
      * @since ArangoDB 3.9
+     * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} instead.
      */
+    @Deprecated
     IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
+
+    /**
+     * Creates a multi-dimensional index for the collection, if it does not already exist.
+     *
+     * @param fields  A list of attribute names used for each dimension
+     * @param options Additional options, can be null
+     * @return information about the index
+     * @see <a href="https://docs.arangodb.com/devel/develop/http-api/indexes/multi-dimensional">API Documentation</a>
+     * @since ArangoDB 3.12
+     */
+    IndexEntity ensureMDIndex(Iterable<String> fields, MDIndexOptions options);
 
     /**
      * Creates an inverted index for the collection, if it does not already exist.

@@ -52,6 +52,8 @@ public enum IndexType {
 
     zkd,
 
+    mdi,
+
     /**
      * @since ArangoDB 3.10
      */

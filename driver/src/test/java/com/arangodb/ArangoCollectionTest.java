@@ -1642,6 +1642,63 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
+    void createMDIndex(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        collection.truncate();
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), null);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getConstraint()).isNull();
+        assertThat(indexResult.getFields()).contains(f1);
+        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        assertThat(indexResult.getMinLength()).isNull();
+        assertThat(indexResult.getType()).isEqualTo(IndexType.mdi);
+        assertThat(indexResult.getUnique()).isFalse();
+        collection.deleteIndex(indexResult.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void createMDIndexWithOptions(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        collection.truncate();
+
+        String name = "MDIndex-" + rnd();
+        final MDIndexOptions options = new MDIndexOptions()
+                .name(name)
+                .unique(false)
+                .fieldValueTypes(MDIndexOptions.FieldValueTypes.DOUBLE)
+                .estimates(false)
+                .sparse(true)
+                .storedValues(Arrays.asList("v1", "v2"));
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), options);
+        assertThat(indexResult.getType()).isEqualTo(IndexType.mdi);
+        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
+        assertThat(indexResult.getName()).isEqualTo(name);
+        assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getEstimates()).isFalse();
+        assertThat(indexResult.getSparse()).isTrue();
+        assertThat(indexResult.getStoredValues())
+                .hasSize(2)
+                .contains("v1", "v2");
+        assertThat(indexResult.getFields())
+                .contains(f1)
+                .contains(f2);
+        assertThat(indexResult.getIsNewlyCreated()).isTrue();
+        collection.deleteIndex(indexResult.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
     void indexEstimates(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());

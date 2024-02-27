@@ -388,6 +388,11 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     }
 
     @Override
+    public CompletableFuture<IndexEntity> ensureMDIndex(final Iterable<String> fields, final MDIndexOptions options) {
+        return executorAsync().execute(() -> createMDIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public CompletableFuture<Collection<IndexEntity>> getIndexes() {
         return executorAsync().execute(this::getIndexesRequest, getIndexesResponseDeserializer());
     }
