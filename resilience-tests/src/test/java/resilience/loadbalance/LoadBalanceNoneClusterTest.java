@@ -3,7 +3,6 @@ package resilience.loadbalance;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.ArangoDBException;
-import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
@@ -22,11 +21,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 public class LoadBalanceNoneClusterTest extends ClusterTest {
 
     static Stream<ArangoDB> arangoProvider() {
-        return Stream.of(
-                dbBuilder().loadBalancingStrategy(LoadBalancingStrategy.NONE).protocol(Protocol.VST).build(),
-                dbBuilder().loadBalancingStrategy(LoadBalancingStrategy.NONE).protocol(Protocol.HTTP_VPACK).build(),
-                dbBuilder().loadBalancingStrategy(LoadBalancingStrategy.NONE).protocol(Protocol.HTTP2_JSON).build()
-        );
+        return builderProvider().map(it->it.loadBalancingStrategy(LoadBalancingStrategy.NONE).build());
     }
 
     static Stream<ArangoDBAsync> asyncArangoProvider() {

@@ -5,6 +5,7 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.LoadBalancingStrategy;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
 import resilience.Endpoint;
 
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AcquireHostListTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void acquireHostList(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
                 .host("127.0.0.1", 8529)

@@ -2,7 +2,7 @@ package resilience.timeout;
 
 import com.arangodb.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
 
 import java.util.Collections;
@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -27,7 +28,7 @@ class TimeoutTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void requestTimeout(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .timeout(1_000)
@@ -68,7 +69,7 @@ class TimeoutTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @MethodSource("protocolProvider")
     void requestTimeoutAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(1_000)
