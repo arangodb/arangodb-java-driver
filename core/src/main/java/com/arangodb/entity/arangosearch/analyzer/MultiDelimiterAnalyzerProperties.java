@@ -29,18 +29,18 @@ import java.util.*;
  */
 public final class MultiDelimiterAnalyzerProperties {
 
-    private Collection<String> delimiters = Collections.emptyList();
+    private Collection<String> delimiter = Collections.emptyList();
 
     /**
      * @return a list of strings of which each is considered as one delimiter that can be one or multiple characters
      * long. The delimiters must not overlap, which means that a delimiter cannot be a prefix of another delimiter.
      */
-    public Collection<String> getDelimiters() {
-        return delimiters;
+    public Collection<String> getDelimiter() {
+        return delimiter;
     }
 
-    public void setDelimiters(String... delimiters) {
-        this.delimiters = Arrays.asList(delimiters);
+    public void setDelimiter(String... delimiter) {
+        this.delimiter = Arrays.asList(delimiter);
     }
 
     @Override
@@ -48,11 +48,11 @@ public final class MultiDelimiterAnalyzerProperties {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MultiDelimiterAnalyzerProperties that = (MultiDelimiterAnalyzerProperties) o;
-        return Objects.equals(delimiters, that.delimiters);
+        return Objects.equals(delimiter, that.delimiter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(delimiters);
+        return Objects.hash(delimiter);
     }
 }
