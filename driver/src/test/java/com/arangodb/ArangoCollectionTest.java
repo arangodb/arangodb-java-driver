@@ -1716,7 +1716,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
 
-        final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), options);
+        final IndexEntity indexResult = collection.ensureMDPrefixedIndex(Arrays.asList(f1, f2), options);
         assertThat(indexResult.getType()).isEqualTo(IndexType.mdiPrefixed);
         assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
         assertThat(indexResult.getName()).isEqualTo(name);
