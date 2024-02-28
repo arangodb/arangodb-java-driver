@@ -1652,8 +1652,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         final IndexEntity indexResult = collection.ensureMDIndex(Arrays.asList(f1, f2), null);
         assertThat(indexResult).isNotNull();
         assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
+        assertThat(indexResult.getFields()).contains(f1, f2);
+        assertThat(indexResult.getFieldValueTypes()).isEqualTo(MDIFieldValueTypes.DOUBLE);
         assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
         assertThat(indexResult.getIsNewlyCreated()).isTrue();
         assertThat(indexResult.getMinLength()).isNull();
@@ -1690,9 +1690,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getStoredValues())
                 .hasSize(2)
                 .contains("v1", "v2");
-        assertThat(indexResult.getFields())
-                .contains(f1)
-                .contains(f2);
+        assertThat(indexResult.getFields()).contains(f1, f2);
+        assertThat(indexResult.getFieldValueTypes()).isEqualTo(MDIFieldValueTypes.DOUBLE);
         assertThat(indexResult.getIsNewlyCreated()).isTrue();
         collection.deleteIndex(indexResult.getId());
     }
@@ -1726,9 +1725,9 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getStoredValues())
                 .hasSize(2)
                 .contains("v1", "v2");
-        assertThat(indexResult.getFields())
-                .contains(f1)
-                .contains(f2);
+        assertThat(indexResult.getFields()).contains(f1, f2);
+        assertThat(indexResult.getFieldValueTypes()).isEqualTo(MDIFieldValueTypes.DOUBLE);
+        assertThat(indexResult.getPrefixFields()).contains("p1", "p2");
         assertThat(indexResult.getIsNewlyCreated()).isTrue();
         collection.deleteIndex(indexResult.getId());
     }
