@@ -39,6 +39,7 @@ import java.util.Set;
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "identity", value = IdentityAnalyzer.class),
         @JsonSubTypes.Type(name = "delimiter", value = DelimiterAnalyzer.class),
+        @JsonSubTypes.Type(name = "multi_delimiter", value = MultiDelimiterAnalyzer.class),
         @JsonSubTypes.Type(name = "stem", value = StemAnalyzer.class),
         @JsonSubTypes.Type(name = "norm", value = NormAnalyzer.class),
         @JsonSubTypes.Type(name = "ngram", value = NGramAnalyzer.class),

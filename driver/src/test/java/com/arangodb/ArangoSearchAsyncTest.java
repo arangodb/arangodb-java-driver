@@ -484,6 +484,29 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
+    void multiDelimiterAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        String name = "test-" + UUID.randomUUID();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        MultiDelimiterAnalyzerProperties properties = new MultiDelimiterAnalyzerProperties();
+        properties.setDelimiters("-", ",", "...");
+
+        MultiDelimiterAnalyzer analyzer = new MultiDelimiterAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+        analyzer.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
     void stemAnalyzerTyped(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
