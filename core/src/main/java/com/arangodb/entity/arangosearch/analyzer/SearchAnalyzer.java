@@ -53,7 +53,8 @@ import java.util.Set;
         @JsonSubTypes.Type(name = "collation", value = CollationAnalyzer.class),
         @JsonSubTypes.Type(name = "classification", value = ClassificationAnalyzer.class),
         @JsonSubTypes.Type(name = "nearest_neighbors", value = NearestNeighborsAnalyzer.class),
-        @JsonSubTypes.Type(name = "minhash", value = MinHashAnalyzer.class)
+        @JsonSubTypes.Type(name = "minhash", value = MinHashAnalyzer.class),
+        @JsonSubTypes.Type(name = "wildcard", value = WildcardAnalyzer.class)
 })
 public abstract class SearchAnalyzer {
     private String name;

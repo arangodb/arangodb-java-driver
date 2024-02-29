@@ -1036,6 +1036,35 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
+    void WildcardAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        NormAnalyzerProperties properties = new NormAnalyzerProperties();
+        properties.setLocale("ru");
+        properties.setAnalyzerCase(SearchAnalyzerCase.lower);
+        properties.setAccent(true);
+
+        NormAnalyzer normAnalyzer = new NormAnalyzer();
+        normAnalyzer.setProperties(properties);
+
+        WildcardAnalyzerProperties wildcardProperties = new WildcardAnalyzerProperties();
+        wildcardProperties.setNgramSize(3);
+        wildcardProperties.setAnalyzer(normAnalyzer);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.position);
+
+        WildcardAnalyzer wildcardAnalyzer = new WildcardAnalyzer();
+        wildcardAnalyzer.setName("test-" + UUID.randomUUID());
+        wildcardAnalyzer.setProperties(wildcardProperties);
+        wildcardAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, wildcardAnalyzer);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
     void offsetFeature(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
 
