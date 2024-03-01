@@ -51,6 +51,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     private static final String MERGE_OBJECTS = "mergeObjects";
     private static final String KEEP_NULL = "keepNull";
     private static final String REFILL_INDEX_CACHES = "refillIndexCaches";
+    private static final String VERSION_ATTRIBUTE = "versionAttribute";
     private static final String IGNORE_REVS = "ignoreRevs";
     private static final String RETURN_NEW = "returnNew";
     private static final String RETURN_OLD = "returnOld";
@@ -103,6 +104,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putQueryParam(KEEP_NULL, params.getKeepNull());
         request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
+        request.putQueryParam(VERSION_ATTRIBUTE, params.getVersionAttribute());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         return request;
     }
@@ -241,6 +243,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
+        request.putQueryParam(VERSION_ATTRIBUTE, params.getVersionAttribute());
         return request;
     }
 
@@ -303,6 +306,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
+        request.putQueryParam(VERSION_ATTRIBUTE, params.getVersionAttribute());
         return request;
     }
 

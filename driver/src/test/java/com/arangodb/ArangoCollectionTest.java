@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -311,6 +312,184 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .returnNew(true)).getNew();
 
         assertThat(updated.getProperties()).doesNotContainKey("foo");
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 2);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 0);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 2);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 0);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
     }
 
     @ParameterizedTest
@@ -731,6 +910,84 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
+    void updateDocumentWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 2);
+        DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(
+                doc.getKey(),
+                doc,
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void updateDocumentWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 0);
+        DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(
+                doc.getKey(),
+                doc,
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true)
+        );
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void updateDocumentsWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void updateDocumentsWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
     void updateDocumentReturnNew(ArangoCollection collection) {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
@@ -1100,6 +1357,84 @@ class ArangoCollectionTest extends BaseJunit5 {
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ignoreRevs(false);
         Throwable thrown = catchThrowable(() -> collection.replaceDocument(createResult.getKey(), doc, options));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void replaceDocumentWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 2);
+        DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(
+                doc.getKey(),
+                doc,
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true)
+        );
+        assertThat(replaceResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void replaceDocumentWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc);
+        doc.addAttribute("_version", 0);
+        DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(
+                doc.getKey(),
+                doc,
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true)
+        );
+        assertThat(replaceResult.getNew().getAttribute("_version")).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void replaceDocumentsWithExternalVersioning(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> replaceResult = collection.replaceDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(replaceResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void replaceDocumentsWithExternalVersioningFail(ArangoCollection collection) {
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2));
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> replaceResult = collection.replaceDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        );
+
+        assertThat(replaceResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
     }
 
     @ParameterizedTest
