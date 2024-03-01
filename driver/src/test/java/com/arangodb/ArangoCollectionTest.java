@@ -317,6 +317,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -334,6 +336,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -352,6 +356,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -379,6 +385,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -406,6 +414,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -423,6 +433,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -441,6 +453,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -468,6 +482,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -911,6 +927,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -926,6 +944,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -941,6 +961,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -965,6 +987,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1362,6 +1386,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -1377,6 +1403,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -1392,6 +1420,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsWithExternalVersioning(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1416,6 +1446,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsWithExternalVersioningFail(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());

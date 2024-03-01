@@ -313,6 +313,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -330,6 +332,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -348,6 +352,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -375,6 +381,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -402,6 +410,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -419,6 +429,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -437,6 +449,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -464,6 +478,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -885,6 +901,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -900,6 +918,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -915,6 +935,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -939,6 +961,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1336,6 +1360,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -1351,6 +1377,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -1366,6 +1394,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1390,6 +1420,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
