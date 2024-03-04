@@ -37,6 +37,7 @@ public final class DocumentCreateOptions {
     private Boolean mergeObjects;
     private Boolean keepNull;
     private Boolean refillIndexCaches;
+    private String versionAttribute;
 
     public DocumentCreateOptions() {
         super();
@@ -177,4 +178,34 @@ public final class DocumentCreateOptions {
         this.refillIndexCaches = refillIndexCaches;
         return this;
     }
+
+    public String getVersionAttribute() {
+        return versionAttribute;
+    }
+
+    /**
+     * Only applicable if {@link #overwriteMode(OverwriteMode)} is set to {@link OverwriteMode#update} or
+     * {@link OverwriteMode#replace}.
+     * You can use the {@code versionAttribute} option for external versioning support.
+     * If set, the attribute with the name specified by the option is looked up in the stored document and the attribute
+     * value is compared numerically to the value of the versioning attribute in the supplied document that is supposed
+     * to update/replace it.
+     * If the version number in the new document is higher (rounded down to a whole number) than in the document that
+     * already exists in the database, then the update/replace operation is performed normally. This is also the case if
+     * the new versioning attribute has a non-numeric value, if it is a negative number, or if the attribute doesn't
+     * exist in the supplied or stored document.
+     * If the version number in the new document is lower or equal to what exists in the database, the operation is not
+     * performed and the existing document thus not changed. No error is returned in this case.
+     * The attribute can only be a top-level attribute.
+     * You can check if _oldRev (if present) and _rev are different to determine if the document has been changed.
+     *
+     * @param versionAttribute the attribute name to use for versioning
+     * @return options
+     * @since ArangoDB 3.12
+     */
+    public DocumentCreateOptions versionAttribute(String versionAttribute) {
+        this.versionAttribute = versionAttribute;
+        return this;
+    }
+
 }
