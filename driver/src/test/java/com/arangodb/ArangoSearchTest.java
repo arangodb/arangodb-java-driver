@@ -483,6 +483,29 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void multiDelimiterAnalyzerTyped(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        String name = "test-" + UUID.randomUUID();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        MultiDelimiterAnalyzerProperties properties = new MultiDelimiterAnalyzerProperties();
+        properties.setDelimiter("-", ",", "...");
+
+        MultiDelimiterAnalyzer analyzer = new MultiDelimiterAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+        analyzer.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void stemAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
