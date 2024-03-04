@@ -14,12 +14,14 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise:3.11.7
+          - docker.io/arangodb/enterprise-preview:devel-nightly
         topology:
-          - single
+          - cluster
         module:
           - driver
           - integration-tests
+        compression:
+          - true
 
     steps:
       - uses: actions/checkout@v2
@@ -36,6 +38,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
+          COMPRESSION: ${{matrix.compression}}
       - name: Info
         run: mvn -version
       - name: Install
