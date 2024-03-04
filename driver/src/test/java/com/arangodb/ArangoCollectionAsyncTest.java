@@ -312,6 +312,200 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
+    void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 2);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 0);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 2);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 0);
+        DocumentCreateEntity<BaseDocument> updateResult = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> updateResult = collection.insertDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.replace)
+                        .versionAttribute("_version")
+                        .returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
     void insertDocumentWaitForSync(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(new BaseDocument(), options).get();
@@ -706,6 +900,92 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
+    void updateDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 2);
+        DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(
+                doc.getKey(),
+                doc,
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void updateDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 0);
+        DocumentUpdateEntity<BaseDocument> updateResult = collection.updateDocument(
+                doc.getKey(),
+                doc,
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true)
+        ).get();
+        assertThat(updateResult.getNew().getAttribute("_version")).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void updateDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void updateDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection.updateDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentUpdateOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(updateResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
     void updateDocumentReturnNew(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("a", "test");
@@ -1075,6 +1355,92 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ignoreRevs(false);
         Throwable thrown = catchThrowable(() -> collection.replaceDocument(createResult.getKey(), doc, options).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void replaceDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 2);
+        DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(
+                doc.getKey(),
+                doc,
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true)
+        ).get();
+        assertThat(replaceResult.getNew().getAttribute("_version")).isEqualTo(2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void replaceDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
+        doc.addAttribute("_version", 1);
+        collection.insertDocument(doc).get();
+        doc.addAttribute("_version", 0);
+        DocumentUpdateEntity<BaseDocument> replaceResult = collection.replaceDocument(
+                doc.getKey(),
+                doc,
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true)
+        ).get();
+        assertThat(replaceResult.getNew().getAttribute("_version")).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void replaceDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 2);
+        d2.addAttribute("_version", 2);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> replaceResult = collection.replaceDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(replaceResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(2);
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void replaceDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
+        d1.addAttribute("_version", 1);
+        BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
+        d2.addAttribute("_version", 1);
+
+        collection.insertDocuments(Arrays.asList(d1, d2)).get();
+
+        d1.addAttribute("_version", 0);
+        d2.addAttribute("_version", 0);
+        MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> replaceResult = collection.replaceDocuments(
+                Arrays.asList(d1, d2),
+                new DocumentReplaceOptions().versionAttribute("_version").returnNew(true),
+                BaseDocument.class
+        ).get();
+
+        assertThat(replaceResult.getDocuments()).allSatisfy(it -> {
+            assertThat(it.getNew()).isNotNull();
+            assertThat(it.getNew().getAttribute("_version")).isEqualTo(1);
+        });
     }
 
     @ParameterizedTest
