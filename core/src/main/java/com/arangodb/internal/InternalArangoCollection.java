@@ -475,6 +475,15 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    protected InternalRequest createMDIndexRequest(
+            final Iterable<String> fields, final AbstractMDIndexOptions<?> options) {
+        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
+        request.putQueryParam(COLLECTION, name);
+        AbstractMDIndexOptions<?> opts = options != null ? options : new MDIndexOptions().fieldValueTypes(MDIFieldValueTypes.DOUBLE);
+        request.setBody(getSerde().serialize(OptionsBuilder.build(opts, fields)));
+        return request;
+    }
+
     protected InternalRequest getIndexesRequest() {
         final InternalRequest request = request(dbName, RequestType.GET, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);

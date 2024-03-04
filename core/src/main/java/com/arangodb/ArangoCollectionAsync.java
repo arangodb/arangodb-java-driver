@@ -305,8 +305,22 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoCollection#ensureZKDIndex(Iterable, ZKDIndexOptions)}
+     *
+     * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} or
+     *             {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
      */
+    @Deprecated
     CompletableFuture<IndexEntity> ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoCollection#ensureMDIndex(Iterable, MDIndexOptions)}
+     */
+    CompletableFuture<IndexEntity> ensureMDIndex(Iterable<String> fields, MDIndexOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoCollection#ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)}
+     */
+    CompletableFuture<IndexEntity> ensureMDPrefixedIndex(Iterable<String> fields, MDPrefixedIndexOptions options);
 
     /**
      * Asynchronous version of {@link ArangoCollection#ensureInvertedIndex(InvertedIndexOptions)}
