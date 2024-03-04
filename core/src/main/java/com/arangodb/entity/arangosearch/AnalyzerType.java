@@ -26,6 +26,7 @@ package com.arangodb.entity.arangosearch;
 public enum AnalyzerType {
     identity,
     delimiter,
+    multi_delimiter,
     stem,
     norm,
     ngram,
