@@ -126,7 +126,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.QueryExecutionState",
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -138,7 +138,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
+    "name": "com.arangodb.entity.QueryExecutionState",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -270,13 +270,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -318,6 +318,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.CursorEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -348,13 +354,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlParseEntity",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
+    "name": "com.arangodb.entity.AqlParseEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -510,6 +516,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -552,13 +564,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -612,6 +624,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.LogEntriesEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -655,6 +673,12 @@
   },
   {
     "name": "com.arangodb.entity.QueryTrackingPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity$Extras",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -726,6 +750,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -733,6 +763,12 @@
   },
   {
     "name": "com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -858,7 +894,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.QueryExecutionState",
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -870,7 +906,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
+    "name": "com.arangodb.entity.QueryExecutionState",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1002,13 +1038,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
+    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1026,7 +1062,37 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.AbstractMDIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptions$Optimizer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptions$Options",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.DocumentImportOptions$OnDuplicate",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.MDIFieldValueTypes",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1080,12 +1146,6 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlQueryOptions$Optimizer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.LogLevelOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1111,12 +1171,6 @@
   },
   {
     "name": "com.arangodb.model.arangosearch.AnalyzerDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.AqlQueryOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1212,6 +1266,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.EdgeCollectionRemoveOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1230,13 +1290,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.VertexDeleteOptions",
+    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
+    "name": "com.arangodb.model.VertexDeleteOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1254,25 +1314,19 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.TransactionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.CollectionsReadOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionTruncateOptions",
+    "name": "com.arangodb.model.TransactionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentDeleteOptions",
+    "name": "com.arangodb.model.CollectionTruncateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1290,7 +1344,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlQueryOptions$Options",
+    "name": "com.arangodb.model.DocumentDeleteOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1308,19 +1362,13 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentUpdateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.GraphDocumentReadOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.OptionsBuilder",
+    "name": "com.arangodb.model.DocumentUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1332,19 +1380,25 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.OptionsBuilder",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.TransactionCollectionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.ReplaceEdgeDefinitionOptions",
+    "name": "com.arangodb.model.LogOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.LogOptions",
+    "name": "com.arangodb.model.ReplaceEdgeDefinitionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1363,6 +1417,12 @@
   },
   {
     "name": "com.arangodb.model.DatabaseOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionRemoveOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1417,6 +1477,12 @@
   },
   {
     "name": "com.arangodb.model.AqlFunctionGetOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryOptionsTest",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1482,7 +1548,25 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.MDIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.MDPrefixedIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.DocumentImportOptions$OnDuplicate",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.MDIFieldValueTypes",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1519,18 +1603,6 @@
   },
   {
     "name": "com.arangodb.model.ZKDIndexOptions$FieldValueTypes",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity$Extras",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
