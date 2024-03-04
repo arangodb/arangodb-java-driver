@@ -41,5 +41,6 @@ public enum AnalyzerType {
     collation,
     classification,
     nearest_neighbors,
-    minhash
+    minhash,
+    wildcard
 }
