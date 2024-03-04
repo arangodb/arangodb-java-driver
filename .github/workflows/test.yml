@@ -217,12 +217,13 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.11.7
+          - docker.io/arangodb/arangodb-preview:devel-nightly
         topology:
           - single
-          - cluster
         java-version:
-          - 17
+          - 21
+        compression:
+          - true
 
     steps:
       - uses: actions/checkout@v2
@@ -237,6 +238,7 @@ jobs:
         env:
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
+          COMPRESSION: ${{matrix.compression}}
       - name: Info
         run: mvn -version
       - name: Install
