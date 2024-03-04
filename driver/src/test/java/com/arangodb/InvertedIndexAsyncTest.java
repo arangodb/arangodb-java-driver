@@ -147,9 +147,8 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getCache()).isEqualTo(options.getCache());
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
 
-        if (isEnterprise() && isAtLeastVersion(3, 11)) {
-            // FIXME: BTS-1428
-            // assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
+        if (isEnterprise() && isAtLeastVersion(3, 12)) {
+             assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
         }
     }
 
