@@ -36,6 +36,7 @@ public class BaseTest {
 
     protected static Stream<Arguments> adbByProtocol() {
         return Arrays.stream(Protocol.values())
+                .filter(p -> !p.equals(Protocol.VST) || TestUtils.isLessThanVersion(3, 12))
                 .map(BaseTest::createAdb)
                 .map(Arguments::of);
     }
