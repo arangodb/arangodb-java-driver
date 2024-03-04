@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.model.MDIFieldValueTypes;
+
 import java.util.Collection;
 
 /**
@@ -45,6 +47,8 @@ public final class IndexEntity {
     private Boolean cacheEnabled;
     private Collection<String> storedValues;
     private Boolean legacyPolygons;
+    private MDIFieldValueTypes fieldValueTypes;
+    private Collection<String> prefixFields;
 
     public IndexEntity() {
         super();
@@ -122,4 +126,11 @@ public final class IndexEntity {
         return legacyPolygons;
     }
 
+    public MDIFieldValueTypes getFieldValueTypes() {
+        return fieldValueTypes;
+    }
+
+    public Collection<String> getPrefixFields() {
+        return prefixFields;
+    }
 }

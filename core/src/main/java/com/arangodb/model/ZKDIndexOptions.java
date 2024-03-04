@@ -27,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
  * @since ArangoDB 3.9
+ * @deprecated since ArangoDB 3.12, use {@link MDIndexOptions} instead.
  */
+@Deprecated
 public final class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
 
     final IndexType type = IndexType.zkd;
