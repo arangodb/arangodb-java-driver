@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added support to external versioning (ArangoDB 3.12, #547)
+- added support to `wildcard` analyzer (ArangoDB 3.12, #546)
+- added support to `multi_delimiter` analyzer (ArangoDB 3.12, #545)
+- added support to multi dimensional indexes (ArangoDB 3.12, #544)
+- added support to WAND optimization (ArangoDB 3.12, #543)
+- added support to content compression (ArangoDB 3.12, #535)
+
+
 ## [7.5.1] - 2024-01-24
 
 - fixed inclusion of transitive dependency on `com.tngtech.archunit:archunit-junit5`

@@ -10,5 +10,5 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.5.1'
+    implementation 'com.arangodb:arangodb-java-driver:7.6.0-SNAPSHOT'
 }
