@@ -22,8 +22,6 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
- * Documentation</a>
  */
 public final class ArangoDBVersion {
 

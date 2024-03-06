@@ -35,7 +35,7 @@ import java.util.Objects;
  * <p/>
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#pipeline">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#pipeline">API Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class PipelineAnalyzer extends SearchAnalyzer {

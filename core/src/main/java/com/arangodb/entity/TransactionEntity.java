@@ -22,9 +22,6 @@ package com.arangodb.entity;
 
 /**
  * @author Michele Rastelli
- * @see <a href=
- * "https://www.arangodb.com/docs/stable/http/transaction-stream-transaction
- * .html#list-currently-ongoing-transactions</a>
  * @since ArangoDB 3.5.0
  */
 public final class TransactionEntity {

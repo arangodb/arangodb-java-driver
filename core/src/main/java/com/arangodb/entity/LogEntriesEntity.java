@@ -24,9 +24,6 @@ import java.util.List;
 
 /**
  * @author Michele Rastelli
- * @see
- * <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
- * Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class LogEntriesEntity {

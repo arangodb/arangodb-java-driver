@@ -24,10 +24,7 @@ import com.arangodb.internal.serde.UserData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @param <T>
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
- * Documentation</a>
  */
 public final class DocumentUpdateEntity<T> extends DocumentEntity {
 

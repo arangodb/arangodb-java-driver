@@ -22,7 +22,6 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
  */
 public final class EdgeCreateOptions {
 

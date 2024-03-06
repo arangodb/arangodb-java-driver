@@ -22,8 +22,6 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Michele Rastelli
- * @see
- * <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#analyzer-features">API Documentation</a>
  */
 public enum AnalyzerFeature {
 

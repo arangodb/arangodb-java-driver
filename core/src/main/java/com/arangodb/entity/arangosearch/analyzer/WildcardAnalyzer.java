@@ -33,7 +33,7 @@ import java.util.Objects;
  * case-insensitive and accent-insensitive search.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/3.12/index-and-search/analyzers/#wildcard">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/devel/index-and-search/analyzers/#wildcard">API Documentation</a>
  */
 public final class WildcardAnalyzer extends SearchAnalyzer {
     private WildcardAnalyzerProperties properties;

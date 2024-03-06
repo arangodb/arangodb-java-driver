@@ -23,9 +23,6 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see
- * <a href= "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
- * Documentation</a>
  */
 public final class DocumentExistsOptions {
 

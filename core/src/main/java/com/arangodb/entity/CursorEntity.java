@@ -28,8 +28,6 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
- * Documentation</a>
  */
 public final class CursorEntity<T> {
     private String id;

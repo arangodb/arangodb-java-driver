@@ -27,7 +27,6 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html">API Documentation</a>
  */
 public class CollectionEntity {
 
