@@ -171,6 +171,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server role.
      *
      * @return the server role
+     * @see <a
+     * href="https://docs.arangodb.com/stable/develop/http-api/cluster/#get-the-server-role">API
+     * Documentation</a>
      */
     ServerRole getRole();
 
@@ -264,6 +267,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user        The name of the user
      * @param permissions The permissions the user grant
      * @since ArangoDB 3.2.0
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">API
+     * Documentation</a>
      */
     void grantDefaultDatabaseAccess(String user, Permissions permissions);
 
@@ -274,6 +279,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user        The name of the user
      * @param permissions The permissions the user grant
      * @since ArangoDB 3.2.0
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-collection-access-level">API
+     * Documentation</a>
      */
     void grantDefaultCollectionAccess(String user, Permissions permissions);
 
@@ -309,6 +316,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return the server's current loglevel settings
      * @since ArangoDB 3.1.0
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
+     * Documentation</a>
      */
     LogLevelEntity getLogLevel();
 
@@ -317,6 +326,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return the server's current loglevel settings
      * @since ArangoDB 3.10
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
+     * Documentation</a>
      */
     LogLevelEntity getLogLevel(LogLevelOptions options);
 
@@ -326,6 +337,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param entity loglevel settings
      * @return the server's current loglevel settings
      * @since ArangoDB 3.1.0
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
+     * Documentation</a>
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity);
 
@@ -335,12 +348,16 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param entity loglevel settings
      * @return the server's current loglevel settings
      * @since ArangoDB 3.10
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
+     * Documentation</a>
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
     /**
      * @return the list of available rules and their respective flags
      * @since ArangoDB 3.10
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-all-aql-optimizer-rules">API
+     * Documentation</a>
      */
     Collection<QueryOptimizerRule> getQueryOptimizerRules();
 

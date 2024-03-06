@@ -52,6 +52,9 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * Checks whether the view exists.
      *
      * @return true if the view exists, otherwise false
+     * @see
+     * <a href= "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#get-information-about-a-view">API
+     * Documentation</a>
      */
     boolean exists();
 

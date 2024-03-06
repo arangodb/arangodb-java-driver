@@ -56,6 +56,8 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Checks whether the graph exists
      *
      * @return true if the graph exists, otherwise false
+     * @see
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-a-graph">API Documentation</a>
      */
     boolean exists();
 

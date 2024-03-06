@@ -155,6 +155,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the import
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * Documentation</a>
      */
     DocumentImportEntity importDocuments(Iterable<?> values);
 
@@ -164,6 +166,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the import
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * Documentation</a>
      */
     DocumentImportEntity importDocuments(Iterable<?> values, DocumentImportOptions options);
 
@@ -172,6 +176,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values Raw data representing a collection of documents
      * @return information about the import
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * Documentation</a>
      */
     DocumentImportEntity importDocuments(RawData values);
 
@@ -181,6 +187,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  Raw data representing a collection of documents
      * @param options Additional options, can be null
      * @return information about the import
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * Documentation</a>
      */
     DocumentImportEntity importDocuments(RawData values, DocumentImportOptions options);
 

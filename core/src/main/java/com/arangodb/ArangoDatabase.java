@@ -230,6 +230,8 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param user        The name of the user
      * @param permissions The permissions the user grant
      * @since ArangoDB 3.2.0
+     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">
+     * API Documentation</a>
      */
     void grantDefaultCollectionAccess(String user, Permissions permissions);
 
