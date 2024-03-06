@@ -681,7 +681,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null.
      *
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/devel/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
      * @since ArangoDB 3.12
      */
     IndexEntity ensureMDIndex(Iterable<String> fields, MDIndexOptions options);
@@ -693,7 +693,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, cannot be null.
      *
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/devel/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
      * @since ArangoDB 3.12
      */
     IndexEntity ensureMDPrefixedIndex(Iterable<String> fields, MDPrefixedIndexOptions options);
