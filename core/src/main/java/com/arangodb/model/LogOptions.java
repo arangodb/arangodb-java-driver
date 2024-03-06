@@ -24,9 +24,6 @@ import com.arangodb.entity.LogLevel;
 
 /**
  * @author Mark Vollmary
- * @see <a href=
- * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
- * Documentation</a>
  */
 public final class LogOptions {
 

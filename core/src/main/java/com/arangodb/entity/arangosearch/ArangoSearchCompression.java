@@ -23,7 +23,6 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
 public enum ArangoSearchCompression {

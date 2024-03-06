@@ -8,7 +8,6 @@ import java.util.Objects;
  * This header contains the most recent request (de)queuing time (in seconds) as tracked by the server’s scheduler.
  *
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/general.html#overload-control">API Documentation</a>
  */
 public final class QueueTimeSample {
     /**

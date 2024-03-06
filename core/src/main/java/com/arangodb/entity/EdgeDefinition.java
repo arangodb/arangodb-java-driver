@@ -26,7 +26,6 @@ import java.util.Collections;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API Documentation</a>
  */
 public final class EdgeDefinition {
     private String collection;

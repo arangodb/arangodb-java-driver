@@ -30,8 +30,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author Michele Rastelli
- * @see
- * <a href="https://www.arangodb.com/docs/stable/data-modeling-documents-schema-validation.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
 public final class CollectionSchema {

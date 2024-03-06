@@ -24,8 +24,6 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- * @see
- * <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API Documentation</a>
  */
 public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
 
@@ -83,7 +81,7 @@ public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
      *                       allows you to let old indexes produce the same, potentially wrong results as before an
      *                       upgrade. A geo index with `legacyPolygons` set to `false` will use the new, correct and
      *                       consistent method for parsing of GeoJSON polygons.
-     *                       See <a href="https://www.arangodb.com/docs/stable/indexing-geo.html#legacy-polygons">Legacy Polygons</a>.
+     *                       See <a href="https://docs.arangodb.com/stable/index-and-search/indexing/working-with-indexes/geo-spatial-indexes/#legacy-polygons">Legacy Polygons</a>.
      * @return options
      * @since ArangoDB 3.10
      */

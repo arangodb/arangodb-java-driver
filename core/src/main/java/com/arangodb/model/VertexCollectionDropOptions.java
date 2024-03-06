@@ -1,9 +1,6 @@
 package com.arangodb.model;
 
 /**
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
- * Documentation</a>
- *
  * @deprecated use {@link VertexCollectionRemoveOptions} instead
  */
 @Deprecated

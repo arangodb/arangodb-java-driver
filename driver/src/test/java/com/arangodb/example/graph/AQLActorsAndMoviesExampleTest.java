@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  * @see
- * <a href="https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html">AQL Example Queries on an
+ * <a href="https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/">AQL Example Queries on an
  * Actors and Movies Database</a>
  */
 class AQLActorsAndMoviesExampleTest {
@@ -309,8 +309,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -324,8 +323,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -340,8 +338,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-actors-who-acted-in-both-movie1-and-movie2-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-both-movie1-and-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -355,8 +352,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-common-movies-between-actor1-and-actor2-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-common-movies-between-actor1-and-actor2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -371,8 +367,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-actors-who-acted-in-3-or-more-movies-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-3-or-more-movies">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -388,8 +383,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#all-movies-where-exactly-6-actors-acted-in-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-movies-where-exactly-6-actors-acted-in">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -402,8 +396,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#the-number-of-actors-by-movie-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-actors-by-movie">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -424,8 +417,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#the-number-of-movies-by-actor-">AQL
+     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-movies-by-actor">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -457,12 +449,6 @@ class AQLActorsAndMoviesExampleTest {
                         new Actor("actors/WernerH", 1), new Actor("actors/WilW", 1));
     }
 
-    /**
-     * @see <a href=
-     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies
-     * .html#the-number-of-movies-acted-in-between-2005-and-2010-by-actor-">AQL
-     * Example Queries on an Actors and Movies Database</a>
-     */
     @Test
     void theNumberOfMoviesActedInBetween2005and2010byActor() {
         final ArangoCursor<Actor> cursor = db.query(

@@ -24,8 +24,6 @@ import com.arangodb.internal.serde.UserData;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
- * Documentation</a>
  */
 public final class DocumentCreateEntity<T> extends DocumentEntity {
 

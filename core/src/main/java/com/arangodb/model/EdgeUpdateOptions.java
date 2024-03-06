@@ -22,7 +22,6 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
  */
 public final class EdgeUpdateOptions {
 

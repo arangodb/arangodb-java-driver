@@ -29,7 +29,6 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  */
 public final class ArangoSearchPropertiesEntity extends ViewEntity {
 

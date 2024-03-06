@@ -24,7 +24,6 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API Documentation</a>
  */
 public final class AqlParseEntity {
 
