@@ -23,8 +23,6 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
- * Documentation</a>
  */
 public final class DocumentReadOptions {
 
@@ -66,7 +64,7 @@ public final class DocumentReadOptions {
     /**
      * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
      * @return options
-     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
+     * @see <a href="https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower">API
      * Documentation</a>
      * @since ArangoDB 3.4.0
      */

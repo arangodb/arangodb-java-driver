@@ -27,7 +27,6 @@ import java.util.Collection;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/views-search-alias.html">API Documentation</a>
  */
 public final class SearchAliasPropertiesEntity extends ViewEntity {
 

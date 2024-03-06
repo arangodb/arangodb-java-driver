@@ -30,7 +30,7 @@ import java.util.Objects;
  * usage with ArangoSearch Geo functions.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#geopoint">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#geopoint">API Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class GeoPointAnalyzer extends SearchAnalyzer {

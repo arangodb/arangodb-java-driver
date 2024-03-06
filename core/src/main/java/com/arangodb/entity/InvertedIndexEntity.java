@@ -29,7 +29,6 @@ import java.util.Set;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-inverted.html">API Documentation</a>
  * @since ArangoDB 3.10
  */
 public final class InvertedIndexEntity {

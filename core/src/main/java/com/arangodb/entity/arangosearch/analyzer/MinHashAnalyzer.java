@@ -30,7 +30,7 @@ import java.util.Objects;
  * Analyzer of your choice before the hashing, for example, to break up text into words.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/analyzers.html#minhash">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#minhash">API Documentation</a>
  * @since ArangoDB 3.10
  */
 public final class MinHashAnalyzer extends SearchAnalyzer {

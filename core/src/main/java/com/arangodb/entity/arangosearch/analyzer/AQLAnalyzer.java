@@ -29,7 +29,7 @@ import java.util.Objects;
  * An Analyzer capable of running a restricted AQL query to perform data manipulation / filtering.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#aql">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#aql">API Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class AQLAnalyzer extends SearchAnalyzer {

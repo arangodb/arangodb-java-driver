@@ -30,7 +30,7 @@ import java.util.Objects;
  * rules of the respective language, most notable in range queries against Views.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#collation">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#collation">API Documentation</a>
  * @since ArangoDB 3.9
  */
 public final class CollationAnalyzer extends SearchAnalyzer {

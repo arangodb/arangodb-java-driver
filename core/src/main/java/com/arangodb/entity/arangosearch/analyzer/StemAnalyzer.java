@@ -29,7 +29,7 @@ import java.util.Objects;
  * An Analyzer capable of stemming the text, treated as a single token, for supported languages.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stem">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#stem">API Documentation</a>
  */
 public final class StemAnalyzer extends SearchAnalyzer {
     private StemAnalyzerProperties properties;

@@ -27,7 +27,7 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
  * An Analyzer applying the identity transformation, i.e. returning the input unmodified.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#identity">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#identity">API Documentation</a>
  */
 public final class IdentityAnalyzer extends SearchAnalyzer {
     public IdentityAnalyzer() {

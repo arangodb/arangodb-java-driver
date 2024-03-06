@@ -29,7 +29,7 @@ import java.util.Objects;
  * An Analyzer capable of normalizing the text, treated as a single token, i.e. case conversion and accent removal.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#norm">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#norm">API Documentation</a>
  */
 public final class NormAnalyzer extends SearchAnalyzer {
     private NormAnalyzerProperties properties;

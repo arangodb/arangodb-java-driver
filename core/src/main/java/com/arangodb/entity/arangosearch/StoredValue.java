@@ -29,7 +29,6 @@ import java.util.Objects;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
 public final class StoredValue {

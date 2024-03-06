@@ -22,9 +22,6 @@ package com.arangodb.entity;
 
 /**
  * @author Michele Rastelli
- * @see
- * <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
- * Documentation</a>
  */
 public final class ArangoDBEngine {
 

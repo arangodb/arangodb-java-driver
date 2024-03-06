@@ -34,7 +34,7 @@ import java.util.Objects;
  * characters raise an Invalid UTF-8 sequence query error.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#n-gram">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#ngram">API Documentation</a>
  */
 public final class NGramAnalyzer extends SearchAnalyzer {
     private NGramAnalyzerProperties properties;

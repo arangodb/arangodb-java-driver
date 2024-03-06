@@ -26,9 +26,6 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
- * @see
- * <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
- * Documentation</a>
  */
 public final class CollectionPropertiesOptions {
 

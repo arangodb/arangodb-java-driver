@@ -24,7 +24,6 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html">API Documentation</a>
  */
 public final class UserEntity {
 

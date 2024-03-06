@@ -30,7 +30,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * Interface for operations on ArangoDB edge collection level.
  *
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/">API Documentation</a>
  */
 @ThreadSafe
 public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
@@ -53,7 +53,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * Remove one edge definition from the graph.
      *
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * "https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
      * Documentation</a>
      *
      * @deprecated use {@link #remove()} instead
@@ -66,7 +66,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      *
      * @param options options
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * "https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
      * Documentation</a>
      *
      * @deprecated use {@link #remove(EdgeCollectionRemoveOptions)} instead
@@ -78,7 +78,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * Remove one edge definition from the graph.
      *
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * "https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
      * Documentation</a>
      */
     void remove();
@@ -88,7 +88,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      *
      * @param options options
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
+     * "https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
      * Documentation</a>
      */
     void remove(EdgeCollectionRemoveOptions options);
@@ -98,7 +98,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      *
      * @param value A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-an-edge">API Documentation</a>
      */
     EdgeEntity insertEdge(Object value);
 
@@ -108,7 +108,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-an-edge">API Documentation</a>
      */
     EdgeEntity insertEdge(Object value, EdgeCreateOptions options);
 
@@ -118,7 +118,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param key  The key of the edge
      * @param type The type of the edge-document (POJO or {@link com.arangodb.util.RawData})
      * @return the edge identified by the key
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-an-edge">API Documentation</a>
      */
     <T> T getEdge(String key, Class<T> type);
 
@@ -129,7 +129,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param type    The type of the edge-document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the edge identified by the key
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-an-edge">API Documentation</a>
      */
     <T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options);
 
@@ -140,7 +140,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param key   The key of the edge
      * @param value A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-an-edge">API Documentation</a>
      */
     EdgeUpdateEntity replaceEdge(String key, Object value);
 
@@ -152,7 +152,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-an-edge">API Documentation</a>
      */
     EdgeUpdateEntity replaceEdge(String key, Object value, EdgeReplaceOptions options);
 
@@ -164,7 +164,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param key   The key of the edge
      * @param value A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#update-an-edge">API Documentation</a>
      */
     EdgeUpdateEntity updateEdge(String key, Object value);
 
@@ -177,7 +177,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single edge (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#update-an-edge">API Documentation</a>
      */
     EdgeUpdateEntity updateEdge(String key, Object value, EdgeUpdateOptions options);
 
@@ -185,7 +185,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * Removes a edge
      *
      * @param key The key of the edge
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge">API Documentation</a>
      */
     void deleteEdge(String key);
 
@@ -194,7 +194,7 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      *
      * @param key     The key of the edge
      * @param options Additional options, can be null
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-an-edge">API Documentation</a>
      */
     void deleteEdge(String key, EdgeDeleteOptions options);
 

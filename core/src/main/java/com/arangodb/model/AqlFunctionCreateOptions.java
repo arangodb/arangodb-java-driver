@@ -22,8 +22,6 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
- * Documentation</a>
  */
 public final class AqlFunctionCreateOptions {
 

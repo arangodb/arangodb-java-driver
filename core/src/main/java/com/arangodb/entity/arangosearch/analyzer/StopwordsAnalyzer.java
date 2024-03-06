@@ -29,7 +29,7 @@ import java.util.Objects;
  * An Analyzer capable of removing specified tokens from the input.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
+ * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#stopwords">API Documentation</a>
  * @since ArangoDB 3.8
  */
 public final class StopwordsAnalyzer extends SearchAnalyzer {

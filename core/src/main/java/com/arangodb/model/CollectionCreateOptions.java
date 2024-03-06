@@ -31,8 +31,6 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
- * Documentation</a>
  */
 public final class CollectionCreateOptions {
 

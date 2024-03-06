@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API Documentation</a>
  */
 public final class AqlQueryExplainOptions {
 

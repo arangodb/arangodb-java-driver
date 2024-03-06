@@ -28,8 +28,6 @@ import java.util.HashSet;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
- * Documentation</a>
  */
 public final class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
 

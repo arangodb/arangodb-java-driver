@@ -303,5 +303,5 @@ Removed document: 6
 
 ## Learn more
 
-- Have a look at the [AQL documentation](https://www.arangodb.com/docs/stable/aql/) to learn more about the query language.
-- Also check out the documentation about ArangoDB's [Data Model & Concepts](https://www.arangodb.com/docs/stable/data-model-and-concepts.html)
+- Have a look at the [AQL documentation](https://docs.arangodb.com/stable/aql/) to learn more about the query language.
+- Also check out the documentation about ArangoDB's [Data Models](https://docs.arangodb.com/stable/concepts/data-models/)

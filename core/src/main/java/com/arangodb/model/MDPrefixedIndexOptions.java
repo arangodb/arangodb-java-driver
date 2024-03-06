@@ -25,7 +25,6 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/devel/develop/http-api/indexes/multi-dimensional">API Documentation</a>
  * @since ArangoDB 3.12
  */
 public final class MDPrefixedIndexOptions extends AbstractMDIndexOptions<MDPrefixedIndexOptions> {

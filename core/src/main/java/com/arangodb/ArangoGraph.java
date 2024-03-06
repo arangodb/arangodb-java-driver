@@ -33,7 +33,7 @@ import java.util.Collection;
  * Interface for operations on ArangoDB graph level.
  *
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/">API Documentation</a>
  */
 @ThreadSafe
 public interface ArangoGraph extends ArangoSerdeAccessor {
@@ -56,6 +56,8 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Checks whether the graph exists
      *
      * @return true if the graph exists, otherwise false
+     * @see
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-a-graph">API Documentation</a>
      */
     boolean exists();
 
@@ -65,7 +67,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      *
      * @param edgeDefinitions An array of definitions for the edge
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
      * Documentation</a>
      */
     GraphEntity create(Iterable<EdgeDefinition> edgeDefinitions);
@@ -77,7 +79,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @param edgeDefinitions An array of definitions for the edge
      * @param options         Additional options, can be null
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
      * Documentation</a>
      */
     GraphEntity create(Iterable<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
@@ -86,7 +88,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Deletes the graph from the database.
      *
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#drop-a-graph">API Documentation</a>
      */
     void drop();
 
@@ -96,7 +98,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @param dropCollections Drop collections of this graph as well. Collections will only be
      *                        dropped if they are not used in other graphs.
      * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API
+     * "https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#drop-a-graph">API
      * Documentation</a>
      */
     void drop(boolean dropCollections);
@@ -106,7 +108,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      *
      * @return the definition content of this graph
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-a-graph">API Documentation</a>
      */
     GraphEntity getInfo();
 
@@ -114,7 +116,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Fetches all vertex collections from the graph and returns a list of collection names.
      *
      * @return all vertex collections within this graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-vertex-collections">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#list-vertex-collections">API
      * Documentation</a>
      */
     Collection<String> getVertexCollections();
@@ -125,7 +127,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      *
      * @param name Name of the vertex collection
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#add-a-vertex-collection">API
      * Documentation</a>
      */
     GraphEntity addVertexCollection(String name);
@@ -137,7 +139,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @param name    Name of the vertex collection
      * @param options additional options
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#add-a-vertex-collection">API
      * Documentation</a>
      * @since ArangoDB 3.9
      */
@@ -163,7 +165,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * Fetches all edge collections from the graph and returns a list of collection names.
      *
      * @return all edge collections within this graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-edge-definitions">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#list-edge-collections">API
      * Documentation</a>
      */
     Collection<String> getEdgeDefinitions();
@@ -173,7 +175,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      *
      * @param definition The edge definition
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-edge-definition">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#add-an-edge-definition">API
      * Documentation</a>
      */
     GraphEntity addEdgeDefinition(EdgeDefinition definition);
@@ -184,7 +186,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      *
      * @param definition The edge definition
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-an-edge-definition">API
      * Documentation</a>
      */
     GraphEntity replaceEdgeDefinition(EdgeDefinition definition);
@@ -196,7 +198,7 @@ public interface ArangoGraph extends ArangoSerdeAccessor {
      * @param definition The edge definition
      * @param options options
      * @return information about the graph
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-an-edge-definition">API
      * Documentation</a>
      */
     GraphEntity replaceEdgeDefinition(EdgeDefinition definition, ReplaceEdgeDefinitionOptions options);
