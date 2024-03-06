@@ -30,13 +30,13 @@ import javax.annotation.concurrent.ThreadSafe;
  * Interface for operations on ArangoDB vertex collection level.
  *
  * @author Mark Vollmary
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/">API Documentation</a>
  */
 @ThreadSafe
 public interface ArangoVertexCollection extends ArangoSerdeAccessor {
 
     /**
-     * The the handler of the named graph the edge collection is within
+     * The handler of the named graph the edge collection is within
      *
      * @return graph handler
      */
@@ -52,7 +52,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     /**
      * Remove a vertex collection form the graph.
      *
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex-collection">API
      * Documentation</a>
      *
      * @deprecated use {@link #remove()} instead
@@ -64,7 +64,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Remove a vertex collection form the graph.
      *
      * @param options options
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex-collection">API
      * Documentation</a>
      *
      * @deprecated use {@link #remove(VertexCollectionRemoveOptions)} instead
@@ -75,7 +75,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
     /**
      * Remove a vertex collection form the graph.
      *
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex-collection">API
      * Documentation</a>
      */
     void remove();
@@ -84,7 +84,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * Remove a vertex collection form the graph.
      *
      * @param options options
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex-collection">API
      * Documentation</a>
      */
     void remove(VertexCollectionRemoveOptions options);
@@ -95,7 +95,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param value A representation of a single vertex (POJO or {@link com.arangodb.util.RawData})
      * @return information about the vertex
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-vertex">API Documentation</a>
      */
     VertexEntity insertVertex(Object value);
 
@@ -106,7 +106,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return information about the vertex
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-vertex">API Documentation</a>
      */
     VertexEntity insertVertex(Object value, VertexCreateOptions options);
 
@@ -116,7 +116,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key  The key of the vertex
      * @param type The type of the vertex-document (POJO or {@link com.arangodb.util.RawData})
      * @return the vertex identified by the key
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-a-vertex">API Documentation</a>
      */
     <T> T getVertex(String key, Class<T> type);
 
@@ -127,7 +127,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param type    The type of the vertex-document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the vertex identified by the key
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#get-a-vertex">API Documentation</a>
      */
     <T> T getVertex(String key, Class<T> type, GraphDocumentReadOptions options);
 
@@ -138,7 +138,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key   The key of the vertex
      * @param value A representation of a single vertex (POJO or {@link com.arangodb.util.RawData})
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-a-vertex">API
      * Documentation</a>
      */
     VertexUpdateEntity replaceVertex(String key, Object value);
@@ -151,7 +151,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single vertex (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
+     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#replace-a-vertex">API
      * Documentation</a>
      */
     VertexUpdateEntity replaceVertex(String key, Object value, VertexReplaceOptions options);
@@ -165,7 +165,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param value A representation of a single vertex (POJO or {@link com.arangodb.util.RawData})
      * @return information about the vertex
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#update-a-vertex">API Documentation</a>
      */
     VertexUpdateEntity updateVertex(String key, Object value);
 
@@ -179,7 +179,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return information about the vertex
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#update-a-vertex">API Documentation</a>
      */
     VertexUpdateEntity updateVertex(String key, Object value, VertexUpdateOptions options);
 
@@ -188,7 +188,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      *
      * @param key The key of the vertex
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex">API Documentation</a>
      */
     void deleteVertex(String key);
 
@@ -198,7 +198,7 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      * @param key     The key of the vertex
      * @param options Additional options, can be null
      * @see
-     * <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
+     * <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#remove-a-vertex">API Documentation</a>
      */
     void deleteVertex(String key, VertexDeleteOptions options);
 
