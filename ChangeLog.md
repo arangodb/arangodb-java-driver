@@ -516,7 +516,7 @@ Any usage of the current Java driver API related to it is therefore discouraged.
 
 ### Added
 
-- added dirty read support ([reading from followers](https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower))
+- added dirty read support ([reading from followers](https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower))
 
   - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
   - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`

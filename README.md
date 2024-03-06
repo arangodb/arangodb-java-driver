@@ -1,4 +1,4 @@
-![ArangoDB-Logo](https://www.arangodb.com/docs/assets/arangodb_logo_2016_inverted.png)
+![ArangoDB-Logo](https://user-images.githubusercontent.com/3998723/207981337-79d49127-48fc-4c7c-9411-8a688edca1dd.png)
 
 # ArangoDB Java Driver
 
@@ -11,6 +11,6 @@ The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 
 - [ChangeLog](ChangeLog.md)
 - [Examples](driver/src/test/java/com/arangodb/example)
-- [Tutorial](https://www.arangodb.com/docs/stable/drivers/java-tutorial.html)
-- [Documentation](https://www.arangodb.com/docs/stable/drivers/java.html)
+- [Tutorial](https://university.arangodb.com/courses/java-driver-tutorial-v7/)
+- [Documentation](https://docs.arangodb.com/stable/develop/drivers/java/)
 - [JavaDoc](https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/latest/index.html)
