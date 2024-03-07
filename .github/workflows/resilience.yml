@@ -27,9 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-img: docker.io/arangodb/enterprise:3.11.7
+          - docker-img: docker.io/arangodb/enterprise:3.11.8
             compression: false
-          - docker-img: docker.io/arangodb/arangodb-preview:devel-nightly
+          - docker-img: docker.io/arangodb/arangodb-preview:3.12.0-alpha.1
             compression: true
 
     env:
