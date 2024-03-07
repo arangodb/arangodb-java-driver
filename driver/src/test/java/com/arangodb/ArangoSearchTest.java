@@ -494,7 +494,7 @@ class ArangoSearchTest extends BaseJunit5 {
         features.add(AnalyzerFeature.position);
 
         MultiDelimiterAnalyzerProperties properties = new MultiDelimiterAnalyzerProperties();
-        properties.setDelimiter("-", ",", "...");
+        properties.setDelimiters("-", ",", "...");
 
         MultiDelimiterAnalyzer analyzer = new MultiDelimiterAnalyzer();
         analyzer.setFeatures(features);
