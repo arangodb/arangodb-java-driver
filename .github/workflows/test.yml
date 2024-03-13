@@ -30,10 +30,10 @@ jobs:
         docker-img:
           - docker.io/arangodb/arangodb:3.10.13
           - docker.io/arangodb/arangodb:3.11.8
-          - docker.io/arangodb/arangodb-preview:3.12.0-alpha.1
+          - docker.io/arangodb/arangodb-preview:3.12.0-rc.1
           - docker.io/arangodb/enterprise:3.10.13
           - docker.io/arangodb/enterprise:3.11.8
-          - docker.io/arangodb/enterprise-preview:3.12.0-alpha.1
+          - docker.io/arangodb/enterprise-preview:3.12.0-rc.1
         topology:
           - single
           - cluster
@@ -43,9 +43,9 @@ jobs:
         user-language:
           - en
         exclude:
-          - docker-img: docker.io/arangodb/arangodb-preview:3.12.0-alpha.1
+          - docker-img: docker.io/arangodb/arangodb-preview:3.12.0-rc.1
             topology: activefailover
-          - docker-img: docker.io/arangodb/enterprise-preview:3.12.0-alpha.1
+          - docker-img: docker.io/arangodb/enterprise-preview:3.12.0-rc.1
             topology: activefailover
 
     steps:
@@ -218,7 +218,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb-preview:3.12.0-alpha.1
+          - docker.io/arangodb/arangodb-preview:3.12.0-rc.1
         topology:
           - single
         java-version:
