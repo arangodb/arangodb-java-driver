@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -143,6 +144,7 @@ public class HttpConnection implements Connection {
             webClientOptions
                     .setSsl(true)
                     .setUseAlpn(true)
+                    .setAlpnVersions(Collections.singletonList(httpVersion))
                     .setVerifyHost(config.getVerifyHost())
                     .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
@@ -157,8 +159,13 @@ public class HttpConnection implements Connection {
                                     true,
                                     null,
                                     IdentityCipherSuiteFilter.INSTANCE,
-                                    ApplicationProtocolConfig.DISABLED,
-                                    ClientAuth.NONE,
+                                    new ApplicationProtocolConfig(
+                                            ApplicationProtocolConfig.Protocol.ALPN,
+                                            ApplicationProtocolConfig.SelectorFailureBehavior.FATAL_ALERT,
+                                            ApplicationProtocolConfig.SelectedListenerFailureBehavior.FATAL_ALERT,
+                                            httpVersion.alpnName()
+                                    ),
+                                    ClientAuth.OPTIONAL,
                                     null,
                                     false
                             );
