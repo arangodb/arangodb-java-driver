@@ -51,7 +51,15 @@ public class ArangoConfig {
     private static ArangoSerdeProvider serdeProvider(ContentType contentType) {
         ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
         ArangoSerdeProvider serdeProvider = null;
-        for (ArangoSerdeProvider p : loader) {
+        Iterator<ArangoSerdeProvider> iterator = loader.iterator();
+        while (iterator.hasNext()) {
+            ArangoSerdeProvider p;
+            try {
+                p = iterator.next();
+            } catch (ServiceConfigurationError e) {
+                LOG.warn("ServiceLoader failed to load ArangoSerdeProvider", e);
+                continue;
+            }
             if (contentType.equals(p.getContentType())) {
                 if (serdeProvider != null) {
                     throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");

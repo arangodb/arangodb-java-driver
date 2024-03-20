@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 class InternalMapperProvider {
@@ -23,7 +25,15 @@ class InternalMapperProvider {
         }
 
         ServiceLoader<JsonFactory> sl = ServiceLoader.load(JsonFactory.class);
-        for (JsonFactory jf : sl) {
+        Iterator<JsonFactory> iterator = sl.iterator();
+        while (iterator.hasNext()) {
+            JsonFactory jf;
+            try {
+                jf = iterator.next();
+            } catch (ServiceConfigurationError e) {
+                LOG.warn("ServiceLoader failed to load JsonFactory", e);
+                continue;
+            }
             if (formatName.equals(jf.getFormatName())) {
                 if (contentType == ContentType.JSON) {
                     JacksonUtils.tryConfigureJsonFactory(jf);
