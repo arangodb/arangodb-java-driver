@@ -36,9 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -618,7 +616,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param executor async downstream executor
          * @return {@link ArangoDB.Builder}
-         *
          * @deprecated for removal. To consume the responses in a custom executor use async CompletableFuture methods.
          */
         @Deprecated
@@ -630,7 +627,15 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         @UnstableApi
         protected ProtocolProvider protocolProvider(Protocol protocol) {
             ServiceLoader<ProtocolProvider> loader = ServiceLoader.load(ProtocolProvider.class);
-            for (ProtocolProvider p : loader) {
+            Iterator<ProtocolProvider> iterator = loader.iterator();
+            while (iterator.hasNext()) {
+                ProtocolProvider p;
+                try {
+                    p = iterator.next();
+                } catch (ServiceConfigurationError e) {
+                    LOG.warn("ServiceLoader failed to load ProtocolProvider", e);
+                    continue;
+                }
                 if (p.supportsProtocol(protocol)) {
                     return p;
                 }
