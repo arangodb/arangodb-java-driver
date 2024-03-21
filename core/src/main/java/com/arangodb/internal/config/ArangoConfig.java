@@ -97,8 +97,7 @@ public class ArangoConfig {
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
-        // FIXME: make connectionTtl field Optional
-        connectionTtl = properties.getConnectionTtl().orElse(null);
+        connectionTtl = properties.getConnectionTtl().orElse(ArangoDefaults.DEFAULT_CONNECTION_TTL);
         // FIXME: make keepAliveInterval field Optional
         keepAliveInterval = properties.getKeepAliveInterval().orElse(null);
         acquireHostList = properties.getAcquireHostList().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);

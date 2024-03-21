@@ -45,6 +45,7 @@ public final class ArangoDefaults {
     public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
     public static final String DEFAULT_USER = "root";
     public static final Integer DEFAULT_TIMEOUT = 0;
+    public static final Long DEFAULT_CONNECTION_TTL = 30_000L;
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
