@@ -219,6 +219,9 @@ public class ArangoConfig {
     }
 
     public Long getConnectionTtl() {
+        if (connectionTtl == null && getProtocol() != Protocol.VST) {
+            connectionTtl = ArangoDefaults.DEFAULT_CONNECTION_TTL_HTTP;
+        }
         return connectionTtl;
     }
 

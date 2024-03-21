@@ -183,7 +183,7 @@ public abstract class VstConnection<T> implements Connection {
             LOGGER.debug("[" + connectionName + "]: Start Callable");
 
             final long openTime = new Date().getTime();
-            final Long ttlTime = ttl != null ? openTime + ttl : null;
+            final Long ttlTime = ttl != null && ttl > 0 ? openTime + ttl : null;
             final ChunkStore chunkStore = new ChunkStore(messageStore);
             while (true) {
                 if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {

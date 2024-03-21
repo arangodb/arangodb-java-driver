@@ -513,9 +513,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
+         * Set the time to live of an inactive connection. After this time of inactivity the connection will be
+         * closed automatically.
          *
-         * @param connectionTtl the maximum time to life of a connection in milliseconds
+         * @param connectionTtl the time to live of a connection in milliseconds
          * @return {@link ArangoDB.Builder}
          */
         public Builder connectionTtl(final Long connectionTtl) {
