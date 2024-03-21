@@ -38,7 +38,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <adb.jackson.version>2.16.0</adb.jackson.version>
+        <adb.jackson.version>2.17.0</adb.jackson.version>
         <graalvm.version>23.1.1</graalvm.version>
         <moduleName/>
         <SslTest/>
