@@ -7,6 +7,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import resilience.TestUtils;
 import resilience.utils.MemoryAppender;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -16,8 +17,9 @@ import java.security.KeyStore;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class ProtocolTest {
+public class ProtocolTest extends TestUtils {
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
@@ -44,6 +46,7 @@ public class ProtocolTest {
     @ParameterizedTest
     @MethodSource("args")
     void shouldUseConfiguredProtocol(Protocol p, String expectedLog) {
+        assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
                 .host("localhost", 8529)
                 .password("test")
@@ -59,6 +62,7 @@ public class ProtocolTest {
     @ParameterizedTest
     @MethodSource("args")
     void shouldUseConfiguredProtocolWithTLS(Protocol p, String expectedLog) throws Exception {
+        assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
                 .host("localhost", 8529)
                 .password("test")
