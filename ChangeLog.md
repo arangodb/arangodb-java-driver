@@ -6,13 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.6.0] - 2024-03-22
+
 - added support to external versioning (ArangoDB 3.12, #547)
 - added support to `wildcard` analyzer (ArangoDB 3.12, #546)
 - added support to `multi_delimiter` analyzer (ArangoDB 3.12, #545)
 - added support to multi dimensional indexes (ArangoDB 3.12, #544)
 - added support to WAND optimization (ArangoDB 3.12, #543)
 - added support to content compression (ArangoDB 3.12, #535)
-
+- fixed ALPN with H2 (DE-792, #551)
+- tolerate SPI ServiceConfigurationError (DE-793, #552)
+- added support to Jackson 2.17
+- changed default TTL to 30 seconds for HTTP connections (DE-794, #553)
 
 ## [7.5.1] - 2024-01-24
 
