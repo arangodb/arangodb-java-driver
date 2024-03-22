@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/enterprise-preview:3.12.0-rc.1
+          - docker.io/arangodb/enterprise-preview:devel-nightly
         topology:
           - cluster
         module:
