@@ -29,7 +29,7 @@ jobs:
         include:
           - docker-img: docker.io/arangodb/enterprise:3.11
             compression: false
-          - docker-img: docker.io/arangodb/arangodb-preview:3.12
+          - docker-img: docker.io/arangodb/arangodb:3.12
             compression: true
 
     env:
