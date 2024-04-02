@@ -24,17 +24,17 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class DocumentDeleteOptions {
+public final class DocumentDeleteOptions extends TransactionalOptions<DocumentDeleteOptions> {
 
     private Boolean waitForSync;
     private String ifMatch;
     private Boolean returnOld;
     private Boolean silent;
-    private String streamTransactionId;
     private Boolean refillIndexCaches;
 
-    public DocumentDeleteOptions() {
-        super();
+    @Override
+    DocumentDeleteOptions getThis() {
+        return this;
     }
 
     public Boolean getWaitForSync() {
@@ -89,20 +89,6 @@ public final class DocumentDeleteOptions {
      */
     public DocumentDeleteOptions silent(final Boolean silent) {
         this.silent = silent;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public DocumentDeleteOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 

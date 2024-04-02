@@ -23,15 +23,15 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public final class EdgeUpdateOptions {
+public final class EdgeUpdateOptions extends TransactionalOptions<EdgeUpdateOptions> {
 
     private Boolean keepNull;
     private Boolean waitForSync;
     private String ifMatch;
-    private String streamTransactionId;
 
-    public EdgeUpdateOptions() {
-        super();
+    @Override
+    EdgeUpdateOptions getThis() {
+        return this;
     }
 
     public Boolean getKeepNull() {
@@ -73,20 +73,6 @@ public final class EdgeUpdateOptions {
      */
     public EdgeUpdateOptions ifMatch(final String ifMatch) {
         this.ifMatch = ifMatch;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.1
-     */
-    public EdgeUpdateOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 

@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class DocumentUpdateOptions {
+public final class DocumentUpdateOptions extends TransactionalOptions<DocumentUpdateOptions> {
 
     private Boolean keepNull;
     private Boolean mergeObjects;
@@ -34,12 +34,12 @@ public final class DocumentUpdateOptions {
     private Boolean returnNew;
     private Boolean returnOld;
     private Boolean silent;
-    private String streamTransactionId;
     private Boolean refillIndexCaches;
     private String versionAttribute;
 
-    public DocumentUpdateOptions() {
-        super();
+    @Override
+    DocumentUpdateOptions getThis() {
+        return this;
     }
 
     public Boolean getKeepNull() {
@@ -157,20 +157,6 @@ public final class DocumentUpdateOptions {
      */
     public DocumentUpdateOptions silent(final Boolean silent) {
         this.silent = silent;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public DocumentUpdateOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 

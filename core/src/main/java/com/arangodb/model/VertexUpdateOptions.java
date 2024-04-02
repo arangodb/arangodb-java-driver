@@ -23,15 +23,15 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public final class VertexUpdateOptions {
+public final class VertexUpdateOptions extends TransactionalOptions<VertexUpdateOptions> {
 
     private Boolean keepNull;
     private Boolean waitForSync;
     private String ifMatch;
-    private String streamTransactionId;
 
-    public VertexUpdateOptions() {
-        super();
+    @Override
+    VertexUpdateOptions getThis() {
+        return this;
     }
 
     public Boolean getKeepNull() {
@@ -76,17 +76,4 @@ public final class VertexUpdateOptions {
         return this;
     }
 
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.1
-     */
-    public VertexUpdateOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
-        return this;
-    }
 }

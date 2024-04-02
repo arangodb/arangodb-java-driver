@@ -28,7 +28,7 @@ import java.util.*;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class AqlQueryOptions implements Cloneable {
+public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions> implements Cloneable {
 
     private Boolean count;
     private Integer ttl;
@@ -39,7 +39,11 @@ public final class AqlQueryOptions implements Cloneable {
     private String query;
     private Options options;
     private Boolean allowDirtyRead;
-    private String streamTransactionId;
+
+    @Override
+    AqlQueryOptions getThis() {
+        return this;
+    }
 
     public Boolean getCount() {
         return count;
@@ -467,20 +471,6 @@ public final class AqlQueryOptions implements Cloneable {
 
     public Boolean getAllowDirtyRead() {
         return allowDirtyRead;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public AqlQueryOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
-        return this;
     }
 
     public Boolean getAllowRetry() {

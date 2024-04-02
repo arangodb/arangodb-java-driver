@@ -23,14 +23,14 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  */
-public final class EdgeDeleteOptions {
+public final class EdgeDeleteOptions extends TransactionalOptions<EdgeDeleteOptions> {
 
     private Boolean waitForSync;
     private String ifMatch;
-    private String streamTransactionId;
 
-    public EdgeDeleteOptions() {
-        super();
+    @Override
+    EdgeDeleteOptions getThis() {
+        return this;
     }
 
     public Boolean getWaitForSync() {
@@ -56,20 +56,6 @@ public final class EdgeDeleteOptions {
      */
     public EdgeDeleteOptions ifMatch(final String ifMatch) {
         this.ifMatch = ifMatch;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.1
-     */
-    public EdgeDeleteOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 
