@@ -2,6 +2,7 @@ package com.arangodb.serde;
 
 import com.arangodb.ContentType;
 import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.SlowTest;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,7 +26,7 @@ public class JacksonConfigurationTest {
         }
         String in = sb.toString();
         byte[] bytes = s.serialize(in);
-        String out = s.deserialize(bytes, String.class);
+        String out = s.deserialize(bytes, String.class, SerdeContextImpl.EMPTY);
         assertThat(out).isEqualTo(in);
     }
 

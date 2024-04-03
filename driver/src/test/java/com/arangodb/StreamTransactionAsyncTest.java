@@ -470,7 +470,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
         // update document from within the tx
         doc.updateAttribute("test", "bar");
         collection
-                .updateDocument(createdDoc.getKey(), doc, new DocumentUpdateOptions().streamTransactionId(tx.getId()));
+                .updateDocument(createdDoc.getKey(), doc, new DocumentUpdateOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the document has not been updated from outside the tx
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class, null).get()
@@ -478,8 +478,7 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
 
         // assert that the document has been updated from within the tx
         assertThat(collection.getDocument(createdDoc.getKey(), BaseDocument.class,
-                new DocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties()).containsEntry("test", "bar")
-        ;
+                new DocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties()).containsEntry("test", "bar");
 
         db.commitStreamTransaction(tx.getId()).get();
 
