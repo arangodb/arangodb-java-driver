@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BaseJunit5 {
-    private static final String TEST_DB = "java_driver_test_db";
+    public static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final ArangoDB adb = new ArangoDB.Builder()
             .loadProperties(config)
