@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Collections;
 
+import static com.arangodb.util.TestUtils.TEST_DB;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -64,7 +65,7 @@ class JacksonSerdeContextTest {
                 .loadProperties(ConfigUtils.loadConfig())
                 .serde(serde).build();
 
-        db = arangoDB.db(BaseJunit5.TEST_DB);
+        db = arangoDB.db(TEST_DB);
         if (!db.exists()) {
             db.create();
         }

@@ -19,8 +19,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.arangodb.util.TestUtils.TEST_DB;
+
 public class BaseJunit5 {
-    public static final String TEST_DB = "java_driver_test_db";
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final ArangoDB adb = new ArangoDB.Builder()
             .loadProperties(config)
