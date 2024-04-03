@@ -2,6 +2,8 @@ package com.arangodb.serde;
 
 import com.arangodb.ContentType;
 
+import java.util.Objects;
+
 /**
  * Contract for serialization/deserialization of user data.
  * Implementations of this interface could be used for customizing serialization/deserialization of user related data
@@ -32,4 +34,17 @@ public interface ArangoSerde {
      */
     <T> T deserialize(byte[] content, Class<T> clazz);
 
+    /**
+     * Deserializes the content and binds it to the target data type.
+     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
+     *
+     * @param content byte array to deserialize
+     * @param clazz   class of target data type
+     * @param ctx     serde context
+     * @return deserialized object
+     */
+    default <T> T deserialize(byte[] content, Class<T> clazz, SerdeContext ctx) {
+        Objects.requireNonNull(ctx);
+        return deserialize(content, clazz);
+    }
 }

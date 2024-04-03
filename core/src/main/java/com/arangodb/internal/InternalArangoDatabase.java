@@ -70,8 +70,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(String.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(String.class), ctx);
     }
 
     protected InternalRequest getAccessibleDatabasesRequest() {
@@ -103,8 +103,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(CollectionEntity.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(CollectionEntity.class), ctx);
     }
 
     protected InternalRequest dropRequest() {
@@ -112,8 +112,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                Boolean.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Boolean.class, ctx);
     }
 
     protected InternalRequest grantAccessRequest(final String user, final Permissions permissions) {
@@ -136,8 +136,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                Permissions.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Permissions.class, ctx);
     }
 
     protected InternalRequest queryRequest(final String query, final Map<String, Object> bindVars,
@@ -232,8 +232,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     public <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
-        return response -> {
-            CursorEntity<T> e = getSerde().deserialize(response.getBody(), constructParametricType(CursorEntity.class, type));
+        return (response, ctx) -> {
+            CursorEntity<T> e = getSerde().deserialize(response.getBody(), constructParametricType(CursorEntity.class, type), ctx);
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
             e.setPotentialDirtyRead(potentialDirtyRead);
             return e;
@@ -241,7 +241,7 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/deletedCount", Integer.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/deletedCount", Integer.class, ctx);
     }
 
     protected InternalRequest getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
@@ -252,8 +252,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(AqlFunctionEntity.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(AqlFunctionEntity.class), ctx);
     }
 
     protected InternalRequest createGraphRequest(final String name, final Iterable<EdgeDefinition> edgeDefinitions,
@@ -265,7 +265,7 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<GraphEntity> createGraphResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/graph", GraphEntity.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/graph", GraphEntity.class, ctx);
     }
 
     protected InternalRequest getGraphsRequest() {
@@ -273,8 +273,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/graphs",
-                constructListType(GraphEntity.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/graphs",
+                constructListType(GraphEntity.class), ctx);
     }
 
     protected InternalRequest transactionRequest(final String action, final TransactionOptions options) {
@@ -282,9 +282,9 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
-        return response -> {
+        return (response, ctx) -> {
             byte[] userContent = getSerde().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER);
-            return getSerde().deserializeUserData(userContent, type);
+            return getSerde().deserializeUserData(userContent, type, ctx);
         };
     }
 
@@ -310,8 +310,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<TransactionEntity>> transactionsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/transactions",
-                constructListType(TransactionEntity.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/transactions",
+                constructListType(TransactionEntity.class), ctx);
     }
 
     protected InternalRequest commitStreamTransactionRequest(String id) {
@@ -319,8 +319,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                StreamTransactionEntity.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                StreamTransactionEntity.class, ctx);
     }
 
     protected InternalRequest getInfoRequest() {
@@ -328,8 +328,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                DatabaseEntity.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                DatabaseEntity.class, ctx);
     }
 
     protected InternalRequest reloadRoutingRequest() {
@@ -341,8 +341,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<ViewEntity>> getViewsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(ViewEntity.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(ViewEntity.class), ctx);
     }
 
     protected InternalRequest createViewRequest(final String name, final ViewType type) {
@@ -367,8 +367,8 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(SearchAnalyzer.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(SearchAnalyzer.class), ctx);
     }
 
     protected InternalRequest createAnalyzerRequest(final SearchAnalyzer options) {

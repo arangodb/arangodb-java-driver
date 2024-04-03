@@ -24,6 +24,8 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.serde.SerdeUtils;
+import com.arangodb.serde.SerdeContext;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
@@ -48,7 +50,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type, final HostHandle hostHandle) {
-        return execute(requestSupplier, response -> createResult(type, response), hostHandle);
+        return execute(requestSupplier, (response, ctx) -> createResult(type, response, ctx), hostHandle);
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final ResponseDeserializer<T> responseDeserializer) {
@@ -62,13 +64,16 @@ public class ArangoExecutorAsync extends ArangoExecutor {
 
         CompletableFuture<T> cf = CompletableFuture.completedFuture(requestSupplier)
                 .thenApply(Supplier::get)
-                .thenCompose(request -> protocol.executeAsync(interceptRequest(request), hostHandle))
+                .thenCompose(request -> protocol
+                        .executeAsync(interceptRequest(request), hostHandle)
+                        .thenApply(resp -> new ResponseWithContext(resp, SerdeUtils.createSerdeContext(request)))
+                )
                 .handle((r, e) -> {
                     if (e != null) {
                         throw ArangoDBException.of(e);
                     } else {
-                        interceptResponse(r);
-                        return responseDeserializer.deserialize(r);
+                        interceptResponse(r.response);
+                        return responseDeserializer.deserialize(r.response, r.context);
                     }
                 });
 
@@ -78,5 +83,16 @@ public class ArangoExecutorAsync extends ArangoExecutor {
             return cf;
         }
     }
+
+    private static class ResponseWithContext {
+        final InternalResponse response;
+        final SerdeContext context;
+
+        ResponseWithContext(InternalResponse response, SerdeContext context) {
+            this.response = response;
+            this.context = context;
+        }
+    }
+
 
 }

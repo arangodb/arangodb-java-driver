@@ -79,8 +79,8 @@ public abstract class InternalArangoGraph extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/collections",
-                constructListType(String.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/collections",
+                constructListType(String.class), ctx);
     }
 
     protected InternalRequest addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
@@ -98,8 +98,8 @@ public abstract class InternalArangoGraph extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/collections",
-                constructListType(String.class));
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/collections",
+                constructListType(String.class), ctx);
     }
 
     protected InternalRequest addEdgeDefinitionRequest(final EdgeDefinition definition) {
@@ -109,7 +109,7 @@ public abstract class InternalArangoGraph extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class, ctx);
     }
 
     protected InternalRequest replaceEdgeDefinitionRequest(final EdgeDefinition definition, final ReplaceEdgeDefinitionOptions options) {
@@ -122,7 +122,7 @@ public abstract class InternalArangoGraph extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), GRAPH, GraphEntity.class, ctx);
     }
 
 }
