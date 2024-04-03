@@ -26,8 +26,8 @@ import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
+import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.vst.internal.utils.CompletableFutureUtils;
 import org.slf4j.Logger;
@@ -94,7 +94,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
                     final InternalResponse response;
                     try {
                         response = createResponse(m);
-                    } catch (final VPackParserException e) {
+                    } catch (final Exception e) {
                         rfuture.completeExceptionally(e);
                         return;
                     }
@@ -104,7 +104,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
                     rfuture.completeExceptionally(e);
                 }
             });
-        } catch (final VPackException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             rfuture.completeExceptionally(e);
         }
@@ -152,7 +152,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
     }
 
     private InternalResponse createResponse(final Message message) throws VPackParserException {
-        final InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class);
+        InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class, SerdeContextImpl.EMPTY);
         if (message.getBody() != null) {
             response.setBody(message.getBody().toByteArray());
         }
