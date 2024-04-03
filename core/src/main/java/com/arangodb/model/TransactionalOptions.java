@@ -1,5 +1,8 @@
 package com.arangodb.model;
 
+import com.arangodb.arch.NoRawTypesInspection;
+
+@NoRawTypesInspection
 public abstract class TransactionalOptions<T extends TransactionalOptions<T>> {
 
     abstract T getThis();
