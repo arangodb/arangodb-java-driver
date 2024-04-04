@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 
 import static com.arangodb.util.TestUtils.TEST_DB;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +71,8 @@ class SerdeContextTest {
 
             @Override
             public <T> T deserialize(byte[] content, Class<T> clazz, SerdeContext ctx) {
+                Objects.requireNonNull(ctx);
+
                 if (clazz != Person.class) {
                     throw new UnsupportedOperationException();
                 }

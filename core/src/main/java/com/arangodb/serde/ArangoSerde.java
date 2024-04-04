@@ -40,7 +40,7 @@ public interface ArangoSerde {
      *
      * @param content byte array to deserialize
      * @param clazz   class of target data type
-     * @param ctx     serde context
+     * @param ctx     serde context, cannot be null
      * @return deserialized object
      */
     default <T> T deserialize(byte[] content, Class<T> clazz, SerdeContext ctx) {
