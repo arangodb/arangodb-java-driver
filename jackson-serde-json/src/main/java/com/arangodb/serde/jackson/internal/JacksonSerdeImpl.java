@@ -1,6 +1,5 @@
 package com.arangodb.serde.jackson.internal;
 
-import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.serde.SerdeContext;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +37,7 @@ public final class JacksonSerdeImpl implements JacksonSerde {
 
     @Override
     public <T> T deserialize(final byte[] content, final Class<T> type) {
-        return deserialize(content, type, SerdeContextImpl.EMPTY);
+        return deserialize(content, type, SerdeContext.EMPTY);
     }
 
     @Override

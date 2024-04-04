@@ -25,6 +25,7 @@ import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
+import com.arangodb.serde.SerdeContext;
 import com.arangodb.serde.jackson.Id;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.serde.jackson.Key;
@@ -562,7 +563,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
         Map<String, Object> newDoc = collection.getSerde().deserializeUserData(createEntity.getNew().get(),
-                Map.class, SerdeContextImpl.EMPTY);
+                Map.class, SerdeContext.EMPTY);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 

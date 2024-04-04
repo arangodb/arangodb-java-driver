@@ -132,7 +132,7 @@ final class InternalSerdeImpl implements InternalSerde {
     @Override
     public <T> T deserializeUserData(byte[] content, Class<T> clazz, SerdeContext ctx) {
         if (isManagedClass(clazz)) {
-            return deserialize(content, clazz, SerdeContextImpl.EMPTY);
+            return deserialize(content, clazz, SerdeContext.EMPTY);
         } else {
             return userSerde.deserialize(content, clazz, ctx);
         }

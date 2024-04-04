@@ -24,7 +24,6 @@ package com.arangodb.serde;
 import com.arangodb.*;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -113,7 +112,7 @@ class CustomSerdeAsyncTest {
         person.name = "Joe";
         InternalSerde serialization = arangoDB.getSerde();
         byte[] serialized = serialization.serializeUserData(person);
-        Person deserializedPerson = serialization.deserializeUserData(serialized, Person.class, SerdeContextImpl.EMPTY);
+        Person deserializedPerson = serialization.deserializeUserData(serialized, Person.class, SerdeContext.EMPTY);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
@@ -210,7 +209,7 @@ class CustomSerdeAsyncTest {
     @Test
     void parseNullString() {
         final String json = arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null),
-                String.class, SerdeContextImpl.EMPTY);
+                String.class, SerdeContext.EMPTY);
         assertThat(json).isNull();
     }
 
