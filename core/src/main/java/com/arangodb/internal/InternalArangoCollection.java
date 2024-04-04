@@ -110,7 +110,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(Class<T> userDataClass) {
-        return response -> {
+        return (response, ctx) -> {
             final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final List<DocumentCreateEntity<T>> docs = new ArrayList<>();
             final List<ErrorEntity> errors = new ArrayList<>();
@@ -119,12 +119,12 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
-                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
+                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class, ctx);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
                     Type type = constructParametricType(DocumentCreateEntity.class, userDataClass);
-                    final DocumentCreateEntity<T> doc = getSerde().deserialize(next, type);
+                    final DocumentCreateEntity<T> doc = getSerde().deserialize(next, type, ctx);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -168,7 +168,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<T> getDocumentResponseDeserializer(final Class<T> type) {
-        return response -> getSerde().deserializeUserData(response.getBody(), type);
+        return (response, ctx) -> getSerde().deserializeUserData(response.getBody(), type, ctx);
     }
 
     protected InternalRequest getDocumentsRequest(final Iterable<String> keys, final DocumentReadOptions options) {
@@ -186,7 +186,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(
             final Class<T> type) {
-        return response -> {
+        return (response, ctx) -> {
             final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<>();
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
             multiDocument.setPotentialDirtyRead(potentialDirtyRead);
@@ -197,11 +197,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
-                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
+                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class, ctx);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
-                    final T doc = getSerde().deserializeUserData(getSerde().serialize(next), type);
+                    final T doc = getSerde().deserializeUserData(getSerde().serialize(next), type, ctx);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -249,7 +249,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
             final Class<T> returnType) {
-        return response -> {
+        return (response, ctx) -> {
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final List<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final List<ErrorEntity> errors = new ArrayList<>();
@@ -258,12 +258,12 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
-                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
+                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class, ctx);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
                     Type type = constructParametricType(DocumentUpdateEntity.class, returnType);
-                    final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type);
+                    final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type, ctx);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -312,7 +312,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
             final Class<T> returnType) {
-        return response -> {
+        return (response, ctx) -> {
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final List<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final List<ErrorEntity> errors = new ArrayList<>();
@@ -321,12 +321,12 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
-                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
+                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class, ctx);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
                     Type type = constructParametricType(DocumentUpdateEntity.class, returnType);
-                    final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type);
+                    final DocumentUpdateEntity<T> doc = getSerde().deserialize(next, type, ctx);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -368,7 +368,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
             final Class<T> userDataClass) {
-        return response -> {
+        return (response, ctx) -> {
             final MultiDocumentEntity<DocumentDeleteEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final List<DocumentDeleteEntity<T>> docs = new ArrayList<>();
             final List<ErrorEntity> errors = new ArrayList<>();
@@ -377,12 +377,12 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
             for (final JsonNode next : body) {
                 JsonNode isError = next.get(ArangoResponseField.ERROR_FIELD_NAME);
                 if (isError != null && isError.booleanValue()) {
-                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class);
+                    final ErrorEntity error = getSerde().deserialize(next, ErrorEntity.class, ctx);
                     errors.add(error);
                     documentsAndErrors.add(error);
                 } else {
                     Type type = constructParametricType(DocumentDeleteEntity.class, userDataClass);
-                    final DocumentDeleteEntity<T> doc = getSerde().deserialize(next, type);
+                    final DocumentDeleteEntity<T> doc = getSerde().deserialize(next, type, ctx);
                     docs.add(doc);
                     documentsAndErrors.add(doc);
                 }
@@ -413,7 +413,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
-        return response -> getSerde().deserialize(response.getBody(), "/id", String.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/id", String.class, ctx);
     }
 
     private String createIndexId(final String id) {
@@ -495,11 +495,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return response -> {
+        return (response, ctx) -> {
             Collection<IndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if (!"inverted".equals(idx.get("type").textValue())) {
-                    indexes.add(getSerde().deserialize(idx, IndexEntity.class));
+                    indexes.add(getSerde().deserialize(idx, IndexEntity.class, ctx));
                 }
             }
             return indexes;
@@ -507,11 +507,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
-        return response -> {
+        return (response, ctx) -> {
             Collection<InvertedIndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if ("inverted".equals(idx.get("type").textValue())) {
-                    indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class));
+                    indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class, ctx));
                 }
             }
             return indexes;
@@ -583,8 +583,8 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return response -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                Permissions.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Permissions.class, ctx);
     }
 
 }

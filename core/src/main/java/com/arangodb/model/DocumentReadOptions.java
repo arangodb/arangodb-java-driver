@@ -24,15 +24,15 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class DocumentReadOptions {
+public final class DocumentReadOptions extends TransactionalOptions<DocumentReadOptions> {
 
     private String ifNoneMatch;
     private String ifMatch;
     private Boolean allowDirtyRead;
-    private String streamTransactionId;
 
-    public DocumentReadOptions() {
-        super();
+    @Override
+    DocumentReadOptions getThis() {
+        return this;
     }
 
     public String getIfNoneMatch() {
@@ -75,20 +75,6 @@ public final class DocumentReadOptions {
 
     public Boolean getAllowDirtyRead() {
         return allowDirtyRead;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
-        return this;
     }
 
 }

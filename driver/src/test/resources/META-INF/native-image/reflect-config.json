@@ -304,5 +304,11 @@
     "allPublicMethods": true,
     "allDeclaredConstructors": true,
     "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.SerdeContextTest$Person",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
   }
 ]

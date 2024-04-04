@@ -22,6 +22,7 @@ package com.arangodb.example.document;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.example.ExampleBase;
+import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -91,7 +92,7 @@ class GetDocumentExampleTest extends ExampleBase {
     void getAsBytes() {
         final RawBytes doc = collection.getDocument(key, RawBytes.class);
         assertThat(doc.get()).isNotNull();
-        Map<String, Object> mapDoc = collection.getSerde().deserializeUserData(doc.get(), Map.class);
+        Map<String, Object> mapDoc = collection.getSerde().deserializeUserData(doc.get(), Map.class, SerdeContextImpl.EMPTY);
         assertThat(mapDoc).containsEntry("foo", "bar");
     }
 

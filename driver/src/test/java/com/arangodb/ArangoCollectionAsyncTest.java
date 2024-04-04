@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
@@ -557,7 +558,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
         Map<String, Object> newDoc = collection.getSerde().deserializeUserData(createEntity.getNew().get(),
-                Map.class);
+                Map.class, SerdeContextImpl.EMPTY);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 

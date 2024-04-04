@@ -24,14 +24,14 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class DocumentExistsOptions {
+public final class DocumentExistsOptions extends TransactionalOptions<DocumentExistsOptions> {
 
     private String ifNoneMatch;
     private String ifMatch;
-    private String streamTransactionId;
 
-    public DocumentExistsOptions() {
-        super();
+    @Override
+    DocumentExistsOptions getThis() {
+        return this;
     }
 
     public String getIfNoneMatch() {
@@ -57,20 +57,6 @@ public final class DocumentExistsOptions {
      */
     public DocumentExistsOptions ifMatch(final String ifMatch) {
         this.ifMatch = ifMatch;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public DocumentExistsOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 

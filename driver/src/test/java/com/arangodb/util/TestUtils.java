@@ -31,7 +31,7 @@ import java.util.UUID;
  * @author Michele Rastelli
  */
 public final class TestUtils {
-
+    public static final String TEST_DB = "java_driver_test_db";
     private static final String[] allChars = TestUtils.generateAllInputChars();
     private static final Random r = new Random();
 

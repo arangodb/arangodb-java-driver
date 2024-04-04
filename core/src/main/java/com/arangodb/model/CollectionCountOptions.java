@@ -23,25 +23,10 @@ package com.arangodb.model;
 /**
  * @author Michele Rastelli
  */
-public final class CollectionCountOptions {
+public final class CollectionCountOptions extends TransactionalOptions<CollectionCountOptions> {
 
-    private String streamTransactionId;
-
-    public CollectionCountOptions() {
-        super();
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public CollectionCountOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
+    @Override
+    CollectionCountOptions getThis() {
         return this;
     }
 

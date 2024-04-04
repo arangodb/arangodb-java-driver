@@ -4,6 +4,7 @@ import com.arangodb.ContentType;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -28,7 +29,7 @@ class SerdeTest {
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
         byte[] serialized = s.serialize(raw);
-        RawJson deserialized = s.deserialize(serialized, RawJson.class);
+        RawJson deserialized = s.deserialize(serialized, RawJson.class, SerdeContextImpl.EMPTY);
         assertThat(deserialized).isEqualTo(raw);
     }
 
@@ -39,7 +40,7 @@ class SerdeTest {
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
         byte[] serialized = s.serialize(raw);
-        RawBytes deserialized = s.deserialize(serialized, RawBytes.class);
+        RawBytes deserialized = s.deserialize(serialized, RawBytes.class, SerdeContextImpl.EMPTY);
         assertThat(deserialized).isEqualTo(raw);
     }
 
@@ -48,7 +49,7 @@ class SerdeTest {
     void deserializeBaseDocumentWithNestedProperties(ContentType type) {
         InternalSerde s = new InternalSerdeProvider(type).create();
         RawJson json = RawJson.of("{\"foo\":\"aaa\",\"properties\":{\"foo\":\"bbb\"}}");
-        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class);
+        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class, SerdeContextImpl.EMPTY);
         assertThat(deserialized.getAttribute("foo")).isEqualTo("aaa");
         assertThat(deserialized.getAttribute("properties"))
                 .isInstanceOf(Map.class)
@@ -64,7 +65,7 @@ class SerdeTest {
         doc.addAttribute("foo", "aaa");
         doc.addAttribute("properties", Collections.singletonMap("foo", "bbb"));
         byte[] ser = s.serialize(doc);
-        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class);
+        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class, SerdeContextImpl.EMPTY);
         assertThat(on.get("foo").textValue()).isEqualTo("aaa");
         assertThat(on.get("properties").get("foo").textValue()).isEqualTo("bbb");
     }

@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class DocumentReplaceOptions {
+public final class DocumentReplaceOptions extends TransactionalOptions<DocumentReplaceOptions> {
 
     private Boolean waitForSync;
     private Boolean ignoreRevs;
@@ -32,12 +32,12 @@ public final class DocumentReplaceOptions {
     private Boolean returnNew;
     private Boolean returnOld;
     private Boolean silent;
-    private String streamTransactionId;
     private Boolean refillIndexCaches;
     private String versionAttribute;
 
-    public DocumentReplaceOptions() {
-        super();
+    @Override
+    DocumentReplaceOptions getThis() {
+        return this;
     }
 
     public Boolean getWaitForSync() {
@@ -122,20 +122,6 @@ public final class DocumentReplaceOptions {
      */
     public DocumentReplaceOptions silent(final Boolean silent) {
         this.silent = silent;
-        return this;
-    }
-
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
-
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.0
-     */
-    public DocumentReplaceOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
         return this;
     }
 
