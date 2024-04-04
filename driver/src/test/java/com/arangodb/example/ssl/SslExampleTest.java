@@ -25,12 +25,17 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.util.TestUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 import java.util.List;
 
@@ -57,10 +62,24 @@ class SslExampleTest {
      */
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
+    private static ArangoDBVersion version;
+
+    @BeforeAll
+    static void fetchVersion() throws Exception {
+        ArangoDB adb = new ArangoDB.Builder()
+                .host("localhost", 8529)
+                .password("test")
+                .useSsl(true)
+                .sslContext(createSslContext())
+                .build();
+        version = adb.getVersion();
+        adb.shutdown();
+    }
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connect(Protocol protocol) throws Exception {
+        assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("localhost", 8529)
                 .password("test")
@@ -70,12 +89,12 @@ class SslExampleTest {
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
-        System.out.println(version.getVersion());
     }
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void noopHostnameVerifier(Protocol protocol) throws Exception {
+        assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("127.0.0.1", 8529)
                 .password("test")
@@ -86,7 +105,6 @@ class SslExampleTest {
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
-        System.out.println(version.getVersion());
     }
 
     @ParameterizedTest
@@ -109,9 +127,9 @@ class SslExampleTest {
         exceptions.forEach(e -> assertThat(e).isInstanceOf(SSLHandshakeException.class));
     }
 
-    private SSLContext createSslContext() throws Exception {
+    private static SSLContext createSslContext() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
+        ks.load(SslExampleTest.class.getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
         final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         kmf.init(ks, SSL_TRUSTSTORE_PASSWORD.toCharArray());
