@@ -2,6 +2,8 @@ package com.arangodb.serde;
 
 import com.arangodb.internal.serde.SerdeContextImpl;
 
+import java.util.Optional;
+
 /**
  * Context holding information about the current request and response.
  */
@@ -12,5 +14,5 @@ public interface SerdeContext {
     /**
      * @return the stream transaction id of the request (if any) or {@code null}
      */
-    String getStreamTransactionId();
+    Optional<String> getStreamTransactionId();
 }

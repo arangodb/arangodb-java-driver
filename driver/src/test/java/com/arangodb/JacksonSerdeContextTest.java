@@ -87,7 +87,7 @@ class JacksonSerdeContextTest {
         public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
             JsonNode rootNode = parser.getCodec().readTree(parser);
             Person person = new Person(rootNode.get("name").asText());
-            person.txId = JacksonSerde.getSerdeContext(ctx).getStreamTransactionId();
+            person.txId = JacksonSerde.getSerdeContext(ctx).getStreamTransactionId().get();
             return person;
         }
     }

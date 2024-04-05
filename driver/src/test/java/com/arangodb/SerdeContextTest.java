@@ -79,7 +79,7 @@ class SerdeContextTest {
 
                 try {
                     Person res = mapper.readValue(content, Person.class);
-                    res.txId = ctx.getStreamTransactionId();
+                    res.txId = ctx.getStreamTransactionId().get();
                     return (T) res;
                 } catch (IOException e) {
                     throw new RuntimeException(e);

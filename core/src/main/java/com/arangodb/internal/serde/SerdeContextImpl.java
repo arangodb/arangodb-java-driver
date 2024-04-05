@@ -2,6 +2,8 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.serde.SerdeContext;
 
+import java.util.Optional;
+
 public class SerdeContextImpl implements SerdeContext {
     private final String streamTransactionId;
 
@@ -10,7 +12,7 @@ public class SerdeContextImpl implements SerdeContext {
     }
 
     @Override
-    public String getStreamTransactionId() {
-        return streamTransactionId;
+    public Optional<String> getStreamTransactionId() {
+        return Optional.ofNullable(streamTransactionId);
     }
 }
