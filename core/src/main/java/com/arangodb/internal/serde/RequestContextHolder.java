@@ -2,16 +2,23 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.serde.RequestContext;
 
+import java.util.function.Supplier;
+
 public enum RequestContextHolder {
     INSTANCE;
 
     private final ThreadLocal<RequestContext> ctx = ThreadLocal.withInitial(() -> RequestContext.EMPTY);
 
-    public RequestContext getCtx() {
-        return ctx.get();
+    public <T> T runWithCtx(RequestContext ctx, Supplier<T> fun) {
+        this.ctx.set(ctx != null ? ctx : RequestContext.EMPTY);
+        try {
+            return fun.get();
+        } finally {
+            this.ctx.remove();
+        }
     }
 
-    public void setCtx(RequestContext ctx) {
-        this.ctx.set(ctx != null ? ctx : RequestContext.EMPTY);
+    public RequestContext getCtx() {
+        return ctx.get();
     }
 }

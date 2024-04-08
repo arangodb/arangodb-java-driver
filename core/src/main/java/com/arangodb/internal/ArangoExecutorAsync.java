@@ -74,8 +74,8 @@ public class ArangoExecutorAsync extends ArangoExecutor {
                         throw ArangoDBException.of(e);
                     } else {
                         interceptResponse(r.response);
-                        RequestContextHolder.INSTANCE.setCtx(r.context);
-                        return responseDeserializer.deserialize(r.response);
+                        return RequestContextHolder.INSTANCE.runWithCtx(r.context, () ->
+                                responseDeserializer.deserialize(r.response));
                     }
                 });
 

@@ -56,8 +56,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
         final InternalResponse response = protocol.execute(interceptRequest(request), hostHandle);
         interceptResponse(response);
-        RequestContextHolder.INSTANCE.setCtx(SerdeUtils.createRequestContext(request));
-        return responseDeserializer.deserialize(response);
+        return RequestContextHolder.INSTANCE.runWithCtx(SerdeUtils.createRequestContext(request), () ->
+                responseDeserializer.deserialize(response));
     }
 
 }
