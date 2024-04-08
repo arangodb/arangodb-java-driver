@@ -3,7 +3,6 @@ package com.arangodb.internal.serde;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
-import com.arangodb.serde.SerdeContext;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
@@ -35,21 +34,19 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param content byte array to deserialize
      * @param type    target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    <T> T deserialize(byte[] content, Type type, SerdeContext ctx);
+    <T> T deserialize(byte[] content, Type type);
 
     /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
      * @param node  parsed json node
      * @param clazz class of target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    default <T> T deserialize(JsonNode node, Class<T> clazz, SerdeContext ctx) {
-        return deserialize(node, (Type) clazz, ctx);
+    default <T> T deserialize(JsonNode node, Class<T> clazz) {
+        return deserialize(node, (Type) clazz);
     }
 
     /**
@@ -57,10 +54,9 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param node parsed json node
      * @param type target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    <T> T deserialize(JsonNode node, Type type, SerdeContext ctx);
+    <T> T deserialize(JsonNode node, Type type);
 
     /**
      * Parses the content.
@@ -86,11 +82,10 @@ public interface InternalSerde extends ArangoSerde {
      * @param content     byte array to deserialize
      * @param jsonPointer location of data to be deserialized
      * @param clazz       class of target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz, SerdeContext ctx) {
-        return deserialize(content, jsonPointer, (Type) clazz, ctx);
+    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz) {
+        return deserialize(content, jsonPointer, (Type) clazz);
     }
 
     /**
@@ -100,11 +95,10 @@ public interface InternalSerde extends ArangoSerde {
      * @param content     byte array to deserialize
      * @param jsonPointer location of data to be deserialized
      * @param type        target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, String jsonPointer, Type type, SerdeContext ctx) {
-        return deserialize(parse(content, jsonPointer), type, ctx);
+    default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
+        return deserialize(parse(content, jsonPointer), type);
     }
 
     /**
@@ -128,31 +122,28 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param content byte array to deserialize
      * @param clazz   class of target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, Class<T> clazz, SerdeContext ctx);
+    <T> T deserializeUserData(byte[] content, Class<T> clazz);
 
     /**
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
      * @param type    target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, Type type, SerdeContext ctx);
+    <T> T deserializeUserData(byte[] content, Type type);
 
     /**
      * Deserializes the parsed json node and binds it to the target data type, using the user serde.
      *
      * @param node  parsed json node
      * @param clazz class of target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    default <T> T deserializeUserData(JsonNode node, Class<T> clazz, SerdeContext ctx) {
-        return deserializeUserData(node, (Type) clazz, ctx);
+    default <T> T deserializeUserData(JsonNode node, Class<T> clazz) {
+        return deserializeUserData(node, (Type) clazz);
     }
 
     /**
@@ -160,10 +151,9 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param node parsed json node
      * @param type target data type
-     * @param ctx     serde context
      * @return deserialized object
      */
-    <T> T deserializeUserData(JsonNode node, Type type, SerdeContext ctx);
+    <T> T deserializeUserData(JsonNode node, Type type);
 
     /**
      * @return the user serde

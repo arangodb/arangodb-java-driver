@@ -77,7 +77,7 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexEntity.class);
     }
 
     protected InternalRequest getVertexRequest(final String key, final GraphDocumentReadOptions options) {
@@ -94,7 +94,7 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-        return (response, ctx) -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), VERTEX_JSON_POINTER), type, ctx);
+        return (response) -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), VERTEX_JSON_POINTER), type);
     }
 
     protected <T> InternalRequest replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
@@ -109,7 +109,7 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class);
     }
 
     protected <T> InternalRequest updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
@@ -126,7 +126,7 @@ public abstract class InternalArangoVertexCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), VERTEX_JSON_POINTER, VertexUpdateEntity.class);
     }
 
     protected InternalRequest deleteVertexRequest(final String key, final VertexDeleteOptions options) {

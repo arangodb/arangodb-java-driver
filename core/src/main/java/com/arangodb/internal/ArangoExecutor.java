@@ -25,7 +25,6 @@ import com.arangodb.QueueTimeMetrics;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.serde.SerdeContext;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -59,8 +58,8 @@ public abstract class ArangoExecutor {
         protocol.setJwt(jwt);
     }
 
-    protected <T> T createResult(final Type type, final InternalResponse response, final SerdeContext ctx) {
-        return serde.deserialize(response.getBody(), type, ctx);
+    protected <T> T createResult(final Type type, final InternalResponse response) {
+        return serde.deserialize(response.getBody(), type);
     }
 
     protected final void interceptResponse(InternalResponse response) {
@@ -80,6 +79,6 @@ public abstract class ArangoExecutor {
     }
 
     public interface ResponseDeserializer<T> {
-        T deserialize(InternalResponse response, SerdeContext ctx);
+        T deserialize(InternalResponse response);
     }
 }

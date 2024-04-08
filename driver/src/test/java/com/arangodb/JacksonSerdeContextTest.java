@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 import static com.arangodb.util.TestUtils.TEST_DB;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,6 +53,7 @@ class JacksonSerdeContextTest {
     private static ArangoDB arangoDB;
     private static ArangoDatabase db;
     private static ArangoCollection collection;
+    private static ArangoCollectionAsync collectionAsync;
 
     @BeforeAll
     static void init() {
@@ -71,6 +73,7 @@ class JacksonSerdeContextTest {
         }
 
         collection = db.collection(COLLECTION_NAME);
+        collectionAsync = arangoDB.async().db(TEST_DB).collection(COLLECTION_NAME);
         if (!collection.exists()) {
             collection.create();
         }
@@ -78,8 +81,10 @@ class JacksonSerdeContextTest {
 
     @AfterAll
     static void shutdown() {
-        if (db.exists())
+        if (db.exists()) {
             db.drop();
+        }
+        arangoDB.shutdown();
     }
 
     static class PersonDeserializer extends JsonDeserializer<Person> {
@@ -111,6 +116,24 @@ class JacksonSerdeContextTest {
 
         Person read = collection.getDocument(doc.getKey(), Person.class,
                 new DocumentReadOptions().streamTransactionId(tx.getId()));
+
+        assertThat(read.name).isEqualTo("foo");
+        assertThat(read.txId).isEqualTo(tx.getId());
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
+    @Test
+    void asyncGetDocumentWithinTx() throws ExecutionException, InterruptedException {
+        DocumentCreateEntity<?> doc = collection.insertDocument(
+                new BaseDocument(Collections.singletonMap("name", "foo")), null);
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
+
+        Person read = collectionAsync.getDocument(doc.getKey(), Person.class,
+                        new DocumentReadOptions().streamTransactionId(tx.getId()))
+                .get();
 
         assertThat(read.name).isEqualTo("foo");
         assertThat(read.txId).isEqualTo(tx.getId());

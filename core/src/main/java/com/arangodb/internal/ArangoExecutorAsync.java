@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.serde.SerdeContextHolder;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.serde.SerdeContext;
 
@@ -50,7 +51,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type, final HostHandle hostHandle) {
-        return execute(requestSupplier, (response, ctx) -> createResult(type, response, ctx), hostHandle);
+        return execute(requestSupplier, (response) -> createResult(type, response), hostHandle);
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final ResponseDeserializer<T> responseDeserializer) {
@@ -66,14 +67,15 @@ public class ArangoExecutorAsync extends ArangoExecutor {
                 .thenApply(Supplier::get)
                 .thenCompose(request -> protocol
                         .executeAsync(interceptRequest(request), hostHandle)
-                        .thenApply(resp -> new ResponseWithContext(resp, SerdeUtils.createSerdeContext(request)))
+                        .thenApply(resp -> new ResponseWithRequest(resp, SerdeUtils.createSerdeContext(request)))
                 )
                 .handle((r, e) -> {
                     if (e != null) {
                         throw ArangoDBException.of(e);
                     } else {
                         interceptResponse(r.response);
-                        return responseDeserializer.deserialize(r.response, r.context);
+                        SerdeContextHolder.INSTANCE.setCtx(r.context);
+                        return responseDeserializer.deserialize(r.response);
                     }
                 });
 
@@ -84,15 +86,14 @@ public class ArangoExecutorAsync extends ArangoExecutor {
         }
     }
 
-    private static class ResponseWithContext {
+    private static class ResponseWithRequest {
         final InternalResponse response;
         final SerdeContext context;
 
-        ResponseWithContext(InternalResponse response, SerdeContext context) {
+        ResponseWithRequest(InternalResponse response, SerdeContext context) {
             this.response = response;
             this.context = context;
         }
     }
-
 
 }

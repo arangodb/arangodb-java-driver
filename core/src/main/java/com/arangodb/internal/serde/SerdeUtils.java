@@ -1,9 +1,7 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.Request;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.model.TransactionalOptions;
 import com.arangodb.serde.SerdeContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

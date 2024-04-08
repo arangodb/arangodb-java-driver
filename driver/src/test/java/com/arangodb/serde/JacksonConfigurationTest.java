@@ -25,7 +25,7 @@ public class JacksonConfigurationTest {
         }
         String in = sb.toString();
         byte[] bytes = s.serialize(in);
-        String out = s.deserialize(bytes, String.class, SerdeContext.EMPTY);
+        String out = s.deserialize(bytes, String.class);
         assertThat(out).isEqualTo(in);
     }
 

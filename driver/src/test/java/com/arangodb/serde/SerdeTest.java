@@ -28,7 +28,7 @@ class SerdeTest {
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
         byte[] serialized = s.serialize(raw);
-        RawJson deserialized = s.deserialize(serialized, RawJson.class, SerdeContext.EMPTY);
+        RawJson deserialized = s.deserialize(serialized, RawJson.class);
         assertThat(deserialized).isEqualTo(raw);
     }
 
@@ -39,7 +39,7 @@ class SerdeTest {
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
         byte[] serialized = s.serialize(raw);
-        RawBytes deserialized = s.deserialize(serialized, RawBytes.class, SerdeContext.EMPTY);
+        RawBytes deserialized = s.deserialize(serialized, RawBytes.class);
         assertThat(deserialized).isEqualTo(raw);
     }
 
@@ -48,7 +48,7 @@ class SerdeTest {
     void deserializeBaseDocumentWithNestedProperties(ContentType type) {
         InternalSerde s = new InternalSerdeProvider(type).create();
         RawJson json = RawJson.of("{\"foo\":\"aaa\",\"properties\":{\"foo\":\"bbb\"}}");
-        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class, SerdeContext.EMPTY);
+        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class);
         assertThat(deserialized.getAttribute("foo")).isEqualTo("aaa");
         assertThat(deserialized.getAttribute("properties"))
                 .isInstanceOf(Map.class)
@@ -64,7 +64,7 @@ class SerdeTest {
         doc.addAttribute("foo", "aaa");
         doc.addAttribute("properties", Collections.singletonMap("foo", "bbb"));
         byte[] ser = s.serialize(doc);
-        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class, SerdeContext.EMPTY);
+        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class);
         assertThat(on.get("foo").textValue()).isEqualTo("aaa");
         assertThat(on.get("properties").get("foo").textValue()).isEqualTo("bbb");
     }

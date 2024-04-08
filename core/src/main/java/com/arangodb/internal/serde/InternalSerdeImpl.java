@@ -4,7 +4,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.SerdeContext;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,16 +12,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.arangodb.internal.serde.SerdeUtils.SERDE_CONTEXT_ATTRIBUTE_NAME;
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 
 final class InternalSerdeImpl implements InternalSerde {
@@ -61,13 +57,7 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public <T> T deserialize(byte[] content, Class<T> clazz) {
-        throw new IllegalArgumentException("Deserialization without context should never be invoked.");
-    }
-
-    @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz, SerdeContext ctx) {
-        Objects.requireNonNull(ctx);
-        return deserialize(content, (Type) clazz, ctx);
+        return deserialize(content, (Type) clazz);
     }
 
     @Override
@@ -130,27 +120,27 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserializeUserData(byte[] content, Class<T> clazz, SerdeContext ctx) {
+    public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
         if (isManagedClass(clazz)) {
-            return deserialize(content, clazz, SerdeContext.EMPTY);
+            return deserialize(content, clazz);
         } else {
-            return userSerde.deserialize(content, clazz, ctx);
+            return userSerde.deserialize(content, clazz, SerdeContextHolder.INSTANCE.getCtx());
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserializeUserData(byte[] content, Type type, SerdeContext ctx) {
+    public <T> T deserializeUserData(byte[] content, Type type) {
         if (type instanceof Class) {
-            return deserializeUserData(content, (Class<T>) type, ctx);
+            return deserializeUserData(content, (Class<T>) type);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     @Override
-    public <T> T deserializeUserData(JsonNode node, Type type, SerdeContext ctx) {
-        return deserializeUserData(serialize(node), type, ctx);
+    public <T> T deserializeUserData(JsonNode node, Type type) {
+        return deserializeUserData(serialize(node), type);
     }
 
     @Override
@@ -159,25 +149,21 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserialize(final JsonNode node, final Type type, final SerdeContext ctx) {
+    public <T> T deserialize(final JsonNode node, final Type type) {
         try {
-            return mapper.readerFor(mapper.constructType(type))
-                    .with(ContextAttributes.getEmpty().withPerCallAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
-                    .readValue(node);
+            return mapper.readerFor(mapper.constructType(type)).readValue(node);
         } catch (IOException e) {
             throw ArangoDBException.of(e);
         }
     }
 
     @Override
-    public <T> T deserialize(final byte[] content, final Type type, final SerdeContext ctx) {
+    public <T> T deserialize(final byte[] content, final Type type) {
         if (content == null) {
             return null;
         }
         try {
-            return mapper.readerFor(mapper.constructType(type))
-                    .with(ContextAttributes.getEmpty().withPerCallAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
-                    .readValue(content);
+            return mapper.readerFor(mapper.constructType(type)).readValue(content);
         } catch (IOException e) {
             throw ArangoDBException.of(e);
         }
