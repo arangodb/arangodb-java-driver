@@ -24,9 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.serde.RequestContextHolder;
-import com.arangodb.internal.serde.SerdeUtils;
-import com.arangodb.serde.RequestContext;
+import com.arangodb.RequestContext;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
@@ -67,7 +65,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
                 .thenApply(Supplier::get)
                 .thenCompose(request -> protocol
                         .executeAsync(interceptRequest(request), hostHandle)
-                        .thenApply(resp -> new ResponseWithRequest(resp, SerdeUtils.createRequestContext(request)))
+                        .thenApply(resp -> new ResponseWithRequest(resp, new RequestContextImpl(request)))
                 )
                 .handle((r, e) -> {
                     if (e != null) {

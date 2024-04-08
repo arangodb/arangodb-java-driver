@@ -1,14 +1,15 @@
 package com.arangodb.serde.jackson;
 
 import com.arangodb.ContentType;
-import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.RequestContext;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.function.Consumer;
+
+import static com.arangodb.serde.jackson.internal.JacksonSerdeImpl.SERDE_CONTEXT_ATTRIBUTE_NAME;
 
 /**
  * User data serde based on Jackson Databind. Not shaded in arangodb-java-driver-shaded.
@@ -42,7 +43,7 @@ public interface JacksonSerde extends ArangoSerde {
      * @return current {@link RequestContext}
      */
     static RequestContext getRequestContext(DeserializationContext ctx) {
-        return (RequestContext) ctx.getAttribute(SerdeUtils.SERDE_CONTEXT_ATTRIBUTE_NAME);
+        return (RequestContext) ctx.getAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME);
     }
 
     /**

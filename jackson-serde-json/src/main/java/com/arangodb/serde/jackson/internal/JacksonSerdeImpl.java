@@ -1,6 +1,6 @@
 package com.arangodb.serde.jackson.internal;
 
-import com.arangodb.serde.RequestContext;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.arangodb.internal.serde.SerdeUtils.SERDE_CONTEXT_ATTRIBUTE_NAME;
 
 /**
  * Not shaded in arangodb-java-driver-shaded.
  */
 public final class JacksonSerdeImpl implements JacksonSerde {
+    public static final String SERDE_CONTEXT_ATTRIBUTE_NAME = "arangoRequestContext";
 
     private final ObjectMapper mapper;
 

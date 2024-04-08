@@ -1,6 +1,6 @@
-package com.arangodb.serde;
+package com.arangodb;
 
-import com.arangodb.internal.serde.RequestContextImpl;
+import com.arangodb.internal.RequestContextImpl;
 
 import java.util.Optional;
 

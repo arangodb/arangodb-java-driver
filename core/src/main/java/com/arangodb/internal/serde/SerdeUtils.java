@@ -1,8 +1,6 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.InternalRequest;
-import com.arangodb.serde.RequestContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,9 +17,7 @@ import java.util.List;
 public enum SerdeUtils {
     INSTANCE;
 
-    public static final String SERDE_CONTEXT_ATTRIBUTE_NAME = "arangoRequestContext";
     private static final Logger LOGGER = LoggerFactory.getLogger(SerdeUtils.class);
-    private static final String TRANSACTION_ID = "x-arango-trx-id";
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -57,10 +53,6 @@ public enum SerdeUtils {
                 LOGGER.warn("Unsupported Jackson version: {}", version);
             }
         });
-    }
-
-    public static RequestContext createRequestContext(InternalRequest request) {
-        return new RequestContextImpl(request.getHeaderParam().get(TRANSACTION_ID));
     }
 
     /**

@@ -27,7 +27,6 @@ import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.RequestContext;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

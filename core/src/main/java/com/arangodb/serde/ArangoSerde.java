@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ContentType;
+import com.arangodb.RequestContext;
 
 import java.util.Objects;
 

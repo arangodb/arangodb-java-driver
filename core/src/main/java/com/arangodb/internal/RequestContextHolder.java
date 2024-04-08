@@ -1,6 +1,6 @@
-package com.arangodb.internal.serde;
+package com.arangodb.internal;
 
-import com.arangodb.serde.RequestContext;
+import com.arangodb.RequestContext;
 
 import java.util.function.Supplier;
 
