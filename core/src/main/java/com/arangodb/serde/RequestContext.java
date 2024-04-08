@@ -1,15 +1,15 @@
 package com.arangodb.serde;
 
-import com.arangodb.internal.serde.SerdeContextImpl;
+import com.arangodb.internal.serde.RequestContextImpl;
 
 import java.util.Optional;
 
 /**
  * Context holding information about the current request and response.
  */
-public interface SerdeContext {
+public interface RequestContext {
 
-    SerdeContext EMPTY = new SerdeContextImpl(null);
+    RequestContext EMPTY = new RequestContextImpl(null);
 
     /**
      * @return the stream transaction id of the request (if any) or {@code null}

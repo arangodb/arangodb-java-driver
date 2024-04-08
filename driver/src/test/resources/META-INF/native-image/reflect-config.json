@@ -306,7 +306,7 @@
     "allDeclaredClasses": true
   },
   {
-    "name": "com.arangodb.SerdeContextTest$Person",
+    "name": "com.arangodb.RequestContextTest$Person",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

@@ -23,7 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.serde.SerdeContextHolder;
+import com.arangodb.internal.serde.RequestContextHolder;
 import com.arangodb.internal.serde.SerdeUtils;
 
 import java.lang.reflect.Type;
@@ -56,7 +56,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
         final InternalResponse response = protocol.execute(interceptRequest(request), hostHandle);
         interceptResponse(response);
-        SerdeContextHolder.INSTANCE.setCtx(SerdeUtils.createSerdeContext(request));
+        RequestContextHolder.INSTANCE.setCtx(SerdeUtils.createRequestContext(request));
         return responseDeserializer.deserialize(response);
     }
 

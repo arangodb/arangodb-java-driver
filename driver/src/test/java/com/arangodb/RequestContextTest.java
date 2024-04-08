@@ -26,18 +26,18 @@ import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import com.arangodb.serde.jackson.JacksonSerde;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.RequestContext;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static com.arangodb.util.TestUtils.TEST_DB;
@@ -46,9 +46,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Michele Rastelli
  */
-class JacksonSerdeContextTest {
+class RequestContextTest {
 
-    private static final String COLLECTION_NAME = "JacksonSerdeContextTest_collection";
+    private static final String COLLECTION_NAME = "RequestContextTest_collection";
 
     private static ArangoDB arangoDB;
     private static ArangoDatabase db;
@@ -57,12 +57,38 @@ class JacksonSerdeContextTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(ContentType.JSON)
-                .configure((mapper) -> {
-                    SimpleModule module = new SimpleModule("PersonModule");
-                    module.addDeserializer(Person.class, new PersonDeserializer());
-                    mapper.registerModule(module);
-                });
+        ArangoSerde serde = new ArangoSerde() {
+            private ObjectMapper mapper = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            @Override
+            public byte[] serialize(Object value) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public <T> T deserialize(byte[] content, Class<T> clazz) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
+                Objects.requireNonNull(ctx);
+
+                if (clazz != Person.class) {
+                    throw new UnsupportedOperationException();
+                }
+
+                try {
+                    Person res = mapper.readValue(content, Person.class);
+                    res.txId = ctx.getStreamTransactionId().get();
+                    return (T) res;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .serde(serde).build();
@@ -87,21 +113,11 @@ class JacksonSerdeContextTest {
         arangoDB.shutdown();
     }
 
-    static class PersonDeserializer extends JsonDeserializer<Person> {
-        @Override
-        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
-            JsonNode rootNode = parser.getCodec().readTree(parser);
-            Person person = new Person(rootNode.get("name").asText());
-            person.txId = JacksonSerde.getSerdeContext(ctx).getStreamTransactionId().get();
-            return person;
-        }
-    }
-
     static class Person {
         String name;
         String txId;
 
-        Person(String name) {
+        Person(@JsonProperty("name") String name) {
             this.name = name;
         }
     }

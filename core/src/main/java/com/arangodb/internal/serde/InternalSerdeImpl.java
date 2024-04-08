@@ -124,7 +124,7 @@ final class InternalSerdeImpl implements InternalSerde {
         if (isManagedClass(clazz)) {
             return deserialize(content, clazz);
         } else {
-            return userSerde.deserialize(content, clazz, SerdeContextHolder.INSTANCE.getCtx());
+            return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
         }
     }
 

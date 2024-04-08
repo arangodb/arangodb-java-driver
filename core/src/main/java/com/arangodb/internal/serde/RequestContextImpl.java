@@ -1,13 +1,13 @@
 package com.arangodb.internal.serde;
 
-import com.arangodb.serde.SerdeContext;
+import com.arangodb.serde.RequestContext;
 
 import java.util.Optional;
 
-public class SerdeContextImpl implements SerdeContext {
+public class RequestContextImpl implements RequestContext {
     private final String streamTransactionId;
 
-    public SerdeContextImpl(String streamTransactionId) {
+    public RequestContextImpl(String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
     }
 
