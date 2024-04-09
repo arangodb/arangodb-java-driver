@@ -9,7 +9,7 @@ import java.util.Optional;
  */
 public interface RequestContext {
 
-    RequestContext EMPTY = new RequestContextImpl(null);
+    RequestContext EMPTY = new RequestContextImpl();
 
     /**
      * @return the stream transaction id of the request (if any) or {@code null}
