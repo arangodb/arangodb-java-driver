@@ -21,4 +21,11 @@ public class RequestContextImpl implements RequestContext {
     public Optional<String> getStreamTransactionId() {
         return Optional.ofNullable(streamTransactionId);
     }
+
+    @Override
+    public String toString() {
+        return "RequestContextImpl{" +
+                "streamTransactionId='" + streamTransactionId + '\'' +
+                '}';
+    }
 }
