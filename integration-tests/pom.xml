@@ -188,7 +188,7 @@
                                 **/SerdeTest.**,
                                 **/SerializableTest.**,
                                 **/JacksonInterferenceTest.**,
-                                **/JacksonSerdeContextTest.**
+                                **/JacksonRequestContextTest.**
                             </filesToExclude>
                             <replacements>
                                 <replacement>

@@ -79,7 +79,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeEntity.class);
     }
 
     protected InternalRequest getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
@@ -96,7 +96,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-        return (response, ctx) -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), EDGE_JSON_POINTER), type, ctx);
+        return (response) -> getSerde().deserializeUserData(getSerde().extract(response.getBody(), EDGE_JSON_POINTER), type);
     }
 
     protected <T> InternalRequest replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
@@ -111,7 +111,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class);
     }
 
     protected <T> InternalRequest updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
@@ -128,7 +128,7 @@ public abstract class InternalArangoEdgeCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), EDGE_JSON_POINTER, EdgeUpdateEntity.class);
     }
 
     protected InternalRequest deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {

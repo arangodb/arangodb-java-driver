@@ -133,11 +133,11 @@ public class ExtendedHostResolver implements HostResolver {
         try {
             response = executor.execute(
                     new InternalRequest(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
-                    (r, ctx) -> {
+                    (r) -> {
                         final List<Map<String, String>> tmp = arangoSerialization.deserialize(r.getBody(),
                                 "/endpoints",
                                 constructParametricType(List.class,
-                                        constructParametricType(Map.class, String.class, String.class)), ctx);
+                                        constructParametricType(Map.class, String.class, String.class)));
                         Collection<String> endpoints = new ArrayList<>();
                         for (final Map<String, String> map : tmp) {
                             endpoints.add(map.get("endpoint"));

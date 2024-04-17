@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ContentType;
+import com.arangodb.RequestContext;
 
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ public interface ArangoSerde {
      * @param ctx     serde context, cannot be null
      * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, Class<T> clazz, SerdeContext ctx) {
+    default <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
         Objects.requireNonNull(ctx);
         return deserialize(content, clazz);
     }

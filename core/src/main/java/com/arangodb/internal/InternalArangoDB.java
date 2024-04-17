@@ -66,11 +66,11 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/role", ServerRole.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), "/role", ServerRole.class);
     }
 
     protected ResponseDeserializer<String> getServerIdResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/id", String.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), "/id", String.class);
     }
 
     protected InternalRequest createDatabaseRequest(final DBCreateOptions options) {
@@ -81,8 +81,8 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                Boolean.class, ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Boolean.class);
     }
 
     protected InternalRequest getDatabasesRequest(final String dbName) {
@@ -90,8 +90,8 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(String.class), ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(String.class));
     }
 
     protected InternalRequest getAccessibleDatabasesForRequest(final String dbName, final String user) {
@@ -99,7 +99,7 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
-        return (response, ctx) -> {
+        return (response) -> {
             Iterator<String> names =
                     getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).fieldNames();
             final Collection<String> dbs = new ArrayList<>();
@@ -136,8 +136,8 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(UserEntity.class), ctx);
+        return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                constructListType(UserEntity.class));
     }
 
     protected InternalRequest updateUserRequest(final String dbName, final String user, final UserUpdateOptions options) {
@@ -173,10 +173,10 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<Response<T>> responseDeserializer(Class<T> type) {
-        return (response, ctx) -> new Response<>(
+        return (response) -> new Response<>(
                 response.getResponseCode(),
                 response.getMeta(),
-                getSerde().deserializeUserData(response.getBody(), type, ctx)
+                getSerde().deserializeUserData(response.getBody(), type)
         );
     }
 

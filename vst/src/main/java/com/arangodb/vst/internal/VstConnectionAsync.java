@@ -26,7 +26,6 @@ import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.SerdeContextImpl;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.vst.internal.utils.CompletableFutureUtils;
@@ -152,7 +151,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
     }
 
     private InternalResponse createResponse(final Message message) throws VPackParserException {
-        InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class, SerdeContextImpl.EMPTY);
+        InternalResponse response = serde.deserialize(message.getHead().toByteArray(), InternalResponse.class);
         if (message.getBody() != null) {
             response.setBody(message.getBody().toByteArray());
         }

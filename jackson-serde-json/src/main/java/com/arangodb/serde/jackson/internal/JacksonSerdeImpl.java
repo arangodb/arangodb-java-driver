@@ -1,7 +1,6 @@
 package com.arangodb.serde.jackson.internal;
 
-import com.arangodb.internal.serde.SerdeContextImpl;
-import com.arangodb.serde.SerdeContext;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,12 +11,12 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.arangodb.internal.serde.SerdeUtils.SERDE_CONTEXT_ATTRIBUTE_NAME;
 
 /**
  * Not shaded in arangodb-java-driver-shaded.
  */
 public final class JacksonSerdeImpl implements JacksonSerde {
+    public static final String SERDE_CONTEXT_ATTRIBUTE_NAME = "arangoRequestContext";
 
     private final ObjectMapper mapper;
 
@@ -38,11 +37,11 @@ public final class JacksonSerdeImpl implements JacksonSerde {
 
     @Override
     public <T> T deserialize(final byte[] content, final Class<T> type) {
-        return deserialize(content, type, SerdeContextImpl.EMPTY);
+        return deserialize(content, type, RequestContext.EMPTY);
     }
 
     @Override
-    public <T> T deserialize(byte[] content, Class<T> type, SerdeContext ctx) {
+    public <T> T deserialize(byte[] content, Class<T> type, RequestContext ctx) {
         Objects.requireNonNull(ctx);
         try {
             return mapper.readerFor(mapper.constructType(type))

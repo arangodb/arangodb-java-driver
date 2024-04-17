@@ -23,11 +23,10 @@ package com.arangodb.internal.util;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.ArangoDBUnavailableException;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.InternalResponse;
-import com.arangodb.internal.serde.SerdeContextImpl;
 
 import java.util.concurrent.TimeoutException;
 
@@ -54,7 +53,7 @@ public final class ResponseUtils {
                     response.getMeta(HEADER_ENDPOINT));
         }
         if (response.getBody() != null) {
-            final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class, SerdeContextImpl.EMPTY);
+            final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
             if (errorEntity.getCode() == ERROR_INTERNAL && errorEntity.getErrorNum() == ERROR_INTERNAL) {
                 return ArangoDBUnavailableException.from(errorEntity);
             }
