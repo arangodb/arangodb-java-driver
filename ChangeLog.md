@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added overloaded variant of `ArangoSerde#deserialize()` accepting `RequestContext` parameter (#555, #554, DE-771) 
+- updated `jackson-dataformat-velocypack` to version `4.3.0`
+
 ## [7.6.0] - 2024-03-22
 
 - added support to external versioning (ArangoDB 3.12, #547)
