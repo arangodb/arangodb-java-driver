@@ -40,7 +40,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
     private final Vertx vertx;
     private final boolean manageVertx;
 
-    public HttpConnectionFactory(final ArangoConfig config) {
+    public HttpConnectionFactory(@UnstableApi final ArangoConfig config) {
         Optional<Vertx> existingVertx = Optional.ofNullable(Vertx.currentContext()).map(Context::owner);
         if (config.getReuseVertx() && existingVertx.isPresent()) {
             LOGGER.info("Reusing existing Vert.x instance");
