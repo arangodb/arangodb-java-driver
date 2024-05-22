@@ -22,8 +22,8 @@ public class HttpProtocolProvider implements ProtocolProvider {
 
     @Override
     @UnstableApi
-    public ConnectionFactory createConnectionFactory() {
-        return new HttpConnectionFactory();
+    public ConnectionFactory createConnectionFactory(@UnstableApi ArangoConfig config) {
+        return new HttpConnectionFactory(config);
     }
 
     @Override

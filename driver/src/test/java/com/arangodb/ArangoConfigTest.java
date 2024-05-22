@@ -31,5 +31,6 @@ public class ArangoConfigTest {
         assertThat(cfg.getCompression()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION);
         assertThat(cfg.getCompressionThreshold()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
         assertThat(cfg.getCompressionLevel()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
+        assertThat(cfg.getReuseVertx()).isEqualTo(ArangoDefaults.DEFAULT_REUSE_VERTX);
     }
 }

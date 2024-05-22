@@ -37,7 +37,6 @@ import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.JdkSslContext;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
@@ -50,8 +49,6 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.security.NoSuchAlgorithmException;
@@ -61,7 +58,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -70,24 +66,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @UnstableApi
 public class HttpConnection implements Connection {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
-    private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
-    private String auth;
+    private volatile String auth;
     private final int compressionThreshold;
     private final Encoder encoder;
     private final WebClient client;
     private final Integer timeout;
     private final MultiMap commonHeaders = MultiMap.caseInsensitiveMultiMap();
-    private final Vertx vertx;
 
     private static String getUserAgent() {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    HttpConnection(final ArangoConfig config, final HostDescription host) {
+    HttpConnection(final ArangoConfig config, final HostDescription host, final Vertx vertx) {
         super();
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
@@ -108,14 +101,9 @@ public class HttpConnection implements Connection {
         }
         commonHeaders.add("x-arango-driver", USER_AGENT);
         timeout = config.getTimeout();
-        vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
-        vertx.runOnContext(e -> {
-            Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement());
-            auth = new UsernamePasswordCredentials(
-                    config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
-            ).toHttpAuthorization();
-            LOGGER.debug("Created Vert.x context");
-        });
+        auth = new UsernamePasswordCredentials(
+                config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
+        ).toHttpAuthorization();
 
         int intTtl = Optional.ofNullable(config.getConnectionTtl())
                 .map(ttl -> Math.toIntExact(ttl / 1000))
@@ -229,7 +217,6 @@ public class HttpConnection implements Connection {
     @Override
     public void close() {
         client.close();
-        vertx.close();
     }
 
     private HttpMethod requestTypeToHttpMethod(RequestType requestType) {
@@ -254,7 +241,7 @@ public class HttpConnection implements Connection {
     @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
-        vertx.runOnContext(e -> doExecute(request, rfuture));
+        doExecute(request, rfuture);
         return rfuture;
     }
 
@@ -308,7 +295,7 @@ public class HttpConnection implements Connection {
     @Override
     public void setJwt(String jwt) {
         if (jwt != null) {
-            vertx.runOnContext(e -> auth = new TokenCredentials(jwt).toHttpAuthorization());
+            auth = new TokenCredentials(jwt).toHttpAuthorization();
         }
     }
 

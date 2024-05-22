@@ -110,4 +110,8 @@ public interface ArangoConfigProperties {
         return Optional.empty();
     }
 
+    default Optional<Boolean> getReuseVertx() {
+        return Optional.empty();
+    }
+
 }

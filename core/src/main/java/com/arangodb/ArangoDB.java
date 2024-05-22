@@ -264,9 +264,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @since ArangoDB 3.2.0
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">API
      * Documentation</a>
+     * @since ArangoDB 3.2.0
      */
     void grantDefaultDatabaseAccess(String user, Permissions permissions);
 
@@ -276,9 +276,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @since ArangoDB 3.2.0
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-collection-access-level">API
      * Documentation</a>
+     * @since ArangoDB 3.2.0
      */
     void grantDefaultCollectionAccess(String user, Permissions permissions);
 
@@ -313,9 +313,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.1.0
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
      * Documentation</a>
+     * @since ArangoDB 3.1.0
      */
     LogLevelEntity getLogLevel();
 
@@ -323,9 +323,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.10
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
      * Documentation</a>
+     * @since ArangoDB 3.10
      */
     LogLevelEntity getLogLevel(LogLevelOptions options);
 
@@ -334,9 +334,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.1.0
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
      * Documentation</a>
+     * @since ArangoDB 3.1.0
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity);
 
@@ -345,17 +345,17 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @since ArangoDB 3.10
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
      * Documentation</a>
+     * @since ArangoDB 3.10
      */
     LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
     /**
      * @return the list of available rules and their respective flags
-     * @since ArangoDB 3.10
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-all-aql-optimizer-rules">API
      * Documentation</a>
+     * @since ArangoDB 3.10
      */
     Collection<QueryOptimizerRule> getQueryOptimizerRules();
 
@@ -381,7 +381,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             ProtocolProvider protocolProvider = protocolProvider(config.getProtocol());
             config.setProtocolModule(protocolProvider.protocolModule());
 
-            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory();
+            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config);
             Collection<Host> hostList = createHostList(connectionFactory);
             HostResolver hostResolver = createHostResolver(hostList, connectionFactory);
             HostHandler hostHandler = createHostHandler(hostResolver);
@@ -394,7 +394,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return new ArangoDBImpl(
                     config,
                     protocol,
-                    hostHandler
+                    hostHandler,
+                    connectionFactory
             );
         }
 
@@ -677,6 +678,17 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder compressionLevel(Integer level) {
             config.setCompressionLevel(level);
+            return this;
+        }
+
+        /**
+         * Sets whether to reuse the Vert.x instance owning the current thread Vert.x context.
+         *
+         * @param reuseVertx whether to reuse the Vert.x instance (default: {@code false})
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder reuseVertx(Boolean reuseVertx) {
+            config.setReuseVertx(reuseVertx);
             return this;
         }
 
