@@ -49,7 +49,7 @@ public enum SerdeUtils {
         ).forEach(version -> {
             int major = version.getMajorVersion();
             int minor = version.getMinorVersion();
-            if (major != 2 || minor < 10 || minor > 16) {
+            if (major != 2 || minor < 10 || minor > 17) {
                 LOGGER.warn("Unsupported Jackson version: {}", version);
             }
         });
