@@ -3,6 +3,7 @@
 # Configuration environment variables:
 #   STARTER_MODE:             (single|cluster|activefailover), default single
 #   DOCKER_IMAGE:             ArangoDB docker image, default docker.io/arangodb/arangodb:latest
+#   STARTER_DOCKER_IMAGE:     ArangoDB Starter docker image, default docker.io/arangodb/arangodb-starter:latest
 #   SSL:                      (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
 
@@ -11,10 +12,10 @@
 
 STARTER_MODE=${STARTER_MODE:=single}
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/arangodb:latest}
+STARTER_DOCKER_IMAGE=${STARTER_DOCKER_IMAGE:=docker.io/arangodb/arangodb-starter:latest}
 SSL=${SSL:=false}
 COMPRESSION=${COMPRESSION:=false}
 
-STARTER_DOCKER_IMAGE=docker.io/arangodb/arangodb-starter:latest
 GW=172.28.0.1
 docker network create arangodb --subnet 172.28.0.0/16
 
