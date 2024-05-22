@@ -1,12 +1,15 @@
 package perf;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.BaseJunit5;
 import com.arangodb.Protocol;
 import com.arangodb.Request;
 import com.arangodb.internal.ArangoRequestParam;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Disabled
 public class SyncBenchmarkTest {
@@ -16,6 +19,8 @@ public class SyncBenchmarkTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersion(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         System.out.println("-----------------------------------------");
         System.out.println("--- getVersion(): " + protocol);
         System.out.println("-----------------------------------------");
@@ -24,6 +29,7 @@ public class SyncBenchmarkTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .protocol(protocol)
+                .maxConnections(16)
                 .build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             @Override
@@ -44,6 +50,8 @@ public class SyncBenchmarkTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersionWithDetails(Protocol protocol) {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         System.out.println("-----------------------------------------");
         System.out.println("--- getVersion w/ details: " + protocol);
         System.out.println("-----------------------------------------");
@@ -52,6 +60,7 @@ public class SyncBenchmarkTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .protocol(protocol)
+                .maxConnections(16)
                 .build();
         Benchmark benchmark = new Benchmark(warmupDurationSeconds, numberOfRequests) {
             private final Request<?> request = Request.builder()
