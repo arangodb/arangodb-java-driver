@@ -43,7 +43,6 @@ class JdkZlibEncoder {
      * Max size for temporary heap buffers used to copy input data to heap.
      */
     private static final int MAX_INPUT_BUFFER_SIZE;
-    private static final ByteBuf EMPTY_BUF;
 
     private final ZlibWrapper wrapper;
     private final Deflater deflater;
@@ -66,8 +65,6 @@ class JdkZlibEncoder {
             logger.debug("-Dio.netty.jdkzlib.encoder.maxInitialOutputBufferSize={}", MAX_INITIAL_OUTPUT_BUFFER_SIZE);
             logger.debug("-Dio.netty.jdkzlib.encoder.maxInputBufferSize={}", MAX_INPUT_BUFFER_SIZE);
         }
-
-        EMPTY_BUF = allocateByteBuf(0);
     }
 
     private static ByteBuf allocateByteBuf(int len) {
@@ -78,6 +75,9 @@ class JdkZlibEncoder {
         return ByteBufAllocator.DEFAULT.heapBuffer();
     }
 
+    private static ByteBuf emptyBuf() {
+        return ByteBufAllocator.DEFAULT.heapBuffer(0, 0);
+    }
 
     /**
      * Creates a new zlib encoder with the specified {@code compressionLevel}
@@ -104,9 +104,8 @@ class JdkZlibEncoder {
 
     ByteBuf encode(byte[] in) {
         if (in.length == 0) {
-            return EMPTY_BUF;
+            return emptyBuf();
         }
-
         ByteBuf out = allocateBuffer(in.length);
         encodeSome(in, out);
         finishEncode(out);

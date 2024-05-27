@@ -1,4 +1,4 @@
-package graal;
+package graal.vertx.graal;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
@@ -16,6 +16,7 @@ import io.vertx.core.eventbus.impl.OutboundDeliveryContext;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.resolver.DefaultResolverProvider;
+import io.vertx.core.impl.transports.JDKTransport;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.spi.resolver.ResolverProvider;
 import io.vertx.core.spi.transport.Transport;
@@ -32,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 final class Target_io_vertx_core_impl_VertxBuilder {
     @Substitute
     public static Transport nativeTransport() {
-        return null;
+        return JDKTransport.INSTANCE;
     }
 }
 
@@ -82,7 +83,8 @@ final class Target_io_vertx_core_eventbus_impl_clustered_ClusteredEventBusCluste
     }
 
     @Substitute
-    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body, String codecName) {
+    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body,
+            String codecName) {
         throw new RuntimeException("Not Implemented");
     }
 

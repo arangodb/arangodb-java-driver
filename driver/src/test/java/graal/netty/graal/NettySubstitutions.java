@@ -1,10 +1,11 @@
-package graal;
+package graal.netty.graal;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.RecomputeFieldValue;
 import com.oracle.svm.core.annotate.RecomputeFieldValue.Kind;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
+import graal.netty.EmptyByteBufStub;
 import io.netty.bootstrap.AbstractBootstrapConfig;
 import io.netty.bootstrap.ChannelFactory;
 import io.netty.buffer.ByteBuf;
@@ -65,7 +66,7 @@ final class Target_io_netty_handler_ssl_SslProvider {
             case OPENSSL_REFCNT:
                 return false;
             default:
-                throw new Error("SslProvider unsupported: " + provider);
+                throw new Error("SslProvider unsupported on Quarkus " + provider);
         }
     }
 }
@@ -86,7 +87,7 @@ final class Target_io_netty_handler_ssl_OpenSsl {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FromAlias)
-    private static Throwable UNAVAILABILITY_CAUSE = new RuntimeException("OpenSsl unsupported!");
+    private static Throwable UNAVAILABILITY_CAUSE = new RuntimeException("OpenSsl unsupported on Quarkus");
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FromAlias)
