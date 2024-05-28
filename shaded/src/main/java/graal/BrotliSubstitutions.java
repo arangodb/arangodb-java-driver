@@ -5,7 +5,7 @@ import com.oracle.svm.core.annotate.TargetClass;
 
 
 @TargetClass(className = "io.netty.handler.codec.compression.Brotli")
-final class Target_com_arangodb_shaded_netty_handler_codec_compression_Brotli {
+final class Target_io_netty_handler_codec_compression_Brotli {
     @Substitute
     public static boolean isAvailable() {
         return false;

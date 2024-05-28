@@ -1,4 +1,4 @@
-package graal;
+package graal.vertx.graal;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
@@ -16,6 +16,7 @@ import io.vertx.core.eventbus.impl.OutboundDeliveryContext;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.resolver.DefaultResolverProvider;
+import io.vertx.core.impl.transports.JDKTransport;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.spi.resolver.ResolverProvider;
 import io.vertx.core.spi.transport.Transport;
@@ -29,10 +30,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 @TargetClass(className = "io.vertx.core.impl.VertxBuilder")
-final class Target_com_arangodb_shaded_vertx_core_impl_VertxBuilder {
+final class Target_io_vertx_core_impl_VertxBuilder {
     @Substitute
     public static Transport nativeTransport() {
-        return null;
+        return JDKTransport.INSTANCE;
     }
 }
 
@@ -49,7 +50,7 @@ final class TargetResolverProvider {
 }
 
 @TargetClass(className = "io.vertx.core.net.OpenSSLEngineOptions")
-final class Target_com_arangodb_shaded_vertx_core_net_OpenSSLEngineOptions {
+final class Target_io_vertx_core_net_OpenSSLEngineOptions {
 
     @Substitute
     public static boolean isAvailable() {
@@ -64,7 +65,7 @@ final class Target_com_arangodb_shaded_vertx_core_net_OpenSSLEngineOptions {
 
 @SuppressWarnings("rawtypes")
 @TargetClass(className = "io.vertx.core.eventbus.impl.clustered.ClusteredEventBus")
-final class Target_com_arangodb_shaded_vertx_core_eventbus_impl_clustered_ClusteredEventBusClusteredEventBus {
+final class Target_io_vertx_core_eventbus_impl_clustered_ClusteredEventBusClusteredEventBus {
 
     @Substitute
     private NetServerOptions getServerOptions() {
@@ -82,7 +83,8 @@ final class Target_com_arangodb_shaded_vertx_core_eventbus_impl_clustered_Cluste
     }
 
     @Substitute
-    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body, String codecName) {
+    public MessageImpl createMessage(boolean send, boolean isLocal, String address, MultiMap headers, Object body,
+            String codecName) {
         throw new RuntimeException("Not Implemented");
     }
 
@@ -160,7 +162,7 @@ final class Target_DefaultSslContextFactory {
         Collection<String> cipherSuites = enabledCipherSuites;
         builder.sslProvider(SslProvider.JDK);
         if (cipherSuites == null || cipherSuites.isEmpty()) {
-            cipherSuites = Target_com_arangodb_shaded_vertx_core_spi_tls_DefaultJDKCipherSuite.get();
+            cipherSuites = Target_io_vertx_core_spi_tls_DefaultJDKCipherSuite.get();
         }
         if (tmf != null) {
             builder.trustManager(tmf);
@@ -183,7 +185,7 @@ final class Target_DefaultSslContextFactory {
 }
 
 @TargetClass(className = "io.vertx.core.spi.tls.DefaultJDKCipherSuite")
-final class Target_com_arangodb_shaded_vertx_core_spi_tls_DefaultJDKCipherSuite {
+final class Target_io_vertx_core_spi_tls_DefaultJDKCipherSuite {
     @Alias
     static List<String> get() {
         return null;
