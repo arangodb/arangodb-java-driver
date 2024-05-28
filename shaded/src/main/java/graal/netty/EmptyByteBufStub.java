@@ -1,4 +1,4 @@
-package graal;
+package graal.netty;
 
 import io.netty.util.internal.PlatformDependent;
 

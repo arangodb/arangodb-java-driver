@@ -225,6 +225,16 @@
             <version>${graalvm.version}</version>
             <type>pom</type>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.graalvm.truffle</groupId>
+                    <artifactId>truffle-runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.graalvm.truffle</groupId>
+                    <artifactId>truffle-enterprise</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.smallrye.config</groupId>

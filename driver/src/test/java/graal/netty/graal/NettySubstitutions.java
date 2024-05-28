@@ -1,10 +1,11 @@
-package graal;
+package graal.netty.graal;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.RecomputeFieldValue;
 import com.oracle.svm.core.annotate.RecomputeFieldValue.Kind;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
+import graal.netty.EmptyByteBufStub;
 import io.netty.bootstrap.AbstractBootstrapConfig;
 import io.netty.bootstrap.ChannelFactory;
 import io.netty.buffer.ByteBuf;
@@ -43,7 +44,7 @@ import static io.netty.handler.codec.http.HttpHeaderValues.*;
  * This substitution avoid having loggers added to the build
  */
 @TargetClass(className = "io.netty.util.internal.logging.InternalLoggerFactory")
-final class Target_com_arangodb_shaded_netty_util_internal_logging_InternalLoggerFactory {
+final class Target_io_netty_util_internal_logging_InternalLoggerFactory {
 
     @Substitute
     private static InternalLoggerFactory newDefaultFactory(String name) {
@@ -55,23 +56,23 @@ final class Target_com_arangodb_shaded_netty_util_internal_logging_InternalLogge
 // This whole section is mostly about removing static analysis references to openssl/tcnative
 
 @TargetClass(className = "io.netty.handler.ssl.SslProvider")
-final class Target_com_arangodb_shaded_netty_handler_ssl_SslProvider {
+final class Target_io_netty_handler_ssl_SslProvider {
     @Substitute
     public static boolean isAlpnSupported(final SslProvider provider) {
         switch (provider) {
             case JDK:
-                return Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator.isAlpnSupported();
+                return Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator.isAlpnSupported();
             case OPENSSL:
             case OPENSSL_REFCNT:
                 return false;
             default:
-                throw new Error("SslProvider unsupported: " + provider);
+                throw new Error("SslProvider unsupported on Quarkus " + provider);
         }
     }
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkAlpnApplicationProtocolNegotiator")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator {
+final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator {
     @Alias
     static boolean isAlpnSupported() {
         return true;
@@ -82,11 +83,11 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnApplicationProto
  * Hardcode io.netty.handler.ssl.OpenSsl as non-available
  */
 @TargetClass(className = "io.netty.handler.ssl.OpenSsl")
-final class Target_com_arangodb_shaded_netty_handler_ssl_OpenSsl {
+final class Target_io_netty_handler_ssl_OpenSsl {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FromAlias)
-    private static Throwable UNAVAILABILITY_CAUSE = new RuntimeException("OpenSsl unsupported!");
+    private static Throwable UNAVAILABILITY_CAUSE = new RuntimeException("OpenSsl unsupported on Quarkus");
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FromAlias)
@@ -138,10 +139,10 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_OpenSsl {
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkSslServerContext")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslServerContext {
+final class Target_io_netty_handler_ssl_JdkSslServerContext {
 
     @Alias
-    Target_com_arangodb_shaded_netty_handler_ssl_JdkSslServerContext(Provider provider,
+    Target_io_netty_handler_ssl_JdkSslServerContext(Provider provider,
             X509Certificate[] trustCertCollection, TrustManagerFactory trustManagerFactory,
             X509Certificate[] keyCertChain, PrivateKey key, String keyPassword,
             KeyManagerFactory keyManagerFactory, Iterable<String> ciphers, CipherSuiteFilter cipherFilter,
@@ -153,10 +154,10 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslServerContext {
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkSslClientContext")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslClientContext {
+final class Target_io_netty_handler_ssl_JdkSslClientContext {
 
     @Alias
-    Target_com_arangodb_shaded_netty_handler_ssl_JdkSslClientContext(Provider sslContextProvider, X509Certificate[] trustCertCollection,
+    Target_io_netty_handler_ssl_JdkSslClientContext(Provider sslContextProvider, X509Certificate[] trustCertCollection,
             TrustManagerFactory trustManagerFactory, X509Certificate[] keyCertChain, PrivateKey key,
             String keyPassword, KeyManagerFactory keyManagerFactory, Iterable<String> ciphers,
             CipherSuiteFilter cipherFilter, ApplicationProtocolConfig apn, String[] protocols,
@@ -167,39 +168,39 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslClientContext {
 }
 
 @TargetClass(className = "io.netty.handler.ssl.SslHandler$SslEngineType")
-final class Target_com_arangodb_shaded_netty_handler_ssl_SslHandler$SslEngineType {
+final class Target_io_netty_handler_ssl_SslHandler$SslEngineType {
 
     @Alias
-    public static Target_com_arangodb_shaded_netty_handler_ssl_SslHandler$SslEngineType JDK;
+    public static Target_io_netty_handler_ssl_SslHandler$SslEngineType JDK;
 
     @Substitute
-    static Target_com_arangodb_shaded_netty_handler_ssl_SslHandler$SslEngineType forEngine(SSLEngine engine) {
+    static Target_io_netty_handler_ssl_SslHandler$SslEngineType forEngine(SSLEngine engine) {
         return JDK;
     }
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkAlpnApplicationProtocolNegotiator$AlpnWrapper")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator_AlpnWrapper {
+final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator_AlpnWrapper {
     @Substitute
     public SSLEngine wrapSslEngine(SSLEngine engine, ByteBufAllocator alloc,
             JdkApplicationProtocolNegotiator applicationNegotiator, boolean isServer) {
-        return (SSLEngine) (Object) new Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnSslEngine(engine, applicationNegotiator,
+        return (SSLEngine) (Object) new Target_io_netty_handler_ssl_JdkAlpnSslEngine(engine, applicationNegotiator,
                 isServer);
     }
 
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkAlpnSslEngine")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnSslEngine {
+final class Target_io_netty_handler_ssl_JdkAlpnSslEngine {
     @Alias
-    Target_com_arangodb_shaded_netty_handler_ssl_JdkAlpnSslEngine(final SSLEngine engine,
+    Target_io_netty_handler_ssl_JdkAlpnSslEngine(final SSLEngine engine,
             final JdkApplicationProtocolNegotiator applicationNegotiator, final boolean isServer) {
 
     }
 }
 
 @TargetClass(className = "io.netty.handler.ssl.SslContext")
-final class Target_com_arangodb_shaded_netty_handler_ssl_SslContext {
+final class Target_io_netty_handler_ssl_SslContext {
 
     @Substitute
     static SslContext newServerContextInternal(SslProvider provider, Provider sslContextProvider,
@@ -212,7 +213,7 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_SslContext {
         if (enableOcsp) {
             throw new IllegalArgumentException("OCSP is not supported with this SslProvider: " + provider);
         }
-        return (SslContext) (Object) new Target_com_arangodb_shaded_netty_handler_ssl_JdkSslServerContext(sslContextProvider,
+        return (SslContext) (Object) new Target_io_netty_handler_ssl_JdkSslServerContext(sslContextProvider,
                 trustCertCollection, trustManagerFactory, keyCertChain, key, keyPassword,
                 keyManagerFactory, ciphers, cipherFilter, apn, sessionCacheSize, sessionTimeout,
                 clientAuth, protocols, startTls, keyStoreType);
@@ -229,7 +230,7 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_SslContext {
         if (enableOcsp) {
             throw new IllegalArgumentException("OCSP is not supported with this SslProvider: " + provider);
         }
-        return (SslContext) (Object) new Target_com_arangodb_shaded_netty_handler_ssl_JdkSslClientContext(sslContextProvider,
+        return (SslContext) (Object) new Target_io_netty_handler_ssl_JdkSslClientContext(sslContextProvider,
                 trustCert, trustManagerFactory, keyCertChain, key, keyPassword,
                 keyManagerFactory, ciphers, cipherFilter, apn, protocols, sessionCacheSize,
                 sessionTimeout, keyStoreType);
@@ -238,24 +239,24 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_SslContext {
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkDefaultApplicationProtocolNegotiator")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator {
+final class Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator {
 
     @Alias
-    public static Target_com_arangodb_shaded_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator INSTANCE;
+    public static Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator INSTANCE;
 }
 
 @TargetClass(className = "io.netty.handler.ssl.JdkSslContext")
-final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslContext {
+final class Target_io_netty_handler_ssl_JdkSslContext {
 
     @Substitute
     static JdkApplicationProtocolNegotiator toNegotiator(ApplicationProtocolConfig config, boolean isServer) {
         if (config == null) {
-            return (JdkApplicationProtocolNegotiator) (Object) Target_com_arangodb_shaded_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator.INSTANCE;
+            return (JdkApplicationProtocolNegotiator) (Object) Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator.INSTANCE;
         }
 
         switch (config.protocol()) {
             case NONE:
-                return (JdkApplicationProtocolNegotiator) (Object) Target_com_arangodb_shaded_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator.INSTANCE;
+                return (JdkApplicationProtocolNegotiator) (Object) Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator.INSTANCE;
             case ALPN:
                 if (isServer) {
                     // GRAAL RC9 bug: https://github.com/oracle/graal/issues/813
@@ -304,7 +305,7 @@ final class Target_com_arangodb_shaded_netty_handler_ssl_JdkSslContext {
  * exception message: https://github.com/eclipse-vertx/vert.x/issues/1657
  */
 @TargetClass(className = "io.netty.bootstrap.AbstractBootstrap")
-final class Target_com_arangodb_shaded_netty_bootstrap_AbstractBootstrap {
+final class Target_io_netty_bootstrap_AbstractBootstrap {
 
     @Alias
     private ChannelFactory channelFactory;
@@ -359,7 +360,7 @@ final class Target_com_arangodb_shaded_netty_bootstrap_AbstractBootstrap {
 }
 
 @TargetClass(className = "io.netty.channel.nio.NioEventLoop")
-final class Target_com_arangodb_shaded_netty_channel_nio_NioEventLoop {
+final class Target_io_netty_channel_nio_NioEventLoop {
 
     @Substitute
     private static Queue<Runnable> newTaskQueue0(int maxPendingTasks) {
@@ -368,7 +369,7 @@ final class Target_com_arangodb_shaded_netty_channel_nio_NioEventLoop {
 }
 
 @TargetClass(className = "io.netty.buffer.AbstractReferenceCountedByteBuf")
-final class Target_com_arangodb_shaded_netty_buffer_AbstractReferenceCountedByteBuf {
+final class Target_io_netty_buffer_AbstractReferenceCountedByteBuf {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FieldOffset, name = "refCnt")
@@ -376,7 +377,7 @@ final class Target_com_arangodb_shaded_netty_buffer_AbstractReferenceCountedByte
 }
 
 @TargetClass(className = "io.netty.util.AbstractReferenceCounted")
-final class Target_com_arangodb_shaded_netty_util_AbstractReferenceCounted {
+final class Target_io_netty_util_AbstractReferenceCounted {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FieldOffset, name = "refCnt")
@@ -384,29 +385,29 @@ final class Target_com_arangodb_shaded_netty_util_AbstractReferenceCounted {
 }
 
 // This class is runtime-initialized by NettyProcessor
-final class Holder_com_arangodb_shaded_netty_util_concurrent_ScheduledFutureTask {
+final class Holder_io_netty_util_concurrent_ScheduledFutureTask {
     static final long START_TIME = System.nanoTime();
 }
 
 @TargetClass(className = "io.netty.util.concurrent.AbstractScheduledEventExecutor")
-final class Target_com_arangodb_shaded_netty_util_concurrent_AbstractScheduledEventExecutor {
+final class Target_io_netty_util_concurrent_AbstractScheduledEventExecutor {
 
     // The START_TIME field is kept but not used.
-    // All the accesses to it have been replaced with Holder_com_arangodb_shaded_netty_util_concurrent_ScheduledFutureTask
+    // All the accesses to it have been replaced with Holder_io_netty_util_concurrent_ScheduledFutureTask
 
     @Substitute
     static long initialNanoTime() {
-        return Holder_com_arangodb_shaded_netty_util_concurrent_ScheduledFutureTask.START_TIME;
+        return Holder_io_netty_util_concurrent_ScheduledFutureTask.START_TIME;
     }
 
     @Substitute
     static long defaultCurrentTimeNanos() {
-        return System.nanoTime() - Holder_com_arangodb_shaded_netty_util_concurrent_ScheduledFutureTask.START_TIME;
+        return System.nanoTime() - Holder_io_netty_util_concurrent_ScheduledFutureTask.START_TIME;
     }
 }
 
 @TargetClass(className = "io.netty.channel.ChannelHandlerMask")
-final class Target_com_arangodb_shaded_netty_channel_ChannelHandlerMask {
+final class Target_io_netty_channel_ChannelHandlerMask {
 
     // Netty tries to self-optimized itself, but it requires lots of reflection. We disable this behavior and avoid
     // misleading DEBUG messages in the log.
@@ -417,7 +418,7 @@ final class Target_com_arangodb_shaded_netty_channel_ChannelHandlerMask {
 }
 
 @TargetClass(className = "io.netty.util.internal.NativeLibraryLoader")
-final class Target_com_arangodb_shaded_netty_util_internal_NativeLibraryLoader {
+final class Target_io_netty_util_internal_NativeLibraryLoader {
 
     // This method can trick GraalVM into thinking that Classloader#defineClass is getting called
     @Substitute
@@ -429,7 +430,7 @@ final class Target_com_arangodb_shaded_netty_util_internal_NativeLibraryLoader {
 }
 
 @TargetClass(className = "io.netty.buffer.EmptyByteBuf")
-final class Target_com_arangodb_shaded_netty_buffer_EmptyByteBuf {
+final class Target_io_netty_buffer_EmptyByteBuf {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.Reset)
@@ -471,7 +472,7 @@ final class Target_com_arangodb_shaded_netty_buffer_EmptyByteBuf {
 }
 
 @TargetClass(className = "io.netty.handler.codec.http.HttpContentDecompressor")
-final class Target_com_arangodb_shaded_netty_handler_codec_http_HttpContentDecompressor {
+final class Target_io_netty_handler_codec_http_HttpContentDecompressor {
 
     @Alias
     private boolean strict;
@@ -500,7 +501,7 @@ final class Target_com_arangodb_shaded_netty_handler_codec_http_HttpContentDecom
 }
 
 @TargetClass(className = "io.netty.handler.codec.http2.DelegatingDecompressorFrameListener")
-final class Target_com_arangodb_shaded_netty_handler_codec_http2_DelegatingDecompressorFrameListener {
+final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListener {
 
     @Alias
     boolean strict;

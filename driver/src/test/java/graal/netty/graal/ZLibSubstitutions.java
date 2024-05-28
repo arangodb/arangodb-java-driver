@@ -1,4 +1,4 @@
-package graal;
+package graal.netty.graal;
 
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;

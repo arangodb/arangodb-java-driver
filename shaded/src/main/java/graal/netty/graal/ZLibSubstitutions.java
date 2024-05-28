@@ -1,4 +1,4 @@
-package graal;
+package graal.netty.graal;
 
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
@@ -8,7 +8,7 @@ import io.netty.handler.codec.compression.*;
  * This substitution avoid having jcraft zlib added to the build
  */
 @TargetClass(className = "io.netty.handler.codec.compression.ZlibCodecFactory")
-final class Target_com_arangodb_shaded_netty_handler_codec_compression_ZlibCodecFactory {
+final class Target_io_netty_handler_codec_compression_ZlibCodecFactory {
 
     @Substitute
     public static ZlibEncoder newZlibEncoder(int compressionLevel) {
