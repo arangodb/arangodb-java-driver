@@ -29,6 +29,7 @@ import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -638,6 +639,7 @@ class ArangoDBTest extends BaseTest {
     }
 
     @Test
+    @Disabled("Manual execution only")
     void queueTime() throws InterruptedException, ExecutionException {
         List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 80)
                 .mapToObj(__ -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))

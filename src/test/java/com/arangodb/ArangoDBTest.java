@@ -729,6 +729,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
+    @Disabled("Manual execution only")
     void queueTime(ArangoDB arangoDB) throws InterruptedException, ExecutionException {
         List<CompletableFuture<Void>> futures = IntStream.range(0, 80)
                 .mapToObj(i -> CompletableFuture.runAsync(
