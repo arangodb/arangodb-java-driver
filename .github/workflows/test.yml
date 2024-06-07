@@ -32,6 +32,9 @@ jobs:
           - docker.io/arangodb/arangodb:3.12
           - docker.io/arangodb/enterprise:3.11
           - docker.io/arangodb/enterprise:3.12
+        starter-docker-img:
+          # support activefailover
+          - docker.io/arangodb/arangodb-starter:0.18.5
         topology:
           - single
           - cluster
@@ -60,6 +63,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
+          STARTER_DOCKER_IMAGE: ${{matrix.starter-docker-img}}
       - name: Info
         run: mvn -version
       - name: Test
@@ -127,6 +131,9 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/enterprise:3.11
+        starter-docker-img:
+          # support activefailover
+          - docker.io/arangodb/arangodb-starter:0.18.5
         topology:
           - single
           - cluster
@@ -150,6 +157,7 @@ jobs:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
+          STARTER_DOCKER_IMAGE: ${{matrix.starter-docker-img}}
       - name: Set JWT
         run: |
           ENDPOINT=$(./docker/find_active_endpoint.sh)

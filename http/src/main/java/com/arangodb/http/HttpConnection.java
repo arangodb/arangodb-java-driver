@@ -75,19 +75,19 @@ public class HttpConnection implements Connection {
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
-    private String auth;
+    private volatile String auth;
     private final int compressionThreshold;
     private final Encoder encoder;
     private final WebClient client;
     private final Integer timeout;
     private final MultiMap commonHeaders = MultiMap.caseInsensitiveMultiMap();
-    private final Vertx vertx;
+    private final Vertx vertxToClose;
 
     private static String getUserAgent() {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    HttpConnection(final ArangoConfig config, final HostDescription host) {
+    HttpConnection(final ArangoConfig config, final HostDescription host, final Vertx existingVertx) {
         super();
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
@@ -108,14 +108,25 @@ public class HttpConnection implements Connection {
         }
         commonHeaders.add("x-arango-driver", USER_AGENT);
         timeout = config.getTimeout();
-        vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
-        vertx.runOnContext(e -> {
-            Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement());
-            auth = new UsernamePasswordCredentials(
-                    config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
-            ).toHttpAuthorization();
-            LOGGER.debug("Created Vert.x context");
-        });
+        auth = new UsernamePasswordCredentials(
+                config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
+        ).toHttpAuthorization();
+
+        Vertx vertxToUse;
+        if (existingVertx != null) {
+            // reuse existing Vert.x
+            vertxToUse = existingVertx;
+            // Vert.x will not be closed when connection is closed
+            vertxToClose = null;
+            LOGGER.debug("Reusing existing Vert.x instance");
+        } else {
+            // create a new Vert.x instance
+            LOGGER.debug("Creating new Vert.x instance");
+            vertxToUse = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
+            vertxToUse.runOnContext(e -> Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement()));
+            // Vert.x be closed when connection is closed
+            vertxToClose = vertxToUse;
+        }
 
         int intTtl = Optional.ofNullable(config.getConnectionTtl())
                 .map(ttl -> Math.toIntExact(ttl / 1000))
@@ -193,7 +204,7 @@ public class HttpConnection implements Connection {
                     });
         }
 
-        client = WebClient.create(vertx, webClientOptions);
+        client = WebClient.create(vertxToUse, webClientOptions);
     }
 
     private static String buildUrl(final InternalRequest request) {
@@ -229,7 +240,10 @@ public class HttpConnection implements Connection {
     @Override
     public void close() {
         client.close();
-        vertx.close();
+        if (vertxToClose != null) {
+            LOGGER.debug("Closing Vert.x instance");
+            vertxToClose.close();
+        }
     }
 
     private HttpMethod requestTypeToHttpMethod(RequestType requestType) {
@@ -254,7 +268,7 @@ public class HttpConnection implements Connection {
     @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
-        vertx.runOnContext(e -> doExecute(request, rfuture));
+        doExecute(request, rfuture);
         return rfuture;
     }
 
@@ -308,7 +322,7 @@ public class HttpConnection implements Connection {
     @Override
     public void setJwt(String jwt) {
         if (jwt != null) {
-            vertx.runOnContext(e -> auth = new TokenCredentials(jwt).toHttpAuthorization());
+            auth = new TokenCredentials(jwt).toHttpAuthorization();
         }
     }
 

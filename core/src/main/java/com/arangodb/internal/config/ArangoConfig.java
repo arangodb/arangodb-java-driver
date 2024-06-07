@@ -7,6 +7,7 @@ import com.arangodb.Protocol;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
+import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.serde.ContentTypeFactory;
@@ -49,6 +50,7 @@ public class ArangoConfig {
     private Compression compression;
     private Integer compressionThreshold;
     private Integer compressionLevel;
+    private ProtocolConfig protocolConfig;
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
@@ -328,5 +330,13 @@ public class ArangoConfig {
 
     public void setCompressionLevel(Integer compressionLevel) {
         this.compressionLevel = compressionLevel;
+    }
+
+    public ProtocolConfig getProtocolConfig() {
+        return protocolConfig;
+    }
+
+    public void setProtocolConfig(ProtocolConfig protocolConfig) {
+        this.protocolConfig = protocolConfig;
     }
 }

@@ -2,6 +2,7 @@ package com.arangodb.http;
 
 import com.arangodb.Protocol;
 import com.arangodb.arch.UnstableApi;
+import com.arangodb.config.ProtocolConfig;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.ConnectionFactory;
@@ -22,8 +23,8 @@ public class HttpProtocolProvider implements ProtocolProvider {
 
     @Override
     @UnstableApi
-    public ConnectionFactory createConnectionFactory() {
-        return new HttpConnectionFactory();
+    public ConnectionFactory createConnectionFactory(@UnstableApi ProtocolConfig config) {
+        return new HttpConnectionFactory((HttpProtocolConfig) config);
     }
 
     @Override

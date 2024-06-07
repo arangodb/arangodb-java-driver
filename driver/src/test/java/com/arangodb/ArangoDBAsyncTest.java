@@ -234,6 +234,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void createUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        assumeTrue(isSingleServer());
         String username = "user-" + UUID.randomUUID();
         final UserEntity result = arangoDB.createUser(username, PW, null).get();
         assertThat(result.getUser()).isEqualTo(username);

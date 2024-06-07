@@ -21,12 +21,15 @@
 package perf;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.BaseJunit5;
 import com.arangodb.Protocol;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -44,6 +47,8 @@ class SimpleSyncPerfTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void getVersion(Protocol protocol) throws InterruptedException {
+        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
+
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
                 .password("test")
