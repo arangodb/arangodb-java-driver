@@ -23,7 +23,7 @@ public class VertxTest extends SingleServerTest {
         adb.shutdown();
 
         assertThat(logs.getLogs())
-                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnectionFactory"))
+                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnection"))
                 .map(ILoggingEvent::getFormattedMessage)
                 .anySatisfy(it -> assertThat(it).contains("Creating new Vert.x instance"))
                 .anySatisfy(it -> assertThat(it).contains("Closing Vert.x instance"));
@@ -45,7 +45,7 @@ public class VertxTest extends SingleServerTest {
         vertx.close();
 
         assertThat(logs.getLogs())
-                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnectionFactory"))
+                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnection"))
                 .map(ILoggingEvent::getFormattedMessage)
                 .anySatisfy(it -> assertThat(it).contains("Reusing existing Vert.x instance"));
     }
@@ -68,7 +68,10 @@ public class VertxTest extends SingleServerTest {
         assertThat(logs.getLogs())
                 .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnectionFactory"))
                 .map(ILoggingEvent::getFormattedMessage)
-                .anySatisfy(it -> assertThat(it).contains("Found an existing Vert.x instance, set reuseVertx=true to reuse it"))
+                .anySatisfy(it -> assertThat(it).contains("Found an existing Vert.x instance, set reuseVertx=true to reuse it"));
+        assertThat(logs.getLogs())
+                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnection"))
+                .map(ILoggingEvent::getFormattedMessage)
                 .anySatisfy(it -> assertThat(it).contains("Creating new Vert.x instance"))
                 .anySatisfy(it -> assertThat(it).contains("Closing Vert.x instance"));
     }

@@ -118,10 +118,10 @@ public class HttpConnection implements Connection {
             vertxToUse = existingVertx;
             // Vert.x will not be closed when connection is closed
             vertxToClose = null;
-            LOGGER.info("Reusing existing Vert.x instance");
+            LOGGER.debug("Reusing existing Vert.x instance");
         } else {
             // create a new Vert.x instance
-            LOGGER.info("Creating new Vert.x instance");
+            LOGGER.debug("Creating new Vert.x instance");
             vertxToUse = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
             vertxToUse.runOnContext(e -> Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement()));
             // Vert.x be closed when connection is closed
@@ -241,6 +241,7 @@ public class HttpConnection implements Connection {
     public void close() {
         client.close();
         if (vertxToClose != null) {
+            LOGGER.debug("Closing Vert.x instance");
             vertxToClose.close();
         }
     }
