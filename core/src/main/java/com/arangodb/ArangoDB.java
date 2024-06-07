@@ -394,8 +394,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             return new ArangoDBImpl(
                     config,
                     protocol,
-                    hostHandler,
-                    connectionFactory
+                    hostHandler
             );
         }
 

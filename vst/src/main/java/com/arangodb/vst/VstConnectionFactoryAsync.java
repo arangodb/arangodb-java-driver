@@ -39,9 +39,4 @@ public class VstConnectionFactoryAsync implements ConnectionFactory {
         return new VstConnectionAsync(config, host);
     }
 
-    @Override
-    public void close() {
-        // no-op
-    }
-
 }

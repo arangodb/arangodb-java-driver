@@ -24,7 +24,6 @@ import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
@@ -42,15 +41,12 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
     private final HostHandler hostHandler;
-    private final ConnectionFactory connectionFactory;
 
     public ArangoDBImpl(final ArangoConfig config,
                         final CommunicationProtocol protocol,
-                        final HostHandler hostHandler,
-                        final ConnectionFactory connectionFactory) {
+                        final HostHandler hostHandler) {
         super(protocol, config);
         this.hostHandler = hostHandler;
-        this.connectionFactory = connectionFactory;
         LOGGER.debug("ArangoDB Client is ready to use");
     }
 
@@ -62,7 +58,6 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
     @Override
     public void shutdown() {
         executorSync().disconnect();
-        connectionFactory.close();
     }
 
     @Override

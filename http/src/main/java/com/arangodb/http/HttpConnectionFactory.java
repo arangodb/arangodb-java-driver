@@ -27,7 +27,6 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,21 +37,16 @@ public class HttpConnectionFactory implements ConnectionFactory {
     private final Logger LOGGER = LoggerFactory.getLogger(HttpConnectionFactory.class);
 
     private final Vertx vertx;
-    private final boolean manageVertx;
 
     public HttpConnectionFactory(@UnstableApi final ArangoConfig config) {
         Optional<Vertx> existingVertx = Optional.ofNullable(Vertx.currentContext()).map(Context::owner);
         if (config.getReuseVertx() && existingVertx.isPresent()) {
-            LOGGER.info("Reusing existing Vert.x instance");
             vertx = existingVertx.get();
-            manageVertx = false;
         } else {
             if (existingVertx.isPresent()) {
                 LOGGER.warn("Found an existing Vert.x instance, set reuseVertx=true to reuse it");
             }
-            LOGGER.info("Creating new Vert.x instance");
-            vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true));
-            manageVertx = true;
+            vertx = null;
         }
     }
 
@@ -60,13 +54,5 @@ public class HttpConnectionFactory implements ConnectionFactory {
     @UnstableApi
     public Connection create(@UnstableApi final ArangoConfig config, final HostDescription host) {
         return new HttpConnection(config, host, vertx);
-    }
-
-    @Override
-    public synchronized void close() {
-        if (manageVertx) {
-            LOGGER.info("Closing Vert.x instance");
-            vertx.close();
-        }
     }
 }

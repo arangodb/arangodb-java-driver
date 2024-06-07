@@ -30,8 +30,4 @@ import com.arangodb.internal.config.ArangoConfig;
 @UsedInApi
 public interface ConnectionFactory {
     Connection create(ArangoConfig config, HostDescription host);
-
-    default void close() {
-        // keep backward compatibility
-    }
 }

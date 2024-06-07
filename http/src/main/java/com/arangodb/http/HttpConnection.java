@@ -37,6 +37,7 @@ import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.JdkSslContext;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
@@ -49,6 +50,8 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +61,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -66,21 +70,24 @@ import java.util.concurrent.TimeUnit;
  */
 @UnstableApi
 public class HttpConnection implements Connection {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
     private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
+    private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private volatile String auth;
     private final int compressionThreshold;
     private final Encoder encoder;
     private final WebClient client;
     private final Integer timeout;
     private final MultiMap commonHeaders = MultiMap.caseInsensitiveMultiMap();
+    private final Vertx vertxToClose;
 
     private static String getUserAgent() {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    HttpConnection(final ArangoConfig config, final HostDescription host, final Vertx vertx) {
+    HttpConnection(final ArangoConfig config, final HostDescription host, final Vertx existingVertx) {
         super();
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
@@ -104,6 +111,22 @@ public class HttpConnection implements Connection {
         auth = new UsernamePasswordCredentials(
                 config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
         ).toHttpAuthorization();
+
+        Vertx vertxToUse;
+        if (existingVertx != null) {
+            // reuse existing Vert.x
+            vertxToUse = existingVertx;
+            // Vert.x will not be closed when connection is closed
+            vertxToClose = null;
+            LOGGER.info("Reusing existing Vert.x instance");
+        } else {
+            // create a new Vert.x instance
+            LOGGER.info("Creating new Vert.x instance");
+            vertxToUse = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
+            vertxToUse.runOnContext(e -> Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement()));
+            // Vert.x be closed when connection is closed
+            vertxToClose = vertxToUse;
+        }
 
         int intTtl = Optional.ofNullable(config.getConnectionTtl())
                 .map(ttl -> Math.toIntExact(ttl / 1000))
@@ -181,7 +204,7 @@ public class HttpConnection implements Connection {
                     });
         }
 
-        client = WebClient.create(vertx, webClientOptions);
+        client = WebClient.create(vertxToUse, webClientOptions);
     }
 
     private static String buildUrl(final InternalRequest request) {
@@ -217,6 +240,9 @@ public class HttpConnection implements Connection {
     @Override
     public void close() {
         client.close();
+        if (vertxToClose != null) {
+            vertxToClose.close();
+        }
     }
 
     private HttpMethod requestTypeToHttpMethod(RequestType requestType) {
