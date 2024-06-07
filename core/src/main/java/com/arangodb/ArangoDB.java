@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
+import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoExecutorSync;
@@ -381,7 +382,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             ProtocolProvider protocolProvider = protocolProvider(config.getProtocol());
             config.setProtocolModule(protocolProvider.protocolModule());
 
-            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config);
+            ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config.getProtocolConfig());
             Collection<Host> hostList = createHostList(connectionFactory);
             HostResolver hostResolver = createHostResolver(hostList, connectionFactory);
             HostHandler hostHandler = createHostHandler(hostResolver);
@@ -681,13 +682,11 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets whether to reuse the Vert.x instance owning the current thread Vert.x context.
-         *
-         * @param reuseVertx whether to reuse the Vert.x instance (default: {@code false})
+         * Configuration specific for {@link com.arangodb.internal.net.ProtocolProvider}.
          * @return {@link ArangoDB.Builder}
          */
-        public Builder reuseVertx(Boolean reuseVertx) {
-            config.setReuseVertx(reuseVertx);
+        public Builder protocolConfig(ProtocolConfig protocolConfig) {
+            config.setProtocolConfig(protocolConfig);
             return this;
         }
 

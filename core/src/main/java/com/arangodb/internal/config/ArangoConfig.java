@@ -7,6 +7,7 @@ import com.arangodb.Protocol;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.HostDescription;
+import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.serde.ContentTypeFactory;
@@ -49,7 +50,7 @@ public class ArangoConfig {
     private Compression compression;
     private Integer compressionThreshold;
     private Integer compressionLevel;
-    private Boolean reuseVertx;
+    private ProtocolConfig protocolConfig;
 
     private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
 
@@ -113,7 +114,6 @@ public class ArangoConfig {
         compression = properties.getCompression().orElse(ArangoDefaults.DEFAULT_COMPRESSION);
         compressionThreshold = properties.getCompressionThreshold().orElse(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
         compressionLevel = properties.getCompressionLevel().orElse(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
-        reuseVertx = properties.getReuseVertx().orElse(ArangoDefaults.DEFAULT_REUSE_VERTX);
     }
 
     public List<HostDescription> getHosts() {
@@ -332,11 +332,11 @@ public class ArangoConfig {
         this.compressionLevel = compressionLevel;
     }
 
-    public Boolean getReuseVertx() {
-        return reuseVertx;
+    public ProtocolConfig getProtocolConfig() {
+        return protocolConfig;
     }
 
-    public void setReuseVertx(Boolean reuseVertx) {
-        this.reuseVertx = reuseVertx;
+    public void setProtocolConfig(ProtocolConfig protocolConfig) {
+        this.protocolConfig = protocolConfig;
     }
 }

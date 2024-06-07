@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import com.arangodb.http.HttpProtocolConfig;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.config.ArangoConfig;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArangoConfigTest {
     @Test
-    void defaultValues() {
+    void ArangoConfigDefaultValues() {
         ArangoConfig cfg = new ArangoConfig();
         assertThat(cfg.getHosts()).isEqualTo(ArangoDefaults.DEFAULT_HOSTS);
         assertThat(cfg.getProtocol()).isEqualTo(Protocol.HTTP2_JSON);
@@ -31,6 +32,13 @@ public class ArangoConfigTest {
         assertThat(cfg.getCompression()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION);
         assertThat(cfg.getCompressionThreshold()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
         assertThat(cfg.getCompressionLevel()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
-        assertThat(cfg.getReuseVertx()).isEqualTo(ArangoDefaults.DEFAULT_REUSE_VERTX);
+        assertThat(cfg.getProtocolConfig()).isNull();
     }
+
+    @Test
+    void HttpProtocolConfigDefaultValues() {
+        HttpProtocolConfig cfg = HttpProtocolConfig.builder().build();
+        assertThat(cfg.getVertx()).isNull();
+    }
+
 }

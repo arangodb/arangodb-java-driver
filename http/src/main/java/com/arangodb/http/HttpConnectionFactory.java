@@ -25,12 +25,9 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
-import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 @UnstableApi
 public class HttpConnectionFactory implements ConnectionFactory {
@@ -38,15 +35,15 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
     private final Vertx vertx;
 
-    public HttpConnectionFactory(@UnstableApi final ArangoConfig config) {
-        Optional<Vertx> existingVertx = Optional.ofNullable(Vertx.currentContext()).map(Context::owner);
-        if (config.getReuseVertx() && existingVertx.isPresent()) {
-            vertx = existingVertx.get();
-        } else {
-            if (existingVertx.isPresent()) {
-                LOGGER.warn("Found an existing Vert.x instance, set reuseVertx=true to reuse it");
-            }
-            vertx = null;
+    public HttpConnectionFactory(@UnstableApi final HttpProtocolConfig config) {
+        HttpProtocolConfig cfg = config != null ? config : HttpProtocolConfig.builder().build();
+        vertx = cfg.getVertx();
+        if (vertx == null && Vertx.currentContext() != null) {
+            LOGGER.warn("Found an existing Vert.x instance, you can reuse it by setting:\n" +
+                    "new ArangoDB.Builder()\n" +
+                    "  // ...\n" +
+                    "  .protocolConfig(HttpProtocolConfig.builder().vertx(Vertx.currentContext().owner()).build())\n" +
+                    "  .build();\n");
         }
     }
 
