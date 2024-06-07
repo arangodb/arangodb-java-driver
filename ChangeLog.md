@@ -6,8 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.7.0] - 2024-06-07
+
+- added configuration option to set Vert.x instance (#558, DE-535)
 - added overloaded variant of `ArangoSerde#deserialize()` accepting `RequestContext` parameter (#555, #554, DE-771) 
 - updated `jackson-dataformat-velocypack` to version `4.3.0`
+- fixed support to Jackson 2.17
+- fixed native image build for GraalVM 22
 
 ## [7.6.0] - 2024-03-22
 
