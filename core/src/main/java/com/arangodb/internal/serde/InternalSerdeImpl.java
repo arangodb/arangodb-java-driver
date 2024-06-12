@@ -176,6 +176,14 @@ final class InternalSerdeImpl implements InternalSerde {
                 RawBytes.class.equals(clazz) ||
                 BaseDocument.class.equals(clazz) ||
                 BaseEdgeDocument.class.equals(clazz) ||
-                clazz.getPackage().getName().startsWith("com.arangodb.entity");
+                isEntityClass(clazz);
+    }
+
+    private boolean isEntityClass(Class<?> clazz) {
+        Package pkg = clazz.getPackage();
+        if (pkg == null) {
+            return false;
+        }
+        return pkg.getName().startsWith("com.arangodb.entity");
     }
 }
