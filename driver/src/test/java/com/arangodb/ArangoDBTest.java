@@ -31,6 +31,7 @@ import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -691,6 +692,36 @@ class ArangoDBTest extends BaseJunit5 {
             assertThat(avg).isEqualTo(0.0);
             assertThat(values).isEmpty();
         }
+    }
 
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void asyncAndLaterResultRetrieval(ArangoDB arangoDB) throws InterruptedException {
+        Request<RawJson> request = Request.<RawJson>builder()
+                .db(ArangoRequestParam.SYSTEM)
+                .method(Request.Method.POST)
+                .path("/_api/cursor")
+                .header("x-arango-async", "store")
+                .body(RawJson.of("{\"query\":\"RETURN SLEEP(0.1) || 5\"}"))
+                .build();
+
+        Response<?> response = arangoDB.execute(request, Void.class);
+        String jobId = response.getHeaders().get("x-arango-async-id");
+        System.out.println(jobId);
+
+        Request<?> request2 = Request.builder()
+                .db(ArangoRequestParam.SYSTEM)
+                .method(Request.Method.PUT)
+                .path("/_api/job/" + jobId)
+                .build();
+
+        Response<ObjectNode> response2 = arangoDB.execute(request2, ObjectNode.class);
+        while (response2.getResponseCode() == 204) {
+            Thread.sleep(50);
+            response2 = arangoDB.execute(request2, ObjectNode.class);
+        }
+
+        assertThat(response2.getResponseCode()).isEqualTo(201);
+        assertThat(response2.getBody().get("result").get(0).numberValue()).isEqualTo(5);
     }
 }
