@@ -1,8 +1,6 @@
 package com.arangodb.internal.config;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.Compression;
-import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.ArangoConfigProperties;
@@ -16,8 +14,6 @@ import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
 import com.fasterxml.jackson.databind.Module;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.util.*;
@@ -51,35 +47,6 @@ public class ArangoConfig {
     private Integer compressionThreshold;
     private Integer compressionLevel;
     private ProtocolConfig protocolConfig;
-
-    private static final Logger LOG = LoggerFactory.getLogger(ArangoConfig.class);
-
-    private static ArangoSerdeProvider serdeProvider(ContentType contentType) {
-        ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
-        ArangoSerdeProvider serdeProvider = null;
-        Iterator<ArangoSerdeProvider> iterator = loader.iterator();
-        while (iterator.hasNext()) {
-            ArangoSerdeProvider p;
-            try {
-                p = iterator.next();
-            } catch (ServiceConfigurationError e) {
-                LOG.warn("ServiceLoader failed to load ArangoSerdeProvider", e);
-                continue;
-            }
-            if (contentType.equals(p.getContentType())) {
-                if (serdeProvider != null) {
-                    throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
-                }
-                serdeProvider = p;
-            }
-        }
-        if (serdeProvider == null) {
-            LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
-                    "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
-            serdeProvider = new InternalSerdeProvider(contentType);
-        }
-        return serdeProvider;
-    }
 
     public ArangoConfig() {
         // load default properties
@@ -272,7 +239,7 @@ public class ArangoConfig {
 
     public ArangoSerde getUserDataSerde() {
         if (userDataSerde == null) {
-            userDataSerde = serdeProvider(ContentTypeFactory.of(getProtocol())).create();
+            userDataSerde = ArangoSerdeProvider.of(ContentTypeFactory.of(getProtocol())).create();
         }
         return userDataSerde;
     }
