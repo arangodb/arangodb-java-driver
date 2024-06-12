@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 public class MemoryAppender extends ListAppender<ILoggingEvent> {
@@ -22,6 +23,7 @@ public class MemoryAppender extends ListAppender<ILoggingEvent> {
     }
 
     public Stream<ILoggingEvent> getLogs() {
-        return list.stream();
+        // avoid concurrent modification exceptions
+        return new ArrayList<>(list).stream();
     }
 }

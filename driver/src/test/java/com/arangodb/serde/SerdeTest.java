@@ -13,8 +13,7 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,4 +68,35 @@ class SerdeTest {
         assertThat(on.get("properties").get("foo").textValue()).isEqualTo("bbb");
     }
 
+    @ParameterizedTest
+    @EnumSource(ContentType.class)
+    void deserializeNull(ContentType type) {
+        InternalSerde s = new InternalSerdeProvider(type).create();
+        Void deser = s.deserialize((byte[]) null, Void.class);
+        assertThat(deser).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(ContentType.class)
+    void deserializeNullUserSerde(ContentType type) {
+        ArangoSerde s = ArangoSerdeProvider.of(type).create();
+        Void deser = s.deserialize(null, Void.class);
+        assertThat(deser).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(ContentType.class)
+    void deserializeEmpty(ContentType type) {
+        InternalSerde s = new InternalSerdeProvider(type).create();
+        Void deser = s.deserialize(new byte[0], Void.class);
+        assertThat(deser).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(ContentType.class)
+    void deserializeEmptyUserSerde(ContentType type) {
+        ArangoSerde s = ArangoSerdeProvider.of(type).create();
+        Void deser = s.deserialize(new byte[0], Void.class);
+        assertThat(deser).isNull();
+    }
 }

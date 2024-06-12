@@ -160,7 +160,7 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public <T> T deserialize(final byte[] content, final Type type) {
-        if (content == null) {
+        if (content == null || content.length == 0) {
             return null;
         }
         try {
@@ -175,6 +175,15 @@ final class InternalSerdeImpl implements InternalSerde {
                 RawJson.class.equals(clazz) ||
                 RawBytes.class.equals(clazz) ||
                 BaseDocument.class.equals(clazz) ||
-                BaseEdgeDocument.class.equals(clazz);
+                BaseEdgeDocument.class.equals(clazz) ||
+                isEntityClass(clazz);
+    }
+
+    private boolean isEntityClass(Class<?> clazz) {
+        Package pkg = clazz.getPackage();
+        if (pkg == null) {
+            return false;
+        }
+        return pkg.getName().startsWith("com.arangodb.entity");
     }
 }

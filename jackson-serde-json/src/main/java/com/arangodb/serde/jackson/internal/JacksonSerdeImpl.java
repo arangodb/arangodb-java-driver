@@ -43,6 +43,9 @@ public final class JacksonSerdeImpl implements JacksonSerde {
     @Override
     public <T> T deserialize(byte[] content, Class<T> type, RequestContext ctx) {
         Objects.requireNonNull(ctx);
+        if (content == null || content.length == 0) {
+            return null;
+        }
         try {
             return mapper.readerFor(mapper.constructType(type))
                     .with(ContextAttributes.getEmpty().withPerCallAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
