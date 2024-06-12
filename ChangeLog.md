@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.7.1] - 2024-06-12
+
+- fixed deserialization of responses with no content (#560)
+
 ## [7.7.0] - 2024-06-07
 
 - added configuration option to set Vert.x instance (#558, DE-535)
