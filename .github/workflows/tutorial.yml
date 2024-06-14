@@ -1,0 +1,32 @@
+name: Tutorial
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ v** ]
+
+jobs:
+  tutorial:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'adopt'
+          cache: maven
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Start Database
+        run: ./docker/start_db.sh
+      - name: Install
+        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+      - name: Execute Maven
+        working-directory: tutorial/maven
+        run: mvn compile exec:java -Dexec.mainClass=FirstProject
+      - name: Execute Gradle
+        working-directory: tutorial/gradle
+        run: gradle run

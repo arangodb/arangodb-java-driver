@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'com.arangodb'
@@ -10,5 +11,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.7.1'
+    implementation 'com.arangodb:arangodb-java-driver:7.8.0-SNAPSHOT'
+}
+
+ext {
+    javaMainClass = "FirstProject"
+}
+
+application {
+    mainClassName = javaMainClass
 }
