@@ -253,6 +253,11 @@ workflows:
                 - 'activefailover'
               starter-docker-img:
                 - 'docker.io/arangodb/arangodb-starter:0.18.5'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
   test-user-language:
     jobs:
       - test:
