@@ -3,7 +3,7 @@
 # ArangoDB Java Driver
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.arangodb/arangodb-java-driver/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.arangodb/arangodb-java-driver)
-[![Actions Status](https://github.com/arangodb/arangodb-java-driver/workflows/Java%20CI/badge.svg)](https://github.com/arangodb/arangodb-java-driver/actions)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/arangodb/arangodb-java-driver/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/arangodb/arangodb-java-driver/tree/main)
 
 The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 
