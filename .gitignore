@@ -6,10 +6,6 @@ target
 *.iml
 .directory
 
-/docker/jwtHeader
-/docker/jwtSecret
-/docker/data
-
 test-results-native
 .flattened-pom.xml
 /resilience-tests/bin/toxiproxy-server-linux-amd64

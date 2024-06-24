@@ -1,0 +1,326 @@
+version: 2.1
+
+parameters:
+  docker-img:
+    type: 'string'
+    default: ""
+
+commands:
+  timeout:
+    parameters:
+      duration:
+        default: '5m'
+        type: 'string'
+    steps:
+      - run:
+          name: Cancel job after <<parameters.duration>>
+          background: true
+          command: |
+            sleep <<parameters.duration>>
+            echo "Cancelling job as <<parameters.duration>> has elapsed"
+            curl --fail -X POST -H "Circle-Token: ${CIRCLE_TOKEN}" "https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel"
+  start-db:
+    parameters:
+      docker-img:
+        type: 'string'
+        default: <<pipeline.parameters.docker-img>>
+      topology:
+        type: 'string'
+        default: 'single'
+      starter-docker-img:
+        type: 'string'
+        default: 'docker.io/arangodb/arangodb-starter:latest'
+      ssl:
+        type: 'string'
+        default: 'false'
+    steps:
+      - run:
+          name: Start Database
+          command: ./docker/start_db.sh
+          environment:
+            DOCKER_IMAGE: <<parameters.docker-img>>
+            STARTER_MODE: <<parameters.topology>>
+            STARTER_DOCKER_IMAGE: <<parameters.starter-docker-img>>
+            SSL: <<parameters.ssl>>
+  mvn-info:
+    parameters:
+      working_directory:
+        type: 'string'
+        default: ''
+    steps:
+      - run:
+          name: mvn version
+          working_directory: <<parameters.working_directory>>
+          command: mvn --version
+      - run:
+          name: mvn dependency:tree
+          working_directory: <<parameters.working_directory>>
+          command: mvn dependency:tree
+  mvn-install:
+    steps:
+      - run:
+          name: mvn install
+          command: mvn install -Dmaven.test.skip=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+  setup_jwt:
+    steps:
+      - run:
+          name: Setup JWT
+          command: |
+            ENDPOINT=$(./docker/find_active_endpoint.sh)
+            echo "Active endpoint: $ENDPOINT"
+            JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
+            echo "Setting JWT: $JWT"
+            sed -i "/arangodb.password/c\arangodb.jwt=$JWT" driver/src/test/resources/arangodb.properties
+  test:
+    parameters:
+      project:
+        type: 'string'
+        default: ''
+      args:
+        type: 'string'
+        default: ''
+    steps:
+      - run:
+          name: Test
+          command: mvn -am -pl <<parameters.project>> test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
+  report:
+    parameters:
+      project:
+        type: 'string'
+        default: ''
+    steps:
+      - run:
+          name: Create reports
+          command: mvn -pl <<parameters.project>> surefire-report:report-only
+      - store_artifacts:
+          path: target/site
+  load_cache:
+    steps:
+      - run:
+          name: Generate Cache Checksum
+          command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
+      - restore_cache:
+          key: maven-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
+  store_cache:
+    steps:
+      - save_cache:
+          key: maven-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
+          paths:
+            - ~/.m2/repository
+  config_gpg:
+    steps:
+      - run:
+          name: Configure GPG
+          command: echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --no-tty --import --yes
+  deploy:
+    steps:
+      - run:
+          name: Deploy to Apache Maven Central
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true deploy
+  release:
+    steps:
+      - run:
+          name: Release to Apache Maven Central
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true nexus-staging:release
+          environment:
+            MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
+
+executors:
+  j11:
+    docker:
+      - image: 'cimg/openjdk:11.0'
+  j17:
+    docker:
+      - image: 'cimg/openjdk:17.0'
+  j21:
+    docker:
+      - image: 'cimg/openjdk:21.0'
+
+jobs:
+  test:
+    parameters:
+      docker-img:
+        type: 'string'
+        default: <<pipeline.parameters.docker-img>>
+      topology:
+        type: 'string'
+        default: 'single'
+      starter-docker-img:
+        type: 'string'
+        default: 'docker.io/arangodb/arangodb-starter:latest'
+      ssl:
+        type: 'string'
+        default: 'false'
+      jdk:
+        type: 'string'
+        default: 'j21'
+      args:
+        type: 'string'
+        default: ''
+      jwt:
+        type: 'boolean'
+        default: false
+    executor: <<parameters.jdk>>
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - start-db:
+          docker-img: <<parameters.docker-img>>
+          topology: <<parameters.topology>>
+          starter-docker-img: <<parameters.starter-docker-img>>
+          ssl: <<parameters.ssl>>
+      - when:
+          condition:
+            equal: [ true, <<parameters.jwt>> ]
+          steps:
+            - setup_jwt
+      - load_cache
+      - mvn-info
+      - test:
+          project: driver
+          args: <<parameters.args>>
+      - report:
+          project: driver
+      - store_cache
+
+  deploy:
+    executor: 'j11'
+    steps:
+      - timeout
+      - checkout
+      - load_cache
+      - mvn-info
+      - config_gpg
+      - deploy
+      - store_cache
+  release:
+    executor: 'j11'
+    steps:
+      - timeout
+      - checkout
+      - load_cache
+      - mvn-info
+      - config_gpg
+      - deploy
+      - release
+      - store_cache
+
+workflows:
+  test-adb-version:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/arangodb:3.12'
+                - 'docker.io/arangodb/enterprise:3.11'
+                - 'docker.io/arangodb/enterprise:3.12'
+              topology:
+                - 'single'
+                - 'cluster'
+              args:
+                - '-DenableSlowTests=true'
+  test-adb-topology:
+    when: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-<<matrix.topology>>
+          matrix:
+            parameters:
+              topology:
+                - 'single'
+                - 'cluster'
+              args:
+                - '-DenableSlowTests=true'
+  test-active-failover:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/enterprise:3.11'
+              topology:
+                - 'activefailover'
+              starter-docker-img:
+                - 'docker.io/arangodb/arangodb-starter:0.18.5'
+  test-user-language:
+    jobs:
+      - test:
+          name: test-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-DargLine="-Duser.language=jp"'
+                - '-DargLine="-Duser.language=tr"'
+  test-jdk:
+    jobs:
+      - test:
+          name: test-<<matrix.jdk>>
+          matrix:
+            parameters:
+              jdk:
+                - 'j17'
+                - 'j21'
+  test-jackson:
+    jobs:
+      - test:
+          name: test-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-Dadb.jackson.version=2.17.1'
+                - '-Dadb.jackson.version=2.16.2'
+                - '-Dadb.jackson.version=2.15.4'
+                - '-Dadb.jackson.version=2.14.3'
+                - '-Dadb.jackson.version=2.13.5'
+                - '-Dadb.jackson.version=2.12.7'
+                - '-Dadb.jackson.version=2.11.4'
+                - '-Dadb.jackson.version=2.10.5'
+  test-ssl:
+    jobs:
+      - test:
+          name: test-ssl
+          matrix:
+            parameters:
+              ssl:
+                - 'true'
+              args:
+                - '-Dgroups=ssl -DSslTest=true'
+  test-jwt:
+    jobs:
+      - test:
+          name: test-jwt-<<matrix.topology>>
+          matrix:
+            parameters:
+              jwt:
+                - true
+              topology:
+                - 'single'
+                - 'cluster'
+  deploy:
+    jobs:
+      - deploy:
+          context: java-release
+          filters:
+            tags:
+              only: /^deploy.*/
+            branches:
+              ignore: /.*/
+  release:
+    jobs:
+      - release:
+          context: java-release
+          filters:
+            tags:
+              only: /^release.*/
+            branches:
+              ignore: /.*/

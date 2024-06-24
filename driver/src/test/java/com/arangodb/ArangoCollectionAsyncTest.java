@@ -755,6 +755,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsDirtyRead(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster()); // skip activefailover
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
