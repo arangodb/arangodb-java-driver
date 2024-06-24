@@ -621,7 +621,7 @@ class ArangoDBTest extends BaseJunit5 {
     void fallbackHost() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
-                .host("not-accessible", 8529).host("127.0.0.1", 8529).build();
+                .host("not-accessible", 8529).host("172.28.0.1", 8529).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }

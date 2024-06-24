@@ -67,10 +67,11 @@ class SslExampleTest {
     @BeforeAll
     static void fetchVersion() throws Exception {
         ArangoDB adb = new ArangoDB.Builder()
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
+                .verifyHost(false)
                 .build();
         version = adb.getVersion();
         adb.shutdown();
