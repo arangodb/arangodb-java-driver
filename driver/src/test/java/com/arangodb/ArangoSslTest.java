@@ -77,10 +77,12 @@ class ArangoSslTest {
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(sc).build();
+                .sslContext(sc)
+                .verifyHost(false)
+                .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
@@ -92,7 +94,7 @@ class ArangoSslTest {
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .useSsl(true)
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
