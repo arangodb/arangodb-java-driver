@@ -162,7 +162,8 @@ jobs:
         default: false
     executor: <<parameters.jdk>>
     steps:
-      - timeout
+      - timeout:
+          duration: '10m'
       - checkout
       - setup_remote_docker
       - start-db:
