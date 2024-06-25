@@ -230,6 +230,26 @@ jobs:
             - ~/.sonar/cache
       - store_cache
 
+  tutorial:
+    executor: 'j21'
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - start-db
+      - load_cache
+      - mvn-info
+      - mvn-install
+      - run:
+          name: Run Maven
+          command: mvn compile exec:java -Dexec.mainClass=FirstProject
+          working_directory: tutorial/maven
+      - run:
+          name: Run Gradle
+          command: gradle run
+          working_directory: tutorial/gradle
+      - store_cache
+
   deploy:
     executor: 'j11'
     steps:
@@ -369,19 +389,23 @@ workflows:
   #                - '-Pjackson-serde'
   #                - '-Pjsonb-serde'
   #                - '-Pplain'
+  #
+  #  sonar:
+  #    when:
+  #      not: <<pipeline.parameters.docker-img>>
+  #    jobs:
+  #      - sonar:
+  #          name: sonar
+  #          matrix:
+  #            parameters:
+  #              docker-img:
+  #                - 'docker.io/arangodb/enterprise:3.11'
+  #              topology:
+  #                - 'cluster'
 
-  sonar:
-    when:
-      not: <<pipeline.parameters.docker-img>>
+  tutorial:
     jobs:
-      - sonar:
-          name: sonar
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'cluster'
+      - tutorial
 
   deploy:
     jobs:
