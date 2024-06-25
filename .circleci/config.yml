@@ -27,9 +27,6 @@ commands:
       topology:
         type: 'string'
         default: 'single'
-      starter-docker-img:
-        type: 'string'
-        default: 'docker.io/arangodb/arangodb-starter:latest'
       ssl:
         type: 'string'
         default: 'false'
@@ -43,7 +40,7 @@ commands:
           environment:
             DOCKER_IMAGE: <<parameters.docker-img>>
             STARTER_MODE: <<parameters.topology>>
-            STARTER_DOCKER_IMAGE: <<parameters.starter-docker-img>>
+            STARTER_DOCKER_IMAGE: 'docker.io/arangodb/arangodb-starter:0.18.5'
             SSL: <<parameters.ssl>>
             COMPRESSION: <<parameters.compression>>
   mvn-info:
@@ -127,9 +124,6 @@ jobs:
       topology:
         type: 'string'
         default: 'single'
-      starter-docker-img:
-        type: 'string'
-        default: 'docker.io/arangodb/arangodb-starter:latest'
       ssl:
         type: 'string'
         default: 'false'
@@ -178,8 +172,7 @@ jobs:
         default: ''
     executor: 'j21'
     steps:
-      - timeout:
-          duration: '5m'
+      - timeout
       - checkout
       - setup_remote_docker
       - start-db
@@ -250,6 +243,32 @@ jobs:
           working_directory: tutorial/gradle
       - store_cache
 
+  resilience-test:
+    executor: 'j21'
+    steps:
+      - timeout:
+          duration: '10m'
+      - checkout
+      - setup_remote_docker
+      - start-db:
+          topology: 'cluster'
+          compression: 'true'
+      - load_cache
+      - mvn-info
+      - run:
+          name: Start Toxiproxy
+          command: ./bin/startProxy.sh
+          working_directory: resilience-tests
+          background: true
+          environment:
+            TOXIPROXY_VERSION: v2.9.0
+      - mvn-install
+      - run:
+          name: Test
+          command: mvn test
+          working_directory: resilience-tests
+      - store_cache
+
   deploy:
     executor: 'j11'
     steps:
@@ -317,8 +336,6 @@ workflows:
   #                - 'docker.io/arangodb/enterprise:3.11'
   #              topology:
   #                - 'activefailover'
-  #              starter-docker-img:
-  #                - 'docker.io/arangodb/arangodb-starter:0.18.5'
   #          filters:
   #            tags:
   #              only: /^v.*/
@@ -402,10 +419,14 @@ workflows:
   #                - 'docker.io/arangodb/enterprise:3.11'
   #              topology:
   #                - 'cluster'
-
-  tutorial:
-    jobs:
-      - tutorial
+  #
+  #  tutorial:
+  #    jobs:
+  #      - tutorial
+  #
+  #  resilience-test:
+  #    jobs:
+  #      - resilience-test
 
   deploy:
     jobs:

@@ -21,7 +21,7 @@ public class AcquireHostListTest extends ClusterTest {
     @MethodSource("protocolProvider")
     void acquireHostList(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .acquireHostList(true)
                 .protocol(protocol)
@@ -44,7 +44,7 @@ public class AcquireHostListTest extends ClusterTest {
     @EnumSource(LoadBalancingStrategy.class)
     void acquireHostListWithLoadBalancingStrategy(LoadBalancingStrategy lb) {
         ArangoDB adb = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .acquireHostList(true)
                 .loadBalancingStrategy(lb)

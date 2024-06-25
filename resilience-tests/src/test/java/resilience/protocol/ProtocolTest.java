@@ -48,7 +48,7 @@ public class ProtocolTest extends TestUtils {
     void shouldUseConfiguredProtocol(Protocol p, String expectedLog) {
         assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .protocol(p)
                 .build();
@@ -64,11 +64,12 @@ public class ProtocolTest extends TestUtils {
     void shouldUseConfiguredProtocolWithTLS(Protocol p, String expectedLog) throws Exception {
         assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .protocol(p)
                 .useSsl(true)
                 .sslContext(sslContext())
+                .verifyHost(false)
                 .build();
         adb.getVersion();
         assertThat(logs.getLogs()).anyMatch(it -> it.getLoggerName().contains(expectedLog));
