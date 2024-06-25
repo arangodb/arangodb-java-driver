@@ -36,55 +36,6 @@ jobs:
       - name: Test
         run: mvn -e --no-transfer-progress -am -pl driver test -Dtest=graalvm.UnicodeUtilsTest -Dsurefire.failIfNoSpecifiedTests=false -DenableSlowTests=true
 
-  integration-tests:
-    if: '! github.event.pull_request.draft'
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        docker-img:
-          - docker.io/arangodb/arangodb:3.12
-        topology:
-          - single
-        java-version:
-          - 17
-          - 21
-        compression:
-          - true
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{matrix.java-version}}
-          distribution: 'adopt'
-          cache: maven
-      - name: Start Database
-        run: ./docker/start_db.sh
-        env:
-          STARTER_MODE: ${{matrix.topology}}
-          DOCKER_IMAGE: ${{matrix.docker-img}}
-          COMPRESSION: ${{matrix.compression}}
-      - name: Info
-        run: mvn -version
-      - name: Install
-        run: mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-      - name: Test internal-serde
-        working-directory: integration-tests
-        run: mvn --no-transfer-progress -Pinternal-serde test
-      - name: Test jackson-serde
-        working-directory: integration-tests
-        run: mvn --no-transfer-progress -Pjackson-serde test
-      - name: Test jsonb-serde
-        working-directory: integration-tests
-        run: mvn --no-transfer-progress -Pjsonb-serde test
-      - name: Test plain
-        working-directory: integration-tests
-        run: mvn --no-transfer-progress -Pplain test
-
   sonar:
     if: '! github.event.pull_request.draft'
     timeout-minutes: 10
