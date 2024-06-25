@@ -163,8 +163,6 @@ jobs:
       - run:
           name: Test
           command: mvn -am -pl driver test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
-      - report:
-          working_directory: driver
       - run:
           name: Create reports
           command: mvn surefire-report:report-only
@@ -198,6 +196,38 @@ jobs:
           working_directory: integration-tests
       - store_artifacts:
           path: integration-tests/target/site
+      - store_cache
+
+  sonar:
+    parameters:
+      docker-img:
+        type: 'string'
+        default: <<pipeline.parameters.docker-img>>
+      topology:
+        type: 'string'
+        default: 'single'
+    executor: 'j21'
+    steps:
+      - timeout:
+          duration: '10m'
+      - checkout
+      - setup_remote_docker
+      - start-db:
+          docker-img: <<parameters.docker-img>>
+          topology: <<parameters.topology>>
+      - load_cache
+      - mvn-info
+      - restore_cache:
+          name: Restore Sonar cache
+          key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
+      - run:
+          name: Build and analyze
+          command: mvn -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true -DenableSlowTests=true
+      - save_cache:
+          name: Save Sonar cache
+          key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
+          paths:
+            - ~/.sonar/cache
       - store_cache
 
   deploy:
@@ -328,17 +358,31 @@ workflows:
   #              topology:
   #                - 'single'
   #                - 'cluster'
-  integration-test:
+  #  integration-test:
+  #    jobs:
+  #      - integration-test:
+  #          name: integration-test-<<matrix.args>>
+  #          matrix:
+  #            parameters:
+  #              args:
+  #                - '-Pinternal-serde'
+  #                - '-Pjackson-serde'
+  #                - '-Pjsonb-serde'
+  #                - '-Pplain'
+
+  sonar:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
-      - integration-test:
-          name: integration-test-<<matrix.args>>
+      - sonar:
+          name: sonar
           matrix:
             parameters:
-              args:
-                - '-Pinternal-serde'
-                - '-Pjackson-serde'
-                - '-Pjsonb-serde'
-                - '-Pplain'
+              docker-img:
+                - 'docker.io/arangodb/enterprise:3.11'
+              topology:
+                - 'cluster'
+
   deploy:
     jobs:
       - deploy:
