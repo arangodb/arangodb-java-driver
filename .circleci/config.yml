@@ -19,6 +19,34 @@ commands:
             sleep <<parameters.duration>>
             echo "Cancelling job as <<parameters.duration>> has elapsed"
             curl --fail -X POST -H "Circle-Token: ${CIRCLE_TOKEN}" "https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/cancel"
+  install-sdk:
+    parameters:
+      sdk:
+        type: 'string'
+        default: 'java'
+      version:
+        type: 'string'
+        default: '21.0.3-tem'
+    steps:
+      - restore_cache:
+          key: sdk-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<<parameters.sdk>>-<<parameters.version>>
+      - run:
+          name: Install SDK
+          command: |
+            curl -s "https://get.sdkman.io" | bash
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+            sdk version
+            sdk install <<parameters.sdk>> <<parameters.version>>
+            sdk default <<parameters.sdk>> <<parameters.version>>
+            sdk use <<parameters.sdk>> <<parameters.version>>
+            echo '### SDKMAN ###' >> "$BASH_ENV"
+            echo 'export SDKMAN_DIR="$HOME/.sdkman"' >> "$BASH_ENV"
+            echo '[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"' >> "$BASH_ENV"
+            source "$BASH_ENV"
+      - save_cache:
+          key: sdk-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<<parameters.sdk>>-<<parameters.version>>
+          paths:
+            - ~/.sdkman
   start-db:
     parameters:
       docker-img:
@@ -269,6 +297,52 @@ jobs:
           working_directory: resilience-tests
       - store_cache
 
+  native:
+    parameters:
+      graalvm-version:
+        type: 'string'
+        default: '21.0.2-graalce'
+      project:
+        type: 'string'
+        default: 'driver'
+      ssl:
+        type: 'string'
+        default: 'false'
+      args:
+        type: 'string'
+        default: ''
+      resource-class:
+        type: 'string'
+        default: '2xlarge'
+    executor: 'j21'
+    resource_class: <<parameters.resource-class>>
+    steps:
+      - timeout:
+          duration: '10m'
+      - checkout
+      - setup_remote_docker
+      - load_cache
+      - mvn-install
+      - install-sdk:
+          sdk: 'java'
+          version: <<parameters.graalvm-version>>
+      - start-db:
+          compression: 'true'
+          ssl: <<parameters.ssl>>
+      - mvn-info:
+          working_directory: <<parameters.project>>
+      - run:
+          name: Test Native
+          command: mvn test -Pnative -P'!arch-test' <<parameters.args>>
+          working_directory: <<parameters.project>>
+      - run:
+          name: Create reports
+          command: mvn surefire-report:report-only
+          working_directory: <<parameters.project>>
+      - store_artifacts:
+          path: <<parameters.project>>/target/site
+      - store_cache
+
   deploy:
     executor: 'j11'
     steps:
@@ -427,6 +501,39 @@ workflows:
   #  resilience-test:
   #    jobs:
   #      - resilience-test
+
+  native:
+    jobs:
+      - native:
+          name: native-<<matrix.resource-class>>-<<matrix.project>>-<<matrix.graalvm-version>>
+          matrix:
+            parameters:
+              graalvm-version:
+                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+              project:
+                - 'driver'
+                - 'integration-tests'
+              resource-class:
+                - '2xlarge'
+                - 'arm.2xlarge'
+
+  native-ssl:
+    jobs:
+      - native:
+          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
+          matrix:
+            parameters:
+              graalvm-version:
+                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+              project:
+                - 'driver'
+                - 'integration-tests'
+              args:
+                - '-Dgroups=ssl -DSslTest=true'
+              ssl:
+                - 'true'
 
   deploy:
     jobs:
