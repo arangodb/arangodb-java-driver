@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   docker-img:
     type: 'string'
-    default: ""
+    default: ''
 
 commands:
   timeout:
@@ -23,10 +23,8 @@ commands:
     parameters:
       sdk:
         type: 'string'
-        default: 'java'
       version:
         type: 'string'
-        default: '21.0.3-tem'
     steps:
       - restore_cache:
           key: sdk-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-<<parameters.sdk>>-<<parameters.version>>
@@ -75,7 +73,7 @@ commands:
     parameters:
       working_directory:
         type: 'string'
-        default: ''
+        default: '.'
     steps:
       - run:
           name: mvn version
@@ -100,6 +98,18 @@ commands:
             JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
             echo "Setting JWT: $JWT"
             sed -i "/arangodb.password/c\arangodb.jwt=$JWT" driver/src/test/resources/arangodb.properties
+  report:
+    parameters:
+      working_directory:
+        type: 'string'
+        default: '.'
+    steps:
+      - run:
+          name: Create reports
+          command: mvn surefire-report:report-only
+          working_directory: <<parameters.working_directory>>
+      - store_artifacts:
+          path: <<parameters.working_directory>>/target/site
   load_cache:
     steps:
       - run:
@@ -166,14 +176,12 @@ jobs:
         default: false
     executor: <<parameters.jdk>>
     steps:
-      - timeout:
-          duration: '10m'
+      - timeout
       - checkout
       - setup_remote_docker
       - start-db:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
-          starter-docker-img: <<parameters.starter-docker-img>>
           ssl: <<parameters.ssl>>
       - when:
           condition:
@@ -185,12 +193,8 @@ jobs:
       - run:
           name: Test
           command: mvn -am -pl driver test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
-      - run:
-          name: Create reports
-          command: mvn surefire-report:report-only
+      - report:
           working_directory: driver
-      - store_artifacts:
-          path: driver/target/site
       - store_cache
 
   integration-test:
@@ -211,31 +215,18 @@ jobs:
           name: Test
           command: mvn test <<parameters.args>>
           working_directory: integration-tests
-      - run:
-          name: Create reports
-          command: mvn surefire-report:report-only
+      - report:
           working_directory: integration-tests
-      - store_artifacts:
-          path: integration-tests/target/site
       - store_cache
 
   sonar:
-    parameters:
-      docker-img:
-        type: 'string'
-        default: <<pipeline.parameters.docker-img>>
-      topology:
-        type: 'string'
-        default: 'single'
     executor: 'j21'
+    resource_class: 'large'
     steps:
-      - timeout:
-          duration: '10m'
+      - timeout
       - checkout
       - setup_remote_docker
-      - start-db:
-          docker-img: <<parameters.docker-img>>
-          topology: <<parameters.topology>>
+      - start-db
       - load_cache
       - mvn-info
       - restore_cache:
@@ -243,7 +234,7 @@ jobs:
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
           name: Build and analyze
-          command: mvn -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true -DenableSlowTests=true
+          command: mvn -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -273,9 +264,9 @@ jobs:
 
   resilience-test:
     executor: 'j21'
+    resource_class: 'large'
     steps:
-      - timeout:
-          duration: '10m'
+      - timeout
       - checkout
       - setup_remote_docker
       - start-db:
@@ -301,10 +292,8 @@ jobs:
     parameters:
       graalvm-version:
         type: 'string'
-        default: '21.0.2-graalce'
       project:
         type: 'string'
-        default: 'driver'
       ssl:
         type: 'string'
         default: 'false'
@@ -313,12 +302,10 @@ jobs:
         default: ''
       resource-class:
         type: 'string'
-        default: '2xlarge'
     executor: 'j21'
     resource_class: <<parameters.resource-class>>
     steps:
-      - timeout:
-          duration: '10m'
+      - timeout
       - checkout
       - setup_remote_docker
       - load_cache
@@ -335,12 +322,8 @@ jobs:
           name: Test Native
           command: mvn test -Pnative -P'!arch-test' <<parameters.args>>
           working_directory: <<parameters.project>>
-      - run:
-          name: Create reports
-          command: mvn surefire-report:report-only
+      - report:
           working_directory: <<parameters.project>>
-      - store_artifacts:
-          path: <<parameters.project>>/target/site
       - store_cache
 
   deploy:
@@ -367,145 +350,142 @@ jobs:
       - store_cache
 
 workflows:
-  #  test-adb-version:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.topology>>-<<matrix.docker-img>>
-  #          matrix:
-  #            parameters:
-  #              docker-img:
-  #                - 'docker.io/arangodb/arangodb:3.11'
-  #                - 'docker.io/arangodb/arangodb:3.12'
-  #                - 'docker.io/arangodb/enterprise:3.11'
-  #                - 'docker.io/arangodb/enterprise:3.12'
-  #              topology:
-  #                - 'single'
-  #                - 'cluster'
-  #              args:
-  #                - '-DenableSlowTests=true'
-  #  test-adb-topology:
-  #    when: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.topology>>
-  #          matrix:
-  #            parameters:
-  #              topology:
-  #                - 'single'
-  #                - 'cluster'
-  #              args:
-  #                - '-DenableSlowTests=true'
-  #  test-active-failover:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.topology>>-<<matrix.docker-img>>
-  #          matrix:
-  #            parameters:
-  #              docker-img:
-  #                - 'docker.io/arangodb/arangodb:3.11'
-  #                - 'docker.io/arangodb/enterprise:3.11'
-  #              topology:
-  #                - 'activefailover'
-  #          filters:
-  #            tags:
-  #              only: /^v.*/
-  #            branches:
-  #              ignore: /.*/
-  #  test-user-language:
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.args>>
-  #          matrix:
-  #            parameters:
-  #              args:
-  #                - '-DargLine="-Duser.language=jp"'
-  #                - '-DargLine="-Duser.language=tr"'
-  #  test-jdk:
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.jdk>>
-  #          matrix:
-  #            parameters:
-  #              jdk:
-  #                - 'j17'
-  #                - 'j21'
-  #  test-jackson:
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.args>>
-  #          matrix:
-  #            parameters:
-  #              args:
-  #                - '-Dadb.jackson.version=2.17.1'
-  #                - '-Dadb.jackson.version=2.16.2'
-  #                - '-Dadb.jackson.version=2.15.4'
-  #                - '-Dadb.jackson.version=2.14.3'
-  #                - '-Dadb.jackson.version=2.13.5'
-  #                - '-Dadb.jackson.version=2.12.7'
-  #                - '-Dadb.jackson.version=2.11.4'
-  #                - '-Dadb.jackson.version=2.10.5'
-  #  test-ssl:
-  #    jobs:
-  #      - test:
-  #          name: test-ssl
-  #          matrix:
-  #            parameters:
-  #              ssl:
-  #                - 'true'
-  #              args:
-  #                - '-Dgroups=ssl -DSslTest=true'
-  #  test-jwt:
-  #    jobs:
-  #      - test:
-  #          name: test-jwt-<<matrix.topology>>
-  #          matrix:
-  #            parameters:
-  #              jwt:
-  #                - true
-  #              topology:
-  #                - 'single'
-  #                - 'cluster'
-  #  integration-test:
-  #    jobs:
-  #      - integration-test:
-  #          name: integration-test-<<matrix.args>>
-  #          matrix:
-  #            parameters:
-  #              args:
-  #                - '-Pinternal-serde'
-  #                - '-Pjackson-serde'
-  #                - '-Pjsonb-serde'
-  #                - '-Pplain'
-  #
-  #  sonar:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - sonar:
-  #          name: sonar
-  #          matrix:
-  #            parameters:
-  #              docker-img:
-  #                - 'docker.io/arangodb/enterprise:3.11'
-  #              topology:
-  #                - 'cluster'
-  #
-  #  tutorial:
-  #    jobs:
-  #      - tutorial
-  #
-  #  resilience-test:
-  #    jobs:
-  #      - resilience-test
-
+  test-adb-version:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-single-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/arangodb:3.12'
+                - 'docker.io/arangodb/enterprise:3.11'
+                - 'docker.io/arangodb/enterprise:3.12'
+              topology:
+                - 'single'
+              args:
+                - '-DenableSlowTests=true'
+      - test:
+          name: test-cluster-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/arangodb:3.12'
+                - 'docker.io/arangodb/enterprise:3.11'
+                - 'docker.io/arangodb/enterprise:3.12'
+              topology:
+                - 'cluster'
+  test-adb-topology:
+    when: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-<<matrix.topology>>
+          matrix:
+            parameters:
+              topology:
+                - 'single'
+                - 'cluster'
+              args:
+                - '-DenableSlowTests=true'
+  test-active-failover:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/enterprise:3.11'
+              topology:
+                - 'activefailover'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+  test-user-language:
+    jobs:
+      - test:
+          name: test-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-DargLine="-Duser.language=jp"'
+                - '-DargLine="-Duser.language=tr"'
+  test-jdk:
+    jobs:
+      - test:
+          name: test-<<matrix.jdk>>
+          matrix:
+            parameters:
+              jdk:
+                - 'j17'
+                - 'j21'
+  test-jackson:
+    jobs:
+      - test:
+          name: test-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-Dadb.jackson.version=2.17.1'
+                - '-Dadb.jackson.version=2.16.2'
+                - '-Dadb.jackson.version=2.15.4'
+                - '-Dadb.jackson.version=2.14.3'
+                - '-Dadb.jackson.version=2.13.5'
+                - '-Dadb.jackson.version=2.12.7'
+                - '-Dadb.jackson.version=2.11.4'
+                - '-Dadb.jackson.version=2.10.5'
+  test-ssl:
+    jobs:
+      - test:
+          name: test-ssl
+          matrix:
+            parameters:
+              ssl:
+                - 'true'
+              args:
+                - '-Dgroups=ssl -DSslTest=true'
+  test-jwt:
+    jobs:
+      - test:
+          name: test-jwt
+          matrix:
+            parameters:
+              jwt:
+                - true
+  integration-test:
+    jobs:
+      - integration-test:
+          name: integration-test-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-Pinternal-serde'
+                - '-Pjackson-serde'
+                - '-Pjsonb-serde'
+                - '-Pplain'
+  sonar:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - sonar:
+          name: sonar
+  tutorial:
+    jobs:
+      - tutorial
+  resilience-test:
+    jobs:
+      - resilience-test
   native:
     jobs:
       - native:
-          name: native-<<matrix.resource-class>>-<<matrix.project>>-<<matrix.graalvm-version>>
+          name: native-<<matrix.project>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               graalvm-version:
@@ -516,10 +496,23 @@ workflows:
                 - 'integration-tests'
               resource-class:
                 - '2xlarge'
+      - native:
+          name: native-arm-<<matrix.project>>-<<matrix.graalvm-version>>
+          matrix:
+            parameters:
+              graalvm-version:
+                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+              project:
+                - 'driver'
+                - 'integration-tests'
+              resource-class:
                 - 'arm.2xlarge'
-
-  native-ssl:
-    jobs:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - native:
           name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
           matrix:
@@ -534,7 +527,13 @@ workflows:
                 - '-Dgroups=ssl -DSslTest=true'
               ssl:
                 - 'true'
-
+              resource-class:
+                - '2xlarge'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
   deploy:
     jobs:
       - deploy:
