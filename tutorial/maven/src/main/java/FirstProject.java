@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class FirstProject {
     private static final ArangoDB arangoDB = new ArangoDB.Builder()
-            .host("localhost", 8529)
+            .host("172.28.0.1", 8529)
             .password("test")
             .build();
 

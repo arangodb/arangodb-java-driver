@@ -59,7 +59,7 @@ class HostHandlerTest {
         }
     };
 
-    private static final Host HOST_0 = new HostImpl(mockCP, new HostDescription("127.0.0.1", 8529));
+    private static final Host HOST_0 = new HostImpl(mockCP, new HostDescription("172.28.0.1", 8529));
     private static final HostResolver SINGLE_HOST = () -> {
         HostSet set = new HostSet(Collections.emptyList());
         set.addHost(HOST_0);

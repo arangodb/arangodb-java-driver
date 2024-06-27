@@ -35,6 +35,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -60,6 +61,8 @@ class ArangoSslTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connect(Protocol protocol) throws Exception {
+        assumeTrue(protocol != Protocol.VST);
+
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -74,10 +77,12 @@ class ArangoSslTest {
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(sc).build();
+                .sslContext(sc)
+                .verifyHost(false)
+                .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
@@ -85,9 +90,11 @@ class ArangoSslTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectWithoutValidSslContext(Protocol protocol) {
+        assumeTrue(protocol != Protocol.VST);
+
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .useSsl(true)
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);

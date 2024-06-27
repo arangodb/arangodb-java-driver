@@ -609,7 +609,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     void fallbackHost() throws ExecutionException, InterruptedException {
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
-                .host("not-accessible", 8529).host("127.0.0.1", 8529)
+                .host("not-accessible", 8529).host("172.28.0.1", 8529)
                 .build()
                 .async();
         final ArangoDBVersion version = arangoDB.getVersion().get();

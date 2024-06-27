@@ -27,6 +27,7 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,15 +68,17 @@ class SslExampleTest {
     @BeforeAll
     static void fetchVersion() throws Exception {
         ArangoDB adb = new ArangoDB.Builder()
-                .host("localhost", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
+                .verifyHost(false)
                 .build();
         version = adb.getVersion();
         adb.shutdown();
     }
 
+    @Disabled("Only local execution, in CircleCI port 8529 exposed to localhost")
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connect(Protocol protocol) throws Exception {
@@ -96,7 +99,7 @@ class SslExampleTest {
     void noopHostnameVerifier(Protocol protocol) throws Exception {
         assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
@@ -112,7 +115,7 @@ class SslExampleTest {
     void hostnameVerifierFailure(Protocol protocol) throws Exception {
         assumeTrue(protocol != Protocol.VST, "VST does not support hostname verification");
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
+                .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
                 .sslContext(createSslContext())
