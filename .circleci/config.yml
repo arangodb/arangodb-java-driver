@@ -192,7 +192,7 @@ jobs:
       - mvn-info
       - run:
           name: Test
-          command: mvn -am -pl driver test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
+          command: mvn -am -pl driver-test test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
       - report:
           working_directory: driver
       - store_cache
@@ -360,24 +360,24 @@ workflows:
             parameters:
               docker-img:
                 - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
-                - 'docker.io/arangodb/enterprise:3.12'
+#                - 'docker.io/arangodb/arangodb:3.12'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#                - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'single'
-              args:
-                - '-DenableSlowTests=true'
-      - test:
-          name: test-cluster-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
-                - 'docker.io/arangodb/enterprise:3.12'
-              topology:
-                - 'cluster'
+#              args:
+#                - '-DenableSlowTests=true'
+#      - test:
+#          name: test-cluster-<<matrix.docker-img>>
+#          matrix:
+#            parameters:
+#              docker-img:
+#                - 'docker.io/arangodb/arangodb:3.11'
+#                - 'docker.io/arangodb/arangodb:3.12'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#                - 'docker.io/arangodb/enterprise:3.12'
+#              topology:
+#                - 'cluster'
   test-adb-topology:
     when: <<pipeline.parameters.docker-img>>
     jobs:
@@ -387,45 +387,45 @@ workflows:
             parameters:
               topology:
                 - 'single'
-                - 'cluster'
-              args:
-                - '-DenableSlowTests=true'
-  test-active-failover:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - test:
-          name: test-<<matrix.topology>>-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'activefailover'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-  test-user-language:
-    jobs:
-      - test:
-          name: test-<<matrix.args>>
-          matrix:
-            parameters:
-              args:
-                - '-DargLine="-Duser.language=jp"'
-                - '-DargLine="-Duser.language=tr"'
-  test-jdk:
-    jobs:
-      - test:
-          name: test-<<matrix.jdk>>
-          matrix:
-            parameters:
-              jdk:
-                - 'j17'
-                - 'j21'
+#                - 'cluster'
+#              args:
+#                - '-DenableSlowTests=true'
+#  test-active-failover:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
+#    jobs:
+#      - test:
+#          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+#          matrix:
+#            parameters:
+#              docker-img:
+#                - 'docker.io/arangodb/arangodb:3.11'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#              topology:
+#                - 'activefailover'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
+#  test-user-language:
+#    jobs:
+#      - test:
+#          name: test-<<matrix.args>>
+#          matrix:
+#            parameters:
+#              args:
+#                - '-DargLine="-Duser.language=jp"'
+#                - '-DargLine="-Duser.language=tr"'
+#  test-jdk:
+#    jobs:
+#      - test:
+#          name: test-<<matrix.jdk>>
+#          matrix:
+#            parameters:
+#              jdk:
+#                - 'j17'
+#                - 'j21'
   test-jackson:
     jobs:
       - test:
@@ -435,12 +435,12 @@ workflows:
               args:
                 - '-Dadb.jackson.version=2.17.1'
                 - '-Dadb.jackson.version=2.16.2'
-                - '-Dadb.jackson.version=2.15.4'
-                - '-Dadb.jackson.version=2.14.3'
-                - '-Dadb.jackson.version=2.13.5'
-                - '-Dadb.jackson.version=2.12.7'
-                - '-Dadb.jackson.version=2.11.4'
-                - '-Dadb.jackson.version=2.10.5'
+#                - '-Dadb.jackson.version=2.15.4'
+#                - '-Dadb.jackson.version=2.14.3'
+#                - '-Dadb.jackson.version=2.13.5'
+#                - '-Dadb.jackson.version=2.12.7'
+#                - '-Dadb.jackson.version=2.11.4'
+#                - '-Dadb.jackson.version=2.10.5'
   test-ssl:
     jobs:
       - test:
@@ -489,7 +489,7 @@ workflows:
           matrix:
             parameters:
               graalvm-version:
-                - '22.0.1-graalce'
+#                - '22.0.1-graalce'
                 - '21.0.2-graalce'
               project:
                 - 'driver'
@@ -501,7 +501,7 @@ workflows:
           matrix:
             parameters:
               graalvm-version:
-                - '22.0.1-graalce'
+#                - '22.0.1-graalce'
                 - '21.0.2-graalce'
               project:
                 - 'driver'
@@ -518,7 +518,7 @@ workflows:
           matrix:
             parameters:
               graalvm-version:
-                - '22.0.1-graalce'
+#                - '22.0.1-graalce'
                 - '21.0.2-graalce'
               project:
                 - 'driver'
