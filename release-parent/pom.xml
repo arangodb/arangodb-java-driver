@@ -15,6 +15,9 @@
     <description>Parent for releasable modules</description>
 
     <properties>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>arangodb-1</sonar.organization>
+        <sonar.test.exclusions>src/test/**/*</sonar.test.exclusions>
         <moduleName/>
     </properties>
 
