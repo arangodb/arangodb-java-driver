@@ -255,7 +255,7 @@ jobs:
           command: mvn -Pstatic-code-analysis -am -pl test-functional-run test
       - run:
           name: Analyze
-          command: mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          command: mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
