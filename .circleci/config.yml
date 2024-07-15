@@ -205,7 +205,7 @@ jobs:
       - setup_remote_docker
       - start-db:
           docker-img: <<parameters.docker-img>>
-          ssl: true
+          ssl: 'true'
       - load_cache
       - mvn-info
       - run:
