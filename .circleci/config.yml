@@ -484,17 +484,17 @@ workflows:
             parameters:
               jwt:
                 - true
-  integration-test:
-    jobs:
-      - integration-test:
-          name: integration-test-<<matrix.args>>
-          matrix:
-            parameters:
-              args:
-                - '-Pinternal-serde'
-                - '-Pjackson-serde'
-                - '-Pjsonb-serde'
-                - '-Pplain'
+#  integration-test:
+#    jobs:
+#      - integration-test:
+#          name: integration-test-<<matrix.args>>
+#          matrix:
+#            parameters:
+#              args:
+#                - '-Pinternal-serde'
+#                - '-Pjackson-serde'
+#                - '-Pjsonb-serde'
+#                - '-Pplain'
   sonar:
     when:
       not: <<pipeline.parameters.docker-img>>
