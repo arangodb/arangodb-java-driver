@@ -16,10 +16,6 @@ STARTER_MODE=activefailover ./docker/start_db.sh
 ```
 
 
-## GH Actions
-Check results [here](https://github.com/arangodb/arangodb-java-driver/actions).
-
-
 ## SonarCloud
 Check results [here](https://sonarcloud.io/project/overview?id=arangodb_arangodb-java-driver).
 
@@ -34,9 +30,10 @@ mvn versions:display-plugin-updates
 ## Code Analysis
 Analyze (Spotbugs and JaCoCo):
 ```
-mvn prepare-package -Pstatic-code-analysis
+mvn -Pstatic-code-analysis -am -pl test-functional-run test
+mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl core verify
 ```
-Report: [link](driver/target/site/jacoco/index.html)
+Report: [link](core/target/site/jacoco/index.html)
 
 
 ## update native image reflection configuration
@@ -70,7 +67,7 @@ mvn -Pnative -P'!arch-test' test
 
 ## test ssl
 ```shell
-mvn test -Dsurefire.failIfNoSpecifiedTests=false -Dtest=com.arangodb.ArangoSslTest -DSslTest=true
+mvn test -Dsurefire.failIfNoSpecifiedTests=false -am -pl ssl-test
 ```
 
 

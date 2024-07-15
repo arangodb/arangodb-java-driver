@@ -97,7 +97,7 @@ commands:
             echo "Active endpoint: $ENDPOINT"
             JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
             echo "Setting JWT: $JWT"
-            sed -i "/arangodb.password/c\arangodb.jwt=$JWT" driver/src/test/resources/arangodb.properties
+            sed -i "/arangodb.password/c\arangodb.jwt=$JWT" test-functional/src/test/resources/arangodb.properties
   report:
     parameters:
       working_directory:
@@ -162,9 +162,6 @@ jobs:
       topology:
         type: 'string'
         default: 'single'
-      ssl:
-        type: 'string'
-        default: 'false'
       jdk:
         type: 'string'
         default: 'j21'
@@ -182,7 +179,6 @@ jobs:
       - start-db:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
-          ssl: <<parameters.ssl>>
       - when:
           condition:
             equal: [ true, <<parameters.jwt>> ]
@@ -192,32 +188,54 @@ jobs:
       - mvn-info
       - run:
           name: Test
-          command: mvn -am -pl driver-test test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
+          command: mvn -am -pl test-functional-run test <<parameters.args>>
       - report:
           working_directory: driver
       - store_cache
 
-  integration-test:
+  test-ssl:
     parameters:
-      args:
+      docker-img:
         type: 'string'
-        default: ''
+        default: <<pipeline.parameters.docker-img>>
     executor: 'j21'
     steps:
       - timeout
       - checkout
       - setup_remote_docker
-      - start-db
+      - start-db:
+          docker-img: <<parameters.docker-img>>
+          ssl: true
       - load_cache
       - mvn-info
-      - mvn-install
       - run:
           name: Test
-          command: mvn test <<parameters.args>>
-          working_directory: integration-tests
+          command: mvn -am -pl test-ssl test
       - report:
-          working_directory: integration-tests
+          working_directory: test-ssl
       - store_cache
+
+#  integration-test:
+#    parameters:
+#      args:
+#        type: 'string'
+#        default: ''
+#    executor: 'j21'
+#    steps:
+#      - timeout
+#      - checkout
+#      - setup_remote_docker
+#      - start-db
+#      - load_cache
+#      - mvn-info
+#      - mvn-install
+#      - run:
+#          name: Test
+#          command: mvn test <<parameters.args>>
+#          working_directory: integration-tests
+#      - report:
+#          working_directory: integration-tests
+#      - store_cache
 
   sonar:
     executor: 'j21'
@@ -233,8 +251,11 @@ jobs:
           name: Restore Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
-          name: Build and analyze
-          command: mvn -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true
+          name: Test
+          command: mvn -Pstatic-code-analysis -am -pl test-functional-run test
+      - run:
+          name: Analyze
+          command: mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -287,6 +308,16 @@ jobs:
           command: mvn test
           working_directory: resilience-tests
       - store_cache
+
+
+
+
+
+
+
+
+
+
 
   native:
     parameters:
@@ -443,14 +474,8 @@ workflows:
 #                - '-Dadb.jackson.version=2.10.5'
   test-ssl:
     jobs:
-      - test:
+      - test-ssl:
           name: test-ssl
-          matrix:
-            parameters:
-              ssl:
-                - 'true'
-              args:
-                - '-Dgroups=ssl -DSslTest=true'
   test-jwt:
     jobs:
       - test:
@@ -513,27 +538,27 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-      - native:
-          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
-          matrix:
-            parameters:
-              graalvm-version:
-#                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
-              args:
-                - '-Dgroups=ssl -DSslTest=true'
-              ssl:
-                - 'true'
-              resource-class:
-                - '2xlarge'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#      - native:
+#          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
+#          matrix:
+#            parameters:
+#              graalvm-version:
+##                - '22.0.1-graalce'
+#                - '21.0.2-graalce'
+#              project:
+#                - 'driver'
+#                - 'integration-tests'
+#              args:
+#                - '-Dgroups=ssl -DSslTest=true'
+#              ssl:
+#                - 'true'
+#              resource-class:
+#                - '2xlarge'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
   deploy:
     jobs:
       - deploy:
