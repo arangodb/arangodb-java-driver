@@ -23,7 +23,7 @@ import static org.awaitility.Awaitility.await;
  * @author Michele Rastelli
  */
 class TtlTest extends SingleServerTest {
-    private static Map<Class<?>, Level> logLevels = new HashMap<>();
+    private static final Map<Class<?>, Level> logLevels = new HashMap<>();
 
     static {
         logLevels.put(LoggingHandler.class, Level.DEBUG);

@@ -33,44 +33,49 @@ Analyze (Spotbugs and JaCoCo):
 mvn -Pstatic-code-analysis -am -pl test-functional-run test
 mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl core verify
 ```
-Report: [link](core/target/site/jacoco/index.html)
+Reports:
+- [core](core/target/site/jacoco/index.html)
+- [jackson-serde-json](jackson-serde-json/target/site/jacoco/index.html)
+- [jackson-serde-vpack](jackson-serde-vpack/target/site/jacoco/index.html)
+- [http-protocol](http-protocol/target/site/jacoco/index.html)
+- [vst-protocol](vst-protocol/target/site/jacoco/index.html)
 
 
 ## update native image reflection configuration
 
-To generate reflection configuration run [NativeImageHelper](./driver/src/test/java/helper/NativeImageHelper.java) and 
+To generate reflection configuration run [NativeImageHelper](./test-native/src/test/java/helper/NativeImageHelper.java) and 
 copy the generated json to 
 [reflect-config.json](./driver/src/main/resources/META-INF/native-image/com.arangodb/arangodb-java-driver/reflect-config.json).
 
-
+````
 ## test
 ```shell
 mvn test
 ```
-
+````
 
 ## test native
 ```shell
-mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-cd driver
-mvn -Pnative -P'!arch-test' test
+mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl shaded,test-functional
+cd test-native
+mvn test
 ```
 
 
 ## test native shaded
 ```shell
-mvn --no-transfer-progress install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-cd integration-tests
-mvn -Pnative -P'!arch-test' test
+mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl shaded,test-functional
+cd test-native
+mvn test -Dshaded
 ```
 
 
 ## test ssl
 ```shell
-mvn test -Dsurefire.failIfNoSpecifiedTests=false -am -pl ssl-test
+mvn test -am -pl test-ssl
 ```
 
-
+````
 ## integration tests
 ```shell
 mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
@@ -88,3 +93,4 @@ mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
 cd resilience-tests
 mvn test
 ```
+````

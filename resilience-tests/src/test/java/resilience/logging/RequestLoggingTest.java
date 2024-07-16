@@ -1,8 +1,10 @@
 package resilience.logging;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
+import com.arangodb.internal.net.Communication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,10 +15,13 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class RequestLoggingTest extends SingleServerTest {
     private final static ObjectMapper mapper = new ObjectMapper();
+
+    public RequestLoggingTest() {
+        super(Collections.singletonMap(Communication.class, Level.DEBUG));
+    }
 
     @ParameterizedTest
     @MethodSource("protocolProvider")
@@ -30,7 +35,7 @@ public class RequestLoggingTest extends SingleServerTest {
         adb.db().query("RETURN \"hello\"", String.class).next();
 
         assertThat(logs.getLogs())
-                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.internal.net.Communication"))
+                .filteredOn(it -> it.getLoggerName().equals(Communication.class.getName()))
                 .map(ILoggingEvent::getFormattedMessage)
                 .anySatisfy(it -> {
                     assertThat(it).contains("Send Request");

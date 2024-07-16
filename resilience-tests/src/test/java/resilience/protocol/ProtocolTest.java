@@ -1,7 +1,11 @@
 package resilience.protocol;
 
+import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
+import com.arangodb.vst.internal.VstConnection;
+import io.netty.handler.codec.http2.Http2FrameLogger;
+import io.netty.handler.logging.LoggingHandler;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +18,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,8 +28,19 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 public class ProtocolTest extends TestUtils {
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
+    private static final Map<Class<?>, Level> logLevels = new HashMap<>();
+
+    static {
+        logLevels.put(VstConnection.class, Level.DEBUG);
+        logLevels.put(LoggingHandler.class, Level.DEBUG);
+        logLevels.put(Http2FrameLogger.class, Level.DEBUG);
+    }
 
     private MemoryAppender logs;
+
+    public ProtocolTest() {
+        super(logLevels);
+    }
 
     @BeforeEach
     void init() {
@@ -76,7 +93,7 @@ public class ProtocolTest extends TestUtils {
         adb.shutdown();
     }
 
-    private SSLContext sslContext() throws Exception{
+    private SSLContext sslContext() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
