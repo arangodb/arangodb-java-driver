@@ -322,7 +322,7 @@ jobs:
       - load_cache
       - run:
           name: mvn install
-          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl shaded,test-functional
+          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl shaded,test-functional
       - install-sdk:
           sdk: 'java'
           version: <<parameters.graalvm-version>>
