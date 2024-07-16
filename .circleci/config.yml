@@ -88,6 +88,9 @@ commands:
       - run:
           name: mvn install
           command: mvn install -DnoTests -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+      - run:
+          name: mvn install test-functional
+          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl test-functional
   setup_jwt:
     steps:
       - run:
@@ -313,12 +316,9 @@ jobs:
         type: 'string'
       project:
         type: 'string'
-      ssl:
+      shaded:
         type: 'string'
         default: 'false'
-      args:
-        type: 'string'
-        default: ''
       resource-class:
         type: 'string'
     executor: 'j21'
@@ -339,7 +339,7 @@ jobs:
           working_directory: <<parameters.project>>
       - run:
           name: Test Native
-          command: mvn test -Pnative -P'!arch-test' <<parameters.args>>
+          command: mvn test -Dshaded=<<parameters.shaded>>
           working_directory: <<parameters.project>>
       - report:
           working_directory: <<parameters.project>>
@@ -498,27 +498,27 @@ workflows:
   native:
     jobs:
       - native:
-          name: native-<<matrix.project>>-<<matrix.graalvm-version>>
+          name: native-shaded=<<matrix.shaded>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               graalvm-version:
 #                - '22.0.1-graalce'
                 - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
+              shaded:
+                - 'true'
+                - 'false'
               resource-class:
                 - '2xlarge'
       - native:
-          name: native-arm-<<matrix.project>>-<<matrix.graalvm-version>>
+          name: native-arm-shaded=<<matrix.shaded>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               graalvm-version:
 #                - '22.0.1-graalce'
                 - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
+              shaded:
+                - 'true'
+                - 'false'
               resource-class:
                 - 'arm.2xlarge'
           filters:
