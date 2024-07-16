@@ -1,17 +1,16 @@
 package resilience.compression;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arangodb.ArangoDB;
 import com.arangodb.Compression;
 import com.arangodb.Protocol;
+import io.netty.handler.codec.http2.Http2FrameLogger;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,6 +21,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Michele Rastelli
  */
 class CompressionTest extends ClusterTest {
+
+    CompressionTest() {
+        super(Collections.singletonMap(Http2FrameLogger.class, Level.DEBUG));
+    }
 
     @ParameterizedTest
     @MethodSource("protocolProvider")

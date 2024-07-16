@@ -302,22 +302,10 @@ jobs:
           background: true
           environment:
             TOXIPROXY_VERSION: v2.9.0
-      - mvn-install
       - run:
           name: Test
-          command: mvn test
-          working_directory: resilience-tests
+          command: mvn -am -pl resilience-tests test
       - store_cache
-
-
-
-
-
-
-
-
-
-
 
   native:
     parameters:

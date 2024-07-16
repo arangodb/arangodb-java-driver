@@ -36,6 +36,7 @@
                 <module>test-native</module>
                 <module>test-non-functional</module>
                 <module>test-functional-run</module>
+                <module>resilience-tests</module>
             </modules>
         </profile>
     </profiles>

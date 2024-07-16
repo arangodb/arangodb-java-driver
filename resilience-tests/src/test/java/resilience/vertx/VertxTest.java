@@ -3,16 +3,22 @@ package resilience.vertx;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arangodb.ArangoDB;
+import com.arangodb.http.HttpConnection;
 import com.arangodb.http.HttpProtocolConfig;
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.Test;
 import resilience.SingleServerTest;
 
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VertxTest extends SingleServerTest {
+
+    public VertxTest() {
+        super(Collections.singletonMap(HttpConnection.class, Level.DEBUG));
+    }
 
     @Test
     void managedVertx() {

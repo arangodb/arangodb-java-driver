@@ -1,5 +1,6 @@
 package resilience;
 
+import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.Protocol;
@@ -7,14 +8,12 @@ import com.arangodb.Request;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
@@ -45,6 +44,13 @@ public abstract class ClusterTest extends TestUtils {
         for (Endpoint endpoint : endpoints) {
             endpoint.getProxy().delete();
         }
+    }
+
+    public ClusterTest() {
+    }
+
+    public ClusterTest(Map<Class<?>, Level> logLevels) {
+        super(logLevels);
     }
 
     @BeforeEach

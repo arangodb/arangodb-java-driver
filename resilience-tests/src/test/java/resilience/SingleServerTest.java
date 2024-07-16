@@ -1,5 +1,6 @@
 package resilience;
 
+import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.Protocol;
@@ -11,12 +12,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Tag("singleServer")
 public abstract class SingleServerTest extends TestUtils {
 
     private static final Endpoint endpoint = new Endpoint("singleServer", HOST, 18529, UPSTREAM_GW + ":8529");
+
+    public SingleServerTest() {
+    }
+
+    public SingleServerTest(Map<Class<?>, Level> logLevels) {
+        super(logLevels);
+    }
 
     @BeforeAll
     static void beforeAll() throws IOException {

@@ -21,9 +21,17 @@
 package resilience;
 
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.ArangoDBVersion;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.LoggerFactory;
 import resilience.utils.MemoryAppender;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Michele Rastelli
@@ -39,6 +47,13 @@ public abstract class TestUtils {
             .password(PASSWORD)
             .build()
             .getVersion();
+
+    public TestUtils() {
+    }
+
+    public TestUtils(Map<Class<?>, Level> logLevels) {
+        this.logLevels.putAll(logLevels);
+    }
 
     protected static boolean isAtLeastVersion(final int major, final int minor) {
         return isAtLeastVersion(major, minor, 0);
@@ -93,6 +108,26 @@ public abstract class TestUtils {
         }
 
         return Integer.compare(patch, otherPatch);
+    }
+
+    private final Map<Class<?>, Level> logLevels = new HashMap<>();
+    private final Map<Class<?>, Level> originalLogLevels = new HashMap<>();
+
+    @BeforeEach
+    void setLogLevels() {
+        logLevels.forEach((clazz, level) -> {
+            Logger logger = (Logger) LoggerFactory.getLogger(clazz);
+            originalLogLevels.put(clazz, logger.getLevel());
+            logger.setLevel(level);
+        });
+    }
+
+    @AfterEach
+    void resetLogLevels() {
+        originalLogLevels.forEach((clazz, level) -> {
+            Logger logger = (Logger) LoggerFactory.getLogger(clazz);
+            logger.setLevel(level);
+        });
     }
 
 }
