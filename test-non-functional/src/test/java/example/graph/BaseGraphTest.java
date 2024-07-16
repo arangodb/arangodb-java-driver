@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.example.graph;
+package example.graph;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;

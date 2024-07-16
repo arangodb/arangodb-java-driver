@@ -1,6 +1,9 @@
-package com.arangodb.example;
+package example;
 
-import com.arangodb.*;
+import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoCursor;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;

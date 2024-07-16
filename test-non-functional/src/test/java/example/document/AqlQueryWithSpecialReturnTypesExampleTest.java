@@ -18,13 +18,13 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.example.document;
+package example.document;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.example.ExampleBase;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import example.ExampleBase;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
