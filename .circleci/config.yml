@@ -328,7 +328,6 @@ jobs:
           version: <<parameters.graalvm-version>>
       - start-db:
           compression: 'true'
-          ssl: <<parameters.ssl>>
       - mvn-info:
           working_directory: test-native
       - run:
