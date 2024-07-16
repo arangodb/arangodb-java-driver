@@ -9,22 +9,36 @@
     <inceptionYear>2016</inceptionYear>
     <modules>
         <module>release-parent</module>
-        <module>test-parent</module>
         <module>core</module>
         <module>driver</module>
-        <module>integration-tests</module>
         <module>shaded</module>
         <module>jackson-serde-json</module>
         <module>jackson-serde-vpack</module>
         <module>http-protocol</module>
         <module>vst-protocol</module>
-        <module>test-ssl</module>
-        <module>test-functional</module>
-        <module>test-native</module>
-        <module>test-non-functional</module>
-        <module>test-functional-run</module>
     </modules>
     <packaging>pom</packaging>
+
+    <profiles>
+        <profile>
+            <id>tests</id>
+            <activation>
+                <property>
+                    <name>noTests</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>test-parent</module>
+                <module>integration-tests</module>
+                <module>test-ssl</module>
+                <module>test-functional</module>
+                <module>test-native</module>
+                <module>test-non-functional</module>
+                <module>test-functional-run</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <name>arangodb-java-driver-parent</name>
     <description>ArangoDB Java Driver Project</description>

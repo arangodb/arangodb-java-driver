@@ -87,7 +87,7 @@ commands:
     steps:
       - run:
           name: mvn install
-          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
+          command: mvn install -DnoTests -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
   setup_jwt:
     steps:
       - run:
