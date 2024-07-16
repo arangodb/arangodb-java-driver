@@ -83,14 +83,6 @@ commands:
           name: mvn dependency:tree
           working_directory: <<parameters.working_directory>>
           command: mvn dependency:tree
-  mvn-install:
-    steps:
-      - run:
-          name: mvn install
-          command: mvn install -DnoTests -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-      - run:
-          name: mvn install test-functional
-          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl test-functional
   setup_jwt:
     steps:
       - run:
@@ -275,7 +267,9 @@ jobs:
       - start-db
       - load_cache
       - mvn-info
-      - mvn-install
+      - run:
+          name: mvn install
+          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver
       - run:
           name: Run Maven
           command: mvn compile exec:java -Dexec.mainClass=FirstProject
@@ -314,8 +308,6 @@ jobs:
     parameters:
       graalvm-version:
         type: 'string'
-      project:
-        type: 'string'
       shaded:
         type: 'string'
         default: 'false'
@@ -328,7 +320,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - load_cache
-      - mvn-install
+      - run:
+          name: mvn install
+          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -pl shaded,test-functional
       - install-sdk:
           sdk: 'java'
           version: <<parameters.graalvm-version>>
@@ -336,13 +330,13 @@ jobs:
           compression: 'true'
           ssl: <<parameters.ssl>>
       - mvn-info:
-          working_directory: <<parameters.project>>
+          working_directory: test-native
       - run:
           name: Test Native
           command: mvn test -Dshaded=<<parameters.shaded>>
-          working_directory: <<parameters.project>>
+          working_directory: test-native
       - report:
-          working_directory: <<parameters.project>>
+          working_directory: test-native
       - store_cache
 
   deploy:
