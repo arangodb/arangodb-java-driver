@@ -69,20 +69,6 @@ commands:
             STARTER_DOCKER_IMAGE: 'docker.io/arangodb/arangodb-starter:0.18.5'
             SSL: <<parameters.ssl>>
             COMPRESSION: <<parameters.compression>>
-  mvn-info:
-    parameters:
-      working_directory:
-        type: 'string'
-        default: '.'
-    steps:
-      - run:
-          name: mvn version
-          working_directory: <<parameters.working_directory>>
-          command: mvn --version
-      - run:
-          name: mvn dependency:tree
-          working_directory: <<parameters.working_directory>>
-          command: mvn dependency:tree
   setup_jwt:
     steps:
       - run:
@@ -166,6 +152,9 @@ jobs:
       jwt:
         type: 'boolean'
         default: false
+      shaded:
+        type: 'string'
+        default: 'false'
     executor: <<parameters.jdk>>
     steps:
       - timeout
@@ -180,12 +169,14 @@ jobs:
           steps:
             - setup_jwt
       - load_cache
-      - mvn-info
+      - run:
+          name: mvn dependency:tree
+          command: mvn -am -pl test-functional-run dependency:tree -Dshaded=<<parameters.shaded>> <<parameters.args>>
       - run:
           name: Test
-          command: mvn -am -pl test-functional-run test <<parameters.args>>
+          command: mvn -am -pl test-functional-run package -Dshaded=<<parameters.shaded>> <<parameters.args>>
       - report:
-          working_directory: driver
+          working_directory: test-functional-run
       - store_cache
 
   test-ssl:
@@ -202,7 +193,9 @@ jobs:
           docker-img: <<parameters.docker-img>>
           ssl: 'true'
       - load_cache
-      - mvn-info
+      - run:
+          name: mvn dependency:tree
+          command: mvn dependency:tree -am -pl test-ssl
       - run:
           name: Test
           command: mvn -am -pl test-ssl test
@@ -222,7 +215,6 @@ jobs:
 #      - setup_remote_docker
 #      - start-db
 #      - load_cache
-#      - mvn-info
 #      - mvn-install
 #      - run:
 #          name: Test
@@ -241,7 +233,6 @@ jobs:
       - setup_remote_docker
       - start-db
       - load_cache
-      - mvn-info
       - restore_cache:
           name: Restore Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -266,7 +257,6 @@ jobs:
       - setup_remote_docker
       - start-db
       - load_cache
-      - mvn-info
       - run:
           name: mvn install
           command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver
@@ -291,7 +281,9 @@ jobs:
           topology: 'cluster'
           compression: 'true'
       - load_cache
-      - mvn-info
+      - run:
+          name: mvn dependency:tree
+          command: mvn -am -pl resilience-tests dependency:tree
       - run:
           name: Start Toxiproxy
           command: ./bin/startProxy.sh
@@ -320,20 +312,20 @@ jobs:
       - checkout
       - setup_remote_docker
       - load_cache
-      - run:
-          name: mvn install
-          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl shaded,test-functional
+#      - run:
+#          name: mvn install
+#          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl shaded,test-functional
       - install-sdk:
           sdk: 'java'
           version: <<parameters.graalvm-version>>
       - start-db:
           compression: 'true'
-      - mvn-info:
-          working_directory: test-native
+      - run:
+          name: mvn dependency:tree
+          command: mvn -am -pl test-native dependency:tree -Dshaded=<<parameters.shaded>>
       - run:
           name: Test Native
-          command: mvn test -Dshaded=<<parameters.shaded>>
-          working_directory: test-native
+          command: mvn -am -pl test-native package -Dshaded=<<parameters.shaded>>
       - report:
           working_directory: test-native
       - store_cache
@@ -344,7 +336,6 @@ jobs:
       - timeout
       - checkout
       - load_cache
-      - mvn-info
       - config_gpg
       - deploy
       - store_cache
@@ -355,7 +346,6 @@ jobs:
       - timeout
       - checkout
       - load_cache
-      - mvn-info
       - config_gpg
       - deploy
       - release
@@ -421,6 +411,8 @@ workflows:
 #            branches:
 #              ignore: /.*/
 #  test-user-language:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
 #    jobs:
 #      - test:
 #          name: test-<<matrix.args>>
@@ -430,6 +422,8 @@ workflows:
 #                - '-DargLine="-Duser.language=jp"'
 #                - '-DargLine="-Duser.language=tr"'
 #  test-jdk:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
 #    jobs:
 #      - test:
 #          name: test-<<matrix.jdk>>
@@ -438,7 +432,20 @@ workflows:
 #              jdk:
 #                - 'j17'
 #                - 'j21'
+  test-shaded:
+    when:
+      not: <<pipeline.parameters.docker-img>>
+    jobs:
+      - test:
+          name: test-shaded
+          matrix:
+            parameters:
+              shaded:
+                - 'true'
+
   test-jackson:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - test:
           name: test-<<matrix.args>>
@@ -483,12 +490,16 @@ workflows:
       - sonar:
           name: sonar
   tutorial:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - tutorial
   resilience-test:
     jobs:
       - resilience-test
   native:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - native:
           name: native-shaded=<<matrix.shaded>>-<<matrix.graalvm-version>>
