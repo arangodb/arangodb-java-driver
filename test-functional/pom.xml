@@ -14,7 +14,12 @@
     <name>test-functional</name>
     <artifactId>test-functional</artifactId>
 
+    <properties>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+    </properties>
+
     <build>
+        <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -35,6 +40,9 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer</testSourceDirectory>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -71,15 +79,6 @@
                                     <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
                                 </replacement>
                             </replacements>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compileSourceRoots>
-                                ${project.build.directory}/generated-test-sources/replacer
-                            </compileSourceRoots>
                         </configuration>
                     </plugin>
                 </plugins>
