@@ -18,45 +18,34 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package arch;
+
+package util;
 
 
-import com.arangodb.ArangoDB;
-import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.util.UnicodeUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * @author Michele Rastelli
  */
-public abstract class TestUtils {
+public final class TestUtils {
+    public static final String TEST_DB = "java_driver_test_db";
+    private static final String[] allChars = TestUtils.generateAllInputChars();
+    private static final Random r = new Random();
 
-    private static final ArangoDBVersion version = new ArangoDB.Builder()
-            .loadProperties(ArangoConfigProperties.fromFile())
-            .build()
-            .getVersion();
-
-    protected static boolean isAtLeastVersion(final int major, final int minor) {
-        return isAtLeastVersion(major, minor, 0);
-    }
-
-    protected static boolean isAtLeastVersion(final int major, final int minor, final int patch) {
-        return isAtLeastVersion(version.getVersion(), major, minor, patch);
-    }
-
-    protected static boolean isLessThanVersion(final int major, final int minor) {
-        return isLessThanVersion(major, minor, 0);
-    }
-
-    protected static boolean isLessThanVersion(final int major, final int minor, final int patch) {
-        return isLessThanVersion(version.getVersion(), major, minor, patch);
+    private TestUtils() {
     }
 
     /**
      * Parses {@param version} and checks whether it is greater or equal to <{@param otherMajor}, {@param otherMinor},
      * {@param otherPatch}> comparing the corresponding version components in lexicographical order.
      */
-    private static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor,
-                                            final int otherPatch) {
+    public static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor,
+                                           final int otherPatch) {
         return compareVersion(version, otherMajor, otherMinor, otherPatch) >= 0;
     }
 
@@ -64,8 +53,8 @@ public abstract class TestUtils {
      * Parses {@param version} and checks whether it is less than <{@param otherMajor}, {@param otherMinor},
      * {@param otherPatch}> comparing the corresponding version components in lexicographical order.
      */
-    private static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor,
-                                             final int otherPatch) {
+    public static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor,
+                                            final int otherPatch) {
         return compareVersion(version, otherMajor, otherMinor, otherPatch) < 0;
     }
 
@@ -88,6 +77,36 @@ public abstract class TestUtils {
         }
 
         return Integer.compare(patch, otherPatch);
+    }
+
+    private static String[] generateAllInputChars() {
+        List<String> list = new ArrayList<>();
+        for (int codePoint = 0; codePoint < Character.MAX_CODE_POINT + 1; codePoint++) {
+            String s = new String(Character.toChars(codePoint));
+            if (codePoint == 47 ||      // '/'
+                    codePoint == 58 ||  // ':'
+                    Character.isISOControl(codePoint) ||
+                    Character.isLowSurrogate(s.charAt(0)) ||
+                    (Character.isHighSurrogate(s.charAt(0)) && s.length() == 1)) {
+                continue;
+            }
+            list.add(s);
+        }
+        return list.toArray(new String[0]);
+    }
+
+    public static String generateRandomName(boolean extendedNames, int length) {
+        if (extendedNames) {
+            int max = allChars.length;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                String allChar = allChars[r.nextInt(max)];
+                sb.append(allChar);
+            }
+            return UnicodeUtils.normalize(sb.toString());
+        } else {
+            return UUID.randomUUID().toString();
+        }
     }
 
 }

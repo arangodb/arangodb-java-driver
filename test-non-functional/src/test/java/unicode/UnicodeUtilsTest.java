@@ -1,7 +1,6 @@
 package unicode;
 
 import com.arangodb.internal.util.EncodeUtils;
-import com.arangodb.util.TestUtils;
 import com.arangodb.util.UnicodeUtils;
 import org.graalvm.home.Version;
 import org.graalvm.polyglot.Context;
@@ -9,6 +8,7 @@ import org.graalvm.polyglot.Value;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import util.TestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;

@@ -24,7 +24,7 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.config.ConfigUtils;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
@@ -56,7 +56,7 @@ class AQLActorsAndMoviesExampleTest {
     @BeforeAll
     static void setUp() {
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig())
+                .loadProperties(ArangoConfigProperties.fromFile())
                 .build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

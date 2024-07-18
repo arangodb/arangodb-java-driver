@@ -1,18 +1,37 @@
-package arch;
+package serde;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.shaded.fasterxml.jackson.databind.JsonNode;
-import com.arangodb.shaded.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.arangodb.ContentType;
+import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.serde.jackson.JacksonSerde;
+import com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider;
+import com.arangodb.serde.jackson.vpack.JacksonVPackSerdeProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SerdeTest extends BaseTest {
+class JacksonSerdeTest {
+
+    static Stream<Arguments> adbByContentType() {
+        return Stream.of(ContentType.values())
+                .map(ct -> new ArangoDB.Builder()
+                        .loadProperties(ArangoConfigProperties.fromFile())
+                        .protocol(ContentType.VPACK.equals(ct) ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON)
+                        .serde(JacksonSerde.of(ct))
+                        .build())
+                .map(Arguments::of);
+    }
 
     @ParameterizedTest
     @MethodSource("adbByContentType")
@@ -25,6 +44,20 @@ class SerdeTest extends BaseTest {
         assertThat(res.size()).isEqualTo(1);
         assertThat(res.get("foo").asText()).isEqualTo("bar");
         JsonNode value = adb.db().query("return @d.foo", JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(value.textValue()).isEqualTo("bar");
+    }
+
+    @ParameterizedTest
+    @MethodSource("adbByContentType")
+    void jsonNode(ArangoDB adb) {
+        // uses the user serde
+        com.fasterxml.jackson.databind.JsonNode doc = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance
+                .objectNode()
+                .put("foo", "bar");
+        com.fasterxml.jackson.databind.JsonNode res = adb.db().query("return @d", com.fasterxml.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(res.size()).isEqualTo(1);
+        assertThat(res.get("foo").asText()).isEqualTo("bar");
+        com.fasterxml.jackson.databind.JsonNode value = adb.db().query("return @d.foo", com.fasterxml.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
         assertThat(value.textValue()).isEqualTo("bar");
     }
 
@@ -53,8 +86,8 @@ class SerdeTest extends BaseTest {
     @ParameterizedTest
     @MethodSource("adbByContentType")
     void person(ArangoDB adb) {
-        Person doc = new Person("key", "Jim", 22);
-        Person res = adb.db().query("return @d", Person.class, Collections.singletonMap("d", doc)).next();
+        JacksonPerson doc = new JacksonPerson("key", "Jim", 22);
+        JacksonPerson res = adb.db().query("return @d", JacksonPerson.class, Collections.singletonMap("d", doc)).next();
         assertThat(res).isEqualTo(doc);
         String key = adb.db().query("return @d._key", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(key).isEqualTo("key");

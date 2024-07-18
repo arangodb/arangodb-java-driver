@@ -1,32 +1,47 @@
-package arch;
+package serde;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ContentType;
+import com.arangodb.Protocol;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
-import jakarta.json.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SerdeTest extends BaseTest {
+class InternalSerdeTest {
+
+    static Stream<Arguments> adbByContentType() {
+        return Stream.of(ContentType.values())
+                .map(ct -> new ArangoDB.Builder()
+                        .loadProperties(ArangoConfigProperties.fromFile())
+                        .protocol(ContentType.VPACK.equals(ct) ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON)
+                        .serde(new InternalSerdeProvider(ct).create())
+                        .build())
+                .map(Arguments::of);
+    }
 
     @ParameterizedTest
     @MethodSource("adbByContentType")
-    void jsonNode(ArangoDB adb) {
-        JsonObject doc = Json.createObjectBuilder()
-                .add("foo", "bar")
-                .build();
-        JsonObject res = adb.db().query("return @d", JsonObject.class, Collections.singletonMap("d", doc)).next();
+    void shadedJsonNode(ArangoDB adb) {
+        // uses the internal serde
+        JsonNode doc = JsonNodeFactory.instance
+                .objectNode()
+                .put("foo", "bar");
+        JsonNode res = adb.db().query("return @d", JsonNode.class, Collections.singletonMap("d", doc)).next();
         assertThat(res.size()).isEqualTo(1);
-        assertThat(res.getString("foo")).isEqualTo("bar");
-        JsonValue value = adb.db().query("return @d.foo", JsonValue.class, Collections.singletonMap("d", doc)).next();
-        assertThat(value)
-                .isInstanceOf(JsonString.class)
-                .extracting(v -> ((JsonString) v).getString())
-                .isEqualTo("bar");
+        assertThat(res.get("foo").asText()).isEqualTo("bar");
+        JsonNode value = adb.db().query("return @d.foo", JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(value.textValue()).isEqualTo("bar");
     }
 
     @ParameterizedTest
@@ -54,8 +69,8 @@ class SerdeTest extends BaseTest {
     @ParameterizedTest
     @MethodSource("adbByContentType")
     void person(ArangoDB adb) {
-        Person doc = new Person("key", "Jim", 22);
-        Person res = adb.db().query("return @d", Person.class, Collections.singletonMap("d", doc)).next();
+        InternalSerdePerson doc = new InternalSerdePerson("key", "Jim", 22);
+        InternalSerdePerson res = adb.db().query("return @d", InternalSerdePerson.class, Collections.singletonMap("d", doc)).next();
         assertThat(res).isEqualTo(doc);
         String key = adb.db().query("return @d._key", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(key).isEqualTo("key");

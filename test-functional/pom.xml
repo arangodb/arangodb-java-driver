@@ -13,10 +13,6 @@
 
     <artifactId>test-functional</artifactId>
 
-    <properties>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-    </properties>
-
     <build>
         <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
         <plugins>
@@ -32,6 +28,18 @@
 
     <profiles>
         <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>shaded</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <properties>
+                <testSourceDirectory>src/test/java</testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
             <id>shaded</id>
             <activation>
                 <property>
@@ -40,7 +48,8 @@
                 </property>
             </activation>
             <properties>
-                <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer</testSourceDirectory>
+                <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer
+                </testSourceDirectory>
             </properties>
             <build>
                 <plugins>

@@ -13,15 +13,24 @@
 
     <artifactId>test-non-functional</artifactId>
 
+    <properties>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.release>17</maven.compiler.release>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>test-functional</artifactId>
-            <version>${project.version}</version>
-            <classifier>tests</classifier>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+        <!--        FIXME: JsonB serde tests-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.arangodb</groupId>-->
+        <!--            <artifactId>jsonb-serde</artifactId>-->
+        <!--            <scope>compile</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.eclipse</groupId>-->
+        <!--            <artifactId>yasson</artifactId>-->
+        <!--        </dependency>-->
+
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>

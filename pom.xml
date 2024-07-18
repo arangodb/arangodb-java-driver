@@ -14,6 +14,7 @@
         <module>shaded</module>
         <module>jackson-serde-json</module>
         <module>jackson-serde-vpack</module>
+        <module>jsonb-serde</module>
         <module>http-protocol</module>
         <module>vst-protocol</module>
     </modules>
@@ -30,7 +31,6 @@
             </activation>
             <modules>
                 <module>test-parent</module>
-                <module>integration-tests</module>
                 <module>test-ssl</module>
                 <module>test-functional</module>
                 <module>test-native</module>
@@ -210,6 +210,14 @@
                             </goals>
                             <configuration>
                                 <rules>
+                                    <enforceBytecodeVersion>
+                                        <scopes>compile</scopes>
+                                        <maxJdkVersion>1.8</maxJdkVersion>
+                                        <excludes>
+                                            <!--                                            <exclude>org.eclipse:yasson</exclude>-->
+                                            <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
+                                        </excludes>
+                                    </enforceBytecodeVersion>
                                     <dependencyConvergence/>
                                     <requirePluginVersions/>
                                     <requireExplicitDependencyScope/>
@@ -220,6 +228,13 @@
                             </configuration>
                         </execution>
                     </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>extra-enforcer-rules</artifactId>
+                            <version>1.8.0</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -1,10 +1,10 @@
-package arch;
+package serde;
 
 
 import com.arangodb.serde.InternalKey;
-import com.arangodb.shaded.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record Person(
+public record InternalSerdePerson(
         @InternalKey
         String key,
         @JsonProperty("firstName")
