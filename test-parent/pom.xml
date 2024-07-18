@@ -15,6 +15,7 @@
 
     <properties>
         <adb.jackson.version>2.17.1</adb.jackson.version>
+        <test-package.classifier/>
     </properties>
 
     <dependencies>
@@ -99,6 +100,9 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                        <configuration>
+                            <classifier>${test-package.classifier}</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -132,6 +136,9 @@
                 </property>
             </activation>
 
+            <properties>
+                <test-package.classifier>tests</test-package.classifier>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
@@ -159,6 +166,9 @@
                 </property>
             </activation>
 
+            <properties>
+                <test-package.classifier>tests-shaded</test-package.classifier>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>

@@ -18,7 +18,7 @@
             <groupId>com.arangodb</groupId>
             <artifactId>test-functional</artifactId>
             <version>${project.version}</version>
-            <classifier>tests</classifier>
+            <classifier>${test-package.classifier}</classifier>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
