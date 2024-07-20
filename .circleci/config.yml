@@ -277,6 +277,10 @@ jobs:
   resilience-test:
     executor: 'j21'
     resource_class: 'large'
+    parameters:
+      shaded:
+        type: 'string'
+        default: 'false'
     steps:
       - timeout
       - checkout
@@ -286,9 +290,6 @@ jobs:
           compression: 'true'
       - load_cache
       - run:
-          name: mvn dependency:tree
-          command: mvn -am -pl resilience-tests dependency:tree
-      - run:
           name: Start Toxiproxy
           command: ./bin/startProxy.sh
           working_directory: resilience-tests
@@ -296,8 +297,11 @@ jobs:
           environment:
             TOXIPROXY_VERSION: v2.9.0
       - run:
+          name: mvn dependency:tree
+          command: mvn -am -pl resilience-tests dependency:tree -Dshaded=<<parameters.shaded>>
+      - run:
           name: Test
-          command: mvn -am -pl resilience-tests test
+          command: mvn package -am -pl resilience-tests -Dshaded=<<parameters.shaded>>
       - store_cache
 
   native:
@@ -500,7 +504,12 @@ workflows:
       - tutorial
   resilience-test:
     jobs:
-      - resilience-test
+      - resilience-test:
+          matrix:
+            parameters:
+              shaded:
+                - 'true'
+                - 'false'
   native:
     when:
       not: <<pipeline.parameters.docker-img>>
