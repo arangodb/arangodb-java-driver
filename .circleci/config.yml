@@ -206,6 +206,9 @@ jobs:
       docker-img:
         type: 'string'
         default: <<pipeline.parameters.docker-img>>
+      shaded:
+        type: 'string'
+        default: 'false'
     executor: 'j21'
     steps:
       - timeout
@@ -217,10 +220,10 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn dependency:tree -am -pl test-ssl
+          command: mvn dependency:tree -am -pl test-ssl -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn -am -pl test-ssl test
+          command: mvn -am -pl test-ssl test -Dshaded=<<parameters.shaded>>
       - report:
           working_directory: test-ssl
       - store_cache
@@ -470,6 +473,12 @@ workflows:
     jobs:
       - test-ssl:
           name: test-ssl
+          matrix:
+            parameters:
+              shaded:
+                - 'true'
+                - 'false'
+
   test-jwt:
     jobs:
       - test:
