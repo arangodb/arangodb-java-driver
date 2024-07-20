@@ -223,7 +223,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-ssl -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn -am -pl test-ssl test -Dshaded=<<parameters.shaded>>
+          command: mvn -am -pl test-ssl package -Dshaded=<<parameters.shaded>>
       - report:
           working_directory: test-ssl
       - store_cache
