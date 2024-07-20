@@ -179,6 +179,28 @@ jobs:
           working_directory: test-functional-run
       - store_cache
 
+  test-non-func:
+    parameters:
+      shaded:
+        type: 'string'
+        default: 'false'
+    executor: 'j21'
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - start-db
+      - load_cache
+      - run:
+          name: mvn dependency:tree
+          command: mvn -am -pl test-non-functional dependency:tree -Dshaded=<<parameters.shaded>>
+      - run:
+          name: Test
+          command: mvn -am -pl test-non-functional package -Dshaded=<<parameters.shaded>>
+      - report:
+          working_directory: test-functional-run
+      - store_cache
+
   test-ssl:
     parameters:
       docker-img:
@@ -202,27 +224,6 @@ jobs:
       - report:
           working_directory: test-ssl
       - store_cache
-
-#  integration-test:
-#    parameters:
-#      args:
-#        type: 'string'
-#        default: ''
-#    executor: 'j21'
-#    steps:
-#      - timeout
-#      - checkout
-#      - setup_remote_docker
-#      - start-db
-#      - load_cache
-#      - mvn-install
-#      - run:
-#          name: Test
-#          command: mvn test <<parameters.args>>
-#          working_directory: integration-tests
-#      - report:
-#          working_directory: integration-tests
-#      - store_cache
 
   sonar:
     executor: 'j21'
@@ -303,18 +304,13 @@ jobs:
       shaded:
         type: 'string'
         default: 'false'
-      resource-class:
-        type: 'string'
     executor: 'j21'
-    resource_class: <<parameters.resource-class>>
+    resource_class: '2xlarge'
     steps:
       - timeout
       - checkout
       - setup_remote_docker
       - load_cache
-#      - run:
-#          name: mvn install
-#          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl shaded,test-functional
       - install-sdk:
           sdk: 'java'
           version: <<parameters.graalvm-version>>
@@ -362,24 +358,24 @@ workflows:
             parameters:
               docker-img:
                 - 'docker.io/arangodb/arangodb:3.11'
-#                - 'docker.io/arangodb/arangodb:3.12'
-#                - 'docker.io/arangodb/enterprise:3.11'
-#                - 'docker.io/arangodb/enterprise:3.12'
+              #                - 'docker.io/arangodb/arangodb:3.12'
+              #                - 'docker.io/arangodb/enterprise:3.11'
+              #                - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'single'
-#              args:
-#                - '-DenableSlowTests=true'
-#      - test:
-#          name: test-cluster-<<matrix.docker-img>>
-#          matrix:
-#            parameters:
-#              docker-img:
-#                - 'docker.io/arangodb/arangodb:3.11'
-#                - 'docker.io/arangodb/arangodb:3.12'
-#                - 'docker.io/arangodb/enterprise:3.11'
-#                - 'docker.io/arangodb/enterprise:3.12'
-#              topology:
-#                - 'cluster'
+  #              args:
+  #                - '-DenableSlowTests=true'
+  #      - test:
+  #          name: test-cluster-<<matrix.docker-img>>
+  #          matrix:
+  #            parameters:
+  #              docker-img:
+  #                - 'docker.io/arangodb/arangodb:3.11'
+  #                - 'docker.io/arangodb/arangodb:3.12'
+  #                - 'docker.io/arangodb/enterprise:3.11'
+  #                - 'docker.io/arangodb/enterprise:3.12'
+  #              topology:
+  #                - 'cluster'
   test-adb-topology:
     when: <<pipeline.parameters.docker-img>>
     jobs:
@@ -389,49 +385,49 @@ workflows:
             parameters:
               topology:
                 - 'single'
-#                - 'cluster'
-#              args:
-#                - '-DenableSlowTests=true'
-#  test-active-failover:
-#    when:
-#      not: <<pipeline.parameters.docker-img>>
-#    jobs:
-#      - test:
-#          name: test-<<matrix.topology>>-<<matrix.docker-img>>
-#          matrix:
-#            parameters:
-#              docker-img:
-#                - 'docker.io/arangodb/arangodb:3.11'
-#                - 'docker.io/arangodb/enterprise:3.11'
-#              topology:
-#                - 'activefailover'
-#          filters:
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
-#  test-user-language:
-#    when:
-#      not: <<pipeline.parameters.docker-img>>
-#    jobs:
-#      - test:
-#          name: test-<<matrix.args>>
-#          matrix:
-#            parameters:
-#              args:
-#                - '-DargLine="-Duser.language=jp"'
-#                - '-DargLine="-Duser.language=tr"'
-#  test-jdk:
-#    when:
-#      not: <<pipeline.parameters.docker-img>>
-#    jobs:
-#      - test:
-#          name: test-<<matrix.jdk>>
-#          matrix:
-#            parameters:
-#              jdk:
-#                - 'j17'
-#                - 'j21'
+  #                - 'cluster'
+  #              args:
+  #                - '-DenableSlowTests=true'
+  #  test-active-failover:
+  #    when:
+  #      not: <<pipeline.parameters.docker-img>>
+  #    jobs:
+  #      - test:
+  #          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+  #          matrix:
+  #            parameters:
+  #              docker-img:
+  #                - 'docker.io/arangodb/arangodb:3.11'
+  #                - 'docker.io/arangodb/enterprise:3.11'
+  #              topology:
+  #                - 'activefailover'
+  #          filters:
+  #            tags:
+  #              only: /^v.*/
+  #            branches:
+  #              ignore: /.*/
+  #  test-user-language:
+  #    when:
+  #      not: <<pipeline.parameters.docker-img>>
+  #    jobs:
+  #      - test:
+  #          name: test-<<matrix.args>>
+  #          matrix:
+  #            parameters:
+  #              args:
+  #                - '-DargLine="-Duser.language=jp"'
+  #                - '-DargLine="-Duser.language=tr"'
+  #  test-jdk:
+  #    when:
+  #      not: <<pipeline.parameters.docker-img>>
+  #    jobs:
+  #      - test:
+  #          name: test-<<matrix.jdk>>
+  #          matrix:
+  #            parameters:
+  #              jdk:
+  #                - 'j17'
+  #                - 'j21'
   test-shaded:
     when:
       not: <<pipeline.parameters.docker-img>>
@@ -442,6 +438,16 @@ workflows:
             parameters:
               shaded:
                 - 'true'
+
+  test-non-func:
+    jobs:
+      - test-non-func:
+          name: test-non-func
+          matrix:
+            parameters:
+              shaded:
+                - 'true'
+                - 'false'
 
   test-jackson:
     when:
@@ -454,12 +460,12 @@ workflows:
               args:
                 - '-Dadb.jackson.version=2.17.1'
                 - '-Dadb.jackson.version=2.16.2'
-#                - '-Dadb.jackson.version=2.15.4'
-#                - '-Dadb.jackson.version=2.14.3'
-#                - '-Dadb.jackson.version=2.13.5'
-#                - '-Dadb.jackson.version=2.12.7'
-#                - '-Dadb.jackson.version=2.11.4'
-#                - '-Dadb.jackson.version=2.10.5'
+  #                - '-Dadb.jackson.version=2.15.4'
+  #                - '-Dadb.jackson.version=2.14.3'
+  #                - '-Dadb.jackson.version=2.13.5'
+  #                - '-Dadb.jackson.version=2.12.7'
+  #                - '-Dadb.jackson.version=2.11.4'
+  #                - '-Dadb.jackson.version=2.10.5'
   test-ssl:
     jobs:
       - test-ssl:
@@ -472,17 +478,6 @@ workflows:
             parameters:
               jwt:
                 - true
-#  integration-test:
-#    jobs:
-#      - integration-test:
-#          name: integration-test-<<matrix.args>>
-#          matrix:
-#            parameters:
-#              args:
-#                - '-Pinternal-serde'
-#                - '-Pjackson-serde'
-#                - '-Pjsonb-serde'
-#                - '-Pplain'
   sonar:
     when:
       not: <<pipeline.parameters.docker-img>>
@@ -506,51 +501,34 @@ workflows:
           matrix:
             parameters:
               graalvm-version:
-#                - '22.0.1-graalce'
+                #                - '22.0.1-graalce'
                 - '21.0.2-graalce'
               shaded:
                 - 'true'
                 - 'false'
               resource-class:
                 - '2xlarge'
-      - native:
-          name: native-arm-shaded=<<matrix.shaded>>-<<matrix.graalvm-version>>
-          matrix:
-            parameters:
-              graalvm-version:
-#                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              shaded:
-                - 'true'
-                - 'false'
-              resource-class:
-                - 'arm.2xlarge'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-#      - native:
-#          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
-#          matrix:
-#            parameters:
-#              graalvm-version:
-##                - '22.0.1-graalce'
-#                - '21.0.2-graalce'
-#              project:
-#                - 'driver'
-#                - 'integration-tests'
-#              args:
-#                - '-Dgroups=ssl -DSslTest=true'
-#              ssl:
-#                - 'true'
-#              resource-class:
-#                - '2xlarge'
-#          filters:
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
+  #      - native:
+  #          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
+  #          matrix:
+  #            parameters:
+  #              graalvm-version:
+  ##                - '22.0.1-graalce'
+  #                - '21.0.2-graalce'
+  #              project:
+  #                - 'driver'
+  #                - 'integration-tests'
+  #              args:
+  #                - '-Dgroups=ssl -DSslTest=true'
+  #              ssl:
+  #                - 'true'
+  #              resource-class:
+  #                - '2xlarge'
+  #          filters:
+  #            tags:
+  #              only: /^v.*/
+  #            branches:
+  #              ignore: /.*/
   deploy:
     jobs:
       - deploy:

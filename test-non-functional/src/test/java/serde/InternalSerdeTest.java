@@ -74,7 +74,7 @@ class InternalSerdeTest {
         assertThat(res).isEqualTo(doc);
         String key = adb.db().query("return @d._key", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(key).isEqualTo("key");
-        String name = adb.db().query("return @d.firstName", String.class, Collections.singletonMap("d", doc)).next();
+        String name = adb.db().query("return @d.name", String.class, Collections.singletonMap("d", doc)).next();
         assertThat(name).isEqualTo("Jim");
     }
 
