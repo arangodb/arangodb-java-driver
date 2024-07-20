@@ -506,8 +506,6 @@ workflows:
               shaded:
                 - 'true'
                 - 'false'
-              resource-class:
-                - '2xlarge'
   #      - native:
   #          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
   #          matrix:
@@ -522,8 +520,6 @@ workflows:
   #                - '-Dgroups=ssl -DSslTest=true'
   #              ssl:
   #                - 'true'
-  #              resource-class:
-  #                - '2xlarge'
   #          filters:
   #            tags:
   #              only: /^v.*/
