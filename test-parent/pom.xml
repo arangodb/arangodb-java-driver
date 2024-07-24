@@ -210,21 +210,14 @@
                             <filesToInclude>**</filesToInclude>
                             <outputBasedir>${project.build.directory}/generated-test-sources</outputBasedir>
                             <outputDir>replacer</outputDir>
-                            <filesToExclude>
-                                **/CustomSerdeTest.**,
-                                **/SerdeTest.**,
-                                **/SerializableTest.**,
-                                **/JacksonInterferenceTest.**,
-                                **/JacksonRequestContextTest.**
-                            </filesToExclude>
                             <replacements>
                                 <replacement>
                                     <token>com.fasterxml</token>
                                     <value>com.arangodb.shaded.fasterxml</value>
                                 </replacement>
                                 <replacement>
-                                    <token>io.vertx.core</token>
-                                    <value>com.arangodb.shaded.vertx.core</value>
+                                    <token>io.vertx</token>
+                                    <value>com.arangodb.shaded.vertx</value>
                                 </replacement>
                                 <replacement>
                                     <token>io.netty</token>
