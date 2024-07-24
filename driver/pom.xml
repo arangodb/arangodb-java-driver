@@ -22,34 +22,11 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.4.1</version>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <includeDependencySources>true</includeDependencySources>
-                            <excludePackageNames>
-                                com.arangodb.internal,
-                                com.arangodb.internal.*,
-                                com.arangodb.http,
-                                com.arangodb.serde.jackson,
-                                com.arangodb.serde.jackson.*,
-                                javax.*
-                            </excludePackageNames>
-                            <doclint>none</doclint>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <includeDependencySources>true</includeDependencySources>
+                </configuration>
             </plugin>
         </plugins>
     </build>
