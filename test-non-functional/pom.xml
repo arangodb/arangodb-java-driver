@@ -56,4 +56,40 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>shaded</id>
+            <activation>
+                <property>
+                    <name>shaded</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <configuration>
+                            <replacements>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.JsonNode</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.ObjectNode</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.node.JsonNodeFactory</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.node.JsonNodeFactory</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

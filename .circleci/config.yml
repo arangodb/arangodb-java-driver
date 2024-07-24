@@ -449,7 +449,7 @@ workflows:
   test-non-func:
     jobs:
       - test-non-func:
-          name: test-non-func
+          name: test-non-func-shaded=<<matrix.shaded>>
           matrix:
             parameters:
               shaded:
