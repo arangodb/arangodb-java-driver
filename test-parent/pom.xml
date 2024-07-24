@@ -91,6 +91,8 @@
     </dependencyManagement>
 
     <build>
+        <testSourceDirectory>${testSourceDirectory}</testSourceDirectory>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +140,7 @@
 
             <properties>
                 <test-package.classifier>tests</test-package.classifier>
+                <testSourceDirectory>src/test/java</testSourceDirectory>
             </properties>
             <dependencies>
                 <dependency>
@@ -168,6 +171,7 @@
 
             <properties>
                 <test-package.classifier>tests-shaded</test-package.classifier>
+                <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer</testSourceDirectory>
             </properties>
             <dependencies>
                 <dependency>
@@ -186,6 +190,52 @@
                     <scope>compile</scope>
                 </dependency>
             </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <basedir>${project.basedir}/src/test/java</basedir>
+                            <filesToInclude>**</filesToInclude>
+                            <outputBasedir>${project.build.directory}/generated-test-sources</outputBasedir>
+                            <outputDir>replacer</outputDir>
+                            <filesToExclude>
+                                **/CustomSerdeTest.**,
+                                **/SerdeTest.**,
+                                **/SerializableTest.**,
+                                **/JacksonInterferenceTest.**,
+                                **/JacksonRequestContextTest.**
+                            </filesToExclude>
+                            <replacements>
+                                <replacement>
+                                    <token>com.fasterxml</token>
+                                    <value>com.arangodb.shaded.fasterxml</value>
+                                </replacement>
+                                <replacement>
+                                    <token>io.vertx.core</token>
+                                    <value>com.arangodb.shaded.vertx.core</value>
+                                </replacement>
+                                <replacement>
+                                    <token>io.netty</token>
+                                    <value>com.arangodb.shaded.netty</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
         </profile>
     </profiles>
 </project>
