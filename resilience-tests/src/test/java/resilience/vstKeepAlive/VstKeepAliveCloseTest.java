@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
 import static org.awaitility.Awaitility.await;
@@ -51,7 +52,9 @@ class VstKeepAliveCloseTest extends SingleServerTest {
     void keepAliveCloseAndReconnect() throws IOException, InterruptedException {
         arangoDB.getVersion();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
-        await().until(() -> logs.getLogs()
+        await()
+                .timeout(Duration.ofSeconds(3))
+                .until(() -> logs.getLogs()
                 .filter(e -> e.getLevel().equals(Level.ERROR))
                 .filter(e -> e.getFormattedMessage() != null)
                 .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));
@@ -71,7 +74,9 @@ class VstKeepAliveCloseTest extends SingleServerTest {
     void keepAliveCloseAndReconnectAsync() throws IOException, ExecutionException, InterruptedException {
         arangoDB.async().getVersion().get();
         Latency toxic = getEndpoint().getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
-        await().until(() -> logs.getLogs()
+        await()
+                .timeout(Duration.ofSeconds(3))
+                .until(() -> logs.getLogs()
                 .filter(e -> e.getLevel().equals(Level.ERROR))
                 .filter(e -> e.getFormattedMessage() != null)
                 .anyMatch(e -> e.getFormattedMessage().contains("Connection unresponsive!")));

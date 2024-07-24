@@ -103,24 +103,16 @@
                             </filesToExclude>
                             <replacements>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.JsonNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
+                                    <token>com.fasterxml</token>
+                                    <value>com.arangodb.shaded.fasterxml</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
+                                    <token>io.vertx.core</token>
+                                    <value>com.arangodb.shaded.vertx.core</value>
                                 </replacement>
                                 <replacement>
-                                    <token>io.vertx.core.Vertx</token>
-                                    <value>com.arangodb.shaded.vertx.core.Vertx</value>
-                                </replacement>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.core.JsonProcessingException</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.core.JsonProcessingException</value>
-                                </replacement>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectMapper</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectMapper</value>
+                                    <token>io.netty</token>
+                                    <value>com.arangodb.shaded.netty</value>
                                 </replacement>
                             </replacements>
                         </configuration>

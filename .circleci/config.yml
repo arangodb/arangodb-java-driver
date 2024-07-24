@@ -476,7 +476,7 @@ workflows:
   test-ssl:
     jobs:
       - test-ssl:
-          name: test-ssl
+          name: test-ssl-shaded=<<matrix.shaded>>
           matrix:
             parameters:
               shaded:
@@ -505,6 +505,7 @@ workflows:
   resilience-test:
     jobs:
       - resilience-test:
+          name: resilience-test-shaded=<<matrix.shaded>>
           matrix:
             parameters:
               shaded:
