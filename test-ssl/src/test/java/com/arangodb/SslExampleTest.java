@@ -20,24 +20,13 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDBMultipleException;
-import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.util.TestUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import utils.TestUtils;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.TrustManagerFactory;
-import java.security.KeyStore;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,38 +37,12 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
-class SslExampleTest {
-
-    /*-
-     * a SSL trust store
-     *
-     * create the trust store for the self signed certificate:
-     * keytool -import -alias "my arangodb server cert" -file server.pem -keystore example.truststore
-     *
-     * Documentation:
-     * https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/conn/ssl/SSLSocketFactory.html
-     */
-    private static final String SSL_TRUSTSTORE = "/example.truststore";
-    private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
-    private static ArangoDBVersion version;
-
-    @BeforeAll
-    static void fetchVersion() throws Exception {
-        ArangoDB adb = new ArangoDB.Builder()
-                .host("172.28.0.1", 8529)
-                .password("test")
-                .useSsl(true)
-                .sslContext(createSslContext())
-                .verifyHost(false)
-                .build();
-        version = adb.getVersion();
-        adb.shutdown();
-    }
+class SslExampleTest extends BaseTest {
 
     @Disabled("Only local execution, in CircleCI port 8529 exposed to localhost")
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void connect(Protocol protocol) throws Exception {
+    void connect(Protocol protocol) {
         assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("localhost", 8529)
@@ -94,7 +57,7 @@ class SslExampleTest {
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void noopHostnameVerifier(Protocol protocol) throws Exception {
+    void noopHostnameVerifier(Protocol protocol) {
         assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
@@ -110,7 +73,7 @@ class SslExampleTest {
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void hostnameVerifierFailure(Protocol protocol) throws Exception {
+    void hostnameVerifierFailure(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST, "VST does not support hostname verification");
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
@@ -128,20 +91,5 @@ class SslExampleTest {
         exceptions.forEach(e -> assertThat(e).isInstanceOf(SSLHandshakeException.class));
     }
 
-    private static SSLContext createSslContext() throws Exception {
-        final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(SslExampleTest.class.getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
-
-        final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(ks, SSL_TRUSTSTORE_PASSWORD.toCharArray());
-
-        final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init(ks);
-
-        final SSLContext sc = SSLContext.getInstance("TLS");
-        sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-
-        return sc;
-    }
 
 }
