@@ -295,16 +295,16 @@ jobs:
       - run:
           name: Start Toxiproxy
           command: ./bin/startProxy.sh
-          working_directory: resilience-tests
+          working_directory: test-resilience
           background: true
           environment:
             TOXIPROXY_VERSION: v2.9.0
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl resilience-tests dependency:tree -Dshaded=<<parameters.shaded>>
+          command: mvn -am -pl test-resilience dependency:tree -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn package -am -pl resilience-tests -Dshaded=<<parameters.shaded>>
+          command: mvn package -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - store_cache
 
   native:

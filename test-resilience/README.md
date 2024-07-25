@@ -1,4 +1,4 @@
-# arangodb-java-driver-resiliency-tests
+# arangodb-java-driver-resilience-tests
 
 ## run
 
@@ -11,5 +11,5 @@ Start [toxiproxy-server](https://github.com/Shopify/toxiproxy) at `127.0.0.1:847
 
 Run the tests:
 ```shell
- mvn test -am -pl resilience-tests
+ mvn test -am -pl test-resilience
 ```

@@ -90,7 +90,7 @@ mvn -Pplain test
 ## resilience tests
 ```shell
 mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-cd resilience-tests
+cd test-resilience
 mvn test
 ```
 ````

@@ -8,7 +8,7 @@ target
 
 test-results-native
 .flattened-pom.xml
-/resilience-tests/bin/toxiproxy-server-linux-amd64
+/test-resilience/bin/toxiproxy-server-linux-amd64
 
 dependency-reduced-pom.xml
 /bin/

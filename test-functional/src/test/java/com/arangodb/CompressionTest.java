@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Non-exhaustive tests of content encoding, executed during integration and native tests.
- * A complete test is at resilience-tests/src/test/java/resilience/compression/CompressionTest.java
+ * A complete test is at test-resilience/src/test/java/resilience/compression/CompressionTest.java
  *
  * @author Michele Rastelli
  */
