@@ -155,14 +155,35 @@ jobs:
       shaded:
         type: 'string'
         default: 'false'
+      ssl:
+        type: 'string'
+        default: 'false'
+      native:
+        type: 'string'
+        default: 'false'
+      graalvm-version:
+        type: 'string'
+        default: '21.0.2-graalce'
+      resource_class:
+        type: 'string'
+        default: 'medium'
     executor: <<parameters.jdk>>
+    resource_class: <<parameters.resource_class>>
     steps:
       - timeout
       - checkout
       - setup_remote_docker
+      - when:
+          condition:
+            equal: [ true, <<parameters.native>> ]
+          steps:
+            - install-sdk:
+                sdk: 'java'
+                version: <<parameters.graalvm-version>>
       - start-db:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
+          ssl: <<parameters.ssl>>
       - when:
           condition:
             equal: [ true, <<parameters.jwt>> ]
@@ -171,10 +192,10 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-functional dependency:tree -Dshaded=<<parameters.shaded>> <<parameters.args>>
+          command: mvn -am -pl test-functional dependency:tree -Dshaded=<<parameters.shaded>> -Dssl=<<parameters.ssl>> -Dnative=<<parameters.native>> <<parameters.args>>
       - run:
           name: Test
-          command: mvn -am -pl test-functional package -Dshaded=<<parameters.shaded>> <<parameters.args>>
+          command: mvn -am -pl test-functional package -Dshaded=<<parameters.shaded>> -Dssl=<<parameters.ssl>> -Dnative=<<parameters.native>> <<parameters.args>>
       - report:
           working_directory: test-functional
       - store_cache
@@ -200,33 +221,6 @@ jobs:
       - run:
           name: Test
           command: mvn -am -pl test-non-functional package -Dshaded=<<parameters.shaded>>
-      - report:
-          working_directory: test-functional
-      - store_cache
-
-  test-ssl:
-    parameters:
-      docker-img:
-        type: 'string'
-        default: <<pipeline.parameters.docker-img>>
-      shaded:
-        type: 'string'
-        default: 'false'
-    executor: 'j21'
-    steps:
-      - timeout
-      - checkout
-      - setup_remote_docker
-      - start-db:
-          docker-img: <<parameters.docker-img>>
-          ssl: 'true'
-      - load_cache
-      - run:
-          name: mvn dependency:tree
-          command: mvn dependency:tree -am -pl test-functional -Dssl -Dshaded=<<parameters.shaded>>
-      - run:
-          name: Test
-          command: mvn -am -pl test-functional package -Dssl -Dshaded=<<parameters.shaded>>
       - report:
           working_directory: test-functional
       - store_cache
@@ -307,35 +301,6 @@ jobs:
           command: mvn package -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - store_cache
 
-  native:
-    parameters:
-      graalvm-version:
-        type: 'string'
-      shaded:
-        type: 'string'
-        default: 'false'
-    executor: 'j21'
-    resource_class: '2xlarge'
-    steps:
-      - timeout
-      - checkout
-      - setup_remote_docker
-      - load_cache
-      - install-sdk:
-          sdk: 'java'
-          version: <<parameters.graalvm-version>>
-      - start-db:
-          compression: 'true'
-      - run:
-          name: mvn dependency:tree
-          command: mvn -am -pl test-functional dependency:tree -Dnative -Dshaded=<<parameters.shaded>>
-      - run:
-          name: Test Native
-          command: mvn -am -pl test-functional package -Dnative -Dshaded=<<parameters.shaded>>
-      - report:
-          working_directory: test-functional
-      - store_cache
-
   deploy:
     executor: 'j11'
     steps:
@@ -398,56 +363,84 @@ workflows:
   #                - 'cluster'
   #              args:
   #                - '-DenableSlowTests=true'
-  #  test-active-failover:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.topology>>-<<matrix.docker-img>>
-  #          matrix:
-  #            parameters:
-  #              docker-img:
-  #                - 'docker.io/arangodb/arangodb:3.11'
-  #                - 'docker.io/arangodb/enterprise:3.11'
-  #              topology:
-  #                - 'activefailover'
-  #          filters:
-  #            tags:
-  #              only: /^v.*/
-  #            branches:
-  #              ignore: /.*/
-  #  test-user-language:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.args>>
-  #          matrix:
-  #            parameters:
-  #              args:
-  #                - '-DargLine="-Duser.language=jp"'
-  #                - '-DargLine="-Duser.language=tr"'
-  #  test-jdk:
-  #    when:
-  #      not: <<pipeline.parameters.docker-img>>
-  #    jobs:
-  #      - test:
-  #          name: test-<<matrix.jdk>>
-  #          matrix:
-  #            parameters:
-  #              jdk:
-  #                - 'j17'
-  #                - 'j21'
-  test-shaded:
+
+  test-func:
     when:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - test:
-          name: test-shaded
+          name: test-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
           matrix:
             parameters:
               shaded:
                 - 'true'
+                - 'false'
+              ssl:
+                - 'true'
+                - 'false'
+      - test:
+          name: test-jdk=<<matrix.jdk>>
+          matrix:
+            parameters:
+              jdk:
+                - 'j11'
+                - 'j17'
+                - 'j21'
+      - test:
+          name: test-jackson-<<matrix.args>>
+          matrix:
+            parameters:
+              args:
+                - '-Dadb.jackson.version=2.17.1'
+                - '-Dadb.jackson.version=2.16.2'
+      #                - '-Dadb.jackson.version=2.15.4'
+      #                - '-Dadb.jackson.version=2.14.3'
+      #                - '-Dadb.jackson.version=2.13.5'
+      #                - '-Dadb.jackson.version=2.12.7'
+      #                - '-Dadb.jackson.version=2.11.4'
+      #                - '-Dadb.jackson.version=2.10.5'
+      - test:
+          name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
+          matrix:
+            parameters:
+              native:
+                - 'true'
+              resource_class:
+                - '2xlarge'
+              shaded:
+                - 'true'
+                - 'false'
+              ssl:
+                - 'true'
+                - 'false'
+              graalvm-version:
+                #                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - test:
+          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          matrix:
+            parameters:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/enterprise:3.11'
+              topology:
+                - 'activefailover'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - test:
+          name: test-jwt
+          matrix:
+            parameters:
+              jwt:
+                - true
 
   test-non-func:
     jobs:
@@ -459,52 +452,19 @@ workflows:
                 - 'true'
                 - 'false'
 
-  test-jackson:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - test:
-          name: test-<<matrix.args>>
-          matrix:
-            parameters:
-              args:
-                - '-Dadb.jackson.version=2.17.1'
-                - '-Dadb.jackson.version=2.16.2'
-  #                - '-Dadb.jackson.version=2.15.4'
-  #                - '-Dadb.jackson.version=2.14.3'
-  #                - '-Dadb.jackson.version=2.13.5'
-  #                - '-Dadb.jackson.version=2.12.7'
-  #                - '-Dadb.jackson.version=2.11.4'
-  #                - '-Dadb.jackson.version=2.10.5'
-  test-ssl:
-    jobs:
-      - test-ssl:
-          name: test-ssl-shaded=<<matrix.shaded>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
-
-  test-jwt:
-    jobs:
-      - test:
-          name: test-jwt
-          matrix:
-            parameters:
-              jwt:
-                - true
   sonar:
     when:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - sonar:
           name: sonar
+
   tutorial:
     when:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - tutorial
+
   resilience-test:
     jobs:
       - resilience-test:
@@ -514,39 +474,7 @@ workflows:
               shaded:
                 - 'true'
                 - 'false'
-  native:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - native:
-          name: native-shaded=<<matrix.shaded>>-<<matrix.graalvm-version>>
-          matrix:
-            parameters:
-              graalvm-version:
-                #                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              shaded:
-                - 'true'
-                - 'false'
-  #      - native:
-  #          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
-  #          matrix:
-  #            parameters:
-  #              graalvm-version:
-  ##                - '22.0.1-graalce'
-  #                - '21.0.2-graalce'
-  #              project:
-  #                - 'driver'
-  #                - 'integration-tests'
-  #              args:
-  #                - '-Dgroups=ssl -DSslTest=true'
-  #              ssl:
-  #                - 'true'
-  #          filters:
-  #            tags:
-  #              only: /^v.*/
-  #            branches:
-  #              ignore: /.*/
+
   deploy:
     jobs:
       - deploy:
@@ -556,6 +484,7 @@ workflows:
               only: /^deploy.*/
             branches:
               ignore: /.*/
+
   release:
     jobs:
       - release:
