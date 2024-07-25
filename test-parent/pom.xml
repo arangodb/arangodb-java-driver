@@ -15,7 +15,6 @@
 
     <properties>
         <adb.jackson.version>2.17.1</adb.jackson.version>
-        <test-package.classifier/>
     </properties>
 
     <dependencies>
@@ -96,34 +95,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>${test-package.classifier}</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <configuration>
-                    <packaging>test-jar</packaging>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Example.java</include>
-                    </includes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -139,7 +111,6 @@
             </activation>
 
             <properties>
-                <test-package.classifier>tests</test-package.classifier>
                 <testSourceDirectory>src/test/java</testSourceDirectory>
             </properties>
             <dependencies>
@@ -170,7 +141,6 @@
             </activation>
 
             <properties>
-                <test-package.classifier>tests-shaded</test-package.classifier>
                 <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer</testSourceDirectory>
             </properties>
             <dependencies>
@@ -196,7 +166,6 @@
                     <plugin>
                         <groupId>com.google.code.maven-replacer-plugin</groupId>
                         <artifactId>replacer</artifactId>
-                        <version>1.5.3</version>
                         <executions>
                             <execution>
                                 <phase>generate-test-sources</phase>
