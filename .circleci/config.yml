@@ -103,12 +103,12 @@ commands:
     steps:
       - run:
           name: Deploy to Apache Maven Central
-          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true deploy
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip deploy
   release:
     steps:
       - run:
           name: Release to Apache Maven Central
-          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true nexus-staging:release
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip nexus-staging:release
           environment:
             MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
 
@@ -290,7 +290,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn verify -am -pl test-resilience -Dshaded=<<parameters.shaded>>
+          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
       - store_cache
 
   deploy:
