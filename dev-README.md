@@ -30,7 +30,7 @@ mvn versions:display-plugin-updates
 ## Code Analysis
 Analyze (Spotbugs and JaCoCo):
 ```
-mvn -Pstatic-code-analysis -am -pl test-functional-run test
+mvn -Pstatic-code-analysis -am -pl test-functional test
 mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl core verify
 ```
 Reports:

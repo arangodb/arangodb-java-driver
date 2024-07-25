@@ -157,7 +157,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <dataFile>../test-functional-run/target/jacoco.exec</dataFile>
+                    <dataFile>../test-functional/target/jacoco.exec</dataFile>
                 </configuration>
             </plugin>
         </plugins>

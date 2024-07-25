@@ -171,12 +171,12 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-functional-run dependency:tree -Dshaded=<<parameters.shaded>> <<parameters.args>>
+          command: mvn -am -pl test-functional dependency:tree -Dshaded=<<parameters.shaded>> <<parameters.args>>
       - run:
           name: Test
-          command: mvn -am -pl test-functional-run package -Dshaded=<<parameters.shaded>> <<parameters.args>>
+          command: mvn -am -pl test-functional package -Dshaded=<<parameters.shaded>> <<parameters.args>>
       - report:
-          working_directory: test-functional-run
+          working_directory: test-functional
       - store_cache
 
   test-non-func:
@@ -201,7 +201,7 @@ jobs:
           name: Test
           command: mvn -am -pl test-non-functional package -Dshaded=<<parameters.shaded>>
       - report:
-          working_directory: test-functional-run
+          working_directory: test-functional
       - store_cache
 
   test-ssl:
@@ -245,7 +245,7 @@ jobs:
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
           name: Test
-          command: mvn -Pstatic-code-analysis -am -pl test-functional-run test
+          command: mvn -Pstatic-code-analysis -am -pl test-functional test
       - run:
           name: Analyze
           command: mvn -DnoTests -Dmaven.test.skip=true -Dgpg.skip=true -Dmaven.javadoc.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
