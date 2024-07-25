@@ -15,7 +15,7 @@
     <executionControl>
         <runAlways>
             <plugins>
-                <plugin groupId="org.apache.maven.plugins" artifactId="maven-surefire-plugin"/>
+                <plugin groupId="org.apache.maven.plugins" artifactId="maven-failsafe-plugin"/>
             </plugins>
         </runAlways>
     </executionControl>

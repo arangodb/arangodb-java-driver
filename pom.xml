@@ -170,6 +170,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <enforceBytecodeVersion>
+                                    <scopes>compile</scopes>
+                                    <maxJdkVersion>1.8</maxJdkVersion>
+                                    <excludes>
+                                        <!--                                            <exclude>org.eclipse:yasson</exclude>-->
+                                        <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
+                                    </excludes>
+                                </enforceBytecodeVersion>
+                                <dependencyConvergence/>
+                                <requirePluginVersions/>
+                                <requireExplicitDependencyScope/>
+                                <requireMavenVersion>
+                                    <version>3.6</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>extra-enforcer-rules</artifactId>
+                        <version>1.8.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
 
@@ -197,44 +231,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.3.0</version>
-                    <executions>
-                        <execution>
-                            <id>enforce</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <enforceBytecodeVersion>
-                                        <scopes>compile</scopes>
-                                        <maxJdkVersion>1.8</maxJdkVersion>
-                                        <excludes>
-                                            <!--                                            <exclude>org.eclipse:yasson</exclude>-->
-                                            <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
-                                        </excludes>
-                                    </enforceBytecodeVersion>
-                                    <dependencyConvergence/>
-                                    <requirePluginVersions/>
-                                    <requireExplicitDependencyScope/>
-                                    <requireMavenVersion>
-                                        <version>3.6</version>
-                                    </requireMavenVersion>
-                                </rules>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>extra-enforcer-rules</artifactId>
-                            <version>1.8.0</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.4.0</version>
                 </plugin>
@@ -257,6 +253,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
