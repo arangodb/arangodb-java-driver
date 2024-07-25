@@ -31,7 +31,6 @@
             </activation>
             <modules>
                 <module>test-parent</module>
-                <module>test-ssl</module>
                 <module>test-functional</module>
                 <module>test-non-functional</module>
                 <module>test-resilience</module>

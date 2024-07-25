@@ -89,6 +89,18 @@
             </build>
         </profile>
         <profile>
+            <id>ssl</id>
+            <activation>
+                <property>
+                    <name>ssl</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <testSourceDirectory>src/test-ssl/java</testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
             <id>native</id>
             <activation>
                 <property>

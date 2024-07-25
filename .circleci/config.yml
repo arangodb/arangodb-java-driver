@@ -223,12 +223,12 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn dependency:tree -am -pl test-ssl -Dshaded=<<parameters.shaded>>
+          command: mvn dependency:tree -am -pl test-functional -Dssl -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn -am -pl test-ssl package -Dshaded=<<parameters.shaded>>
+          command: mvn -am -pl test-functional package -Dssl -Dshaded=<<parameters.shaded>>
       - report:
-          working_directory: test-ssl
+          working_directory: test-functional
       - store_cache
 
   sonar:
