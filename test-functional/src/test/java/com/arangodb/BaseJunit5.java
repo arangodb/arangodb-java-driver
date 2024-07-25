@@ -6,6 +6,8 @@ import com.arangodb.entity.*;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
@@ -76,6 +78,20 @@ public class BaseJunit5 {
 
     protected static <T, U> Function<Named<T>, Named<U>> mapNamedPayload(Function<T, U> mapper) {
         return named -> Named.of(named.getName(), mapper.apply(named.getPayload()));
+    }
+
+    protected static String getJwt() {
+        Response<ObjectNode> response = adb.execute(Request.builder()
+                .method(Request.Method.POST)
+                .db("_system")
+                .path("/_open/auth")
+                .body(JsonNodeFactory.instance.objectNode()
+                        .put("username", config.getUser().orElse("root"))
+                        .put("password", config.getPassword().orElse(""))
+                )
+                .build(), ObjectNode.class);
+
+        return response.getBody().get("jwt").textValue();
     }
 
     static ArangoDatabase initDB(String name) {

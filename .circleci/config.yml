@@ -69,16 +69,6 @@ commands:
             STARTER_DOCKER_IMAGE: 'docker.io/arangodb/arangodb-starter:0.18.5'
             SSL: <<parameters.ssl>>
             COMPRESSION: <<parameters.compression>>
-  setup_jwt:
-    steps:
-      - run:
-          name: Setup JWT
-          command: |
-            ENDPOINT=$(./docker/find_active_endpoint.sh)
-            echo "Active endpoint: $ENDPOINT"
-            JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
-            echo "Setting JWT: $JWT"
-            sed -i "/arangodb.password/c\arangodb.jwt=$JWT" test-functional/src/test/resources/arangodb.properties
   report:
     parameters:
       working_directory:
@@ -149,9 +139,6 @@ jobs:
       args:
         type: 'string'
         default: ''
-      jwt:
-        type: 'boolean'
-        default: false
       shaded:
         type: 'string'
         default: 'false'
@@ -184,11 +171,6 @@ jobs:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
           ssl: <<parameters.ssl>>
-      - when:
-          condition:
-            equal: [ true, <<parameters.jwt>> ]
-          steps:
-            - setup_jwt
       - load_cache
       - run:
           name: mvn dependency:tree
@@ -435,12 +417,6 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-      - test:
-          name: test-jwt
-          matrix:
-            parameters:
-              jwt:
-                - true
 
   test-non-func:
     jobs:
