@@ -189,6 +189,9 @@ jobs:
       - timeout
       - checkout
       - setup_remote_docker
+      - install-sdk:
+          sdk: 'java'
+          version: '21.0.2-graalce'
       - start-db
       - load_cache
       - run:

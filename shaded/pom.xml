@@ -165,11 +165,11 @@
 
     <profiles>
         <profile>
-            <!-- skip attaching javadoc artifact in case of -Dmaven.javadoc.skip=true because the artifact file could not be found -->
-            <id>no-javadoc</id>
+            <id>javadoc</id>
             <activation>
                 <property>
-                    <name>!maven.javadoc.skip</name>
+                    <name>maven.javadoc.skip</name>
+                    <value>!true</value>
                 </property>
             </activation>
             <build>
@@ -188,7 +188,7 @@
                                     <artifacts>
                                         <artifact>
                                             <file>
-                                                ${project.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
+                                                ${project.parent.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
                                             </file>
                                             <type>jar</type>
                                             <classifier>javadoc</classifier>
