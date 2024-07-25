@@ -175,7 +175,7 @@ jobs:
       - setup_remote_docker
       - when:
           condition:
-            equal: [ true, <<parameters.native>> ]
+            equal: [ 'true', <<parameters.native>> ]
           steps:
             - install-sdk:
                 sdk: 'java'
@@ -416,11 +416,11 @@ workflows:
               graalvm-version:
                 #                - '22.0.1-graalce'
                 - '21.0.2-graalce'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
       - test:
           name: test-<<matrix.topology>>-<<matrix.docker-img>>
           matrix:
