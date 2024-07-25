@@ -43,7 +43,7 @@ Reports:
 
 ## update native image reflection configuration
 
-To generate reflection configuration run [NativeImageHelper](./test-native/src/test/java/helper/NativeImageHelper.java) and 
+To generate reflection configuration run [NativeImageHelper](./driver/src/test/java/helper/NativeImageHelper.java) and 
 copy the generated json to 
 [reflect-config.json](./driver/src/main/resources/META-INF/native-image/com.arangodb/arangodb-java-driver/reflect-config.json).
 

@@ -328,12 +328,12 @@ jobs:
           compression: 'true'
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-native dependency:tree -Dshaded=<<parameters.shaded>>
+          command: mvn -am -pl test-functional dependency:tree -Dnative -Dshaded=<<parameters.shaded>>
       - run:
           name: Test Native
-          command: mvn -am -pl test-native package -Dshaded=<<parameters.shaded>>
+          command: mvn -am -pl test-functional package -Dnative -Dshaded=<<parameters.shaded>>
       - report:
-          working_directory: test-native
+          working_directory: test-functional
       - store_cache
 
   deploy:

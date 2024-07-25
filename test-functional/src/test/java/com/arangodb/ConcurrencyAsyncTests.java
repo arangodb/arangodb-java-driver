@@ -39,7 +39,6 @@ class ConcurrencyAsyncTests {
         List<CompletableFuture<ArangoDBVersion>> futures = IntStream.range(0, 20)
                 .mapToObj(i -> adb.getVersion()
                         .whenCompleteAsync((dbVersion, ex) -> {
-                            System.out.println(Thread.currentThread().getName());
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {

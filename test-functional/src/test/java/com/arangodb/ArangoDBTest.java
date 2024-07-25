@@ -707,7 +707,6 @@ class ArangoDBTest extends BaseJunit5 {
 
         Response<?> response = arangoDB.execute(request, Void.class);
         String jobId = response.getHeaders().get("x-arango-async-id");
-        System.out.println(jobId);
 
         Request<?> request2 = Request.builder()
                 .db(ArangoRequestParam.SYSTEM)
