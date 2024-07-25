@@ -122,7 +122,7 @@
                                     <goal>generateTestResourceConfig</goal>
                                     <goal>test</goal>
                                 </goals>
-                                <phase>test</phase>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                         <configuration>
