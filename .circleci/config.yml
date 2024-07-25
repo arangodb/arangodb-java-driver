@@ -174,10 +174,20 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-functional dependency:tree -Dshaded=<<parameters.shaded>> -Dssl=<<parameters.ssl>> -Dnative=<<parameters.native>> <<parameters.args>>
+          command: |
+            mvn dependency:tree -am -pl test-functional \
+              -Dshaded=<<parameters.shaded>> \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
       - run:
           name: Test
-          command: mvn -am -pl test-functional package -Dshaded=<<parameters.shaded>> -Dssl=<<parameters.ssl>> -Dnative=<<parameters.native>> <<parameters.args>>
+          command: |
+            mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
+              -Dshaded=<<parameters.shaded>> \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
       - report:
           working_directory: test-functional
       - store_cache
@@ -199,10 +209,10 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-non-functional dependency:tree -Dshaded=<<parameters.shaded>>
+          command: mvn dependency:tree -am -pl test-non-functional -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn -am -pl test-non-functional package -Dshaded=<<parameters.shaded>>
+          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
       - report:
           working_directory: test-functional
       - store_cache
@@ -221,10 +231,10 @@ jobs:
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
           name: Test
-          command: mvn -Pstatic-code-analysis -am -pl test-functional test
+          command: mvn verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
       - run:
           name: Analyze
-          command: mvn -DnoTests -Dmaven.test.skip=true -Dgpg.skip=true -Dmaven.javadoc.skip=true verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+          command: mvn verify -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -242,7 +252,7 @@ jobs:
       - load_cache
       - run:
           name: mvn install
-          command: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl driver
+          command: mvn install -Dmaven.test.skip -Dgpg.skip -am -pl driver
       - run:
           name: Run Maven
           command: mvn compile exec:java -Dexec.mainClass=FirstProject
@@ -277,10 +287,10 @@ jobs:
             TOXIPROXY_VERSION: v2.9.0
       - run:
           name: mvn dependency:tree
-          command: mvn -am -pl test-resilience dependency:tree -Dshaded=<<parameters.shaded>>
+          command: mvn dependency:tree -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn package -am -pl test-resilience -Dshaded=<<parameters.shaded>>
+          command: mvn verify -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - store_cache
 
   deploy:
