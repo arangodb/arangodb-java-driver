@@ -77,7 +77,7 @@ commands:
     steps:
       - run:
           name: Create reports
-          command: mvn failsafe-report:report-only
+          command: mvn surefire-report:failsafe-report-only
           working_directory: <<parameters.working_directory>>
       - store_artifacts:
           path: <<parameters.working_directory>>/target/site

@@ -17,26 +17,12 @@
         <module>jsonb-serde</module>
         <module>http-protocol</module>
         <module>vst-protocol</module>
+        <module>test-parent</module>
+        <module>test-functional</module>
+        <module>test-non-functional</module>
+        <module>test-resilience</module>
     </modules>
     <packaging>pom</packaging>
-
-    <profiles>
-        <profile>
-            <id>tests</id>
-            <activation>
-                <property>
-                    <name>noTests</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <modules>
-                <module>test-parent</module>
-                <module>test-functional</module>
-                <module>test-non-functional</module>
-                <module>test-resilience</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <name>arangodb-java-driver-parent</name>
     <description>ArangoDB Java Driver Project</description>
