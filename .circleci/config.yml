@@ -230,8 +230,11 @@ jobs:
           name: Restore Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
+          name: Build
+          command: mvn verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip
+      - run:
           name: Test
-          command: mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
       - run:
           name: Analyze
           command: mvn verify -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver

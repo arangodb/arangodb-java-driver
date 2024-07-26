@@ -170,7 +170,6 @@
                                     <scopes>compile</scopes>
                                     <maxJdkVersion>1.8</maxJdkVersion>
                                     <excludes>
-                                        <!--                                            <exclude>org.eclipse:yasson</exclude>-->
                                         <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
                                     </excludes>
                                 </enforceBytecodeVersion>
