@@ -414,7 +414,7 @@ workflows:
 #            branches:
 #              ignore: /.*/
       - test:
-          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          name: test-activefailover-<<matrix.docker-img>>
           matrix:
             parameters:
               docker-img:
