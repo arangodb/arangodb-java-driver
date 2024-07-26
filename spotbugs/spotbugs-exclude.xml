@@ -14,6 +14,10 @@
                 xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/release-3.1/spotbugs/etc/findbugsfilter.xsd">
 
     <Match>
+        <Package name="~graal.*"/>
+    </Match>
+
+    <Match>
         <Package name="~.*velocystream.*"/>
     </Match>
 
