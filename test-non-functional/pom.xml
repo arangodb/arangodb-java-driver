@@ -20,17 +20,16 @@
     </properties>
 
     <dependencies>
-        <!--        FIXME: JsonB serde tests-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.arangodb</groupId>-->
-        <!--            <artifactId>jsonb-serde</artifactId>-->
-        <!--            <scope>compile</scope>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse</groupId>-->
-        <!--            <artifactId>yasson</artifactId>-->
-        <!--        </dependency>-->
-
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jsonb-serde</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
