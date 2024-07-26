@@ -17,6 +17,7 @@
 
     <properties>
         <moduleName>com.arangodb.core</moduleName>
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
     <dependencies>
