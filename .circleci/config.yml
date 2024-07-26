@@ -9,7 +9,7 @@ commands:
   timeout:
     parameters:
       duration:
-        default: '5m'
+        default: '10m'
         type: 'string'
     steps:
       - run:
@@ -69,35 +69,6 @@ commands:
             STARTER_DOCKER_IMAGE: 'docker.io/arangodb/arangodb-starter:0.18.5'
             SSL: <<parameters.ssl>>
             COMPRESSION: <<parameters.compression>>
-  mvn-info:
-    parameters:
-      working_directory:
-        type: 'string'
-        default: '.'
-    steps:
-      - run:
-          name: mvn version
-          working_directory: <<parameters.working_directory>>
-          command: mvn --version
-      - run:
-          name: mvn dependency:tree
-          working_directory: <<parameters.working_directory>>
-          command: mvn dependency:tree
-  mvn-install:
-    steps:
-      - run:
-          name: mvn install
-          command: mvn install -Dmaven.test.skip=true -Dgpg.skip=true -Dmaven.javadoc.skip=true
-  setup_jwt:
-    steps:
-      - run:
-          name: Setup JWT
-          command: |
-            ENDPOINT=$(./docker/find_active_endpoint.sh)
-            echo "Active endpoint: $ENDPOINT"
-            JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
-            echo "Setting JWT: $JWT"
-            sed -i "/arangodb.password/c\arangodb.jwt=$JWT" driver/src/test/resources/arangodb.properties
   report:
     parameters:
       working_directory:
@@ -106,7 +77,7 @@ commands:
     steps:
       - run:
           name: Create reports
-          command: mvn surefire-report:report-only
+          command: mvn surefire-report:failsafe-report-only
           working_directory: <<parameters.working_directory>>
       - store_artifacts:
           path: <<parameters.working_directory>>/target/site
@@ -132,12 +103,12 @@ commands:
     steps:
       - run:
           name: Deploy to Apache Maven Central
-          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true deploy
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip deploy
   release:
     steps:
       - run:
           name: Release to Apache Maven Central
-          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip=true nexus-staging:release
+          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip nexus-staging:release
           environment:
             MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
 
@@ -162,61 +133,88 @@ jobs:
       topology:
         type: 'string'
         default: 'single'
-      ssl:
-        type: 'string'
-        default: 'false'
       jdk:
         type: 'string'
         default: 'j21'
       args:
         type: 'string'
         default: ''
-      jwt:
-        type: 'boolean'
-        default: false
+      shaded:
+        type: 'string'
+        default: 'false'
+      ssl:
+        type: 'string'
+        default: 'false'
+      native:
+        type: 'string'
+        default: 'false'
+      graalvm-version:
+        type: 'string'
+        default: '21.0.2-graalce'
+      resource_class:
+        type: 'string'
+        default: 'medium'
     executor: <<parameters.jdk>>
+    resource_class: <<parameters.resource_class>>
     steps:
       - timeout
       - checkout
       - setup_remote_docker
+      - when:
+          condition:
+            equal: [ 'true', <<parameters.native>> ]
+          steps:
+            - install-sdk:
+                sdk: 'java'
+                version: <<parameters.graalvm-version>>
       - start-db:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
           ssl: <<parameters.ssl>>
-      - when:
-          condition:
-            equal: [ true, <<parameters.jwt>> ]
-          steps:
-            - setup_jwt
       - load_cache
-      - mvn-info
+      - run:
+          name: mvn dependency:tree
+          command: |
+            mvn dependency:tree -am -pl test-functional \
+              -Dshaded=<<parameters.shaded>> \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
       - run:
           name: Test
-          command: mvn -am -pl driver test -Dsurefire.failIfNoSpecifiedTests=false <<parameters.args>>
+          command: |
+            mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
+              -Dshaded=<<parameters.shaded>> \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
       - report:
-          working_directory: driver
+          working_directory: test-functional
       - store_cache
 
-  integration-test:
+  test-non-func:
     parameters:
-      args:
+      shaded:
         type: 'string'
-        default: ''
+        default: 'false'
     executor: 'j21'
     steps:
       - timeout
       - checkout
       - setup_remote_docker
+      - install-sdk:
+          sdk: 'java'
+          version: '21.0.2-graalce'
       - start-db
       - load_cache
-      - mvn-info
-      - mvn-install
+      - run:
+          name: mvn dependency:tree
+          command: mvn dependency:tree -am -pl test-non-functional -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn test <<parameters.args>>
-          working_directory: integration-tests
+          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
       - report:
-          working_directory: integration-tests
+          working_directory: test-functional
       - store_cache
 
   sonar:
@@ -228,13 +226,18 @@ jobs:
       - setup_remote_docker
       - start-db
       - load_cache
-      - mvn-info
       - restore_cache:
           name: Restore Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
-          name: Build and analyze
-          command: mvn -Pstatic-code-analysis -B -Dgpg.skip=true -am -pl driver verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver -Dmaven.javadoc.skip=true
+          name: Build
+          command: mvn verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip
+      - run:
+          name: Test
+          command: mvn verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
+      - run:
+          name: Analyze
+          command: mvn verify -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -250,8 +253,9 @@ jobs:
       - setup_remote_docker
       - start-db
       - load_cache
-      - mvn-info
-      - mvn-install
+      - run:
+          name: mvn install
+          command: mvn install -Dmaven.test.skip -Dgpg.skip -am -pl driver
       - run:
           name: Run Maven
           command: mvn compile exec:java -Dexec.mainClass=FirstProject
@@ -265,6 +269,10 @@ jobs:
   resilience-test:
     executor: 'j21'
     resource_class: 'large'
+    parameters:
+      shaded:
+        type: 'string'
+        default: 'false'
     steps:
       - timeout
       - checkout
@@ -273,66 +281,28 @@ jobs:
           topology: 'cluster'
           compression: 'true'
       - load_cache
-      - mvn-info
       - run:
           name: Start Toxiproxy
           command: ./bin/startProxy.sh
-          working_directory: resilience-tests
+          working_directory: test-resilience
           background: true
           environment:
             TOXIPROXY_VERSION: v2.9.0
-      - mvn-install
+      - run:
+          name: mvn dependency:tree
+          command: mvn dependency:tree -am -pl test-resilience -Dshaded=<<parameters.shaded>>
       - run:
           name: Test
-          command: mvn test
-          working_directory: resilience-tests
-      - store_cache
-
-  native:
-    parameters:
-      graalvm-version:
-        type: 'string'
-      project:
-        type: 'string'
-      ssl:
-        type: 'string'
-        default: 'false'
-      args:
-        type: 'string'
-        default: ''
-      resource-class:
-        type: 'string'
-    executor: 'j21'
-    resource_class: <<parameters.resource-class>>
-    steps:
-      - timeout
-      - checkout
-      - setup_remote_docker
-      - load_cache
-      - mvn-install
-      - install-sdk:
-          sdk: 'java'
-          version: <<parameters.graalvm-version>>
-      - start-db:
-          compression: 'true'
-          ssl: <<parameters.ssl>>
-      - mvn-info:
-          working_directory: <<parameters.project>>
-      - run:
-          name: Test Native
-          command: mvn test -Pnative -P'!arch-test' <<parameters.args>>
-          working_directory: <<parameters.project>>
-      - report:
-          working_directory: <<parameters.project>>
+          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
       - store_cache
 
   deploy:
     executor: 'j11'
     steps:
-      - timeout
+      - timeout:
+          duration: '30m'
       - checkout
       - load_cache
-      - mvn-info
       - config_gpg
       - deploy
       - store_cache
@@ -340,10 +310,10 @@ jobs:
   release:
     executor: 'j11'
     steps:
-      - timeout
+      - timeout:
+          duration: '30m'
       - checkout
       - load_cache
-      - mvn-info
       - config_gpg
       - deploy
       - release
@@ -378,6 +348,8 @@ workflows:
                 - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'cluster'
+              args:
+                - '-DenableSlowTests=true'
   test-adb-topology:
     when: <<pipeline.parameters.docker-img>>
     jobs:
@@ -390,46 +362,37 @@ workflows:
                 - 'cluster'
               args:
                 - '-DenableSlowTests=true'
-  test-active-failover:
+
+  test-func:
     when:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - test:
-          name: test-<<matrix.topology>>-<<matrix.docker-img>>
+          name: test-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
           matrix:
             parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'activefailover'
+              shaded:
+                - 'true'
+                - 'false'
+              ssl:
+                - 'true'
+                - 'false'
+      - test:
+          name: test-jdk=<<matrix.jdk>>
+          matrix:
+            parameters:
+              jdk:
+                - 'j11'
+                - 'j17'
+                - 'j21'
           filters:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
-  test-user-language:
-    jobs:
+              only:
+                - main
       - test:
-          name: test-<<matrix.args>>
-          matrix:
-            parameters:
-              args:
-                - '-DargLine="-Duser.language=jp"'
-                - '-DargLine="-Duser.language=tr"'
-  test-jdk:
-    jobs:
-      - test:
-          name: test-<<matrix.jdk>>
-          matrix:
-            parameters:
-              jdk:
-                - 'j17'
-                - 'j21'
-  test-jackson:
-    jobs:
-      - test:
-          name: test-<<matrix.args>>
+          name: test-jackson-<<matrix.args>>
           matrix:
             parameters:
               args:
@@ -441,99 +404,84 @@ workflows:
                 - '-Dadb.jackson.version=2.12.7'
                 - '-Dadb.jackson.version=2.11.4'
                 - '-Dadb.jackson.version=2.10.5'
-  test-ssl:
-    jobs:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - main
       - test:
-          name: test-ssl
+          name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
           matrix:
             parameters:
+              native:
+                - 'true'
+              resource_class:
+                - '2xlarge'
+              shaded:
+                - 'true'
+                - 'false'
               ssl:
                 - 'true'
-              args:
-                - '-Dgroups=ssl -DSslTest=true'
-  test-jwt:
-    jobs:
+                - 'false'
+              graalvm-version:
+                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - main
       - test:
-          name: test-jwt
+          name: test-activefailover-<<matrix.docker-img>>
           matrix:
             parameters:
-              jwt:
-                - true
-  integration-test:
+              docker-img:
+                - 'docker.io/arangodb/arangodb:3.11'
+                - 'docker.io/arangodb/enterprise:3.11'
+              topology:
+                - 'activefailover'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - main
+
+  test-non-func:
     jobs:
-      - integration-test:
-          name: integration-test-<<matrix.args>>
+      - test-non-func:
+          name: test-non-func-shaded=<<matrix.shaded>>
           matrix:
             parameters:
-              args:
-                - '-Pinternal-serde'
-                - '-Pjackson-serde'
-                - '-Pjsonb-serde'
-                - '-Pplain'
+              shaded:
+                - 'true'
+                - 'false'
+
   sonar:
     when:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - sonar:
           name: sonar
+
   tutorial:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - tutorial
+
   resilience-test:
     jobs:
-      - resilience-test
-  native:
-    jobs:
-      - native:
-          name: native-<<matrix.project>>-<<matrix.graalvm-version>>
+      - resilience-test:
+          name: resilience-test-shaded=<<matrix.shaded>>
           matrix:
             parameters:
-              graalvm-version:
-                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
-              resource-class:
-                - '2xlarge'
-      - native:
-          name: native-arm-<<matrix.project>>-<<matrix.graalvm-version>>
-          matrix:
-            parameters:
-              graalvm-version:
-                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
-              resource-class:
-                - 'arm.2xlarge'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-      - native:
-          name: native-ssl-<<matrix.project>>-<<matrix.graalvm-version>>
-          matrix:
-            parameters:
-              graalvm-version:
-                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-              project:
-                - 'driver'
-                - 'integration-tests'
-              args:
-                - '-Dgroups=ssl -DSslTest=true'
-              ssl:
+              shaded:
                 - 'true'
-              resource-class:
-                - '2xlarge'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+                - 'false'
+
   deploy:
     jobs:
       - deploy:
@@ -543,6 +491,7 @@ workflows:
               only: /^deploy.*/
             branches:
               ignore: /.*/
+
   release:
     jobs:
       - release:

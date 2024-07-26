@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
-        <artifactId>arangodb-java-driver-parent</artifactId>
+        <artifactId>release-parent</artifactId>
         <version>7.8.0-SNAPSHOT</version>
     </parent>
 
@@ -15,8 +16,8 @@
     <description>ArangoDB Java Driver Shaded</description>
 
     <properties>
-        <maven.deploy.skip>false</maven.deploy.skip>
         <moduleName>com.arangodb.driver</moduleName>
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
     <dependencies>
@@ -63,12 +64,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-            </plugin>
-            <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>shade-core-dependencies</id>
@@ -164,18 +160,17 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.4.1</version>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
-            <!-- skip attaching javadoc artifact in case of -Dmaven.javadoc.skip=true because the artifact file could not be found -->
-            <id>no-javadoc</id>
+            <id>javadoc</id>
             <activation>
                 <property>
-                    <name>!maven.javadoc.skip</name>
+                    <name>maven.javadoc.skip</name>
+                    <value>!true</value>
                 </property>
             </activation>
             <build>
@@ -183,7 +178,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -195,7 +189,7 @@
                                     <artifacts>
                                         <artifact>
                                             <file>
-                                                ${project.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
+                                                ${project.parent.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
                                             </file>
                                             <type>jar</type>
                                             <classifier>javadoc</classifier>
