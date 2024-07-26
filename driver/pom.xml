@@ -16,8 +16,8 @@
     <description>ArangoDB Java Driver</description>
 
     <properties>
-        <moduleName>com.arangodb.driver</moduleName>
         <maven.deploy.skip>false</maven.deploy.skip>
+        <moduleName>com.arangodb.driver</moduleName>
     </properties>
 
     <build>

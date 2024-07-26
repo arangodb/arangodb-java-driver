@@ -16,8 +16,17 @@
         <runAlways>
             <plugins>
                 <plugin groupId="org.apache.maven.plugins" artifactId="maven-failsafe-plugin"/>
+                <plugin groupId="org.jacoco" artifactId="jacoco-maven-plugin"/>
             </plugins>
         </runAlways>
     </executionControl>
+
+    <configuration>
+        <attachedOutputs>
+            <dirNames>
+                <dirName>classes</dirName>
+            </dirNames>
+        </attachedOutputs>
+    </configuration>
 
 </cache>

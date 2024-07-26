@@ -22,7 +22,7 @@ mvn versions:display-plugin-updates
 ## Code Analysis
 Analyze (Spotbugs and JaCoCo):
 ```
-mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -Pstatic-code-analysis -am -pl test-functional verify
+mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl test-functional verify
 mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dmaven.test.skip verify
 ```
 Reports:
