@@ -382,6 +382,10 @@ workflows:
                 - 'j11'
                 - 'j17'
                 - 'j21'
+          filters:
+            branches:
+              only:
+                - main
       - test:
           name: test-jackson-<<matrix.args>>
           matrix:
@@ -395,6 +399,10 @@ workflows:
                 - '-Dadb.jackson.version=2.12.7'
                 - '-Dadb.jackson.version=2.11.4'
                 - '-Dadb.jackson.version=2.10.5'
+          filters:
+            branches:
+              only:
+                - main
       - test:
           name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
           matrix:
@@ -413,10 +421,9 @@ workflows:
                 - '22.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - main
       - test:
           name: test-activefailover-<<matrix.docker-img>>
           matrix:
@@ -427,10 +434,9 @@ workflows:
               topology:
                 - 'activefailover'
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - main
 
   test-non-func:
     jobs:
