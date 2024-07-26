@@ -383,6 +383,8 @@ workflows:
                 - 'j17'
                 - 'j21'
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only:
                 - main
@@ -400,6 +402,8 @@ workflows:
                 - '-Dadb.jackson.version=2.11.4'
                 - '-Dadb.jackson.version=2.10.5'
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only:
                 - main
@@ -421,6 +425,8 @@ workflows:
                 - '22.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only:
                 - main
@@ -434,6 +440,8 @@ workflows:
               topology:
                 - 'activefailover'
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only:
                 - main
