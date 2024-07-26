@@ -20,10 +20,7 @@
 
 package example.graph;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoCursor;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
+import com.arangodb.*;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
@@ -35,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import util.TestUtils;
 
 import java.util.UUID;
 
@@ -55,8 +53,10 @@ class AQLActorsAndMoviesExampleTest {
 
     @BeforeAll
     static void setUp() {
+        ArangoConfigProperties config = ArangoConfigProperties.fromFile();
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(ArangoConfigProperties.fromFile())
+                .loadProperties(config)
+                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP2_JSON)))
                 .build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

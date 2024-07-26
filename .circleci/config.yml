@@ -9,7 +9,7 @@ commands:
   timeout:
     parameters:
       duration:
-        default: '5m'
+        default: '10m'
         type: 'string'
     steps:
       - run:

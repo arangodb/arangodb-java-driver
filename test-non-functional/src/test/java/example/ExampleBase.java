@@ -23,9 +23,11 @@ package example;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import util.TestUtils;
 
 /**
  * @author Mark Vollmary
@@ -40,8 +42,10 @@ public class ExampleBase {
 
     @BeforeAll
     static void setUp() {
+        ArangoConfigProperties config = ArangoConfigProperties.fromFile();
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(ArangoConfigProperties.fromFile())
+                .loadProperties(config)
+                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP2_JSON)))
                 .build();
         String dbName = DB_NAME;
         if (arangoDB.db(dbName).exists())
