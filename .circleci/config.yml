@@ -296,7 +296,8 @@ jobs:
   deploy:
     executor: 'j11'
     steps:
-      - timeout
+      - timeout:
+          duration: '30m'
       - checkout
       - load_cache
       - config_gpg
@@ -306,7 +307,8 @@ jobs:
   release:
     executor: 'j11'
     steps:
-      - timeout
+      - timeout:
+          duration: '30m'
       - checkout
       - load_cache
       - config_gpg

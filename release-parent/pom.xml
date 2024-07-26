@@ -130,6 +130,7 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <stagingProfileId>84aff6e87e214c</stagingProfileId>
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <skipNexusStagingDeployMojo>${maven.deploy.skip}</skipNexusStagingDeployMojo>
                 </configuration>
             </plugin>
             <plugin>
