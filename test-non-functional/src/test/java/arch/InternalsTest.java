@@ -147,7 +147,7 @@ public class InternalsTest {
             .should(be(paramPredicate));
 
     private static DescribedPredicate<JavaClass> superclasses(DescribedPredicate<? super JavaClass> predicate) {
-        return new DescribedPredicate<JavaClass>("superclasses " + predicate.getDescription()) {
+        return new DescribedPredicate<>("superclasses " + predicate.getDescription()) {
             @Override
             public boolean test(JavaClass clazz) {
                 return Stream.of(
@@ -162,7 +162,7 @@ public class InternalsTest {
     }
 
     private static DescribedPredicate<JavaCodeUnit> haveParams(DescribedPredicate<? super JavaParameter> predicate) {
-        return new DescribedPredicate<JavaCodeUnit>("have params " + predicate.getDescription()) {
+        return new DescribedPredicate<>("have params " + predicate.getDescription()) {
             @Override
             public boolean test(JavaCodeUnit method) {
                 return method.getParameters().stream().allMatch(predicate);

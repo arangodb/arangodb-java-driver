@@ -13,7 +13,7 @@ class ArchUtils {
 
     static class JavaTypeExt {
         static DescribedPredicate<JavaType> rawTypes(DescribedPredicate<? super JavaClass> predicate) {
-            return new DescribedPredicate<JavaType>("raw types " + predicate.getDescription()) {
+            return new DescribedPredicate<>("raw types " + predicate.getDescription()) {
                 @Override
                 public boolean test(JavaType t) {
                     if (t.toErasure().isAnnotatedWith(NoRawTypesInspection.class)) {
@@ -27,7 +27,7 @@ class ArchUtils {
     }
 
     static class HasReturnTypeExt {
-        private static final ChainableFunction<HasReturnType, JavaType> GET_RETURN_TYPE = new ChainableFunction<HasReturnType, JavaType>() {
+        private static final ChainableFunction<HasReturnType, JavaType> GET_RETURN_TYPE = new ChainableFunction<>() {
             @Override
             public JavaType apply(HasReturnType input) {
                 return input.getReturnType();
@@ -40,7 +40,7 @@ class ArchUtils {
     }
 
     static class HasTypeExt {
-        private static final ChainableFunction<HasType, JavaType> GET_TYPE = new ChainableFunction<HasType, JavaType>() {
+        private static final ChainableFunction<HasType, JavaType> GET_TYPE = new ChainableFunction<>() {
             @Override
             public JavaType apply(HasType input) {
                 return input.getType();
