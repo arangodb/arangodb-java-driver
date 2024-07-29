@@ -1,0 +1,4 @@
+{
+    "sonarCloudOrganization": "arangodb-1",
+    "projectKey": "arangodb_arangodb-java-driver"
+}
