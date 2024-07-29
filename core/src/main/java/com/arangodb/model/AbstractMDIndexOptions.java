@@ -39,7 +39,7 @@ public abstract class AbstractMDIndexOptions<T extends AbstractMDIndexOptions<T>
     private Iterable<String> storedValues;
 
 
-    public AbstractMDIndexOptions() {
+    protected AbstractMDIndexOptions() {
         super();
     }
 

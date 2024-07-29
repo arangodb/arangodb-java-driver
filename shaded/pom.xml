@@ -18,6 +18,7 @@
     <properties>
         <moduleName>com.arangodb.driver</moduleName>
         <maven.deploy.skip>false</maven.deploy.skip>
+        <sonar.exclusions>src/main/java/graal/**/*</sonar.exclusions>
     </properties>
 
     <dependencies>

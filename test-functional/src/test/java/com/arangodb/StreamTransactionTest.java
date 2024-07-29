@@ -426,9 +426,9 @@ class StreamTransactionTest extends BaseJunit5 {
         StreamTransactionEntity tx = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
-        List<BaseDocument> modifiedDocs = createdDocs.stream().peek(doc -> {
-            doc.updateAttribute("test", "bar");
-        }).collect(Collectors.toList());
+        List<BaseDocument> modifiedDocs = createdDocs.stream()
+                .peek(doc -> doc.updateAttribute("test", "bar"))
+                .collect(Collectors.toList());
 
         // replace document from within the tx
         collection
@@ -511,9 +511,9 @@ class StreamTransactionTest extends BaseJunit5 {
         StreamTransactionEntity tx = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
 
-        List<BaseDocument> modifiedDocs = createdDocs.stream().peek(doc -> {
-            doc.updateAttribute("test", "bar");
-        }).collect(Collectors.toList());
+        List<BaseDocument> modifiedDocs = createdDocs.stream()
+                .peek(doc -> doc.updateAttribute("test", "bar"))
+                .collect(Collectors.toList());
 
         // update documents from within the tx
         collection

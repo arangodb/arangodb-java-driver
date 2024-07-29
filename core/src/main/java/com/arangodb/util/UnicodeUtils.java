@@ -21,6 +21,7 @@
 package com.arangodb.util;
 
 import java.text.Normalizer;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -45,6 +46,7 @@ public final class UnicodeUtils {
     }
 
     public static boolean isNormalized(final String value) {
-        return normalize(value).equals(value);
+        Objects.requireNonNull(value);
+        return value.equals(normalize(value));
     }
 }
