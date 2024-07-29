@@ -190,6 +190,9 @@
                         </executions>
                         <configuration>
                             <dataFile>../test-functional/target/jacoco.exec</dataFile>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
                         </configuration>
                     </plugin>
                 </plugins>

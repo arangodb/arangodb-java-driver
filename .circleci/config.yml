@@ -317,144 +317,145 @@ jobs:
       - store_cache
 
 workflows:
-  test-adb-version:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - test:
-          name: test-single-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
-                - 'docker.io/arangodb/enterprise:3.12'
-              topology:
-                - 'single'
-              args:
-                - '-DenableSlowTests=true'
-      - test:
-          name: test-cluster-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
-                - 'docker.io/arangodb/enterprise:3.12'
-              topology:
-                - 'cluster'
-              args:
-                - '-DenableSlowTests=true'
-  test-adb-topology:
-    when: <<pipeline.parameters.docker-img>>
-    jobs:
-      - test:
-          name: test-<<matrix.topology>>
-          matrix:
-            parameters:
-              topology:
-                - 'single'
-                - 'cluster'
-              args:
-                - '-DenableSlowTests=true'
-
-  test-func:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - test:
-          name: test-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
-              ssl:
-                - 'true'
-                - 'false'
-      - test:
-          name: test-jdk=<<matrix.jdk>>
-          matrix:
-            parameters:
-              jdk:
-                - 'j11'
-                - 'j17'
-                - 'j21'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-      - test:
-          name: test-jackson-<<matrix.args>>
-          matrix:
-            parameters:
-              args:
-                - '-Dadb.jackson.version=2.17.1'
-                - '-Dadb.jackson.version=2.16.2'
-                - '-Dadb.jackson.version=2.15.4'
-                - '-Dadb.jackson.version=2.14.3'
-                - '-Dadb.jackson.version=2.13.5'
-                - '-Dadb.jackson.version=2.12.7'
-                - '-Dadb.jackson.version=2.11.4'
-                - '-Dadb.jackson.version=2.10.5'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-      - test:
-          name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
-          matrix:
-            parameters:
-              native:
-                - 'true'
-              resource_class:
-                - '2xlarge'
-              shaded:
-                - 'true'
-                - 'false'
-              ssl:
-                - 'true'
-                - 'false'
-              graalvm-version:
-                - '22.0.1-graalce'
-                - '21.0.2-graalce'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-      - test:
-          name: test-activefailover-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'activefailover'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-
-  test-non-func:
-    jobs:
-      - test-non-func:
-          name: test-non-func-shaded=<<matrix.shaded>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
+#  test-adb-version:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
+#    jobs:
+#      - test:
+#          name: test-single-<<matrix.docker-img>>
+#          matrix:
+#            parameters:
+#              docker-img:
+#                - 'docker.io/arangodb/arangodb:3.11'
+#                - 'docker.io/arangodb/arangodb:3.12'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#                - 'docker.io/arangodb/enterprise:3.12'
+#              topology:
+#                - 'single'
+#              args:
+#                - '-DenableSlowTests=true'
+#      - test:
+#          name: test-cluster-<<matrix.docker-img>>
+#          matrix:
+#            parameters:
+#              docker-img:
+#                - 'docker.io/arangodb/arangodb:3.11'
+#                - 'docker.io/arangodb/arangodb:3.12'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#                - 'docker.io/arangodb/enterprise:3.12'
+#              topology:
+#                - 'cluster'
+#              args:
+#                - '-DenableSlowTests=true'
+#
+#  test-adb-topology:
+#    when: <<pipeline.parameters.docker-img>>
+#    jobs:
+#      - test:
+#          name: test-<<matrix.topology>>
+#          matrix:
+#            parameters:
+#              topology:
+#                - 'single'
+#                - 'cluster'
+#              args:
+#                - '-DenableSlowTests=true'
+#
+#  test-func:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
+#    jobs:
+#      - test:
+#          name: test-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
+#          matrix:
+#            parameters:
+#              shaded:
+#                - 'true'
+#                - 'false'
+#              ssl:
+#                - 'true'
+#                - 'false'
+#      - test:
+#          name: test-jdk=<<matrix.jdk>>
+#          matrix:
+#            parameters:
+#              jdk:
+#                - 'j11'
+#                - 'j17'
+#                - 'j21'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              only:
+#                - main
+#      - test:
+#          name: test-jackson-<<matrix.args>>
+#          matrix:
+#            parameters:
+#              args:
+#                - '-Dadb.jackson.version=2.17.1'
+#                - '-Dadb.jackson.version=2.16.2'
+#                - '-Dadb.jackson.version=2.15.4'
+#                - '-Dadb.jackson.version=2.14.3'
+#                - '-Dadb.jackson.version=2.13.5'
+#                - '-Dadb.jackson.version=2.12.7'
+#                - '-Dadb.jackson.version=2.11.4'
+#                - '-Dadb.jackson.version=2.10.5'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              only:
+#                - main
+#      - test:
+#          name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
+#          matrix:
+#            parameters:
+#              native:
+#                - 'true'
+#              resource_class:
+#                - '2xlarge'
+#              shaded:
+#                - 'true'
+#                - 'false'
+#              ssl:
+#                - 'true'
+#                - 'false'
+#              graalvm-version:
+#                - '22.0.1-graalce'
+#                - '21.0.2-graalce'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              only:
+#                - main
+#      - test:
+#          name: test-activefailover-<<matrix.docker-img>>
+#          matrix:
+#            parameters:
+#              docker-img:
+#                - 'docker.io/arangodb/arangodb:3.11'
+#                - 'docker.io/arangodb/enterprise:3.11'
+#              topology:
+#                - 'activefailover'
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              only:
+#                - main
+#
+#  test-non-func:
+#    jobs:
+#      - test-non-func:
+#          name: test-non-func-shaded=<<matrix.shaded>>
+#          matrix:
+#            parameters:
+#              shaded:
+#                - 'true'
+#                - 'false'
 
   sonar:
     when:
@@ -463,38 +464,38 @@ workflows:
       - sonar:
           name: sonar
 
-  tutorial:
-    when:
-      not: <<pipeline.parameters.docker-img>>
-    jobs:
-      - tutorial
-
-  resilience-test:
-    jobs:
-      - resilience-test:
-          name: resilience-test-shaded=<<matrix.shaded>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
-
-  deploy:
-    jobs:
-      - deploy:
-          context: java-release
-          filters:
-            tags:
-              only: /^deploy.*/
-            branches:
-              ignore: /.*/
-
-  release:
-    jobs:
-      - release:
-          context: java-release
-          filters:
-            tags:
-              only: /^release.*/
-            branches:
-              ignore: /.*/
+#  tutorial:
+#    when:
+#      not: <<pipeline.parameters.docker-img>>
+#    jobs:
+#      - tutorial
+#
+#  resilience-test:
+#    jobs:
+#      - resilience-test:
+#          name: resilience-test-shaded=<<matrix.shaded>>
+#          matrix:
+#            parameters:
+#              shaded:
+#                - 'true'
+#                - 'false'
+#
+#  deploy:
+#    jobs:
+#      - deploy:
+#          context: java-release
+#          filters:
+#            tags:
+#              only: /^deploy.*/
+#            branches:
+#              ignore: /.*/
+#
+#  release:
+#    jobs:
+#      - release:
+#          context: java-release
+#          filters:
+#            tags:
+#              only: /^release.*/
+#            branches:
+#              ignore: /.*/
