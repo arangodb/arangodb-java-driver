@@ -363,6 +363,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(REFILL_INDEX_CACHES, params.getRefillIndexCaches());
+        request.putQueryParam(IGNORE_REVS, params.getIgnoreRevs());
         return request;
     }
 
