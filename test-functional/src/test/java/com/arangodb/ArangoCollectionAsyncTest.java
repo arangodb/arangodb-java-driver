@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.internal.RequestContextHolder;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
@@ -35,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -557,8 +557,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(createEntity.getKey()).isEqualTo(key);
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
-        Map<String, Object> newDoc = RequestContextHolder.INSTANCE.runWithCtx(RequestContext.EMPTY, () ->
-                collection.getSerde().deserializeUserData(createEntity.getNew().get(), Map.class));
+        Map<String, Object> newDoc = collection.getSerde().getUserSerde().deserialize(createEntity.getNew().get(), Map.class);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 
@@ -1595,6 +1594,38 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
         Throwable thrown = catchThrowable(() -> collection.deleteDocument(createResult.getKey(), options).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void deleteDocuments(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        DocumentCreateEntity<?> a = collection.insertDocument(new BaseDocument()).get();
+        DocumentCreateEntity<?> b = collection.insertDocument(new BaseDocument()).get();
+        MultiDocumentEntity<DocumentDeleteEntity<Void>> info = collection.deleteDocuments(
+                Arrays.asList(a.getKey(), b.getKey())).get();
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).hasSize(2);
+        assertThat(info.getErrors()).isEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void deleteDocumentsWithRevs(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        DocumentCreateEntity<?> a = collection.insertDocument(new BaseDocument()).get();
+        DocumentCreateEntity<?> b = collection.insertDocument(new BaseDocument()).get();
+        MultiDocumentEntity<DocumentDeleteEntity<Void>> info = collection.deleteDocuments(
+                Arrays.asList(
+                        JsonNodeFactory.instance.objectNode()
+                                .put("_key", a.getKey())
+                                .put("_rev", a.getRev()),
+                        JsonNodeFactory.instance.objectNode()
+                                .put("_key", b.getKey())
+                                .put("_rev", "wrong")
+                ), new DocumentDeleteOptions().ignoreRevs(false)).get();
+        assertThat(info).isNotNull();
+        assertThat(info.getDocuments()).hasSize(1);
+        assertThat(info.getDocuments().get(0).getKey()).isEqualTo(a.getKey());
+        assertThat(info.getErrors()).hasSize(1);
     }
 
     @ParameterizedTest

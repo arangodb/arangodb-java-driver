@@ -31,6 +31,7 @@ public final class DocumentDeleteOptions extends TransactionalOptions<DocumentDe
     private Boolean returnOld;
     private Boolean silent;
     private Boolean refillIndexCaches;
+    private Boolean ignoreRevs;
 
     @Override
     DocumentDeleteOptions getThis() {
@@ -104,6 +105,20 @@ public final class DocumentDeleteOptions extends TransactionalOptions<DocumentDe
      */
     public DocumentDeleteOptions refillIndexCaches(Boolean refillIndexCaches) {
         this.refillIndexCaches = refillIndexCaches;
+        return this;
+    }
+
+    public Boolean getIgnoreRevs() {
+        return ignoreRevs;
+    }
+
+    /**
+     * @param ignoreRevs If set to true, ignore any _rev attribute in the selectors. No revision check is performed.
+     *                   If set to false then revisions are checked. The default is true.
+     * @return options
+     */
+    public DocumentDeleteOptions ignoreRevs(final Boolean ignoreRevs) {
+        this.ignoreRevs = ignoreRevs;
         return this;
     }
 }
