@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.8.0] - 2024-09-02
+
+- added property `ignoreRevs` to DocumentDeleteOptions (#567, DE-844)
+
 ## [7.7.1] - 2024-06-12
 
 - fixed deserialization of responses with no content (#560)
