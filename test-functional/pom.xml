@@ -13,6 +13,10 @@
 
     <artifactId>test-functional</artifactId>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <profiles>
         <profile>
             <id>shaded</id>

@@ -17,6 +17,7 @@
         <maven.build.cache.enabled>false</maven.build.cache.enabled>
         <adb.jackson.version>2.17.1</adb.jackson.version>
         <sonar.skip>true</sonar.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
