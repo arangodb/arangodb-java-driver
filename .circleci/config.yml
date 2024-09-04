@@ -69,6 +69,11 @@ commands:
             STARTER_DOCKER_IMAGE: 'docker.io/arangodb/arangodb-starter:0.18.5'
             SSL: <<parameters.ssl>>
             COMPRESSION: <<parameters.compression>>
+  install:
+    steps:
+      - run:
+          name: mvn install
+          command: mvn install -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip
   report:
     parameters:
       working_directory:
@@ -139,9 +144,6 @@ jobs:
       args:
         type: 'string'
         default: ''
-      shaded:
-        type: 'string'
-        default: 'false'
       ssl:
         type: 'string'
         default: 'false'
@@ -176,7 +178,6 @@ jobs:
           name: mvn dependency:tree
           command: |
             mvn dependency:tree -am -pl test-functional \
-              -Dshaded=<<parameters.shaded>> \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
               <<parameters.args>>
@@ -184,7 +185,76 @@ jobs:
           name: Test
           command: |
             mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
-              -Dshaded=<<parameters.shaded>> \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
+      - report:
+          working_directory: test-functional
+      - store_cache
+
+  # DE-847
+  # https://issues.apache.org/jira/browse/MSHADE-206
+  # https://issues.apache.org/jira/browse/MNG-5899
+  test-shaded:
+    parameters:
+      docker-img:
+        type: 'string'
+        default: <<pipeline.parameters.docker-img>>
+      topology:
+        type: 'string'
+        default: 'single'
+      jdk:
+        type: 'string'
+        default: 'j21'
+      args:
+        type: 'string'
+        default: ''
+      ssl:
+        type: 'string'
+        default: 'false'
+      native:
+        type: 'string'
+        default: 'false'
+      graalvm-version:
+        type: 'string'
+        default: '21.0.2-graalce'
+      resource_class:
+        type: 'string'
+        default: 'medium'
+    executor: <<parameters.jdk>>
+    resource_class: <<parameters.resource_class>>
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - when:
+          condition:
+            equal: [ 'true', <<parameters.native>> ]
+          steps:
+            - install-sdk:
+                sdk: 'java'
+                version: <<parameters.graalvm-version>>
+      - start-db:
+          docker-img: <<parameters.docker-img>>
+          topology: <<parameters.topology>>
+          ssl: <<parameters.ssl>>
+      - load_cache
+      - install
+      - run:
+          name: mvn dependency:tree
+          working_directory: test-functional
+          command: |
+            mvn dependency:tree \
+              -Dshaded \
+              -Dssl=<<parameters.ssl>> \
+              -Dnative=<<parameters.native>> \
+              <<parameters.args>>
+      - run:
+          name: Test
+          working_directory: test-functional
+          command: |
+            mvn verify -Dgpg.skip \
+              -Dshaded \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
               <<parameters.args>>
@@ -193,10 +263,6 @@ jobs:
       - store_cache
 
   test-non-func:
-    parameters:
-      shaded:
-        type: 'string'
-        default: 'false'
     executor: 'j21'
     steps:
       - timeout
@@ -209,12 +275,35 @@ jobs:
       - load_cache
       - run:
           name: mvn dependency:tree
-          command: mvn dependency:tree -am -pl test-non-functional -Dshaded=<<parameters.shaded>>
+          command: mvn dependency:tree -am -pl test-non-functional
       - run:
           name: Test
-          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
-      - report:
-          working_directory: test-functional
+          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
+      - store_cache
+
+  # DE-847
+  # https://issues.apache.org/jira/browse/MSHADE-206
+  # https://issues.apache.org/jira/browse/MNG-5899
+  test-non-func-shaded:
+    executor: 'j21'
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - install-sdk:
+          sdk: 'java'
+          version: '21.0.2-graalce'
+      - start-db
+      - load_cache
+      - install
+      - run:
+          name: mvn dependency:tree
+          working_directory: test-non-functional
+          command: mvn dependency:tree -Dshaded
+      - run:
+          name: Test
+          working_directory: test-non-functional
+          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - store_cache
 
   sonar:
@@ -266,10 +355,6 @@ jobs:
   resilience-test:
     executor: 'j21'
     resource_class: 'large'
-    parameters:
-      shaded:
-        type: 'string'
-        default: 'false'
     steps:
       - timeout
       - checkout
@@ -287,10 +372,42 @@ jobs:
             TOXIPROXY_VERSION: v2.9.0
       - run:
           name: mvn dependency:tree
-          command: mvn dependency:tree -am -pl test-resilience -Dshaded=<<parameters.shaded>>
+          command: mvn dependency:tree -am -pl test-resilience
       - run:
           name: Test
-          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip -Dshaded=<<parameters.shaded>>
+          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
+      - store_cache
+
+  # DE-847
+  # https://issues.apache.org/jira/browse/MSHADE-206
+  # https://issues.apache.org/jira/browse/MNG-5899
+  resilience-test-shaded:
+    executor: 'j21'
+    resource_class: 'large'
+    steps:
+      - timeout
+      - checkout
+      - setup_remote_docker
+      - start-db:
+          topology: 'cluster'
+          compression: 'true'
+      - load_cache
+      - install
+      - run:
+          name: Start Toxiproxy
+          command: ./bin/startProxy.sh
+          working_directory: test-resilience
+          background: true
+          environment:
+            TOXIPROXY_VERSION: v2.9.0
+      - run:
+          name: mvn dependency:tree
+          working_directory: test-resilience
+          command: mvn dependency:tree -Dshaded
+      - run:
+          name: Test
+          working_directory: test-resilience
+          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - store_cache
 
   deploy:
@@ -366,12 +483,16 @@ workflows:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - test:
-          name: test-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
+          name: test-ssl=<<matrix.ssl>>
           matrix:
             parameters:
-              shaded:
+              ssl:
                 - 'true'
                 - 'false'
+      - test-shaded:
+          name: test-shaded-ssl=<<matrix.ssl>>
+          matrix:
+            parameters:
               ssl:
                 - 'true'
                 - 'false'
@@ -409,16 +530,33 @@ workflows:
               only:
                 - main
       - test:
-          name: test-native-shaded=<<matrix.shaded>>-ssl=<<matrix.ssl>>
+          name: test-native-ssl=<<matrix.ssl>>
           matrix:
             parameters:
               native:
                 - 'true'
               resource_class:
                 - '2xlarge'
-              shaded:
+              ssl:
                 - 'true'
                 - 'false'
+              graalvm-version:
+                - '22.0.1-graalce'
+                - '21.0.2-graalce'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - main
+      - test-shaded:
+          name: test-native-shaded-ssl=<<matrix.ssl>>
+          matrix:
+            parameters:
+              native:
+                - 'true'
+              resource_class:
+                - '2xlarge'
               ssl:
                 - 'true'
                 - 'false'
@@ -450,12 +588,9 @@ workflows:
   test-non-func:
     jobs:
       - test-non-func:
-          name: test-non-func-shaded=<<matrix.shaded>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
+          name: test-non-func
+      - test-non-func-shaded:
+          name: test-non-func-shaded
 
   sonar:
     when:
@@ -473,12 +608,9 @@ workflows:
   resilience-test:
     jobs:
       - resilience-test:
-          name: resilience-test-shaded=<<matrix.shaded>>
-          matrix:
-            parameters:
-              shaded:
-                - 'true'
-                - 'false'
+          name: resilience-test
+      - resilience-test-shaded:
+          name: resilience-test-shaded
 
   deploy:
     jobs:
