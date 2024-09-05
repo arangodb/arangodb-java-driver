@@ -44,6 +44,10 @@ public final class CursorEntity<T> {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * @return the total number of result documents available (only available if the query was executed with the count
      * attribute set)

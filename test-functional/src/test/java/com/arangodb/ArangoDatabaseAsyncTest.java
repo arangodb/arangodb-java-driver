@@ -780,6 +780,26 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
+    void queryCursorInTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions()).get();
+        ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1).streamTransactionId(tx.getId())).get();
+        List<Integer> result = new ArrayList<>();
+        result.addAll(c1.getResult());
+        ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
+        result.addAll(c2.getResult());
+        ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class,
+                new AqlQueryOptions().streamTransactionId(tx.getId())).get();
+        result.addAll(c3.getResult());
+        ArangoCursorAsync<Integer> c4 = c3.nextBatch().get();
+        result.addAll(c4.getResult());
+        assertThat(c4.hasMore()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+        db.abortStreamTransaction(tx.getId()).get();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
     void queryCursorRetry(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 11));
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
@@ -795,6 +815,28 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         c4.close();
         assertThat(c4.hasMore()).isFalse();
         assertThat(result).containsExactly(1, 2, 3, 4);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
+    void queryCursorRetryInTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions()).get();
+        ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1).allowRetry(true).streamTransactionId(tx.getId())).get();
+        List<Integer> result = new ArrayList<>();
+        result.addAll(c1.getResult());
+        ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
+        result.addAll(c2.getResult());
+        ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class, c2.getNextBatchId(),
+                new AqlQueryOptions().streamTransactionId(tx.getId())).get();
+        result.addAll(c3.getResult());
+        ArangoCursorAsync<Integer> c4 = c3.nextBatch().get();
+        result.addAll(c4.getResult());
+        c4.close();
+        assertThat(c4.hasMore()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+        db.abortStreamTransaction(tx.getId()).get();
     }
 
     @ParameterizedTest

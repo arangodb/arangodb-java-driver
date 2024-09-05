@@ -850,6 +850,25 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void queryCursorInTx(ArangoDatabase db) {
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions());
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1).streamTransactionId(tx.getId()));
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class,
+                new AqlQueryOptions().streamTransactionId(tx.getId())
+        );
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+        db.abortStreamTransaction(tx.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void queryCursorRetry(ArangoDatabase db) throws IOException {
         assumeTrue(isAtLeastVersion(3, 11));
         ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
@@ -863,6 +882,27 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor2.close();
         assertThat(cursor2.hasNext()).isFalse();
         assertThat(result).containsExactly(1, 2, 3, 4);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryCursorRetryInTx(ArangoDatabase db) throws IOException {
+        assumeTrue(isAtLeastVersion(3, 11));
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions());
+        ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
+                new AqlQueryOptions().batchSize(1).allowRetry(true).streamTransactionId(tx.getId()));
+        List<Integer> result = new ArrayList<>();
+        result.add(cursor.next());
+        result.add(cursor.next());
+        ArangoCursor<Integer> cursor2 = db.cursor(cursor.getId(), Integer.class, cursor.getNextBatchId(),
+                new AqlQueryOptions().streamTransactionId(tx.getId())
+        );
+        result.add(cursor2.next());
+        result.add(cursor2.next());
+        cursor2.close();
+        assertThat(cursor2.hasNext()).isFalse();
+        assertThat(result).containsExactly(1, 2, 3, 4);
+        db.abortStreamTransaction(tx.getId());
     }
 
     @ParameterizedTest
