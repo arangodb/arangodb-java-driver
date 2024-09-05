@@ -26,6 +26,7 @@ import com.arangodb.config.HostDescription;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Mark Vollmary
@@ -41,7 +42,7 @@ public class FallbackHostHandler implements HostHandler {
 
     public FallbackHostHandler(final HostResolver resolver) {
         this.resolver = resolver;
-        lastFailExceptions = new ArrayList<>();
+        lastFailExceptions = new CopyOnWriteArrayList<>();
         reset();
         hosts = resolver.getHosts();
         current = lastSuccess = hosts.getHostsList().get(0);

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Mark Vollmary
@@ -45,7 +46,7 @@ public class RoundRobinHostHandler implements HostHandler {
     public RoundRobinHostHandler(final HostResolver resolver) {
         super();
         this.resolver = resolver;
-        lastFailExceptions = new ArrayList<>();
+        lastFailExceptions = new CopyOnWriteArrayList<>();
         hosts = resolver.getHosts();
         current = 0L;
         reset();
