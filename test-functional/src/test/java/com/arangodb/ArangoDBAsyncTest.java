@@ -577,6 +577,39 @@ class ArangoDBAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
+    void resetLogLevels(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        LogLevelOptions options = new LogLevelOptions();
+        LogLevelEntity entity = new LogLevelEntity();
+        entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity err = arangoDB.setLogLevel(entity, options).get();
+        assertThat(err.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity logLevel = arangoDB.resetLogLevels(options).get();
+        assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.INFO);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncArangos")
+    void resetLogLevelsWithServerId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        assumeTrue(isCluster());
+        String serverId = arangoDB.getServerId().get();
+        LogLevelOptions options = new LogLevelOptions().serverId(serverId);
+
+        LogLevelEntity entity = new LogLevelEntity();
+        entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity err = arangoDB.setLogLevel(entity, options).get();
+        assertThat(err.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity logLevel = arangoDB.resetLogLevels(options).get();
+        assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.INFO);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncArangos")
     void getQueryOptimizerRules(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 10));
         final Collection<QueryOptimizerRule> rules = arangoDB.getQueryOptimizerRules().get();

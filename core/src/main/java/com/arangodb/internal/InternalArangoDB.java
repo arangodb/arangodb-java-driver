@@ -203,6 +203,11 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
                 .setBody(getSerde().serialize(entity));
     }
 
+    protected InternalRequest resetLogLevelsRequest(final LogLevelOptions options) {
+        return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_ADMIN_LOG_LEVEL)
+                .putQueryParam("serverId", options.getServerId());
+    }
+
     protected InternalRequest getQueryOptimizerRulesRequest() {
         return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_QUERY_RULES);
     }
