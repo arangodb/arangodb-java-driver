@@ -32,6 +32,7 @@ import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.model.*;
 import com.arangodb.serde.ArangoSerde;
+import com.arangodb.serde.ArangoSerdeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -633,6 +634,18 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder serde(final ArangoSerde serde) {
             config.setUserDataSerde(serde);
+            return this;
+        }
+
+        /**
+         * Sets the serde provider to be used to instantiate the user data serde.
+         * Ignored if {@link Builder#serde(ArangoSerde)} is used.
+         *
+         * @param serdeProviderClass class of the serde provider, it must have a public no-args constructor
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder serdeProviderClass(final Class<? extends ArangoSerdeProvider> serdeProviderClass) {
+            config.setUserDataSerdeProvider(serdeProviderClass);
             return this;
         }
 

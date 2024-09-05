@@ -16,6 +16,7 @@ import com.arangodb.serde.ArangoSerdeProvider;
 import com.fasterxml.jackson.databind.Module;
 
 import javax.net.ssl.SSLContext;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class ArangoConfig {
     private LoadBalancingStrategy loadBalancingStrategy;
     private InternalSerde internalSerde;
     private ArangoSerde userDataSerde;
+    private Class<? extends ArangoSerdeProvider> serdeProviderClass;
     private Integer responseQueueTimeSamples;
     private Module protocolModule;
     private Executor asyncExecutor;
@@ -81,6 +83,14 @@ public class ArangoConfig {
         compression = properties.getCompression().orElse(ArangoDefaults.DEFAULT_COMPRESSION);
         compressionThreshold = properties.getCompressionThreshold().orElse(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
         compressionLevel = properties.getCompressionLevel().orElse(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
+        serdeProviderClass = properties.getSerdeProviderClass().map((String className) -> {
+            try {
+                //noinspection unchecked
+                return (Class<? extends ArangoSerdeProvider>) Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElse(null);
     }
 
     public List<HostDescription> getHosts() {
@@ -237,11 +247,23 @@ public class ArangoConfig {
         this.loadBalancingStrategy = loadBalancingStrategy;
     }
 
+    public Class<? extends ArangoSerdeProvider> getSerdeProviderClass() {
+        return serdeProviderClass;
+    }
+
     public ArangoSerde getUserDataSerde() {
-        if (userDataSerde == null) {
-            userDataSerde = ArangoSerdeProvider.of(ContentTypeFactory.of(getProtocol())).create();
+        if (userDataSerde != null) {
+            return userDataSerde;
+        } else if (serdeProviderClass != null) {
+            try {
+                return serdeProviderClass.getDeclaredConstructor().newInstance().create();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return ArangoSerdeProvider.of(ContentTypeFactory.of(getProtocol())).create();
         }
-        return userDataSerde;
     }
 
     public InternalSerde getInternalSerde() {
@@ -253,6 +275,10 @@ public class ArangoConfig {
 
     public void setUserDataSerde(ArangoSerde userDataSerde) {
         this.userDataSerde = userDataSerde;
+    }
+
+    public void setUserDataSerdeProvider(Class<? extends ArangoSerdeProvider> serdeProviderClass) {
+        this.serdeProviderClass = serdeProviderClass;
     }
 
     public Integer getResponseQueueTimeSamples() {

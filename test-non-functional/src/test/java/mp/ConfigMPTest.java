@@ -33,6 +33,7 @@ class ConfigMPTest {
     private final Compression compression = Compression.GZIP;
     private final Integer compressionThreshold = 123456789;
     private final Integer compressionLevel = 9;
+    private final String serdeProviderClass = "com.arangodb.serde.jsonb.JsonbSerdeProvider";
 
     @Test
     void readConfig() {
@@ -73,5 +74,6 @@ class ConfigMPTest {
         assertThat(config.getCompression()).hasValue(compression);
         assertThat(config.getCompressionThreshold()).hasValue(compressionThreshold);
         assertThat(config.getCompressionLevel()).hasValue(compressionLevel);
+        assertThat(config.getSerdeProviderClass()).isPresent().hasValue(serdeProviderClass);
     }
 }
