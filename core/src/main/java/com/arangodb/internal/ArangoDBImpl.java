@@ -204,6 +204,11 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
     }
 
     @Override
+    public LogLevelEntity resetLogLevels(LogLevelOptions options) {
+        return executorSync().execute(resetLogLevelsRequest(options), LogLevelEntity.class);
+    }
+
+    @Override
     public Collection<QueryOptimizerRule> getQueryOptimizerRules() {
         return executorSync().execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }

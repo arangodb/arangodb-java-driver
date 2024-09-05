@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  */
@@ -28,22 +30,53 @@ public final class LogLevelEntity {
     private LogLevel all;
     private LogLevel agency;
     private LogLevel agencycomm;
+    private LogLevel agencystore;
+    private LogLevel backup;
+    private LogLevel bench;
     private LogLevel cluster;
-    private LogLevel collector;
     private LogLevel communication;
-    private LogLevel compactor;
+    private LogLevel authentication;
     private LogLevel config;
-    private LogLevel datafiles;
-    private LogLevel graphs;
-    private LogLevel heartbeat;
-    private LogLevel mmap;
-    private LogLevel performance;
-    private LogLevel queries;
-    private LogLevel replication;
-    private LogLevel requests;
+    private LogLevel crash;
+    private LogLevel dump;
+    private LogLevel engines;
+    private LogLevel cache;
+    private LogLevel security;
     private LogLevel startup;
+    private LogLevel trx;
+    private LogLevel supervision;
     private LogLevel threads;
+    private LogLevel ttl;
+    private LogLevel ssl;
+    private LogLevel replication2;
+    private LogLevel restore;
+    private LogLevel memory;
+    private LogLevel validation;
+    private LogLevel statistics;
     private LogLevel v8;
+    private LogLevel syscall;
+    private LogLevel libiresearch;
+    private LogLevel license;
+    private LogLevel deprecation;
+    private LogLevel rocksdb;
+    private LogLevel requests;
+    @JsonProperty("rep-wal")
+    private LogLevel repWal;
+    private LogLevel arangosearch;
+    private LogLevel views;
+    @JsonProperty("rep-state")
+    private LogLevel repState;
+    private LogLevel authorization;
+    private LogLevel queries;
+    private LogLevel aql;
+    private LogLevel graphs;
+    private LogLevel maintenance;
+    private LogLevel development;
+    private LogLevel replication;
+    private LogLevel httpclient;
+    private LogLevel heartbeat;
+    private LogLevel flush;
+    private LogLevel general;
 
     public LogLevelEntity() {
         super();
@@ -53,7 +86,7 @@ public final class LogLevelEntity {
         return all;
     }
 
-    public void setAll(final LogLevel all) {
+    public void setAll(LogLevel all) {
         this.all = all;
     }
 
@@ -61,7 +94,7 @@ public final class LogLevelEntity {
         return agency;
     }
 
-    public void setAgency(final LogLevel agency) {
+    public void setAgency(LogLevel agency) {
         this.agency = agency;
     }
 
@@ -69,136 +102,368 @@ public final class LogLevelEntity {
         return agencycomm;
     }
 
-    public void setAgencycomm(final LogLevel agencycomm) {
+    public void setAgencycomm(LogLevel agencycomm) {
         this.agencycomm = agencycomm;
+    }
+
+    public LogLevel getAgencystore() {
+        return agencystore;
+    }
+
+    public void setAgencystore(LogLevel agencystore) {
+        this.agencystore = agencystore;
+    }
+
+    public LogLevel getBackup() {
+        return backup;
+    }
+
+    public void setBackup(LogLevel backup) {
+        this.backup = backup;
+    }
+
+    public LogLevel getBench() {
+        return bench;
+    }
+
+    public void setBench(LogLevel bench) {
+        this.bench = bench;
     }
 
     public LogLevel getCluster() {
         return cluster;
     }
 
-    public void setCluster(final LogLevel cluster) {
+    public void setCluster(LogLevel cluster) {
         this.cluster = cluster;
-    }
-
-    public LogLevel getCollector() {
-        return collector;
-    }
-
-    public void setCollector(final LogLevel collector) {
-        this.collector = collector;
     }
 
     public LogLevel getCommunication() {
         return communication;
     }
 
-    public void setCommunication(final LogLevel communication) {
+    public void setCommunication(LogLevel communication) {
         this.communication = communication;
     }
 
-    public LogLevel getCompactor() {
-        return compactor;
+    public LogLevel getAuthentication() {
+        return authentication;
     }
 
-    public void setCompactor(final LogLevel compactor) {
-        this.compactor = compactor;
+    public void setAuthentication(LogLevel authentication) {
+        this.authentication = authentication;
     }
 
     public LogLevel getConfig() {
         return config;
     }
 
-    public void setConfig(final LogLevel config) {
+    public void setConfig(LogLevel config) {
         this.config = config;
     }
 
-    public LogLevel getDatafiles() {
-        return datafiles;
+    public LogLevel getCrash() {
+        return crash;
     }
 
-    public void setDatafiles(final LogLevel datafiles) {
-        this.datafiles = datafiles;
+    public void setCrash(LogLevel crash) {
+        this.crash = crash;
     }
 
-    public LogLevel getGraphs() {
-        return graphs;
+    public LogLevel getDump() {
+        return dump;
     }
 
-    public void setGraphs(final LogLevel graphs) {
-        this.graphs = graphs;
+    public void setDump(LogLevel dump) {
+        this.dump = dump;
     }
 
-    public LogLevel getHeartbeat() {
-        return heartbeat;
+    public LogLevel getEngines() {
+        return engines;
     }
 
-    public void setHeartbeat(final LogLevel heartbeat) {
-        this.heartbeat = heartbeat;
+    public void setEngines(LogLevel engines) {
+        this.engines = engines;
     }
 
-    public LogLevel getMmap() {
-        return mmap;
+    public LogLevel getCache() {
+        return cache;
     }
 
-    public void setMmap(final LogLevel mmap) {
-        this.mmap = mmap;
+    public void setCache(LogLevel cache) {
+        this.cache = cache;
     }
 
-    public LogLevel getPerformance() {
-        return performance;
+    public LogLevel getSecurity() {
+        return security;
     }
 
-    public void setPerformance(final LogLevel performance) {
-        this.performance = performance;
-    }
-
-    public LogLevel getQueries() {
-        return queries;
-    }
-
-    public void setQueries(final LogLevel queries) {
-        this.queries = queries;
-    }
-
-    public LogLevel getReplication() {
-        return replication;
-    }
-
-    public void setReplication(final LogLevel replication) {
-        this.replication = replication;
-    }
-
-    public LogLevel getRequests() {
-        return requests;
-    }
-
-    public void setRequests(final LogLevel requests) {
-        this.requests = requests;
+    public void setSecurity(LogLevel security) {
+        this.security = security;
     }
 
     public LogLevel getStartup() {
         return startup;
     }
 
-    public void setStartup(final LogLevel startup) {
+    public void setStartup(LogLevel startup) {
         this.startup = startup;
+    }
+
+    public LogLevel getTrx() {
+        return trx;
+    }
+
+    public void setTrx(LogLevel trx) {
+        this.trx = trx;
+    }
+
+    public LogLevel getSupervision() {
+        return supervision;
+    }
+
+    public void setSupervision(LogLevel supervision) {
+        this.supervision = supervision;
     }
 
     public LogLevel getThreads() {
         return threads;
     }
 
-    public void setThreads(final LogLevel threads) {
+    public void setThreads(LogLevel threads) {
         this.threads = threads;
+    }
+
+    public LogLevel getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(LogLevel ttl) {
+        this.ttl = ttl;
+    }
+
+    public LogLevel getSsl() {
+        return ssl;
+    }
+
+    public void setSsl(LogLevel ssl) {
+        this.ssl = ssl;
+    }
+
+    public LogLevel getReplication2() {
+        return replication2;
+    }
+
+    public void setReplication2(LogLevel replication2) {
+        this.replication2 = replication2;
+    }
+
+    public LogLevel getRestore() {
+        return restore;
+    }
+
+    public void setRestore(LogLevel restore) {
+        this.restore = restore;
+    }
+
+    public LogLevel getMemory() {
+        return memory;
+    }
+
+    public void setMemory(LogLevel memory) {
+        this.memory = memory;
+    }
+
+    public LogLevel getValidation() {
+        return validation;
+    }
+
+    public void setValidation(LogLevel validation) {
+        this.validation = validation;
+    }
+
+    public LogLevel getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(LogLevel statistics) {
+        this.statistics = statistics;
     }
 
     public LogLevel getV8() {
         return v8;
     }
 
-    public void setV8(final LogLevel v8) {
+    public void setV8(LogLevel v8) {
         this.v8 = v8;
+    }
+
+    public LogLevel getSyscall() {
+        return syscall;
+    }
+
+    public void setSyscall(LogLevel syscall) {
+        this.syscall = syscall;
+    }
+
+    public LogLevel getLibiresearch() {
+        return libiresearch;
+    }
+
+    public void setLibiresearch(LogLevel libiresearch) {
+        this.libiresearch = libiresearch;
+    }
+
+    public LogLevel getLicense() {
+        return license;
+    }
+
+    public void setLicense(LogLevel license) {
+        this.license = license;
+    }
+
+    public LogLevel getDeprecation() {
+        return deprecation;
+    }
+
+    public void setDeprecation(LogLevel deprecation) {
+        this.deprecation = deprecation;
+    }
+
+    public LogLevel getRocksdb() {
+        return rocksdb;
+    }
+
+    public void setRocksdb(LogLevel rocksdb) {
+        this.rocksdb = rocksdb;
+    }
+
+    public LogLevel getRequests() {
+        return requests;
+    }
+
+    public void setRequests(LogLevel requests) {
+        this.requests = requests;
+    }
+
+    public LogLevel getRepWal() {
+        return repWal;
+    }
+
+    public void setRepWal(LogLevel repWal) {
+        this.repWal = repWal;
+    }
+
+    public LogLevel getArangosearch() {
+        return arangosearch;
+    }
+
+    public void setArangosearch(LogLevel arangosearch) {
+        this.arangosearch = arangosearch;
+    }
+
+    public LogLevel getViews() {
+        return views;
+    }
+
+    public void setViews(LogLevel views) {
+        this.views = views;
+    }
+
+    public LogLevel getRepState() {
+        return repState;
+    }
+
+    public void setRepState(LogLevel repState) {
+        this.repState = repState;
+    }
+
+    public LogLevel getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(LogLevel authorization) {
+        this.authorization = authorization;
+    }
+
+    public LogLevel getQueries() {
+        return queries;
+    }
+
+    public void setQueries(LogLevel queries) {
+        this.queries = queries;
+    }
+
+    public LogLevel getAql() {
+        return aql;
+    }
+
+    public void setAql(LogLevel aql) {
+        this.aql = aql;
+    }
+
+    public LogLevel getGraphs() {
+        return graphs;
+    }
+
+    public void setGraphs(LogLevel graphs) {
+        this.graphs = graphs;
+    }
+
+    public LogLevel getMaintenance() {
+        return maintenance;
+    }
+
+    public void setMaintenance(LogLevel maintenance) {
+        this.maintenance = maintenance;
+    }
+
+    public LogLevel getDevelopment() {
+        return development;
+    }
+
+    public void setDevelopment(LogLevel development) {
+        this.development = development;
+    }
+
+    public LogLevel getReplication() {
+        return replication;
+    }
+
+    public void setReplication(LogLevel replication) {
+        this.replication = replication;
+    }
+
+    public LogLevel getHttpclient() {
+        return httpclient;
+    }
+
+    public void setHttpclient(LogLevel httpclient) {
+        this.httpclient = httpclient;
+    }
+
+    public LogLevel getHeartbeat() {
+        return heartbeat;
+    }
+
+    public void setHeartbeat(LogLevel heartbeat) {
+        this.heartbeat = heartbeat;
+    }
+
+    public LogLevel getFlush() {
+        return flush;
+    }
+
+    public void setFlush(LogLevel flush) {
+        this.flush = flush;
+    }
+
+    public LogLevel getGeneral() {
+        return general;
+    }
+
+    public void setGeneral(LogLevel general) {
+        this.general = general;
     }
 
     public enum LogLevel {

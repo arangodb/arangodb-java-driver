@@ -190,6 +190,11 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
     }
 
     @Override
+    public CompletableFuture<LogLevelEntity> resetLogLevels(LogLevelOptions options) {
+        return executorAsync().execute(() -> resetLogLevelsRequest(options), LogLevelEntity.class);
+    }
+
+    @Override
     public CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules() {
         return executorAsync().execute(this::getQueryOptimizerRulesRequest, SerdeUtils.constructListType(QueryOptimizerRule.class));
     }

@@ -553,13 +553,15 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void setAllLogLevel(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 9));
+        assumeTrue(isAtLeastVersion(3, 12));
         final LogLevelEntity entity = new LogLevelEntity();
         try {
             entity.setAll(LogLevelEntity.LogLevel.ERROR);
             final LogLevelEntity logLevel = arangoDB.setLogLevel(entity);
             assertThat(logLevel.getAgency()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
             assertThat(logLevel.getQueries()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+            assertThat(logLevel.getRepWal()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+            assertThat(logLevel.getRepState()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
             LogLevelEntity retrievedLevels = arangoDB.getLogLevel();
             assertThat(retrievedLevels.getAgency()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
         } finally {
@@ -585,6 +587,39 @@ class ArangoDBTest extends BaseJunit5 {
             entity.setGraphs(LogLevelEntity.LogLevel.INFO);
             arangoDB.setLogLevel(entity);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void resetLogLevels(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        LogLevelOptions options = new LogLevelOptions();
+        LogLevelEntity entity = new LogLevelEntity();
+        entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity err = arangoDB.setLogLevel(entity, options);
+        assertThat(err.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity logLevel = arangoDB.resetLogLevels(options);
+        assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.INFO);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void resetLogLevelsWithServerId(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        assumeTrue(isCluster());
+        String serverId = arangoDB.getServerId();
+        LogLevelOptions options = new LogLevelOptions().serverId(serverId);
+
+        LogLevelEntity entity = new LogLevelEntity();
+        entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity err = arangoDB.setLogLevel(entity, options);
+        assertThat(err.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.ERROR);
+
+        LogLevelEntity logLevel = arangoDB.resetLogLevels(options);
+        assertThat(logLevel.getGraphs()).isEqualTo(LogLevelEntity.LogLevel.INFO);
     }
 
     @ParameterizedTest

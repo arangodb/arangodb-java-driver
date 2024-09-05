@@ -187,6 +187,11 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
     CompletableFuture<LogLevelEntity> setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
     /**
+     * Asynchronous version of {@link ArangoDB#resetLogLevels(LogLevelOptions)}
+     */
+    CompletableFuture<LogLevelEntity> resetLogLevels(LogLevelOptions options);
+
+    /**
      * Asynchronous version of {@link ArangoDB#getQueryOptimizerRules()}
      */
     CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules();

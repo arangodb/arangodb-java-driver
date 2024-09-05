@@ -353,6 +353,13 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     LogLevelEntity setLogLevel(LogLevelEntity entity, LogLevelOptions options);
 
     /**
+     * Reset the server log levels
+     * Revert the server's log level settings to the values they had at startup, as determined by the startup options specified on the command-line, a configuration file, and the factory defaults.
+     * @since ArangoDB 3.12
+     */
+    LogLevelEntity resetLogLevels(LogLevelOptions options);
+
+    /**
      * @return the list of available rules and their respective flags
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-all-aql-optimizer-rules">API
      * Documentation</a>
