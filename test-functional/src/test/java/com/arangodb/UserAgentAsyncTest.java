@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UserAgentAsyncTest extends BaseJunit5 {
 
-    private static final String EXPECTED_VERSION = "7.8.0";
+    private static final String EXPECTED_VERSION = "7.9.0-SNAPSHOT";
 
     @Test
     void packageVersion() {

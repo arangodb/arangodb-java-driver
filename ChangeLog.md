@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added `serdeProviderClass` configuration property (#575, DE-837)
+- added `skipFastLockRound` parameter to StreamTransactionOptions (#574, DE-832)
+- added support to reset log levels (#573, DE-831)
+- added `legacy` option to `GeoJSONAnalyzerProperties` (#572, DE-736)
+- support resuming AQL cursor in transaction (#571, DE-592)
+- fíxed `HostHandler` concurrency (DE-663)
+- fíxed `ConnectionPoolImpl` concurrency (#570, DE-536)
+
 ## [7.8.0] - 2024-09-02
 
 - added property `ignoreRevs` to DocumentDeleteOptions (#567, DE-844)
