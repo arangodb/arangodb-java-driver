@@ -23,6 +23,7 @@ package com.arangodb.internal.net;
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public void setJwt(String jwt) {
+    public synchronized void setJwt(String jwt) {
         if (jwt != null) {
             this.jwt = jwt;
             for (Connection connection : connections) {
