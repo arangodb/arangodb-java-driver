@@ -860,6 +860,7 @@ class ArangoSearchTest extends BaseJunit5 {
         GeoJSONAnalyzerProperties properties = new GeoJSONAnalyzerProperties();
         properties.setOptions(options);
         properties.setType(GeoJSONAnalyzerProperties.GeoJSONAnalyzerType.point);
+        properties.setLegacy(true);
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
