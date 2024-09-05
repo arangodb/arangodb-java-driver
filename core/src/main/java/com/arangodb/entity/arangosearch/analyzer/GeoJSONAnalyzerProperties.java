@@ -30,6 +30,7 @@ public final class GeoJSONAnalyzerProperties {
 
     private GeoJSONAnalyzerType type;
     private GeoAnalyzerOptions options;
+    private Boolean legacy;
 
     public GeoJSONAnalyzerType getType() {
         return type;
@@ -51,17 +52,36 @@ public final class GeoJSONAnalyzerProperties {
         this.options = options;
     }
 
+    /**
+     * @return This option controls how GeoJSON Polygons are interpreted (introduced in v3.10.5).
+     * - If `legacy` is `true`, the smaller of the two regions defined by a
+     * linear ring is interpreted as the interior of the ring and a ring can at most
+     * enclose half the Earth's surface.
+     * - If `legacy` is `false`, the area to the left of the boundary ring's
+     * path is considered to be the interior and a ring can enclose the entire
+     * surface of the Earth.
+     * <p>
+     * The default is `false`.
+     */
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(Boolean legacy) {
+        this.legacy = legacy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GeoJSONAnalyzerProperties that = (GeoJSONAnalyzerProperties) o;
-        return type == that.type && Objects.equals(options, that.options);
+        return type == that.type && Objects.equals(options, that.options) && Objects.equals(legacy, that.legacy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, options);
+        return Objects.hash(type, options, legacy);
     }
 
     public enum GeoJSONAnalyzerType {
