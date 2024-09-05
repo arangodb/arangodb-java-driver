@@ -161,4 +161,9 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
         return Optional.ofNullable(getProperty("compressionLevel")).map(Integer::valueOf);
     }
 
+    @Override
+    public Optional<String> getSerdeProviderClass() {
+        return Optional.ofNullable(getProperty("serdeProviderClass"));
+    }
+
 }

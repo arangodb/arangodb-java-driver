@@ -33,6 +33,7 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<Compression> compression;
     private Optional<Integer> compressionThreshold;
     private Optional<Integer> compressionLevel;
+    private Optional<String> serdeProviderClass;
 
     @Override
     public Optional<List<HostDescription>> getHosts() {
@@ -130,21 +131,26 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     }
 
     @Override
+    public Optional<String> getSerdeProviderClass() {
+        return serdeProviderClass;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArangoConfigPropertiesMPImpl that = (ArangoConfigPropertiesMPImpl) o;
-        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel);
+        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel);
+        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
     }
 
     @Override
     public String toString() {
-        return "ArangoConfigPropertiesImpl{" +
+        return "ArangoConfigPropertiesMPImpl{" +
                 "hosts=" + hosts +
                 ", protocol=" + protocol +
                 ", user=" + user +
@@ -164,6 +170,7 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
                 ", compression=" + compression +
                 ", compressionThreshold=" + compressionThreshold +
                 ", compressionLevel=" + compressionLevel +
+                ", serdeProviderClass=" + serdeProviderClass +
                 '}';
     }
 }

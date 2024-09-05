@@ -33,6 +33,7 @@ public class ArangoConfigTest {
         assertThat(cfg.getCompressionThreshold()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
         assertThat(cfg.getCompressionLevel()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
         assertThat(cfg.getProtocolConfig()).isNull();
+        assertThat(cfg.getSerdeProviderClass()).isNull();
     }
 
     @Test
