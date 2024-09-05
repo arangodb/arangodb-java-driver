@@ -279,6 +279,8 @@ jobs:
       - run:
           name: Test
           command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
+      - report:
+          working_directory: test-non-functional
       - store_cache
 
   # DE-847
@@ -304,6 +306,8 @@ jobs:
           name: Test
           working_directory: test-non-functional
           command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+      - report:
+          working_directory: test-non-functional
       - store_cache
 
   sonar:
@@ -376,6 +380,8 @@ jobs:
       - run:
           name: Test
           command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
+      - report:
+          working_directory: test-resilience
       - store_cache
 
   # DE-847
@@ -408,6 +414,8 @@ jobs:
           name: Test
           working_directory: test-resilience
           command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+      - report:
+          working_directory: test-resilience
       - store_cache
 
   deploy:
