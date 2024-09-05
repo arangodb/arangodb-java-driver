@@ -193,15 +193,25 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type) {
-        return cursor(cursorId, type, null);
+        return cursor(cursorId, type, null, new AqlQueryOptions());
+    }
+
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, AqlQueryOptions options) {
+        return cursor(cursorId, type, null, options);
     }
 
     @Override
     public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
-        final HostHandle hostHandle = new HostHandle();
+        return cursor(cursorId, type, nextBatchId, new AqlQueryOptions());
+    }
+
+    @Override
+    public <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId, AqlQueryOptions options) {
+        options.allowRetry(nextBatchId != null);
+        HostHandle hostHandle = new HostHandle();
         return executorAsync()
-                .execute(() ->
-                                queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
+                .execute(() -> queryNextRequest(cursorId, options, nextBatchId),
                         cursorEntityDeserializer(type),
                         hostHandle)
                 .thenApply(res -> new ArangoCursorAsyncImpl<>(this, res, type, hostHandle, nextBatchId != null));

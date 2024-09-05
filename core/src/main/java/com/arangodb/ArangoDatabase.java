@@ -317,6 +317,19 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
     /**
      * Return an cursor from the given cursor-ID if still existing
      *
+     * @param cursorId The ID of the cursor
+     * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
+     * @param options  options
+     * @return cursor of the results
+     * @see <a href=
+     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API
+     * Documentation</a>
+     */
+    <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, AqlQueryOptions options);
+
+    /**
+     * Return an cursor from the given cursor-ID if still existing
+     *
      * @param cursorId    The ID of the cursor
      * @param type        The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param nextBatchId The ID of the next cursor batch (set only if cursor allows retries, see
@@ -326,6 +339,20 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @since ArangoDB 3.11
      */
     <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, String nextBatchId);
+
+    /**
+     * Return an cursor from the given cursor-ID if still existing
+     *
+     * @param cursorId    The ID of the cursor
+     * @param type        The type of the result (POJO or {@link com.arangodb.util.RawData})
+     * @param nextBatchId The ID of the next cursor batch (set only if cursor allows retries, see
+     *                    {@link AqlQueryOptions#allowRetry(Boolean)}
+     * @param options     options
+     * @return cursor of the results
+     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API Documentation</a>
+     * @since ArangoDB 3.11
+     */
+    <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, String nextBatchId, AqlQueryOptions options);
 
     /**
      * Explain an AQL query and return information about it

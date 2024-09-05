@@ -186,17 +186,28 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) {
-        return cursor(cursorId, type, null);
+        return cursor(cursorId, type, null, new AqlQueryOptions());
+    }
+
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final AqlQueryOptions options) {
+        return cursor(cursorId, type, null, options);
     }
 
     @Override
     public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId) {
-        final HostHandle hostHandle = new HostHandle();
-        final CursorEntity<T> result = executorSync().execute(
-                queryNextRequest(cursorId, new AqlQueryOptions(), nextBatchId),
+        return cursor(cursorId, type, nextBatchId, new AqlQueryOptions());
+    }
+
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type, final String nextBatchId, final AqlQueryOptions options) {
+        options.allowRetry(nextBatchId != null);
+        HostHandle hostHandle = new HostHandle();
+        CursorEntity<T> result = executorSync().execute(
+                queryNextRequest(cursorId, options, nextBatchId),
                 cursorEntityDeserializer(type),
                 hostHandle);
-        return createCursor(result, type, null, hostHandle);
+        return createCursor(result, type, options, hostHandle);
     }
 
     private <T> ArangoCursor<T> createCursor(

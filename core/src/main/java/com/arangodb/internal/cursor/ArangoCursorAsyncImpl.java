@@ -17,6 +17,7 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
 
     private final ArangoDatabaseAsyncImpl db;
     private final HostHandle hostHandle;
+    private final CursorEntity<T> entity;
 
     public ArangoCursorAsyncImpl(
             final ArangoDatabaseAsyncImpl db,
@@ -28,13 +29,18 @@ public class ArangoCursorAsyncImpl<T> extends InternalArangoCursor<T> implements
         super(db, db.name(), entity, type, allowRetry);
         this.db = db;
         this.hostHandle = hostHandle;
+        this.entity = entity;
     }
 
     @Override
     public CompletableFuture<ArangoCursorAsync<T>> nextBatch() {
         if (Boolean.TRUE.equals(hasMore())) {
             return executorAsync().execute(this::queryNextRequest, db.cursorEntityDeserializer(getType()), hostHandle)
-                    .thenApply(r -> new ArangoCursorAsyncImpl<>(db, r, getType(), hostHandle, allowRetry()));
+                    .thenApply(r -> {
+                        // needed because the latest batch does not return the cursor id
+                        r.setId(entity.getId());
+                        return new ArangoCursorAsyncImpl<>(db, r, getType(), hostHandle, allowRetry());
+                    });
         } else {
             CompletableFuture<ArangoCursorAsync<T>> cf = new CompletableFuture<>();
             cf.completeExceptionally(new NoSuchElementException());
