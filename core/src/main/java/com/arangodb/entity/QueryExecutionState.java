@@ -41,6 +41,9 @@ public enum QueryExecutionState {
     @JsonProperty("instantiating plan")
     INSTANTIATING_PLAN,
 
+    @JsonProperty("instantiating executors")
+    INSTANTIATING_EXECUTORS,
+
     @JsonProperty("optimizing plan")
     OPTIMIZING_PLAN,
 
