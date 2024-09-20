@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.9.0] - 2024-09-20
+
+- updated `velocypack` to version `3.1.0`
+- updated `jackson-dataformat-velocypack` to version `4.4.0`
+- added `SHADED` flag in `PackageVersion` class (#576)
 - added `serdeProviderClass` configuration property (#575, DE-837)
 - added `skipFastLockRound` parameter to StreamTransactionOptions (#574, DE-832)
 - added support to reset log levels (#573, DE-831)
