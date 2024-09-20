@@ -12,9 +12,16 @@ class UserAgentTest extends BaseJunit5 {
 
     private static final String EXPECTED_VERSION = "7.9.0-SNAPSHOT";
 
+    private static final boolean SHADED = Boolean.parseBoolean(System.getProperty("shaded"));
+
     @Test
     void packageVersion() {
-        assertThat(PackageVersion.VERSION).isEqualTo(EXPECTED_VERSION);
+        assertThat(PackageVersion.VERSION).isEqualTo(EXPECTED_VERSION + (SHADED ? "-shaded" : ""));
+    }
+
+    @Test
+    void packageVersionIsShaded() {
+        assertThat(PackageVersion.SHADED).isEqualTo(SHADED);
     }
 
     @ParameterizedTest

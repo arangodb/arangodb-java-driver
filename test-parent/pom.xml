@@ -18,9 +18,17 @@
         <adb.jackson.version>2.17.2</adb.jackson.version>
         <sonar.skip>true</sonar.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <shaded/>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson-serde-vpack</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -103,6 +111,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <junit.platform.listeners.uid.tracking.enabled>true</junit.platform.listeners.uid.tracking.enabled>
+                        <shaded>${shaded}</shaded>
                     </systemPropertyVariables>
                     <includes>
                         <include>**/*Test.java</include>
@@ -132,16 +141,12 @@
 
             <properties>
                 <testSourceDirectory>src/test/java</testSourceDirectory>
+                <shaded>false</shaded>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>arangodb-java-driver</artifactId>
-                    <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-serde-vpack</artifactId>
                     <scope>compile</scope>
                 </dependency>
                 <dependency>
@@ -162,6 +167,7 @@
 
             <properties>
                 <testSourceDirectory>${project.build.directory}/generated-test-sources/replacer</testSourceDirectory>
+                <shaded>true</shaded>
             </properties>
             <dependencies>
                 <dependency>
@@ -172,11 +178,6 @@
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>jackson-serde-json</artifactId>
-                    <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>jackson-serde-vpack</artifactId>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>

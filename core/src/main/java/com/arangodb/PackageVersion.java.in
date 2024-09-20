@@ -4,5 +4,15 @@ package com.arangodb;
  * Automatically generated from PackageVersion.java.in by replacer plugin.
  */
 public final class PackageVersion {
-    public final static String VERSION = "@project.version@";
+    public final static boolean SHADED = isShaded();
+    public final static String VERSION = "@project.version@" + (isShaded() ? "-shaded" : "");
+
+    private static boolean isShaded() {
+        try {
+            Class.forName("com.arangodb.shaded.vertx.core.Vertx");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

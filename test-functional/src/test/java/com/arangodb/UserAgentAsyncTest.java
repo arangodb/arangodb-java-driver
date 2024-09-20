@@ -11,14 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UserAgentAsyncTest extends BaseJunit5 {
-
-    private static final String EXPECTED_VERSION = "7.9.0-SNAPSHOT";
-
-    @Test
-    void packageVersion() {
-        assertThat(PackageVersion.VERSION).isEqualTo(EXPECTED_VERSION);
-    }
-
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void userAgentHeader(Protocol protocol) throws ExecutionException, InterruptedException {
