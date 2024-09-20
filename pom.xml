@@ -139,12 +139,12 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.3.0</version>
+                <version>4.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>velocypack</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
