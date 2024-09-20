@@ -9,7 +9,7 @@ public final class PackageVersion {
 
     private static boolean isShaded() {
         try {
-            Class.forName("com.arangodb.shaded.vertx.core.Vertx");
+            Class.forName("com.arangodb.shaded.fasterxml.jackson.core.JsonFactory");
             return true;
         } catch (ClassNotFoundException e) {
             return false;
