@@ -3,6 +3,7 @@ package resilience.vertx;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arangodb.ArangoDB;
+import com.arangodb.PackageVersion;
 import com.arangodb.http.HttpConnection;
 import com.arangodb.http.HttpProtocolConfig;
 import io.vertx.core.Vertx;
@@ -93,14 +94,16 @@ public class VertxTest extends SingleServerTest {
         }).toCompletionStage().toCompletableFuture().get();
         vertx.close();
 
-        assertThat(logs.getLogs())
-                .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnectionFactory"))
-                .filteredOn(it -> it.getLevel().equals(Level.WARN))
-                .map(ILoggingEvent::getFormattedMessage)
-                .anySatisfy(it -> assertThat(it)
-                        .contains("Found an existing Vert.x instance, you can reuse it by setting:")
-                        .contains(".protocolConfig(HttpProtocolConfig.builder().vertx(Vertx.currentContext().owner()).build())")
-                );
+        if (!PackageVersion.SHADED) {
+            assertThat(logs.getLogs())
+                    .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnectionFactory"))
+                    .filteredOn(it -> it.getLevel().equals(Level.WARN))
+                    .map(ILoggingEvent::getFormattedMessage)
+                    .anySatisfy(it -> assertThat(it)
+                            .contains("Found an existing Vert.x instance, you can reuse it by setting:")
+                            .contains(".protocolConfig(HttpProtocolConfig.builder().vertx(Vertx.currentContext().owner()).build())")
+                    );
+        }
         assertThat(logs.getLogs())
                 .filteredOn(it -> it.getLoggerName().equals("com.arangodb.http.HttpConnection"))
                 .filteredOn(it -> it.getLevel().equals(Level.DEBUG))

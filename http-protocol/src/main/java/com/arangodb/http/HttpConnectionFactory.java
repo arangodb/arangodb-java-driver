@@ -20,6 +20,7 @@
 
 package com.arangodb.http;
 
+import com.arangodb.PackageVersion;
 import com.arangodb.arch.UnstableApi;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
@@ -38,7 +39,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
     public HttpConnectionFactory(@UnstableApi final HttpProtocolConfig config) {
         HttpProtocolConfig cfg = config != null ? config : HttpProtocolConfig.builder().build();
         vertx = cfg.getVertx();
-        if (vertx == null && Vertx.currentContext() != null) {
+        if (vertx == null && !PackageVersion.SHADED && Vertx.currentContext() != null) {
             LOGGER.warn("Found an existing Vert.x instance, you can reuse it by setting:\n" +
                     "new ArangoDB.Builder()\n" +
                     "  // ...\n" +

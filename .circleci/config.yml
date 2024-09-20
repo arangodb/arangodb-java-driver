@@ -118,9 +118,6 @@ commands:
             MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
 
 executors:
-  j11:
-    docker:
-      - image: 'cimg/openjdk:11.0'
   j17:
     docker:
       - image: 'cimg/openjdk:17.0'
@@ -419,7 +416,7 @@ jobs:
       - store_cache
 
   deploy:
-    executor: 'j11'
+    executor: 'j17'
     steps:
       - timeout:
           duration: '30m'
@@ -430,7 +427,7 @@ jobs:
       - store_cache
 
   release:
-    executor: 'j11'
+    executor: 'j17'
     steps:
       - timeout:
           duration: '30m'
@@ -509,7 +506,6 @@ workflows:
           matrix:
             parameters:
               jdk:
-                - 'j11'
                 - 'j17'
                 - 'j21'
           filters:
