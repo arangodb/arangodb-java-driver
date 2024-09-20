@@ -3202,7 +3202,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void updateDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
                 "\"foo\":\"bar\"}]");
