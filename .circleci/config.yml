@@ -487,9 +487,9 @@ workflows:
       - test:
           name: test-ssl
           matrix:
-            docker-img:
-              - <<pipeline.parameters.docker-img>>
             parameters:
+              docker-img:
+                - <<pipeline.parameters.docker-img>>
               ssl:
                 - 'true'
 
