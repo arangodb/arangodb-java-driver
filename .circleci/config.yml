@@ -49,7 +49,7 @@ commands:
     parameters:
       docker-img:
         type: 'string'
-        default: <<pipeline.parameters.docker-img>>
+        default: 'docker.io/arangodb/arangodb:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -131,7 +131,7 @@ jobs:
     parameters:
       docker-img:
         type: 'string'
-        default: <<pipeline.parameters.docker-img>>
+        default: 'docker.io/arangodb/arangodb:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -196,7 +196,7 @@ jobs:
     parameters:
       docker-img:
         type: 'string'
-        default: <<pipeline.parameters.docker-img>>
+        default: 'docker.io/arangodb/arangodb:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -477,11 +477,21 @@ workflows:
           name: test-<<matrix.topology>>
           matrix:
             parameters:
+              docker-img:
+                - <<pipeline.parameters.docker-img>>
               topology:
                 - 'single'
                 - 'cluster'
               args:
                 - '-DenableSlowTests=true'
+      - test:
+          name: test-ssl
+          matrix:
+            docker-img:
+              - <<pipeline.parameters.docker-img>>
+            parameters:
+              ssl:
+                - 'true'
 
   test-func:
     when:
@@ -590,6 +600,8 @@ workflows:
                 - main
 
   test-non-func:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - test-non-func:
           name: test-non-func
@@ -610,6 +622,8 @@ workflows:
       - tutorial
 
   resilience-test:
+    when:
+      not: <<pipeline.parameters.docker-img>>
     jobs:
       - resilience-test:
           name: resilience-test
