@@ -662,11 +662,14 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.getStats().getFiltered()).isNotNull();
         assertThat(cursor.getStats().getExecutionTime()).isNotNull();
         assertThat(cursor.getStats().getPeakMemoryUsage()).isNotNull();
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(cursor.getStats().getCursorsCreated()).isNotNull();
-            assertThat(cursor.getStats().getCursorsRearmed()).isNotNull();
-            assertThat(cursor.getStats().getCacheHits()).isNotNull();
-            assertThat(cursor.getStats().getCacheMisses()).isNotNull();
+        assertThat(cursor.getStats().getCursorsCreated()).isNotNull();
+        assertThat(cursor.getStats().getCursorsRearmed()).isNotNull();
+        assertThat(cursor.getStats().getCacheHits()).isNotNull();
+        assertThat(cursor.getStats().getCacheMisses()).isNotNull();
+        assertThat(cursor.getStats().getIntermediateCommits()).isNotNull();
+        if (isAtLeastVersion(3, 12)) {
+            assertThat(cursor.getStats().getDocumentLookups()).isNotNull();
+            assertThat(cursor.getStats().getSeeks()).isNotNull();
         }
     }
 
