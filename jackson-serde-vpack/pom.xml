@@ -8,7 +8,7 @@
         <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
         <artifactId>release-parent</artifactId>
-        <version>7.9.0</version>
+        <version>7.10.0</version>
     </parent>
 
     <name>jackson-serde-vpack</name>

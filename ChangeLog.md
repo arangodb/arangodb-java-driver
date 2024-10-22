@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.10.0] - 2024-10-22
+
+- udpated Jackson to version `2.18` (#581, DE-877)
+- added missing statistics to `CursorStats` (#580, DE-876)
+- fixed type of `AqlExecutionExplainEntity.warnings` (#579, DE-886)
+
 ## [7.9.0] - 2024-09-20
 
 - updated `velocypack` to version `3.1.0`
