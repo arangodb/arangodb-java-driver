@@ -630,6 +630,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getExtra().getStats().getFiltered()).isNotNull();
         assertThat(cursor.getExtra().getStats().getExecutionTime()).isNotNull();
         assertThat(cursor.getExtra().getStats().getPeakMemoryUsage()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getDocumentLookups()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getIntermediateCommits()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getSeeks()).isNotNull();
     }
 
     @ParameterizedTest

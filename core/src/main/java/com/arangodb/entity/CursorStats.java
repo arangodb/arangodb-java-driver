@@ -20,6 +20,9 @@ public final class CursorStats {
     private Long fullCount;
     private Double executionTime;
     private Long peakMemoryUsage;
+    private Integer documentLookups;
+    private Integer intermediateCommits;
+    private Integer seeks;
 
     @JsonAnySetter
     public void add(String key, Object value) {
@@ -141,5 +144,23 @@ public final class CursorStats {
      */
     public Long getPeakMemoryUsage() {
         return peakMemoryUsage;
+    }
+
+    public Integer getDocumentLookups() {
+        return documentLookups;
+    }
+
+    /**
+     * @return The total number of intermediate commits the query has performed. This number can only be greater than
+     * zero for data-modification queries that perform modifications beyond the `--rocksdb.intermediate-commit-count`
+     * or `--rocksdb.intermediate-commit-size` thresholds. In a cluster, the intermediate commits are tracked per
+     * DB-Server that participates in the query and are summed up in the end.
+     */
+    public Integer getIntermediateCommits() {
+        return intermediateCommits;
+    }
+
+    public Integer getSeeks() {
+        return seeks;
     }
 }
