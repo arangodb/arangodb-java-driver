@@ -29,7 +29,7 @@ public final class AqlExecutionExplainEntity {
 
     private ExecutionPlan plan;
     private Collection<ExecutionPlan> plans;
-    private Collection<String> warnings;
+    private Collection<CursorWarning> warnings;
     private ExecutionStats stats;
     private Boolean cacheable;
 
@@ -41,7 +41,7 @@ public final class AqlExecutionExplainEntity {
         return plans;
     }
 
-    public Collection<String> getWarnings() {
+    public Collection<CursorWarning> getWarnings() {
         return warnings;
     }
 

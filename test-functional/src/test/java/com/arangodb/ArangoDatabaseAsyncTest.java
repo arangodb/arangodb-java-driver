@@ -1086,6 +1086,18 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
+    void explainQueryWithWarnings(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        AqlExecutionExplainEntity explain = db.explainQuery("return 1/0", null, null).get();
+        assertThat(explain.getWarnings())
+                .hasSize(1)
+                .allSatisfy(w -> {
+                    assertThat(w.getCode()).isEqualTo(1562);
+                    assertThat(w.getMessage()).isEqualTo("division by zero");
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
     void explainQueryWithIndexNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCollectionAsync character = db.collection("got_characters");
         ArangoCollectionAsync actor = db.collection("got_actors");
