@@ -1159,6 +1159,18 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void explainQueryWithWarnings(ArangoDatabase db) {
+        AqlExecutionExplainEntity explain = db.explainQuery("return 1/0", null, null);
+        assertThat(explain.getWarnings())
+                .hasSize(1)
+                .allSatisfy(w -> {
+                    assertThat(w.getCode()).isEqualTo(1562);
+                    assertThat(w.getMessage()).isEqualTo("division by zero");
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void explainQueryWithIndexNode(ArangoDatabase db) {
         ArangoCollection character = db.collection("got_characters");
         ArangoCollection actor = db.collection("got_actors");
