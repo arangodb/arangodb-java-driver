@@ -1,3 +1,4 @@
 # ArangoDB Java driver tutorial
 
-Code for ArangoDB [Java driver tutorial](https://university.arangodb.com/courses/java-driver-tutorial-v7/).
+This folder contains the code for the
+[Java driver tutorial](https://docs.arangodb.com/stable/develop/drivers/java/).
