@@ -146,6 +146,11 @@ public final class CursorStats {
         return peakMemoryUsage;
     }
 
+    /**
+     * @return The number of real document lookups caused by late materialization as well as `IndexNode`s that had to
+     * load document attributes not covered by the index. This is how many documents had to be fetched from storage
+     * after an index scan that initially covered the attribute access for these documents.
+     */
     public Integer getDocumentLookups() {
         return documentLookups;
     }
@@ -160,6 +165,9 @@ public final class CursorStats {
         return intermediateCommits;
     }
 
+    /**
+     * @return The number of seek calls done by RocksDB iterators for merge joins (`JoinNode` in the execution plan).
+     */
     public Integer getSeeks() {
         return seeks;
     }
