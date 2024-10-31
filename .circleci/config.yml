@@ -170,6 +170,9 @@ jobs:
           docker-img: <<parameters.docker-img>>
           topology: <<parameters.topology>>
           ssl: <<parameters.ssl>>
+      - run:
+          name: Start proxy
+          command: ./docker/start_proxy.sh
       - load_cache
       - run:
           name: mvn dependency:tree

@@ -21,6 +21,9 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.http.HttpProtocolConfig;
+import io.vertx.core.net.ProxyOptions;
+import io.vertx.core.net.ProxyType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -37,6 +40,31 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Michele Rastelli
  */
 class ArangoSslTest extends BaseTest {
+
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void httpProxy(Protocol protocol) {
+        assumeTrue(protocol != Protocol.VST);
+
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .protocol(protocol)
+                .host("172.28.0.1", 8529)
+                .password("test")
+                .useSsl(true)
+                .sslContext(createSslContext())
+                .verifyHost(false)
+                .protocolConfig(HttpProtocolConfig.builder()
+                        .proxyOptions(new ProxyOptions()
+                                .setType(ProxyType.HTTP)
+                                .setHost("127.0.0.1")
+                                .setPort(8888)
+                                .setUsername("user")
+                                .setPassword("password"))
+                        .build())
+                .build();
+        final ArangoDBVersion version = arangoDB.getVersion();
+        assertThat(version).isNotNull();
+    }
 
     @ParameterizedTest
     @EnumSource(Protocol.class)

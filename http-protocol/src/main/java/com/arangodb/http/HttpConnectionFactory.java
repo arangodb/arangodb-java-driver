@@ -34,12 +34,11 @@ import org.slf4j.LoggerFactory;
 public class HttpConnectionFactory implements ConnectionFactory {
     private final Logger LOGGER = LoggerFactory.getLogger(HttpConnectionFactory.class);
 
-    private final Vertx vertx;
+    final HttpProtocolConfig protocolConfig;
 
-    public HttpConnectionFactory(@UnstableApi final HttpProtocolConfig config) {
-        HttpProtocolConfig cfg = config != null ? config : HttpProtocolConfig.builder().build();
-        vertx = cfg.getVertx();
-        if (vertx == null && !PackageVersion.SHADED && Vertx.currentContext() != null) {
+    public HttpConnectionFactory(@UnstableApi final HttpProtocolConfig cfg) {
+        protocolConfig = cfg != null ? cfg : HttpProtocolConfig.builder().build();
+        if (protocolConfig.getVertx() == null && !PackageVersion.SHADED && Vertx.currentContext() != null) {
             LOGGER.warn("Found an existing Vert.x instance, you can reuse it by setting:\n" +
                     "new ArangoDB.Builder()\n" +
                     "  // ...\n" +
@@ -51,6 +50,6 @@ public class HttpConnectionFactory implements ConnectionFactory {
     @Override
     @UnstableApi
     public Connection create(@UnstableApi final ArangoConfig config, final HostDescription host) {
-        return new HttpConnection(config, host, vertx);
+        return new HttpConnection(config, host, protocolConfig);
     }
 }

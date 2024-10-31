@@ -87,7 +87,7 @@ public class HttpConnection implements Connection {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    HttpConnection(final ArangoConfig config, final HostDescription host, final Vertx existingVertx) {
+    HttpConnection(final ArangoConfig config, final HostDescription host, final HttpProtocolConfig protocolConfig) {
         super();
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
@@ -113,9 +113,9 @@ public class HttpConnection implements Connection {
         ).toHttpAuthorization();
 
         Vertx vertxToUse;
-        if (existingVertx != null) {
+        if (protocolConfig.getVertx() != null) {
             // reuse existing Vert.x
-            vertxToUse = existingVertx;
+            vertxToUse = protocolConfig.getVertx();
             // Vert.x will not be closed when connection is closed
             vertxToClose = null;
             LOGGER.debug("Reusing existing Vert.x instance");
@@ -154,7 +154,8 @@ public class HttpConnection implements Connection {
                 .setHttp2ClearTextUpgrade(false)
                 .setProtocolVersion(httpVersion)
                 .setDefaultHost(host.getHost())
-                .setDefaultPort(host.getPort());
+                .setDefaultPort(host.getPort())
+                .setProxyOptions(protocolConfig.getProxyOptions());
 
         if (compression != Compression.NONE) {
             webClientOptions.setTryUseCompression(true);
