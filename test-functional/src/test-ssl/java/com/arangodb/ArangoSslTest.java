@@ -56,7 +56,7 @@ class ArangoSslTest extends BaseTest {
                 .protocolConfig(HttpProtocolConfig.builder()
                         .proxyOptions(new ProxyOptions()
                                 .setType(ProxyType.HTTP)
-                                .setHost("172.28.0.100")
+                                .setHost("172.28.0.1")
                                 .setPort(8888)
                                 .setUsername("user")
                                 .setPassword("password"))
