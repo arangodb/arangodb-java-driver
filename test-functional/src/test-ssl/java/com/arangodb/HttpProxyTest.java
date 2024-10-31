@@ -21,10 +21,14 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.http.HttpProtocolConfig;
+import io.netty.handler.proxy.ProxyConnectException;
+import io.vertx.core.net.ProxyOptions;
+import io.vertx.core.net.ProxyType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,14 +37,18 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
- * @author Mark Vollmary
  * @author Michele Rastelli
  */
-class ArangoSslTest extends BaseTest {
+class HttpProxyTest extends BaseTest {
+
+    @BeforeEach
+    void setUp() {
+        assumeTrue(!PackageVersion.SHADED);
+    }
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void connect(Protocol protocol) {
+    void httpProxy(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
@@ -50,27 +58,52 @@ class ArangoSslTest extends BaseTest {
                 .useSsl(true)
                 .sslContext(createSslContext())
                 .verifyHost(false)
+                .protocolConfig(HttpProtocolConfig.builder()
+                        .proxyOptions(new ProxyOptions()
+                                .setType(ProxyType.HTTP)
+                                .setHost("172.28.0.1")
+                                .setPort(8888)
+                                .setUsername("user")
+                                .setPassword("password"))
+                        .build())
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }
 
+
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void connectWithoutValidSslContext(Protocol protocol) {
+    void httpProxyWrongPassword(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)
+                .password("test")
                 .useSsl(true)
+                .sslContext(createSslContext())
+                .verifyHost(false)
+                .protocolConfig(HttpProtocolConfig.builder()
+                        .proxyOptions(new ProxyOptions()
+                                .setType(ProxyType.HTTP)
+                                .setHost("172.28.0.1")
+                                .setPort(8888)
+                                .setUsername("user")
+                                .setPassword("wrong"))
+                        .build())
                 .build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-        ArangoDBException ex = (ArangoDBException) thrown;
-        assertThat(ex.getCause()).isInstanceOf(ArangoDBMultipleException.class);
-        List<Throwable> exceptions = ((ArangoDBMultipleException) ex.getCause()).getExceptions();
-        exceptions.forEach(e -> assertThat(e).isInstanceOf(SSLHandshakeException.class));
+        assertThat(thrown)
+                .isInstanceOf(ArangoDBException.class)
+                .hasMessageContaining("Cannot contact any host!")
+                .cause()
+                .isInstanceOf(ArangoDBMultipleException.class);
+        List<Throwable> causes = ((ArangoDBMultipleException) thrown.getCause()).getExceptions();
+        assertThat(causes).allSatisfy(e -> assertThat(e)
+                .isInstanceOf(ProxyConnectException.class)
+                .hasMessageContaining("status: 401 Unauthorized"));
+        assertThat(version).isNotNull();
     }
 
 }
