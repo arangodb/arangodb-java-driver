@@ -2,9 +2,11 @@ package com.arangodb.http;
 
 import com.arangodb.config.ProtocolConfig;
 import io.vertx.core.Vertx;
+import io.vertx.core.net.ProxyOptions;
 
 public final class HttpProtocolConfig implements ProtocolConfig {
     private final Vertx vertx;
+    private final ProxyOptions proxyOptions;
 
     public static Builder builder() {
         return new Builder();
@@ -12,6 +14,7 @@ public final class HttpProtocolConfig implements ProtocolConfig {
 
     public static class Builder {
         private Vertx vertx;
+        private ProxyOptions proxyOptions;
 
         private Builder() {
         }
@@ -27,16 +30,30 @@ public final class HttpProtocolConfig implements ProtocolConfig {
             return this;
         }
 
+        /**
+         * @param proxyOptions proxy options for HTTP connections
+         * @return this builder
+         */
+        public Builder proxyOptions(ProxyOptions proxyOptions) {
+            this.proxyOptions = proxyOptions;
+            return this;
+        }
+
         public HttpProtocolConfig build() {
-            return new HttpProtocolConfig(vertx);
+            return new HttpProtocolConfig(vertx, proxyOptions);
         }
     }
 
-    private HttpProtocolConfig(Vertx vertx) {
+    private HttpProtocolConfig(Vertx vertx, ProxyOptions proxyOptions) {
         this.vertx = vertx;
+        this.proxyOptions = proxyOptions;
     }
 
     public Vertx getVertx() {
         return vertx;
+    }
+
+    public ProxyOptions getProxyOptions() {
+        return proxyOptions;
     }
 }

@@ -20,6 +20,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <testSources>src/test/java</testSources>
         <shaded/>
     </properties>
 
@@ -153,7 +154,7 @@
             </activation>
 
             <properties>
-                <testSourceDirectory>src/test/java</testSourceDirectory>
+                <testSourceDirectory>${testSources}</testSourceDirectory>
                 <shaded>false</shaded>
             </properties>
             <dependencies>
@@ -209,7 +210,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <basedir>${project.basedir}/src/test/java</basedir>
+                            <basedir>${project.basedir}/${testSources}</basedir>
                             <filesToInclude>**</filesToInclude>
                             <outputBasedir>${project.build.directory}/generated-test-sources</outputBasedir>
                             <outputDir>replacer</outputDir>

@@ -37,7 +37,8 @@
                                 **/SerdeTest.**,
                                 **/SerializableTest.**,
                                 **/JacksonInterferenceTest.**,
-                                **/JacksonRequestContextTest.**
+                                **/JacksonRequestContextTest.**,
+                                **/HttpProxyTest.**
                             </filesToExclude>
                             <replacements>
                                 <replacement>
@@ -101,7 +102,19 @@
                 </property>
             </activation>
             <properties>
-                <testSourceDirectory>src/test-ssl/java</testSourceDirectory>
+                <testSources>src/test-ssl/java</testSources>
+            </properties>
+        </profile>
+        <profile>
+            <id>no-ssl</id>
+            <activation>
+                <property>
+                    <name>ssl</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <properties>
+                <testSources>src/test/java</testSources>
             </properties>
         </profile>
         <profile>
