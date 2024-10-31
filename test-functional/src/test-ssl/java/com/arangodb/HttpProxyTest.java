@@ -25,7 +25,6 @@ import com.arangodb.http.HttpProtocolConfig;
 import io.netty.handler.proxy.ProxyConnectException;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -40,11 +39,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Michele Rastelli
  */
 class HttpProxyTest extends BaseTest {
-
-    @BeforeEach
-    void setUp() {
-        assumeTrue(!PackageVersion.SHADED);
-    }
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
