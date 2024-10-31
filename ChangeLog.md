@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.11.0] - 2024-10-31
+
+- added support to HTTP proxies (#584, DE-930)
+
 ## [7.10.0] - 2024-10-22
 
 - udpated Jackson to version `2.18` (#581, DE-877)
