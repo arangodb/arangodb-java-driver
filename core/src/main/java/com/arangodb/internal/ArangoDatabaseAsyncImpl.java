@@ -224,6 +224,12 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     }
 
     @Override
+    public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(
+            String query, Map<String, Object> bindVars, AqlQueryExplainOptions options) {
+        return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
+    }
+
+    @Override
     public CompletableFuture<AqlParseEntity> parseQuery(final String query) {
         return executorAsync().execute(() -> parseQueryRequest(query), AqlParseEntity.class);
     }
