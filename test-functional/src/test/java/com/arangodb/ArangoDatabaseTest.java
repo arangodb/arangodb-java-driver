@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
 import com.arangodb.util.*;
@@ -45,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.assertj.core.api.InstanceOfAssertFactories.*;
 
 
 /**
@@ -1125,56 +1125,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         cursor.close();
     }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQuery(ArangoDatabase db) {
-        final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return i", null, null);
-        assertThat(explain).isNotNull();
-        assertThat(explain.getPlan()).isNotNull();
-        assertThat(explain.getPlans()).isNull();
-        final ExecutionPlan plan = explain.getPlan();
-        assertThat(plan.getCollections()).isEmpty();
-        assertThat(plan.getEstimatedCost()).isPositive();
-        assertThat(plan.getEstimatedNrItems()).isPositive();
-        assertThat(plan.getVariables()).hasSize(2);
-        assertThat(plan.getNodes()).isNotEmpty();
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(explain.getStats().getPeakMemoryUsage()).isNotNull();
-            assertThat(explain.getStats().getExecutionTime()).isNotNull();
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQueryWithBindVars(ArangoDatabase db) {
-        final AqlExecutionExplainEntity explain = db.explainQuery("for i in 1..1 return @value",
-                Collections.singletonMap("value", 11), null);
-        assertThat(explain).isNotNull();
-        assertThat(explain.getPlan()).isNotNull();
-        assertThat(explain.getPlans()).isNull();
-        final ExecutionPlan plan = explain.getPlan();
-        assertThat(plan.getCollections()).isEmpty();
-        assertThat(plan.getEstimatedCost()).isPositive();
-        assertThat(plan.getEstimatedNrItems()).isPositive();
-        assertThat(plan.getVariables()).hasSize(3);
-        assertThat(plan.getNodes()).isNotEmpty();
-    }
-
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQueryWithWarnings(ArangoDatabase db) {
-        AqlExecutionExplainEntity explain = db.explainQuery("return 1/0", null, null);
-        assertThat(explain.getWarnings())
-                .hasSize(1)
-                .allSatisfy(w -> {
-                    assertThat(w.getCode()).isEqualTo(1562);
-                    assertThat(w.getMessage()).isEqualTo("division by zero");
-                });
-    }
-
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQueryWithIndexNode(ArangoDatabase db) {
+    private String getExplainQuery(ArangoDatabase db) {
         ArangoCollection character = db.collection("got_characters");
         ArangoCollection actor = db.collection("got_actors");
 
@@ -1184,20 +1135,186 @@ class ArangoDatabaseTest extends BaseJunit5 {
         if (!actor.exists())
             actor.create();
 
-        String query = "" +
-                "FOR `character` IN `got_characters` " +
-                "   FOR `actor` IN `got_actors` " +
-                "       FILTER `character`.`actor` == `actor`.`_id` " +
-                "       RETURN `character`";
+        return "FOR `character` IN `got_characters` " +
+                " FOR `actor` IN `got_actors` " +
+                "   FILTER `actor`.`_id` == @myId" +
+                "   FILTER `character`.`actor` == `actor`.`_id` " +
+                "   FILTER `character`.`value` != 1/0 " +
+                "   RETURN {`character`, `actor`}";
+    }
 
-        final ExecutionPlan plan = db.explainQuery(query, null, null).getPlan();
-        plan.getNodes().stream()
-                .filter(it -> "IndexNode".equals(it.getType()))
-                .flatMap(it -> it.getIndexes().stream())
-                .forEach(it -> {
-                    assertThat(it.getType()).isEqualTo(IndexType.primary);
-                    assertThat(it.getFields()).contains("_key");
-                });
+    void checkExecutionPlan(AqlExecutionExplainEntity.ExecutionPlan plan) {
+        assertThat(plan).isNotNull();
+        assertThat(plan.getEstimatedNrItems())
+                .isNotNull()
+                .isNotNegative();
+        assertThat(plan.getNodes()).isNotEmpty();
+
+        AqlExecutionExplainEntity.ExecutionNode node = plan.getNodes().iterator().next();
+        assertThat(node.getEstimatedCost()).isNotNull();
+
+        assertThat(plan.getEstimatedCost()).isNotNull().isNotNegative();
+        assertThat(plan.getCollections()).isNotEmpty();
+
+        AqlExecutionExplainEntity.ExecutionCollection collection = plan.getCollections().iterator().next();
+        assertThat(collection.getName())
+                .isNotNull()
+                .isNotEmpty();
+
+        assertThat(plan.getRules()).isNotEmpty();
+        assertThat(plan.getVariables()).isNotEmpty();
+
+        AqlExecutionExplainEntity.ExecutionVariable variable = plan.getVariables().iterator().next();
+        assertThat(variable.getName())
+                .isNotNull()
+                .isNotEmpty();
+    }
+
+    @SuppressWarnings("deprecation")
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainQuery(ArangoDatabase db) {
+        AqlExecutionExplainEntity explain = db.explainQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions());
+        assertThat(explain).isNotNull();
+
+        checkExecutionPlan(explain.getPlan());
+        assertThat(explain.getPlans()).isNull();
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().getExecutionTime())
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isFalse();
+    }
+
+    @SuppressWarnings("deprecation")
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainQueryAllPlans(ArangoDatabase db) {
+        AqlExecutionExplainEntity explain = db.explainQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions().allPlans(true));
+        assertThat(explain).isNotNull();
+
+        assertThat(explain.getPlan()).isNull();
+        assertThat(explain.getPlans()).allSatisfy(this::checkExecutionPlan);
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().getExecutionTime())
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isNull();
+    }
+
+    void checkUntypedExecutionPlan(AqlQueryExplainEntity.ExecutionPlan plan) {
+        assertThat(plan).isNotNull();
+        assertThat(plan.get("estimatedNrItems"))
+                .isInstanceOf(Integer.class)
+                .asInstanceOf(INTEGER)
+                .isNotNull()
+                .isNotNegative();
+        assertThat(plan.getNodes()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionNode node = plan.getNodes().iterator().next();
+        assertThat(node.get("estimatedCost")).isNotNull();
+
+        assertThat(plan.getEstimatedCost()).isNotNull().isNotNegative();
+        assertThat(plan.getCollections()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionCollection collection = plan.getCollections().iterator().next();
+        assertThat(collection.get("name"))
+                .isInstanceOf(String.class)
+                .asInstanceOf(STRING)
+                .isNotNull()
+                .isNotEmpty();
+
+        assertThat(plan.getRules()).isNotEmpty();
+        assertThat(plan.getVariables()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionVariable variable = plan.getVariables().iterator().next();
+        assertThat(variable.get("name"))
+                .isInstanceOf(String.class)
+                .asInstanceOf(STRING)
+                .isNotNull()
+                .isNotEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainAqlQuery(ArangoDatabase db) {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions());
+        assertThat(explain).isNotNull();
+
+        checkUntypedExecutionPlan(explain.getPlan());
+        assertThat(explain.getPlans()).isNull();
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainAqlQueryAllPlans(ArangoDatabase db) {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions().allPlans(true));
+        assertThat(explain).isNotNull();
+
+        assertThat(explain.getPlan()).isNull();
+        assertThat(explain.getPlans()).allSatisfy(this::checkUntypedExecutionPlan);
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isNull();
     }
 
     @ParameterizedTest

@@ -110,7 +110,7 @@ public final class AqlQueryExplainOptions {
         return this;
     }
 
-    private Options getOptions() {
+    public Options getOptions() {
         if (options == null) {
             options = new Options();
         }
@@ -128,9 +128,21 @@ public final class AqlQueryExplainOptions {
             }
             return optimizer;
         }
+
+        public Integer getMaxNumberOfPlans() {
+            return maxNumberOfPlans;
+        }
+
+        public Boolean getAllPlans() {
+            return allPlans;
+        }
     }
 
     public static final class Optimizer {
         private Collection<String> rules;
+
+        public Collection<String> getRules() {
+            return rules;
+        }
     }
 }
