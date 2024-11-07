@@ -45,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.assertj.core.api.InstanceOfAssertFactories.*;
 
 
 /**
@@ -1198,6 +1199,115 @@ class ArangoDatabaseTest extends BaseJunit5 {
                     assertThat(it.getType()).isEqualTo(IndexType.primary);
                     assertThat(it.getFields()).contains("_key");
                 });
+    }
+
+    private String getExplainQuery(ArangoDatabase db) {
+        ArangoCollection character = db.collection("got_characters");
+        ArangoCollection actor = db.collection("got_actors");
+
+        if (!character.exists())
+            character.create();
+
+        if (!actor.exists())
+            actor.create();
+
+        return "FOR `character` IN `got_characters` " +
+                " FOR `actor` IN `got_actors` " +
+                "   FILTER `actor`.`_id` == @myId" +
+                "   FILTER `character`.`actor` == `actor`.`_id` " +
+                "   FILTER `character`.`value` != 1/0 " +
+                "   RETURN {`character`, `actor`}";
+    }
+
+    void checkExecutionPlan(AqlQueryExplainEntity.ExecutionPlan plan) {
+        assertThat(plan).isNotNull();
+        assertThat(plan.get("estimatedNrItems"))
+                .isInstanceOf(Integer.class)
+                .asInstanceOf(INTEGER)
+                .isNotNull()
+                .isNotNegative();
+        assertThat(plan.getNodes()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionNode node = plan.getNodes().iterator().next();
+        assertThat(node.get("estimatedCost")).isNotNull();
+
+        assertThat(plan.getEstimatedCost()).isNotNull().isNotNegative();
+        assertThat(plan.getCollections()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionCollection collection = plan.getCollections().iterator().next();
+        assertThat(collection.get("name"))
+                .isInstanceOf(String.class)
+                .asInstanceOf(STRING)
+                .isNotNull()
+                .isNotEmpty();
+
+        assertThat(plan.getRules()).isNotEmpty();
+        assertThat(plan.getVariables()).isNotEmpty();
+
+        AqlQueryExplainEntity.ExecutionVariable variable = plan.getVariables().iterator().next();
+        assertThat(variable.get("name"))
+                .isInstanceOf(String.class)
+                .asInstanceOf(STRING)
+                .isNotNull()
+                .isNotEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainAqlQuery(ArangoDatabase db) {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions());
+        assertThat(explain).isNotNull();
+
+        checkExecutionPlan(explain.getPlan());
+        assertThat(explain.getPlans()).isNull();
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainAqlQueryAllPlans(ArangoDatabase db) {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new AqlQueryExplainOptions().allPlans(true));
+        assertThat(explain).isNotNull();
+
+        assertThat(explain.getPlan()).isNull();
+        assertThat(explain.getPlans()).allSatisfy(this::checkExecutionPlan);
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isNull();
     }
 
     @ParameterizedTest
