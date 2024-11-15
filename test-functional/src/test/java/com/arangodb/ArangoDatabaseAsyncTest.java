@@ -21,8 +21,8 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.RawBytes;
@@ -666,6 +666,19 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException ex = (ArangoDBException) thrown;
         assertThat(ex.getMessage()).isEqualTo("Response: 404, Error: 1600 - cursor not found");
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
+    void queryRawBytes(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        InternalSerde serde = db.getSerde();
+        RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
+        RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).get()
+                .getResult().get(0);
+        JsonNode data = serde.parse(res.get());
+        assertThat(data.isObject()).isTrue();
+        assertThat(data.get("value").isNumber()).isTrue();
+        assertThat(data.get("value").numberValue()).isEqualTo(1);
     }
 
     @ParameterizedTest
