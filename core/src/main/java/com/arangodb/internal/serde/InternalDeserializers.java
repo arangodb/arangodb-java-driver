@@ -6,10 +6,8 @@ import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalResponse;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -17,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,20 +26,7 @@ public final class InternalDeserializers {
     static final JsonDeserializer<RawJson> RAW_JSON_DESERIALIZER = new JsonDeserializer<RawJson>() {
         @Override
         public RawJson deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            // TODO: find a way to access raw bytes directly
             return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
-        }
-    };
-
-    static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
-        @Override
-        public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            // TODO: find a way to access raw bytes directly
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            try (JsonGenerator g = p.getCodec().getFactory().createGenerator(os)) {
-                g.writeTree(p.readValueAsTree());
-            }
-            return RawBytes.of(os.toByteArray());
         }
     };
 

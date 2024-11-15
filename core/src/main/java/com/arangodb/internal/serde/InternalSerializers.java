@@ -4,11 +4,9 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.internal.ArangoRequestParam;
-import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -24,16 +22,6 @@ public final class InternalSerializers {
         @Override
         public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeTree(SerdeUtils.INSTANCE.parseJson(value.get()));
-        }
-    };
-    static final JsonSerializer<RawBytes> RAW_BYTES_SERIALIZER = new JsonSerializer<RawBytes>() {
-        @Override
-        public void serialize(RawBytes value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            // TODO: find a way to append raw bytes directly
-            // see https://github.com/FasterXML/jackson-core/issues/914
-            try (JsonParser parser = gen.getCodec().getFactory().createParser(value.get())) {
-                gen.writeTree(parser.readValueAsTree());
-            }
         }
     };
     static final JsonSerializer<InternalRequest> REQUEST = new JsonSerializer<InternalRequest>() {

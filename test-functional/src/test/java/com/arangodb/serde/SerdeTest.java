@@ -37,8 +37,8 @@ class SerdeTest {
         InternalSerde s = new InternalSerdeProvider(type).create();
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
-        byte[] serialized = s.serialize(raw);
-        RawBytes deserialized = s.deserialize(serialized, RawBytes.class);
+        byte[] serialized = s.serializeUserData(raw);
+        RawBytes deserialized = s.deserializeUserData(serialized, RawBytes.class);
         assertThat(deserialized).isEqualTo(raw);
     }
 

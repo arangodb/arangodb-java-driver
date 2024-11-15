@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
+import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 import com.arangodb.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -734,6 +735,18 @@ class ArangoDatabaseTest extends BaseJunit5 {
         } catch (final ArangoDBException ex) {
             assertThat(ex.getMessage()).isEqualTo("Response: 404, Error: 1600 - cursor not found");
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryRawBytes(ArangoDatabase db) {
+        InternalSerde serde = db.getSerde();
+        RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
+        RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).next();
+        JsonNode data = serde.parse(res.get());
+        assertThat(data.isObject()).isTrue();
+        assertThat(data.get("value").isNumber()).isTrue();
+        assertThat(data.get("value").numberValue()).isEqualTo(1);
     }
 
     @ParameterizedTest

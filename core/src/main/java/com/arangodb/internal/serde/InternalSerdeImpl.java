@@ -8,6 +8,7 @@ import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -104,7 +106,11 @@ final class InternalSerdeImpl implements InternalSerde {
             return serialize(null);
         }
         Class<?> clazz = value.getClass();
-        if (isManagedClass(clazz)) {
+        if (RawBytes.class.equals(clazz)) {
+            return ((RawBytes) value).get();
+        } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
+            return ((RawJson) value).get().getBytes(StandardCharsets.UTF_8);
+        } else if (isManagedClass(clazz)) {
             return serialize(value);
         } else {
             return userSerde.serialize(value);
@@ -121,8 +127,13 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
-        if (isManagedClass(clazz)) {
+        if (RawBytes.class.equals(clazz)) {
+            return (T) RawBytes.of(content);
+        } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
+            return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
+        } else if (isManagedClass(clazz)) {
             return deserialize(content, clazz);
         } else {
             return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
