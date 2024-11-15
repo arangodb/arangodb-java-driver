@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.13.0] - 2024-11-15
+
+- improved serialization and deserialization of `RawBytes` and `RawJson` (#586)
+
 ## [7.12.0] - 2024-11-07
 
 - added new method `ArangoDatabase.explainAqlQuery()`, supporting arbitrary JSON-like response data
