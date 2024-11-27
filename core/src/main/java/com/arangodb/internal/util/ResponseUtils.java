@@ -72,7 +72,7 @@ public final class ResponseUtils {
             errorEntity = serde.deserialize(body, ErrorEntity.class);
         } catch (Exception e) {
             ArangoDBException adbEx = new ArangoDBException("Response Code: " + responseCode
-                    + "[Unparsable data] Response: " + response, responseCode);
+                    + " [Unparsable data] Response: " + response, responseCode);
             adbEx.addSuppressed(e);
             return adbEx;
         }
