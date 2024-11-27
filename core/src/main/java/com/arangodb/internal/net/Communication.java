@@ -23,6 +23,8 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.arangodb.internal.util.SerdeUtils.toJsonString;
+
 @UsedInApi
 public abstract class Communication implements Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
@@ -57,8 +59,7 @@ public abstract class Communication implements Closeable {
             final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount, Connection connection, long reqId
     ) {
         if (LOGGER.isDebugEnabled()) {
-            String body = request.getBody() == null ? "" : serde.toJsonString(request.getBody());
-            LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, body);
+            LOGGER.debug("Send Request [id={}]: {} {}", reqId, request, toJsonString(serde, request.getBody()));
         }
         final CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
         try {
@@ -84,8 +85,7 @@ public abstract class Communication implements Closeable {
                             handleException(isSafe(request), e, hostHandle, request, host, reqId, attemptCount, rfuture);
                         } else {
                             if (LOGGER.isDebugEnabled()) {
-                                String body = response.getBody() == null ? "" : serde.toJsonString(response.getBody());
-                                LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, body);
+                                LOGGER.debug("Received Response [id={}]: {} {}", reqId, response, toJsonString(serde, response.getBody()));
                             }
                             ArangoDBException errorEntityEx = ResponseUtils.translateError(serde, response);
                             if (errorEntityEx instanceof ArangoDBRedirectException) {
