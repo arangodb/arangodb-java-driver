@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.4.0</version>
+                <version>4.5.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
@@ -323,6 +323,19 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <scm>
         <url>https://github.com/arangodb/arangodb-java-driver</url>
