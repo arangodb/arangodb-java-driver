@@ -770,6 +770,27 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void queryUserDataScalar(ArangoDatabase db) {
+        List<String> docs = Arrays.asList("a", "b", "c");
+        ArangoCursor<String> res = db.query("FOR d IN @docs RETURN d", String.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<String>) res).contains("a", "b", "c");
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryUserDataStruct(ArangoDatabase db) {
+        RawJson a = RawJson.of("\"foo\"");
+        RawJson b = RawJson.of("{\"key\":\"value\"}");
+        RawJson c = RawJson.of("[1,null,true,\"bla\",{},[],\"\"]");
+        RawJson docs = RawJson.of("[" + a.get() + "," + b.get() + "," + c.get() + "]");
+        ArangoCursor<RawJson> res = db.query("FOR d IN @docs RETURN d", RawJson.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<RawJson>) res).containsExactly(a, b, c);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void changeQueryCache(ArangoDatabase db) {
         QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
         assertThat(properties).isNotNull();

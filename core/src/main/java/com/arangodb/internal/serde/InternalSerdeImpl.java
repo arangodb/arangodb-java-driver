@@ -9,6 +9,7 @@ import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,6 +39,7 @@ final class InternalSerdeImpl implements InternalSerde {
         this.userSerde = userSerde;
         mapper.deactivateDefaultTyping();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.enable(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION);
         mapper.registerModule(InternalModule.INSTANCE.get());
         if (protocolModule != null) {
             mapper.registerModule(protocolModule);
