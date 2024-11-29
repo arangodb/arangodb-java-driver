@@ -10,6 +10,7 @@ import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalResponse;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +34,11 @@ public final class InternalDeserializers {
             if (JsonFactory.FORMAT_NAME_JSON.equals(p.getCodec().getFactory().getFormatName())) {
                 return RawJson.of(new String(SerdeUtils.extractBytes(p), StandardCharsets.UTF_8));
             } else {
-                return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
+                StringWriter w = new StringWriter();
+                JsonGenerator gen = SerdeUtils.INSTANCE.getJsonMapper().createGenerator(w);
+                gen.copyCurrentStructure(p);
+                gen.close();
+                return RawJson.of(w.toString());
             }
         }
     };

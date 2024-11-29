@@ -76,6 +76,7 @@
                 <module>test-functional</module>
                 <module>test-non-functional</module>
                 <module>test-resilience</module>
+                <module>test-perf</module>
             </modules>
         </profile>
     </profiles>
