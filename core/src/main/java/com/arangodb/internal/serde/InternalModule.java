@@ -4,6 +4,7 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
@@ -25,6 +26,7 @@ enum InternalModule implements Supplier<Module> {
         module.addSerializer(CollectionType.class, InternalSerializers.COLLECTION_TYPE);
 
         module.addDeserializer(RawJson.class, InternalDeserializers.RAW_JSON_DESERIALIZER);
+        module.addDeserializer(RawBytes.class, InternalDeserializers.RAW_BYTES_DESERIALIZER);
         module.addDeserializer(CollectionStatus.class, InternalDeserializers.COLLECTION_STATUS);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);

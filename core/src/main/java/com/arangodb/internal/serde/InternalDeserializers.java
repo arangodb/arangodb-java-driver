@@ -6,8 +6,10 @@ import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalResponse;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -26,7 +29,18 @@ public final class InternalDeserializers {
     static final JsonDeserializer<RawJson> RAW_JSON_DESERIALIZER = new JsonDeserializer<RawJson>() {
         @Override
         public RawJson deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
+            if (JsonFactory.FORMAT_NAME_JSON.equals(p.getCodec().getFactory().getFormatName())) {
+                return RawJson.of(new String(SerdeUtils.extractBytes(p), StandardCharsets.UTF_8));
+            } else {
+                return RawJson.of(SerdeUtils.INSTANCE.writeJson(p.readValueAsTree()));
+            }
+        }
+    };
+
+    static final JsonDeserializer<RawBytes> RAW_BYTES_DESERIALIZER = new JsonDeserializer<RawBytes>() {
+        @Override
+        public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return RawBytes.of(SerdeUtils.extractBytes(p));
         }
     };
 
@@ -133,6 +147,5 @@ public final class InternalDeserializers {
             return SerdeUtils.INSTANCE.writeJson(p.readValueAsTree());
         }
     }
-
 
 }

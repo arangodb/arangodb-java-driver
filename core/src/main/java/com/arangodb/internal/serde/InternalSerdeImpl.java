@@ -1,8 +1,6 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.internal.RequestContextHolder;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
@@ -112,7 +110,7 @@ final class InternalSerdeImpl implements InternalSerde {
             return ((RawBytes) value).get();
         } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
             return ((RawJson) value).get().getBytes(StandardCharsets.UTF_8);
-        } else if (isManagedClass(clazz)) {
+        } else if (SerdeUtils.isManagedClass(clazz)) {
             return serialize(value);
         } else {
             return userSerde.serialize(value);
@@ -129,13 +127,8 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
-        if (RawBytes.class.equals(clazz)) {
-            return (T) RawBytes.of(content);
-        } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
-            return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
-        } else if (isManagedClass(clazz)) {
+        if (SerdeUtils.isManagedClass(clazz)) {
             return deserialize(content, clazz);
         } else {
             return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
@@ -183,20 +176,4 @@ final class InternalSerdeImpl implements InternalSerde {
         }
     }
 
-    private boolean isManagedClass(Class<?> clazz) {
-        return JsonNode.class.isAssignableFrom(clazz) ||
-                RawJson.class.equals(clazz) ||
-                RawBytes.class.equals(clazz) ||
-                BaseDocument.class.equals(clazz) ||
-                BaseEdgeDocument.class.equals(clazz) ||
-                isEntityClass(clazz);
-    }
-
-    private boolean isEntityClass(Class<?> clazz) {
-        Package pkg = clazz.getPackage();
-        if (pkg == null) {
-            return false;
-        }
-        return pkg.getName().startsWith("com.arangodb.entity");
-    }
 }

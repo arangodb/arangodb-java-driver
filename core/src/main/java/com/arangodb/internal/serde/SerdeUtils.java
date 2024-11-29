@@ -1,7 +1,13 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
+import com.arangodb.util.RawBytes;
+import com.arangodb.util.RawJson;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +15,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,4 +88,49 @@ public enum SerdeUtils {
         }
     }
 
+    /**
+     * Extract raw bytes for the current JSON (or VPACK) node
+     *
+     * @param parser JsonParser with current token pointing to the node to extract
+     * @return byte array
+     */
+    public static byte[] extractBytes(JsonParser parser) throws IOException {
+        JsonToken t = parser.currentToken();
+        if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
+            throw new RuntimeException("Unexpected token: " + t);
+        }
+        byte[] data = (byte[]) parser.currentTokenLocation().contentReference().getRawContent();
+        int start = (int) parser.currentTokenLocation().getByteOffset();
+        if (t.isStructStart()) {
+            int open = 1;
+            while (open > 0) {
+                t = parser.nextToken();
+                if (t.isStructStart()) {
+                    open++;
+                } else if (t.isStructEnd()) {
+                    open--;
+                }
+            }
+        }
+        parser.finishToken();
+        int end = (int) parser.currentLocation().getByteOffset();
+        return Arrays.copyOfRange(data, start, end);
+    }
+
+    public static boolean isManagedClass(Class<?> clazz) {
+        return JsonNode.class.isAssignableFrom(clazz) ||
+                RawJson.class.equals(clazz) ||
+                RawBytes.class.equals(clazz) ||
+                BaseDocument.class.equals(clazz) ||
+                BaseEdgeDocument.class.equals(clazz) ||
+                isEntityClass(clazz);
+    }
+
+    private static boolean isEntityClass(Class<?> clazz) {
+        Package pkg = clazz.getPackage();
+        if (pkg == null) {
+            return false;
+        }
+        return pkg.getName().startsWith("com.arangodb.entity");
+    }
 }
