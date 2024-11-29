@@ -779,7 +779,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
-    void queryUserDataStruct(ArangoDatabase db) {
+    void queryUserDataManaged(ArangoDatabase db) {
         RawJson a = RawJson.of("\"foo\"");
         RawJson b = RawJson.of("{\"key\":\"value\"}");
         RawJson c = RawJson.of("[1,null,true,\"bla\",{},[],\"\"]");
@@ -787,6 +787,18 @@ class ArangoDatabaseTest extends BaseJunit5 {
         ArangoCursor<RawJson> res = db.query("FOR d IN @docs RETURN d", RawJson.class,
                 Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
         assertThat((Iterable<RawJson>) res).containsExactly(a, b, c);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryUserData(ArangoDatabase db) {
+        Object a = "foo";
+        Object b = Collections.singletonMap("key", "value");
+        Object c = Arrays.asList(1, null, true, "bla", Collections.emptyMap(), Collections.emptyList(), "");
+        List<Object> docs = Arrays.asList(a, b, c);
+        ArangoCursor<Object> res = db.query("FOR d IN @docs RETURN d", Object.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<Object>) res).containsExactly(a, b, c);
     }
 
     @ParameterizedTest
