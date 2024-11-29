@@ -7,6 +7,7 @@ import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -21,7 +22,10 @@ public final class InternalSerializers {
     static final JsonSerializer<RawJson> RAW_JSON_SERIALIZER = new JsonSerializer<RawJson>() {
         @Override
         public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value.get()));
+            try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().createParser(value.get())) {
+                parser.nextToken();
+                gen.copyCurrentStructure(parser);
+            }
         }
     };
     static final JsonSerializer<InternalRequest> REQUEST = new JsonSerializer<InternalRequest>() {

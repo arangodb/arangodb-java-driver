@@ -60,7 +60,7 @@ public class SerdeBench {
                 vpack = vpackMapper.writeValueAsBytes(jn);
                 rawJsonBytes = RawBytes.of(json);
                 rawVPackBytes = RawBytes.of(vpack);
-                rawJson = RawJson.of(jsonMapper.writeValueAsString(json));
+                rawJson = RawJson.of(jsonMapper.writeValueAsString(jsonMapper.readTree(json)));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -90,11 +90,19 @@ public class SerdeBench {
         new Runner(opt).run();
     }
 
+//    @Benchmark
+//    public void rawJsonDeser(Data data, Blackhole bh) {
+//        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
+//        bh.consume(
+//                serde.deserialize(data.vpack, RawJson.class)
+//        );
+//    }
+
     @Benchmark
-    public void rawJsonDeser(Data data, Blackhole bh) {
+    public void rawJsonSer(Data data, Blackhole bh) {
         InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
         bh.consume(
-                serde.deserialize(data.vpack, RawJson.class)
+                serde.serialize(data.rawJson)
         );
     }
 
