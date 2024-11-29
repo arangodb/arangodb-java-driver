@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.13.1] - 2024-11-29
+
+- tolerate error responses with text content-type (#587, DE-960)
+
 ## [7.13.0] - 2024-11-15
 
 - improved serialization and deserialization of `RawBytes` and `RawJson` (#586)
