@@ -62,6 +62,10 @@ public enum SerdeUtils {
         });
     }
 
+    public ObjectMapper getJsonMapper() {
+        return jsonMapper;
+    }
+
     /**
      * Parse a JSON string.
      *

@@ -90,19 +90,35 @@ public class SerdeBench {
         new Runner(opt).run();
     }
 
-//    @Benchmark
-//    public void rawJsonDeser(Data data, Blackhole bh) {
-//        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
-//        bh.consume(
-//                serde.deserialize(data.vpack, RawJson.class)
-//        );
-//    }
+    @Benchmark
+    public void rawJsonDeser(Data data, Blackhole bh) {
+        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
+        bh.consume(
+                serde.deserialize(data.vpack, RawJson.class)
+        );
+    }
 
     @Benchmark
     public void rawJsonSer(Data data, Blackhole bh) {
         InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
         bh.consume(
                 serde.serialize(data.rawJson)
+        );
+    }
+
+    @Benchmark
+    public void extractBytesVPack(Data data, Blackhole bh) {
+        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
+        bh.consume(
+                serde.extract(data.vpack, "/definitions/put_api_simple_remove_by_example_opts")
+        );
+    }
+
+    @Benchmark
+    public void extractBytesJson(Data data, Blackhole bh) {
+        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
+        bh.consume(
+                serde.extract(data.json, "/definitions/put_api_simple_remove_by_example_opts")
         );
     }
 

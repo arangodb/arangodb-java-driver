@@ -15,6 +15,7 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param content byte array
      * @return JSON string
+     * @implSpec return {@code "[Unparsable data]"} in case of parsing exception
      */
     String toJsonString(byte[] content);
 
@@ -97,6 +98,7 @@ public interface InternalSerde extends ArangoSerde {
      * @param type        target data type
      * @return deserialized object
      */
+    // TODO: avoid serialization-deserialization round-trip
     default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
         return deserialize(parse(content, jsonPointer), type);
     }
