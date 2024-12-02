@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
+import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
 
 final class InternalSerdeImpl implements InternalSerde {
 
@@ -65,18 +67,48 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public String toJsonString(final byte[] content) {
+        if (content == null) {
+            return "";
+        }
         try {
             return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
+        } catch (Exception e) {
+            return "[Unparsable data]";
         }
     }
 
     @Override
     public byte[] extract(final byte[] content, final String jsonPointer) {
-        try {
-            JsonNode target = parse(content).at(jsonPointer);
-            return mapper.writeValueAsBytes(target);
+        if (!jsonPointer.startsWith("/")) {
+            throw new ArangoDBException("Unsupported JSON pointer: " + jsonPointer);
+        }
+        String[] parts = jsonPointer.substring(1).split("/");
+        try (JsonParser parser = mapper.createParser(content)) {
+            int match = 0;
+            int level = 0;
+            JsonToken token = parser.nextToken();
+            if (token != JsonToken.START_OBJECT) {
+                throw new ArangoDBException("Unable to parse token: " + token);
+            }
+            while (true) {
+                token = parser.nextToken();
+                if (token == JsonToken.START_OBJECT) {
+                    level++;
+                }
+                if (token == JsonToken.END_OBJECT) {
+                    level--;
+                }
+                if (token == null || level < match) {
+                    throw new ArangoDBException("Unable to parse JSON pointer: " + jsonPointer);
+                }
+                if (token == JsonToken.FIELD_NAME && match == level && parts[match].equals(parser.getText())) {
+                    match++;
+                    if (match == parts.length) {
+                        parser.nextToken();
+                        return extractBytes(parser);
+                    }
+                }
+            }
         } catch (IOException e) {
             throw ArangoDBException.of(e);
         }
@@ -117,6 +149,7 @@ final class InternalSerdeImpl implements InternalSerde {
         }
     }
 
+    // TODO: review
     @Override
     public byte[] serializeCollectionUserData(Iterable<?> value) {
         List<JsonNode> jsonNodeCollection = StreamSupport.stream(value.spliterator(), false)

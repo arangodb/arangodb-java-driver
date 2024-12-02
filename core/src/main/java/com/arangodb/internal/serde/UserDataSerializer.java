@@ -22,6 +22,7 @@ class UserDataSerializer extends JsonSerializer<Object> {
         } else {
             // TODO: find a way to append raw bytes directly
             // see https://github.com/FasterXML/jackson-core/issues/914
+            // TODO: check gen.getOutputContext()
             try (JsonParser parser = gen.getCodec().getFactory().createParser(serde.serializeUserData(value))) {
                 gen.writeTree(parser.readValueAsTree());
             }

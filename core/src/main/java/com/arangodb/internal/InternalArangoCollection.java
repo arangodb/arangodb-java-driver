@@ -109,6 +109,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    // TODO: avoid serialization-deserialization round-trip
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(Class<T> userDataClass) {
         return (response) -> {
             final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
@@ -184,6 +185,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    // TODO: avoid serialization-deserialization round-trip
     protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(
             final Class<T> type) {
         return (response) -> {
@@ -247,6 +249,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    // TODO: avoid serialization-deserialization round-trip
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
             final Class<T> returnType) {
         return (response) -> {
@@ -310,6 +313,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    // TODO: avoid serialization-deserialization round-trip
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
             final Class<T> returnType) {
         return (response) -> {
@@ -367,6 +371,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    // TODO: avoid serialization-deserialization round-trip
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
             final Class<T> userDataClass) {
         return (response) -> {
