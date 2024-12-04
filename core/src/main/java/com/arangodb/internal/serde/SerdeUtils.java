@@ -105,6 +105,7 @@ public enum SerdeUtils {
         }
         byte[] data = (byte[]) parser.currentTokenLocation().contentReference().getRawContent();
         int start = (int) parser.currentTokenLocation().getByteOffset();
+        int end = (int) parser.currentLocation().getByteOffset();
         if (t.isStructStart()) {
             int open = 1;
             while (open > 0) {
@@ -117,7 +118,9 @@ public enum SerdeUtils {
             }
         }
         parser.finishToken();
-        int end = (int) parser.currentLocation().getByteOffset();
+        if ("JSON".equals(parser.getCodec().getFactory().getFormatName())) {
+            end = (int) parser.currentLocation().getByteOffset();
+        }
         return Arrays.copyOfRange(data, start, end);
     }
 

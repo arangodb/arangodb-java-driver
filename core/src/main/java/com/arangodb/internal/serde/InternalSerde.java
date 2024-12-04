@@ -98,9 +98,8 @@ public interface InternalSerde extends ArangoSerde {
      * @param type        target data type
      * @return deserialized object
      */
-    // TODO: avoid serialization-deserialization round-trip
     default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
-        return deserialize(parse(content, jsonPointer), type);
+        return deserialize(extract(content, jsonPointer), type);
     }
 
     /**
