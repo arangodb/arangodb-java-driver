@@ -114,6 +114,7 @@ final class InternalSerdeImpl implements InternalSerde {
         }
     }
 
+    // TODO: remove
     @Override
     public JsonNode parse(byte[] content) {
         try {
@@ -176,11 +177,6 @@ final class InternalSerdeImpl implements InternalSerde {
         } else {
             throw new UnsupportedOperationException();
         }
-    }
-
-    @Override
-    public <T> T deserializeUserData(JsonNode node, Type type) {
-        return deserializeUserData(serialize(node), type);
     }
 
     @Override
