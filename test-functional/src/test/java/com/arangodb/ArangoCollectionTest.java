@@ -2537,9 +2537,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         for (final DocumentCreateEntity<BaseDocument> doc : docs.getDocuments()) {
             assertThat(doc.getNew()).isNotNull();
             final BaseDocument baseDocument = doc.getNew();
+            assertThat(baseDocument.getId()).isNotNull();
             assertThat(baseDocument.getKey()).isNotNull();
+            assertThat(baseDocument.getRevision()).isNotNull();
         }
-
     }
 
     @ParameterizedTest

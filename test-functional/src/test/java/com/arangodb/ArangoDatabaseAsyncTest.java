@@ -675,7 +675,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
         RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).get()
                 .getResult().get(0);
-        JsonNode data = serde.parse(res.get());
+        JsonNode data = serde.deserialize(res.get(), JsonNode.class);
         assertThat(data.isObject()).isTrue();
         assertThat(data.get("value").isNumber()).isTrue();
         assertThat(data.get("value").numberValue()).isEqualTo(1);

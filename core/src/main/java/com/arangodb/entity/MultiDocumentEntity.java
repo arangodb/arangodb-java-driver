@@ -20,6 +20,7 @@
 
 package com.arangodb.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,9 +28,9 @@ import java.util.List;
  */
 public final class MultiDocumentEntity<E> {
 
-    private List<E> documents;
-    private List<ErrorEntity> errors;
-    private List<Object> documentsAndErrors;
+    private List<E> documents = new ArrayList<>();
+    private List<ErrorEntity> errors = new ArrayList<>();
+    private List<Object> documentsAndErrors = new ArrayList<>();
     private boolean isPotentialDirtyRead = false;
 
     public MultiDocumentEntity() {

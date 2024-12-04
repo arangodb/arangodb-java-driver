@@ -762,7 +762,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         InternalSerde serde = db.getSerde();
         RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
         RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).next();
-        JsonNode data = serde.parse(res.get());
+        JsonNode data = serde.deserialize(res.get(), JsonNode.class);
         assertThat(data.isObject()).isTrue();
         assertThat(data.get("value").isNumber()).isTrue();
         assertThat(data.get("value").numberValue()).isEqualTo(1);
