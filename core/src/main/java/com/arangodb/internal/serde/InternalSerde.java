@@ -3,6 +3,8 @@ package com.arangodb.internal.serde;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
@@ -58,14 +60,6 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     <T> T deserialize(JsonNode node, Type type);
-
-    /**
-     * Parses the content.
-     *
-     * @param content VPack or byte encoded JSON string
-     * @return root of the parsed tree
-     */
-    JsonNode parse(byte[] content);
 
     /**
      * Parses the content at json pointer.
@@ -135,6 +129,16 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     <T> T deserializeUserData(byte[] content, Type type);
+
+    /**
+     * Deserializes the parsed json node and binds it to the target data type.
+     * The parser is not closed.
+     *
+     * @param parser json parser
+     * @param clazz  class of target data type
+     * @return deserialized object
+     */
+    <T> T deserializeUserData(JsonParser parser, JavaType clazz);
 
     /**
      * @return the user serde

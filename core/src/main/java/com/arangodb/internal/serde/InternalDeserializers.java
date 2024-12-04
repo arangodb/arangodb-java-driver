@@ -34,7 +34,6 @@ public final class InternalDeserializers {
             if (JsonFactory.FORMAT_NAME_JSON.equals(p.getCodec().getFactory().getFormatName())) {
                 return RawJson.of(new String(SerdeUtils.extractBytes(p), StandardCharsets.UTF_8));
             } else {
-                // TODO: compare perfs using ByteArrayOutputStream and StringWriter
                 StringWriter w = new StringWriter();
                 try (JsonGenerator gen = SerdeUtils.INSTANCE.getJsonMapper().createGenerator(w)) {
                     gen.copyCurrentStructure(p);

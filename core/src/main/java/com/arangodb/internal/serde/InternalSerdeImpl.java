@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +40,7 @@ final class InternalSerdeImpl implements InternalSerde {
         mapper.deactivateDefaultTyping();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.enable(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION);
-        mapper.registerModule(InternalModule.INSTANCE.get());
+        mapper.registerModule(InternalModule.get(this));
         if (protocolModule != null) {
             mapper.registerModule(protocolModule);
         }
@@ -113,16 +114,6 @@ final class InternalSerdeImpl implements InternalSerde {
         }
     }
 
-    // TODO: remove
-    @Override
-    public JsonNode parse(byte[] content) {
-        try {
-            return mapper.readTree(content);
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
-        }
-    }
-
     @Override
     public JsonNode parse(byte[] content, String jsonPointer) {
         try {
@@ -181,6 +172,19 @@ final class InternalSerdeImpl implements InternalSerde {
             return deserializeUserData(content, (Class<T>) type);
         } else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public <T> T deserializeUserData(JsonParser parser, JavaType clazz) {
+        try {
+            if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
+                return mapper.readerFor(clazz).readValue(parser);
+            } else {
+                return deserializeUserData(extractBytes(parser), clazz);
+            }
+        } catch (IOException e) {
+            throw ArangoDBException.of(e);
         }
     }
 

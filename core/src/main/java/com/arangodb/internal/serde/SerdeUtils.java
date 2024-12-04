@@ -98,6 +98,7 @@ public enum SerdeUtils {
      * @param parser JsonParser with current token pointing to the node to extract
      * @return byte array
      */
+    // TODO: move to InternalSerdeImpl, non-static, keep reference to serde to check content-type
     public static byte[] extractBytes(JsonParser parser) throws IOException {
         JsonToken t = parser.currentToken();
         if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
