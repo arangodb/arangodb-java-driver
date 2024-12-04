@@ -7,6 +7,7 @@ import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -15,12 +16,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
@@ -150,14 +149,20 @@ final class InternalSerdeImpl implements InternalSerde {
         }
     }
 
-    // TODO: review
     @Override
     public byte[] serializeCollectionUserData(Iterable<?> value) {
-        List<JsonNode> jsonNodeCollection = StreamSupport.stream(value.spliterator(), false)
-                .map(this::serializeUserData)
-                .map(this::parse)
-                .collect(Collectors.toList());
-        return serialize(jsonNodeCollection);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try (JsonGenerator gen = mapper.createGenerator(os)) {
+            gen.writeStartArray();
+            for (Object o : value) {
+                gen.writeRawValue(new RawUserDataValue(serializeUserData(o)));
+            }
+            gen.writeEndArray();
+            gen.flush();
+        } catch (IOException e) {
+            throw ArangoDBException.of(e);
+        }
+        return os.toByteArray();
     }
 
     @Override
