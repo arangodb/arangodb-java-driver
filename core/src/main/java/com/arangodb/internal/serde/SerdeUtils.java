@@ -101,7 +101,7 @@ public enum SerdeUtils {
     public static byte[] extractBytes(JsonParser parser) throws IOException {
         JsonToken t = parser.currentToken();
         if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
-            throw new RuntimeException("Unexpected token: " + t);
+            throw new ArangoDBException("Unexpected token: " + t);
         }
         byte[] data = (byte[]) parser.currentTokenLocation().contentReference().getRawContent();
         int start = (int) parser.currentTokenLocation().getByteOffset();
