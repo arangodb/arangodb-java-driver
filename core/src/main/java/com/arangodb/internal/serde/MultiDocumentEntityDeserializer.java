@@ -52,6 +52,11 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
                 throw new JsonMappingException(p, "Expected FIELD_NAME but got " + p.currentToken());
             }
             String fieldName = p.getText();
+            // FIXME: this can potentially fail for: MultiDocumentEntity<T> getDocuments()
+            // fix by scanning the 1st level field names and checking if any matches:
+            // - "_id"
+            // - "_key"
+            // - "_rev"
             switch (fieldName) {
                 case "_id":
                 case "_key":
