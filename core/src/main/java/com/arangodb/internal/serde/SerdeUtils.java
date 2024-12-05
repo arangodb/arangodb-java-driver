@@ -5,6 +5,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -98,7 +99,6 @@ public enum SerdeUtils {
      * @param parser JsonParser with current token pointing to the node to extract
      * @return byte array
      */
-    // TODO: move to InternalSerdeImpl, non-static, keep reference to serde to check content-type
     public static byte[] extractBytes(JsonParser parser) throws IOException {
         JsonToken t = parser.currentToken();
         if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
@@ -119,7 +119,7 @@ public enum SerdeUtils {
             }
         }
         parser.finishToken();
-        if ("JSON".equals(parser.getCodec().getFactory().getFormatName())) {
+        if (JsonFactory.FORMAT_NAME_JSON.equals(parser.getCodec().getFactory().getFormatName())) {
             end = (int) parser.currentLocation().getByteOffset();
         }
         return Arrays.copyOfRange(data, start, end);
