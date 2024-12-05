@@ -6,12 +6,14 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +24,13 @@ public final class InternalSerializers {
     static final JsonSerializer<RawJson> RAW_JSON_SERIALIZER = new JsonSerializer<RawJson>() {
         @Override
         public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().createParser(value.get())) {
-                parser.nextToken();
-                gen.copyCurrentStructure(parser);
+            if (JsonFactory.FORMAT_NAME_JSON.equals(gen.getCodec().getFactory().getFormatName())) {
+                gen.writeRawValue(new RawUserDataValue(value.get().getBytes(StandardCharsets.UTF_8)));
+            } else {
+                try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().createParser(value.get())) {
+                    parser.nextToken();
+                    gen.copyCurrentStructure(parser);
+                }
             }
         }
     };
