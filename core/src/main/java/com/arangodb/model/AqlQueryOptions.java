@@ -22,7 +22,9 @@ package com.arangodb.model;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.internal.serde.UserDataInside;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.*;
 
@@ -210,6 +212,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     public static final class Options implements Cloneable {
+        private Map<String, Object> customOptions;
         private Boolean allPlans;
         private Boolean allowDirtyReads;
         private Boolean allowRetry;
@@ -233,6 +236,19 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         private Long spillOverThresholdMemoryUsage;
         private Long spillOverThresholdNumRows;
         private Boolean stream;
+
+        @JsonInclude
+        @JsonAnyGetter
+        public Map<String, Object> getCustomOptions() {
+            if (customOptions == null) {
+                customOptions = new HashMap<>();
+            }
+            return customOptions;
+        }
+
+        public void setCustomOption(String key, Object value) {
+            getCustomOptions().put(key, value);
+        }
 
         public Boolean getAllPlans() {
             return allPlans;
@@ -434,6 +450,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         public Options clone() {
             try {
                 Options clone = (Options) super.clone();
+                clone.customOptions = customOptions != null ? new HashMap<>(customOptions) : null;
                 clone.optimizer = optimizer != null ? optimizer.clone() : null;
                 clone.shardIds = shardIds != null ? new ArrayList<>(shardIds) : null;
                 return clone;
@@ -469,6 +486,23 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     // ------------------------------------
     // --- accessors for nested options ---
     // ------------------------------------
+
+    @JsonIgnore
+    public Map<String, Object> getCustomOptions() {
+        return getOptions().getCustomOptions();
+    }
+
+    /**
+     * Set an additional custom option in the form of key-value pair.
+     *
+     * @param key   option name
+     * @param value option value
+     * @return this
+     */
+    public AqlQueryOptions customOption(String key, Object value) {
+        getOptions().setCustomOption(key, value);
+        return this;
+    }
 
     @JsonIgnore
     public Boolean getAllowDirtyReads() {

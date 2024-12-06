@@ -645,6 +645,25 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void queryWithLimitAndFullCountAsCustomOption(ArangoDatabase db) {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 5 return i._id", String.class, new AqlQueryOptions()
+                        .customOption("fullCount", true));
+        assertThat((Object) cursor).isNotNull();
+        for (int i = 0; i < 5; i++, cursor.next()) {
+            assertThat((Iterator<?>) cursor).hasNext();
+        }
+        assertThat(cursor.getStats()).isNotNull();
+        assertThat(cursor.getStats().getExecutionTime()).isPositive();
+        assertThat((cursor.getStats().getFullCount())).isGreaterThanOrEqualTo(10);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void queryStats(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
