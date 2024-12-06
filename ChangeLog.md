@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.14.0] - 2024-12-06
+
+- support all AQL query options in `ArangoDatabase.explainAqlQuery()` (#589, ES-2266)
+
 ## [7.13.1] - 2024-11-29
 
 - tolerate error responses with text content-type (#587, DE-960)
