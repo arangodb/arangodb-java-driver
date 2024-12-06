@@ -20,70 +20,24 @@
 
 package com.arangodb.model;
 
-import com.arangodb.ArangoCursor;
 import com.arangodb.internal.serde.UserDataInside;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * @author Mark Vollmary
  * @author Michele Rastelli
  */
-public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions> implements Cloneable {
+public final class ExplainAqlQueryOptions {
 
-    private Boolean allowDirtyRead;
-    private Integer batchSize;
     private Map<String, Object> bindVars;
-    private Boolean cache;
-    private Boolean count;
-    private Long memoryLimit;
-    private Options options;
     private String query;
-    private Integer ttl;
+    private AqlQueryOptions.Options options;
 
-    @Override
-    AqlQueryOptions getThis() {
-        return this;
-    }
-
-    public Boolean getAllowDirtyRead() {
-        return allowDirtyRead;
-    }
-
-    /**
-     * Sets the header {@code x-arango-allow-dirty-read} to {@code true} to allow the Coordinator to ask any shard
-     * replica for the data, not only the shard leader. This may result in “dirty reads”.
-     * <p/>
-     * The header is ignored if this operation is part of a Stream Transaction
-     * ({@link AqlQueryOptions#streamTransactionId(String)}). The header set when creating the transaction decides
-     * about dirty reads for the entire transaction, not the individual read operations.
-     *
-     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
-     * @return this
-     * @see <a href="https://docs.arangodb.com/3.11/deploy/active-failover/administration/#reading-from-follower">API
-     * Documentation</a>
-     */
-    public AqlQueryOptions allowDirtyRead(final Boolean allowDirtyRead) {
-        this.allowDirtyRead = allowDirtyRead;
-        return this;
-    }
-
-    public Integer getBatchSize() {
-        return batchSize;
-    }
-
-    /**
-     * @param batchSize maximum number of result documents to be transferred from the server to the client in one
-     *                  roundtrip. If this attribute is not set, a server-controlled default value will be used.
-     *                  A batchSize value of 0 is disallowed.
-     * @return this
-     */
-    public AqlQueryOptions batchSize(final Integer batchSize) {
-        this.batchSize = batchSize;
-        return this;
+    public ExplainAqlQueryOptions() {
+        super();
     }
 
     @UserDataInside
@@ -92,76 +46,11 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     /**
-     * @param bindVars A map with key/value pairs representing the bind parameters. For a bind variable {@code @var} in
-     *                 the query, specify the value using an attribute with the name {@code var}. For a collection bind
-     *                 variable {@code @@coll}, use {@code @coll} as the attribute name.
-     * @return this
+     * @param bindVars key/value pairs representing the bind parameters
+     * @return options
      */
-    AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+    ExplainAqlQueryOptions bindVars(final Map<String, Object> bindVars) {
         this.bindVars = bindVars;
-        return this;
-    }
-
-    public Boolean getCache() {
-        return cache;
-    }
-
-    /**
-     * @param cache flag to determine whether the AQL query results cache shall be used. If set to false, then any
-     *              query cache lookup will be skipped for the query. If set to true, it will lead to the query cache
-     *              being checked for the query if the query cache mode is either on or demand.
-     * @return this
-     */
-    public AqlQueryOptions cache(final Boolean cache) {
-        this.cache = cache;
-        return this;
-    }
-
-    public Boolean getCount() {
-        return count;
-    }
-
-    /**
-     * @param count indicates whether the number of documents in the result set should be returned and made accessible
-     *              via {@link ArangoCursor#getCount()}. Calculating the {@code count} attribute might have a
-     *              performance impact for some queries in the future so this option is turned off by default, and
-     *              {@code count} is only returned when requested.
-     * @return this
-     */
-    public AqlQueryOptions count(final Boolean count) {
-        this.count = count;
-        return this;
-    }
-
-    public Long getMemoryLimit() {
-        return memoryLimit;
-    }
-
-    /**
-     * @param memoryLimit the maximum number of memory (measured in bytes) that the query is allowed to use. If set,
-     *                    then the query will fail with error {@code resource limit exceeded} in case it allocates too
-     *                    much memory. A value of {@code 0} indicates that there is no memory limit.
-     * @return this
-     * @since ArangoDB 3.1.0
-     */
-    public AqlQueryOptions memoryLimit(final Long memoryLimit) {
-        this.memoryLimit = memoryLimit;
-        return this;
-    }
-
-    public Options getOptions() {
-        if (options == null) {
-            options = new Options();
-        }
-        return options;
-    }
-
-    /**
-     * @param options extra options for the query
-     * @return this
-     */
-    public AqlQueryOptions options(final Options options) {
-        this.options = options;
         return this;
     }
 
@@ -170,318 +59,26 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     /**
-     * @param query the query to be executed
-     * @return this
+     * @param query the query which you want explained
+     * @return options
      */
-    public AqlQueryOptions query(final String query) {
+    ExplainAqlQueryOptions query(final String query) {
         this.query = query;
         return this;
     }
 
-    public Integer getTtl() {
-        return ttl;
+    public AqlQueryOptions.Options getOptions() {
+        if (options == null) {
+            options = new AqlQueryOptions.Options();
+        }
+        return options;
     }
 
-    /**
-     * @param ttl The time-to-live for the cursor (in seconds). If the result set is small enough (less than or equal
-     *            to batchSize) then results are returned right away. Otherwise, they are stored in memory and will be
-     *            accessible via the cursor with respect to the ttl. The cursor will be removed on the server
-     *            automatically after the specified amount of time. This is useful to ensure garbage collection of
-     *            cursors that are not fully fetched by clients.
-     *            <p/>
-     *            If not set, a server-defined value will be used (default: 30 seconds).
-     *            <p/>
-     *            The time-to-live is renewed upon every access to the cursor.
-     * @return this
-     */
-    public AqlQueryOptions ttl(final Integer ttl) {
-        this.ttl = ttl;
+    public ExplainAqlQueryOptions options(final AqlQueryOptions.Options options) {
+        this.options = options;
         return this;
     }
 
-    @Override
-    public AqlQueryOptions clone() {
-        try {
-            AqlQueryOptions clone = (AqlQueryOptions) super.clone();
-            clone.bindVars = bindVars != null ? new HashMap<>(bindVars) : null;
-            clone.options = options != null ? options.clone() : null;
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
-
-    public static final class Options implements Cloneable {
-        private Map<String, Object> customOptions;
-        private Boolean allPlans;
-        private Boolean allowDirtyReads;
-        private Boolean allowRetry;
-        private Boolean failOnWarning;
-        private Boolean fillBlockCache;
-        private String forceOneShardAttributeValue;
-        private Boolean fullCount;
-        private Long intermediateCommitCount;
-        private Long intermediateCommitSize;
-        private Integer maxDNFConditionMembers;
-        private Integer maxNodesPerCallstack;
-        private Integer maxNumberOfPlans;
-        private Double maxRuntime;
-        private Long maxTransactionSize;
-        private Long maxWarningCount;
-        private Optimizer optimizer;
-        private Boolean profile;
-        private Double satelliteSyncWait;
-        private Collection<String> shardIds;
-        private Boolean skipInaccessibleCollections;
-        private Long spillOverThresholdMemoryUsage;
-        private Long spillOverThresholdNumRows;
-        private Boolean stream;
-
-        @JsonInclude
-        @JsonAnyGetter
-        public Map<String, Object> getCustomOptions() {
-            if (customOptions == null) {
-                customOptions = new HashMap<>();
-            }
-            return customOptions;
-        }
-
-        public void setCustomOption(String key, Object value) {
-            getCustomOptions().put(key, value);
-        }
-
-        public Boolean getAllPlans() {
-            return allPlans;
-        }
-
-        public Boolean getAllowDirtyReads() {
-            return allowDirtyReads;
-        }
-
-        public Boolean getAllowRetry() {
-            return allowRetry;
-        }
-
-        public Boolean getFailOnWarning() {
-            return failOnWarning;
-        }
-
-        public Boolean getFillBlockCache() {
-            return fillBlockCache;
-        }
-
-        public String getForceOneShardAttributeValue() {
-            return forceOneShardAttributeValue;
-        }
-
-        public Boolean getFullCount() {
-            return fullCount;
-        }
-
-        public Long getIntermediateCommitCount() {
-            return intermediateCommitCount;
-        }
-
-        public Long getIntermediateCommitSize() {
-            return intermediateCommitSize;
-        }
-
-        public Integer getMaxDNFConditionMembers() {
-            return maxDNFConditionMembers;
-        }
-
-        public Integer getMaxNodesPerCallstack() {
-            return maxNodesPerCallstack;
-        }
-
-        public Integer getMaxNumberOfPlans() {
-            return maxNumberOfPlans;
-        }
-
-        /**
-         * @deprecated for removal, use {@link Options#getMaxNumberOfPlans()} instead
-         */
-        @Deprecated
-        @JsonIgnore
-        public Integer getMaxPlans() {
-            return getMaxNumberOfPlans();
-        }
-
-        public Double getMaxRuntime() {
-            return maxRuntime;
-        }
-
-        public Long getMaxTransactionSize() {
-            return maxTransactionSize;
-        }
-
-        public Long getMaxWarningCount() {
-            return maxWarningCount;
-        }
-
-        public Optimizer getOptimizer() {
-            if (optimizer == null) {
-                optimizer = new Optimizer();
-            }
-            return optimizer;
-        }
-
-        public Boolean getProfile() {
-            return profile;
-        }
-
-        public Double getSatelliteSyncWait() {
-            return satelliteSyncWait;
-        }
-
-        public Collection<String> getShardIds() {
-            return shardIds;
-        }
-
-        public Boolean getSkipInaccessibleCollections() {
-            return skipInaccessibleCollections;
-        }
-
-        public Long getSpillOverThresholdMemoryUsage() {
-            return spillOverThresholdMemoryUsage;
-        }
-
-        public Long getSpillOverThresholdNumRows() {
-            return spillOverThresholdNumRows;
-        }
-
-        public Boolean getStream() {
-            return stream;
-        }
-
-        public void setAllPlans(Boolean allPlans) {
-            this.allPlans = allPlans;
-        }
-
-        public void setAllowDirtyReads(Boolean allowDirtyReads) {
-            this.allowDirtyReads = allowDirtyReads;
-        }
-
-        public void setAllowRetry(Boolean allowRetry) {
-            this.allowRetry = allowRetry;
-        }
-
-        public void setFailOnWarning(Boolean failOnWarning) {
-            this.failOnWarning = failOnWarning;
-        }
-
-        public void setFillBlockCache(Boolean fillBlockCache) {
-            this.fillBlockCache = fillBlockCache;
-        }
-
-        public void setForceOneShardAttributeValue(String forceOneShardAttributeValue) {
-            this.forceOneShardAttributeValue = forceOneShardAttributeValue;
-        }
-
-        public void setFullCount(Boolean fullCount) {
-            this.fullCount = fullCount;
-        }
-
-        public void setIntermediateCommitCount(Long intermediateCommitCount) {
-            this.intermediateCommitCount = intermediateCommitCount;
-        }
-
-        public void setIntermediateCommitSize(Long intermediateCommitSize) {
-            this.intermediateCommitSize = intermediateCommitSize;
-        }
-
-        public void setMaxDNFConditionMembers(Integer maxDNFConditionMembers) {
-            this.maxDNFConditionMembers = maxDNFConditionMembers;
-        }
-
-        public void setMaxNodesPerCallstack(Integer maxNodesPerCallstack) {
-            this.maxNodesPerCallstack = maxNodesPerCallstack;
-        }
-
-        public void setMaxNumberOfPlans(Integer maxNumberOfPlans) {
-            this.maxNumberOfPlans = maxNumberOfPlans;
-        }
-
-        public void setMaxRuntime(Double maxRuntime) {
-            this.maxRuntime = maxRuntime;
-        }
-
-        public void setMaxTransactionSize(Long maxTransactionSize) {
-            this.maxTransactionSize = maxTransactionSize;
-        }
-
-        public void setMaxWarningCount(Long maxWarningCount) {
-            this.maxWarningCount = maxWarningCount;
-        }
-
-        public void setOptimizer(Optimizer optimizer) {
-            this.optimizer = optimizer;
-        }
-
-        public void setProfile(Boolean profile) {
-            this.profile = profile;
-        }
-
-        public void setSatelliteSyncWait(Double satelliteSyncWait) {
-            this.satelliteSyncWait = satelliteSyncWait;
-        }
-
-        public void setShardIds(Collection<String> shardIds) {
-            this.shardIds = shardIds;
-        }
-
-        public void setSkipInaccessibleCollections(Boolean skipInaccessibleCollections) {
-            this.skipInaccessibleCollections = skipInaccessibleCollections;
-        }
-
-        public void setSpillOverThresholdMemoryUsage(Long spillOverThresholdMemoryUsage) {
-            this.spillOverThresholdMemoryUsage = spillOverThresholdMemoryUsage;
-        }
-
-        public void setSpillOverThresholdNumRows(Long spillOverThresholdNumRows) {
-            this.spillOverThresholdNumRows = spillOverThresholdNumRows;
-        }
-
-        public void setStream(Boolean stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public Options clone() {
-            try {
-                Options clone = (Options) super.clone();
-                clone.customOptions = customOptions != null ? new HashMap<>(customOptions) : null;
-                clone.optimizer = optimizer != null ? optimizer.clone() : null;
-                clone.shardIds = shardIds != null ? new ArrayList<>(shardIds) : null;
-                return clone;
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError();
-            }
-        }
-    }
-
-    public static final class Optimizer implements Cloneable {
-        private Collection<String> rules;
-
-        public Collection<String> getRules() {
-            return rules;
-        }
-
-        public void setRules(Collection<String> rules) {
-            this.rules = rules;
-        }
-
-        @Override
-        public Optimizer clone() {
-            try {
-                Optimizer clone = (Optimizer) super.clone();
-                clone.rules = rules != null ? new ArrayList<>(rules) : null;
-                return clone;
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError();
-            }
-        }
-    }
 
     // ------------------------------------
     // --- accessors for nested options ---
@@ -499,8 +96,23 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @param value option value
      * @return this
      */
-    public AqlQueryOptions customOption(String key, Object value) {
+    public ExplainAqlQueryOptions customOption(String key, Object value) {
         getOptions().setCustomOption(key, value);
+        return this;
+    }
+
+    @JsonIgnore
+    public Boolean getAllPlans() {
+        return getOptions().getAllPlans();
+    }
+
+    /**
+     * @param value if set to true, all possible execution plans will be returned. The default is false, meaning only
+     *              the optimal plan will be returned.
+     * @return this
+     */
+    public ExplainAqlQueryOptions allPlans(final Boolean value) {
+        getOptions().setAllPlans(value);
         return this;
     }
 
@@ -518,7 +130,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                        leader. This feature is only available in the Enterprise Edition.
      * @return this
      */
-    public AqlQueryOptions allowDirtyReads(final Boolean allowDirtyReads) {
+    public ExplainAqlQueryOptions allowDirtyReads(final Boolean allowDirtyReads) {
         getOptions().setAllowDirtyReads(allowDirtyReads);
         return this;
     }
@@ -546,7 +158,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.11
      */
-    public AqlQueryOptions allowRetry(final Boolean allowRetry) {
+    public ExplainAqlQueryOptions allowRetry(final Boolean allowRetry) {
         getOptions().setAllowRetry(allowRetry);
         return this;
     }
@@ -565,7 +177,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                      need to be set on a per-query level.
      * @return this
      */
-    public AqlQueryOptions failOnWarning(final Boolean failOnWarning) {
+    public ExplainAqlQueryOptions failOnWarning(final Boolean failOnWarning) {
         getOptions().setFailOnWarning(failOnWarning);
         return this;
     }
@@ -586,7 +198,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.8.1
      */
-    public AqlQueryOptions fillBlockCache(final Boolean fillBlockCache) {
+    public ExplainAqlQueryOptions fillBlockCache(final Boolean fillBlockCache) {
         getOptions().setFillBlockCache(fillBlockCache);
         return this;
     }
@@ -608,7 +220,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                                    Use at your own risk.
      * @return this
      */
-    public AqlQueryOptions forceOneShardAttributeValue(final String forceOneShardAttributeValue) {
+    public ExplainAqlQueryOptions forceOneShardAttributeValue(final String forceOneShardAttributeValue) {
         getOptions().setForceOneShardAttributeValue(forceOneShardAttributeValue);
         return this;
     }
@@ -638,7 +250,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                  query.
      * @return this
      */
-    public AqlQueryOptions fullCount(final Boolean fullCount) {
+    public ExplainAqlQueryOptions fullCount(final Boolean fullCount) {
         getOptions().setFullCount(fullCount);
         return this;
     }
@@ -655,7 +267,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions intermediateCommitCount(final Long intermediateCommitCount) {
+    public ExplainAqlQueryOptions intermediateCommitCount(final Long intermediateCommitCount) {
         getOptions().setIntermediateCommitCount(intermediateCommitCount);
         return this;
     }
@@ -672,7 +284,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions intermediateCommitSize(final Long intermediateCommitSize) {
+    public ExplainAqlQueryOptions intermediateCommitSize(final Long intermediateCommitSize) {
         getOptions().setIntermediateCommitSize(intermediateCommitSize);
         return this;
     }
@@ -700,7 +312,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                               --query.max-dnf-condition-members startup option.
      * @return this
      */
-    public AqlQueryOptions maxDNFConditionMembers(final Integer maxDNFConditionMembers) {
+    public ExplainAqlQueryOptions maxDNFConditionMembers(final Integer maxDNFConditionMembers) {
         getOptions().setMaxDNFConditionMembers(maxDNFConditionMembers);
         return this;
     }
@@ -719,7 +331,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                             adjustment.
      * @return this
      */
-    public AqlQueryOptions maxNodesPerCallstack(final Integer maxNodesPerCallstack) {
+    public ExplainAqlQueryOptions maxNodesPerCallstack(final Integer maxNodesPerCallstack) {
         getOptions().setMaxNodesPerCallstack(maxNodesPerCallstack);
         return this;
     }
@@ -733,28 +345,9 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @param maxNumberOfPlans Limits the maximum number of plans that are created by the AQL query optimizer.
      * @return this
      */
-    public AqlQueryOptions maxNumberOfPlans(final Integer maxNumberOfPlans) {
+    public ExplainAqlQueryOptions maxNumberOfPlans(final Integer maxNumberOfPlans) {
         getOptions().setMaxNumberOfPlans(maxNumberOfPlans);
         return this;
-    }
-
-    /**
-     * @deprecated for removal, use {@link AqlQueryOptions#getMaxNumberOfPlans()} instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public Integer getMaxPlans() {
-        return getMaxNumberOfPlans();
-    }
-
-    /**
-     * @param maxPlans Limits the maximum number of plans that are created by the AQL query optimizer.
-     * @return this
-     * @deprecated for removal, use {@link AqlQueryOptions#maxNumberOfPlans(Integer)} instead
-     */
-    @Deprecated
-    public AqlQueryOptions maxPlans(final Integer maxPlans) {
-        return maxNumberOfPlans(maxPlans);
     }
 
     @JsonIgnore
@@ -767,7 +360,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                   in seconds. The default value is 0.0 (no timeout).
      * @return this
      */
-    public AqlQueryOptions maxRuntime(final Double maxRuntime) {
+    public ExplainAqlQueryOptions maxRuntime(final Double maxRuntime) {
         getOptions().setMaxRuntime(maxRuntime);
         return this;
     }
@@ -782,7 +375,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions maxTransactionSize(final Long maxTransactionSize) {
+    public ExplainAqlQueryOptions maxTransactionSize(final Long maxTransactionSize) {
         getOptions().setMaxTransactionSize(maxTransactionSize);
         return this;
     }
@@ -800,13 +393,13 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions maxWarningCount(final Long maxWarningCount) {
+    public ExplainAqlQueryOptions maxWarningCount(final Long maxWarningCount) {
         getOptions().setMaxWarningCount(maxWarningCount);
         return this;
     }
 
     @JsonIgnore
-    public Optimizer getOptimizer() {
+    public AqlQueryOptions.Optimizer getOptimizer() {
         return getOptions().getOptimizer();
     }
 
@@ -814,7 +407,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @param optimizer Options related to the query optimizer.
      * @return this
      */
-    public AqlQueryOptions optimizer(final Optimizer optimizer) {
+    public ExplainAqlQueryOptions optimizer(final AqlQueryOptions.Optimizer optimizer) {
         getOptions().setOptimizer(optimizer);
         return this;
     }
@@ -830,7 +423,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                profile of the extra return attribute if the query result is not served from the query cache.
      * @return this
      */
-    public AqlQueryOptions profile(final Boolean profile) {
+    public ExplainAqlQueryOptions profile(final Boolean profile) {
         getOptions().setProfile(profile);
         return this;
     }
@@ -849,7 +442,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions satelliteSyncWait(final Double satelliteSyncWait) {
+    public ExplainAqlQueryOptions satelliteSyncWait(final Double satelliteSyncWait) {
         getOptions().setSatelliteSyncWait(satelliteSyncWait);
         return this;
     }
@@ -865,7 +458,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @param shardIds
      * @return this
      */
-    public AqlQueryOptions shardIds(final String... shardIds) {
+    public ExplainAqlQueryOptions shardIds(final String... shardIds) {
         getOptions().setShardIds(Arrays.asList(shardIds));
         return this;
     }
@@ -890,7 +483,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.2.0
      */
-    public AqlQueryOptions skipInaccessibleCollections(final Boolean skipInaccessibleCollections) {
+    public ExplainAqlQueryOptions skipInaccessibleCollections(final Boolean skipInaccessibleCollections) {
         getOptions().setSkipInaccessibleCollections(skipInaccessibleCollections);
         return this;
     }
@@ -920,7 +513,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                                      stream option).
      * @return this
      */
-    public AqlQueryOptions spillOverThresholdMemoryUsage(final Long spillOverThresholdMemoryUsage) {
+    public ExplainAqlQueryOptions spillOverThresholdMemoryUsage(final Long spillOverThresholdMemoryUsage) {
         getOptions().setSpillOverThresholdMemoryUsage(spillOverThresholdMemoryUsage);
         return this;
     }
@@ -951,7 +544,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                                  query result in RAM, use a streaming query (see the stream option).
      * @return this
      */
-    public AqlQueryOptions spillOverThresholdNumRows(final Long spillOverThresholdNumRows) {
+    public ExplainAqlQueryOptions spillOverThresholdNumRows(final Long spillOverThresholdNumRows) {
         getOptions().setSpillOverThresholdNumRows(spillOverThresholdNumRows);
         return this;
     }
@@ -978,7 +571,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * @return this
      * @since ArangoDB 3.4.0
      */
-    public AqlQueryOptions stream(final Boolean stream) {
+    public ExplainAqlQueryOptions stream(final Boolean stream) {
         getOptions().setStream(stream);
         return this;
     }
@@ -996,7 +589,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *              a rule, prefix it with a +. There is also a pseudo-rule all, which will match all optimizer rules
      * @return this
      */
-    public AqlQueryOptions rules(final Collection<String> rules) {
+    public ExplainAqlQueryOptions rules(final Collection<String> rules) {
         getOptions().getOptimizer().setRules(rules);
         return this;
     }

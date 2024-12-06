@@ -250,6 +250,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     }
 
     @Override
+    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options) {
+        return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
+    }
+
+    @Override
     public AqlParseEntity parseQuery(final String query) {
         return executorSync().execute(parseQueryRequest(query), AqlParseEntity.class);
     }

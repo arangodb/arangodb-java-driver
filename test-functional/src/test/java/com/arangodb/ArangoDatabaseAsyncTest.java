@@ -1209,7 +1209,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         AqlQueryExplainEntity explain = db.explainAqlQuery(
                 getExplainQuery(db),
                 Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions()).get();
+                new ExplainAqlQueryOptions()).get();
         assertThat(explain).isNotNull();
 
         checkUntypedExecutionPlan(explain.getPlan());
@@ -1238,7 +1238,36 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         AqlQueryExplainEntity explain = db.explainAqlQuery(
                 getExplainQuery(db),
                 Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions().allPlans(true)).get();
+                new ExplainAqlQueryOptions().allPlans(true)).get();
+        assertThat(explain).isNotNull();
+
+        assertThat(explain.getPlan()).isNull();
+        assertThat(explain.getPlans()).allSatisfy(this::checkUntypedExecutionPlan);
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
+    void explainAqlQueryAllPlansCustomOption(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new ExplainAqlQueryOptions().customOption("allPlans", true)).get();
         assertThat(explain).isNotNull();
 
         assertThat(explain.getPlan()).isNull();

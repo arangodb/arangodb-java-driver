@@ -645,6 +645,25 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("dbs")
+    void queryWithLimitAndFullCountAsCustomOption(ArangoDatabase db) {
+        for (int i = 0; i < 10; i++) {
+            db.collection(CNAME1).insertDocument(new BaseDocument(), null);
+        }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 5 return i._id", String.class, new AqlQueryOptions()
+                        .customOption("fullCount", true));
+        assertThat((Object) cursor).isNotNull();
+        for (int i = 0; i < 5; i++, cursor.next()) {
+            assertThat((Iterator<?>) cursor).hasNext();
+        }
+        assertThat(cursor.getStats()).isNotNull();
+        assertThat(cursor.getStats().getExecutionTime()).isPositive();
+        assertThat((cursor.getStats().getFullCount())).isGreaterThanOrEqualTo(10);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
     void queryStats(ArangoDatabase db) {
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
@@ -1278,7 +1297,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         AqlQueryExplainEntity explain = db.explainAqlQuery(
                 getExplainQuery(db),
                 Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions());
+                new ExplainAqlQueryOptions());
         assertThat(explain).isNotNull();
 
         checkUntypedExecutionPlan(explain.getPlan());
@@ -1307,7 +1326,36 @@ class ArangoDatabaseTest extends BaseJunit5 {
         AqlQueryExplainEntity explain = db.explainAqlQuery(
                 getExplainQuery(db),
                 Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions().allPlans(true));
+                new ExplainAqlQueryOptions().allPlans(true));
+        assertThat(explain).isNotNull();
+
+        assertThat(explain.getPlan()).isNull();
+        assertThat(explain.getPlans()).allSatisfy(this::checkUntypedExecutionPlan);
+        assertThat(explain.getWarnings()).isNotEmpty();
+
+        CursorWarning warning = explain.getWarnings().iterator().next();
+        assertThat(warning).isNotNull();
+        assertThat(warning.getCode()).isEqualTo(1562);
+        assertThat(warning.getMessage()).contains("division by zero");
+
+        assertThat(explain.getStats()).isNotNull();
+
+        assertThat(explain.getStats().get("executionTime"))
+                .isInstanceOf(Double.class)
+                .asInstanceOf(DOUBLE)
+                .isNotNull()
+                .isPositive();
+
+        assertThat(explain.getCacheable()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void explainAqlQueryAllPlansCustomOption(ArangoDatabase db) {
+        AqlQueryExplainEntity explain = db.explainAqlQuery(
+                getExplainQuery(db),
+                Collections.singletonMap("myId", "123"),
+                new ExplainAqlQueryOptions().customOption("allPlans", true));
         assertThat(explain).isNotNull();
 
         assertThat(explain.getPlan()).isNull();

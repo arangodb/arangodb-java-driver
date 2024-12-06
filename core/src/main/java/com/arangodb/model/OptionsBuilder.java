@@ -82,6 +82,13 @@ public final class OptionsBuilder {
         return options.query(query).bindVars(bindVars);
     }
 
+    public static ExplainAqlQueryOptions build(
+            final ExplainAqlQueryOptions options,
+            final String query,
+            final Map<String, Object> bindVars) {
+        return options.query(query).bindVars(bindVars);
+    }
+
     public static AqlQueryParseOptions build(final AqlQueryParseOptions options, final String query) {
         return options.query(query);
     }
