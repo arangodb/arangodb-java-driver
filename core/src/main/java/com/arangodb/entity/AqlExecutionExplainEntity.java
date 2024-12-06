@@ -20,11 +20,17 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.ArangoDatabase;
+import com.arangodb.model.ExplainAqlQueryOptions;
+
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
+ * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
  */
+@Deprecated
 public final class AqlExecutionExplainEntity {
 
     private ExecutionPlan plan;

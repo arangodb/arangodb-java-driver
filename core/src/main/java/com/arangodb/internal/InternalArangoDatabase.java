@@ -179,6 +179,13 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
     }
 
+    protected InternalRequest explainQueryRequest(final String query, final Map<String, Object> bindVars,
+                                                  final ExplainAqlQueryOptions options) {
+        final ExplainAqlQueryOptions opt = options != null ? options : new ExplainAqlQueryOptions();
+        return request(name, RequestType.POST, PATH_API_EXPLAIN)
+                .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
+    }
+
     protected InternalRequest parseQueryRequest(final String query) {
         return request(name, RequestType.POST, PATH_API_QUERY).setBody(getSerde().serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
     }

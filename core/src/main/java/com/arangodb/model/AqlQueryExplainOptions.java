@@ -20,6 +20,7 @@
 
 package com.arangodb.model;
 
+import com.arangodb.ArangoDatabase;
 import com.arangodb.internal.serde.UserDataInside;
 
 import java.util.Collection;
@@ -28,7 +29,10 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
+ *
+ * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
  */
+@Deprecated
 public final class AqlQueryExplainOptions {
 
     private Map<String, Object> bindVars;

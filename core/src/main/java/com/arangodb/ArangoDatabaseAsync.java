@@ -172,8 +172,16 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)}
+     *
+     * @deprecated for removal, use {@link ArangoDatabaseAsync#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
      */
+    @Deprecated
     CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)}
+     */
+    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#parseQuery(String)}
