@@ -1542,6 +1542,12 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.model.ExplainAqlQueryOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.model.QueueTimeSample",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
