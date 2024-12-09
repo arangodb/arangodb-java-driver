@@ -33,7 +33,7 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
         if (SerdeUtils.isManagedClass(clazz)) {
             return p.readValueAs(clazz);
         } else {
-            return serde.deserializeUserData(SerdeUtils.extractBytes(p), targetType);
+            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz);
         }
     }
 

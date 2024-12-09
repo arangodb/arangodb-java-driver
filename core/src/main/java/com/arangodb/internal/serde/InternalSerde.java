@@ -125,10 +125,10 @@ public interface InternalSerde extends ArangoSerde {
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
-     * @param type    target data type
+     * @param clazz  class of target data type
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, Type type);
+    <T> T deserializeUserData(byte[] content, JavaType clazz);
 
     /**
      * Deserializes the parsed json node and binds it to the target data type.
@@ -139,6 +139,12 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     <T> T deserializeUserData(JsonParser parser, JavaType clazz);
+
+    /**
+     * @param content byte array to deserialize
+     * @return whether the content represents a document (i.e. it has at least one field name equal to _id, _key, _rev)
+     */
+    boolean isDocument(byte[] content);
 
     /**
      * @return the user serde
