@@ -1,99 +1,23 @@
-package resilience.http;
+package resilience.mock;
 
 import ch.qos.logback.classic.Level;
-import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
-import com.arangodb.Protocol;
-import com.arangodb.internal.net.Communication;
+import com.arangodb.entity.MultiDocumentEntity;
 import com.fasterxml.jackson.core.JsonParseException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
-import org.mockserver.integration.ClientAndServer;
-import org.mockserver.matchers.Times;
-import resilience.SingleServerTest;
+import resilience.MockTest;
 
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-class MockTest extends SingleServerTest {
-
-    private ClientAndServer mockServer;
-    private ArangoDB arangoDB;
-
-    public MockTest() {
-        super(Collections.singletonMap(Communication.class, Level.DEBUG));
-    }
-
-    @BeforeEach
-    void before() {
-        mockServer = startClientAndServer(getEndpoint().getHost(), getEndpoint().getPort());
-        arangoDB = new ArangoDB.Builder()
-                .protocol(Protocol.HTTP_JSON)
-                .password(PASSWORD)
-                .host("127.0.0.1", mockServer.getPort())
-                .build();
-    }
-
-    @AfterEach
-    void after() {
-        arangoDB.shutdown();
-        mockServer.stop();
-    }
-
-    @Test
-    void retryOn503() {
-        arangoDB.getVersion();
-
-        mockServer
-                .when(
-                        request()
-                                .withMethod("GET")
-                                .withPath("/.*/_api/version"),
-                        Times.exactly(2)
-                )
-                .respond(
-                        response()
-                                .withStatusCode(503)
-                                .withBody("{\"error\":true,\"errorNum\":503,\"errorMessage\":\"boom\",\"code\":503}")
-                );
-
-        logs.reset();
-        arangoDB.getVersion();
-        assertThat(logs.getLogs())
-                .filteredOn(e -> e.getLevel().equals(Level.WARN))
-                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
-    }
-
-    @Test
-    void retryOn503Async() throws ExecutionException, InterruptedException {
-        arangoDB.async().getVersion().get();
-
-        mockServer
-                .when(
-                        request()
-                                .withMethod("GET")
-                                .withPath("/.*/_api/version"),
-                        Times.exactly(2)
-                )
-                .respond(
-                        response()
-                                .withStatusCode(503)
-                                .withBody("{\"error\":true,\"errorNum\":503,\"errorMessage\":\"boom\",\"code\":503}")
-                );
-
-        logs.reset();
-        arangoDB.async().getVersion().get();
-        assertThat(logs.getLogs())
-                .filteredOn(e -> e.getLevel().equals(Level.WARN))
-                .anyMatch(e -> e.getFormattedMessage().contains("Could not connect to host"));
-    }
+public class SerdeTest extends MockTest {
 
     @Test
     void unparsableData() {
@@ -178,4 +102,35 @@ class MockTest extends SingleServerTest {
                 .hasMessageContaining("upstream timed out");
     }
 
+    @Test
+    void getDocumentsWithErrorField() {
+        List<String> keys = Arrays.asList("1", "2", "3");
+
+        String resp = "[" +
+                "{\"error\":true,\"_key\":\"1\",\"_id\":\"col/1\",\"_rev\":\"_i4otI-q---\"}," +
+                "{\"_key\":\"2\",\"_id\":\"col/2\",\"_rev\":\"_i4otI-q--_\"}," +
+                "{\"_key\":\"3\",\"_id\":\"col/3\",\"_rev\":\"_i4otI-q--A\"}" +
+                "]";
+
+        mockServer
+                .when(
+                        request()
+                                .withMethod("PUT")
+                                .withPath("/.*/_api/document/col")
+                                .withQueryStringParameter("onlyget", "true")
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                                .withHeader("Content-Type", "application/json; charset=utf-8")
+                                .withBody(resp.getBytes(StandardCharsets.UTF_8))
+                );
+
+        MultiDocumentEntity<JsonNode> res = arangoDB.db().collection("col").getDocuments(keys, JsonNode.class);
+        assertThat(res.getErrors()).isEmpty();
+        assertThat(res.getDocuments()).hasSize(3)
+                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("1"))
+                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("2"))
+                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("3"));
+    }
 }

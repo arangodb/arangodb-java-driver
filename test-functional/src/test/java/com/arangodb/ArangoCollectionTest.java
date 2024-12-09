@@ -756,6 +756,34 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
+    void getDocumentsUserData(ArangoCollection collection) {
+        Cat a = new Cat();
+        a.setKey(UUID.randomUUID().toString());
+        a.setName("a");
+
+        Cat b = new Cat();
+        b.setKey(UUID.randomUUID().toString());
+        b.setName("b");
+
+        final List<Cat> values = Arrays.asList(a, b);
+        collection.insertDocuments(values);
+        final MultiDocumentEntity<Cat> documents = collection.getDocuments(Arrays.asList(a.getKey(), b.getKey()),
+                Cat.class);
+        assertThat(documents).isNotNull();
+        assertThat(documents.getDocuments())
+                .hasSize(2)
+                .anySatisfy(d -> {
+                    assertThat(d.getKey()).isEqualTo(a.getKey());
+                    assertThat(d.getName()).isEqualTo(a.getName());
+                })
+                .anySatisfy(d -> {
+                    assertThat(d.getKey()).isEqualTo(b.getKey());
+                    assertThat(d.getName()).isEqualTo(b.getName());
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
     void getDocumentsWithCustomShardingKey(ArangoCollection c) {
         ArangoCollection collection = c.db().collection("customShardingKeyCollection");
         if (collection.exists()) collection.drop();
@@ -2415,6 +2443,33 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
+    void insertDocumentsReturnNewUserData(ArangoCollection collection) {
+        Cat a = new Cat();
+        a.setKey(UUID.randomUUID().toString());
+        a.setName("a");
+
+        Cat b = new Cat();
+        b.setKey(UUID.randomUUID().toString());
+        b.setName("b");
+
+        final List<Cat> values = Arrays.asList(a, b);
+        MultiDocumentEntity<DocumentCreateEntity<Cat>> res =
+                collection.insertDocuments(values, new DocumentCreateOptions().returnNew(true), Cat.class);
+        assertThat(res).isNotNull();
+        assertThat(res.getDocuments())
+                .hasSize(2)
+                .anySatisfy(d -> {
+                    assertThat(d.getKey()).isEqualTo(a.getKey());
+                    assertThat(d.getNew().getName()).isEqualTo(a.getName());
+                })
+                .anySatisfy(d -> {
+                    assertThat(d.getKey()).isEqualTo(b.getKey());
+                    assertThat(d.getNew().getName()).isEqualTo(b.getName());
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdate(ArangoCollection collection) {
         assumeTrue(isAtLeastVersion(3, 7));
 
@@ -2537,9 +2592,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         for (final DocumentCreateEntity<BaseDocument> doc : docs.getDocuments()) {
             assertThat(doc.getNew()).isNotNull();
             final BaseDocument baseDocument = doc.getNew();
+            assertThat(baseDocument.getId()).isNotNull();
             assertThat(baseDocument.getKey()).isNotNull();
+            assertThat(baseDocument.getRevision()).isNotNull();
         }
-
     }
 
     @ParameterizedTest
