@@ -99,12 +99,13 @@ public enum SerdeUtils {
      * @param parser JsonParser with current token pointing to the node to extract
      * @return byte array
      */
+    @SuppressWarnings("deprecation")
     public static byte[] extractBytes(JsonParser parser) throws IOException {
         JsonToken t = parser.currentToken();
         if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
             throw new ArangoDBException("Unexpected token: " + t);
         }
-        byte[] data = (byte[]) parser.getTokenLocation().contentReference().getRawContent();
+        byte[] data = (byte[]) parser.getTokenLocation().getSourceRef();
         int start = (int) parser.getTokenLocation().getByteOffset();
         int end = (int) parser.getCurrentLocation().getByteOffset();
         if (t.isStructStart()) {

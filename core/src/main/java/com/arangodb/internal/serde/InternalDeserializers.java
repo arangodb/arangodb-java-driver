@@ -35,7 +35,7 @@ public final class InternalDeserializers {
                 return RawJson.of(new String(SerdeUtils.extractBytes(p), StandardCharsets.UTF_8));
             } else {
                 StringWriter w = new StringWriter();
-                try (JsonGenerator gen = SerdeUtils.INSTANCE.getJsonMapper().createGenerator(w)) {
+                try (JsonGenerator gen = SerdeUtils.INSTANCE.getJsonMapper().getFactory().createGenerator(w)) {
                     gen.copyCurrentStructure(p);
                     gen.flush();
                 }
