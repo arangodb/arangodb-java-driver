@@ -27,7 +27,7 @@ public final class InternalSerializers {
             if (JsonFactory.FORMAT_NAME_JSON.equals(gen.getCodec().getFactory().getFormatName())) {
                 gen.writeRawValue(new RawUserDataValue(value.get().getBytes(StandardCharsets.UTF_8)));
             } else {
-                try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().createParser(value.get())) {
+                try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().getFactory().createParser(value.get())) {
                     parser.nextToken();
                     gen.copyCurrentStructure(parser);
                 }

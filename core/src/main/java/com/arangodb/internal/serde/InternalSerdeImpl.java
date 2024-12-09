@@ -84,7 +84,7 @@ final class InternalSerdeImpl implements InternalSerde {
             throw new ArangoDBException("Unsupported JSON pointer: " + jsonPointer);
         }
         String[] parts = jsonPointer.substring(1).split("/");
-        try (JsonParser parser = mapper.createParser(content)) {
+        try (JsonParser parser = mapper.getFactory().createParser(content)) {
             int match = 0;
             int level = 0;
             JsonToken token = parser.nextToken();
@@ -144,7 +144,7 @@ final class InternalSerdeImpl implements InternalSerde {
     @Override
     public byte[] serializeCollectionUserData(Iterable<?> value) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try (JsonGenerator gen = mapper.createGenerator(os)) {
+        try (JsonGenerator gen = mapper.getFactory().createGenerator(os)) {
             gen.writeStartArray();
             for (Object o : value) {
                 gen.writeRawValue(new RawUserDataValue(serializeUserData(o)));
@@ -195,7 +195,7 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public boolean isDocument(byte[] content) {
-        try (JsonParser p = mapper.createParser(content)) {
+        try (JsonParser p = mapper.getFactory().createParser(content)) {
             if (p.nextToken() != JsonToken.START_OBJECT) {
                 return false;
             }
