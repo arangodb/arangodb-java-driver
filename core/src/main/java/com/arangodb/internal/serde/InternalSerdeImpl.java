@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -166,12 +167,15 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T deserializeUserData(byte[] content, Type type) {
-        if (type instanceof Class) {
-            return deserializeUserData(content, (Class<T>) type);
-        } else {
-            throw new UnsupportedOperationException();
+    public <T> T deserializeUserData(byte[] content, JavaType clazz) {
+        try {
+            if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
+                return mapper.readerFor(clazz).readValue(content);
+            } else {
+                return deserializeUserData(content, clazz);
+            }
+        } catch (IOException e) {
+            throw ArangoDBException.of(e);
         }
     }
 
@@ -186,6 +190,38 @@ final class InternalSerdeImpl implements InternalSerde {
         } catch (IOException e) {
             throw ArangoDBException.of(e);
         }
+    }
+
+    @Override
+    public boolean isDocument(byte[] content) {
+        try (JsonParser p = mapper.createParser(content)) {
+            if (p.nextToken() != JsonToken.START_OBJECT) {
+                return false;
+            }
+
+            int level = 1;
+            while (level >= 1) {
+                JsonToken t = p.nextToken();
+                if (level == 1 && t == JsonToken.FIELD_NAME) {
+                    String fieldName = p.getText();
+                    if (fieldName.equals("_id") || fieldName.equals("_key") || fieldName.equals("_rev")) {
+                        return true;
+                    }
+                }
+                if (t.isStructStart()) {
+                    level++;
+                } else if (t.isStructEnd()) {
+                    level--;
+                }
+            }
+
+            if (p.currentToken() != JsonToken.END_OBJECT) {
+                throw new JsonMappingException(p, "Expected END_OBJECT but got " + p.currentToken());
+            }
+        } catch (IOException e) {
+            throw ArangoDBException.of(e);
+        }
+        return false;
     }
 
     @Override

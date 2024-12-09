@@ -47,36 +47,15 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
             if (p.currentToken() != JsonToken.START_OBJECT) {
                 throw new JsonMappingException(p, "Expected START_OBJECT but got " + p.currentToken());
             }
-            p.nextToken();
-            if (p.currentToken() != JsonToken.FIELD_NAME) {
-                throw new JsonMappingException(p, "Expected FIELD_NAME but got " + p.currentToken());
-            }
-            String fieldName = p.getText();
-            // FIXME: this can potentially fail for: MultiDocumentEntity<T> getDocuments()
-            // fix by scanning the 1st level field names and checking if any matches:
-            // - "_id"
-            // - "_key"
-            // - "_rev"
-            switch (fieldName) {
-                case "_id":
-                case "_key":
-                case "_rev":
-                case "_oldRev":
-                case "new":
-                case "old":
-                    Object d = serde.deserializeUserData(p, containedType);
-                    multiDocument.getDocuments().add(d);
-                    multiDocument.getDocumentsAndErrors().add(d);
-                    break;
-                case "error":
-                case "errorNum":
-                case "errorMessage":
-                    ErrorEntity e = ctxt.readValue(p, ErrorEntity.class);
-                    multiDocument.getErrors().add(e);
-                    multiDocument.getDocumentsAndErrors().add(e);
-                    break;
-                default:
-                    throw new JsonMappingException(p, "Unrecognized field '" + fieldName + "'");
+            byte[] element = SerdeUtils.extractBytes(p);
+            if (serde.isDocument(element)) {
+                Object d = serde.deserializeUserData(element, containedType);
+                multiDocument.getDocuments().add(d);
+                multiDocument.getDocumentsAndErrors().add(d);
+            } else {
+                ErrorEntity e = serde.deserialize(element, ErrorEntity.class);
+                multiDocument.getErrors().add(e);
+                multiDocument.getDocumentsAndErrors().add(e);
             }
             p.nextToken();  // END_OBJECT
         }
