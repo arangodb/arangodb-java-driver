@@ -551,7 +551,7 @@ workflows:
               only:
                 - main
       - test:
-          name: test-native-ssl=<<matrix.ssl>>-(<<graalvm-version>>)
+          name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               native:
@@ -571,7 +571,7 @@ workflows:
               only:
                 - main
       - test-shaded:
-          name: test-native-shaded-ssl=<<matrix.ssl>>-(<<graalvm-version>>)
+          name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               native:

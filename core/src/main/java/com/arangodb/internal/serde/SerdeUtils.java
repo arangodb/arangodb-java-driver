@@ -104,9 +104,9 @@ public enum SerdeUtils {
         if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
             throw new ArangoDBException("Unexpected token: " + t);
         }
-        byte[] data = (byte[]) parser.currentTokenLocation().contentReference().getRawContent();
-        int start = (int) parser.currentTokenLocation().getByteOffset();
-        int end = (int) parser.currentLocation().getByteOffset();
+        byte[] data = (byte[]) parser.getTokenLocation().contentReference().getRawContent();
+        int start = (int) parser.getTokenLocation().getByteOffset();
+        int end = (int) parser.getCurrentLocation().getByteOffset();
         if (t.isStructStart()) {
             int open = 1;
             while (open > 0) {
@@ -120,7 +120,7 @@ public enum SerdeUtils {
         }
         parser.finishToken();
         if (JsonFactory.FORMAT_NAME_JSON.equals(parser.getCodec().getFactory().getFormatName())) {
-            end = (int) parser.currentLocation().getByteOffset();
+            end = (int) parser.getCurrentLocation().getByteOffset();
         }
         return Arrays.copyOfRange(data, start, end);
     }
