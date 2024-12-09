@@ -167,12 +167,13 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T deserializeUserData(byte[] content, JavaType clazz) {
         try {
             if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
                 return mapper.readerFor(clazz).readValue(content);
             } else {
-                return deserializeUserData(content, clazz);
+                return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass());
             }
         } catch (IOException e) {
             throw ArangoDBException.of(e);
