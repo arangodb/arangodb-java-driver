@@ -3,6 +3,8 @@ package com.arangodb.internal.serde;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
@@ -15,6 +17,7 @@ public interface InternalSerde extends ArangoSerde {
      *
      * @param content byte array
      * @return JSON string
+     * @implSpec return {@code "[Unparsable data]"} in case of parsing exception
      */
     String toJsonString(byte[] content);
 
@@ -59,14 +62,6 @@ public interface InternalSerde extends ArangoSerde {
     <T> T deserialize(JsonNode node, Type type);
 
     /**
-     * Parses the content.
-     *
-     * @param content VPack or byte encoded JSON string
-     * @return root of the parsed tree
-     */
-    JsonNode parse(byte[] content);
-
-    /**
      * Parses the content at json pointer.
      *
      * @param content     VPack or byte encoded JSON string
@@ -98,7 +93,7 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
-        return deserialize(parse(content, jsonPointer), type);
+        return deserialize(extract(content, jsonPointer), type);
     }
 
     /**
@@ -130,30 +125,26 @@ public interface InternalSerde extends ArangoSerde {
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
-     * @param type    target data type
+     * @param clazz  class of target data type
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, Type type);
+    <T> T deserializeUserData(byte[] content, JavaType clazz);
 
     /**
-     * Deserializes the parsed json node and binds it to the target data type, using the user serde.
+     * Deserializes the parsed json node and binds it to the target data type.
+     * The parser is not closed.
      *
-     * @param node  parsed json node
-     * @param clazz class of target data type
+     * @param parser json parser
+     * @param clazz  class of target data type
      * @return deserialized object
      */
-    default <T> T deserializeUserData(JsonNode node, Class<T> clazz) {
-        return deserializeUserData(node, (Type) clazz);
-    }
+    <T> T deserializeUserData(JsonParser parser, JavaType clazz);
 
     /**
-     * Deserializes the parsed json node and binds it to the target data type, using the user serde.
-     *
-     * @param node parsed json node
-     * @param type target data type
-     * @return deserialized object
+     * @param content byte array to deserialize
+     * @return whether the content represents a document (i.e. it has at least one field name equal to _id, _key, _rev)
      */
-    <T> T deserializeUserData(JsonNode node, Type type);
+    boolean isDocument(byte[] content);
 
     /**
      * @return the user serde

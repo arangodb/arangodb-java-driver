@@ -535,8 +535,8 @@ workflows:
           matrix:
             parameters:
               args:
-                - '-Dadb.jackson.version=2.18.0'
-                - '-Dadb.jackson.version=2.17.2'
+                - '-Dadb.jackson.version=2.18.2'
+                - '-Dadb.jackson.version=2.17.3'
                 - '-Dadb.jackson.version=2.16.2'
                 - '-Dadb.jackson.version=2.15.4'
                 - '-Dadb.jackson.version=2.14.3'
@@ -551,7 +551,7 @@ workflows:
               only:
                 - main
       - test:
-          name: test-native-ssl=<<matrix.ssl>>
+          name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               native:
@@ -571,7 +571,7 @@ workflows:
               only:
                 - main
       - test-shaded:
-          name: test-native-shaded-ssl=<<matrix.ssl>>
+          name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
             parameters:
               native:

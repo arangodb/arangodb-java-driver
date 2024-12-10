@@ -762,10 +762,43 @@ class ArangoDatabaseTest extends BaseJunit5 {
         InternalSerde serde = db.getSerde();
         RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
         RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).next();
-        JsonNode data = serde.parse(res.get());
+        JsonNode data = serde.deserialize(res.get(), JsonNode.class);
         assertThat(data.isObject()).isTrue();
         assertThat(data.get("value").isNumber()).isTrue();
         assertThat(data.get("value").numberValue()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryUserDataScalar(ArangoDatabase db) {
+        List<String> docs = Arrays.asList("a", "b", "c");
+        ArangoCursor<String> res = db.query("FOR d IN @docs RETURN d", String.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<String>) res).contains("a", "b", "c");
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryUserDataManaged(ArangoDatabase db) {
+        RawJson a = RawJson.of("\"foo\"");
+        RawJson b = RawJson.of("{\"key\":\"value\"}");
+        RawJson c = RawJson.of("[1,null,true,\"bla\",{},[],\"\"]");
+        RawJson docs = RawJson.of("[" + a.get() + "," + b.get() + "," + c.get() + "]");
+        ArangoCursor<RawJson> res = db.query("FOR d IN @docs RETURN d", RawJson.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<RawJson>) res).containsExactly(a, b, c);
+    }
+
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void queryUserData(ArangoDatabase db) {
+        Object a = "foo";
+        Object b = Collections.singletonMap("key", "value");
+        Object c = Arrays.asList(1, null, true, "bla", Collections.emptyMap(), Collections.emptyList(), "");
+        List<Object> docs = Arrays.asList(a, b, c);
+        ArangoCursor<Object> res = db.query("FOR d IN @docs RETURN d", Object.class,
+                Collections.singletonMap("docs", docs), new AqlQueryOptions().batchSize(1));
+        assertThat((Iterable<Object>) res).containsExactly(a, b, c);
     }
 
     @ParameterizedTest

@@ -29,7 +29,12 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
 
     @Override
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return serde.deserializeUserData(p.readValueAsTree(), targetType);
+        Class<?> clazz = (Class<?>) targetType;
+        if (SerdeUtils.isManagedClass(clazz)) {
+            return p.readValueAs(clazz);
+        } else {
+            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz);
+        }
     }
 
     @Override
@@ -41,4 +46,5 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
     public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
         return new UserDataDeserializer(ctxt.getContextualType(), serde);
     }
+
 }
