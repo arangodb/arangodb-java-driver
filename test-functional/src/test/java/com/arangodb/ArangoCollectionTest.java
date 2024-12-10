@@ -3453,36 +3453,51 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void changeProperties(ArangoCollection collection) {
+        assumeTrue(isCluster());
         final CollectionPropertiesEntity properties = collection.getProperties();
         assertThat(properties.getWaitForSync()).isNotNull();
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(properties.getSchema()).isNull();
-        }
+        assertThat(properties.getSchema()).isNull();
 
         String schemaRule = ("{  " + "           \"properties\": {" + "               \"number\": {" + "             " +
                 "      \"type\": \"number\"" + "               }" + "           }" + "       }").replaceAll("\\s", "");
         String schemaMessage = "The document has problems!";
 
         CollectionPropertiesOptions updatedOptions =
-                new CollectionPropertiesOptions().waitForSync(!properties.getWaitForSync()).schema(new CollectionSchema().setLevel(CollectionSchema.Level.NEW).setMessage(schemaMessage).setRule(schemaRule));
+                new CollectionPropertiesOptions()
+                        .cacheEnabled(!properties.getCacheEnabled())
+                        .computedValues(new ComputedValue()
+                                .name("foo")
+                                .expression("RETURN 11")
+                                .overwrite(false)
+                                .computeOn(ComputedValue.ComputeOn.insert)
+                                .keepNull(false)
+                                .failOnWarning(true))
+                        .replicationFactor(ReplicationFactor.of(3))
+                        .schema(new CollectionSchema().setLevel(CollectionSchema.Level.NEW).setMessage(schemaMessage).setRule(schemaRule))
+                        .waitForSync(!properties.getWaitForSync())
+                        .writeConcern(2);
 
         final CollectionPropertiesEntity changedProperties = collection.changeProperties(updatedOptions);
-        assertThat(changedProperties.getWaitForSync()).isNotNull();
-        assertThat(changedProperties.getWaitForSync()).isEqualTo(!properties.getWaitForSync());
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(changedProperties.getSchema()).isNotNull();
-            assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
-            assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
-            assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
-        }
+        assertThat(changedProperties.getCacheEnabled()).isEqualTo(updatedOptions.getCacheEnabled());
+        assertThat(changedProperties.getComputedValues())
+                .hasSize(1)
+                .contains(updatedOptions.getComputedValues().get(0));
+        assertThat(changedProperties.getReplicationFactor().get()).isEqualTo(updatedOptions.getReplicationFactor().get());
+        assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
+        assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
+        assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
+        assertThat(changedProperties.getWaitForSync()).isEqualTo(updatedOptions.getWaitForSync());
+        assertThat(changedProperties.getWriteConcern()).isEqualTo(updatedOptions.getWriteConcern());
 
         // revert changes
-        CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions()
-                .waitForSync(properties.getWaitForSync()).schema(new CollectionSchema()));
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(revertedProperties.getSchema()).isNull();
-        }
-
+        CollectionPropertiesOptions revertOptions = new CollectionPropertiesOptions()
+                .cacheEnabled(properties.getCacheEnabled())
+                .computedValues()
+                .replicationFactor(properties.getReplicationFactor())
+                .schema(properties.getSchema())
+                .waitForSync(properties.getWaitForSync())
+                .writeConcern(properties.getWriteConcern());
+        collection.changeProperties(revertOptions);
     }
 
     @ParameterizedTest
