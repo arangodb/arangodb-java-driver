@@ -1,5 +1,10 @@
 package com.arangodb;
 
+import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.internal.ArangoCollectionImpl;
+import com.arangodb.internal.ArangoDatabaseImpl;
+import com.arangodb.internal.ArangoExecutor;
+import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
@@ -25,6 +30,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +45,35 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Fork(1)
 public class SerdeBench {
+    public static class MyCol extends ArangoCollectionImpl {
+        static ArangoDB jsonAdb = new ArangoDB.Builder()
+                .host("127.0.0.1", 8529)
+                .protocol(Protocol.HTTP_JSON)
+                .build();
+
+        static ArangoDB vpackAdb = new ArangoDB.Builder()
+                .host("127.0.0.1", 8529)
+                .protocol(Protocol.HTTP_VPACK)
+                .build();
+
+        private MyCol(ArangoDB adb) {
+            super((ArangoDatabaseImpl) adb.db(), "foo");
+        }
+
+        public static MyCol ofJson() {
+            return new MyCol(jsonAdb);
+        }
+
+        public static MyCol ofVpack() {
+            return new MyCol(vpackAdb);
+        }
+
+        @Override
+        public <T> ArangoExecutor.ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(Class<T> type) {
+            return super.getDocumentsResponseDeserializer(type);
+        }
+    }
+
     @State(Scope.Benchmark)
     public static class Data {
         public final byte[] vpack;
@@ -46,25 +81,37 @@ public class SerdeBench {
         public final RawBytes rawJsonBytes;
         public final RawBytes rawVPackBytes;
         public final RawJson rawJson;
+        public final MyCol jsonCol = MyCol.ofJson();
+        public final MyCol vpackCol = MyCol.ofVpack();
+        public final InternalResponse jsonResp = new InternalResponse();
+        public final InternalResponse vpackResp = new InternalResponse();
 
         public Data() {
             ObjectMapper jsonMapper = new ObjectMapper();
             VPackMapper vpackMapper = new VPackMapper();
 
             try {
-                String str = new String(Files.readAllBytes(
-                        Paths.get(SerdeBench.class.getResource("/api-docs.json").toURI())));
-                JsonNode jn = jsonMapper.readTree(str);
-
+                JsonNode jn = readFile("/api-docs.json", jsonMapper);
                 json = jsonMapper.writeValueAsBytes(jn);
                 vpack = vpackMapper.writeValueAsBytes(jn);
                 rawJsonBytes = RawBytes.of(json);
                 rawVPackBytes = RawBytes.of(vpack);
                 rawJson = RawJson.of(jsonMapper.writeValueAsString(jsonMapper.readTree(json)));
 
+                JsonNode docs = readFile("/multi-docs.json", jsonMapper);
+                jsonResp.setResponseCode(200);
+                jsonResp.setBody(jsonMapper.writeValueAsBytes(docs));
+                vpackResp.setResponseCode(200);
+                vpackResp.setBody(vpackMapper.writeValueAsBytes(docs));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        private JsonNode readFile(String filename, ObjectMapper mapper) throws IOException, URISyntaxException {
+            String str = new String(Files.readAllBytes(
+                    Paths.get(SerdeBench.class.getResource(filename).toURI())));
+            return mapper.readTree(str);
         }
     }
 
@@ -119,6 +166,20 @@ public class SerdeBench {
         InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
         bh.consume(
                 serde.extract(data.json, "/definitions/put_api_simple_remove_by_example_opts")
+        );
+    }
+
+    @Benchmark
+    public void deserializeDocsJson(Data data, Blackhole bh) {
+        bh.consume(
+                data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp)
+        );
+    }
+
+    @Benchmark
+    public void deserializeDocsVPack(Data data, Blackhole bh) {
+        bh.consume(
+                data.vpackCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.vpackResp)
         );
     }
 
