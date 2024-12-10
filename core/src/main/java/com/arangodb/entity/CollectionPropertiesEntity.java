@@ -27,72 +27,86 @@ import java.util.Collection;
  */
 public final class CollectionPropertiesEntity extends CollectionEntity {
 
+    private Boolean cacheEnabled;
+    private String distributeShardsLike;
+    private Boolean isDisjoint;
+    private Boolean isSmart;
     private KeyOptions keyOptions;
-    private Long count;
     private Integer numberOfShards;
-    private Collection<String> shardKeys;
     private ReplicationFactor replicationFactor;
-    private Integer writeConcern;
+    private Collection<String> shardKeys;
     private String shardingStrategy; // cluster option
+    private String smartGraphAttribute;
     private String smartJoinAttribute; // enterprise option
+    private Integer writeConcern;
+    private Long count;
 
     public CollectionPropertiesEntity() {
         super();
+    }
+
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public void setCacheEnabled(Boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
+
+    public String getDistributeShardsLike() {
+        return distributeShardsLike;
+    }
+
+    public void setDistributeShardsLike(String distributeShardsLike) {
+        this.distributeShardsLike = distributeShardsLike;
+    }
+
+    public Boolean getDisjoint() {
+        return isDisjoint;
+    }
+
+    public void setDisjoint(Boolean disjoint) {
+        isDisjoint = disjoint;
+    }
+
+    public Boolean getSmart() {
+        return isSmart;
+    }
+
+    public void setSmart(Boolean smart) {
+        isSmart = smart;
     }
 
     public KeyOptions getKeyOptions() {
         return keyOptions;
     }
 
-    public void setKeyOptions(final KeyOptions keyOptions) {
+    public void setKeyOptions(KeyOptions keyOptions) {
         this.keyOptions = keyOptions;
     }
 
-    public Long getCount() {
-        return count;
-    }
-
-    public void setCount(final Long count) {
-        this.count = count;
-    }
-
-    /**
-     * @return the number of shards of the collection. Only in a cluster setup (else returning null).
-     */
     public Integer getNumberOfShards() {
         return numberOfShards;
     }
 
-    public void setNumberOfShards(final Integer numberOfShards) {
+    public void setNumberOfShards(Integer numberOfShards) {
         this.numberOfShards = numberOfShards;
-    }
-
-    /**
-     * @return the names of document attributes that are used to determine the target shard for documents.
-     * Only in a cluster setup (else returning null).
-     */
-    public Collection<String> getShardKeys() {
-        return shardKeys;
-    }
-
-    public void setShardKeys(final Collection<String> shardKeys) {
-        this.shardKeys = shardKeys;
     }
 
     public ReplicationFactor getReplicationFactor() {
         return replicationFactor;
     }
 
-    public void setReplicationFactor(final ReplicationFactor replicationFactor) {
+    public void setReplicationFactor(ReplicationFactor replicationFactor) {
         this.replicationFactor = replicationFactor;
     }
 
-    public Integer getWriteConcern() {
-        return writeConcern;
+    public Collection<String> getShardKeys() {
+        return shardKeys;
     }
 
-    public void setWriteConcern(final Integer writeConcern) {
-        this.writeConcern = writeConcern;
+    public void setShardKeys(Collection<String> shardKeys) {
+        this.shardKeys = shardKeys;
     }
 
     public String getShardingStrategy() {
@@ -103,6 +117,14 @@ public final class CollectionPropertiesEntity extends CollectionEntity {
         this.shardingStrategy = shardingStrategy;
     }
 
+    public String getSmartGraphAttribute() {
+        return smartGraphAttribute;
+    }
+
+    public void setSmartGraphAttribute(String smartGraphAttribute) {
+        this.smartGraphAttribute = smartGraphAttribute;
+    }
+
     public String getSmartJoinAttribute() {
         return smartJoinAttribute;
     }
@@ -111,4 +133,19 @@ public final class CollectionPropertiesEntity extends CollectionEntity {
         this.smartJoinAttribute = smartJoinAttribute;
     }
 
+    public Integer getWriteConcern() {
+        return writeConcern;
+    }
+
+    public void setWriteConcern(Integer writeConcern) {
+        this.writeConcern = writeConcern;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
 }
