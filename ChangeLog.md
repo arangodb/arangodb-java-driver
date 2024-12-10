@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [7.15.0] - 2024-12-06
+## [7.15.0] - 2024-12-10
 
 - added missing collection options (#590, DE-961) 
 - improved serde performances (#588, DE-959)
