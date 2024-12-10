@@ -1,0 +1,719 @@
+[
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "error": true,
+    "errorNum": 11,
+    "code": 500,
+    "errorMessage": "bla"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "error": true,
+    "errorNum": 11,
+    "code": 500,
+    "errorMessage": "bla"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "error": true,
+    "errorNum": 11,
+    "code": 500,
+    "errorMessage": "bla"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  },
+  {
+    "error": true,
+    "errorNum": 11,
+    "code": 500,
+    "errorMessage": "bla"
+  },
+  {
+    "properties": {
+      "doCompact": {
+        "description": "whether or not the collection will be compacted (default is <strong>true</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "indexBuckets": {
+        "description": "The: number of buckets into which indexes using a hash table are split. The default is 16 and this number has to be a power of 2 and less than or equal to 1024.  <br> For very large collections one should increase this to avoid long pauses  when the hash table has to be initially built or resized, since buckets  are resized individually and can be initially built in parallel. For  example, 64 might be a sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects this value, but other index types might follow in future ArangoDB versions.  Changes (see below) are applied when the collection is loaded the next  time. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "isSystem": {
+        "description": "If <strong>true</strong>, create a  system collection. In this case <strong>collection-name</strong> should start with an underscore. End users should normally create non-system collections only. API implementors may be required to create system collections in very special occasions, but normally a regular collection will do. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "isVolatile": {
+        "description": "If <strong>true</strong> then the collection data is kept in-memory only and not made persistent. Unloading the collection will cause the collection data to be discarded. Stopping or re-starting the server will also cause full loss of data in the collection. Setting this option will make the resulting collection be slightly faster than regular collections because ArangoDB does not enforce any synchronization to disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option  should therefore be used for cache-type collections only, and not  for data that cannot be re-created otherwise. (The default is <strong>false</strong>) <br>",
+        "format": "",
+        "type": "boolean"
+      },
+      "journalSize": {
+        "description": "The maximal size of a journal or datafile in bytes. The value  must be at least `1048576` (1 MiB). (The default is a configuration parameter) <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "keyOptions": {
+        "$ref": "#/definitions/JSF_post_api_collection_opts"
+      },
+      "name": {
+        "description": "The name of the collection. <br>",
+        "type": "string"
+      },
+      "numberOfShards": {
+        "description": "(The default is <strong>1</strong>): in a cluster, this value determines the number of shards to create for the collection. In a single server setup, this option is meaningless. <br>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "shardKeys": {
+        "description": "(The default is <strong>[ \"_key\" ]</strong>): in a cluster, this attribute determines which document attributes are used to determine the target shard for documents. Documents are sent to shards based on the values of their shard key attributes. The values of all shard key attributes in a document are hashed, and the hash value is used to determine the target shard. <strong>Note</strong>: Values of shard key attributes cannot be changed once set.   This option is meaningless in a single server setup. <br>",
+        "type": "string"
+      },
+      "type": {
+        "description": "(The default is <strong>2</strong>): the type of the collection to create. The following values for <strong>type</strong> are valid: <br>  <ul class=\"swagger-list\"><li><strong>2</strong>: document collection <li><strong>3</strong>: edges collection </ul>",
+        "format": "int64",
+        "type": "integer"
+      },
+      "waitForSync": {
+        "description": "If <strong>true</strong> then the data is synchronized to disk before returning from a document create, update, replace or removal operation. (default: false) <br>",
+        "format": "",
+        "type": "boolean"
+      }
+    },
+    "_rev": "uuu",
+    "_key": "iii",
+    "_id": "ooo/iii",
+    "required": [
+      "name"
+    ],
+    "type": "object",
+    "x-filename": "Collections - js/actions/_api/collection/app.js"
+  }
+]
