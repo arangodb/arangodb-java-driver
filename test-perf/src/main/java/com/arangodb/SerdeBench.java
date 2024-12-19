@@ -29,8 +29,10 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -108,10 +110,21 @@ public class SerdeBench {
             }
         }
 
-        private JsonNode readFile(String filename, ObjectMapper mapper) throws IOException, URISyntaxException {
-            String str = new String(Files.readAllBytes(
-                    Paths.get(SerdeBench.class.getResource(filename).toURI())));
+        private JsonNode readFile(String filename, ObjectMapper mapper) throws IOException {
+            InputStream inputStream = SerdeBench.class.getResourceAsStream(filename);
+            String str = readFromInputStream(inputStream);
             return mapper.readTree(str);
+        }
+
+        private String readFromInputStream(InputStream inputStream) throws IOException {
+            StringBuilder resultStringBuilder = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    resultStringBuilder.append(line).append("\n");
+                }
+            }
+            return resultStringBuilder.toString();
         }
     }
 
