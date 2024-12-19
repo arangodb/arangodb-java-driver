@@ -6,10 +6,6 @@ parameters:
     default: ''
 
 commands:
-  setup_docker:
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
   timeout:
     parameters:
       duration:
@@ -162,7 +158,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - when:
           condition:
             equal: [ 'true', <<parameters.native>> ]
@@ -230,7 +226,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - when:
           condition:
             equal: [ 'true', <<parameters.native>> ]
@@ -274,7 +270,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - install-sdk:
           sdk: 'java'
           version: '21.0.2-graalce'
@@ -298,7 +294,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - install-sdk:
           sdk: 'java'
           version: '21.0.2-graalce'
@@ -323,7 +319,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - start-db
       - load_cache
       - restore_cache:
@@ -347,7 +343,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - start-db
       - load_cache
       - run:
@@ -369,7 +365,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - start-db:
           topology: 'cluster'
           compression: 'true'
@@ -400,7 +396,7 @@ jobs:
     steps:
       - timeout
       - checkout
-      - setup_docker
+      - setup_remote_docker
       - start-db:
           topology: 'cluster'
           compression: 'true'
