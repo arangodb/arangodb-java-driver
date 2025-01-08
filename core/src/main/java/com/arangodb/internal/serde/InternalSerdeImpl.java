@@ -181,19 +181,6 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserializeUserData(JsonParser parser, JavaType clazz) {
-        try {
-            if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
-                return mapper.readerFor(clazz).readValue(parser);
-            } else {
-                return deserializeUserData(extractBytes(parser), clazz);
-            }
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
-        }
-    }
-
-    @Override
     public boolean isDocument(byte[] content) {
         try (JsonParser p = mapper.getFactory().createParser(content)) {
             if (p.nextToken() != JsonToken.START_OBJECT) {
@@ -240,14 +227,21 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T deserialize(final byte[] content, final Type type) {
         if (content == null || content.length == 0) {
             return null;
         }
-        try {
-            return mapper.readerFor(mapper.constructType(type)).readValue(content);
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
+        if (RawBytes.class.equals(type)) {
+            return (T) RawBytes.of(content);
+        } else if (RawJson.class.equals(type) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
+            return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
+        } else {
+            try {
+                return mapper.readerFor(mapper.constructType(type)).readValue(content);
+            } catch (IOException e) {
+                throw ArangoDBException.of(e);
+            }
         }
     }
 

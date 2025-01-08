@@ -130,15 +130,6 @@ public interface InternalSerde extends ArangoSerde {
      */
     <T> T deserializeUserData(byte[] content, JavaType clazz);
 
-    /**
-     * Deserializes the parsed json node and binds it to the target data type.
-     * The parser is not closed.
-     *
-     * @param parser json parser
-     * @param clazz  class of target data type
-     * @return deserialized object
-     */
-    <T> T deserializeUserData(JsonParser parser, JavaType clazz);
 
     /**
      * @param content byte array to deserialize
