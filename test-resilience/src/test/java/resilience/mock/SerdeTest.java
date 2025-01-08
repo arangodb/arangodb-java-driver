@@ -2,7 +2,10 @@ package resilience.mock;
 
 import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDBException;
+import com.arangodb.Request;
+import com.arangodb.Response;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
@@ -132,5 +135,32 @@ public class SerdeTest extends MockTest {
                 .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("1"))
                 .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("2"))
                 .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("3"));
+    }
+
+    @Test
+    void getXArangoDumpJsonLines() {
+        String resp = "{\"a\":1}\n" +
+                "{\"b\":2}\n" +
+                "{\"c\":3}";
+
+        mockServer
+                .when(
+                        request()
+                                .withMethod("GET")
+                                .withPath("/_db/foo/_api/foo")
+                )
+                .respond(
+                        response()
+                                .withStatusCode(200)
+                                .withHeader("Content-Type", "application/x-arango-dump; charset=utf-8")
+                                .withBody(resp.getBytes(StandardCharsets.UTF_8))
+                );
+
+        Response<RawJson> res = arangoDB.execute(Request.builder()
+                .method(Request.Method.GET)
+                .db("foo")
+                .path("/_api/foo")
+                .build(), RawJson.class);
+        assertThat(res.getBody().get()).endsWith("{\"c\":3}");
     }
 }
