@@ -186,6 +186,7 @@
                                     <scopes>compile</scopes>
                                     <maxJdkVersion>1.8</maxJdkVersion>
                                     <excludes>
+                                        <exclude>jakarta.json:jakarta.json-api</exclude>
                                         <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
                                     </excludes>
                                 </enforceBytecodeVersion>
