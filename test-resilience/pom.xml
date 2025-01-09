@@ -6,7 +6,7 @@
         <relativePath>../test-parent</relativePath>
         <groupId>com.arangodb</groupId>
         <artifactId>test-parent</artifactId>
-        <version>7.15.0</version>
+        <version>7.16.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

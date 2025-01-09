@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.16.0] - 2025-01-09
+
+- improved deserialization of `RawBytes` and `RawJson` (#592, DE-969)
+- added support to Jakarta JSON-P data types (#593, DE-968)
+- fixed ArangoSearch `PrimarySort` serialization
+
 ## [7.15.0] - 2024-12-10
 
 - added missing collection options (#590, DE-961) 
