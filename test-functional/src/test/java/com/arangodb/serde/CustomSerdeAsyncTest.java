@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
- * @author Michele Rastelli
+ * NB: excluded from shaded tests
  */
 class CustomSerdeAsyncTest {
 
