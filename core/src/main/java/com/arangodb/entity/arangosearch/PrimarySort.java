@@ -20,6 +20,9 @@
 
 package com.arangodb.entity.arangosearch;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Heiko Kernbach
  */
@@ -27,6 +30,14 @@ public final class PrimarySort {
 
     private final String fieldName;
     private Boolean ascending;
+
+    public PrimarySort(
+            @JsonProperty("field") String field,
+            @JsonProperty("asc") Boolean asc
+    ) {
+        this.fieldName = field;
+        this.ascending = asc;
+    }
 
     private PrimarySort(final String fieldName) {
         super();
@@ -46,11 +57,33 @@ public final class PrimarySort {
         return this;
     }
 
+    @JsonIgnore
     public Boolean getAscending() {
         return ascending;
     }
 
+    public Direction getDirection() {
+        if (ascending == null) {
+            return null;
+        }
+        return ascending ? Direction.asc : Direction.desc;
+    }
+
+    /**
+     * @deprecated for removal, use {@link #getField()} instead
+     */
+    @Deprecated
+    @JsonIgnore
     public String getFieldName() {
+        return getField();
+    }
+
+    public String getField() {
         return fieldName;
+    }
+
+    public enum Direction {
+        asc,
+        desc
     }
 }

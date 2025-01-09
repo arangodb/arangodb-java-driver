@@ -154,7 +154,7 @@ class ArangoSearchTest extends BaseJunit5 {
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
 
         final PrimarySort primarySort = PrimarySort.on("myFieldName");
-        primarySort.ascending(true);
+        primarySort.ascending(false);
         options.primarySort(primarySort);
         options.primarySortCompression(ArangoSearchCompression.none);
         options.consolidationIntervalMsec(666666L);
@@ -179,6 +179,13 @@ class ArangoSearchTest extends BaseJunit5 {
             assertThat(retrievedStoredValue).isNotNull();
             assertThat(retrievedStoredValue.getFields()).isEqualTo(storedValue.getFields());
             assertThat(retrievedStoredValue.getCompression()).isEqualTo(storedValue.getCompression());
+            assertThat(properties.getPrimarySort())
+                    .hasSize(1)
+                    .allSatisfy(ps -> {
+                        assertThat(ps).isNotNull();
+                        assertThat(ps.getField()).isEqualTo(primarySort.getField());
+                        assertThat(ps.getAscending()).isEqualTo(primarySort.getAscending());
+                    });
         }
     }
 
@@ -739,7 +746,7 @@ class ArangoSearchTest extends BaseJunit5 {
         }
 
         if (isEnterprise() && isAtLeastVersion(3, 12)) {
-             assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
+            assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
         }
 
     }

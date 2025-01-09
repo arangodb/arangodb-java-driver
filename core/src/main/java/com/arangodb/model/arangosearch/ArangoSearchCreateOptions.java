@@ -23,6 +23,7 @@ package com.arangodb.model.arangosearch;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.internal.serde.InternalSerializers;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
@@ -217,7 +218,16 @@ public final class ArangoSearchCreateOptions {
         return links;
     }
 
+    /**
+     * @deprecated for removal, use {@link #getPrimarySort()} instead
+     */
+    @Deprecated
+    @JsonIgnore
     public Collection<PrimarySort> getPrimarySorts() {
+        return getPrimarySort();
+    }
+
+    public Collection<PrimarySort> getPrimarySort() {
         return primarySorts;
     }
 
