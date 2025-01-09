@@ -17,6 +17,15 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>parsson</artifactId>
+            <version>1.1.7</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <profiles>
         <profile>
             <id>shaded</id>
@@ -34,11 +43,11 @@
                         <configuration>
                             <filesToExclude>
                                 **/CustomSerdeTest.**,
-                                **/SerdeTest.**,
-                                **/SerializableTest.**,
+                                **/CustomSerdeAsyncTest.**,
                                 **/JacksonInterferenceTest.**,
                                 **/JacksonRequestContextTest.**,
-                                **/HttpProxyTest.**
+                                **/HttpProxyTest.**,
+                                **/RequestContextTest.**
                             </filesToExclude>
                             <replacements>
                                 <replacement>
@@ -48,6 +57,18 @@
                                 <replacement>
                                     <token>com.fasterxml.jackson.databind.ObjectNode</token>
                                     <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.node</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.node</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.ObjectMapper</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectMapper</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.core.JsonProcessingException</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.core.JsonProcessingException</value>
                                 </replacement>
                             </replacements>
                         </configuration>

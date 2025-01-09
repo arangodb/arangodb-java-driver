@@ -44,7 +44,7 @@ import static com.arangodb.util.TestUtils.TEST_DB;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Michele Rastelli
+ * NB: excluded from shaded tests
  */
 class JacksonRequestContextTest {
 

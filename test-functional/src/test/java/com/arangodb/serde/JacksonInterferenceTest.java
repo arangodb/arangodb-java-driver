@@ -16,6 +16,9 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * NB: excluded from shaded tests
+ */
 class JacksonInterferenceTest {
 
     private final ObjectMapper mapper = new ObjectMapper();

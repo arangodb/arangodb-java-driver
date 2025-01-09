@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
- * @author Michele Rastelli
+ * NB: excluded from shaded tests
  */
 class HttpProxyTest extends BaseTest {
 

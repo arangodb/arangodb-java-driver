@@ -17,6 +17,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsonp.JSONPModule;
+import jakarta.json.JsonException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +31,7 @@ import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersio
 import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
 
 final class InternalSerdeImpl implements InternalSerde {
+    private static final Logger LOG = LoggerFactory.getLogger(InternalSerdeImpl.class);
 
     static {
         checkSupportedJacksonVersion();
@@ -50,6 +55,13 @@ final class InternalSerdeImpl implements InternalSerde {
                 new UserDataSerializer(this),
                 new UserDataDeserializer(this)
         ));
+
+        // JSON-P datatypes
+        try {
+            mapper.registerModule(new JSONPModule());
+        } catch (JsonException e) {
+            LOG.debug("Jakarta JSON-P provider not found, handling of JSON-P datatypes is disabled", e);
+        }
     }
 
     @Override

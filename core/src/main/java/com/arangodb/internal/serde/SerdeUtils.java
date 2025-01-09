@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import jakarta.json.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +128,8 @@ public enum SerdeUtils {
     }
 
     public static boolean isManagedClass(Class<?> clazz) {
-        return JsonNode.class.isAssignableFrom(clazz) ||
+        return JsonNode.class.isAssignableFrom(clazz) ||        // jackson datatypes
+                JsonValue.class.isAssignableFrom(clazz) ||      // JSON-B datatypes
                 RawJson.class.equals(clazz) ||
                 RawBytes.class.equals(clazz) ||
                 BaseDocument.class.equals(clazz) ||

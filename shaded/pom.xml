@@ -48,6 +48,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <!-- build arangodb-java-driver before so that we can use the javadoc artifact -->
             <groupId>com.arangodb</groupId>
             <artifactId>arangodb-java-driver</artifactId>
@@ -82,6 +87,7 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.slf4j:slf4j-api</exclude>
+                                    <exclude>jakarta.json:jakarta.json-api</exclude>
                                 </excludes>
                             </artifactSet>
                             <relocations>
