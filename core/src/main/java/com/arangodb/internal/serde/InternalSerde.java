@@ -3,7 +3,6 @@ package com.arangodb.internal.serde;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 

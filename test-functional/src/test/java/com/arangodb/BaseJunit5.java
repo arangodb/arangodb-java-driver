@@ -101,7 +101,7 @@ public class BaseJunit5 {
         return database;
     }
 
-    static ArangoDatabase initDB() {
+    protected static ArangoDatabase initDB() {
         return initDB(TEST_DB);
     }
 
