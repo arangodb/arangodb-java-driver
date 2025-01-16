@@ -1,5 +1,7 @@
 package com.arangodb;
 
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,6 +50,30 @@ class SerializableTest {
         ArangoDBMultipleException e2 = roundTrip(e);
         assertThat(e2.getExceptions()).hasSize(1);
         assertThat(e2.getExceptions().iterator().next().getMessage()).isEqualTo("foo");
+    }
+
+    @Test
+    void serializeBaseDocument() throws IOException, ClassNotFoundException {
+        BaseDocument doc = new BaseDocument();
+        doc.setKey("test");
+        doc.setId("id");
+        doc.setRevision("revision");
+        doc.addAttribute("foo", "bar");
+        BaseDocument doc2 = roundTrip(doc);
+        assertThat(doc2).isEqualTo(doc);
+    }
+
+    @Test
+    void serializeBaseEdgeDocument() throws IOException, ClassNotFoundException {
+        BaseEdgeDocument doc = new BaseEdgeDocument();
+        doc.setKey("test");
+        doc.setId("id");
+        doc.setRevision("revision");
+        doc.setFrom("from");
+        doc.setTo("to");
+        doc.addAttribute("foo", "bar");
+        BaseDocument doc2 = roundTrip(doc);
+        assertThat(doc2).isEqualTo(doc);
     }
 
     private <T> T roundTrip(T input) throws IOException, ClassNotFoundException {
