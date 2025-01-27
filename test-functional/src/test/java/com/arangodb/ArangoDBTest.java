@@ -672,9 +672,22 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("arangos")
-    void loadpropertiesWithPrefix() {
+    void loadPropertiesWithPrefix() {
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
+                .build();
+        adb.getVersion();
+        adb.shutdown();
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void loadConfigFromPropertiesWithPrefix() {
+        Properties props = new Properties();
+        props.setProperty("adb.hosts", "172.28.0.1:8529");
+        props.setProperty("adb.password", "test");
+        ArangoDB adb = new ArangoDB.Builder()
+                .loadProperties(ConfigUtils.loadConfig(props, "adb"))
                 .build();
         adb.getVersion();
         adb.shutdown();

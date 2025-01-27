@@ -7,6 +7,7 @@ import com.arangodb.internal.config.ArangoConfigPropertiesImpl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 public interface ArangoConfigProperties {
 
@@ -32,6 +33,22 @@ public interface ArangoConfigProperties {
      */
     static ArangoConfigProperties fromFile(final String fileName, final String prefix) {
         return new ArangoConfigPropertiesImpl(fileName, prefix);
+    }
+
+    /**
+     * Creates {@code ArangoConfigProperties} from Java properties ({@link java.util.Properties}).
+     * Properties must be prefixed with @{code "arangodb"}, eg. @{code "arangodb.hosts=localhost:8529"}.
+     */
+    static ArangoConfigProperties fromProperties(final Properties properties) {
+        return new ArangoConfigPropertiesImpl(properties);
+    }
+
+    /**
+     * Creates {@code ArangoConfigProperties} from Java properties ({@link java.util.Properties}).
+     * Properties must be prefixed with @{code prefix}, eg. @{code "<prefix>.hosts=localhost:8529"}.
+     */
+    static ArangoConfigProperties fromProperties(final Properties properties, final String prefix) {
+        return new ArangoConfigPropertiesImpl(properties, prefix);
     }
 
     default Optional<List<HostDescription>> getHosts() {

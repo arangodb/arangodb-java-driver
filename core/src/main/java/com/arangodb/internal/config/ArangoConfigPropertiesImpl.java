@@ -31,9 +31,27 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
         this(fileName, DEFAULT_PREFIX);
     }
 
-    public  ArangoConfigPropertiesImpl(final String fileName, final String prefix) {
-        properties = initProperties(fileName);
+    public ArangoConfigPropertiesImpl(final String fileName, final String prefix) {
+        this(initProperties(fileName), prefix);
+    }
+
+    public ArangoConfigPropertiesImpl(final Properties properties) {
+        this(properties, DEFAULT_PREFIX);
+    }
+
+    public ArangoConfigPropertiesImpl(final Properties properties, final String prefix) {
+        this.properties = properties;
         this.prefix = initPrefix(prefix);
+    }
+
+    private static Properties initProperties(String fileName) {
+        Properties p = new Properties();
+        try (InputStream is = ArangoConfigPropertiesImpl.class.getClassLoader().getResourceAsStream(fileName)) {
+            p.load(is);
+        } catch (Exception e) {
+            throw ArangoDBException.of("Got exception while reading properties file " + fileName, e);
+        }
+        return p;
     }
 
     private String initPrefix(String p) {
@@ -42,16 +60,6 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
         } else {
             return p + ".";
         }
-    }
-
-    private Properties initProperties(String fileName) {
-        Properties p = new Properties();
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(fileName)) {
-            p.load(is);
-        } catch (Exception e) {
-            throw ArangoDBException.of("Got exception while reading properties file " + fileName, e);
-        }
-        return p;
     }
 
     private String getProperty(String key) {
