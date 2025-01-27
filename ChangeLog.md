@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.17.0] - 2025-01-27
+
+- allow construct ArangoConfigProperties from `java.util.Properties` (DE-976)
+- made BaseDocument and BaseEdgeDocument serializable (#596)
+
+
 ## [7.16.0] - 2025-01-09
 
 - improved deserialization of `RawBytes` and `RawJson` (#592, DE-969)
