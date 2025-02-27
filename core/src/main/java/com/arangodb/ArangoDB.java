@@ -528,6 +528,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * {@link Protocol#VST} == 1
          * {@link Protocol#HTTP_JSON} == 20
          * {@link Protocol#HTTP_VPACK} == 20
+         * {@link Protocol#HTTP2_JSON} == 1
+         * {@link Protocol#HTTP2_VPACK} == 1
          * </pre>
          *
          * @param maxConnections max number of connections
