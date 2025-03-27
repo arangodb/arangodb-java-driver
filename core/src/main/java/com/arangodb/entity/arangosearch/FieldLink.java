@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public final class FieldLink {
 
@@ -163,5 +164,17 @@ public final class FieldLink {
 
     public Boolean getCache() {
         return cache;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof FieldLink)) return false;
+        FieldLink fieldLink = (FieldLink) o;
+        return Objects.equals(name, fieldLink.name) && Objects.equals(analyzers, fieldLink.analyzers) && Objects.equals(includeAllFields, fieldLink.includeAllFields) && Objects.equals(trackListPositions, fieldLink.trackListPositions) && storeValues == fieldLink.storeValues && Objects.equals(fields, fieldLink.fields) && Objects.equals(nested, fieldLink.nested) && Objects.equals(inBackground, fieldLink.inBackground) && Objects.equals(cache, fieldLink.cache);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, analyzers, includeAllFields, trackListPositions, storeValues, fields, nested, inBackground, cache);
     }
 }

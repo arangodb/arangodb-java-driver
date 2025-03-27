@@ -24,6 +24,7 @@ import com.arangodb.entity.ViewEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Michele Rastelli
@@ -39,4 +40,15 @@ public final class SearchAliasPropertiesEntity extends ViewEntity {
         return indexes;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SearchAliasPropertiesEntity)) return false;
+        SearchAliasPropertiesEntity that = (SearchAliasPropertiesEntity) o;
+        return Objects.equals(indexes, that.indexes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(indexes);
+    }
 }

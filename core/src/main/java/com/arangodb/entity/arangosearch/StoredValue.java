@@ -73,8 +73,7 @@ public final class StoredValue {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof StoredValue)) return false;
         StoredValue that = (StoredValue) o;
         return Objects.equals(fields, that.fields) && compression == that.compression && Objects.equals(cache, that.cache);
     }

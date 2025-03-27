@@ -25,6 +25,7 @@ import com.arangodb.internal.serde.InternalDeserializers;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -135,5 +136,17 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
 
     public Boolean getPrimaryKeyCache() {
         return primaryKeyCache;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ArangoSearchPropertiesEntity)) return false;
+        ArangoSearchPropertiesEntity that = (ArangoSearchPropertiesEntity) o;
+        return Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(primarySort, that.primarySort) && Objects.equals(links, that.links) && primarySortCompression == that.primarySortCompression && Objects.equals(storedValues, that.storedValues) && Objects.equals(optimizeTopK, that.optimizeTopK) && Objects.equals(primarySortCache, that.primarySortCache) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(consolidationIntervalMsec, commitIntervalMsec, cleanupIntervalStep, consolidationPolicy, primarySort, links, primarySortCompression, storedValues, optimizeTopK, primarySortCache, primaryKeyCache);
     }
 }

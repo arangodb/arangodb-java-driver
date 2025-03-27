@@ -25,6 +25,7 @@ import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.StoredValue;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -162,5 +163,17 @@ public final class InvertedIndexEntity {
 
     public Boolean getPrimaryKeyCache() {
         return primaryKeyCache;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof InvertedIndexEntity)) return false;
+        InvertedIndexEntity that = (InvertedIndexEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(isNewlyCreated, that.isNewlyCreated) && Objects.equals(unique, that.unique) && Objects.equals(sparse, that.sparse) && Objects.equals(version, that.version) && Objects.equals(code, that.code) && type == that.type && Objects.equals(name, that.name) && Objects.equals(fields, that.fields) && Objects.equals(searchField, that.searchField) && Objects.equals(storedValues, that.storedValues) && Objects.equals(optimizeTopK, that.optimizeTopK) && Objects.equals(primarySort, that.primarySort) && Objects.equals(analyzer, that.analyzer) && Objects.equals(features, that.features) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && Objects.equals(cleanupIntervalStep, that.cleanupIntervalStep) && Objects.equals(commitIntervalMsec, that.commitIntervalMsec) && Objects.equals(consolidationIntervalMsec, that.consolidationIntervalMsec) && Objects.equals(consolidationPolicy, that.consolidationPolicy) && Objects.equals(writebufferIdle, that.writebufferIdle) && Objects.equals(writebufferActive, that.writebufferActive) && Objects.equals(writebufferSizeMax, that.writebufferSizeMax) && Objects.equals(cache, that.cache) && Objects.equals(primaryKeyCache, that.primaryKeyCache);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isNewlyCreated, unique, sparse, version, code, type, name, fields, searchField, storedValues, optimizeTopK, primarySort, analyzer, features, includeAllFields, trackListPositions, cleanupIntervalStep, commitIntervalMsec, consolidationIntervalMsec, consolidationPolicy, writebufferIdle, writebufferActive, writebufferSizeMax, cache, primaryKeyCache);
     }
 }

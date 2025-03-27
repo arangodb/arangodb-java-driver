@@ -23,6 +23,8 @@ package com.arangodb.entity.arangosearch;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Heiko Kernbach
  */
@@ -85,5 +87,17 @@ public final class PrimarySort {
     public enum Direction {
         asc,
         desc
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PrimarySort)) return false;
+        PrimarySort that = (PrimarySort) o;
+        return Objects.equals(fieldName, that.fieldName) && Objects.equals(ascending, that.ascending);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fieldName, ascending);
     }
 }

@@ -23,6 +23,8 @@ package com.arangodb.entity;
 import com.arangodb.internal.serde.UserData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -66,4 +68,16 @@ public final class DocumentUpdateEntity<T> extends DocumentEntity {
         this.oldDocument = oldDocument;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentUpdateEntity)) return false;
+        if (!super.equals(o)) return false;
+        DocumentUpdateEntity<?> that = (DocumentUpdateEntity<?>) o;
+        return Objects.equals(oldRev, that.oldRev) && Objects.equals(newDocument, that.newDocument) && Objects.equals(oldDocument, that.oldDocument);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), oldRev, newDocument, oldDocument);
+    }
 }

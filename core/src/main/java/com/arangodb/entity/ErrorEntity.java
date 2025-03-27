@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -66,4 +67,15 @@ public final class ErrorEntity implements Serializable {
         return errorNum;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ErrorEntity)) return false;
+        ErrorEntity that = (ErrorEntity) o;
+        return code == that.code && errorNum == that.errorNum && Objects.equals(errorMessage, that.errorMessage) && Objects.equals(exception, that.exception);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(errorMessage, exception, code, errorNum);
+    }
 }

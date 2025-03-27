@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Michele Rastelli
@@ -37,6 +38,18 @@ public final class LogEntriesEntity {
 
     public List<Message> getMessages() {
         return messages;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LogEntriesEntity)) return false;
+        LogEntriesEntity that = (LogEntriesEntity) o;
+        return Objects.equals(total, that.total) && Objects.equals(messages, that.messages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(total, messages);
     }
 
     public static final class Message {
@@ -64,6 +77,18 @@ public final class LogEntriesEntity {
 
         public String getMessage() {
             return message;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Message)) return false;
+            Message message1 = (Message) o;
+            return Objects.equals(id, message1.id) && Objects.equals(topic, message1.topic) && Objects.equals(level, message1.level) && Objects.equals(date, message1.date) && Objects.equals(message, message1.message);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, topic, level, date, message);
         }
     }
 

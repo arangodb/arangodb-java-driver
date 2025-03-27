@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Michele Rastelli
  * @since ArangoDB 3.5.0
@@ -37,4 +39,15 @@ public final class StreamTransactionEntity {
         return status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StreamTransactionEntity)) return false;
+        StreamTransactionEntity that = (StreamTransactionEntity) o;
+        return Objects.equals(id, that.id) && status == that.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, status);
+    }
 }

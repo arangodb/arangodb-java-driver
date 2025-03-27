@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -56,4 +58,15 @@ public final class AqlFunctionEntity {
         return isDeterministic;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AqlFunctionEntity)) return false;
+        AqlFunctionEntity that = (AqlFunctionEntity) o;
+        return Objects.equals(name, that.name) && Objects.equals(code, that.code) && Objects.equals(isDeterministic, that.isDeterministic);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, code, isDeterministic);
+    }
 }

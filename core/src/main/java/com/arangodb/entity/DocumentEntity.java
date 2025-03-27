@@ -23,6 +23,8 @@ package com.arangodb.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -56,4 +58,15 @@ public class DocumentEntity {
         return rev;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentEntity)) return false;
+        DocumentEntity that = (DocumentEntity) o;
+        return Objects.equals(key, that.key) && Objects.equals(id, that.id) && Objects.equals(rev, that.rev);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, id, rev);
+    }
 }

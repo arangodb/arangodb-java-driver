@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -58,6 +60,18 @@ public final class QueryCachePropertiesEntity {
      */
     public void setMaxResults(final Long maxResults) {
         this.maxResults = maxResults;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof QueryCachePropertiesEntity)) return false;
+        QueryCachePropertiesEntity that = (QueryCachePropertiesEntity) o;
+        return mode == that.mode && Objects.equals(maxResults, that.maxResults);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mode, maxResults);
     }
 
     public enum CacheMode {

@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -80,5 +81,17 @@ public final class MultiDocumentEntity<E> {
 
     public void setPotentialDirtyRead(final Boolean isPotentialDirtyRead) {
         this.isPotentialDirtyRead = isPotentialDirtyRead;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MultiDocumentEntity)) return false;
+        MultiDocumentEntity<?> that = (MultiDocumentEntity<?>) o;
+        return isPotentialDirtyRead == that.isPotentialDirtyRead && Objects.equals(documents, that.documents) && Objects.equals(errors, that.errors) && Objects.equals(documentsAndErrors, that.documentsAndErrors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(documents, errors, documentsAndErrors, isPotentialDirtyRead);
     }
 }

@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -107,5 +108,17 @@ public final class QueryEntity {
      */
     public Boolean getStream() {
         return stream;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof QueryEntity)) return false;
+        QueryEntity that = (QueryEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(database, that.database) && Objects.equals(user, that.user) && Objects.equals(query, that.query) && Objects.equals(bindVars, that.bindVars) && Objects.equals(started, that.started) && Objects.equals(runTime, that.runTime) && Objects.equals(peakMemoryUsage, that.peakMemoryUsage) && state == that.state && Objects.equals(stream, that.stream);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, database, user, query, bindVars, started, runTime, peakMemoryUsage, state, stream);
     }
 }

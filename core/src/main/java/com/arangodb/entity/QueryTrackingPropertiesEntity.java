@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -129,4 +131,15 @@ public final class QueryTrackingPropertiesEntity {
         this.maxQueryStringLength = maxQueryStringLength;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof QueryTrackingPropertiesEntity)) return false;
+        QueryTrackingPropertiesEntity that = (QueryTrackingPropertiesEntity) o;
+        return Objects.equals(enabled, that.enabled) && Objects.equals(trackSlowQueries, that.trackSlowQueries) && Objects.equals(maxSlowQueries, that.maxSlowQueries) && Objects.equals(slowQueryThreshold, that.slowQueryThreshold) && Objects.equals(maxQueryStringLength, that.maxQueryStringLength);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enabled, trackSlowQueries, maxSlowQueries, slowQueryThreshold, maxQueryStringLength);
+    }
 }

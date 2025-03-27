@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Michele Rastelli
  */
@@ -35,4 +37,15 @@ public final class ShardEntity {
         return shardId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ShardEntity)) return false;
+        ShardEntity that = (ShardEntity) o;
+        return Objects.equals(shardId, that.shardId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(shardId);
+    }
 }

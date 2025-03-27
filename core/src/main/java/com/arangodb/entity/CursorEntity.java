@@ -25,6 +25,7 @@ import com.arangodb.internal.serde.UserDataInside;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -110,6 +111,18 @@ public final class CursorEntity<T> {
         return nextBatchId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CursorEntity)) return false;
+        CursorEntity<?> that = (CursorEntity<?>) o;
+        return Objects.equals(id, that.id) && Objects.equals(count, that.count) && Objects.equals(cached, that.cached) && Objects.equals(hasMore, that.hasMore) && Objects.equals(result, that.result) && Objects.equals(potentialDirtyRead, that.potentialDirtyRead) && Objects.equals(nextBatchId, that.nextBatchId) && Objects.equals(extra, that.extra);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, count, cached, hasMore, result, potentialDirtyRead, nextBatchId, extra);
+    }
+
     public static final class Extras {
         private final Collection<CursorWarning> warnings = Collections.emptyList();
         private CursorStats stats;
@@ -120,6 +133,18 @@ public final class CursorEntity<T> {
 
         public Collection<CursorWarning> getWarnings() {
             return warnings;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Extras)) return false;
+            Extras extras = (Extras) o;
+            return Objects.equals(warnings, extras.warnings) && Objects.equals(stats, extras.stats);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(warnings, stats);
         }
     }
 

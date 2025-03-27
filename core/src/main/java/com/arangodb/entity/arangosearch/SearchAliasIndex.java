@@ -3,6 +3,8 @@ package com.arangodb.entity.arangosearch;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Michele Rastelli
  * @since ArabgoDB 3.10
@@ -49,5 +51,17 @@ public final class SearchAliasIndex {
 
     public enum OperationType {
         add, del
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SearchAliasIndex)) return false;
+        SearchAliasIndex that = (SearchAliasIndex) o;
+        return Objects.equals(collection, that.collection) && Objects.equals(index, that.index) && operation == that.operation;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(collection, index, operation);
     }
 }

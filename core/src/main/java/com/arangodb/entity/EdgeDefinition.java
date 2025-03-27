@@ -23,6 +23,7 @@ package com.arangodb.entity;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -80,11 +81,35 @@ public final class EdgeDefinition {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EdgeDefinition)) return false;
+        EdgeDefinition that = (EdgeDefinition) o;
+        return Objects.equals(collection, that.collection) && Objects.equals(from, that.from) && Objects.equals(to, that.to) && Objects.equals(options, that.options);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(collection, from, to, options);
+    }
+
     public static final class Options {
         private Collection<String> satellites = Collections.emptyList();
 
         public Collection<String> getSatellites() {
             return satellites;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Options)) return false;
+            Options options = (Options) o;
+            return Objects.equals(satellites, options.satellites);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(satellites);
         }
     }
 }

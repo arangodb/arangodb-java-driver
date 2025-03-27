@@ -22,6 +22,8 @@ package com.arangodb.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -464,6 +466,18 @@ public final class LogLevelEntity {
 
     public void setGeneral(LogLevel general) {
         this.general = general;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LogLevelEntity)) return false;
+        LogLevelEntity that = (LogLevelEntity) o;
+        return all == that.all && agency == that.agency && agencycomm == that.agencycomm && agencystore == that.agencystore && backup == that.backup && bench == that.bench && cluster == that.cluster && communication == that.communication && authentication == that.authentication && config == that.config && crash == that.crash && dump == that.dump && engines == that.engines && cache == that.cache && security == that.security && startup == that.startup && trx == that.trx && supervision == that.supervision && threads == that.threads && ttl == that.ttl && ssl == that.ssl && replication2 == that.replication2 && restore == that.restore && memory == that.memory && validation == that.validation && statistics == that.statistics && v8 == that.v8 && syscall == that.syscall && libiresearch == that.libiresearch && license == that.license && deprecation == that.deprecation && rocksdb == that.rocksdb && requests == that.requests && repWal == that.repWal && arangosearch == that.arangosearch && views == that.views && repState == that.repState && authorization == that.authorization && queries == that.queries && aql == that.aql && graphs == that.graphs && maintenance == that.maintenance && development == that.development && replication == that.replication && httpclient == that.httpclient && heartbeat == that.heartbeat && flush == that.flush && general == that.general;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(all, agency, agencycomm, agencystore, backup, bench, cluster, communication, authentication, config, crash, dump, engines, cache, security, startup, trx, supervision, threads, ttl, ssl, replication2, restore, memory, validation, statistics, v8, syscall, libiresearch, license, deprecation, rocksdb, requests, repWal, arangosearch, views, repState, authorization, queries, aql, graphs, maintenance, development, replication, httpclient, heartbeat, flush, general);
     }
 
     public enum LogLevel {

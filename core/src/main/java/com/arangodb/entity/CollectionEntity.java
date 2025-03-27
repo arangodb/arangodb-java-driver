@@ -24,6 +24,7 @@ import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ComputedValue;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -83,4 +84,15 @@ public class CollectionEntity {
         return computedValues;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CollectionEntity)) return false;
+        CollectionEntity that = (CollectionEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(waitForSync, that.waitForSync) && Objects.equals(isSystem, that.isSystem) && status == that.status && type == that.type && Objects.equals(schema, that.schema) && Objects.equals(computedValues, that.computedValues);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, waitForSync, isSystem, status, type, schema, computedValues);
+    }
 }

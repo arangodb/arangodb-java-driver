@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class CursorStats {
     private final Map<String, Object> properties = new HashMap<>();
@@ -170,5 +171,17 @@ public final class CursorStats {
      */
     public Integer getSeeks() {
         return seeks;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CursorStats)) return false;
+        CursorStats that = (CursorStats) o;
+        return Objects.equals(properties, that.properties) && Objects.equals(writesExecuted, that.writesExecuted) && Objects.equals(writesIgnored, that.writesIgnored) && Objects.equals(scannedFull, that.scannedFull) && Objects.equals(scannedIndex, that.scannedIndex) && Objects.equals(cursorsCreated, that.cursorsCreated) && Objects.equals(cursorsRearmed, that.cursorsRearmed) && Objects.equals(cacheHits, that.cacheHits) && Objects.equals(cacheMisses, that.cacheMisses) && Objects.equals(filtered, that.filtered) && Objects.equals(httpRequests, that.httpRequests) && Objects.equals(fullCount, that.fullCount) && Objects.equals(executionTime, that.executionTime) && Objects.equals(peakMemoryUsage, that.peakMemoryUsage) && Objects.equals(documentLookups, that.documentLookups) && Objects.equals(intermediateCommits, that.intermediateCommits) && Objects.equals(seeks, that.seeks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(properties, writesExecuted, writesIgnored, scannedFull, scannedIndex, cursorsCreated, cursorsRearmed, cacheHits, cacheMisses, filtered, httpRequests, fullCount, executionTime, peakMemoryUsage, documentLookups, intermediateCommits, seeks);
     }
 }

@@ -23,6 +23,7 @@ package com.arangodb.entity;
 import com.arangodb.model.MDIFieldValueTypes;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -132,5 +133,17 @@ public final class IndexEntity {
 
     public Collection<String> getPrefixFields() {
         return prefixFields;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof IndexEntity)) return false;
+        IndexEntity that = (IndexEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type && Objects.equals(fields, that.fields) && Objects.equals(selectivityEstimate, that.selectivityEstimate) && Objects.equals(unique, that.unique) && Objects.equals(sparse, that.sparse) && Objects.equals(minLength, that.minLength) && Objects.equals(isNewlyCreated, that.isNewlyCreated) && Objects.equals(geoJson, that.geoJson) && Objects.equals(constraint, that.constraint) && Objects.equals(deduplicate, that.deduplicate) && Objects.equals(expireAfter, that.expireAfter) && Objects.equals(inBackground, that.inBackground) && Objects.equals(estimates, that.estimates) && Objects.equals(cacheEnabled, that.cacheEnabled) && Objects.equals(storedValues, that.storedValues) && Objects.equals(legacyPolygons, that.legacyPolygons) && fieldValueTypes == that.fieldValueTypes && Objects.equals(prefixFields, that.prefixFields);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type, fields, selectivityEstimate, unique, sparse, minLength, isNewlyCreated, geoJson, constraint, deduplicate, expireAfter, inBackground, estimates, cacheEnabled, storedValues, legacyPolygons, fieldValueTypes, prefixFields);
     }
 }

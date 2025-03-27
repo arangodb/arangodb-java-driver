@@ -22,6 +22,8 @@ package com.arangodb.entity;
 
 import com.arangodb.internal.serde.UserData;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -44,5 +46,17 @@ public final class DocumentDeleteEntity<T> extends DocumentEntity {
     @UserData
     public void setOld(final T oldDocument) {
         this.oldDocument = oldDocument;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentDeleteEntity)) return false;
+        DocumentDeleteEntity<?> that = (DocumentDeleteEntity<?>) o;
+        return Objects.equals(oldDocument, that.oldDocument);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(oldDocument);
     }
 }

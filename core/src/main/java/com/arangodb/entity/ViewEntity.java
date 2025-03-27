@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -52,4 +54,15 @@ public class ViewEntity {
         return type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ViewEntity)) return false;
+        ViewEntity that = (ViewEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type);
+    }
 }

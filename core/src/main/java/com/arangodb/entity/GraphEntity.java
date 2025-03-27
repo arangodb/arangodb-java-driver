@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -128,5 +129,17 @@ public final class GraphEntity {
      */
     public Boolean getIsSatellite() {
         return isSatellite;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof GraphEntity)) return false;
+        GraphEntity that = (GraphEntity) o;
+        return Objects.equals(name, that.name) && Objects.equals(edgeDefinitions, that.edgeDefinitions) && Objects.equals(orphanCollections, that.orphanCollections) && Objects.equals(numberOfShards, that.numberOfShards) && Objects.equals(_id, that._id) && Objects.equals(_rev, that._rev) && Objects.equals(replicationFactor, that.replicationFactor) && Objects.equals(writeConcern, that.writeConcern) && Objects.equals(isSmart, that.isSmart) && Objects.equals(isDisjoint, that.isDisjoint) && Objects.equals(smartGraphAttribute, that.smartGraphAttribute) && Objects.equals(isSatellite, that.isSatellite);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, edgeDefinitions, orphanCollections, numberOfShards, _id, _rev, replicationFactor, writeConcern, isSmart, isDisjoint, smartGraphAttribute, isSatellite);
     }
 }

@@ -22,6 +22,8 @@ package com.arangodb.entity;
 
 import com.arangodb.internal.serde.UserData;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -59,4 +61,15 @@ public final class DocumentCreateEntity<T> extends DocumentEntity {
         this.oldDocument = oldDocument;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentCreateEntity)) return false;
+        DocumentCreateEntity<?> that = (DocumentCreateEntity<?>) o;
+        return Objects.equals(newDocument, that.newDocument) && Objects.equals(oldDocument, that.oldDocument);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(newDocument, oldDocument);
+    }
 }

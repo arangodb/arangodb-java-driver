@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Michele Rastelli
  */
@@ -36,6 +38,18 @@ public final class ArangoDBEngine {
      */
     public StorageEngineName getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ArangoDBEngine)) return false;
+        ArangoDBEngine that = (ArangoDBEngine) o;
+        return name == that.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 
     public enum StorageEngineName {

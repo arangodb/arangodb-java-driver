@@ -22,6 +22,8 @@ package com.arangodb.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -38,4 +40,16 @@ public final class EdgeUpdateEntity extends DocumentEntity {
         return oldRev;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EdgeUpdateEntity)) return false;
+        if (!super.equals(o)) return false;
+        EdgeUpdateEntity that = (EdgeUpdateEntity) o;
+        return Objects.equals(oldRev, that.oldRev);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), oldRev);
+    }
 }

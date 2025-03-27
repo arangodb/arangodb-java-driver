@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -188,4 +189,15 @@ public final class CollectionLink {
         return cache;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CollectionLink)) return false;
+        CollectionLink that = (CollectionLink) o;
+        return Objects.equals(name, that.name) && Objects.equals(analyzers, that.analyzers) && Objects.equals(includeAllFields, that.includeAllFields) && Objects.equals(trackListPositions, that.trackListPositions) && storeValues == that.storeValues && Objects.equals(fields, that.fields) && Objects.equals(nested, that.nested) && Objects.equals(inBackground, that.inBackground) && Objects.equals(cache, that.cache);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, analyzers, includeAllFields, trackListPositions, storeValues, fields, nested, inBackground, cache);
+    }
 }

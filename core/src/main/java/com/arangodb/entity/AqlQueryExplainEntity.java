@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class AqlQueryExplainEntity {
 
@@ -52,6 +53,18 @@ public final class AqlQueryExplainEntity {
 
     public Boolean getCacheable() {
         return cacheable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AqlQueryExplainEntity)) return false;
+        AqlQueryExplainEntity that = (AqlQueryExplainEntity) o;
+        return Objects.equals(plan, that.plan) && Objects.equals(plans, that.plans) && Objects.equals(warnings, that.warnings) && Objects.equals(stats, that.stats) && Objects.equals(cacheable, that.cacheable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(plan, plans, warnings, stats, cacheable);
     }
 
     public static final class ExecutionPlan {
@@ -90,6 +103,18 @@ public final class AqlQueryExplainEntity {
         public Collection<ExecutionVariable> getVariables() {
             return variables;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ExecutionPlan)) return false;
+            ExecutionPlan that = (ExecutionPlan) o;
+            return Objects.equals(properties, that.properties) && Objects.equals(nodes, that.nodes) && Objects.equals(estimatedCost, that.estimatedCost) && Objects.equals(collections, that.collections) && Objects.equals(rules, that.rules) && Objects.equals(variables, that.variables);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(properties, nodes, estimatedCost, collections, rules, variables);
+        }
     }
 
     public static final class ExecutionNode {
@@ -102,6 +127,18 @@ public final class AqlQueryExplainEntity {
 
         public Object get(String key) {
             return properties.get(key);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ExecutionNode)) return false;
+            ExecutionNode that = (ExecutionNode) o;
+            return Objects.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(properties);
         }
     }
 
@@ -116,6 +153,18 @@ public final class AqlQueryExplainEntity {
         public Object get(String key) {
             return properties.get(key);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ExecutionVariable)) return false;
+            ExecutionVariable that = (ExecutionVariable) o;
+            return Objects.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(properties);
+        }
     }
 
     public static final class ExecutionCollection {
@@ -129,6 +178,18 @@ public final class AqlQueryExplainEntity {
         public Object get(String key) {
             return properties.get(key);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ExecutionCollection)) return false;
+            ExecutionCollection that = (ExecutionCollection) o;
+            return Objects.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(properties);
+        }
     }
 
     public static final class ExecutionStats {
@@ -141,6 +202,18 @@ public final class AqlQueryExplainEntity {
 
         public Object get(String key) {
             return properties.get(key);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof ExecutionStats)) return false;
+            ExecutionStats that = (ExecutionStats) o;
+            return Objects.equals(properties, that.properties);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(properties);
         }
     }
 

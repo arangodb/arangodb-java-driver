@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -57,4 +58,15 @@ public final class UserEntity {
         return changePassword;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof UserEntity)) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(user, that.user) && Objects.equals(active, that.active) && Objects.equals(extra, that.extra) && Objects.equals(changePassword, that.changePassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user, active, extra, changePassword);
+    }
 }

@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -91,5 +93,17 @@ public final class DatabaseEntity {
      */
     public String getSharding() {
         return sharding;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DatabaseEntity)) return false;
+        DatabaseEntity that = (DatabaseEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(path, that.path) && Objects.equals(isSystem, that.isSystem) && Objects.equals(replicationFactor, that.replicationFactor) && Objects.equals(writeConcern, that.writeConcern) && Objects.equals(sharding, that.sharding);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, path, isSystem, replicationFactor, writeConcern, sharding);
     }
 }

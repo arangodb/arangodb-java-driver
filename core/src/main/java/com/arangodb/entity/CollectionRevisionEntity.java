@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -31,4 +33,16 @@ public final class CollectionRevisionEntity extends CollectionEntity {
         return revision;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CollectionRevisionEntity)) return false;
+        if (!super.equals(o)) return false;
+        CollectionRevisionEntity that = (CollectionRevisionEntity) o;
+        return Objects.equals(revision, that.revision);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), revision);
+    }
 }

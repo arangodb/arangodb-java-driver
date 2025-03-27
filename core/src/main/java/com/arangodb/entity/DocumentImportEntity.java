@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -108,4 +109,15 @@ public final class DocumentImportEntity {
         this.details = details;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DocumentImportEntity)) return false;
+        DocumentImportEntity that = (DocumentImportEntity) o;
+        return Objects.equals(created, that.created) && Objects.equals(errors, that.errors) && Objects.equals(empty, that.empty) && Objects.equals(updated, that.updated) && Objects.equals(ignored, that.ignored) && Objects.equals(details, that.details);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(created, errors, empty, updated, ignored, details);
+    }
 }

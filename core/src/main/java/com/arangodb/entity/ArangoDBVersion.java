@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -55,4 +57,15 @@ public final class ArangoDBVersion {
         return license;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ArangoDBVersion)) return false;
+        ArangoDBVersion that = (ArangoDBVersion) o;
+        return Objects.equals(server, that.server) && Objects.equals(version, that.version) && license == that.license;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(server, version, license);
+    }
 }

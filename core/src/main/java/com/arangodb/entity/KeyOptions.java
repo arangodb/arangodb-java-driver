@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Objects;
+
 /**
  * @author Mark Vollmary
  */
@@ -74,4 +76,15 @@ public final class KeyOptions {
         this.offset = offset;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof KeyOptions)) return false;
+        KeyOptions that = (KeyOptions) o;
+        return Objects.equals(allowUserKeys, that.allowUserKeys) && type == that.type && Objects.equals(increment, that.increment) && Objects.equals(offset, that.offset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(allowUserKeys, type, increment, offset);
+    }
 }
