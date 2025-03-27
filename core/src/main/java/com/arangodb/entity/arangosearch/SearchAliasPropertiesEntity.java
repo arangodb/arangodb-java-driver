@@ -43,12 +43,13 @@ public final class SearchAliasPropertiesEntity extends ViewEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SearchAliasPropertiesEntity)) return false;
+        if (!super.equals(o)) return false;
         SearchAliasPropertiesEntity that = (SearchAliasPropertiesEntity) o;
         return Objects.equals(indexes, that.indexes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(indexes);
+        return Objects.hash(super.hashCode(), indexes);
     }
 }

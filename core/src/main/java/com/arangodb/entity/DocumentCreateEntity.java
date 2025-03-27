@@ -64,12 +64,13 @@ public final class DocumentCreateEntity<T> extends DocumentEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DocumentCreateEntity)) return false;
+        if (!super.equals(o)) return false;
         DocumentCreateEntity<?> that = (DocumentCreateEntity<?>) o;
         return Objects.equals(newDocument, that.newDocument) && Objects.equals(oldDocument, that.oldDocument);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(newDocument, oldDocument);
+        return Objects.hash(super.hashCode(), newDocument, oldDocument);
     }
 }

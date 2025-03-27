@@ -51,12 +51,13 @@ public final class DocumentDeleteEntity<T> extends DocumentEntity {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DocumentDeleteEntity)) return false;
+        if (!super.equals(o)) return false;
         DocumentDeleteEntity<?> that = (DocumentDeleteEntity<?>) o;
         return Objects.equals(oldDocument, that.oldDocument);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(oldDocument);
+        return Objects.hash(super.hashCode(), oldDocument);
     }
 }
