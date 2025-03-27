@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.17.1] - 2025-03-27
+
+- implemented `equals()` and `hashCode()` for all entity classes
+- fixed overlapping resources in shaded package
+
 ## [7.17.0] - 2025-01-27
 
 - allow construct ArangoConfigProperties from `java.util.Properties` (DE-976)
