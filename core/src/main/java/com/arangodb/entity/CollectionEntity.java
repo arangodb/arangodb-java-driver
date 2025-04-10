@@ -60,6 +60,7 @@ public class CollectionEntity {
         return isSystem;
     }
 
+    @Deprecated
     public CollectionStatus getStatus() {
         return status;
     }

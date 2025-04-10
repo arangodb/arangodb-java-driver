@@ -23,6 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark Vollmary
  */
+@Deprecated
 public enum CollectionStatus {
 
     LOADED(3), DELETED(5);
