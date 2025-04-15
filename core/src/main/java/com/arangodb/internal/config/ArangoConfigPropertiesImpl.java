@@ -68,7 +68,7 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
 
     @Override
     public Optional<List<HostDescription>> getHosts() {
-        return Optional.ofNullable(getProperty("hosts"))
+        return Optional.ofNullable(getProperty(KEY_HOSTS))
                 .map(s -> {
                     List<HostDescription> hostDescriptions = new ArrayList<>();
                     String[] hosts = s.split(",");
@@ -81,97 +81,97 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
 
     @Override
     public Optional<Protocol> getProtocol() {
-        return Optional.ofNullable(getProperty("protocol")).map(Protocol::valueOf);
+        return Optional.ofNullable(getProperty(KEY_PROTOCOL)).map(Protocol::valueOf);
     }
 
     @Override
     public Optional<String> getUser() {
-        return Optional.ofNullable(getProperty("user"));
+        return Optional.ofNullable(getProperty(KEY_USER));
     }
 
     @Override
     public Optional<String> getPassword() {
-        return Optional.ofNullable(getProperty("password"));
+        return Optional.ofNullable(getProperty(KEY_PASSWORD));
     }
 
     @Override
     public Optional<String> getJwt() {
-        return Optional.ofNullable(getProperty("jwt"));
+        return Optional.ofNullable(getProperty(KEY_JWT));
     }
 
     @Override
     public Optional<Integer> getTimeout() {
-        return Optional.ofNullable(getProperty("timeout")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_TIMEOUT)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Boolean> getUseSsl() {
-        return Optional.ofNullable(getProperty("useSsl")).map(Boolean::valueOf);
+        return Optional.ofNullable(getProperty(KEY_USE_SSL)).map(Boolean::valueOf);
     }
 
     @Override
     public Optional<Boolean> getVerifyHost() {
-        return Optional.ofNullable(getProperty("verifyHost")).map(Boolean::valueOf);
+        return Optional.ofNullable(getProperty(KEY_VERIFY_HOST)).map(Boolean::valueOf);
     }
 
     @Override
     public Optional<Integer> getChunkSize() {
-        return Optional.ofNullable(getProperty("chunkSize")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_CHUNK_SIZE)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Integer> getMaxConnections() {
-        return Optional.ofNullable(getProperty("maxConnections")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_MAX_CONNECTIONS)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Long> getConnectionTtl() {
-        return Optional.ofNullable(getProperty("connectionTtl")).map(Long::valueOf);
+        return Optional.ofNullable(getProperty(KEY_CONNECTION_TTL)).map(Long::valueOf);
     }
 
     @Override
     public Optional<Integer> getKeepAliveInterval() {
-        return Optional.ofNullable(getProperty("keepAliveInterval")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_KEEP_ALIVE_INTERVAL)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Boolean> getAcquireHostList() {
-        return Optional.ofNullable(getProperty("acquireHostList")).map(Boolean::valueOf);
+        return Optional.ofNullable(getProperty(KEY_ACQUIRE_HOST_LIST)).map(Boolean::valueOf);
     }
 
     @Override
     public Optional<Integer> getAcquireHostListInterval() {
-        return Optional.ofNullable(getProperty("acquireHostListInterval")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_ACQUIRE_HOST_LIST_INTERVAL)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<LoadBalancingStrategy> getLoadBalancingStrategy() {
-        return Optional.ofNullable(getProperty("loadBalancingStrategy")).map(LoadBalancingStrategy::valueOf);
+        return Optional.ofNullable(getProperty(KEY_LOAD_BALANCING_STRATEGY)).map(LoadBalancingStrategy::valueOf);
     }
 
     @Override
     public Optional<Integer> getResponseQueueTimeSamples() {
-        return Optional.ofNullable(getProperty("responseQueueTimeSamples")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_RESPONSE_QUEUE_TIME_SAMPLES)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Compression> getCompression() {
-        return Optional.ofNullable(getProperty("compression")).map(Compression::valueOf);
+        return Optional.ofNullable(getProperty(KEY_COMPRESSION)).map(Compression::valueOf);
     }
 
     @Override
     public Optional<Integer> getCompressionThreshold() {
-        return Optional.ofNullable(getProperty("compressionThreshold")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_COMPRESSION_THRESHOLD)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<Integer> getCompressionLevel() {
-        return Optional.ofNullable(getProperty("compressionLevel")).map(Integer::valueOf);
+        return Optional.ofNullable(getProperty(KEY_COMPRESSION_LEVEL)).map(Integer::valueOf);
     }
 
     @Override
     public Optional<String> getSerdeProviderClass() {
-        return Optional.ofNullable(getProperty("serdeProviderClass"));
+        return Optional.ofNullable(getProperty(KEY_SERDE_PROVIDER_CLASS));
     }
 
 }
