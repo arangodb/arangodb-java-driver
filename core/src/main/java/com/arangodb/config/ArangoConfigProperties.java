@@ -11,6 +11,29 @@ import java.util.Properties;
 
 public interface ArangoConfigProperties {
 
+    //region configuration properties keys
+    String KEY_HOSTS = "hosts";
+    String KEY_PROTOCOL = "protocol";
+    String KEY_USER = "user";
+    String KEY_PASSWORD = "password";
+    String KEY_JWT = "jwt";
+    String KEY_TIMEOUT = "timeout";
+    String KEY_USE_SSL = "useSsl";
+    String KEY_VERIFY_HOST = "verifyHost";
+    String KEY_CHUNK_SIZE = "chunkSize";
+    String KEY_MAX_CONNECTIONS = "maxConnections";
+    String KEY_CONNECTION_TTL = "connectionTtl";
+    String KEY_KEEP_ALIVE_INTERVAL = "keepAliveInterval";
+    String KEY_ACQUIRE_HOST_LIST = "acquireHostList";
+    String KEY_ACQUIRE_HOST_LIST_INTERVAL = "acquireHostListInterval";
+    String KEY_LOAD_BALANCING_STRATEGY = "loadBalancingStrategy";
+    String KEY_RESPONSE_QUEUE_TIME_SAMPLES = "responseQueueTimeSamples";
+    String KEY_COMPRESSION = "compression";
+    String KEY_COMPRESSION_THRESHOLD = "compressionThreshold";
+    String KEY_COMPRESSION_LEVEL = "compressionLevel";
+    String KEY_SERDE_PROVIDER_CLASS = "serdeProviderClass";
+    //endregion
+
     /**
      * Reads properties from file arangodb.properties.
      * Properties must be prefixed with @{code "arangodb"}, eg. @{code "arangodb.hosts=localhost:8529"}.
