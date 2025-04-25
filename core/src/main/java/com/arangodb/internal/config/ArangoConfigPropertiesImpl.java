@@ -174,4 +174,11 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
         return Optional.ofNullable(getProperty(KEY_SERDE_PROVIDER_CLASS));
     }
 
+    @Override
+    public String toString() {
+        return "ArangoConfigPropertiesImpl{" +
+                "prefix='" + prefix + '\'' +
+                ", properties=" + properties +
+                '}';
+    }
 }
