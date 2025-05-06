@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.18.0] - 2025-05-06
+
+- updated `jackson-dataformat-velocypack` to version `4.6.0`
+- exposed configuration properties keys in `ArangoConfigProperties`
+- deprecated `CollectionStatus`
+- fixed `equals()` and `hashCode()` in some entity classes
+
 ## [7.17.1] - 2025-03-27
 
 - implemented `equals()` and `hashCode()` for all entity classes
