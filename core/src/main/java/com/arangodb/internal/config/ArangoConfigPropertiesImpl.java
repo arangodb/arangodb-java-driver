@@ -120,6 +120,11 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<Boolean> getPipelining() {
+        return Optional.ofNullable(getProperty(KEY_PIPELINING)).map(Boolean::valueOf);
+    }
+
+    @Override
     public Optional<Integer> getMaxConnections() {
         return Optional.ofNullable(getProperty(KEY_MAX_CONNECTIONS)).map(Integer::valueOf);
     }

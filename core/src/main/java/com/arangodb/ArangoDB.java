@@ -518,6 +518,17 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
+         * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_JSON} or {@link Protocol#HTTP_VPACK}).
+         *
+         * @param pipelining {@code true} if enabled
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder pipelining(final Boolean pipelining) {
+            config.setPipelining(pipelining);
+            return this;
+        }
+
+        /**
          * Sets the maximum number of connections the built in connection pool will open per host.
          *
          * <p>

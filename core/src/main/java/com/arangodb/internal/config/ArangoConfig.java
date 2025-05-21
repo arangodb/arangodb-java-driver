@@ -33,6 +33,7 @@ public class ArangoConfig {
     private SSLContext sslContext;
     private Boolean verifyHost;
     private Integer chunkSize;
+    private Boolean pipelining;
     private Integer maxConnections;
     private Long connectionTtl;
     private Integer keepAliveInterval;
@@ -70,6 +71,7 @@ public class ArangoConfig {
         useSsl = properties.getUseSsl().orElse(ArangoDefaults.DEFAULT_USE_SSL);
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
+        pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
         // FIXME: make connectionTtl field Optional
@@ -171,6 +173,14 @@ public class ArangoConfig {
 
     public void setChunkSize(Integer chunkSize) {
         this.chunkSize = chunkSize;
+    }
+
+    public Boolean getPipelining() {
+        return pipelining;
+    }
+
+    public void setPipelining(Boolean pipelining) {
+        this.pipelining = pipelining;
     }
 
     public Integer getMaxConnections() {
