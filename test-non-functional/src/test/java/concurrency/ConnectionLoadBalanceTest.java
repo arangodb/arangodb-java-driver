@@ -2,9 +2,12 @@ package concurrency;
 
 import com.arangodb.*;
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.internal.net.ConnectionPoolImpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.TestUtils;
 
 import java.time.Duration;
@@ -16,12 +19,13 @@ import java.util.stream.Stream;
 import static org.awaitility.Awaitility.await;
 
 public class ConnectionLoadBalanceTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionLoadBalanceTest.class);
 
     public static Stream<Arguments> configs() {
         return Stream.of(
-                // FIXME: DE-1017
-                // new Config(Protocol.VST, 1),
-                // new Config(Protocol.VST, 2),
+//                 FIXME: DE-1017
+//                 new Config(Protocol.VST, 1),
+//                 new Config(Protocol.VST, 2),
                 new Config(Protocol.HTTP_JSON, 10),
                 new Config(Protocol.HTTP_JSON, 20),
                 new Config(Protocol.HTTP2_JSON, 1),
@@ -32,7 +36,7 @@ public class ConnectionLoadBalanceTest {
     // Test the requests load balancing across different connections, when all the slots except 1 are busy
     @MethodSource("configs")
     @ParameterizedTest
-    void loadBalanceToFreeConnection(Config cfg) throws InterruptedException {
+    void loadBalanceToAvailableSlots(Config cfg) throws InterruptedException {
         doTestLoadBalance(cfg, 1);
     }
 
@@ -66,20 +70,30 @@ public class ConnectionLoadBalanceTest {
 
         CompletableFuture<Void> shortRunningTasks = CompletableFuture.allOf(
                 IntStream.range(0, shortTasksCount)
-                        .mapToObj(__ -> db.query("RETURN 1", Integer.class))
+                        .mapToObj(__ -> db.getVersion())
                         .toArray(CompletableFuture[]::new)
         );
+
+        LOGGER.debug("awaiting...");
 
         await()
                 .timeout(Duration.ofSeconds(sleepDuration * sleepCycles - 1L))
                 .until(shortRunningTasks::isDone);
 
+        LOGGER.debug("completed shortRunningTasks");
+
+        // join exceptional completions
+        shortRunningTasks.join();
+
         await()
                 .timeout(Duration.ofSeconds(sleepDuration * sleepCycles + 1L))
                 .until(longRunningTasks::isDone);
 
-        shortRunningTasks.join();
+        LOGGER.debug("completed longRunningTasks");
+
+        // join exceptional completions
         longRunningTasks.join();
+
         db.arango().shutdown();
     }
 
@@ -90,7 +104,7 @@ public class ConnectionLoadBalanceTest {
         int maxStreams() {
             return switch (protocol) {
                 case HTTP_JSON, HTTP_VPACK -> 1;
-                default -> 32;
+                default -> ConnectionPoolImpl.HTTP2_STREAMS;
             };
         }
     }

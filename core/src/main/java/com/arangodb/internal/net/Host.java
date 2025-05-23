@@ -24,6 +24,7 @@ import com.arangodb.arch.UsedInApi;
 import com.arangodb.config.HostDescription;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
@@ -33,7 +34,9 @@ public interface Host {
 
     HostDescription getDescription();
 
-    Connection connection();
+    CompletableFuture<Connection> connection();
+
+    void release(Connection c);
 
     void closeOnError();
 
@@ -44,5 +47,4 @@ public interface Host {
     void setMarkforDeletion(boolean markforDeletion);
 
     void setJwt(String jwt);
-
 }

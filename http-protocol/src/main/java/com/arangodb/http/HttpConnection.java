@@ -63,6 +63,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.arangodb.internal.net.ConnectionPoolImpl.HTTP1_PIPELINING_LIMIT;
+import static com.arangodb.internal.net.ConnectionPoolImpl.HTTP2_STREAMS;
+
 
 /**
  * @author Mark Vollmary
@@ -88,7 +91,6 @@ public class HttpConnection implements Connection {
     }
 
     HttpConnection(final ArangoConfig config, final HostDescription host, final HttpProtocolConfig protocolConfig) {
-        super();
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
         if (contentType == ContentType.VPACK) {
@@ -148,7 +150,9 @@ public class HttpConnection implements Connection {
                 .setLogActivity(true)
                 .setKeepAlive(true)
                 .setTcpKeepAlive(true)
-                .setPipelining(true)
+                .setPipelining(config.getPipelining())
+                .setPipeliningLimit(HTTP1_PIPELINING_LIMIT)
+                .setHttp2MultiplexingLimit(HTTP2_STREAMS)
                 .setReuseAddress(true)
                 .setReusePort(true)
                 .setHttp2ClearTextUpgrade(false)
@@ -273,7 +277,7 @@ public class HttpConnection implements Connection {
         return rfuture;
     }
 
-    public void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
+    private void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)
