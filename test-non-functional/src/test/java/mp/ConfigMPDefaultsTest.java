@@ -25,6 +25,7 @@ class ConfigMPDefaultsTest {
         assertThat(config.getUseSsl()).isEmpty();
         assertThat(config.getVerifyHost()).isEmpty();
         assertThat(config.getChunkSize()).isEmpty();
+        assertThat(config.getPipelining()).isEmpty();
         assertThat(config.getMaxConnections()).isNotPresent();
         assertThat(config.getConnectionTtl()).isNotPresent();
         assertThat(config.getKeepAliveInterval()).isNotPresent();

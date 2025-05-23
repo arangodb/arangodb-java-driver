@@ -50,7 +50,9 @@ public abstract class Communication implements Closeable {
 
     private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount) {
         long reqId = reqCount.getAndIncrement();
-        return doExecuteAsync(request, hostHandle, host, attemptCount, host.connection(), reqId);
+        return host.connection().thenCompose(c ->
+                doExecuteAsync(request, hostHandle, host, attemptCount, c, reqId)
+                        .whenComplete((r, t) -> host.release(c)));
     }
 
     private CompletableFuture<InternalResponse> doExecuteAsync(

@@ -50,6 +50,7 @@ public final class ArangoDefaults {
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
+    public static final Boolean DEFAULT_PIPELINING = false;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;

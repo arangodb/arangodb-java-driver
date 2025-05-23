@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -44,8 +45,13 @@ class HostHandlerTest {
         }
 
         @Override
-        public Connection connection() {
+        public CompletableFuture<Connection> connection() {
             return null;
+        }
+
+        @Override
+        public void release(Connection connection) {
+
         }
 
         @Override

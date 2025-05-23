@@ -23,22 +23,28 @@ package com.arangodb.internal.net;
 import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.util.AsyncQueue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
  */
 public class ConnectionPoolImpl implements ConnectionPool {
 
+    public static final int HTTP1_PIPELINING_LIMIT = 10;
+    public static final int HTTP2_STREAMS = 32;    // hard-coded, see BTS-2049
+
+    private final AsyncQueue<Connection> slots = new AsyncQueue<>();
     private final HostDescription host;
     private final ArangoConfig config;
     private final int maxConnections;
     private final List<Connection> connections;
     private final ConnectionFactory factory;
-    private int current;
+    private final int maxSlots;
     private volatile String jwt = null;
     private boolean closed = false;
 
@@ -49,7 +55,14 @@ public class ConnectionPoolImpl implements ConnectionPool {
         this.maxConnections = config.getMaxConnections();
         this.factory = factory;
         connections = new ArrayList<>();
-        current = 0;
+        switch (config.getProtocol()) {
+            case HTTP_JSON:
+            case HTTP_VPACK:
+                maxSlots = config.getPipelining() ? HTTP1_PIPELINING_LIMIT : 1;
+                break;
+            default:
+                maxSlots = HTTP2_STREAMS;
+        }
     }
 
     @Override
@@ -60,23 +73,25 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public synchronized Connection connection() {
+    public synchronized CompletableFuture<Connection> connection() {
         if (closed) {
             throw new ArangoDBException("Connection pool already closed!");
         }
 
-        final Connection connection;
-
         if (connections.size() < maxConnections) {
-            connection = createConnection(host);
+            Connection connection = createConnection(host);
             connections.add(connection);
-            current++;
-        } else {
-            final int index = Math.floorMod(current++, connections.size());
-            connection = connections.get(index);
+            for (int i = 0; i < maxSlots; i++) {
+                slots.offer((connection));
+            }
         }
 
-        return connection;
+        return slots.poll();
+    }
+
+    @Override
+    public void release(Connection connection) {
+        slots.offer(connection);
     }
 
     @Override
@@ -101,7 +116,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     @Override
     public String toString() {
         return "ConnectionPoolImpl [host=" + host + ", maxConnections=" + maxConnections + ", connections="
-                + connections.size() + ", current=" + current + ", factory=" + factory.getClass().getSimpleName() + "]";
+                + connections.size() + ", factory=" + factory.getClass().getSimpleName() + "]";
     }
 
 }

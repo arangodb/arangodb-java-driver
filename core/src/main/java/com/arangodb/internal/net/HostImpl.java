@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
@@ -51,8 +52,13 @@ public class HostImpl implements Host {
     }
 
     @Override
-    public Connection connection() {
+    public CompletableFuture<Connection> connection() {
         return connectionPool.connection();
+    }
+
+    @Override
+    public void release(Connection c) {
+        connectionPool.release(c);
     }
 
     @Override

@@ -23,6 +23,7 @@ class ConfigMPTest {
     private final Boolean useSsl = true;
     private final Boolean verifyHost = false;
     private final Integer vstChunkSize = 1234;
+    private final Boolean pipelining = true;
     private final Integer maxConnections = 123;
     private final Long connectionTtl = 12345L;
     private final Integer keepAliveInterval = 123456;
@@ -58,6 +59,7 @@ class ConfigMPTest {
         assertThat(config.getUseSsl()).hasValue(useSsl);
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
         assertThat(config.getChunkSize()).hasValue(vstChunkSize);
+        assertThat(config.getPipelining()).hasValue(pipelining);
         assertThat(config.getMaxConnections())
                 .isPresent()
                 .hasValue(maxConnections);
