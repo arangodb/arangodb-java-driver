@@ -1,30 +1,44 @@
 package com.arangodb.internal.util;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AsyncQueue<T> {
-    private final Queue<CompletableFuture<T>> requests = new ArrayDeque<>();
-    private final Queue<T> offers = new ArrayDeque<>();
+    private final Queue<CompletableFuture<T>> requests = new ConcurrentLinkedQueue<>();
+    private final Queue<T> offers = new ConcurrentLinkedQueue<>();
 
     public synchronized CompletableFuture<T> poll() {
-        CompletableFuture<T> r = new CompletableFuture<>();
         T o = offers.poll();
         if (o != null) {
-            r.complete(o);
+            return CompletableFuture.completedFuture(o);
         } else {
-            requests.add(r);
+            CompletableFuture<T> res = new CompletableFuture<>();
+            requests.offer(res);
+            update();
+            return res;
         }
-        return r;
     }
 
-    public synchronized void offer(T o) {
+    public void offer(T o) {
         CompletableFuture<T> r = requests.poll();
         if (r != null) {
             r.complete(o);
         } else {
-            offers.add(o);
+            offers.offer(o);
+            update();
         }
+    }
+
+    private void update() {
+        CompletableFuture<T> r;
+        T o;
+        synchronized (this) {
+            if (offers.isEmpty()) return;
+            r = requests.poll();
+            if (r == null) return;
+            o = offers.poll();
+        }
+        r.complete(o);
     }
 }

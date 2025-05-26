@@ -26,9 +26,9 @@ import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.util.AsyncQueue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPoolImpl implements ConnectionPool {
 
@@ -43,7 +43,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private final ConnectionFactory factory;
     private final int maxSlots;
     private volatile String jwt = null;
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
     public ConnectionPoolImpl(final HostDescription host, final ArangoConfig config, final ConnectionFactory factory) {
         super();
@@ -51,7 +51,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
         this.config = config;
         this.maxConnections = config.getMaxConnections();
         this.factory = factory;
-        connections = new ArrayList<>();
+        connections = new CopyOnWriteArrayList<>();
         switch (config.getProtocol()) {
             case HTTP_JSON:
             case HTTP_VPACK:
@@ -70,7 +70,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public synchronized CompletableFuture<Connection> connection() {
+    public CompletableFuture<Connection> connection() {
         if (closed) {
             throw new ArangoDBException("Connection pool already closed!");
         }
@@ -92,7 +92,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public synchronized void setJwt(String jwt) {
+    public void setJwt(String jwt) {
         if (jwt != null) {
             this.jwt = jwt;
             for (Connection connection : connections) {
@@ -102,12 +102,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public synchronized void close() throws IOException {
+    public void close() throws IOException {
         closed = true;
         for (final Connection connection : connections) {
             connection.close();
         }
-        connections.clear();
     }
 
     @Override
