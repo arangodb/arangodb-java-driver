@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * @author Mark Vollmary
- */
 public class ConnectionPoolImpl implements ConnectionPool {
 
     public static final int HTTP1_PIPELINING_LIMIT = 10;

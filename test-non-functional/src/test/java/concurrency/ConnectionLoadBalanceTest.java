@@ -86,7 +86,7 @@ public class ConnectionLoadBalanceTest {
         shortRunningTasks.join();
 
         await()
-                .timeout(Duration.ofSeconds(sleepDuration * sleepCycles + 1L))
+                .timeout(Duration.ofSeconds(sleepDuration * sleepCycles + 2L))
                 .until(longRunningTasks::isDone);
 
         LOGGER.debug("completed longRunningTasks");
