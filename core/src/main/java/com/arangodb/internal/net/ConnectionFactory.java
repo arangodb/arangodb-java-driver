@@ -29,5 +29,5 @@ import com.arangodb.internal.config.ArangoConfig;
  */
 @UsedInApi
 public interface ConnectionFactory {
-    Connection create(ArangoConfig config, HostDescription host);
+    Connection create(ArangoConfig config, HostDescription host, ConnectionPool pool);
 }

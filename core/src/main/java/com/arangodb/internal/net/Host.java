@@ -36,10 +36,6 @@ public interface Host {
 
     CompletableFuture<Connection> connection();
 
-    void release(Connection c);
-
-    void closeOnError();
-
     void close() throws IOException;
 
     boolean isMarkforDeletion();

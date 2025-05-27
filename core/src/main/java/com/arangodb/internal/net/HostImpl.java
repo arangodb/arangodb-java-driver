@@ -20,7 +20,6 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.config.HostDescription;
 
 import java.io.IOException;
@@ -54,20 +53,6 @@ public class HostImpl implements Host {
     @Override
     public CompletableFuture<Connection> connection() {
         return connectionPool.connection();
-    }
-
-    @Override
-    public void release(Connection c) {
-        connectionPool.release(c);
-    }
-
-    @Override
-    public void closeOnError() {
-        try {
-            connectionPool.close();
-        } catch (final IOException e) {
-            throw ArangoDBException.of(e);
-        }
     }
 
     @Override

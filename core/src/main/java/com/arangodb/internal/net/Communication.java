@@ -52,7 +52,7 @@ public abstract class Communication implements Closeable {
         long reqId = reqCount.getAndIncrement();
         return host.connection().thenCompose(c ->
                 doExecuteAsync(request, hostHandle, host, attemptCount, c, reqId)
-                        .whenComplete((r, t) -> host.release(c)));
+                        .whenComplete((r, t) -> c.release()));
     }
 
     private CompletableFuture<InternalResponse> doExecuteAsync(

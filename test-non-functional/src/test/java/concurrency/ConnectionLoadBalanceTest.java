@@ -23,9 +23,9 @@ public class ConnectionLoadBalanceTest {
 
     public static Stream<Arguments> configs() {
         return Stream.of(
-//                 FIXME: DE-1017
-//                 new Config(Protocol.VST, 1),
-//                 new Config(Protocol.VST, 2),
+                // FIXME: DE-1017
+                // new Config(Protocol.VST, 1),
+                // new Config(Protocol.VST, 2),
                 new Config(Protocol.HTTP_JSON, 10),
                 new Config(Protocol.HTTP_JSON, 20),
                 new Config(Protocol.HTTP2_JSON, 1),
@@ -58,6 +58,8 @@ public class ConnectionLoadBalanceTest {
                 .serde(TestUtils.createSerde(cfg.protocol))
                 .maxConnections(cfg.maxConnections)
                 .build().async().db();
+
+        LOGGER.debug("starting...");
 
         CompletableFuture<Void> longRunningTasks = CompletableFuture.allOf(
                 IntStream.range(0, longTasksCount)
@@ -103,8 +105,8 @@ public class ConnectionLoadBalanceTest {
     ) {
         int maxStreams() {
             return switch (protocol) {
-                case HTTP_JSON, HTTP_VPACK -> 1;
-                default -> ConnectionPoolImpl.HTTP2_STREAMS;
+                case HTTP_JSON, HTTP_VPACK -> ConnectionPoolImpl.HTTP1_SLOTS;
+                default -> ConnectionPoolImpl.HTTP2_SLOTS;
             };
         }
     }

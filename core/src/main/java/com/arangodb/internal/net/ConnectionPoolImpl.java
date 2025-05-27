@@ -32,8 +32,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPoolImpl implements ConnectionPool {
 
-    public static final int HTTP1_PIPELINING_LIMIT = 10;
-    public static final int HTTP2_STREAMS = 32;    // hard-coded, see BTS-2049
+    public static final int HTTP1_SLOTS = 1;                // HTTP/1: max 1 pending request
+    public static final int HTTP1_SLOTS_PIPELINING = 10;    // HTTP/1: max pipelining
+    public static final int HTTP2_SLOTS = 32;               // HTTP/2: max streams, hard-coded see BTS-2049
 
     private final AsyncQueue<Connection> slots = new AsyncQueue<>();
     private final HostDescription host;
@@ -55,16 +56,16 @@ public class ConnectionPoolImpl implements ConnectionPool {
         switch (config.getProtocol()) {
             case HTTP_JSON:
             case HTTP_VPACK:
-                maxSlots = config.getPipelining() ? HTTP1_PIPELINING_LIMIT : 1;
+                maxSlots = config.getPipelining() ? HTTP1_SLOTS_PIPELINING : HTTP1_SLOTS;
                 break;
             default:
-                maxSlots = HTTP2_STREAMS;
+                maxSlots = HTTP2_SLOTS;
         }
     }
 
     @Override
-    public Connection createConnection(final HostDescription host) {
-        Connection c = factory.create(config, host);
+    public Connection createConnection() {
+        Connection c = factory.create(config, host, this);
         c.setJwt(jwt);
         return c;
     }
@@ -76,7 +77,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
         }
 
         if (connections.size() < maxConnections) {
-            Connection connection = createConnection(host);
+            Connection connection = createConnection();
             connections.add(connection);
             for (int i = 0; i < maxSlots; i++) {
                 slots.offer((connection));

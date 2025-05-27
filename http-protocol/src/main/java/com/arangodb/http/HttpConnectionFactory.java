@@ -26,6 +26,7 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.ConnectionPool;
 import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
     @Override
     @UnstableApi
-    public Connection create(@UnstableApi final ArangoConfig config, final HostDescription host) {
-        return new HttpConnection(config, host, protocolConfig);
+    public Connection create(@UnstableApi final ArangoConfig config,
+                             final HostDescription host,
+                             @UnstableApi final ConnectionPool pool) {
+        return new HttpConnection(config, protocolConfig, host, pool);
     }
 }

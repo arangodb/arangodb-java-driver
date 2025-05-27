@@ -20,7 +20,7 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.config.HostDescription;
+import com.arangodb.arch.UsedInApi;
 
 import java.io.Closeable;
 import java.util.concurrent.CompletableFuture;
@@ -28,9 +28,10 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface ConnectionPool extends Closeable {
 
-    Connection createConnection(final HostDescription host);
+    Connection createConnection();
 
     CompletableFuture<Connection> connection();
 

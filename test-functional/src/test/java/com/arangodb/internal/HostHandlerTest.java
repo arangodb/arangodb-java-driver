@@ -40,7 +40,7 @@ class HostHandlerTest {
 
     private static final ConnectionPool mockCP = new ConnectionPool() {
         @Override
-        public Connection createConnection(HostDescription host) {
+        public Connection createConnection() {
             return null;
         }
 
