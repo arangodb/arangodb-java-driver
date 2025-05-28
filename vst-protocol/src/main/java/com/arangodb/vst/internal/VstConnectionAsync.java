@@ -25,6 +25,7 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.InternalRequest;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.config.ArangoConfig;
+import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
@@ -51,8 +52,8 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
     private final InternalSerde serde;
 
 
-    public VstConnectionAsync(final ArangoConfig config, final HostDescription host) {
-        super(config, host);
+    public VstConnectionAsync(final ArangoConfig config, final HostDescription host, final ConnectionPool pool) {
+        super(config, host, pool);
         chunkSize = config.getChunkSize();
         serde = config.getInternalSerde();
     }
@@ -98,7 +99,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
                         return;
                     }
                     rfuture.complete(response);
-                } else  {
+                } else {
                     Throwable e = ex instanceof CompletionException ? ex.getCause() : ex;
                     rfuture.completeExceptionally(e);
                 }

@@ -21,6 +21,7 @@ public interface ArangoConfigProperties {
     String KEY_USE_SSL = "useSsl";
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
+    String KEY_PIPELINING = "pipelining";
     String KEY_MAX_CONNECTIONS = "maxConnections";
     String KEY_CONNECTION_TTL = "connectionTtl";
     String KEY_KEEP_ALIVE_INTERVAL = "keepAliveInterval";
@@ -107,6 +108,10 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Integer> getChunkSize() {
+        return Optional.empty();
+    }
+
+    default Optional<Boolean> getPipelining() {
         return Optional.empty();
     }
 

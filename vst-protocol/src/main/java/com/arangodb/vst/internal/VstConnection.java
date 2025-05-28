@@ -25,6 +25,7 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
@@ -68,6 +69,7 @@ public abstract class VstConnection<T> implements Connection {
     private final HostDescription host;
     private final Map<Long, Long> sendTimestamps = new ConcurrentHashMap<>();
     private final String connectionName;
+    private final ConnectionPool pool;
     private final byte[] keepAliveRequest = new VPackBuilder()
             .add(ValueType.ARRAY)
             .add(1)
@@ -89,7 +91,7 @@ public abstract class VstConnection<T> implements Connection {
     private OutputStream outputStream;
     private InputStream inputStream;
 
-    protected VstConnection(final ArangoConfig config, final HostDescription host) {
+    protected VstConnection(final ArangoConfig config, final HostDescription host, final ConnectionPool pool) {
         super();
         timeout = config.getTimeout();
         ttl = config.getConnectionTtl();
@@ -97,6 +99,7 @@ public abstract class VstConnection<T> implements Connection {
         useSsl = config.getUseSsl();
         sslContext = config.getSslContext();
         this.host = host;
+        this.pool = pool;
 
         connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
         LOGGER.debug("[" + connectionName + "]: Connection created");
@@ -242,6 +245,11 @@ public abstract class VstConnection<T> implements Connection {
                 throw ArangoDBException.of(e);
             }
         }
+    }
+
+    @Override
+    public void release() {
+        pool.release(this);
     }
 
     private synchronized void sendProtocolHeader() throws IOException {

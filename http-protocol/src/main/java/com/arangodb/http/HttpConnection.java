@@ -29,6 +29,7 @@ import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.RequestType;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.util.EncodeUtils;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
@@ -63,6 +64,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.arangodb.internal.net.ConnectionPoolImpl.HTTP1_SLOTS_PIPELINING;
+import static com.arangodb.internal.net.ConnectionPoolImpl.HTTP2_SLOTS;
+
 
 /**
  * @author Mark Vollmary
@@ -81,14 +85,16 @@ public class HttpConnection implements Connection {
     private final WebClient client;
     private final Integer timeout;
     private final MultiMap commonHeaders = MultiMap.caseInsensitiveMultiMap();
+    private final Vertx vertx;
     private final Vertx vertxToClose;
+    private final ConnectionPool pool;
 
     private static String getUserAgent() {
         return "JavaDriver/" + PackageVersion.VERSION + " (JVM/" + System.getProperty("java.specification.version") + ")";
     }
 
-    HttpConnection(final ArangoConfig config, final HostDescription host, final HttpProtocolConfig protocolConfig) {
-        super();
+    HttpConnection(final ArangoConfig config, final HttpProtocolConfig protocolConfig, final HostDescription host, final ConnectionPool pool) {
+        this.pool = pool;
         Protocol protocol = config.getProtocol();
         ContentType contentType = ContentTypeFactory.of(protocol);
         if (contentType == ContentType.VPACK) {
@@ -112,20 +118,19 @@ public class HttpConnection implements Connection {
                 config.getUser(), Optional.ofNullable(config.getPassword()).orElse("")
         ).toHttpAuthorization();
 
-        Vertx vertxToUse;
         if (protocolConfig.getVertx() != null) {
             // reuse existing Vert.x
-            vertxToUse = protocolConfig.getVertx();
+            vertx = protocolConfig.getVertx();
             // Vert.x will not be closed when connection is closed
             vertxToClose = null;
             LOGGER.debug("Reusing existing Vert.x instance");
         } else {
             // create a new Vert.x instance
             LOGGER.debug("Creating new Vert.x instance");
-            vertxToUse = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
-            vertxToUse.runOnContext(e -> Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement()));
+            vertx = Vertx.vertx(new VertxOptions().setPreferNativeTransport(true).setEventLoopPoolSize(1));
+            vertx.runOnContext(e -> Thread.currentThread().setName("adb-http-" + THREAD_COUNT.getAndIncrement()));
             // Vert.x be closed when connection is closed
-            vertxToClose = vertxToUse;
+            vertxToClose = vertx;
         }
 
         int intTtl = Optional.ofNullable(config.getConnectionTtl())
@@ -148,7 +153,9 @@ public class HttpConnection implements Connection {
                 .setLogActivity(true)
                 .setKeepAlive(true)
                 .setTcpKeepAlive(true)
-                .setPipelining(true)
+                .setPipelining(config.getPipelining())
+                .setPipeliningLimit(HTTP1_SLOTS_PIPELINING)
+                .setHttp2MultiplexingLimit(HTTP2_SLOTS)
                 .setReuseAddress(true)
                 .setReusePort(true)
                 .setHttp2ClearTextUpgrade(false)
@@ -205,7 +212,7 @@ public class HttpConnection implements Connection {
                     });
         }
 
-        client = WebClient.create(vertxToUse, webClientOptions);
+        client = WebClient.create(vertx, webClientOptions);
     }
 
     private static String buildUrl(final InternalRequest request) {
@@ -266,6 +273,11 @@ public class HttpConnection implements Connection {
     }
 
     @Override
+    public void release() {
+        vertx.runOnContext(__ -> pool.release(this));
+    }
+
+    @Override
     @UnstableApi
     public CompletableFuture<InternalResponse> executeAsync(@UnstableApi final InternalRequest request) {
         CompletableFuture<InternalResponse> rfuture = new CompletableFuture<>();
@@ -273,7 +285,7 @@ public class HttpConnection implements Connection {
         return rfuture;
     }
 
-    public void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
+    private void doExecute(@UnstableApi final InternalRequest request, @UnstableApi final CompletableFuture<InternalResponse> rfuture) {
         String path = buildUrl(request);
         HttpRequest<Buffer> httpRequest = client
                 .request(requestTypeToHttpMethod(request.getRequestType()), path)

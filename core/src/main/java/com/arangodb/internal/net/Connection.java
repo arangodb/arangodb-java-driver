@@ -35,4 +35,6 @@ public interface Connection extends Closeable {
     void setJwt(String jwt);
 
     CompletableFuture<InternalResponse> executeAsync(InternalRequest request);
+
+    void release();
 }

@@ -20,18 +20,22 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.config.HostDescription;
+import com.arangodb.arch.UsedInApi;
 
 import java.io.Closeable;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
  */
+@UsedInApi
 public interface ConnectionPool extends Closeable {
 
-    Connection createConnection(final HostDescription host);
+    Connection createConnection();
 
-    Connection connection();
+    CompletableFuture<Connection> connection();
+
+    void release(final Connection connection);
 
     void setJwt(String jwt);
 

@@ -23,6 +23,7 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<Boolean> useSsl;
     private Optional<Boolean> verifyHost;
     private Optional<Integer> chunkSize;
+    private Optional<Boolean> pipelining;
     private Optional<Integer> maxConnections;
     private Optional<Long> connectionTtl;
     private Optional<Integer> keepAliveInterval;
@@ -78,6 +79,11 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     @Override
     public Optional<Integer> getChunkSize() {
         return chunkSize;
+    }
+
+    @Override
+    public Optional<Boolean> getPipelining() {
+        return pipelining;
     }
 
     @Override
@@ -140,12 +146,12 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArangoConfigPropertiesMPImpl that = (ArangoConfigPropertiesMPImpl) o;
-        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
+        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(pipelining, that.pipelining) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
+        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, pipelining, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
     }
 
     @Override
@@ -160,6 +166,7 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
                 ", useSsl=" + useSsl +
                 ", verifyHost=" + verifyHost +
                 ", chunkSize=" + chunkSize +
+                ", pipelining=" + pipelining +
                 ", maxConnections=" + maxConnections +
                 ", connectionTtl=" + connectionTtl +
                 ", keepAliveInterval=" + keepAliveInterval +
