@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.19.0] - 2025-05-28
+
+- fixed connection pool load-balancing (DE-1016, #602), now the connection pool:
+  - keeps track of busy connections (or busy HTTP/2 streams)
+  - enqueues new requests only to connections that are not busy (or that have available HTTP/2 streams)
+  - waits asynchronously if all the connections are busy (or all HTTP/2 streams are busy)
+- added new option to configure HTTP/1.1 pipelining (`com.arangodb.ArangoDB.Builder.pipelining(Boolean)`), 
+  `false` by default 
+- changed default configuration HTTP/1.1 pipelining to `false`
+
 ## [7.18.0] - 2025-05-06
 
 - updated `jackson-dataformat-velocypack` to version `4.6.0`
