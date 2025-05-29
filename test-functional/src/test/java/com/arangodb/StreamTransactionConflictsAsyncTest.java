@@ -53,8 +53,6 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void conflictOnInsertDocumentWithNotYetCommittedTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
@@ -73,11 +71,8 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
                 new DocumentCreateOptions().streamTransactionId(tx2.getId())).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-
-        if (isAtLeastVersion(3, 8)) {
-            assertThat(e.getResponseCode()).isEqualTo(409);
-            assertThat(e.getErrorNum()).isEqualTo(1200);
-        }
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1200);
 
         db.abortStreamTransaction(tx1.getId()).get();
         db.abortStreamTransaction(tx2.getId()).get();
@@ -87,8 +82,6 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void conflictOnInsertDocumentWithAlreadyCommittedTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
@@ -110,10 +103,8 @@ class StreamTransactionConflictsAsyncTest extends BaseJunit5 {
                 new DocumentCreateOptions().streamTransactionId(tx2.getId())).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-        if (isAtLeastVersion(3, 8)) {
-            assertThat(e.getResponseCode()).isEqualTo(409);
-            assertThat(e.getErrorNum()).isEqualTo(1200);
-        }
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1200);
 
         db.abortStreamTransaction(tx2.getId());
     }
