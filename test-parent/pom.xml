@@ -174,11 +174,6 @@
                     <artifactId>arangodb-java-driver</artifactId>
                     <scope>compile</scope>
                 </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>vst-protocol</artifactId>
-                    <scope>compile</scope>
-                </dependency>
             </dependencies>
         </profile>
         <profile>
