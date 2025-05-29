@@ -1751,6 +1751,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void shouldIncludeExceptionMessage(ArangoDatabase db) {
+        final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
         try {
             db.transaction(action, Void.class, null);

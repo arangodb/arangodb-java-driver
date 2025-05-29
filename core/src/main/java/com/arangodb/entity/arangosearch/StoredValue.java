@@ -40,7 +40,7 @@ public final class StoredValue {
     /**
      * @param fields      A list of attribute paths. The . character denotes sub-attributes.
      * @param compression Defines how to compress the attribute values.
-     * @param cache       Whether to cache stored values in memory. (Since ArangoDB 3.9.5, Enterprise Edition only)
+     * @param cache       Whether to cache stored values in memory. (Since ArangoDB 3.9.5)
      */
     @JsonCreator
     public StoredValue(@JsonProperty("fields") List<String> fields,

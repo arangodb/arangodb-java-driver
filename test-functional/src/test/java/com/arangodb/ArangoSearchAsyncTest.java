@@ -686,8 +686,8 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
 
         assertThat(fieldLink.getName()).isEqualTo("f1");
         assertThat(fieldLink.getNested()).isNotEmpty();
-        FieldLink nested = fieldLink.getNested().iterator().next();
-        assertThat(nested.getName()).isEqualTo("f2");
+        FieldLink nested2 = fieldLink.getNested().iterator().next();
+        assertThat(nested2.getName()).isEqualTo("f2");
         assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
     }
 
