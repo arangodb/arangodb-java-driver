@@ -206,10 +206,6 @@ public class BaseJunit5 {
         return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
     }
 
-    public static boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(adb.getEngine().getName());
-    }
-
     public static boolean isSingleServer() {
         return role == ServerRole.SINGLE;
     }

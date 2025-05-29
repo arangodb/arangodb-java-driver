@@ -64,22 +64,20 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
                         AnalyzerFeature.offset
                 );
 
-        if (isEnterprise()) {
-            field.nested(
-                    new InvertedIndexField()
-                            .name("bar")
-                            .analyzer(analyzerName)
-                            .searchField(true)
-                            .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
-                            .nested(
-                                    new InvertedIndexField()
-                                            .name("baz")
-                                            .analyzer(AnalyzerType.identity.toString())
-                                            .searchField(false)
-                                            .features(AnalyzerFeature.frequency)
-                            )
-            );
-        }
+        field.nested(
+                new InvertedIndexField()
+                        .name("bar")
+                        .analyzer(analyzerName)
+                        .searchField(true)
+                        .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
+                        .nested(
+                                new InvertedIndexField()
+                                        .name("baz")
+                                        .analyzer(AnalyzerType.identity.toString())
+                                        .searchField(false)
+                                        .features(AnalyzerFeature.frequency)
+                        )
+        );
 
         return new InvertedIndexOptions()
                 .name(rndName())
@@ -146,16 +144,12 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         assertThat(indexResult.getCache()).isEqualTo(options.getCache());
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
-
-        if (isEnterprise() && isAtLeastVersion(3, 12)) {
-             assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
-        }
+        assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
     }
 
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createAndGetInvertedIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
@@ -168,8 +162,6 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void getInvertedIndexesShouldNotReturnOtherIndexTypes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 
@@ -188,8 +180,6 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void getIndexesShouldNotReturnInvertedIndexes(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 
