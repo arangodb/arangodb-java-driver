@@ -82,8 +82,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("vertices")
     void getVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabase db = vertexCollection1.graph().db();
         StreamTransactionEntity tx = db
@@ -106,8 +104,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("vertices")
     void createVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabase db = vertexCollection1.graph().db();
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -136,8 +132,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("vertices")
     void replaceVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -175,8 +169,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("vertices")
     void updateVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -214,8 +206,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("vertices")
     void deleteVertex(ArangoVertexCollection vertexCollection1) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         VertexEntity createdDoc = vertexCollection1.insertVertex(new BaseDocument(), null);
 
@@ -246,8 +236,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("edges")
     void getEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabase db = edgeCollection.graph().db();
         StreamTransactionEntity tx = db
@@ -270,8 +258,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("edges")
     void createEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabase db = edgeCollection.graph().db();
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -300,8 +286,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("edges")
     void replaceEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseEdgeDocument doc = createEdgeValue(null, edgeCollection.graph());
         doc.addAttribute("test", "foo");
@@ -339,8 +323,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("edges")
     void updateEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseEdgeDocument doc = createEdgeValue(null, edgeCollection.graph());
         doc.addAttribute("test", "foo");
@@ -377,8 +359,6 @@ class StreamTransactionGraphTest extends BaseJunit5 {
     @MethodSource("edges")
     void deleteEdge(ArangoEdgeCollection edgeCollection) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         EdgeEntity createdDoc = edgeCollection.insertEdge(createEdgeValue(null, edgeCollection.graph()), null);
 

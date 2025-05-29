@@ -58,7 +58,7 @@ public final class VertexCollectionCreateOptions {
 
     /**
      * @param satellites collection names that will be used to create SatelliteCollections
-     *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
+     *                   for a Hybrid (Disjoint) SmartGraph. Each array element
      *                   must be a valid collection name. The collection type cannot be modified later.
      * @return options
      * @since ArangoDB 3.9.0

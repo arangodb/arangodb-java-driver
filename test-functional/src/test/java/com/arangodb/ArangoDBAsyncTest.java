@@ -26,6 +26,7 @@ import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.util.ProtocolSource;
 import com.arangodb.util.RawJson;
 import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
@@ -34,7 +35,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
@@ -113,7 +113,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @MethodSource("asyncArangos")
     void createDatabaseWithOptions(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
-        assumeTrue(isAtLeastVersion(3, 6));
         final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
@@ -139,8 +138,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @MethodSource("asyncArangos")
     void createDatabaseWithOptionsSatellite(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
-        assumeTrue(isEnterprise());
-        assumeTrue(isAtLeastVersion(3, 6));
 
         final String dbName = rndDbName();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
@@ -190,9 +187,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         UserEntity retrievedUser = retrievedUserOptional.get();
         assertThat(retrievedUser.getActive()).isTrue();
         assertThat(retrievedUser.getExtra()).isEqualTo(extra);
-
-        // needed for active-failover tests only
-        Thread.sleep(2_000);
 
         ArangoDBAsync arangoDBTestUser = new ArangoDB.Builder()
                 .loadProperties(config)
@@ -358,10 +352,8 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void authenticationFailPassword(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)
@@ -375,10 +367,8 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void authenticationFailUser(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         final ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)
@@ -405,16 +395,13 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(body.get("version").isTextual()).isTrue();
         assertThat(body.get("details").isObject()).isTrue();
         assertThat(response.getResponseCode()).isEqualTo(200);
-        if (isAtLeastVersion(3, 9)) {
-            String header = response.getHeaders().get("x-arango-queue-time-seconds");
-            assertThat(header).isNotNull();
-        }
+        String header = response.getHeaders().get("x-arango-queue-time-seconds");
+        assertThat(header).isNotNull();
     }
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntries(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
         assertThat(logs.getTotal()).isPositive();
         assertThat(logs.getMessages()).hasSize(logs.getTotal().intValue());
@@ -423,7 +410,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesUpto(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logsUpto = arangoDB.getLogEntries(new LogOptions().upto(LogLevel.WARNING)).get();
         assertThat(logsUpto.getMessages())
                 .map(LogEntriesEntity.Message::getLevel)
@@ -433,7 +419,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logsInfo = arangoDB.getLogEntries(new LogOptions().level(LogLevel.INFO)).get();
         assertThat(logsInfo.getMessages())
                 .map(LogEntriesEntity.Message::getLevel)
@@ -443,7 +428,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesStart(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
         final Long firstId = logs.getMessages().get(0).getId();
         final LogEntriesEntity logsStart = arangoDB.getLogEntries(new LogOptions().start(firstId + 1)).get();
@@ -455,7 +439,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSize(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
         int count = logs.getMessages().size();
         assertThat(count).isPositive();
@@ -466,7 +449,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesOffset(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
         assertThat(logs.getTotal()).isPositive();
         Long firstId = logs.getMessages().get(0).getId();
@@ -479,7 +461,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSearch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
         final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(getTestDb())).get();
         assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotal());
@@ -488,7 +469,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSortAsc(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.asc)).get();
         long lastId = -1;
         List<Long> ids = logs.getMessages().stream()
@@ -503,7 +483,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogEntriesSortDesc(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.desc)).get();
         long lastId = Long.MAX_VALUE;
         List<Long> ids = logs.getMessages().stream()
@@ -518,7 +497,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogLevelEntity logLevel = arangoDB.getLogLevel().get();
         assertThat(logLevel.getAgency()).isEqualTo(LogLevelEntity.LogLevel.INFO);
     }
@@ -526,7 +504,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void setLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogLevelEntity entity = new LogLevelEntity();
         try {
             entity.setAgency(LogLevelEntity.LogLevel.ERROR);
@@ -541,7 +518,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void setAllLogLevel(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 9));
         final LogLevelEntity entity = new LogLevelEntity();
         try {
             entity.setAll(LogLevelEntity.LogLevel.ERROR);
@@ -559,7 +535,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void logLevelWithServerId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         assumeTrue(isCluster());
         String serverId = arangoDB.getServerId().get();
         LogLevelOptions options = new LogLevelOptions().serverId(serverId);
@@ -578,7 +553,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void resetLogLevels(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
         LogLevelOptions options = new LogLevelOptions();
         LogLevelEntity entity = new LogLevelEntity();
         entity.setGraphs(LogLevelEntity.LogLevel.ERROR);
@@ -593,7 +567,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void resetLogLevelsWithServerId(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
         assumeTrue(isCluster());
         String serverId = arangoDB.getServerId().get();
         LogLevelOptions options = new LogLevelOptions().serverId(serverId);
@@ -611,7 +584,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void getQueryOptimizerRules(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         final Collection<QueryOptimizerRule> rules = arangoDB.getQueryOptimizerRules().get();
         assertThat(rules).isNotEmpty();
         for (QueryOptimizerRule rule : rules) {
@@ -683,27 +655,22 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
         double avg = qt.getAvg();
         QueueTimeSample[] values = qt.getValues();
-        if (isAtLeastVersion(3, 9)) {
-            assertThat(values).hasSize(20);
-            for (int i = 0; i < values.length; i++) {
-                assertThat(values[i].value).isNotNegative();
-                if (i > 0) {
-                    assertThat(values[i].timestamp).isGreaterThanOrEqualTo(values[i - 1].timestamp);
-                }
+        assertThat(values).hasSize(20);
+        for (int i = 0; i < values.length; i++) {
+            assertThat(values[i].value).isNotNegative();
+            if (i > 0) {
+                assertThat(values[i].timestamp).isGreaterThanOrEqualTo(values[i - 1].timestamp);
             }
-
-            if (avg < 0.0) {
-                System.err.println("avg < 0: " + avg);
-                System.err.println("got values:");
-                for (QueueTimeSample v : values) {
-                    System.err.println(v.value);
-                }
-            }
-            assertThat(avg).isNotNegative();
-        } else {
-            assertThat(avg).isEqualTo(0.0);
-            assertThat(values).isEmpty();
         }
+
+        if (avg < 0.0) {
+            System.err.println("avg < 0: " + avg);
+            System.err.println("got values:");
+            for (QueueTimeSample v : values) {
+                System.err.println(v.value);
+            }
+        }
+        assertThat(avg).isNotNegative();
 
     }
 }

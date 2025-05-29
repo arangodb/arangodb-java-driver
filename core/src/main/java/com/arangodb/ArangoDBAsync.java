@@ -39,8 +39,7 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
     void shutdown();
 
     /**
-     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
-     * connections are authenticated during the initialization phase.
+     * Updates the JWT used for requests authorization.
      *
      * @param jwt token to use
      */

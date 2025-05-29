@@ -70,8 +70,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     void shutdown();
 
     /**
-     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
-     * connections are authenticated during the initialization phase.
+     * Updates the JWT used for requests authorization.
      *
      * @param jwt token to use
      */
@@ -511,7 +510,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param chunkSize size of a chunk in bytes
          * @return {@link ArangoDB.Builder}
+         * @deprecated for removal, no longer supported since ArangoDB 3.12
          */
+        @Deprecated
         public Builder chunkSize(final Integer chunkSize) {
             config.setChunkSize(chunkSize);
             return this;
@@ -536,7 +537,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * </p>
          *
          * <pre>
-         * {@link Protocol#VST} == 1
          * {@link Protocol#HTTP_JSON} == 20
          * {@link Protocol#HTTP_VPACK} == 20
          * {@link Protocol#HTTP2_JSON} == 1
@@ -570,19 +570,19 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param keepAliveInterval interval in seconds
          * @return {@link ArangoDB.Builder}
+         * @deprecated for removal, no longer supported since ArangoDB 3.12
          */
+        @Deprecated
         public Builder keepAliveInterval(final Integer keepAliveInterval) {
             config.setKeepAliveInterval(keepAliveInterval);
             return this;
         }
 
         /**
-         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
-         * master discovery.
+         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster.
          *
          * <p>
-         * The host list will be used for failover and load balancing.
+         * The host list will be used for load balancing.
          * </p>
          *
          * @param acquireHostList whether automatically acquire a list of available hosts (default: false)
@@ -605,8 +605,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup. In case of Active-Failover
-         * deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that would be the default.
+         * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
          *                              {@link LoadBalancingStrategy#NONE}

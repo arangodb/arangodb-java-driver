@@ -119,7 +119,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
     /**
      * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
      * @return options
-     * @since ArangoDB 3.11, Enterprise Edition only
+     * @since ArangoDB 3.11
      */
     public InvertedIndexOptions optimizeTopK(String... optimizeTopK) {
         Collections.addAll(this.optimizeTopK, optimizeTopK);
@@ -373,7 +373,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
      *              are memory-mapped and it is up to the operating system to load them from disk into memory and to
      *              evict them from memory.
      *              <p/>
-     *              Default: `false`. (Enterprise Edition only)
+     *              Default: `false`
      * @return this
      * @since ArangoDB 3.10.2
      */
@@ -390,7 +390,7 @@ public final class InvertedIndexOptions extends IndexOptions<InvertedIndexOption
      * @param primaryKeyCache If you enable this option, then the primary key columns are always cached in memory. This
      *                        can improve the performance of queries that return many documents. Otherwise, these values
      *                        are memory-mapped and it is up to the operating system to load them from disk into memory
-     *                        and to evict them from memory (Enterprise Edition only). (default: false)
+     *                        and to evict them from memory. (default: false)
      * @return this
      * @since ArangoDB 3.10.2
      */

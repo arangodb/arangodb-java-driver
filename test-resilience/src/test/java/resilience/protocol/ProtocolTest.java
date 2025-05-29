@@ -3,7 +3,6 @@ package resilience.protocol;
 import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
-import com.arangodb.vst.internal.VstConnection;
 import io.netty.handler.codec.http2.Http2FrameLogger;
 import io.netty.handler.logging.LoggingHandler;
 import org.junit.jupiter.api.*;
@@ -18,13 +17,11 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ProtocolTest extends TestUtils {
     private static final Map<Class<?>, Level> logLevels = new HashMap<>();
 
     static {
-        logLevels.put(VstConnection.class, Level.DEBUG);
         logLevels.put(LoggingHandler.class, Level.DEBUG);
         logLevels.put(Http2FrameLogger.class, Level.DEBUG);
     }
@@ -47,7 +44,6 @@ public class ProtocolTest extends TestUtils {
 
     static Stream<Arguments> args() {
         return Stream.of(
-                Arguments.of(Protocol.VST, "VstConnection"),
                 Arguments.of(Protocol.HTTP_JSON, "LoggingHandler"),
                 Arguments.of(Protocol.HTTP2_JSON, "Http2FrameLogger")
         );
@@ -56,7 +52,6 @@ public class ProtocolTest extends TestUtils {
     @ParameterizedTest
     @MethodSource("args")
     void shouldUseConfiguredProtocol(Protocol p, String expectedLog) {
-        assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
                 .password("test")

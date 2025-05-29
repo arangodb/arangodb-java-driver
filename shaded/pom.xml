@@ -8,7 +8,7 @@
         <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
         <artifactId>release-parent</artifactId>
-        <version>7.19.0</version>
+        <version>7.20.0-SNAPSHOT</version>
     </parent>
 
     <name>arangodb-java-driver-shaded</name>
@@ -30,11 +30,6 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>http-protocol</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>vst-protocol</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -113,14 +108,6 @@
                                     <artifact>com.arangodb:core</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>com.arangodb:vst-protocol</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                        <exclude>META-INF/services/**</exclude>
-                                        <exclude>META-INF/maven/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
