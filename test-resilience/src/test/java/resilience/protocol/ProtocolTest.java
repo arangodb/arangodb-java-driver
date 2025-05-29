@@ -3,7 +3,6 @@ package resilience.protocol;
 import ch.qos.logback.classic.Level;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
-import com.arangodb.vst.internal.VstConnection;
 import io.netty.handler.codec.http2.Http2FrameLogger;
 import io.netty.handler.logging.LoggingHandler;
 import org.junit.jupiter.api.*;
@@ -24,7 +23,6 @@ public class ProtocolTest extends TestUtils {
     private static final Map<Class<?>, Level> logLevels = new HashMap<>();
 
     static {
-        logLevels.put(VstConnection.class, Level.DEBUG);
         logLevels.put(LoggingHandler.class, Level.DEBUG);
         logLevels.put(Http2FrameLogger.class, Level.DEBUG);
     }
