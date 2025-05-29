@@ -63,8 +63,6 @@ public final class GraphDocumentReadOptions extends TransactionalOptions<GraphDo
     /**
      * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
      * @return options
-     * @see <a href="https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower">API
-     * Documentation</a>
      * @since ArangoDB 3.4.0
      */
     public GraphDocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {

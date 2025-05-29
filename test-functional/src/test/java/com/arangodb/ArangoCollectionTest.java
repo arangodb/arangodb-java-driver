@@ -773,7 +773,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsDirtyRead(ArangoCollection collection) {
-        assumeTrue(isCluster()); // skip activefailover
+        assumeTrue(isCluster());
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
