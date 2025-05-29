@@ -579,12 +579,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
-         * master discovery.
+         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster.
          *
          * <p>
-         * The host list will be used for failover and load balancing.
+         * The host list will be used for load balancing.
          * </p>
          *
          * @param acquireHostList whether automatically acquire a list of available hosts (default: false)
@@ -607,8 +605,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup. In case of Active-Failover
-         * deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that would be the default.
+         * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
          *                              {@link LoadBalancingStrategy#NONE}
