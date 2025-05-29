@@ -32,8 +32,6 @@ class CompressionTest extends BaseJunit5 {
     }
 
     void doTest(Protocol protocol, Compression compression) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)

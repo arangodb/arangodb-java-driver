@@ -80,7 +80,6 @@ class ArangoViewAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfoSearchAlias(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         String name = rndName();
         db.createView(name, ViewType.SEARCH_ALIAS).get();
         final ViewEntity info = db.view(name).getInfo().get();
@@ -93,7 +92,6 @@ class ArangoViewAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getViews(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         String name1 = rndName();
         String name2 = rndName();
         db.createView(name1, ViewType.ARANGO_SEARCH).get();

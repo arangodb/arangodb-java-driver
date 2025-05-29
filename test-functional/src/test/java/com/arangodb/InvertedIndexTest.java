@@ -145,16 +145,12 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         assertThat(indexResult.getCache()).isEqualTo(options.getCache());
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
-
-        if (isEnterprise() && isAtLeastVersion(3, 12)) {
-             assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
-        }
+        assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createAndGetInvertedIndex(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
@@ -167,8 +163,6 @@ public class InvertedIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getInvertedIndexesShouldNotReturnOtherIndexTypes(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 
@@ -187,8 +181,6 @@ public class InvertedIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getIndexesShouldNotReturnInvertedIndexes(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 
