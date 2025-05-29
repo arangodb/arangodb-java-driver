@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver-parent</artifactId>
-        <version>7.19.0</version>
+        <version>7.20.0-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
 
