@@ -48,8 +48,8 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
     }
 
     private InvertedIndexOptions createOptions(String analyzerName) {
-        Boolean cache = isEnterprise() ? true : null;
-        Boolean fieldCache = cache != null ? false : null;
+        Boolean cache = true;
+        Boolean fieldCache = false;
         InvertedIndexField field = new InvertedIndexField()
                 .name("foo")
                 .analyzer(AnalyzerType.identity.toString())

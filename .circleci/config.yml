@@ -49,7 +49,7 @@ commands:
     parameters:
       docker-img:
         type: 'string'
-        default: 'docker.io/arangodb/arangodb:latest'
+        default: 'docker.io/arangodb/enterprise:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -131,7 +131,7 @@ jobs:
     parameters:
       docker-img:
         type: 'string'
-        default: 'docker.io/arangodb/arangodb:latest'
+        default: 'docker.io/arangodb/enterprise:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -199,7 +199,7 @@ jobs:
     parameters:
       docker-img:
         type: 'string'
-        default: 'docker.io/arangodb/arangodb:latest'
+        default: 'docker.io/arangodb/enterprise:latest'
       topology:
         type: 'string'
         default: 'single'
@@ -454,7 +454,7 @@ workflows:
           matrix:
             parameters:
               docker-img:
-                - 'docker.io/arangodb/arangodb:3.12'
+                - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'single'
               args:
@@ -464,7 +464,7 @@ workflows:
           matrix:
             parameters:
               docker-img:
-                - 'docker.io/arangodb/arangodb:3.12'
+                - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'cluster'
               args:

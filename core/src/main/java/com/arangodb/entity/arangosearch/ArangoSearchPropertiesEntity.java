@@ -124,7 +124,7 @@ public final class ArangoSearchPropertiesEntity extends ViewEntity {
 
     /**
      * @return An array of strings defining optimized sort expressions.
-     * @since ArangoDB 3.11, Enterprise Edition only
+     * @since ArangoDB 3.11
      */
     public Collection<String> getOptimizeTopK() {
         return optimizeTopK;

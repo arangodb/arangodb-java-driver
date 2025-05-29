@@ -47,7 +47,7 @@ public final class CollectionCreateOptions {
     private String distributeShardsLike;
 
     private String shardingStrategy; // cluster option
-    private String smartJoinAttribute; // enterprise option
+    private String smartJoinAttribute;
 
     private CollectionSchema schema;
 
@@ -255,7 +255,7 @@ public final class CollectionCreateOptions {
     }
 
     /**
-     * @param distributeShardsLike (The default is ""): in an enterprise cluster, this attribute binds the specifics
+     * @param distributeShardsLike (The default is ""): this attribute binds the specifics
      *                             of sharding for the
      *                             newly created collection to follow that of a specified existing collection. Note:
      *                             Using this parameter
