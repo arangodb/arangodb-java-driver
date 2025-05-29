@@ -214,8 +214,4 @@ public class BaseJunit5 {
         return role == ServerRole.COORDINATOR;
     }
 
-    public static boolean isEnterprise() {
-        return version.getLicense() == License.ENTERPRISE;
-    }
-
 }

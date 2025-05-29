@@ -513,7 +513,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                        You may observe data inconsistencies (dirty reads) when reading from followers, namely
      *                        obsolete revisions of documents because changes have not yet been replicated to the
      *                        follower, as well as changes to documents before they are officially committed on the
-     *                        leader. This feature is only available in the Enterprise Edition.
+     *                        leader.
      * @return this
      */
     public AqlQueryOptions allowDirtyReads(final Boolean allowDirtyReads) {
@@ -839,7 +839,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     /**
-     * @param satelliteSyncWait This enterprise parameter allows to configure how long a DBServer will have time to
+     * @param satelliteSyncWait This parameter allows to configure how long a DBServer will have time to
      *                          bring the
      *                          satellite collections involved in the query into sync. The default value is 60.0
      *                          (seconds). When the
@@ -883,8 +883,6 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                                    collections and different users execute AQL queries on that graph. You can
      *                                    now naturally limit the
      *                                    accessible results by changing the access rights of users on collections.
-     *                                    This feature is only
-     *                                    available in the Enterprise Edition.
      * @return this
      * @since ArangoDB 3.2.0
      */

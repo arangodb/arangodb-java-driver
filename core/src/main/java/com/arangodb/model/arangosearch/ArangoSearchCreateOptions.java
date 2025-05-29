@@ -156,7 +156,7 @@ public final class ArangoSearchCreateOptions {
     /**
      * @param optimizeTopK An array of strings defining sort expressions that you want to optimize.
      * @return options
-     * @since ArangoDB 3.11, Enterprise Edition only
+     * @since ArangoDB 3.11
      */
     public ArangoSearchCreateOptions optimizeTopK(final String... optimizeTopK) {
         this.optimizeTopK = Arrays.asList(optimizeTopK);
@@ -169,7 +169,7 @@ public final class ArangoSearchCreateOptions {
      *                         Otherwise, these values are memory-mapped and it is up to the operating system to load
      *                         them from disk into memory and to evict them from memory.
      * @return options
-     * @since ArangoDB 3.9.6, Enterprise Edition only
+     * @since ArangoDB 3.9.6
      */
     public ArangoSearchCreateOptions primarySortCache(final Boolean primarySortCache) {
         this.primarySortCache = primarySortCache;
@@ -182,7 +182,7 @@ public final class ArangoSearchCreateOptions {
      *                        are memory-mapped and it is up to the operating system to load them from disk into memory
      *                        and to evict them from memory.
      * @return options
-     * @since ArangoDB 3.9.6, Enterprise Edition only
+     * @since ArangoDB 3.9.6
      */
     public ArangoSearchCreateOptions primaryKeyCache(final Boolean primaryKeyCache) {
         this.primaryKeyCache = primaryKeyCache;
