@@ -26,6 +26,7 @@ import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.util.ProtocolSource;
 import com.arangodb.util.RawJson;
 import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
@@ -36,7 +37,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.*;
@@ -360,10 +360,8 @@ class ArangoDBTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void authenticationFailPassword(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)
@@ -375,10 +373,8 @@ class ArangoDBTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void authenticationFailUser(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)

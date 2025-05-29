@@ -22,14 +22,13 @@ package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.util.List;
+import utils.ProtocolSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -39,10 +38,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ArangoSslTest extends BaseTest {
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void connect(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)
@@ -56,10 +53,8 @@ class ArangoSslTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void connectWithoutValidSslContext(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)

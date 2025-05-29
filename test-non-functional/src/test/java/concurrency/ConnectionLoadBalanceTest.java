@@ -23,9 +23,6 @@ public class ConnectionLoadBalanceTest {
 
     public static Stream<Arguments> configs() {
         return Stream.of(
-                // FIXME: DE-1017
-                // new Config(Protocol.VST, 1),
-                // new Config(Protocol.VST, 2),
                 new Config(Protocol.HTTP_JSON, 10),
                 new Config(Protocol.HTTP_JSON, 20),
                 new Config(Protocol.HTTP2_JSON, 1),

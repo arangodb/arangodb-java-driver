@@ -13,7 +13,6 @@ import resilience.Endpoint;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,11 +111,6 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangoProvider")
     void retryPOST(ArangoDB arangoDB) throws IOException, InterruptedException {
-        // create VST connections
-        for (int i = 0; i < getEndpoints().size(); i++) {
-            arangoDB.getVersion();
-        }
-
         // slow down the driver connection
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);
@@ -137,12 +131,7 @@ public class LoadBalanceRoundRobinClusterTest extends ClusterTest {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("asyncArangoProvider")
-    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException, ExecutionException {
-        // create VST connections
-        for (int i = 0; i < getEndpoints().size(); i++) {
-            arangoDB.getVersion().get();
-        }
-
+    void retryPOSTAsync(ArangoDBAsync arangoDB) throws IOException, InterruptedException {
         // slow down the driver connection
         Latency toxic = getEndpoints().get(0).getProxy().toxics().latency("latency", ToxicDirection.DOWNSTREAM, 10_000);
         Thread.sleep(100);

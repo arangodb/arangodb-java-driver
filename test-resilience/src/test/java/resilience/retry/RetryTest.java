@@ -8,6 +8,7 @@ import eu.rekawek.toxiproxy.model.ToxicDirection;
 import eu.rekawek.toxiproxy.model.toxic.Latency;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import resilience.utils.ProtocolSource;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -16,7 +17,6 @@ import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -97,7 +97,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void connectionTimeout(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .timeout(500)
@@ -131,7 +131,7 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void connectionTimeoutAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(500)
@@ -170,9 +170,8 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
                 .build();
@@ -212,9 +211,8 @@ class RetryTest extends SingleServerTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void retryGetOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)
                 .build()
@@ -251,7 +249,7 @@ class RetryTest extends SingleServerTest {
      * once restored: - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -267,9 +265,7 @@ class RetryTest extends SingleServerTest {
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
-        if (protocol != Protocol.VST) {
-            assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
-        }
+        assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
 
         toxic.remove();
         getEndpoint().enable();
@@ -284,7 +280,7 @@ class RetryTest extends SingleServerTest {
      * once restored: - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void notRetryPostOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -301,9 +297,7 @@ class RetryTest extends SingleServerTest {
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
-        if (protocol != Protocol.VST) {
-            assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
-        }
+        assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
 
         toxic.remove();
         getEndpoint().enable();

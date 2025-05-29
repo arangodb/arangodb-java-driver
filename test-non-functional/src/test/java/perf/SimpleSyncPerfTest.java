@@ -24,7 +24,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import util.ProtocolSource;
 
 import java.util.Date;
 
@@ -42,7 +42,7 @@ class SimpleSyncPerfTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void getVersion(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)

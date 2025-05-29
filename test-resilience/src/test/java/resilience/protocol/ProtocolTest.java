@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ProtocolTest extends TestUtils {
     private static final Map<Class<?>, Level> logLevels = new HashMap<>();
@@ -45,7 +44,6 @@ public class ProtocolTest extends TestUtils {
 
     static Stream<Arguments> args() {
         return Stream.of(
-                Arguments.of(Protocol.VST, "VstConnection"),
                 Arguments.of(Protocol.HTTP_JSON, "LoggingHandler"),
                 Arguments.of(Protocol.HTTP2_JSON, "Http2FrameLogger")
         );
@@ -54,7 +52,6 @@ public class ProtocolTest extends TestUtils {
     @ParameterizedTest
     @MethodSource("args")
     void shouldUseConfiguredProtocol(Protocol p, String expectedLog) {
-        assumeTrue(!p.equals(Protocol.VST) || isLessThanVersion(3, 12));
         ArangoDB adb = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
                 .password("test")
