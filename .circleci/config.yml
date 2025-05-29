@@ -590,21 +590,6 @@ workflows:
             branches:
               only:
                 - main
-      - test:
-          name: test-activefailover-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'activefailover'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
 
   test-non-func:
     when:

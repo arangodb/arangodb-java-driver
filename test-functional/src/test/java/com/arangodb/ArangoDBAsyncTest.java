@@ -188,9 +188,6 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(retrievedUser.getActive()).isTrue();
         assertThat(retrievedUser.getExtra()).isEqualTo(extra);
 
-        // needed for active-failover tests only
-        Thread.sleep(2_000);
-
         ArangoDBAsync arangoDBTestUser = new ArangoDB.Builder()
                 .loadProperties(config)
                 .user("testUser")
