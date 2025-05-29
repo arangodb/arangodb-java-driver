@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
+import resilience.utils.ProtocolSource;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -14,7 +15,6 @@ import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ConnectionTest extends SingleServerTest {
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFail(Protocol protocol) {
         // FIXME: make this test faster and re-enable
@@ -44,7 +44,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFailAsync(Protocol protocol) {
         // FIXME: make this test faster and re-enable
@@ -98,7 +98,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void authFail(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
@@ -114,7 +114,7 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void authFailAsync(Protocol protocol) {
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
@@ -151,9 +151,8 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void connReset(Protocol protocol) throws IOException, InterruptedException {
-        assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
         ArangoDB adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
                 .protocol(protocol)
@@ -171,9 +170,8 @@ class ConnectionTest extends SingleServerTest {
     }
 
     @ParameterizedTest(name = "{index}")
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void connResetAsync(Protocol protocol) throws IOException, InterruptedException {
-        assumeTrue(!protocol.equals(Protocol.VST), "DE-776");   // FIXME
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .host(getEndpoint().getHost(), getEndpoint().getPort())
                 .protocol(protocol)

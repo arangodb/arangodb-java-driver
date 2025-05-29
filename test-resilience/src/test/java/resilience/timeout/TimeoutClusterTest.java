@@ -2,8 +2,8 @@ package resilience.timeout;
 
 import com.arangodb.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
+import resilience.utils.ProtocolSource;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,7 +27,7 @@ class TimeoutClusterTest extends ClusterTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void requestTimeout(Protocol protocol) throws InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .timeout(500)
@@ -68,7 +68,7 @@ class TimeoutClusterTest extends ClusterTest {
      * - the subsequent requests should be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void requestTimeoutAsync(Protocol protocol) throws InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .timeout(500)

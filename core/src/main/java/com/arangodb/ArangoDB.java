@@ -70,8 +70,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     void shutdown();
 
     /**
-     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
-     * connections are authenticated during the initialization phase.
+     * Updates the JWT used for requests authorization.
      *
      * @param jwt token to use
      */
@@ -511,7 +510,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param chunkSize size of a chunk in bytes
          * @return {@link ArangoDB.Builder}
+         * @deprecated for removal, no longer supported since ArangoDB 3.12
          */
+        @Deprecated
         public Builder chunkSize(final Integer chunkSize) {
             config.setChunkSize(chunkSize);
             return this;
@@ -536,7 +537,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * </p>
          *
          * <pre>
-         * {@link Protocol#VST} == 1
          * {@link Protocol#HTTP_JSON} == 20
          * {@link Protocol#HTTP_VPACK} == 20
          * {@link Protocol#HTTP2_JSON} == 1
@@ -570,7 +570,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          *
          * @param keepAliveInterval interval in seconds
          * @return {@link ArangoDB.Builder}
+         * @deprecated for removal, no longer supported since ArangoDB 3.12
          */
+        @Deprecated
         public Builder keepAliveInterval(final Integer keepAliveInterval) {
             config.setKeepAliveInterval(keepAliveInterval);
             return this;

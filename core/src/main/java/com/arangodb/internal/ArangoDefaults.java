@@ -33,10 +33,6 @@ import java.util.List;
  */
 public final class ArangoDefaults {
 
-    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-    public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
-    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
     public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
     public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
     public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
