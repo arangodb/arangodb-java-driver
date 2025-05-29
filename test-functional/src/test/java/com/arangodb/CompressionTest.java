@@ -1,9 +1,9 @@
 package com.arangodb;
 
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.util.ProtocolSource;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -20,20 +20,19 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class CompressionTest extends BaseJunit5 {
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void gzip(Protocol protocol) {
         doTest(protocol, Compression.GZIP);
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void deflate(Protocol protocol) {
         doTest(protocol, Compression.DEFLATE);
     }
 
     void doTest(Protocol protocol, Compression compression) {
         assumeTrue(isAtLeastVersion(3, 12));
-        assumeTrue(protocol != Protocol.VST);
 
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())

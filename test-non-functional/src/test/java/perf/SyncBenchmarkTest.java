@@ -6,7 +6,7 @@ import com.arangodb.Request;
 import com.arangodb.internal.ArangoRequestParam;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import util.ProtocolSource;
 
 @Disabled
 public class SyncBenchmarkTest {
@@ -14,7 +14,7 @@ public class SyncBenchmarkTest {
     private final int numberOfRequests = 1_000_000;
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void getVersion(Protocol protocol) {
         System.out.println("-----------------------------------------");
         System.out.println("--- getVersion(): " + protocol);
@@ -43,7 +43,7 @@ public class SyncBenchmarkTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void getVersionWithDetails(Protocol protocol) {
         System.out.println("-----------------------------------------");
         System.out.println("--- getVersion w/ details: " + protocol);
