@@ -766,8 +766,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
 
             LOG.debug("HostHandler is {}", hostHandler.getClass().getSimpleName());
-
-            return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
+            return hostHandler;
         }
 
         @UnstableApi

@@ -53,8 +53,8 @@ public class RoundRobinHostHandler implements HostHandler {
     }
 
     @Override
-    public Host get(final HostHandle hostHandle, AccessType accessType) {
-        checkNext(hostHandle, accessType);
+    public Host get(final HostHandle hostHandle) {
+        checkNext(hostHandle);
         final int size = hosts.getHostsList().size();
         final int index = (int) ((current++) % size);
         Host host = hosts.getHostsList().get(index);
@@ -76,7 +76,7 @@ public class RoundRobinHostHandler implements HostHandler {
     }
 
     @Override
-    public void checkNext(HostHandle hostHandle, AccessType accessType) {
+    public void checkNext(HostHandle hostHandle) {
         hosts = resolver.getHosts();
         final int size = hosts.getHostsList().size();
 
