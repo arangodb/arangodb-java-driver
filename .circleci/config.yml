@@ -109,13 +109,6 @@ commands:
       - run:
           name: Deploy to Apache Maven Central
           command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip deploy
-  release:
-    steps:
-      - run:
-          name: Release to Apache Maven Central
-          command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip nexus-staging:release
-          environment:
-            MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED"
 
 executors:
   j17:
@@ -432,18 +425,6 @@ jobs:
       - deploy
       - store_cache
 
-  release:
-    executor: 'j17'
-    steps:
-      - timeout:
-          duration: '30m'
-      - checkout
-      - load_cache
-      - config_gpg
-      - deploy
-      - release
-      - store_cache
-
 workflows:
   test-adb-version:
     when:
@@ -518,13 +499,6 @@ workflows:
               jdk:
                 - 'j17'
                 - 'j21'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-                - next
       - test:
           name: test-jackson-<<matrix.args>>
           matrix:
@@ -544,7 +518,6 @@ workflows:
               only: /^v.*/
             branches:
               only:
-                - main
                 - next
       - test:
           name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
@@ -565,7 +538,6 @@ workflows:
               only: /^v.*/
             branches:
               only:
-                - main
                 - next
       - test-shaded:
           name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
@@ -586,7 +558,6 @@ workflows:
               only: /^v.*/
             branches:
               only:
-                - main
                 - next
 
   test-non-func:
@@ -628,14 +599,5 @@ workflows:
             tags:
               only: /^deploy.*/
             branches:
-              ignore: /.*/
-
-  release:
-    jobs:
-      - release:
-          context: java-release
-          filters:
-            tags:
-              only: /^release.*/
-            branches:
-              ignore: /.*/
+              only:
+                - next
