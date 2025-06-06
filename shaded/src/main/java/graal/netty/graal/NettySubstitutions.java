@@ -166,7 +166,6 @@ final class Target_io_netty_handler_ssl_JdkSslClientContext {
 
     }
 }
-
 @TargetClass(className = "io.netty.handler.ssl.SslHandler$SslEngineType")
 final class Target_io_netty_handler_ssl_SslHandler$SslEngineType {
 
@@ -237,7 +236,6 @@ final class Target_io_netty_handler_ssl_SslContext {
     }
 
 }
-
 @TargetClass(className = "io.netty.handler.ssl.JdkDefaultApplicationProtocolNegotiator")
 final class Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator {
 
