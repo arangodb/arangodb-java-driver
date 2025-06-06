@@ -499,6 +499,11 @@ workflows:
               jdk:
                 - 'j17'
                 - 'j21'
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - test:
           name: test-jackson-<<matrix.args>>
           matrix:
@@ -517,8 +522,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - next
+              ignore: /.*/
       - test:
           name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
@@ -537,8 +541,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - next
+              ignore: /.*/
       - test-shaded:
           name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
@@ -557,8 +560,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - next
+              ignore: /.*/
 
   test-non-func:
     when:
@@ -599,5 +601,4 @@ workflows:
             tags:
               only: /^deploy.*/
             branches:
-              only:
-                - next
+              ignore: /.*/
