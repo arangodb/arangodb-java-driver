@@ -569,7 +569,6 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '24.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
@@ -590,7 +589,6 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '24.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
