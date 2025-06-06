@@ -530,6 +530,7 @@ workflows:
             branches:
               only:
                 - main
+                - next
       - test:
           name: test-jackson-<<matrix.args>>
           matrix:
@@ -550,6 +551,7 @@ workflows:
             branches:
               only:
                 - main
+                - next
       - test:
           name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
@@ -570,6 +572,7 @@ workflows:
             branches:
               only:
                 - main
+                - next
       - test-shaded:
           name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
@@ -590,6 +593,7 @@ workflows:
             branches:
               only:
                 - main
+                - next
       - test:
           name: test-activefailover-<<matrix.docker-img>>
           matrix:
@@ -605,6 +609,7 @@ workflows:
             branches:
               only:
                 - main
+                - next
 
   test-non-func:
     when:
