@@ -31,9 +31,9 @@ import java.io.IOException;
 @UsedInApi
 public interface HostHandler {
 
-    Host get(HostHandle hostHandle, AccessType accessType);
+    Host get(HostHandle hostHandle);
 
-    void checkNext(HostHandle hostHandle, AccessType accessType);
+    void checkNext(HostHandle hostHandle);
 
     void success();
 
