@@ -49,8 +49,8 @@ public class FallbackHostHandler implements HostHandler {
     }
 
     @Override
-    public Host get(final HostHandle hostHandle, AccessType accessType) {
-        checkNext(hostHandle, accessType);
+    public Host get(final HostHandle hostHandle) {
+        checkNext(hostHandle);
         if (current.isMarkforDeletion()) {
             fail(new ArangoDBException("Host marked for deletion"));
         }
@@ -58,7 +58,7 @@ public class FallbackHostHandler implements HostHandler {
     }
 
     @Override
-    public void checkNext(HostHandle hostHandle, AccessType accessType) {
+    public void checkNext(HostHandle hostHandle) {
         if (current == lastSuccess && iterations >= 3) {
             ArangoDBException e = ArangoDBException.of("Cannot contact any host!",
                     new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));

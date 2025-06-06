@@ -74,8 +74,7 @@ public class ArangoConfig {
         pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
-        // FIXME: make connectionTtl field Optional
-        connectionTtl = properties.getConnectionTtl().orElse(null);
+        connectionTtl = properties.getConnectionTtl().orElse(ArangoDefaults.DEFAULT_CONNECTION_TTL_HTTP);
         // FIXME: make keepAliveInterval field Optional
         keepAliveInterval = properties.getKeepAliveInterval().orElse(null);
         acquireHostList = properties.getAcquireHostList().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);
@@ -215,9 +214,6 @@ public class ArangoConfig {
     }
 
     public Long getConnectionTtl() {
-        if (connectionTtl == null && getProtocol() != Protocol.VST) {
-            connectionTtl = ArangoDefaults.DEFAULT_CONNECTION_TTL_HTTP;
-        }
         return connectionTtl;
     }
 

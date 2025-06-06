@@ -52,8 +52,6 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
     @MethodSource("dbs")
     void conflictOnInsertDocumentWithNotYetCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
@@ -72,11 +70,8 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
                 new DocumentCreateOptions().streamTransactionId(tx2.getId())));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-
-        if (isAtLeastVersion(3, 8)) {
-            assertThat(e.getResponseCode()).isEqualTo(409);
-            assertThat(e.getErrorNum()).isEqualTo(1200);
-        }
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1200);
 
         db.abortStreamTransaction(tx1.getId());
         db.abortStreamTransaction(tx2.getId());
@@ -86,8 +81,6 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
     @MethodSource("dbs")
     void conflictOnInsertDocumentWithAlreadyCommittedTx(ArangoDatabase db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
@@ -109,10 +102,8 @@ class StreamTransactionConflictsTest extends BaseJunit5 {
                 new DocumentCreateOptions().streamTransactionId(tx2.getId())));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
-        if (isAtLeastVersion(3, 8)) {
-            assertThat(e.getResponseCode()).isEqualTo(409);
-            assertThat(e.getErrorNum()).isEqualTo(1200);
-        }
+        assertThat(e.getResponseCode()).isEqualTo(409);
+        assertThat(e.getErrorNum()).isEqualTo(1200);
 
         db.abortStreamTransaction(tx2.getId());
     }

@@ -84,26 +84,26 @@ class HostHandlerTest {
     @Test
     void fallbackHostHandlerSingleHost() {
         final HostHandler handler = new FallbackHostHandler(SINGLE_HOST);
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
         handler.fail(new RuntimeException());
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
     }
 
     @Test
     void fallbackHostHandlerMultipleHosts() {
         final HostHandler handler = new FallbackHostHandler(MULTIPLE_HOSTS);
         for (int i = 0; i < 3; i++) {
-            assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+            assertThat(handler.get(null)).isEqualTo(HOST_0);
             handler.fail(new RuntimeException("HOST_0 failed"));
-            assertThat(handler.get(null, null)).isEqualTo(HOST_1);
+            assertThat(handler.get(null)).isEqualTo(HOST_1);
             handler.fail(new RuntimeException("HOST_1 failed"));
-            assertThat(handler.get(null, null)).isEqualTo(HOST_2);
+            assertThat(handler.get(null)).isEqualTo(HOST_2);
             handler.fail(new RuntimeException("HOST_2 failed"));
             if (i < 2) {
-                assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+                assertThat(handler.get(null)).isEqualTo(HOST_0);
             } else {
                 try {
-                    handler.get(null, null);
+                    handler.get(null);
                     fail();
                 } catch (ArangoDBException e) {
                     assertThat(e.getCause()).isNotNull();
@@ -123,24 +123,24 @@ class HostHandlerTest {
     @Test
     void randomHostHandlerSingleHost() {
         final HostHandler handler = new RandomHostHandler(SINGLE_HOST, new FallbackHostHandler(SINGLE_HOST));
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
         handler.fail(new RuntimeException());
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
     }
 
     @Test
     void randomHostHandlerMultipleHosts() {
         final HostHandler handler = new RandomHostHandler(MULTIPLE_HOSTS, new FallbackHostHandler(MULTIPLE_HOSTS));
 
-        final Host pick0 = handler.get(null, null);
+        final Host pick0 = handler.get(null);
         assertThat(pick0).isIn(HOST_0, HOST_1, HOST_2);
         handler.fail(new RuntimeException());
 
-        final Host pick1 = handler.get(null, null);
+        final Host pick1 = handler.get(null);
         assertThat(pick1).isIn(HOST_0, HOST_1, HOST_2);
         handler.success();
 
-        final Host pick3 = handler.get(null, null);
+        final Host pick3 = handler.get(null);
         assertThat(pick3)
                 .isIn(HOST_0, HOST_1, HOST_2)
                 .isEqualTo(pick1);
@@ -149,25 +149,25 @@ class HostHandlerTest {
     @Test
     void roundRobinHostHandlerSingleHost() {
         final HostHandler handler = new RoundRobinHostHandler(SINGLE_HOST);
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
         handler.fail(new RuntimeException());
-        assertThat(handler.get(null, null)).isEqualTo(HOST_0);
+        assertThat(handler.get(null)).isEqualTo(HOST_0);
     }
 
     @Test
     void roundRobinHostHandlerMultipleHosts() {
         final HostHandler handler = new RoundRobinHostHandler(MULTIPLE_HOSTS);
-        final Host pick0 = handler.get(null, null);
+        final Host pick0 = handler.get(null);
         assertThat(pick0).isIn(HOST_0, HOST_1, HOST_2);
-        final Host pick1 = handler.get(null, null);
+        final Host pick1 = handler.get(null);
         assertThat(pick1)
                 .isIn(HOST_0, HOST_1, HOST_2)
                 .isNotEqualTo(pick0);
-        final Host pick2 = handler.get(null, null);
+        final Host pick2 = handler.get(null);
         assertThat(pick2)
                 .isIn(HOST_0, HOST_1, HOST_2)
                 .isNotIn(pick0, pick1);
-        final Host pick4 = handler.get(null, null);
+        final Host pick4 = handler.get(null);
         assertThat(pick4).isEqualTo(pick0);
     }
 

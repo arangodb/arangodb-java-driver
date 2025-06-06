@@ -111,7 +111,7 @@ public final class InvertedIndexField {
      * @param cache Enable this option to always cache the field normalization values in memory for this specific field.
      *              This can improve the performance of scoring and ranking queries. Otherwise, these values are
      *              memory-mapped and it is up to the operating system to load them from disk into memory and to evict
-     *              them from memory. (Enterprise Edition only)
+     *              them from memory.
      * @return this
      * @since ArangoDB 3.10.2
      */
@@ -142,7 +142,7 @@ public final class InvertedIndexField {
      * @param nested Index the specified sub-objects that are stored in an array. Other than with the fields property,
      *               the values get indexed in a way that lets you query for co-occurring values. For example, you can
      *               search the sub-objects and all the conditions need to be met by a single sub-object instead of
-     *               across all of them. This property is available in the Enterprise Edition only.
+     *               across all of them.
      * @return this
      */
     public InvertedIndexField nested(InvertedIndexField... nested) {

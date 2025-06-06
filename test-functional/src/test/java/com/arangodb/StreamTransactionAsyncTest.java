@@ -51,8 +51,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void beginStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(null).get();
         assertThat(tx.getId()).isNotNull();
@@ -64,8 +62,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void beginStreamTransactionWithNonExistingCollectionsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         Throwable thrown = catchThrowable(() ->
                 db.beginStreamTransaction(new StreamTransactionOptions().writeCollections("notExistingCollection")).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -75,8 +71,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void abortStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity begunTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity abortedTx = db.abortStreamTransaction(begunTx.getId()).get();
@@ -90,8 +84,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void abortStreamTransactionTwice(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity begunTx = db.beginStreamTransaction(null).get();
         db.abortStreamTransaction(begunTx.getId());
@@ -102,8 +94,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         Throwable thrown = catchThrowable(() -> db.abortStreamTransaction("000000").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
@@ -112,8 +102,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void abortStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         Throwable thrown = catchThrowable(() -> db.abortStreamTransaction("invalidTransactionId").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
@@ -122,8 +110,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void abortCommittedStreamTransactionShouldThrow(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         db.commitStreamTransaction(createdTx.getId()).get();
@@ -135,8 +121,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId()).get();
@@ -152,8 +136,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         Throwable thrown = catchThrowable(() -> db.getStreamTransaction("000000").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -163,8 +145,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         Throwable thrown = catchThrowable(() -> db.getStreamTransaction("invalidTransactionId").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -174,8 +154,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void commitStreamTransaction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity committedTx = db.commitStreamTransaction(createdTx.getId()).get();
@@ -189,8 +167,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void commitStreamTransactionTwice(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         db.commitStreamTransaction(createdTx.getId());
@@ -201,8 +177,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         Throwable thrown = catchThrowable(() -> db.commitStreamTransaction("000000").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -212,8 +186,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void commitStreamTransactionWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         Throwable thrown = catchThrowable(() -> db.commitStreamTransaction("invalidTransactionId").get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -223,8 +195,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void commitAbortedStreamTransactionShouldThrow(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         db.abortStreamTransaction(createdTx.getId()).get();
@@ -236,8 +206,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db
                 .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
@@ -258,8 +226,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getDocumentWithNonExistingTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
 
@@ -272,8 +238,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getDocumentWithInvalidTransactionIdShouldThrow(ArangoDatabaseAsync db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         Throwable thrown = catchThrowable(() -> collection
@@ -285,8 +249,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db
                 .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
@@ -313,8 +275,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void insertDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
@@ -341,8 +301,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void insertDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
@@ -373,8 +331,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void replaceDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -410,8 +366,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void replaceDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         List<BaseDocument> docs = IntStream.range(0, 3).mapToObj(it -> new BaseDocument())
                 .peek(doc -> doc.addAttribute("test", "foo")).collect(Collectors.toList());
@@ -455,8 +409,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void updateDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -492,8 +444,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void updateDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         List<BaseDocument> docs = IntStream.range(0, 3).mapToObj(it -> new BaseDocument())
                 .peek(doc -> doc.addAttribute("test", "foo")).collect(Collectors.toList());
@@ -537,8 +487,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void deleteDocument(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         DocumentCreateEntity<BaseDocument> createdDoc = collection
@@ -568,8 +516,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void deleteDocuments(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         List<String> keys = collection
@@ -601,8 +547,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void documentExists(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db
                 .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
@@ -623,8 +567,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void count(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         Long initialCount = collection.count().get().getCount();
@@ -646,8 +588,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void truncate(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         collection.insertDocument(new BaseDocument(), null).get();
@@ -675,8 +615,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void createCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db
                 .beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME)).get();
@@ -704,8 +642,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void nextCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
@@ -740,8 +676,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void getStreamTransactions(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(null).get();
         StreamTransactionEntity tx2 = db.beginStreamTransaction(null).get();
@@ -762,8 +696,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void transactionAllowImplicitFalse(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db
                 .beginStreamTransaction(new StreamTransactionOptions().allowImplicit(false)).get();
@@ -789,7 +721,6 @@ class StreamTransactionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void transactionDirtyRead(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
-        assumeTrue(isAtLeastVersion(3, 10));
 
         ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         DocumentCreateEntity<?> doc = collection.insertDocument(new BaseDocument()).get();

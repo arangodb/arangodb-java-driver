@@ -8,8 +8,8 @@ import com.arangodb.internal.net.Communication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import resilience.SingleServerTest;
+import resilience.utils.ProtocolSource;
 
 import java.util.Collections;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class RequestLoggingTest extends SingleServerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void requestLogging(Protocol protocol) {
         ArangoDB adb = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)

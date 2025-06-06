@@ -133,7 +133,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithWriteConcern(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -149,7 +148,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createSatelliteCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -179,7 +177,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithShardingStrategys(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 4));
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -195,8 +192,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithSmartJoinAttribute(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String fooName = rndName();
@@ -213,8 +208,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithSmartJoinAttributeWrong(ArangoDatabaseAsync db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -257,7 +250,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithDistributeShardsLike(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         final Integer numberOfShards = 3;
@@ -292,7 +284,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypePadded(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.padded);
     }
 
@@ -305,14 +296,12 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithKeyTypeUuid(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.uuid);
     }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithJsonSchema(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
         String name = rndName();
         String rule = ("{  " +
                 "           \"properties\": {" +
@@ -360,7 +349,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createCollectionWithComputedFields(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         String cName = rndName();
         ComputedValue cv = new ComputedValue()
                 .name("foo")
@@ -633,10 +621,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(cursor.getExtra().getStats().getExecutionTime()).isNotNull();
         assertThat(cursor.getExtra().getStats().getPeakMemoryUsage()).isNotNull();
         assertThat(cursor.getExtra().getStats().getIntermediateCommits()).isNotNull();
-        if (isAtLeastVersion(3, 12)) {
-            assertThat(cursor.getExtra().getStats().getDocumentLookups()).isNotNull();
-            assertThat(cursor.getExtra().getStats().getSeeks()).isNotNull();
-        }
+        assertThat(cursor.getExtra().getStats().getDocumentLookups()).isNotNull();
+        assertThat(cursor.getExtra().getStats().getSeeks()).isNotNull();
     }
 
     @ParameterizedTest
@@ -762,7 +748,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithTimeout(ArangoDatabaseAsync db) {
-        assumeTrue(isAtLeastVersion(3, 6));
         Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", String.class,
                 new AqlQueryOptions().maxRuntime(0.1)).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -821,7 +806,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryCursorRetry(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true)).get();
         List<Integer> result = new ArrayList<>();
@@ -840,7 +824,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryCursorRetryInTx(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions()).get();
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true).streamTransactionId(tx.getId())).get();
@@ -937,9 +920,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryForceOneShardAttributeValue(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
         assumeTrue(isCluster());
-        assumeTrue(isEnterprise());
 
         String cname = "forceOneShardAttr-" + UUID.randomUUID();
         db.createCollection(cname, new CollectionCreateOptions()
@@ -1018,7 +999,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetry(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursorAsync<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1)).get();
         assertThat(cursor.getResult()).containsExactly("1");
@@ -1036,7 +1016,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryClose(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursorAsync<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1)).get();
         assertThat(cursor.getResult()).containsExactly("1");
@@ -1050,7 +1029,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryCloseBeforeLatestBatch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursorAsync<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1)).get();
         assertThat(cursor.getResult()).containsExactly("1");
@@ -1061,7 +1039,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncArangos")
     void queryAllowRetryCloseSingleBatch(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursorAsync<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true)).get();
         assertThat(cursor.getResult()).containsExactly("1", "2");
@@ -1317,9 +1294,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if (isAtLeastVersion(3, 11)) {
-            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
-        }
+        assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
         assertThat(queryEntity.getStream()).isFalse();
         q.get();
@@ -1373,9 +1348,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if (isAtLeastVersion(3, 11)) {
-            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
-        }
+        assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
         assertThat(queryEntity.getStream()).isFalse();
 
@@ -1399,11 +1372,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         } finally {
             final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null).get();
             // compatibility with ArangoDB < 3.4
-            if (isAtLeastVersion(3, 4)) {
-                assertThat(deleteCount).isEqualTo(1);
-            } else {
-                assertThat(deleteCount).isNull();
-            }
+            assertThat(deleteCount).isEqualTo(1);
             final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null).get();
             assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
         }
@@ -1423,12 +1392,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         } finally {
             final Integer deleteCount = db
                     .deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true)).get();
-            // compatibility with ArangoDB < 3.4
-            if (isAtLeastVersion(3, 4)) {
-                assertThat(deleteCount).isEqualTo(2);
-            } else {
-                assertThat(deleteCount).isNull();
-            }
+            assertThat(deleteCount).isEqualTo(2);
             final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null).get();
             assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
         }
@@ -1445,9 +1409,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraphSatellite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isCluster());
-        assumeTrue(isEnterprise());
 
         String name = "graph-" + rnd();
         final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().replicationFactor(ReplicationFactor.ofSatellite())).get();
@@ -1603,7 +1565,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionExclusiveWrite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 4));
         String key = "key-" + rnd();
         final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
                 .exclusiveCollections(CNAME1);
@@ -1655,7 +1616,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 
-        if (isAtLeastVersion(3, 6) && isCluster()) {
+        if (isCluster()) {
             assertThat(info.getSharding()).isNotNull();
             assertThat(info.getWriteConcern()).isNotNull();
             assertThat(info.getReplicationFactor()).isNotNull();
@@ -1665,8 +1626,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void shouldIncludeExceptionMessage(ArangoDatabaseAsync db) {
-        assumeTrue(isAtLeastVersion(3, 4));
-
         final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
         Throwable thrown = catchThrowable(() -> db.transaction(action, Void.class, null).get()).getCause();

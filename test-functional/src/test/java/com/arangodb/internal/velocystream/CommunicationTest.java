@@ -56,7 +56,6 @@ class CommunicationTest {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .build();
-        arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread fast = new Thread(() -> {
@@ -85,7 +84,6 @@ class CommunicationTest {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .build();
-        arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final ArangoDatabase db = arangoDB.db();
 
