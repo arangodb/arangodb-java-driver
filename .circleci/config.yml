@@ -536,7 +536,8 @@ workflows:
           matrix:
             parameters:
               args:
-                - '-Dadb.jackson.version=2.18.2'
+                - '-Dadb.jackson.version=2.19.0'
+                - '-Dadb.jackson.version=2.18.3'
                 - '-Dadb.jackson.version=2.17.3'
                 - '-Dadb.jackson.version=2.16.2'
                 - '-Dadb.jackson.version=2.15.4'
