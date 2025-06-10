@@ -124,6 +124,9 @@ executors:
   j21:
     docker:
       - image: 'cimg/openjdk:21.0'
+  j23:
+    docker:
+      - image: 'cimg/openjdk:23.0'
 
 jobs:
 
@@ -524,6 +527,7 @@ workflows:
               jdk:
                 - 'j17'
                 - 'j21'
+                - 'j23'
           filters:
             tags:
               only: /^v.*/
@@ -565,7 +569,6 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '22.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
@@ -586,7 +589,6 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '22.0.1-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
