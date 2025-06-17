@@ -236,6 +236,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         private Long spillOverThresholdMemoryUsage;
         private Long spillOverThresholdNumRows;
         private Boolean stream;
+        private Boolean usePlanCache;
 
         @JsonInclude
         @JsonAnyGetter
@@ -354,6 +355,10 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
             return stream;
         }
 
+        public Boolean getUsePlanCache() {
+            return usePlanCache;
+        }
+
         public void setAllPlans(Boolean allPlans) {
             this.allPlans = allPlans;
         }
@@ -444,6 +449,10 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
 
         public void setStream(Boolean stream) {
             this.stream = stream;
+        }
+
+        public void setUsePlanCache(Boolean usePlanCache) {
+            this.usePlanCache = usePlanCache;
         }
 
         @Override
@@ -961,6 +970,11 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         return getOptions().getStream();
     }
 
+    @JsonIgnore
+    public Boolean getUsePlanCache() {
+        return getOptions().getUsePlanCache();
+    }
+
     /**
      * @param stream Specify true and the query will be executed in a streaming fashion. The query result is not
      *               stored on
@@ -980,6 +994,20 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      */
     public AqlQueryOptions stream(final Boolean stream) {
         getOptions().setStream(stream);
+        return this;
+    }
+
+    /**
+     * @param usePlanCache Set this option to true to utilize a cached query plan or add the execution plan of this
+     *                     query to the cache if it’s not in the cache yet. Otherwise, the plan cache is bypassed
+     *                     (introduced in v3.12.4).
+     *                     Query plan caching can reduce the total time for processing queries by avoiding to parse,
+     *                     plan, and optimize queries over and over again that effectively have the same execution plan
+     *                     with at most some changes to bind parameter values.
+     * @return this
+     */
+    public AqlQueryOptions usePlanCache(final Boolean usePlanCache) {
+        getOptions().setUsePlanCache(usePlanCache);
         return this;
     }
 
