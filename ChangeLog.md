@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.20.0] - 2025-06-17
+
+- added option `usePlanCache` to `AqlQueryOptions` (DE-973, #609)
+- updated Jackson version to `2.19` (DE-1012, #607)
+
 ## [7.19.0] - 2025-05-28
 
 - fixed connection pool load-balancing (DE-1016, #602), now the connection pool:
