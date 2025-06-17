@@ -554,6 +554,11 @@ public final class ExplainAqlQueryOptions {
         return getOptions().getStream();
     }
 
+    @JsonIgnore
+    public Boolean getUsePlanCache() {
+        return getOptions().getUsePlanCache();
+    }
+
     /**
      * @param stream Specify true and the query will be executed in a streaming fashion. The query result is not
      *               stored on
@@ -573,6 +578,20 @@ public final class ExplainAqlQueryOptions {
      */
     public ExplainAqlQueryOptions stream(final Boolean stream) {
         getOptions().setStream(stream);
+        return this;
+    }
+
+    /**
+     * @param usePlanCache Set this option to true to utilize a cached query plan or add the execution plan of this
+     *                     query to the cache if it’s not in the cache yet. Otherwise, the plan cache is bypassed
+     *                     (introduced in v3.12.4).
+     *                     Query plan caching can reduce the total time for processing queries by avoiding to parse,
+     *                     plan, and optimize queries over and over again that effectively have the same execution plan
+     *                     with at most some changes to bind parameter values.
+     * @return this
+     */
+    public ExplainAqlQueryOptions usePlanCache(final Boolean usePlanCache) {
+        getOptions().setUsePlanCache(usePlanCache);
         return this;
     }
 
