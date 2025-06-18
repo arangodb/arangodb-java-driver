@@ -986,52 +986,54 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void classificationAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
+// FIXME: allow disable on QA tests
+//    @ParameterizedTest
+//    @MethodSource("dbs")
+//    void classificationAnalyzer(ArangoDatabase db) {
+//        assumeTrue(isAtLeastVersion(3, 10));
+//        assumeTrue(isEnterprise());
+//
+//        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
+//        properties.setModelLocation("/tmp/foo.bin");
+//        properties.setTopK(2);
+//        properties.setThreshold(.5);
+//
+//        Set<AnalyzerFeature> features = new HashSet<>();
+//        features.add(AnalyzerFeature.frequency);
+//        features.add(AnalyzerFeature.norm);
+//        features.add(AnalyzerFeature.position);
+//
+//        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
+//        analyzer.setName("test-" + UUID.randomUUID());
+//        analyzer.setProperties(properties);
+//        analyzer.setFeatures(features);
+//
+//        createGetAndDeleteTypedAnalyzer(db, analyzer);
+//    }
 
-        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
-        properties.setModelLocation("/tmp/foo.bin");
-        properties.setTopK(2);
-        properties.setThreshold(.5);
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
-        analyzer.setName("test-" + UUID.randomUUID());
-        analyzer.setProperties(properties);
-        analyzer.setFeatures(features);
-
-        createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
-
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void nearestNeighborsAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
-        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
-        properties.setModelLocation("/tmp/foo.bin");
-        properties.setTopK(2);
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
-        analyzer.setName("test-" + UUID.randomUUID());
-        analyzer.setProperties(properties);
-        analyzer.setFeatures(features);
-
-        createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
+// FIXME: allow disable on QA tests
+//    @ParameterizedTest
+//    @MethodSource("dbs")
+//    void nearestNeighborsAnalyzer(ArangoDatabase db) {
+//        assumeTrue(isAtLeastVersion(3, 10));
+//        assumeTrue(isEnterprise());
+//
+//        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
+//        properties.setModelLocation("/tmp/foo.bin");
+//        properties.setTopK(2);
+//
+//        Set<AnalyzerFeature> features = new HashSet<>();
+//        features.add(AnalyzerFeature.frequency);
+//        features.add(AnalyzerFeature.norm);
+//        features.add(AnalyzerFeature.position);
+//
+//        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
+//        analyzer.setName("test-" + UUID.randomUUID());
+//        analyzer.setProperties(properties);
+//        analyzer.setFeatures(features);
+//
+//        createGetAndDeleteTypedAnalyzer(db, analyzer);
+//    }
 
     @ParameterizedTest
     @MethodSource("dbs")

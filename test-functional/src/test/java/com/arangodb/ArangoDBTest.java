@@ -651,15 +651,16 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1228);
     }
 
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void fallbackHost() {
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(config)
-                .host("not-accessible", 8529).host("172.28.0.1", 8529).build();
-        final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version).isNotNull();
-    }
+// FIXME: do not hard-code host address
+//    @ParameterizedTest
+//    @MethodSource("arangos")
+//    void fallbackHost() {
+//        final ArangoDB arangoDB = new ArangoDB.Builder()
+//                .loadProperties(config)
+//                .host("not-accessible", 8529).host("172.28.0.1", 8529).build();
+//        final ArangoDBVersion version = arangoDB.getVersion();
+//        assertThat(version).isNotNull();
+//    }
 
     @ParameterizedTest
     @MethodSource("arangos")
@@ -670,28 +671,30 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void loadPropertiesWithPrefix() {
-        ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
-                .build();
-        adb.getVersion();
-        adb.shutdown();
-    }
+// FIXME: do not hard-code host address
+//    @ParameterizedTest
+//    @MethodSource("arangos")
+//    void loadPropertiesWithPrefix() {
+//        ArangoDB adb = new ArangoDB.Builder()
+//                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
+//                .build();
+//        adb.getVersion();
+//        adb.shutdown();
+//    }
 
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void loadConfigFromPropertiesWithPrefix() {
-        Properties props = new Properties();
-        props.setProperty("adb.hosts", "172.28.0.1:8529");
-        props.setProperty("adb.password", "test");
-        ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig(props, "adb"))
-                .build();
-        adb.getVersion();
-        adb.shutdown();
-    }
+// FIXME: do not hard-code host address
+//    @ParameterizedTest
+//    @MethodSource("arangos")
+//    void loadConfigFromPropertiesWithPrefix() {
+//        Properties props = new Properties();
+//        props.setProperty("adb.hosts", "172.28.0.1:8529");
+//        props.setProperty("adb.password", "test");
+//        ArangoDB adb = new ArangoDB.Builder()
+//                .loadProperties(ConfigUtils.loadConfig(props, "adb"))
+//                .build();
+//        adb.getVersion();
+//        adb.shutdown();
+//    }
 
     @ParameterizedTest
     @MethodSource("arangos")

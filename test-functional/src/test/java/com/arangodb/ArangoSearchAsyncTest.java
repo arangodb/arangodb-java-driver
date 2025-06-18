@@ -979,53 +979,54 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, collationAnalyzer);
     }
 
+// FIXME: allow disable on QA tests
+//    @ParameterizedTest
+//    @MethodSource("asyncDbs")
+//    void classificationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+//        assumeTrue(isAtLeastVersion(3, 10));
+//        assumeTrue(isEnterprise());
+//
+//        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
+//        properties.setModelLocation("/tmp/foo.bin");
+//        properties.setTopK(2);
+//        properties.setThreshold(.5);
+//
+//        Set<AnalyzerFeature> features = new HashSet<>();
+//        features.add(AnalyzerFeature.frequency);
+//        features.add(AnalyzerFeature.norm);
+//        features.add(AnalyzerFeature.position);
+//
+//        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
+//        analyzer.setName("test-" + UUID.randomUUID());
+//        analyzer.setProperties(properties);
+//        analyzer.setFeatures(features);
+//
+//        createGetAndDeleteTypedAnalyzer(db, analyzer);
+//    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void classificationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
-        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
-        properties.setModelLocation("/tmp/foo.bin");
-        properties.setTopK(2);
-        properties.setThreshold(.5);
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
-        analyzer.setName("test-" + UUID.randomUUID());
-        analyzer.setProperties(properties);
-        analyzer.setFeatures(features);
-
-        createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
-
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void nearestNeighborsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
-        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
-        properties.setModelLocation("/tmp/foo.bin");
-        properties.setTopK(2);
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
-        analyzer.setName("test-" + UUID.randomUUID());
-        analyzer.setProperties(properties);
-        analyzer.setFeatures(features);
-
-        createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
+// FIXME: allow disable on QA tests
+//    @ParameterizedTest
+//    @MethodSource("asyncDbs")
+//    void nearestNeighborsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+//        assumeTrue(isAtLeastVersion(3, 10));
+//        assumeTrue(isEnterprise());
+//
+//        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
+//        properties.setModelLocation("/tmp/foo.bin");
+//        properties.setTopK(2);
+//
+//        Set<AnalyzerFeature> features = new HashSet<>();
+//        features.add(AnalyzerFeature.frequency);
+//        features.add(AnalyzerFeature.norm);
+//        features.add(AnalyzerFeature.position);
+//
+//        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
+//        analyzer.setName("test-" + UUID.randomUUID());
+//        analyzer.setProperties(properties);
+//        analyzer.setFeatures(features);
+//
+//        createGetAndDeleteTypedAnalyzer(db, analyzer);
+//    }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
