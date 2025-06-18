@@ -637,28 +637,30 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(e.getErrorNum()).isEqualTo(1228);
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncArangos")
-    void fallbackHost() throws ExecutionException, InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDB.Builder()
-                .loadProperties(config)
-                .host("not-accessible", 8529).host("172.28.0.1", 8529)
-                .build()
-                .async();
-        final ArangoDBVersion version = arangoDB.getVersion().get();
-        assertThat(version).isNotNull();
-    }
+// FIXME: do not hard-code host address
+//    @ParameterizedTest
+//    @MethodSource("asyncArangos")
+//    void fallbackHost() throws ExecutionException, InterruptedException {
+//        final ArangoDBAsync arangoDB = new ArangoDB.Builder()
+//                .loadProperties(config)
+//                .host("not-accessible", 8529).host("172.28.0.1", 8529)
+//                .build()
+//                .async();
+//        final ArangoDBVersion version = arangoDB.getVersion().get();
+//        assertThat(version).isNotNull();
+//    }
 
-    @ParameterizedTest
-    @MethodSource("asyncArangos")
-    void loadpropertiesWithPrefix() throws ExecutionException, InterruptedException {
-        ArangoDBAsync adb = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
-                .build()
-                .async();
-        adb.getVersion().get();
-        adb.shutdown();
-    }
+// FIXME: do not hard-code host address
+//    @ParameterizedTest
+//    @MethodSource("asyncArangos")
+//    void loadpropertiesWithPrefix() throws ExecutionException, InterruptedException {
+//        ArangoDBAsync adb = new ArangoDB.Builder()
+//                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
+//                .build()
+//                .async();
+//        adb.getVersion().get();
+//        adb.shutdown();
+//    }
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
