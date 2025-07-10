@@ -28,6 +28,7 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -986,54 +987,54 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
-// FIXME: allow disable on QA tests
-//    @ParameterizedTest
-//    @MethodSource("dbs")
-//    void classificationAnalyzer(ArangoDatabase db) {
-//        assumeTrue(isAtLeastVersion(3, 10));
-//        assumeTrue(isEnterprise());
-//
-//        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
-//        properties.setModelLocation("/tmp/foo.bin");
-//        properties.setTopK(2);
-//        properties.setThreshold(.5);
-//
-//        Set<AnalyzerFeature> features = new HashSet<>();
-//        features.add(AnalyzerFeature.frequency);
-//        features.add(AnalyzerFeature.norm);
-//        features.add(AnalyzerFeature.position);
-//
-//        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
-//        analyzer.setName("test-" + UUID.randomUUID());
-//        analyzer.setProperties(properties);
-//        analyzer.setFeatures(features);
-//
-//        createGetAndDeleteTypedAnalyzer(db, analyzer);
-//    }
+    @DisabledIfSystemProperty(named = "test.stateful.skip", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void classificationAnalyzer(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isEnterprise());
 
-// FIXME: allow disable on QA tests
-//    @ParameterizedTest
-//    @MethodSource("dbs")
-//    void nearestNeighborsAnalyzer(ArangoDatabase db) {
-//        assumeTrue(isAtLeastVersion(3, 10));
-//        assumeTrue(isEnterprise());
-//
-//        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
-//        properties.setModelLocation("/tmp/foo.bin");
-//        properties.setTopK(2);
-//
-//        Set<AnalyzerFeature> features = new HashSet<>();
-//        features.add(AnalyzerFeature.frequency);
-//        features.add(AnalyzerFeature.norm);
-//        features.add(AnalyzerFeature.position);
-//
-//        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
-//        analyzer.setName("test-" + UUID.randomUUID());
-//        analyzer.setProperties(properties);
-//        analyzer.setFeatures(features);
-//
-//        createGetAndDeleteTypedAnalyzer(db, analyzer);
-//    }
+        ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
+        properties.setModelLocation("/tmp/foo.bin");
+        properties.setTopK(2);
+        properties.setThreshold(.5);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        ClassificationAnalyzer analyzer = new ClassificationAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    @DisabledIfSystemProperty(named = "test.stateful.skip", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
+    @ParameterizedTest
+    @MethodSource("dbs")
+    void nearestNeighborsAnalyzer(ArangoDatabase db) {
+        assumeTrue(isAtLeastVersion(3, 10));
+        assumeTrue(isEnterprise());
+
+        NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
+        properties.setModelLocation("/tmp/foo.bin");
+        properties.setTopK(2);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        NearestNeighborsAnalyzer analyzer = new NearestNeighborsAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
 
     @ParameterizedTest
     @MethodSource("dbs")

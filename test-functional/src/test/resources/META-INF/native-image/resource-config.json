@@ -11,9 +11,6 @@
         "pattern": "\\Qarangodb-bad2.properties\\E"
       },
       {
-        "pattern":"\\Qarangodb-with-prefix.properties\\E"
-      },
-      {
         "pattern": "\\Qlogback-test.xml\\E"
       },
       {
