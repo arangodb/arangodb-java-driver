@@ -981,7 +981,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
     }
 
 
-    @DisabledIfSystemProperty(named = "test.stateful.skip", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
+    @DisabledIfSystemProperty(named = "skipStatefulTests", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void classificationAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
@@ -1006,7 +1006,7 @@ class ArangoSearchAsyncTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @DisabledIfSystemProperty(named = "test.stateful.skip", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
+    @DisabledIfSystemProperty(named = "skipStatefulTests", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void nearestNeighborsAnalyzer(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
