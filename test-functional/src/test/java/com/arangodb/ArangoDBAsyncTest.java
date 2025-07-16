@@ -245,10 +245,10 @@ class ArangoDBAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void deleteUser(ArangoDBAsync arangoDB) {
+    void deleteUser(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String username = "user-" + UUID.randomUUID();
-        arangoDB.createUser(username, PW, null);
-        arangoDB.deleteUser(username);
+        arangoDB.createUser(username, PW, null).get();
+        arangoDB.deleteUser(username).get();
     }
 
     @ParameterizedTest
