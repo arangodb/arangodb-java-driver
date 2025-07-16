@@ -312,7 +312,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         String username = "user-" + UUID.randomUUID();
         arangoDB.createUser(username, PW, null).get();
         try {
-            arangoDB.updateUser(username, null);
+            arangoDB.updateUser(username, null).get();
         } finally {
             arangoDB.deleteUser(username).get();
         }
