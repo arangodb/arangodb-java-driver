@@ -28,6 +28,7 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.InvertedIndexOptions;
 import com.arangodb.model.arangosearch.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -986,6 +987,7 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
 
+    @DisabledIfSystemProperty(named = "skipStatefulTests", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
     @ParameterizedTest
     @MethodSource("dbs")
     void classificationAnalyzer(ArangoDatabase db) {
@@ -1010,6 +1012,7 @@ class ArangoSearchTest extends BaseJunit5 {
         createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
+    @DisabledIfSystemProperty(named = "skipStatefulTests", matches = "^(|true|1)$", disabledReason = "Test requires server with analyzer model located at `/tmp/foo.bin`")
     @ParameterizedTest
     @MethodSource("dbs")
     void nearestNeighborsAnalyzer(ArangoDatabase db) {
