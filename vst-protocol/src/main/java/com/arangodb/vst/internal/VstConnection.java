@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,11 +149,7 @@ public abstract class VstConnection<T> implements Connection {
             LOGGER.debug(String.format("[%s]: Open connection to %s", connectionName, host));
         }
         if (Boolean.TRUE.equals(useSsl)) {
-            if (sslContext != null) {
-                socket = sslContext.getSocketFactory().createSocket();
-            } else {
-                socket = SSLSocketFactory.getDefault().createSocket();
-            }
+            socket = sslContext.getSocketFactory().createSocket();
         } else {
             socket = SocketFactory.getDefault().createSocket();
         }

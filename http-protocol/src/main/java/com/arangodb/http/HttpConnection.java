@@ -55,7 +55,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -169,17 +168,7 @@ public class HttpConnection implements Connection {
         }
 
         if (Boolean.TRUE.equals(config.getUseSsl())) {
-            SSLContext ctx;
-            if (config.getSslContext() != null) {
-                ctx = config.getSslContext();
-            } else {
-                try {
-                    ctx = SSLContext.getDefault();
-                } catch (NoSuchAlgorithmException e) {
-                    throw ArangoDBException.of(e);
-                }
-            }
-
+            SSLContext ctx = config.getSslContext();
             webClientOptions
                     .setSsl(true)
                     .setUseAlpn(true)

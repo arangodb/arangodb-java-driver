@@ -110,6 +110,31 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<String> getSslCertValue() {
+        return Optional.ofNullable(getProperty(KEY_SSL_CERT_VALUE));
+    }
+
+    @Override
+    public Optional<String> getSslCertType() {
+        return Optional.ofNullable(getProperty(KEY_SSL_CERT_TYPE));
+    }
+
+    @Override
+    public Optional<String> getSslAlgorithm() {
+        return Optional.ofNullable(getProperty(KEY_SSL_ALGORITHM));
+    }
+
+    @Override
+    public Optional<String> getSslKeystoreType() {
+        return Optional.ofNullable(getProperty(KEY_SSL_KEYSTORE_TYPE));
+    }
+
+    @Override
+    public Optional<String> getSslProtocol() {
+        return Optional.ofNullable(getProperty(KEY_SSL_PROTOCOL));
+    }
+
+    @Override
     public Optional<Boolean> getVerifyHost() {
         return Optional.ofNullable(getProperty(KEY_VERIFY_HOST)).map(Boolean::valueOf);
     }

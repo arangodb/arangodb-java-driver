@@ -356,6 +356,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Reset the server log levels
      * Revert the server's log level settings to the values they had at startup, as determined by the startup options specified on the command-line, a configuration file, and the factory defaults.
+     *
      * @since ArangoDB 3.12
      */
     LogLevelEntity resetLogLevels(LogLevelOptions options);
@@ -481,6 +482,61 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder useSsl(final Boolean useSsl) {
             config.setUseSsl(useSsl);
+            return this;
+        }
+
+        /**
+         * Sets the SSL certificate value as Base64 encoded String
+         *
+         * @param sslCertValue the SSL certificate value as Base64 encoded String
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslCertValue(final String sslCertValue) {
+            config.setSslCertValue(sslCertValue);
+            return this;
+        }
+
+        /**
+         * Sets the SSL certificate type, default: {@code X.509}
+         *
+         * @param sslCertType the SSL certificate type
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslCertType(final String sslCertType) {
+            config.setSslCertType(sslCertType);
+            return this;
+        }
+
+        /**
+         * Sets the SSL Trust manager algorithm
+         *
+         * @param sslAlgorithm the name of the SSL Trust manager algorithm
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslAlgorithm(final String sslAlgorithm) {
+            config.setSslAlgorithm(sslAlgorithm);
+            return this;
+        }
+
+        /**
+         * Sets the SSL keystore type
+         *
+         * @param sslKeystoreType the SSL keystore type
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslKeystoreType(final String sslKeystoreType) {
+            config.setSslKeystoreType(sslKeystoreType);
+            return this;
+        }
+
+        /**
+         * Sets the SSLContext protocol, default: {@code TLS}
+         *
+         * @param sslProtocol the name of the SSLContext protocol
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslProtocol(final String sslProtocol) {
+            config.setSslProtocol(sslProtocol);
             return this;
         }
 
@@ -716,6 +772,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         /**
          * Configuration specific for {@link com.arangodb.internal.net.ProtocolProvider}.
+         *
          * @return {@link ArangoDB.Builder}
          */
         public Builder protocolConfig(ProtocolConfig protocolConfig) {
