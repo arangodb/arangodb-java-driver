@@ -5,6 +5,9 @@
         "pattern": "\\Qarangodb.properties\\E"
       },
       {
+        "pattern": "\\Qarangodb-ssl.properties\\E"
+      },
+      {
         "pattern": "\\Qarangodb-bad.properties\\E"
       },
       {
