@@ -17,7 +17,6 @@
 
     <properties>
         <moduleName>com.arangodb.http</moduleName>
-        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
     <dependencies>
