@@ -3057,7 +3057,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void deleteDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<String> keys = new ArrayList<>();
         final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys).get();
         assertThat(deleteResult).isNotNull();
@@ -3069,7 +3069,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void deleteDocumentsByKeyNotExisting(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<String> keys = Arrays.asList(rnd(), rnd());
 
         final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys).get();
@@ -3170,7 +3170,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         {
             values.add(new BaseDocument("1"));
         }
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
@@ -3188,7 +3188,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final Collection<RawJson> values = new ArrayList<>();
         values.add(RawJson.of("{\"_key\":\"1\"}"));
         values.add(RawJson.of("{\"_key\":\"2\"}"));
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final Collection<RawJson> updatedValues = new ArrayList<>();
         updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
@@ -3263,7 +3263,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
@@ -3321,7 +3321,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void replaceDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
                 "\"foo\":\"bar\"}]");
