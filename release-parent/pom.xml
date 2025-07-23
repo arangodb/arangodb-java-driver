@@ -43,6 +43,7 @@
 
     <properties>
         <moduleName/>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <build>
@@ -159,8 +160,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
-                    <autoPublish>false</autoPublish>
+                    <autoPublish>true</autoPublish>
                     <waitUntil>published</waitUntil>
+                    <skipPublishing>${maven.deploy.skip}</skipPublishing>
                 </configuration>
             </plugin>
         </plugins>

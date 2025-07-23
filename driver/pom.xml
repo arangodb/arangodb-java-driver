@@ -16,6 +16,7 @@
     <description>ArangoDB Java Driver</description>
 
     <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
         <moduleName>com.arangodb.driver</moduleName>
         <sonar.test.exclusions>src/test/**/*</sonar.test.exclusions>
     </properties>
