@@ -36,9 +36,7 @@ public class ArangoConfig {
     private String jwt;
     private Boolean useSsl;
     private Optional<String> sslCertValue;
-    private String sslCertType;
     private Optional<String> sslAlgorithm;
-    private Optional<String> sslKeystoreType;
     private String sslProtocol;
     private SSLContext sslContext;
     private Boolean verifyHost;
@@ -80,9 +78,7 @@ public class ArangoConfig {
         jwt = properties.getJwt().orElse(null);
         useSsl = properties.getUseSsl().orElse(ArangoDefaults.DEFAULT_USE_SSL);
         sslCertValue = properties.getSslCertValue();
-        sslCertType = properties.getSslCertType().orElse(ArangoDefaults.DEFAULT_SSL_CERT_TYPE);
         sslAlgorithm = properties.getSslAlgorithm();
-        sslKeystoreType = properties.getSslKeystoreType();
         sslProtocol = properties.getSslProtocol().orElse(ArangoDefaults.DEFAULT_SSL_PROTOCOL);
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
@@ -170,16 +166,8 @@ public class ArangoConfig {
         this.sslCertValue = Optional.ofNullable(sslCertValue);
     }
 
-    public void setSslCertType(String sslCertType) {
-        this.sslCertType = sslCertType;
-    }
-
     public void setSslAlgorithm(String sslAlgorithm) {
         this.sslAlgorithm = Optional.ofNullable(sslAlgorithm);
-    }
-
-    public void setSslKeystoreType(String sslKeystoreType) {
-        this.sslKeystoreType = Optional.ofNullable(sslKeystoreType);
     }
 
     public void setSslProtocol(String sslProtocol) {
@@ -385,8 +373,8 @@ public class ArangoConfig {
         try {
             if (sslCertValue.isPresent()) {
                 ByteArrayInputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(sslCertValue.get()));
-                Certificate cert = CertificateFactory.getInstance(sslCertType).generateCertificate(is);
-                KeyStore ks = KeyStore.getInstance(sslKeystoreType.orElseGet(KeyStore::getDefaultType));
+                Certificate cert = CertificateFactory.getInstance("X.509").generateCertificate(is);
+                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
                 ks.load(null);
                 ks.setCertificateEntry("arangodb", cert);
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance(sslAlgorithm.orElseGet(TrustManagerFactory::getDefaultAlgorithm));

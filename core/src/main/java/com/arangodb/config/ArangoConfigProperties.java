@@ -20,9 +20,7 @@ public interface ArangoConfigProperties {
     String KEY_TIMEOUT = "timeout";
     String KEY_USE_SSL = "useSsl";
     String KEY_SSL_CERT_VALUE = "sslCertValue";
-    String KEY_SSL_CERT_TYPE = "sslCertType";
     String KEY_SSL_ALGORITHM = "sslAlgorithm";
-    String KEY_SSL_KEYSTORE_TYPE = "sslKeystoreType";
     String KEY_SSL_PROTOCOL = "sslProtocol";
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
@@ -112,15 +110,7 @@ public interface ArangoConfigProperties {
         return Optional.empty();
     }
 
-    default Optional<String> getSslCertType() {
-        return Optional.empty();
-    }
-
     default Optional<String> getSslAlgorithm() {
-        return Optional.empty();
-    }
-
-    default Optional<String> getSslKeystoreType() {
         return Optional.empty();
     }
 

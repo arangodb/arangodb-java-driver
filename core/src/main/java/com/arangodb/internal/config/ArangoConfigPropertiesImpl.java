@@ -115,18 +115,8 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
-    public Optional<String> getSslCertType() {
-        return Optional.ofNullable(getProperty(KEY_SSL_CERT_TYPE));
-    }
-
-    @Override
     public Optional<String> getSslAlgorithm() {
         return Optional.ofNullable(getProperty(KEY_SSL_ALGORITHM));
-    }
-
-    @Override
-    public Optional<String> getSslKeystoreType() {
-        return Optional.ofNullable(getProperty(KEY_SSL_KEYSTORE_TYPE));
     }
 
     @Override

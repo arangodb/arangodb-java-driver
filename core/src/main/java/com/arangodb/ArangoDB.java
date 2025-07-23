@@ -497,17 +497,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the SSL certificate type, default: {@code X.509}
-         *
-         * @param sslCertType the SSL certificate type
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder sslCertType(final String sslCertType) {
-            config.setSslCertType(sslCertType);
-            return this;
-        }
-
-        /**
          * Sets the SSL Trust manager algorithm
          *
          * @param sslAlgorithm the name of the SSL Trust manager algorithm
@@ -515,17 +504,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder sslAlgorithm(final String sslAlgorithm) {
             config.setSslAlgorithm(sslAlgorithm);
-            return this;
-        }
-
-        /**
-         * Sets the SSL keystore type
-         *
-         * @param sslKeystoreType the SSL keystore type
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder sslKeystoreType(final String sslKeystoreType) {
-            config.setSslKeystoreType(sslKeystoreType);
             return this;
         }
 

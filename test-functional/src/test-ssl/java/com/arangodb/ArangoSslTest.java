@@ -58,7 +58,7 @@ class ArangoSslTest extends BaseTest {
 
     @ParameterizedTest
     @EnumSource(Protocol.class)
-    void connectWithProperties(Protocol protocol) {
+    void connectWithCertConf(Protocol protocol) {
         assumeTrue(protocol != Protocol.VST);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()

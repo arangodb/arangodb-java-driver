@@ -22,9 +22,7 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<Integer> timeout;
     private Optional<Boolean> useSsl;
     private Optional<String> sslCertValue;
-    private Optional<String> sslCertType;
     private Optional<String> sslAlgorithm;
-    private Optional<String> sslKeystoreType;
     private Optional<String> sslProtocol;
     private Optional<Boolean> verifyHost;
     private Optional<Integer> chunkSize;
@@ -82,18 +80,8 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     }
 
     @Override
-    public Optional<String> getSslCertType() {
-        return sslCertType;
-    }
-
-    @Override
     public Optional<String> getSslAlgorithm() {
         return sslAlgorithm;
-    }
-
-    @Override
-    public Optional<String> getSslKeystoreType() {
-        return sslKeystoreType;
     }
 
     @Override
