@@ -8,7 +8,7 @@
         <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
         <artifactId>release-parent</artifactId>
-        <version>7.20.0</version>
+        <version>7.21.0-SNAPSHOT</version>
     </parent>
 
     <name>arangodb-java-driver</name>

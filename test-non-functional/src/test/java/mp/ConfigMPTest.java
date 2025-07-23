@@ -21,6 +21,9 @@ class ConfigMPTest {
     private final String jwt = "testJwt";
     private final Integer timeout = 9876;
     private final Boolean useSsl = true;
+    private final String sslCertValue = "sslCertValue";
+    private final String sslAlgorithm = "sslAlgorithm";
+    private final String sslProtocol = "sslProtocol";
     private final Boolean verifyHost = false;
     private final Integer vstChunkSize = 1234;
     private final Boolean pipelining = true;
@@ -57,6 +60,9 @@ class ConfigMPTest {
                 .hasValue(jwt);
         assertThat(config.getTimeout()).hasValue(timeout);
         assertThat(config.getUseSsl()).hasValue(useSsl);
+        assertThat(config.getSslCertValue()).hasValue(sslCertValue);
+        assertThat(config.getSslAlgorithm()).hasValue(sslAlgorithm);
+        assertThat(config.getSslProtocol()).hasValue(sslProtocol);
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
         assertThat(config.getChunkSize()).hasValue(vstChunkSize);
         assertThat(config.getPipelining()).hasValue(pipelining);

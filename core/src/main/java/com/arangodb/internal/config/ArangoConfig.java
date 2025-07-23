@@ -16,7 +16,12 @@ import com.arangodb.serde.ArangoSerdeProvider;
 import com.fasterxml.jackson.databind.Module;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -30,6 +35,9 @@ public class ArangoConfig {
     private String password;
     private String jwt;
     private Boolean useSsl;
+    private Optional<String> sslCertValue;
+    private Optional<String> sslAlgorithm;
+    private String sslProtocol;
     private SSLContext sslContext;
     private Boolean verifyHost;
     private Integer chunkSize;
@@ -69,6 +77,9 @@ public class ArangoConfig {
         // FIXME: make jwt field Optional
         jwt = properties.getJwt().orElse(null);
         useSsl = properties.getUseSsl().orElse(ArangoDefaults.DEFAULT_USE_SSL);
+        sslCertValue = properties.getSslCertValue();
+        sslAlgorithm = properties.getSslAlgorithm();
+        sslProtocol = properties.getSslProtocol().orElse(ArangoDefaults.DEFAULT_SSL_PROTOCOL);
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
@@ -151,7 +162,22 @@ public class ArangoConfig {
         this.useSsl = useSsl;
     }
 
+    public void setSslCertValue(String sslCertValue) {
+        this.sslCertValue = Optional.ofNullable(sslCertValue);
+    }
+
+    public void setSslAlgorithm(String sslAlgorithm) {
+        this.sslAlgorithm = Optional.ofNullable(sslAlgorithm);
+    }
+
+    public void setSslProtocol(String sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
     public SSLContext getSslContext() {
+        if (sslContext == null) {
+            sslContext = createSslContext();
+        }
         return sslContext;
     }
 
@@ -342,4 +368,26 @@ public class ArangoConfig {
     public void setProtocolConfig(ProtocolConfig protocolConfig) {
         this.protocolConfig = protocolConfig;
     }
+
+    private SSLContext createSslContext() {
+        try {
+            if (sslCertValue.isPresent()) {
+                ByteArrayInputStream is = new ByteArrayInputStream(Base64.getDecoder().decode(sslCertValue.get()));
+                Certificate cert = CertificateFactory.getInstance("X.509").generateCertificate(is);
+                KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+                ks.load(null);
+                ks.setCertificateEntry("arangodb", cert);
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(sslAlgorithm.orElseGet(TrustManagerFactory::getDefaultAlgorithm));
+                tmf.init(ks);
+                SSLContext sc = SSLContext.getInstance(sslProtocol);
+                sc.init(null, tmf.getTrustManagers(), null);
+                return sc;
+            } else {
+                return SSLContext.getDefault();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -19,6 +19,9 @@ public interface ArangoConfigProperties {
     String KEY_JWT = "jwt";
     String KEY_TIMEOUT = "timeout";
     String KEY_USE_SSL = "useSsl";
+    String KEY_SSL_CERT_VALUE = "sslCertValue";
+    String KEY_SSL_ALGORITHM = "sslAlgorithm";
+    String KEY_SSL_PROTOCOL = "sslProtocol";
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
     String KEY_PIPELINING = "pipelining";
@@ -100,6 +103,18 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Boolean> getUseSsl() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslCertValue() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslAlgorithm() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslProtocol() {
         return Optional.empty();
     }
 
