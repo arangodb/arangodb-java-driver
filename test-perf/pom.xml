@@ -13,7 +13,6 @@
     <artifactId>test-perf</artifactId>
 
     <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
         <jmh.version>1.37</jmh.version>
         <uberjar.name>benchmarks</uberjar.name>
     </properties>

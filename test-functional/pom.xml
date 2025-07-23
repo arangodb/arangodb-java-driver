@@ -13,10 +13,6 @@
 
     <artifactId>test-functional</artifactId>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.eclipse.parsson</groupId>

@@ -13,6 +13,33 @@
     <name>release-parent</name>
     <artifactId>release-parent</artifactId>
     <description>Parent for releasable modules</description>
+    <url>https://github.com/arangodb/arangodb-java-driver</url>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Michele Rastelli</name>
+            <url>https://github.com/rashtao</url>
+        </developer>
+        <developer>
+            <id>mpv1989</id>
+            <name>Mark Vollmary</name>
+            <url>https://github.com/mpv1989</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/arangodb/arangodb-java-driver</url>
+        <connection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</connection>
+        <developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
+    </scm>
 
     <properties>
         <moduleName/>
@@ -124,6 +151,18 @@
                             </includes>
                         </fileset>
                     </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>false</autoPublish>
+                    <waitUntil>published</waitUntil>
+                    <skipPublishing>${maven.deploy.skip}</skipPublishing>
                 </configuration>
             </plugin>
         </plugins>

@@ -17,7 +17,6 @@
         <maven.build.cache.enabled>false</maven.build.cache.enabled>
         <adb.jackson.version>2.19.0</adb.jackson.version>
         <sonar.skip>true</sonar.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <testSources>src/test/java</testSources>
