@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.21.0] - 2025-07-23
+
+- added SSL configuration properties (DE-1010, #611)
+- fixed support to Jackson `2.19`
+
 ## [7.20.0] - 2025-06-17
 
 - added option `usePlanCache` to `AqlQueryOptions` (DE-973, #609)
