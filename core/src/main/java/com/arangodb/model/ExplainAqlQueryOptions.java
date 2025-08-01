@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public final class ExplainAqlQueryOptions {
 
-    private Map<String, Object> bindVars;
+    private Map<String, ?> bindVars;
     private String query;
     private AqlQueryOptions.Options options;
 
@@ -41,7 +41,7 @@ public final class ExplainAqlQueryOptions {
     }
 
     @UserDataInside
-    public Map<String, Object> getBindVars() {
+    public Map<String, ?> getBindVars() {
         return bindVars;
     }
 
@@ -49,7 +49,7 @@ public final class ExplainAqlQueryOptions {
      * @param bindVars key/value pairs representing the bind parameters
      * @return options
      */
-    ExplainAqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+    ExplainAqlQueryOptions bindVars(final Map<String, ?> bindVars) {
         this.bindVars = bindVars;
         return this;
     }

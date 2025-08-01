@@ -162,7 +162,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public <T> ArangoCursor<T> query(
-            final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
+            final String query, final Class<T> type, final Map<String, ?> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
         final CursorEntity<T> result = executorSync().execute(request, cursorEntityDeserializer(type), hostHandle);
@@ -170,7 +170,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     }
 
     @Override
-    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final Map<String, Object> bindVars) {
+    public <T> ArangoCursor<T> query(final String query, final Class<T> type, final Map<String, ?> bindVars) {
         return query(query, type, bindVars, new AqlQueryOptions());
     }
 
@@ -240,17 +240,17 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
 
     @Override
     public AqlExecutionExplainEntity explainQuery(
-            final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
+            final String query, final Map<String, ?> bindVars, final AqlQueryExplainOptions options) {
         return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
     }
 
     @Override
-    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options) {
+    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options) {
         return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
 
     @Override
-    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options) {
+    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options) {
         return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
 
