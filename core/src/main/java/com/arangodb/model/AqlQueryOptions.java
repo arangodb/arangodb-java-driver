@@ -36,7 +36,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
 
     private Boolean allowDirtyRead;
     private Integer batchSize;
-    private Map<String, Object> bindVars;
+    private Map<String, ?> bindVars;
     private Boolean cache;
     private Boolean count;
     private Long memoryLimit;
@@ -87,7 +87,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     @UserDataInside
-    public Map<String, Object> getBindVars() {
+    public Map<String, ?> getBindVars() {
         return bindVars;
     }
 
@@ -97,7 +97,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                 variable {@code @@coll}, use {@code @coll} as the attribute name.
      * @return this
      */
-    AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+    AqlQueryOptions bindVars(final Map<String, ?> bindVars) {
         this.bindVars = bindVars;
         return this;
     }

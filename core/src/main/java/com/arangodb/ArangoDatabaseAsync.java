@@ -146,11 +146,11 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Permissions> getPermissions(String user);
 
-    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, ?> bindVars, AqlQueryOptions options);
 
     <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, AqlQueryOptions options);
 
-    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars);
+    <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, ?> bindVars);
 
     <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type);
 
@@ -168,7 +168,7 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @deprecated for removal, use {@link ArangoDatabaseAsync#explainAqlQuery(String, Map, AqlQueryExplainOptions)} instead
      */
     @Deprecated
-    CompletableFuture<AqlExecutionExplainEntity> explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    CompletableFuture<AqlExecutionExplainEntity> explainQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)}
@@ -176,12 +176,12 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * @deprecated for removal, use {@link ArangoDatabaseAsync#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
      */
     @Deprecated
-    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)}
      */
-    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options);
+    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#parseQuery(String)}

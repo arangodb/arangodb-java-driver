@@ -169,7 +169,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public <T> CompletableFuture<ArangoCursorAsync<T>> query(
-            final String query, final Class<T> type, final Map<String, Object> bindVars, final AqlQueryOptions options) {
+            final String query, final Class<T> type, final Map<String, ?> bindVars, final AqlQueryOptions options) {
         final InternalRequest request = queryRequest(query, bindVars, options);
         final HostHandle hostHandle = new HostHandle();
         return executorAsync().execute(() -> request, cursorEntityDeserializer(type), hostHandle)
@@ -182,7 +182,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     }
 
     @Override
-    public <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, Object> bindVars) {
+    public <T> CompletableFuture<ArangoCursorAsync<T>> query(String query, Class<T> type, Map<String, ?> bindVars) {
         return query(query, type, bindVars, new AqlQueryOptions());
     }
 
@@ -219,18 +219,18 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
 
     @Override
     public CompletableFuture<AqlExecutionExplainEntity> explainQuery(
-            final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
+            final String query, final Map<String, ?> bindVars, final AqlQueryExplainOptions options) {
         return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
     }
 
     @Override
     public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(
-            String query, Map<String, Object> bindVars, AqlQueryExplainOptions options) {
+            String query, Map<String, ?> bindVars, AqlQueryExplainOptions options) {
         return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
 
     @Override
-    public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options) {
+    public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options) {
         return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
 

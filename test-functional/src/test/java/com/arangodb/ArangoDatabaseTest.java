@@ -1050,7 +1050,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithRawBindVars(ArangoDatabase db) {
-        final Map<String, Object> bindVars = new HashMap<>();
+        final Map<String, RawData> bindVars = new HashMap<>();
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 

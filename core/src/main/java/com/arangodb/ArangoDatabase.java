@@ -254,7 +254,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, ?> bindVars, AqlQueryOptions options);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
@@ -280,7 +280,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, ?> bindVars);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
@@ -355,11 +355,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return information about the query
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
-     *
      * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)} instead
      */
     @Deprecated
-    AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    AqlExecutionExplainEntity explainQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
     /**
      * Explain an AQL query and return information about it
@@ -370,11 +369,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return information about the query
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
-     *
      * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
      */
     @Deprecated
-    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
 
     /**
@@ -387,7 +385,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
      */
-    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options);
+    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options);
 
     /**
      * Parse an AQL query and return information about it This method is for query validation only. To actually query

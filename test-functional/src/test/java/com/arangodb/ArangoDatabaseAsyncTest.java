@@ -24,10 +24,7 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.util.RawBytes;
-import com.arangodb.util.RawJson;
-import com.arangodb.util.SlowTest;
+import com.arangodb.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -932,7 +929,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithRawBindVars(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        final Map<String, Object> bindVars = new HashMap<>();
+        final Map<String, RawData> bindVars = new HashMap<>();
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 
