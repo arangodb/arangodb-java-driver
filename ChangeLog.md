@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.22.0] - 2025-08-06
+
+- wildcard generic AQL bind vars (#612, DE-991)
+
 ## [7.21.0] - 2025-07-23
 
 - added SSL configuration properties (DE-1010, #611)
