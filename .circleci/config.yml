@@ -438,9 +438,6 @@ workflows:
           matrix:
             parameters:
               docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
                 - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'single'
@@ -451,9 +448,6 @@ workflows:
           matrix:
             parameters:
               docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/arangodb:3.12'
-                - 'docker.io/arangodb/enterprise:3.11'
                 - 'docker.io/arangodb/enterprise:3.12'
               topology:
                 - 'cluster'
@@ -571,22 +565,6 @@ workflows:
                 - 'false'
               graalvm-version:
                 - '21.0.2-graalce'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only:
-                - main
-                - next
-      - test:
-          name: test-activefailover-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/arangodb:3.11'
-                - 'docker.io/arangodb/enterprise:3.11'
-              topology:
-                - 'activefailover'
           filters:
             tags:
               only: /^v.*/
