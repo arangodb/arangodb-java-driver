@@ -310,7 +310,7 @@ jobs:
       - store_cache
 
   sonar:
-    executor: 'j25'
+    executor: 'j21'
     resource_class: 'large'
     steps:
       - timeout
@@ -335,7 +335,7 @@ jobs:
       - store_cache
 
   tutorial:
-    executor: 'j25'
+    executor: 'j21'
     steps:
       - timeout
       - checkout
