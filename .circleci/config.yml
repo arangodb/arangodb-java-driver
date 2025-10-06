@@ -117,9 +117,9 @@ executors:
   j21:
     docker:
       - image: 'cimg/openjdk:21.0'
-  j23:
+  j25:
     docker:
-      - image: 'cimg/openjdk:23.0'
+      - image: 'cimg/openjdk:25.0'
 
 jobs:
 
@@ -133,7 +133,7 @@ jobs:
         default: 'single'
       jdk:
         type: 'string'
-        default: 'j21'
+        default: 'j25'
       args:
         type: 'string'
         default: ''
@@ -201,7 +201,7 @@ jobs:
         default: 'single'
       jdk:
         type: 'string'
-        default: 'j21'
+        default: 'j25'
       args:
         type: 'string'
         default: ''
@@ -262,7 +262,7 @@ jobs:
       - store_cache
 
   test-non-func:
-    executor: 'j21'
+    executor: 'j25'
     steps:
       - timeout
       - checkout
@@ -286,7 +286,7 @@ jobs:
   # https://issues.apache.org/jira/browse/MSHADE-206
   # https://issues.apache.org/jira/browse/MNG-5899
   test-non-func-shaded:
-    executor: 'j21'
+    executor: 'j25'
     steps:
       - timeout
       - checkout
@@ -310,7 +310,7 @@ jobs:
       - store_cache
 
   sonar:
-    executor: 'j21'
+    executor: 'j25'
     resource_class: 'large'
     steps:
       - timeout
@@ -335,7 +335,7 @@ jobs:
       - store_cache
 
   tutorial:
-    executor: 'j21'
+    executor: 'j25'
     steps:
       - timeout
       - checkout
@@ -356,7 +356,7 @@ jobs:
       - store_cache
 
   resilience-test:
-    executor: 'j21'
+    executor: 'j25'
     resource_class: 'large'
     steps:
       - timeout
@@ -387,7 +387,7 @@ jobs:
   # https://issues.apache.org/jira/browse/MSHADE-206
   # https://issues.apache.org/jira/browse/MNG-5899
   resilience-test-shaded:
-    executor: 'j21'
+    executor: 'j25'
     resource_class: 'large'
     steps:
       - timeout
@@ -502,7 +502,7 @@ workflows:
               jdk:
                 - 'j17'
                 - 'j21'
-                - 'j23'
+                - 'j25'
           filters:
             tags:
               only: /^v.*/
