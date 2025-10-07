@@ -41,7 +41,7 @@
         <sonar.organization>arangodb-1</sonar.organization>
         <sonar.java.spotbugs.reportPaths>target/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <graalvm.version>24.2.1</graalvm.version>
+        <graalvm.version>25.0.0</graalvm.version>
     </properties>
 
     <developers>
@@ -92,7 +92,7 @@
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-stack-depchain</artifactId>
-                <version>4.5.7</version>
+                <version>4.5.21</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -208,7 +208,7 @@
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.10.0</version>
+                        <version>1.11.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -242,6 +242,15 @@
                                     <ignoreVersion>
                                         <type>regex</type>
                                         <version>.*</version>
+                                    </ignoreVersion>
+                                </ignoreVersions>
+                            </rule>
+                            <rule>
+                                <groupId>org.junit.jupiter</groupId>
+                                <ignoreVersions>
+                                    <ignoreVersion>
+                                        <type>regex</type>
+                                        <version>6..*</version>
                                     </ignoreVersion>
                                 </ignoreVersions>
                             </rule>
