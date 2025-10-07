@@ -145,7 +145,7 @@ jobs:
         default: 'false'
       graalvm-version:
         type: 'string'
-        default: '21.0.2-graalce'
+        default: '25-graalce'
       resource_class:
         type: 'string'
         default: 'medium'
@@ -213,7 +213,7 @@ jobs:
         default: 'false'
       graalvm-version:
         type: 'string'
-        default: '21.0.2-graalce'
+        default: '25-graalce'
       resource_class:
         type: 'string'
         default: 'medium'
@@ -269,7 +269,7 @@ jobs:
       - setup_remote_docker
       - install-sdk:
           sdk: 'java'
-          version: '21.0.2-graalce'
+          version: '25-graalce'
       - start-db
       - load_cache
       - run:
@@ -293,7 +293,7 @@ jobs:
       - setup_remote_docker
       - install-sdk:
           sdk: 'java'
-          version: '21.0.2-graalce'
+          version: '25-graalce'
       - start-db
       - load_cache
       - install
@@ -543,6 +543,7 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
+                - '25-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
@@ -563,6 +564,7 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
+                - '25-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
