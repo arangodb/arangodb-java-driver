@@ -8,7 +8,7 @@
         <relativePath>../test-parent</relativePath>
         <groupId>com.arangodb</groupId>
         <artifactId>test-parent</artifactId>
-        <version>7.22.0</version>
+        <version>7.22.1</version>
     </parent>
 
     <artifactId>test-functional</artifactId>

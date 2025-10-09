@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.22.1] - 2025-10-09
+
+- added Java 25 to test matrix (#614)
+- fixed native image in GraalVM 25 (#614)
+- update Vert.x to version 4.5.21 (#614)
+- updated Jackson to version `2.20.0` (#613)
+
 ## [7.22.0] - 2025-08-06
 
 - wildcard generic AQL bind vars (#612, DE-991)
