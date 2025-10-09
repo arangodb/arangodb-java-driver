@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
-        <artifactId>release-parent</artifactId>
+        <artifactId>arangodb-java-driver-parent</artifactId>
         <version>7.22.1</version>
     </parent>
 
