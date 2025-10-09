@@ -205,7 +205,7 @@
                                     <artifacts>
                                         <artifact>
                                             <file>
-                                                ${project.parent.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
+                                                ${project.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
                                             </file>
                                             <type>jar</type>
                                             <classifier>javadoc</classifier>
