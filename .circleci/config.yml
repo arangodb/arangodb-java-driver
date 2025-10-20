@@ -180,7 +180,7 @@ jobs:
       - run:
           name: Test
           command: |
-            mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
+            mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
               <<parameters.args>>
@@ -252,7 +252,7 @@ jobs:
           name: Test
           working_directory: test-functional
           command: |
-            mvn verify -Dgpg.skip \
+            mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip \
               -Dshaded \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
@@ -277,7 +277,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-non-functional
       - run:
           name: Test
-          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
       - report:
           working_directory: test-non-functional
       - store_cache
@@ -304,7 +304,7 @@ jobs:
       - run:
           name: Test
           working_directory: test-non-functional
-          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - report:
           working_directory: test-non-functional
       - store_cache
@@ -323,10 +323,10 @@ jobs:
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
           name: Test
-          command: mvn verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
       - run:
           name: Analyze
-          command: mvn verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -378,7 +378,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-resilience
       - run:
           name: Test
-          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
       - report:
           working_directory: test-resilience
       - store_cache
@@ -412,7 +412,7 @@ jobs:
       - run:
           name: Test
           working_directory: test-resilience
-          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - report:
           working_directory: test-resilience
       - store_cache
