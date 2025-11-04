@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.23.0] - 2025-11-04
+
+- increased default HTTP/2 window size (#616, DE-1080)
+- made HTTP/2 window size configurable (#616, DE-1080)
+
 ## [7.22.1] - 2025-10-09
 
 - added Java 25 to test matrix (#614)
