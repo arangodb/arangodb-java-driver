@@ -42,6 +42,8 @@ public class ArangoConfig {
     private Boolean verifyHost;
     private Integer chunkSize;
     private Boolean pipelining;
+    private Integer connectionWindowSize;
+    private Integer initialWindowSize;
     private Integer maxConnections;
     private Long connectionTtl;
     private Integer keepAliveInterval;
@@ -83,6 +85,8 @@ public class ArangoConfig {
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
+        connectionWindowSize = properties.getConnectionWindowSize().orElse(ArangoDefaults.DEFAULT_CONNECTION_WINDOW_SIZE);
+        initialWindowSize = properties.getInitialWindowSize().orElse(ArangoDefaults.DEFAULT_INITIAL_WINDOW_SIZE);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
         // FIXME: make connectionTtl field Optional
@@ -207,6 +211,22 @@ public class ArangoConfig {
 
     public void setPipelining(Boolean pipelining) {
         this.pipelining = pipelining;
+    }
+
+    public Integer getConnectionWindowSize() {
+        return connectionWindowSize;
+    }
+
+    public void setConnectionWindowSize(Integer connectionWindowSize) {
+        this.connectionWindowSize = connectionWindowSize;
+    }
+
+    public Integer getInitialWindowSize() {
+        return initialWindowSize;
+    }
+
+    public void setInitialWindowSize(Integer initialWindowSize) {
+        this.initialWindowSize = initialWindowSize;
     }
 
     public Integer getMaxConnections() {

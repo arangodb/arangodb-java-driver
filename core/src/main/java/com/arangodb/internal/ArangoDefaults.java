@@ -30,8 +30,11 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public final class ArangoDefaults {
+
+    private static final int MB = 1024 * 1024;
 
     public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
     public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
@@ -52,6 +55,8 @@ public final class ArangoDefaults {
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_PIPELINING = false;
+    public static final Integer DEFAULT_CONNECTION_WINDOW_SIZE = 32 * MB;
+    public static final Integer DEFAULT_INITIAL_WINDOW_SIZE = 2 * MB;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;

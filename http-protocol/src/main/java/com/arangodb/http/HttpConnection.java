@@ -40,6 +40,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.Http2Settings;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
@@ -161,7 +162,9 @@ public class HttpConnection implements Connection {
                 .setProtocolVersion(httpVersion)
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort())
-                .setProxyOptions(protocolConfig.getProxyOptions());
+                .setProxyOptions(protocolConfig.getProxyOptions())
+                .setHttp2ConnectionWindowSize(config.getConnectionWindowSize())
+                .setInitialSettings(new Http2Settings().setInitialWindowSize(config.getInitialWindowSize()));
 
         if (compression != Compression.NONE) {
             webClientOptions.setTryUseCompression(true);
