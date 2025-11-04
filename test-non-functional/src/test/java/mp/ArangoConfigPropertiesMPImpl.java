@@ -27,6 +27,8 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<Boolean> verifyHost;
     private Optional<Integer> chunkSize;
     private Optional<Boolean> pipelining;
+    private Optional<Integer> connectionWindowSize;
+    private Optional<Integer> initialWindowSize;
     private Optional<Integer> maxConnections;
     private Optional<Long> connectionTtl;
     private Optional<Integer> keepAliveInterval;
@@ -105,6 +107,16 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     }
 
     @Override
+    public Optional<Integer> getConnectionWindowSize() {
+        return connectionWindowSize;
+    }
+
+    @Override
+    public Optional<Integer> getInitialWindowSize() {
+        return initialWindowSize;
+    }
+
+    @Override
     public Optional<Integer> getMaxConnections() {
         return maxConnections;
     }
@@ -164,12 +176,12 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArangoConfigPropertiesMPImpl that = (ArangoConfigPropertiesMPImpl) o;
-        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(pipelining, that.pipelining) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
+        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(pipelining, that.pipelining) && Objects.equals(connectionWindowSize, that.connectionWindowSize) && Objects.equals(initialWindowSize, that.initialWindowSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, pipelining, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
+        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, pipelining, connectionWindowSize, initialWindowSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
     }
 
     @Override
@@ -185,6 +197,8 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
                 ", verifyHost=" + verifyHost +
                 ", chunkSize=" + chunkSize +
                 ", pipelining=" + pipelining +
+                ", connectionWindowSize=" + connectionWindowSize +
+                ", initialWindowSize=" + initialWindowSize +
                 ", maxConnections=" + maxConnections +
                 ", connectionTtl=" + connectionTtl +
                 ", keepAliveInterval=" + keepAliveInterval +

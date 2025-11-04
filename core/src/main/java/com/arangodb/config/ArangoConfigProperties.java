@@ -25,6 +25,8 @@ public interface ArangoConfigProperties {
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
     String KEY_PIPELINING = "pipelining";
+    String KEY_CONNECTION_WINDOW_SIZE = "connectionWindowSize";
+    String KEY_INITIAL_WINDOW_SIZE = "initialWindowSize";
     String KEY_MAX_CONNECTIONS = "maxConnections";
     String KEY_CONNECTION_TTL = "connectionTtl";
     String KEY_KEEP_ALIVE_INTERVAL = "keepAliveInterval";
@@ -127,6 +129,14 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Boolean> getPipelining() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getConnectionWindowSize() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getInitialWindowSize() {
         return Optional.empty();
     }
 

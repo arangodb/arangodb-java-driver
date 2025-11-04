@@ -563,6 +563,28 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
+         * Sets the size of the connection window for HTTP/2.
+         *
+         * @param connectionWindowSize size in bytes
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder connectionWindowSize(final Integer connectionWindowSize) {
+            config.setConnectionWindowSize(connectionWindowSize);
+            return this;
+        }
+
+        /**
+         * Sets the initial window size for HTTP/2 streams.
+         *
+         * @param initialWindowSize size in bytes
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder initialWindowSize(final Integer initialWindowSize) {
+            config.setInitialWindowSize(initialWindowSize);
+            return this;
+        }
+
+        /**
          * Sets the maximum number of connections the built in connection pool will open per host.
          *
          * <p>

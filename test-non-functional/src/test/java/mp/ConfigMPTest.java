@@ -27,6 +27,8 @@ class ConfigMPTest {
     private final Boolean verifyHost = false;
     private final Integer vstChunkSize = 1234;
     private final Boolean pipelining = true;
+    private final Integer connectionWindowSize = 987;
+    private final Integer initialWindowSize = 876;
     private final Integer maxConnections = 123;
     private final Long connectionTtl = 12345L;
     private final Integer keepAliveInterval = 123456;
@@ -66,6 +68,8 @@ class ConfigMPTest {
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
         assertThat(config.getChunkSize()).hasValue(vstChunkSize);
         assertThat(config.getPipelining()).hasValue(pipelining);
+        assertThat(config.getConnectionWindowSize()).hasValue(connectionWindowSize);
+        assertThat(config.getInitialWindowSize()).hasValue(initialWindowSize);
         assertThat(config.getMaxConnections())
                 .isPresent()
                 .hasValue(maxConnections);

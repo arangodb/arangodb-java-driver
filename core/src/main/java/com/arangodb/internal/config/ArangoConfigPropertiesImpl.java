@@ -140,6 +140,16 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<Integer> getConnectionWindowSize() {
+        return Optional.ofNullable(getProperty(KEY_CONNECTION_WINDOW_SIZE)).map(Integer::valueOf);
+    }
+
+    @Override
+    public Optional<Integer> getInitialWindowSize() {
+        return Optional.ofNullable(getProperty(KEY_INITIAL_WINDOW_SIZE)).map(Integer::valueOf);
+    }
+
+    @Override
     public Optional<Integer> getMaxConnections() {
         return Optional.ofNullable(getProperty(KEY_MAX_CONNECTIONS)).map(Integer::valueOf);
     }
