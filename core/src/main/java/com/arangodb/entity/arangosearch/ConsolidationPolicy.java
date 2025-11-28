@@ -141,4 +141,17 @@ public final class ConsolidationPolicy {
     public int hashCode() {
         return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor, minScore);
     }
+
+    @Override
+    public String toString() {
+        return "ConsolidationPolicy{" +
+                "type=" + type +
+                ", threshold=" + threshold +
+                ", segmentsMin=" + segmentsMin +
+                ", segmentsMax=" + segmentsMax +
+                ", segmentsBytesMax=" + segmentsBytesMax +
+                ", segmentsBytesFloor=" + segmentsBytesFloor +
+                ", minScore=" + minScore +
+                '}';
+    }
 }
