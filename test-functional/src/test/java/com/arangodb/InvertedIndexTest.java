@@ -80,6 +80,21 @@ public class InvertedIndexTest extends BaseJunit5 {
             );
         }
 
+        ConsolidationPolicy consolidationPolicy;
+        if (isAtLeastVersion(3, 12, 7)) {
+            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+                    .segmentsBytesMax(55555L)
+                    .maxSkewThreshold(0.3)
+                    .minDeletionRatio(0.4);
+        } else {
+            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+                    .segmentsMin(3L)
+                    .segmentsMax(44L)
+                    .segmentsBytesMax(55555L)
+                    .segmentsBytesFloor(666L)
+                    .minScore(77L);
+        }
+
         return new InvertedIndexOptions()
                 .name(rndName())
                 .inBackground(true)
@@ -103,13 +118,7 @@ public class InvertedIndexTest extends BaseJunit5 {
                 .consolidationIntervalMsec(11L)
                 .commitIntervalMsec(22L)
                 .cleanupIntervalStep(33L)
-                .consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.TIER)
-                        .segmentsMin(3L)
-                        .segmentsMax(44L)
-                        .segmentsBytesMax(55555L)
-                        .segmentsBytesFloor(666L)
-                        .minScore(77L)
-                )
+                .consolidationPolicy(consolidationPolicy)
                 .writebufferIdle(44L)
                 .writebufferActive(55L)
                 .writebufferSizeMax(66L)
@@ -147,7 +156,7 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
 
         if (isEnterprise() && isAtLeastVersion(3, 12)) {
-             assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
+            assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
         }
     }
 

@@ -34,6 +34,8 @@ public final class ConsolidationPolicy {
     private Long segmentsBytesMax;
     private Long segmentsBytesFloor;
     private Long minScore;
+    private Double maxSkewThreshold;
+    private Double minDeletionRatio;
 
     public static ConsolidationPolicy of(final ConsolidationType type) {
         return new ConsolidationPolicy().type(type);
@@ -69,7 +71,9 @@ public final class ConsolidationPolicy {
      * @param segmentsMin The minimum number of segments that will be evaluated as candidates for consolidation.
      *                    (default: 1)
      * @return this
+     * @deprecated from ArangoDB 3.12.7 onwards.
      */
+    @Deprecated
     public ConsolidationPolicy segmentsMin(final Long segmentsMin) {
         this.segmentsMin = segmentsMin;
         return this;
@@ -83,7 +87,9 @@ public final class ConsolidationPolicy {
      * @param segmentsMax The maximum number of segments that will be evaluated as candidates for consolidation.
      *                    (default: 10)
      * @return this
+     * @deprecated from ArangoDB 3.12.7 onwards.
      */
+    @Deprecated
     public ConsolidationPolicy segmentsMax(final Long segmentsMax) {
         this.segmentsMax = segmentsMax;
         return this;
@@ -110,7 +116,9 @@ public final class ConsolidationPolicy {
      * @param segmentsBytesFloor Defines the value (in bytes) to treat all smaller segments as equal for consolidation
      *                           selection. (default: 2097152)
      * @return this
+     * @deprecated from ArangoDB 3.12.7 onwards.
      */
+    @Deprecated
     public ConsolidationPolicy segmentsBytesFloor(final Long segmentsBytesFloor) {
         this.segmentsBytesFloor = segmentsBytesFloor;
         return this;
@@ -123,23 +131,55 @@ public final class ConsolidationPolicy {
     /**
      * @param minScore Filter out consolidation candidates with a score less than this. (default: 0)
      * @return this
+     * @deprecated from ArangoDB 3.12.7 onwards.
      */
+    @Deprecated
     public ConsolidationPolicy minScore(final Long minScore) {
         this.minScore = minScore;
         return this;
     }
 
+    public Double getMaxSkewThreshold() {
+        return maxSkewThreshold;
+    }
+
+    /**
+     * @param maxSkewThreshold The maximum allowed skew in segment sizes to allow consolidation.
+     *                         (default: 0.4)
+     * @return this
+     * @since ArangoDB 3.12.7
+     */
+    public ConsolidationPolicy maxSkewThreshold(final Double maxSkewThreshold) {
+        this.maxSkewThreshold = maxSkewThreshold;
+        return this;
+    }
+
+    public Double getMinDeletionRatio() {
+        return minDeletionRatio;
+    }
+
+    /**
+     * @param minDeletionRatio The minimum required percentage of total deleted documents in a
+     *                         segment (or a group of segments) to execute cleanup on those segments.
+     *                         (default: 0.5)
+     * @return this
+     * @since ArangoDB 3.12.7
+     */
+    public ConsolidationPolicy minDeletionRatio(final Double minDeletionRatio) {
+        this.minDeletionRatio = minDeletionRatio;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ConsolidationPolicy that = (ConsolidationPolicy) o;
-        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor) && Objects.equals(minScore, that.minScore);
+        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor) && Objects.equals(minScore, that.minScore) && Objects.equals(maxSkewThreshold, that.maxSkewThreshold) && Objects.equals(minDeletionRatio, that.minDeletionRatio);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor, minScore);
+        return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor, minScore, maxSkewThreshold, minDeletionRatio);
     }
 
     @Override
@@ -152,6 +192,8 @@ public final class ConsolidationPolicy {
                 ", segmentsBytesMax=" + segmentsBytesMax +
                 ", segmentsBytesFloor=" + segmentsBytesFloor +
                 ", minScore=" + minScore +
+                ", maxSkewThreshold=" + maxSkewThreshold +
+                ", minDeletionRatio=" + minDeletionRatio +
                 '}';
     }
 }
