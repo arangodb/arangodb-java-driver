@@ -161,6 +161,7 @@ class ArangoSearchTest extends BaseJunit5 {
         options.consolidationIntervalMsec(666666L);
         StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none);
         options.storedValues(storedValue);
+        options.consolidationPolicy(createConsolidationPolicy());
 
         final ArangoSearch view = db.arangoSearch(viewName);
         final ViewEntity info = view.create(options);
@@ -702,6 +703,7 @@ class ArangoSearchTest extends BaseJunit5 {
                 .primaryKeyCache(true);
         StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none, true);
         options.storedValues(storedValue);
+        options.consolidationPolicy(createConsolidationPolicy());
         String[] optimizeTopK = new String[]{"BM25(@doc) DESC", "TFIDF(@doc) DESC"};
         options.optimizeTopK(optimizeTopK);
 
@@ -1113,6 +1115,24 @@ class ArangoSearchTest extends BaseJunit5 {
         analyzer.setName(name);
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
+    }
+
+    private ConsolidationPolicy createConsolidationPolicy() {
+        ConsolidationPolicy consolidationPolicy;
+        if (isAtLeastVersion(3, 12, 7)) {
+            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+                    .segmentsBytesMax(55555L)
+                    .maxSkewThreshold(0.3)
+                    .minDeletionRatio(0.4);
+        } else {
+            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+                    .segmentsMin(3L)
+                    .segmentsMax(44L)
+                    .segmentsBytesMax(55555L)
+                    .segmentsBytesFloor(666L)
+                    .minScore(77L);
+        }
+        return consolidationPolicy;
     }
 
 }

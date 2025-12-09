@@ -71,7 +71,7 @@ public final class ConsolidationPolicy {
      * @param segmentsMin The minimum number of segments that will be evaluated as candidates for consolidation.
      *                    (default: 1)
      * @return this
-     * @deprecated from ArangoDB 3.12.7 onwards.
+     * @deprecated Removed from ArangoDB 3.12.7 onwards.
      */
     @Deprecated
     public ConsolidationPolicy segmentsMin(final Long segmentsMin) {
@@ -87,7 +87,7 @@ public final class ConsolidationPolicy {
      * @param segmentsMax The maximum number of segments that will be evaluated as candidates for consolidation.
      *                    (default: 10)
      * @return this
-     * @deprecated from ArangoDB 3.12.7 onwards.
+     * @deprecated Removed from ArangoDB 3.12.7 onwards.
      */
     @Deprecated
     public ConsolidationPolicy segmentsMax(final Long segmentsMax) {
@@ -116,7 +116,7 @@ public final class ConsolidationPolicy {
      * @param segmentsBytesFloor Defines the value (in bytes) to treat all smaller segments as equal for consolidation
      *                           selection. (default: 2097152)
      * @return this
-     * @deprecated from ArangoDB 3.12.7 onwards.
+     * @deprecated Removed from ArangoDB 3.12.7 onwards.
      */
     @Deprecated
     public ConsolidationPolicy segmentsBytesFloor(final Long segmentsBytesFloor) {
@@ -131,7 +131,7 @@ public final class ConsolidationPolicy {
     /**
      * @param minScore Filter out consolidation candidates with a score less than this. (default: 0)
      * @return this
-     * @deprecated from ArangoDB 3.12.7 onwards.
+     * @deprecated Removed from ArangoDB 3.12.7 onwards.
      */
     @Deprecated
     public ConsolidationPolicy minScore(final Long minScore) {
