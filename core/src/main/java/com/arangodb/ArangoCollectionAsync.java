@@ -184,7 +184,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoCollection#updateDocument(String, Object, DocumentUpdateOptions, Class)}
      */
     <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(String key, Object value, DocumentUpdateOptions options,
-                                               Class<T> returnType);
+                                                                  Class<T> returnType);
 
     /**
      * Asynchronous version of {@link ArangoCollection#updateDocuments(RawData)}
@@ -307,7 +307,7 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoCollection#ensureZKDIndex(Iterable, ZKDIndexOptions)}
      *
      * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} or
-     *             {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
+     * {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
      */
     @Deprecated
     CompletableFuture<IndexEntity> ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
@@ -326,6 +326,11 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoCollection#ensureInvertedIndex(InvertedIndexOptions)}
      */
     CompletableFuture<InvertedIndexEntity> ensureInvertedIndex(InvertedIndexOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoCollection#ensureVectorIndex(Iterable, VectorIndexOptions)}
+     */
+    CompletableFuture<IndexEntity> ensureVectorIndex(Iterable<String> fields, VectorIndexOptions options);
 
     /**
      * Asynchronous version of {@link ArangoCollection#getIndexes()}

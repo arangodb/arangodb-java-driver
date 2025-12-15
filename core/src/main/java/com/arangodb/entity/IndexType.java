@@ -72,5 +72,10 @@ public enum IndexType {
     /**
      * @since ArangoDB 3.10
      */
-    inverted
+    inverted,
+
+    /**
+     * @since ArangoDB 3.12
+     */
+    vector
 }

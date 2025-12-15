@@ -367,6 +367,11 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     }
 
     @Override
+    public CompletableFuture<IndexEntity> ensureVectorIndex(Iterable<String> fields, VectorIndexOptions options) {
+        return executorAsync().execute(() -> createVectorIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public CompletableFuture<IndexEntity> ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options) {
         return executorAsync().execute(() -> createGeoIndexRequest(fields, options), IndexEntity.class);
     }

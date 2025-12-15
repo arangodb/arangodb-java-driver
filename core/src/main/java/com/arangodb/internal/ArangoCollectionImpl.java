@@ -358,6 +358,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
     }
 
     @Override
+    public IndexEntity ensureVectorIndex(Iterable<String> fields, VectorIndexOptions options) {
+        return executorSync().execute(createVectorIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options) {
         return executorSync().execute(createGeoIndexRequest(fields, options), IndexEntity.class);
     }
