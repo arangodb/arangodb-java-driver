@@ -692,7 +692,7 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(tokens.getTokens())
                 .map(AccessToken::getId)
                 .contains(token.getId());
-        arangoDB.deleteAccessToken("root", token.getId());
+        arangoDB.deleteAccessToken("root", token.getId()).get();
         tokens = arangoDB.getAccessTokens("root").get();
         assertThat(tokens.getTokens())
                 .map(AccessToken::getId)
