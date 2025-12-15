@@ -6,6 +6,18 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.AccessToken",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AccessTokens",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.AqlExecutionExplainEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -919,6 +931,12 @@
   },
   {
     "name": "com.arangodb.model.AbstractMDIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AccessTokenCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true

@@ -25,6 +25,7 @@ import com.arangodb.model.*;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -195,5 +196,20 @@ public interface ArangoDBAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoDB#getQueryOptimizerRules()}
      */
     CompletableFuture<Collection<QueryOptimizerRule>> getQueryOptimizerRules();
+
+    /**
+     * Asynchronous version of {@link ArangoDB#createAccessToken(String, AccessTokenCreateOptions)}
+     */
+    CompletableFuture<AccessToken> createAccessToken(String user, AccessTokenCreateOptions options);
+
+    /**
+     * Asynchronous version of {@link ArangoDB#getAccessTokens(String)}
+     */
+    CompletableFuture<AccessTokens> getAccessTokens(String user);
+
+    /**
+     * Asynchronous version of {@link ArangoDB#deleteAccessToken(String, Long)}
+     */
+    CompletableFuture<Void> deleteAccessToken(String user, Long tokenId);
 
 }
