@@ -1964,16 +1964,19 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncCols")
-    void createAndGetVectorIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
+    private void cleanCollection(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         collection.getIndexes().get().stream()
                 .filter(i -> !IndexType.primary.equals(i.getType()))
                 .map(IndexEntity::getName)
                 .forEach(id -> collection.deleteIndex(id).join());
         collection.truncate().get();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void createAndGetVectorIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        cleanCollection(collection);
 
         String f1 = "vector_data";
         int dimension = 128;
@@ -2020,6 +2023,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 .usingRecursiveComparison()
                 .ignoringFields("isNewlyCreated")
                 .isEqualTo(created);
+        cleanCollection(collection);
     }
 
     @ParameterizedTest

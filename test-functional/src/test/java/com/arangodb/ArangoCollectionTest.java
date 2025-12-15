@@ -2017,16 +2017,19 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
-    @ParameterizedTest
-    @MethodSource("cols")
-    void createAndGetVectorIndex(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
+    private void cleanCollection(ArangoCollection collection) {
         collection.getIndexes().stream()
                 .filter(i -> !IndexType.primary.equals(i.getType()))
                 .map(IndexEntity::getName)
                 .forEach(collection::deleteIndex);
         collection.truncate();
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void createAndGetVectorIndex(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        cleanCollection(collection);
 
         String f1 = "vector_data";
         int dimension = 128;
@@ -2073,6 +2076,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .usingRecursiveComparison()
                 .ignoringFields("isNewlyCreated")
                 .isEqualTo(created);
+        cleanCollection(collection);
     }
 
     @ParameterizedTest
