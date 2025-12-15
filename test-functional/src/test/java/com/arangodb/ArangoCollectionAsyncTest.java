@@ -2019,10 +2019,15 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(created.getType()).isEqualTo(IndexType.vector);
 
         IndexEntity gotIdx = collection.getIndex(created.getId()).get();
-        assertThat(gotIdx)
-                .usingRecursiveComparison()
-                .ignoringFields("isNewlyCreated")
-                .isEqualTo(created);
+        assertThat(gotIdx).isNotNull();
+        assertThat(gotIdx.getFields()).containsExactly(f1);
+        assertThat(gotIdx.getName()).isEqualTo(name);
+        assertThat(gotIdx.getStoredValues()).containsExactlyInAnyOrder("v1", "v2");
+        assertThat(gotIdx.getSparse()).isTrue();
+        assertThat(gotIdx.getParams()).isEqualTo(params);
+        assertThat(gotIdx.getId()).startsWith(COLLECTION_NAME);
+        assertThat(gotIdx.getType()).isEqualTo(IndexType.vector);
+
         cleanCollection(collection);
     }
 
