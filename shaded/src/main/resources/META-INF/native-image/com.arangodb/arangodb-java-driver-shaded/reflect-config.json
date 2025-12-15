@@ -1,18 +1,882 @@
 [
   {
-    "name": "com.arangodb.internal.serde.InternalSerializers$FieldLinksSerializer",
+    "name": "com.arangodb.entity.AbstractBaseDocument",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.internal.serde.InternalSerializers$CollectionLinksSerializer",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.internal.serde.InternalSerializers$CollectionSchemaRuleSerializer",
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionCollection",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionExpression",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionNode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionPlan",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionVariable",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlFunctionEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlParseEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlParseEntity$AstNode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionCollection",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionNode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionPlan",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionStats",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionVariable",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ArangoDBEngine",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ArangoDBEngine$StorageEngineName",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ArangoDBVersion",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.BaseDocument",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.BaseEdgeDocument",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionRevisionEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionStatus",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CursorEntity$Extras",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CursorStats",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CursorWarning",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DatabaseEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DocumentCreateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DocumentDeleteEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DocumentEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DocumentImportEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.DocumentUpdateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.EdgeDefinition",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.EdgeDefinition$Options",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.EdgeEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.EdgeUpdateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ErrorEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.GraphEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.IndexEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.IndexType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexField",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexPrimarySort",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexPrimarySort$Field",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.InvertedIndexPrimarySort$Field$Direction",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.KeyOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.KeyType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.License",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LoadBalancingStrategy",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LogEntriesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LogEntriesEntity$Message",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LogLevel",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LogLevelEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.LogLevelEntity$LogLevel",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.MultiDocumentEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.Permissions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryCachePropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryCachePropertiesEntity$CacheMode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryExecutionState",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryOptimizerRule",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryOptimizerRule$Flags",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.QueryTrackingPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ReplicationFactor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ReplicationFactor$NumericReplicationFactor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ReplicationFactor$SatelliteReplicationFactor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ServerMode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ServerRole",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ShardEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ShardingStrategy",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.StreamTransactionEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.StreamTransactionStatus",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.TransactionEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.UserEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.VectorIndexParams",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.VectorIndexParams$Metric",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.VertexEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.VertexUpdateEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ViewEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.ViewType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.AnalyzerFeature",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.AnalyzerType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.ArangoSearchCompression",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.CollectionLink",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.FieldLink",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.PrimarySort",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.PrimarySort$Direction",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.SearchAliasPropertiesEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.StoreValuesType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.StoredValue",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties$ReturnType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.EdgeNgram",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties$GeoJSONAnalyzerType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2Analyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2Format",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties$BreakMode",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.StreamType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzerProperties",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -36,1075 +900,61 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.ViewEntity",
+    "name": "com.arangodb.internal.serde.InternalSerializers$CollectionLinksSerializer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.BaseDocument",
+    "name": "com.arangodb.internal.serde.InternalSerializers$CollectionSchemaRuleSerializer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.entity.CollectionEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ReplicationFactor",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AbstractBaseDocument",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DocumentEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasPropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.BaseEdgeDocument",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ServerRole",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ReplicationFactor$SatelliteReplicationFactor",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties$BreakMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.AnalyzerFeature",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ArangoDBEngine$StorageEngineName",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.StreamTransactionStatus",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryExecutionState",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogLevel",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryCachePropertiesEntity$CacheMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogLevelEntity$LogLevel",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.StoreValuesType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LoadBalancingStrategy",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexPrimarySort$Field$Direction",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.IndexType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ArangoSearchCompression",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.License",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionStatus",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties$ReturnType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StreamType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.KeyType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2Format",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ViewType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ServerMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.AnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties$GeoJSONAnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ShardingStrategy",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.Permissions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionRevisionEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionPropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryOptimizerRule",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexPrimarySort$Field",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.IndexEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlParseEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.EdgeDefinition",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.MultiDocumentEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionStats",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionVariable",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryCachePropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorStats",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.GraphEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlFunctionEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DatabaseEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.PrimarySort",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.EdgeNgram",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionNode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionVariable",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.TransactionEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ArangoDBEngine",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.UserEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ErrorEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionStats",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.FieldLink",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionNode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlParseEntity$AstNode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ShardEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryOptimizerRule$Flags",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionCollection",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ReplicationFactor$NumericReplicationFactor",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.EdgeDefinition$Options",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ArangoDBVersion",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionPlan",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlQueryExplainEntity$ExecutionCollection",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.KeyOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionPlan",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogLevelEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorWarning",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.StreamTransactionEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogEntriesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.CollectionLink",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.StoredValue",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DocumentImportEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzerProperties",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexPrimarySort",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryTrackingPropertiesEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CursorEntity$Extras",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogEntriesEntity$Message",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexField",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.AqlExecutionExplainEntity$ExecutionExpression",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.EdgeUpdateEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DocumentCreateEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.VertexUpdateEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DocumentDeleteEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.VertexEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.DocumentUpdateEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.EdgeEntity",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MultiDelimiterAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.WildcardAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2Analyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NearestNeighborsAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.MinHashAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.ClassificationAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StemAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NormAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.CollationAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.TextAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ServerRole",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ReplicationFactor$SatelliteReplicationFactor",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SegmentationAnalyzerProperties$BreakMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.AnalyzerFeature",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ArangoDBEngine$StorageEngineName",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.SearchAliasIndex$OperationType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.StreamTransactionStatus",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryExecutionState",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogLevel",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.QueryCachePropertiesEntity$CacheMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LogLevelEntity$LogLevel",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.StoreValuesType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.LoadBalancingStrategy",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.InvertedIndexPrimarySort$Field$Direction",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.IndexType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ArangoSearchCompression",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.License",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionStatus",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties$ReturnType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.StreamType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.CollectionType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.KeyType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2Format",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ViewType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ServerMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.AnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties$GeoJSONAnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.ShardingStrategy",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.ConsolidationType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.arangosearch.analyzer.GeoS2AnalyzerProperties$GeoS2AnalyzerType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.entity.Permissions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.TransactionalOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.IndexOptions",
+    "name": "com.arangodb.internal.serde.InternalSerializers$FieldLinksSerializer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
     "name": "com.arangodb.model.AbstractMDIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlFunctionCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlFunctionDeleteOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlFunctionGetOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryExplainOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryExplainOptions$Optimizer",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.AqlQueryExplainOptions$Options",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1128,55 +978,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentImportOptions$OnDuplicate",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.MDIFieldValueTypes",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.OverwriteMode",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ImportType",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.LogOptions$SortOrder",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ComputedValue$ComputeOn",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.CollectionSchema$Level",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ZKDIndexOptions$FieldValueTypes",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentReadOptions",
+    "name": "com.arangodb.model.AqlQueryParseOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1188,283 +990,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeReplaceOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexReplaceOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentUpdateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.GraphDocumentReadOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeUpdateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexUpdateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentExistsOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentReplaceOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.CollectionTruncateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexCollectionDropOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.LogLevelOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DBCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.AqlFunctionDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.arangosearch.AnalyzerDeleteOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.StreamTransactionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.UserUpdateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DatabaseUsersOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ViewRenameOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.arangosearch.SearchAliasPropertiesOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeCollectionDropOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
     "name": "com.arangodb.model.CollectionCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.AqlQueryExplainOptions$Options",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ViewCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexCollectionCreateOptions$Options",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.AqlQueryParseOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.UserAccessOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ComputedValue",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.EdgeCollectionRemoveOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.VertexCollectionCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.GraphCreateOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.CollectionsReadOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.TransactionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.DocumentImportOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.CollectionSchema",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.OptionsBuilder",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.TransactionCollectionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.ReplaceEdgeDefinitionOptions",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.LogOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1476,7 +1002,49 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.UserCreateOptions",
+    "name": "com.arangodb.model.CollectionRenameOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionSchema",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionSchema$Level",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionTruncateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionsReadOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ComputedValue",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ComputedValue$ComputeOn",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.DBCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1488,55 +1056,91 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.VertexCollectionRemoveOptions",
+    "name": "com.arangodb.model.DatabaseUsersOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.GraphCreateOptions$SmartOptions",
+    "name": "com.arangodb.model.DocumentCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.arangosearch.SearchAliasOptionsBuilder",
+    "name": "com.arangodb.model.DocumentDeleteOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionRenameOptions",
+    "name": "com.arangodb.model.DocumentExistsOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.arangosearch.SearchAliasCreateOptions",
+    "name": "com.arangodb.model.DocumentImportOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlFunctionGetOptions",
+    "name": "com.arangodb.model.DocumentImportOptions$OnDuplicate",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlFunctionCreateOptions",
+    "name": "com.arangodb.model.DocumentReadOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlQueryExplainOptions$Optimizer",
+    "name": "com.arangodb.model.DocumentReplaceOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.AqlQueryExplainOptions",
+    "name": "com.arangodb.model.DocumentUpdateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeCollectionDropOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeCollectionRemoveOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeDeleteOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeReplaceOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.EdgeUpdateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1548,7 +1152,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.QueueTimeSample",
+    "name": "com.arangodb.model.FulltextIndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1560,19 +1164,31 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.TtlIndexOptions",
+    "name": "com.arangodb.model.GraphCreateOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.FulltextIndexOptions",
+    "name": "com.arangodb.model.GraphCreateOptions$SmartOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.ZKDIndexOptions",
+    "name": "com.arangodb.model.GraphDocumentReadOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ImportType",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.IndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1584,7 +1200,25 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.PersistentIndexOptions",
+    "name": "com.arangodb.model.LogLevelOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.LogOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.LogOptions$SortOrder",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.MDIFieldValueTypes",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1602,13 +1236,7 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.DocumentImportOptions$OnDuplicate",
-    "allDeclaredFields": true,
-    "allDeclaredMethods": true,
-    "allDeclaredConstructors": true
-  },
-  {
-    "name": "com.arangodb.model.MDIFieldValueTypes",
+    "name": "com.arangodb.model.OptionsBuilder",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
@@ -1620,31 +1248,187 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.ImportType",
+    "name": "com.arangodb.model.PersistentIndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.LogOptions$SortOrder",
+    "name": "com.arangodb.model.QueueTimeSample",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.ComputedValue$ComputeOn",
+    "name": "com.arangodb.model.ReplaceEdgeDefinitionOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
-    "name": "com.arangodb.model.CollectionSchema$Level",
+    "name": "com.arangodb.model.StreamTransactionOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.TransactionCollectionOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.TransactionOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.TransactionalOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.TtlIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.UserAccessOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.UserCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.UserUpdateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VectorIndexOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionCreateOptions$Options",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionDropOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCollectionRemoveOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexDeleteOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexReplaceOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.VertexUpdateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ViewCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ViewRenameOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.ZKDIndexOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
   },
   {
     "name": "com.arangodb.model.ZKDIndexOptions$FieldValueTypes",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.AnalyzerDeleteOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.ArangoSearchCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.SearchAliasCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.SearchAliasOptionsBuilder",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.arangosearch.SearchAliasPropertiesOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
