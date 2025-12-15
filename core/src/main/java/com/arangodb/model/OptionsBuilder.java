@@ -45,6 +45,10 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
+    public static VectorIndexOptions build(final VectorIndexOptions options, final Iterable<String> fields) {
+        return options.fields(fields);
+    }
+
     public static GeoIndexOptions build(final GeoIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }

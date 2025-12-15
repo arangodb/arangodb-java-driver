@@ -66,7 +66,8 @@ docker run -d \
     --starter.address="${GW}" \
     --docker.image="${DOCKER_IMAGE}" \
     --starter.local --starter.mode=${STARTER_MODE} --all.log.level=debug --all.log.output=+ --log.verbose \
-    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true --all.server.maximal-threads=128
+    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true --all.server.maximal-threads=128 \
+    --all.experimental-vector-index=true
 
 
 wait_server() {

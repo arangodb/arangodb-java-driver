@@ -1966,6 +1966,64 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
+    void createAndGetVectorIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+
+        collection.getIndexes().get().stream()
+                .filter(i -> !IndexType.primary.equals(i.getType()))
+                .map(IndexEntity::getName)
+                .forEach(id -> collection.deleteIndex(id).join());
+        collection.truncate().get();
+
+        String f1 = "vector_data";
+        int dimension = 128;
+
+        List<BaseDocument> seed = IntStream.range(0, 10).mapToObj(i -> {
+            BaseDocument d = new BaseDocument();
+            List<Double> vec = new ArrayList<>(dimension);
+            for (int k = 0; k < dimension; k++) {
+                vec.add((double) k);
+            }
+            d.addAttribute(f1, vec);
+            return d;
+        }).collect(Collectors.toList());
+        collection.insertDocuments(seed).get();
+
+        String name = "vectorIndex";
+        VectorIndexParams params = new VectorIndexParams()
+                .metric(VectorIndexParams.Metric.cosine)
+                .dimension(dimension)
+                .nLists(10)
+                .factory("IVF10_HNSW5,Flat")
+                .defaultNProbe(2)
+                .trainingIterations(10);
+        Collection<String> fields = Collections.singletonList(f1);
+        IndexEntity created = collection.ensureVectorIndex(fields, new VectorIndexOptions()
+                .name(name)
+                .parallelism(2)
+                .storedValues("v1", "v2")
+                .sparse(true)
+                .params(params)
+        ).get();
+        assertThat(created).isNotNull();
+        assertThat(created.getFields()).containsExactly(f1);
+        assertThat(created.getName()).isEqualTo(name);
+        assertThat(created.getStoredValues()).containsExactlyInAnyOrder("v1", "v2");
+        assertThat(created.getSparse()).isTrue();
+        assertThat(created.getParams()).isEqualTo(params);
+        assertThat(created.getId()).startsWith(COLLECTION_NAME);
+        assertThat(created.getIsNewlyCreated()).isTrue();
+        assertThat(created.getType()).isEqualTo(IndexType.vector);
+
+        IndexEntity gotIdx = collection.getIndex(created.getId()).get();
+        assertThat(gotIdx)
+                .usingRecursiveComparison()
+                .ignoringFields("isNewlyCreated")
+                .isEqualTo(created);
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
     void createZKDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate().get();
