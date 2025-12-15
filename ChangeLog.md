@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.24.0] - 2025-12-15
+
+- added support to access tokens (#620, DE-1101)
+- added support to vector indexes (#619, DE-1032)
+- changed `ConsolidationPolicy` to support ArangoDB version `3.12.7`
+
 ## [7.23.0] - 2025-11-04
 
 - increased default HTTP/2 window size (#616, DE-1080)
