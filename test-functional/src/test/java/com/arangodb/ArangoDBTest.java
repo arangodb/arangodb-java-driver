@@ -39,6 +39,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -667,6 +669,64 @@ class ArangoDBTest extends BaseJunit5 {
             assertThat(flags.getDisabledByDefault()).isNotNull();
             assertThat(flags.getEnterpriseOnly()).isNotNull();
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void createAccessToken(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        doCreateAccessToken(arangoDB);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void getAccessTokens(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        AccessToken token = doCreateAccessToken(arangoDB);
+        AccessTokens tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens).isNotNull();
+        assertThat(tokens.getTokens()).anySatisfy(t -> {
+            assertThat(t.getId()).isEqualTo(token.getId());
+            assertThat(t.getName()).isEqualTo(token.getName());
+            assertThat(t.getValidUntil()).isEqualTo(token.getValidUntil());
+            assertThat(t.getActive()).isEqualTo(token.getActive());
+            assertThat(t.getCreatedAt()).isEqualTo(token.getCreatedAt());
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void deleteAccessToken(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        AccessToken token = doCreateAccessToken(arangoDB);
+        AccessTokens tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens.getTokens())
+                .map(AccessToken::getId)
+                .contains(token.getId());
+        arangoDB.deleteAccessToken("root", token.getId());
+        tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens.getTokens())
+                .map(AccessToken::getId)
+                .doesNotContain(token.getId());
+    }
+
+    private AccessToken doCreateAccessToken(ArangoDB arangoDB) {
+        String name = "foo-" + UUID.randomUUID();
+        long validUntil = LocalDateTime.now()
+                .plusDays(1)
+                .atZone(ZoneId.systemDefault())
+                .toEpochSecond();
+        AccessToken token = arangoDB.createAccessToken("root", new AccessTokenCreateOptions()
+                .name(name)
+                .validUntil(validUntil)
+        );
+        assertThat(token.getActive()).isTrue();
+        assertThat(token.getCreatedAt()).isGreaterThan(0);
+        assertThat(token.getFingerprint()).isNotNull();
+        assertThat(token.getId()).isNotNull();
+        assertThat(token.getName()).isEqualTo(name);
+        assertThat(token.getValidUntil()).isEqualTo(validUntil);
+        return token;
     }
 
     @ParameterizedTest

@@ -199,4 +199,19 @@ public class ArangoDBAsyncImpl extends InternalArangoDB implements ArangoDBAsync
         return executorAsync().execute(this::getQueryOptimizerRulesRequest, SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
+    @Override
+    public CompletableFuture<AccessToken> createAccessToken(String user, AccessTokenCreateOptions options) {
+        return executorAsync().execute(() -> createAccessTokenRequest(user, options), AccessToken.class);
+    }
+
+    @Override
+    public CompletableFuture<AccessTokens> getAccessTokens(String user) {
+        return executorAsync().execute(() -> getAccessTokensRequest(user), AccessTokens.class);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteAccessToken(String user, Long tokenId) {
+        return executorAsync().execute(() -> deleteAccessTokenRequest(user, tokenId), Void.class);
+    }
+
 }

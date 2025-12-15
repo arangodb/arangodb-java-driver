@@ -370,6 +370,45 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     Collection<QueryOptimizerRule> getQueryOptimizerRules();
 
     /**
+     * Create a new access token for the given user.
+     * The response includes the actual access token string that you need to store in a secure manner. It is only shown
+     * once.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * create an access token for a different user. You can always create an access token for yourself, regardless of
+     * database access levels.
+     *
+     * @param user    The name of the user.
+     * @param options options
+     * @return the created token
+     * @since ArangoDB 3.12
+     */
+    AccessToken createAccessToken(String user, AccessTokenCreateOptions options);
+
+    /**
+     * List the access tokens for a given user.
+     * This only returns the access token metadata. The actual access token strings are only shown when creating tokens.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * list the access tokens for a different user. You can always list your own access tokens, regardless of database
+     * access levels.
+     *
+     * @return the tokens
+     * @since ArangoDB 3.12
+     */
+    AccessTokens getAccessTokens(String user);
+
+    /**
+     * Delete an access token with the specified identifier for the given user.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * delete an access token for a different user. You can always delete your own access tokens, regardless of
+     * database access levels.
+     *
+     * @param user    The name of the user.
+     * @param tokenId The identifier of the access token.
+     * @since ArangoDB 3.12
+     */
+    void deleteAccessToken(String user, Long tokenId);
+
+    /**
      * Builder class to build an instance of {@link ArangoDB}.
      *
      * @author Mark Vollmary
