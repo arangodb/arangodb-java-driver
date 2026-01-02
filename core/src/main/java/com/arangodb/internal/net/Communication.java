@@ -51,8 +51,7 @@ public abstract class Communication implements Closeable {
     private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount) {
         long reqId = reqCount.getAndIncrement();
         return host.connection().thenCompose(c ->
-                doExecuteAsync(request, hostHandle, host, attemptCount, c, reqId)
-                        .whenComplete((r, t) -> c.release()));
+                doExecuteAsync(request, hostHandle, host, attemptCount, c, reqId));
     }
 
     private CompletableFuture<InternalResponse> doExecuteAsync(
@@ -65,12 +64,14 @@ public abstract class Communication implements Closeable {
         try {
             connect(connection);
         } catch (IOException e) {
+            connection.release();
             handleException(true, e, hostHandle, request, host, reqId, attemptCount, rfuture);
             return rfuture;
         }
 
         connection.executeAsync(request)
                 .whenComplete((response, e) -> {
+                    connection.release();
                     try {
                         if (e instanceof SocketTimeoutException) {
                             // SocketTimeoutException exceptions are wrapped and rethrown.
