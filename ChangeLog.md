@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- fixed release connection in case of exceptions
+
 ## [7.24.0] - 2025-12-15
 
 - added support to access tokens (#620, DE-1101)
