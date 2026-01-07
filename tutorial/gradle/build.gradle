@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.arangodb:arangodb-java-driver:7.24.1'
+    implementation 'com.arangodb:arangodb-java-driver:7.24.2'
 }
 
 ext {

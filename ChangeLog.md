@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.24.2] - 2026-01-05
+
+- removed maven build cache
+
 ## [7.24.1] - 2026-01-02
 
 - fixed release connection in case of exceptions

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UserAgentTest extends BaseJunit5 {
 
-    private static final String EXPECTED_VERSION = "7.24.1";
+    private static final String EXPECTED_VERSION = "7.24.2";
 
     private static final boolean SHADED = Boolean.parseBoolean(System.getProperty("shaded"));
 
