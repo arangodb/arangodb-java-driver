@@ -30,7 +30,7 @@ import java.util.Objects;
  * extracting word stems, applying case conversion and accent removal.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#text">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#text">API Documentation</a>
  */
 public final class TextAnalyzer extends SearchAnalyzer {
     private TextAnalyzerProperties properties;

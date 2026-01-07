@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Shortest Path in AQL
  *
  * @author a-brandt
- * @see <a href="https://docs.arangodb.com/stable/aql/graphs/shortest-path/">Shortest Path in AQL</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/aql/graph-queries/shortest-path/">Shortest Path in AQL</a>
  */
 class ShortestPathInAQLExampleTest extends BaseGraphTest {
 

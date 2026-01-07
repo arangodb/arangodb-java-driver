@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @author Heiko Kernbach
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/">Collection API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/">Collection API Documentation</a>
  */
 @ThreadSafe
 public interface ArangoCollection extends ArangoSerdeAccessor {
@@ -58,7 +58,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param value A representation of a single document (POJO or {@link com.arangodb.util.RawData}
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-a-document">API
      * Documentation</a>
      */
     DocumentCreateEntity<Void> insertDocument(Object value);
@@ -70,7 +70,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-a-document">API
      * Documentation</a>
      */
     <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options);
@@ -83,7 +83,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-a-document">API
      * Documentation</a>
      */
     <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options, Class<T> type);
@@ -94,7 +94,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values Raw data representing a collection of documents
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(RawData values);
@@ -106,7 +106,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentCreateEntity<RawData>> insertDocuments(
@@ -118,7 +118,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(Iterable<?> values);
@@ -130,7 +130,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentCreateEntity<Void>> insertDocuments(
@@ -144,7 +144,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#create-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#create-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
@@ -155,7 +155,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the import
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/import/#import-json-data-as-documents">API
      * Documentation</a>
      */
     DocumentImportEntity importDocuments(Iterable<?> values);
@@ -166,7 +166,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return information about the import
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/import/#import-json-data-as-documents">API
      * Documentation</a>
      */
     DocumentImportEntity importDocuments(Iterable<?> values, DocumentImportOptions options);
@@ -176,7 +176,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values Raw data representing a collection of documents
      * @return information about the import
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/import/#import-json-data-as-documents">API
      * Documentation</a>
      */
     DocumentImportEntity importDocuments(RawData values);
@@ -187,7 +187,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  Raw data representing a collection of documents
      * @param options Additional options, can be null
      * @return information about the import
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/import/#import-json-data-as-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/import/#import-json-data-as-documents">API
      * Documentation</a>
      */
     DocumentImportEntity importDocuments(RawData values, DocumentImportOptions options);
@@ -198,7 +198,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key  The key of the document
      * @param type The type of the document (POJO or {@link com.arangodb.util.RawData})
      * @return the document identified by the key
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#get-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-a-document">API
      * Documentation</a>
      */
     <T> T getDocument(String key, Class<T> type);
@@ -210,7 +210,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    The type of the document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the document identified by the key
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#get-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-a-document">API
      * Documentation</a>
      */
     <T> T getDocument(String key, Class<T> type, DocumentReadOptions options);
@@ -221,7 +221,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param keys The keys of the documents
      * @param type The type of the documents (POJO or {@link com.arangodb.util.RawData})
      * @return the documents and possible errors
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#get-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<T> getDocuments(Iterable<String> keys, Class<T> type);
@@ -233,7 +233,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    The type of the documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the documents and possible errors
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#get-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<T> getDocuments(Iterable<String> keys, Class<T> type, DocumentReadOptions options);
@@ -245,7 +245,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO or {@link com.arangodb.util.RawData})
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-a-document">API
      * Documentation</a>
      */
     DocumentUpdateEntity<Void> replaceDocument(String key, Object value);
@@ -258,7 +258,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-a-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options);
@@ -272,7 +272,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-a-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options, Class<T> type);
@@ -283,7 +283,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values Raw data representing a collection of documents
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(RawData values);
@@ -295,7 +295,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<RawData>> replaceDocuments(
@@ -307,7 +307,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(Iterable<?> values);
@@ -319,7 +319,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A List of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> replaceDocuments(
@@ -333,7 +333,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @param type    Deserialization target type for the returned documents.
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#replace-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#replace-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
@@ -347,7 +347,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO or {@link com.arangodb.util.RawData})
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-a-document">API
      * Documentation</a>
      */
     DocumentUpdateEntity<Void> updateDocument(String key, Object value);
@@ -361,7 +361,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value   A representation of a single document (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-a-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> updateDocument(String key, T value, DocumentUpdateOptions options);
@@ -376,7 +376,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-a-document">API
      * Documentation</a>
      */
     <T> DocumentUpdateEntity<T> updateDocument(String key, Object value, DocumentUpdateOptions options,
@@ -390,7 +390,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values Raw data representing a collection of documents
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(RawData values);
@@ -404,7 +404,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  Raw data representing a collection of documents
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<RawData>> updateDocuments(
@@ -418,7 +418,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param values A list of documents (POJO or {@link com.arangodb.util.RawData})
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(Iterable<?> values);
@@ -432,7 +432,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values  A list of documents (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentUpdateEntity<Void>> updateDocuments(
@@ -448,7 +448,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options    Additional options
      * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#update-multiple-documents">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#update-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
@@ -459,7 +459,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param key The key of the document
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#remove-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-a-document">API
      * Documentation</a>
      */
     DocumentDeleteEntity<Void> deleteDocument(String key);
@@ -470,7 +470,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key     The key of the document
      * @param options Additional options
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#remove-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-a-document">API
      * Documentation</a>
      */
     DocumentDeleteEntity<Void> deleteDocument(String key, DocumentDeleteOptions options);
@@ -482,7 +482,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param type    Deserialization target type for the returned documents.
      * @param options Additional options
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/documents/#remove-a-document">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-a-document">API
      * Documentation</a>
      */
     <T> DocumentDeleteEntity<T> deleteDocument(String key, DocumentDeleteOptions options, Class<T> type);
@@ -493,7 +493,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values Raw data representing the keys of the documents or the documents themselves
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#remove-multiple-documents">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(RawData values);
@@ -505,7 +505,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#remove-multiple-documents">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentDeleteEntity<RawData>> deleteDocuments(
@@ -517,7 +517,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param values The keys of the documents or the documents themselves
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#remove-multiple-documents">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Iterable<?> values);
@@ -529,7 +529,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#remove-multiple-documents">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-multiple-documents">API
      * Documentation</a>
      */
     MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(
@@ -543,7 +543,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#remove-multiple-documents">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#remove-multiple-documents">API
      * Documentation</a>
      */
     <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
@@ -555,7 +555,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param key The key of the document
      * @return true if the document was found, otherwise false
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#get-a-document-header">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-a-document-header">API
      * Documentation</a>
      */
     Boolean documentExists(String key);
@@ -567,7 +567,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return true if the document was found, otherwise false
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/documents/#get-a-document-header">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#get-a-document-header">API
      * Documentation</a>
      */
     Boolean documentExists(String key, DocumentExistsOptions options);
@@ -580,7 +580,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
      */
     IndexEntity getIndex(String id);
 
@@ -589,7 +589,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
      * @since ArangoDB 3.10
      */
     InvertedIndexEntity getInvertedIndex(String id);
@@ -599,7 +599,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return the id of the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/#delete-an-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#delete-an-index">API Documentation</a>
      */
     String deleteIndex(String id);
 
@@ -609,7 +609,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/persistent/#create-a-persistent-index">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/persistent/#create-a-persistent-index">API
      * Documentation</a>
      */
     IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options);
@@ -620,7 +620,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/geo-spatial/#create-a-geo-spatial-index">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/geo-spatial/#create-a-geo-spatial-index">API
      * Documentation</a>
      */
     IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options);
@@ -631,7 +631,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/fulltext/#create-a-full-text-index">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/fulltext/#create-a-full-text-index">API
      * Documentation</a>
      * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
      */
@@ -644,7 +644,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/ttl/#create-a-ttl-index">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/ttl/#create-a-ttl-index">API
      * Documentation</a>
      */
     IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options);
@@ -656,7 +656,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
      * @since ArangoDB 3.9
      * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} or
      * {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
@@ -670,7 +670,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute names used for each dimension
      * @param options Additional options, can be null.
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
      * @since ArangoDB 3.12
      */
     IndexEntity ensureMDIndex(Iterable<String> fields, MDIndexOptions options);
@@ -681,7 +681,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param fields  A list of attribute names used for each dimension
      * @param options Additional options, cannot be null.
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
      * @since ArangoDB 3.12
      */
     IndexEntity ensureMDPrefixedIndex(Iterable<String> fields, MDPrefixedIndexOptions options);
@@ -691,7 +691,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param options index creation options
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/inverted/#create-an-inverted-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/inverted/#create-an-inverted-index">API Documentation</a>
      * @since ArangoDB 3.10
      */
     InvertedIndexEntity ensureInvertedIndex(InvertedIndexOptions options);
@@ -717,7 +717,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return information about the indexes
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/indexes/#list-all-indexes-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#list-all-indexes-of-a-collection">API
      * Documentation</a>
      */
     Collection<IndexEntity> getIndexes();
@@ -727,7 +727,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return information about the indexes
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/indexes/#list-all-indexes-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#list-all-indexes-of-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
@@ -738,7 +738,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return true if the collection exists, otherwise false
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-collection-information">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-collection-information">API
      * Documentation</a>
      */
     boolean exists();
@@ -747,7 +747,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Removes all documents from the collection, but leaves the indexes intact
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#truncate-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#truncate-a-collection">API
      * Documentation</a>
      */
     CollectionEntity truncate();
@@ -757,7 +757,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param options
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#truncate-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#truncate-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -768,7 +768,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return information about the collection, including the number of documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-document-count-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-document-count-of-a-collection">API
      * Documentation</a>
      */
     CollectionPropertiesEntity count();
@@ -779,7 +779,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options
      * @return information about the collection, including the number of documents
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-document-count-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-document-count-of-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -789,7 +789,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Creates a collection for this collection's name, then returns collection information from the server.
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#create-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#create-a-collection">API
      * Documentation</a>
      */
     CollectionEntity create();
@@ -800,7 +800,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#create-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#create-a-collection">API
      * Documentation</a>
      */
     CollectionEntity create(CollectionCreateOptions options);
@@ -808,7 +808,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     /**
      * Deletes the collection from the database.
      *
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#drop-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#drop-a-collection">API
      * Documentation</a>
      */
     void drop();
@@ -819,7 +819,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param isSystem Whether or not the collection to drop is a system collection. This parameter must be set to
      *                 true in
      *                 order to drop a system collection.
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#drop-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#drop-a-collection">API
      * Documentation</a>
      * @since ArangoDB 3.1.0
      */
@@ -830,7 +830,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return information about the collection
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-collection-information">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-collection-information">API
      * Documentation</a>
      */
     CollectionEntity getInfo();
@@ -840,7 +840,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @return properties of the collection
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-properties-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-properties-of-a-collection">API
      * Documentation</a>
      */
     CollectionPropertiesEntity getProperties();
@@ -851,7 +851,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return properties of the collection
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/collections/#change-the-properties-of-a-collection">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#change-the-properties-of-a-collection">API
      * Documentation</a>
      */
     CollectionPropertiesEntity changeProperties(CollectionPropertiesOptions options);
@@ -861,7 +861,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param newName The new name
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#rename-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#rename-a-collection">API
      * Documentation</a>
      */
     CollectionEntity rename(String newName);
@@ -873,7 +873,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param value A projection of the document containing at least the shard key (_key or a custom attribute) for
      *              which the responsible shard should be determined
      * @return information about the responsible shard
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-responsible-shard-for-a-document">
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-responsible-shard-for-a-document">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -883,7 +883,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Retrieve the collections revision
      *
      * @return information about the collection, including the collections revision
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#get-the-collection-revision-id">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-collection-revision-id">API
      * Documentation</a>
      */
     CollectionRevisionEntity getRevision();
@@ -895,7 +895,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @param user        The name of the user
      * @param permissions The permissions the user grant
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-collection-access-level"> API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-collection-access-level"> API
      * Documentation</a>
      */
     void grantAccess(String user, Permissions permissions);
@@ -906,7 +906,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-collection-access-level"> API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-collection-access-level"> API
      * Documentation</a>
      */
     void revokeAccess(String user);
@@ -916,7 +916,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/users/#clear-a-users-collection-access-level"> API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#clear-a-users-collection-access-level"> API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -927,7 +927,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @return permissions of the user
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#get-a-users-collection-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#get-a-users-collection-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */

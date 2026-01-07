@@ -34,7 +34,7 @@ import java.util.Objects;
  * precision, and query performance.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#geo_s2">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#geo_s2">API Documentation</a>
  * @since ArangoDB 3.10.5
  */
 public final class GeoS2Analyzer extends SearchAnalyzer {

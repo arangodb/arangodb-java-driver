@@ -62,9 +62,9 @@ public final class DocumentReadOptions extends TransactionalOptions<DocumentRead
     }
 
     /**
-     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @param allowDirtyRead Set to {@code true} to allow reading from follower shards in a cluster setup.
      * @return options
-     * @see <a href="https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#read-from-followers">API
      * Documentation</a>
      * @since ArangoDB 3.4.0
      */

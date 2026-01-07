@@ -31,7 +31,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * Interface for operations on ArangoDB view level for ArangoSearch views.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/">View API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
 @ThreadSafe
@@ -41,7 +41,7 @@ public interface ArangoSearch extends ArangoView {
      * Creates a view, then returns view information from the server.
      *
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
      * Documentation</a>
      */
     ViewEntity create();
@@ -51,7 +51,7 @@ public interface ArangoSearch extends ArangoView {
      *
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
      * Documentation</a>
      */
     ViewEntity create(ArangoSearchCreateOptions options);
@@ -60,7 +60,7 @@ public interface ArangoSearch extends ArangoView {
      * Reads the properties of the specified view.
      *
      * @return properties of the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#get-the-properties-of-a-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#get-the-properties-of-a-view">API
      * Documentation</a>
      */
     ArangoSearchPropertiesEntity getProperties();
@@ -71,7 +71,7 @@ public interface ArangoSearch extends ArangoView {
      * @param options properties to change
      * @return properties of the view
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#update-the-properties-of-an-arangosearch-view">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#update-the-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
     ArangoSearchPropertiesEntity updateProperties(ArangoSearchPropertiesOptions options);
@@ -82,7 +82,7 @@ public interface ArangoSearch extends ArangoView {
      * @param options properties to change
      * @return properties of the view
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#replace-the-properties-of-an-arangosearch-view">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#replace-the-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
     ArangoSearchPropertiesEntity replaceProperties(ArangoSearchPropertiesOptions options);

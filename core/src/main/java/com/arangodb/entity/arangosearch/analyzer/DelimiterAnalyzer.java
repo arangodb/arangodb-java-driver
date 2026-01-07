@@ -30,7 +30,7 @@ import java.util.Objects;
  * newlines).
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#delimiter">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#delimiter">API Documentation</a>
  */
 public final class DelimiterAnalyzer extends SearchAnalyzer {
     private DelimiterAnalyzerProperties properties;

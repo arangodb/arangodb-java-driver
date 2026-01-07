@@ -11,5 +11,5 @@ The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 
 - [ChangeLog](ChangeLog.md)
 - [Examples](test-non-functional/src/test/java/example)
-- [Documentation and Tutorial](https://docs.arangodb.com/stable/develop/drivers/java/)
+- [Documentation and Tutorial](https://docs.arango.ai/ecosystem/drivers/java/)
 - [JavaDoc](https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/latest/index.html)

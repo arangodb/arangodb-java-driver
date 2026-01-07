@@ -217,7 +217,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [7.0.0] - 2023-04-20
 
-Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/main/drivers/java-changes-v7.md).
+Detailed changes documentation is available [here](https://github.com/arangodb/docs-hugo/blob/main/site/content/ecosystem/drivers/java/reference-version-7/changes-in-version-7.md).
 
 ### Added
 
@@ -651,7 +651,7 @@ Any usage of the current Java driver API related to it is therefore discouraged.
 
 ### Added
 
-- added dirty read support ([reading from followers](https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower))
+- added dirty read support ([reading from followers](https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#read-from-followers))
 
   - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
   - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`

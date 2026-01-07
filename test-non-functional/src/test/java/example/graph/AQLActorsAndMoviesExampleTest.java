@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Mark Vollmary
  * @see
- * <a href="https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/">AQL Example Queries on an
+ * <a href="https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/">AQL Example Queries on an
  * Actors and Movies Database</a>
  */
 class AQLActorsAndMoviesExampleTest {
@@ -312,7 +312,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -326,7 +326,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -341,7 +341,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-both-movie1-and-movie2">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-both-movie1-and-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -355,7 +355,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-common-movies-between-actor1-and-actor2">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-common-movies-between-actor1-and-actor2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -370,7 +370,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-3-or-more-movies">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-actors-who-acted-in-3-or-more-movies">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -386,7 +386,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-movies-where-exactly-6-actors-acted-in">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#all-movies-where-exactly-6-actors-acted-in">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -399,7 +399,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-actors-by-movie">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-actors-by-movie">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -420,7 +420,7 @@ class AQLActorsAndMoviesExampleTest {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-movies-by-actor">AQL
+     * "https://docs.arango.ai/arangodb/stable/aql/examples-and-query-patterns/actors-and-movies-dataset-queries/#the-number-of-movies-by-actor">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
