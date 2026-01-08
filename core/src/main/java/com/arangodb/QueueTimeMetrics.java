@@ -29,7 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * This header contains the most recent request (de)queuing time (in seconds) as tracked by the server’s scheduler.
  *
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/general-request-handling/#overload-control">API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/general-request-handling/#overload-control">API Documentation</a>
  * @since ArangoDB 3.9
  */
 @ThreadSafe

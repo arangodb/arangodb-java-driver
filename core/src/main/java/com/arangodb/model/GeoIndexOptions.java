@@ -81,7 +81,7 @@ public final class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
      *                       allows you to let old indexes produce the same, potentially wrong results as before an
      *                       upgrade. A geo index with `legacyPolygons` set to `false` will use the new, correct and
      *                       consistent method for parsing of GeoJSON polygons.
-     *                       See <a href="https://docs.arangodb.com/stable/index-and-search/indexing/working-with-indexes/geo-spatial-indexes/#legacy-polygons">Legacy Polygons</a>.
+     *                       See <a href="https://docs.arango.ai/arangodb/stable/indexes-and-search/indexing/working-with-indexes/geo-spatial-indexes/#legacy-polygons">Legacy Polygons</a>.
      * @return options
      * @since ArangoDB 3.10
      */

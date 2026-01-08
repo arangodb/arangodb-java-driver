@@ -61,9 +61,9 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * ({@link AqlQueryOptions#streamTransactionId(String)}). The header set when creating the transaction decides
      * about dirty reads for the entire transaction, not the individual read operations.
      *
-     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @param allowDirtyRead Set to {@code true} to allow reading from follower shards in a cluster setup.
      * @return this
-     * @see <a href="https://docs.arangodb.com/3.11/deploy/active-failover/administration/#reading-from-follower">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#read-from-followers">API
      * Documentation</a>
      */
     public AqlQueryOptions allowDirtyRead(final Boolean allowDirtyRead) {

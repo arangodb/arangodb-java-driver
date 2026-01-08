@@ -29,7 +29,7 @@ import com.arangodb.model.arangosearch.SearchAliasPropertiesOptions;
  * Interface for operations on ArangoDB view level for SearchAlias views.
  *
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/">View API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/">View API Documentation</a>
  * @since ArangoDB 3.10
  */
 public interface SearchAlias extends ArangoView {
@@ -38,7 +38,7 @@ public interface SearchAlias extends ArangoView {
      * Creates a view, then returns view information from the server.
      *
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
      * Documentation</a>
      */
     ViewEntity create();
@@ -48,7 +48,7 @@ public interface SearchAlias extends ArangoView {
      *
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
      * Documentation</a>
      */
     ViewEntity create(SearchAliasCreateOptions options);
@@ -57,7 +57,7 @@ public interface SearchAlias extends ArangoView {
      * Reads the properties of the specified view.
      *
      * @return properties of the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#read-properties-of-a-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#read-properties-of-a-view">API
      * Documentation</a>
      */
     SearchAliasPropertiesEntity getProperties();
@@ -68,7 +68,7 @@ public interface SearchAlias extends ArangoView {
      * @param options properties to change
      * @return properties of the view
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#partially-changes-properties-of-a-search-alias-view">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#update-the-properties-of-a-search-alias-view">API
      * Documentation</a>
      */
     SearchAliasPropertiesEntity updateProperties(SearchAliasPropertiesOptions options);
@@ -79,7 +79,7 @@ public interface SearchAlias extends ArangoView {
      * @param options properties to change
      * @return properties of the view
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#replace-the-properties-of-a-search-alias-view">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#replace-the-properties-of-a-search-alias-view">API
      * Documentation</a>
      */
     SearchAliasPropertiesEntity replaceProperties(SearchAliasPropertiesOptions options);
