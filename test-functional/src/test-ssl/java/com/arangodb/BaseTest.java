@@ -3,8 +3,10 @@ package com.arangodb;
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 abstract class BaseTest {
     /*-
@@ -22,9 +24,14 @@ abstract class BaseTest {
 
     static {
         try {
-            SSL_TRUSTSTORE_PATH = Paths.get(BaseTest.class.getResource(SSL_TRUSTSTORE_RESOURCE).toURI()).toString();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            Path tempFile = Files.createTempFile("example", ".truststore");
+            tempFile.toFile().deleteOnExit();
+            try (InputStream in = BaseTest.class.getResourceAsStream(SSL_TRUSTSTORE_RESOURCE)) {
+                Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+            SSL_TRUSTSTORE_PATH = tempFile.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
     }
 
