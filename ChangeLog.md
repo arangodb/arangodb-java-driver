@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.25.0] - 2026-01-14
+ 
+- added SSL configuration from files (#623, DE-505)
+
 ## [7.24.2] - 2026-01-05
 
 - removed maven build cache
