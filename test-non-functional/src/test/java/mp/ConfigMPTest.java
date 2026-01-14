@@ -24,6 +24,9 @@ class ConfigMPTest {
     private final String sslCertValue = "sslCertValue";
     private final String sslAlgorithm = "sslAlgorithm";
     private final String sslProtocol = "sslProtocol";
+    private final String sslTrustStorePath = "sslTrustStorePath";
+    private final String sslTrustStorePassword = "sslTrustStorePassword";
+    private final String sslTrustStoreType = "sslTrustStoreType";
     private final Boolean verifyHost = false;
     private final Integer vstChunkSize = 1234;
     private final Boolean pipelining = true;
@@ -65,6 +68,9 @@ class ConfigMPTest {
         assertThat(config.getSslCertValue()).hasValue(sslCertValue);
         assertThat(config.getSslAlgorithm()).hasValue(sslAlgorithm);
         assertThat(config.getSslProtocol()).hasValue(sslProtocol);
+        assertThat(config.getSslTrustStorePath()).hasValue(sslTrustStorePath);
+        assertThat(config.getSslTrustStorePassword()).hasValue(sslTrustStorePassword);
+        assertThat(config.getSslTrustStoreType()).hasValue(sslTrustStoreType);
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
         assertThat(config.getChunkSize()).hasValue(vstChunkSize);
         assertThat(config.getPipelining()).hasValue(pipelining);
