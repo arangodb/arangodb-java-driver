@@ -558,6 +558,39 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
+         * Sets the file path to the SSL trust store.
+         *
+         * @param sslTrustStorePath The file path to the SSL trust store.
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStorePath(final String sslTrustStorePath) {
+            config.setSslTrustStorePath(sslTrustStorePath);
+            return this;
+        }
+
+        /**
+         * Sets the password for the SSL trust store.
+         *
+         * @param sslTrustStorePassword the password to access the SSL trust store
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStorePassword(final String sslTrustStorePassword) {
+            config.setSslTrustStorePassword(sslTrustStorePassword);
+            return this;
+        }
+
+        /**
+         * Sets the type of the SSL trust store to be used.
+         *
+         * @param sslTrustStoreType the type of the SSL trust store (e.g., "JKS", "PKCS12").
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStoreType(String sslTrustStoreType) {
+            config.setSslTrustStoreType(sslTrustStoreType);
+            return this;
+        }
+
+        /**
          * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
          *
          * @param sslContext SSL context to be used

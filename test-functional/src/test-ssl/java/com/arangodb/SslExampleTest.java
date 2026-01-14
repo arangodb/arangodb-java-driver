@@ -48,7 +48,8 @@ class SslExampleTest extends BaseTest {
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .protocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
@@ -63,7 +64,8 @@ class SslExampleTest extends BaseTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .verifyHost(false)
                 .protocol(protocol)
                 .build();
@@ -79,7 +81,8 @@ class SslExampleTest extends BaseTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .verifyHost(true)
                 .protocol(protocol)
                 .build();

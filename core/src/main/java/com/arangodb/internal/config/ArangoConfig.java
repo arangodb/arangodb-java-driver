@@ -18,7 +18,10 @@ import com.fasterxml.jackson.databind.Module;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -38,6 +41,9 @@ public class ArangoConfig {
     private Optional<String> sslCertValue;
     private Optional<String> sslAlgorithm;
     private String sslProtocol;
+    private Optional<String> sslTrustStorePath;
+    private Optional<String> sslTrustStorePassword;
+    private String sslTrustStoreType;
     private SSLContext sslContext;
     private Boolean verifyHost;
     private Integer chunkSize;
@@ -82,6 +88,9 @@ public class ArangoConfig {
         sslCertValue = properties.getSslCertValue();
         sslAlgorithm = properties.getSslAlgorithm();
         sslProtocol = properties.getSslProtocol().orElse(ArangoDefaults.DEFAULT_SSL_PROTOCOL);
+        sslTrustStorePath = properties.getSslTrustStorePath();
+        sslTrustStorePassword = properties.getSslTrustStorePassword();
+        sslTrustStoreType = properties.getSslTrustStoreType().orElse(ArangoDefaults.DEFAULT_SSL_TRUST_STORE_TYPE);
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
         chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
@@ -176,6 +185,18 @@ public class ArangoConfig {
 
     public void setSslProtocol(String sslProtocol) {
         this.sslProtocol = sslProtocol;
+    }
+
+    public void setSslTrustStorePath(String sslTrustStorePath) {
+        this.sslTrustStorePath = Optional.ofNullable(sslTrustStorePath);
+    }
+
+    public void setSslTrustStorePassword(String sslTrustStorePassword) {
+        this.sslTrustStorePassword = Optional.ofNullable(sslTrustStorePassword);
+    }
+
+    public void setSslTrustStoreType(String sslTrustStoreType) {
+        this.sslTrustStoreType = sslTrustStoreType;
     }
 
     public SSLContext getSslContext() {
@@ -397,14 +418,28 @@ public class ArangoConfig {
                 KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
                 ks.load(null);
                 ks.setCertificateEntry("arangodb", cert);
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance(sslAlgorithm.orElseGet(TrustManagerFactory::getDefaultAlgorithm));
-                tmf.init(ks);
-                SSLContext sc = SSLContext.getInstance(sslProtocol);
-                sc.init(null, tmf.getTrustManagers(), null);
-                return sc;
+                return createSslContext(ks);
+            } else if (sslTrustStorePath.isPresent()) {
+                KeyStore ks = KeyStore.getInstance(sslTrustStoreType);
+                try (InputStream is = Files.newInputStream(Paths.get(sslTrustStorePath.get()))) {
+                    ks.load(is, sslTrustStorePassword.map(String::toCharArray).orElse(null));
+                }
+                return createSslContext(ks);
             } else {
                 return SSLContext.getDefault();
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private SSLContext createSslContext(KeyStore ks) {
+        try {
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(sslAlgorithm.orElseGet(TrustManagerFactory::getDefaultAlgorithm));
+            tmf.init(ks);
+            SSLContext sc = SSLContext.getInstance(sslProtocol);
+            sc.init(null, tmf.getTrustManagers(), null);
+            return sc;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

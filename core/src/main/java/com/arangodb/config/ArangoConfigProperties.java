@@ -22,6 +22,9 @@ public interface ArangoConfigProperties {
     String KEY_SSL_CERT_VALUE = "sslCertValue";
     String KEY_SSL_ALGORITHM = "sslAlgorithm";
     String KEY_SSL_PROTOCOL = "sslProtocol";
+    String KEY_SSL_TRUST_STORE_PATH = "sslTrustStorePath";
+    String KEY_SSL_TRUST_STORE_PASSWORD = "sslTrustStorePassword";
+    String KEY_SSL_TRUST_STORE_TYPE = "sslTrustStoreType";
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
     String KEY_PIPELINING = "pipelining";
@@ -117,6 +120,18 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<String> getSslProtocol() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStorePath() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStorePassword() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStoreType() {
         return Optional.empty();
     }
 

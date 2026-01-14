@@ -125,6 +125,21 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<String> getSslTrustStorePath() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_PATH));
+    }
+
+    @Override
+    public Optional<String> getSslTrustStorePassword() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_PASSWORD));
+    }
+
+    @Override
+    public Optional<String> getSslTrustStoreType() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_TYPE));
+    }
+
+    @Override
     public Optional<Boolean> getVerifyHost() {
         return Optional.ofNullable(getProperty(KEY_VERIFY_HOST)).map(Boolean::valueOf);
     }

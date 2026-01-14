@@ -52,6 +52,7 @@ public final class ArangoDefaults {
     public static final Long DEFAULT_CONNECTION_TTL_HTTP = 30_000L;
     public static final Boolean DEFAULT_USE_SSL = false;
     public static final String DEFAULT_SSL_PROTOCOL = "TLS";
+    public static final String DEFAULT_SSL_TRUST_STORE_TYPE = "PKCS12";
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_PIPELINING = false;

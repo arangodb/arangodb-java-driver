@@ -26,6 +26,9 @@ class ConfigMPDefaultsTest {
         assertThat(config.getSslCertValue()).isEmpty();
         assertThat(config.getSslAlgorithm()).isEmpty();
         assertThat(config.getSslProtocol()).isEmpty();
+        assertThat(config.getSslTrustStorePath()).isEmpty();
+        assertThat(config.getSslTrustStorePassword()).isEmpty();
+        assertThat(config.getSslTrustStoreType()).isEmpty();
         assertThat(config.getVerifyHost()).isEmpty();
         assertThat(config.getChunkSize()).isEmpty();
         assertThat(config.getPipelining()).isEmpty();
