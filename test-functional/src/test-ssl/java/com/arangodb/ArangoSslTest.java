@@ -26,6 +26,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.util.List;
+
+import org.junit.jupiter.params.provider.EnumSource;
 import utils.ProtocolSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
