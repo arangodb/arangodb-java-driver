@@ -57,8 +57,6 @@ class ArangoSslTest extends BaseTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectWithCertConf(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)
@@ -74,8 +72,6 @@ class ArangoSslTest extends BaseTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectWithFileProperties(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile("arangodb-ssl.properties"))
                 .protocol(protocol)

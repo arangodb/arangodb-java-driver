@@ -30,13 +30,11 @@ class ConfigMPDefaultsTest {
         assertThat(config.getSslTrustStorePassword()).isEmpty();
         assertThat(config.getSslTrustStoreType()).isEmpty();
         assertThat(config.getVerifyHost()).isEmpty();
-        assertThat(config.getChunkSize()).isEmpty();
         assertThat(config.getPipelining()).isEmpty();
         assertThat(config.getConnectionWindowSize()).isEmpty();
         assertThat(config.getInitialWindowSize()).isEmpty();
         assertThat(config.getMaxConnections()).isNotPresent();
         assertThat(config.getConnectionTtl()).isNotPresent();
-        assertThat(config.getKeepAliveInterval()).isNotPresent();
         assertThat(config.getAcquireHostList()).isEmpty();
         assertThat(config.getAcquireHostListInterval()).isEmpty();
         assertThat(config.getLoadBalancingStrategy()).isEmpty();

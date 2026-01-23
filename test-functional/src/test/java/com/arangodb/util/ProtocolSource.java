@@ -8,11 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@EnumSource(
-        value = Protocol.class,
-        mode = EnumSource.Mode.EXCLUDE,
-        names = "VST"
-)
+@EnumSource(Protocol.class)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProtocolSource {

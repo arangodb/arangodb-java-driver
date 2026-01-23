@@ -73,7 +73,6 @@ public abstract class ClusterTest extends TestUtils {
 
     protected static Stream<ArangoDB.Builder> builderProvider() {
         return Stream.of(Protocol.values())
-                .filter(p -> !p.equals(Protocol.VST))
                 .map(p -> dbBuilder().protocol(p));
     }
 

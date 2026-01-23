@@ -96,8 +96,6 @@ class SslExampleTest extends BaseTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectWithSslContext(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)

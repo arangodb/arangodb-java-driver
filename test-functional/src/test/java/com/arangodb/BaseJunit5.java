@@ -34,7 +34,6 @@ public class BaseJunit5 {
     private static final ServerRole role = adb.getRole();
 
     private static final List<Named<ArangoDB>> adbs = Arrays.stream(Protocol.values())
-            .filter(p -> !p.equals(Protocol.VST))
             .map(p -> Named.of(p.toString(), new ArangoDB.Builder()
                     .loadProperties(config)
                     .protocol(p)

@@ -612,19 +612,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the chunk size when {@link Protocol#VST} is used.
-         *
-         * @param chunkSize size of a chunk in bytes
-         * @return {@link ArangoDB.Builder}
-         * @deprecated for removal, no longer supported since ArangoDB 3.12
-         */
-        @Deprecated
-        public Builder chunkSize(final Integer chunkSize) {
-            config.setChunkSize(chunkSize);
-            return this;
-        }
-
-        /**
          * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_JSON} or {@link Protocol#HTTP_VPACK}).
          *
          * @param pipelining {@code true} if enabled
@@ -688,21 +675,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder connectionTtl(final Long connectionTtl) {
             config.setConnectionTtl(connectionTtl);
-            return this;
-        }
-
-        /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
-         * every {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the
-         * external environment, eg. firewall, intermediate routers, operating system).
-         *
-         * @param keepAliveInterval interval in seconds
-         * @return {@link ArangoDB.Builder}
-         * @deprecated for removal, no longer supported since ArangoDB 3.12
-         */
-        @Deprecated
-        public Builder keepAliveInterval(final Integer keepAliveInterval) {
-            config.setKeepAliveInterval(keepAliveInterval);
             return this;
         }
 

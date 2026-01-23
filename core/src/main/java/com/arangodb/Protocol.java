@@ -26,15 +26,6 @@ package com.arangodb;
 public enum Protocol {
 
     /**
-     * VelocyStream
-     *
-     * @see <a href="https://github.com/arangodb/velocystream">VelocyStream specification</a>
-     * @deprecated for removal, no longer supported since ArangoDB 3.12
-     */
-    @Deprecated
-    VST,
-
-    /**
      * HTTP 1.1 with JSON body
      */
     HTTP_JSON,
