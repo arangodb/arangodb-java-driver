@@ -111,9 +111,6 @@ commands:
           command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip deploy
 
 executors:
-  j17:
-    docker:
-      - image: 'cimg/openjdk:17.0'
   j21:
     docker:
       - image: 'cimg/openjdk:21.0'
@@ -418,7 +415,7 @@ jobs:
       - store_cache
 
   deploy:
-    executor: 'j17'
+    executor: 'j21'
     steps:
       - timeout:
           duration: '30m'
@@ -500,7 +497,6 @@ workflows:
           matrix:
             parameters:
               jdk:
-                - 'j17'
                 - 'j21'
                 - 'j25'
           filters:
