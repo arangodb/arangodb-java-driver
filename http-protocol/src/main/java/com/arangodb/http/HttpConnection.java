@@ -40,6 +40,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.Http2Settings;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
@@ -55,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -162,24 +162,16 @@ public class HttpConnection implements Connection {
                 .setProtocolVersion(httpVersion)
                 .setDefaultHost(host.getHost())
                 .setDefaultPort(host.getPort())
-                .setProxyOptions(protocolConfig.getProxyOptions());
+                .setProxyOptions(protocolConfig.getProxyOptions())
+                .setHttp2ConnectionWindowSize(config.getConnectionWindowSize())
+                .setInitialSettings(new Http2Settings().setInitialWindowSize(config.getInitialWindowSize()));
 
         if (compression != Compression.NONE) {
             webClientOptions.setTryUseCompression(true);
         }
 
         if (Boolean.TRUE.equals(config.getUseSsl())) {
-            SSLContext ctx;
-            if (config.getSslContext() != null) {
-                ctx = config.getSslContext();
-            } else {
-                try {
-                    ctx = SSLContext.getDefault();
-                } catch (NoSuchAlgorithmException e) {
-                    throw ArangoDBException.of(e);
-                }
-            }
-
+            SSLContext ctx = config.getSslContext();
             webClientOptions
                     .setSsl(true)
                     .setUseAlpn(true)

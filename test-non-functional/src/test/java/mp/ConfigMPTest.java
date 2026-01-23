@@ -21,9 +21,17 @@ class ConfigMPTest {
     private final String jwt = "testJwt";
     private final Integer timeout = 9876;
     private final Boolean useSsl = true;
+    private final String sslCertValue = "sslCertValue";
+    private final String sslAlgorithm = "sslAlgorithm";
+    private final String sslProtocol = "sslProtocol";
+    private final String sslTrustStorePath = "sslTrustStorePath";
+    private final String sslTrustStorePassword = "sslTrustStorePassword";
+    private final String sslTrustStoreType = "sslTrustStoreType";
     private final Boolean verifyHost = false;
     private final Integer vstChunkSize = 1234;
     private final Boolean pipelining = true;
+    private final Integer connectionWindowSize = 987;
+    private final Integer initialWindowSize = 876;
     private final Integer maxConnections = 123;
     private final Long connectionTtl = 12345L;
     private final Integer keepAliveInterval = 123456;
@@ -57,9 +65,17 @@ class ConfigMPTest {
                 .hasValue(jwt);
         assertThat(config.getTimeout()).hasValue(timeout);
         assertThat(config.getUseSsl()).hasValue(useSsl);
+        assertThat(config.getSslCertValue()).hasValue(sslCertValue);
+        assertThat(config.getSslAlgorithm()).hasValue(sslAlgorithm);
+        assertThat(config.getSslProtocol()).hasValue(sslProtocol);
+        assertThat(config.getSslTrustStorePath()).hasValue(sslTrustStorePath);
+        assertThat(config.getSslTrustStorePassword()).hasValue(sslTrustStorePassword);
+        assertThat(config.getSslTrustStoreType()).hasValue(sslTrustStoreType);
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
         assertThat(config.getChunkSize()).hasValue(vstChunkSize);
         assertThat(config.getPipelining()).hasValue(pipelining);
+        assertThat(config.getConnectionWindowSize()).hasValue(connectionWindowSize);
+        assertThat(config.getInitialWindowSize()).hasValue(initialWindowSize);
         assertThat(config.getMaxConnections())
                 .isPresent()
                 .hasValue(maxConnections);

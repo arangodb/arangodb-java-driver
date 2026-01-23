@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.ProtocolSource;
@@ -31,9 +32,10 @@ class JwtAuthAsyncTest {
     }
 
     private static String getJwt(ArangoDB arangoDB) {
+        ArangoConfigProperties conf = ConfigUtils.loadConfig();
         Map<String, String> reqBody = new HashMap<>();
-        reqBody.put("username", "root");
-        reqBody.put("password", "test");
+        reqBody.put("username", conf.getUser().orElse("root"));
+        reqBody.put("password", conf.getPassword().orElse(null));
 
         Request<?> req = Request.builder()
                 .db(ArangoRequestParam.SYSTEM)

@@ -75,6 +75,8 @@ public class NativeImageHelper {
                 });
         Stream.concat(serdeClasses, entityClasses)
                 .filter(className -> className.startsWith("com.arangodb"))
+                .sorted()
+                .distinct()
                 .map(className -> {
                     ObjectNode entry = mapper.createObjectNode();
                     entry.put("name", className);

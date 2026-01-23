@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserAgentTest extends BaseJunit5 {
 
-    private static final String EXPECTED_VERSION = "7.20.0-SNAPSHOT";
+    private static final String EXPECTED_VERSION = "7.25.0";
 
     private static final boolean SHADED = Boolean.parseBoolean(System.getProperty("shaded"));
 

@@ -28,7 +28,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * Interface for operations on ArangoDB view level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/">View API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
 @ThreadSafe
@@ -53,7 +53,7 @@ public interface ArangoView extends ArangoSerdeAccessor {
      *
      * @return true if the view exists, otherwise false
      * @see
-     * <a href= "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#get-information-about-a-view">API
+     * <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#get-information-about-a-view">API
      * Documentation</a>
      */
     boolean exists();
@@ -62,7 +62,7 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * Deletes the view from the database.
      *
      * @see
-     * <a href= "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#drop-a-view">API Documentation</a>
+     * <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#drop-a-view">API Documentation</a>
      */
     void drop();
 
@@ -72,7 +72,7 @@ public interface ArangoView extends ArangoSerdeAccessor {
      * @param newName The new name
      * @return information about the view
      * @see
-     * <a href= "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#rename-a-view">API Documentation</a>
+     * <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#rename-a-view">API Documentation</a>
      */
     ViewEntity rename(String newName);
 
@@ -81,7 +81,7 @@ public interface ArangoView extends ArangoSerdeAccessor {
      *
      * @return information about the view
      * @see
-     * <a href= "https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#get-information-about-a-view">API
+     * <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#get-information-about-a-view">API
      * Documentation</a>
      */
     ViewEntity getInfo();

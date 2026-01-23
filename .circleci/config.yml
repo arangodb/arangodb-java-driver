@@ -117,6 +117,9 @@ executors:
   j21:
     docker:
       - image: 'cimg/openjdk:21.0'
+  j25:
+    docker:
+      - image: 'cimg/openjdk:25.0'
 
 jobs:
 
@@ -130,7 +133,7 @@ jobs:
         default: 'single'
       jdk:
         type: 'string'
-        default: 'j21'
+        default: 'j25'
       args:
         type: 'string'
         default: ''
@@ -142,7 +145,7 @@ jobs:
         default: 'false'
       graalvm-version:
         type: 'string'
-        default: '21.0.2-graalce'
+        default: '25-graalce'
       resource_class:
         type: 'string'
         default: 'medium'
@@ -177,7 +180,7 @@ jobs:
       - run:
           name: Test
           command: |
-            mvn verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
+            mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-functional -Dgpg.skip -Dmaven.javadoc.skip \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
               <<parameters.args>>
@@ -198,7 +201,7 @@ jobs:
         default: 'single'
       jdk:
         type: 'string'
-        default: 'j21'
+        default: 'j25'
       args:
         type: 'string'
         default: ''
@@ -210,7 +213,7 @@ jobs:
         default: 'false'
       graalvm-version:
         type: 'string'
-        default: '21.0.2-graalce'
+        default: '25-graalce'
       resource_class:
         type: 'string'
         default: 'medium'
@@ -249,7 +252,7 @@ jobs:
           name: Test
           working_directory: test-functional
           command: |
-            mvn verify -Dgpg.skip \
+            mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip \
               -Dshaded \
               -Dssl=<<parameters.ssl>> \
               -Dnative=<<parameters.native>> \
@@ -259,14 +262,14 @@ jobs:
       - store_cache
 
   test-non-func:
-    executor: 'j21'
+    executor: 'j25'
     steps:
       - timeout
       - checkout
       - setup_remote_docker
       - install-sdk:
           sdk: 'java'
-          version: '21.0.2-graalce'
+          version: '25-graalce'
       - start-db
       - load_cache
       - run:
@@ -274,7 +277,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-non-functional
       - run:
           name: Test
-          command: mvn verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-non-functional -Dgpg.skip -Dmaven.javadoc.skip
       - report:
           working_directory: test-non-functional
       - store_cache
@@ -283,14 +286,14 @@ jobs:
   # https://issues.apache.org/jira/browse/MSHADE-206
   # https://issues.apache.org/jira/browse/MNG-5899
   test-non-func-shaded:
-    executor: 'j21'
+    executor: 'j25'
     steps:
       - timeout
       - checkout
       - setup_remote_docker
       - install-sdk:
           sdk: 'java'
-          version: '21.0.2-graalce'
+          version: '25-graalce'
       - start-db
       - load_cache
       - install
@@ -301,7 +304,7 @@ jobs:
       - run:
           name: Test
           working_directory: test-non-functional
-          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - report:
           working_directory: test-non-functional
       - store_cache
@@ -320,10 +323,10 @@ jobs:
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
       - run:
           name: Test
-          command: mvn verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-functional -Pstatic-code-analysis -Dgpg.skip -Dmaven.javadoc.skip
       - run:
           name: Analyze
-          command: mvn verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Pstatic-code-analysis -Dmaven.test.skip -Dgpg.skip -Dmaven.javadoc.skip org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=arangodb_arangodb-java-driver
       - save_cache:
           name: Save Sonar cache
           key: sonar-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/maven_cache_seed" }}
@@ -353,7 +356,7 @@ jobs:
       - store_cache
 
   resilience-test:
-    executor: 'j21'
+    executor: 'j25'
     resource_class: 'large'
     steps:
       - timeout
@@ -375,7 +378,7 @@ jobs:
           command: mvn dependency:tree -am -pl test-resilience
       - run:
           name: Test
-          command: mvn verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -am -pl test-resilience -Dgpg.skip -Dmaven.javadoc.skip
       - report:
           working_directory: test-resilience
       - store_cache
@@ -384,7 +387,7 @@ jobs:
   # https://issues.apache.org/jira/browse/MSHADE-206
   # https://issues.apache.org/jira/browse/MNG-5899
   resilience-test-shaded:
-    executor: 'j21'
+    executor: 'j25'
     resource_class: 'large'
     steps:
       - timeout
@@ -409,7 +412,7 @@ jobs:
       - run:
           name: Test
           working_directory: test-resilience
-          command: mvn verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
+          command: mvn -Dorg.slf4j.simpleLogger.showDateTime verify -Dgpg.skip -Dmaven.javadoc.skip -Dshaded
       - report:
           working_directory: test-resilience
       - store_cache
@@ -499,6 +502,7 @@ workflows:
               jdk:
                 - 'j17'
                 - 'j21'
+                - 'j25'
           filters:
             tags:
               only: /^v.*/
@@ -509,15 +513,15 @@ workflows:
           matrix:
             parameters:
               args:
-                - '-Dadb.jackson.version=2.18.2'
+                - '-Dadb.jackson.version=2.20.0'
+                - '-Dadb.jackson.version=2.19.2'
+                - '-Dadb.jackson.version=2.18.4'
                 - '-Dadb.jackson.version=2.17.3'
                 - '-Dadb.jackson.version=2.16.2'
                 - '-Dadb.jackson.version=2.15.4'
                 - '-Dadb.jackson.version=2.14.3'
                 - '-Dadb.jackson.version=2.13.5'
                 - '-Dadb.jackson.version=2.12.7'
-                - '-Dadb.jackson.version=2.11.4'
-                - '-Dadb.jackson.version=2.10.5'
           filters:
             tags:
               only: /^v.*/
@@ -535,7 +539,7 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '22.0.1-graalce'
+                - '25-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
@@ -554,13 +558,15 @@ workflows:
                 - 'true'
                 - 'false'
               graalvm-version:
-                - '22.0.1-graalce'
+                - '25-graalce'
                 - '21.0.2-graalce'
           filters:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - main
+                - next
 
   test-non-func:
     when:

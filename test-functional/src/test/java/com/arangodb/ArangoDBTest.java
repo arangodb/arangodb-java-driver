@@ -39,6 +39,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -233,7 +235,11 @@ class ArangoDBTest extends BaseJunit5 {
     void createUser(ArangoDB arangoDB) {
         String username = "user-" + UUID.randomUUID();
         final UserEntity result = arangoDB.createUser(username, PW, null);
-        assertThat(result.getUser()).isEqualTo(username);
+        try {
+            assertThat(result.getUser()).isEqualTo(username);
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -275,19 +281,23 @@ class ArangoDBTest extends BaseJunit5 {
         final Collection<UserEntity> initialUsers = arangoDB.getUsers();
 
         arangoDB.createUser(username, PW, null);
-        final Collection<UserEntity> users = arangoDB.getUsers();
-        assertThat(users).hasSize(initialUsers.size() + 1);
+        try {
+            final Collection<UserEntity> users = arangoDB.getUsers();
+            assertThat(users).hasSize(initialUsers.size() + 1);
 
-        final List<String> expected = new ArrayList<>(users.size());
-        // Add initial users, including root:
-        for (final UserEntity userEntity : initialUsers) {
-            expected.add(userEntity.getUser());
-        }
-        // Add username:
-        expected.add(username);
+            final List<String> expected = new ArrayList<>(users.size());
+            // Add initial users, including root:
+            for (final UserEntity userEntity : initialUsers) {
+                expected.add(userEntity.getUser());
+            }
+            // Add username:
+            expected.add(username);
 
-        for (final UserEntity user : users) {
-            assertThat(user.getUser()).isIn(expected);
+            for (final UserEntity user : users) {
+                assertThat(user.getUser()).isIn(expected);
+            }
+        } finally {
+            arangoDB.deleteUser(username);
         }
     }
 
@@ -296,7 +306,11 @@ class ArangoDBTest extends BaseJunit5 {
     void updateUserNoOptions(ArangoDB arangoDB) {
         String username = "user-" + UUID.randomUUID();
         arangoDB.createUser(username, PW, null);
-        arangoDB.updateUser(username, null);
+        try {
+            arangoDB.updateUser(username, null);
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -306,16 +320,20 @@ class ArangoDBTest extends BaseJunit5 {
         final Map<String, Object> extra = new HashMap<>();
         extra.put("hund", false);
         arangoDB.createUser(username, PW, new UserCreateOptions().extra(extra));
-        extra.put("hund", true);
-        extra.put("mund", true);
-        final UserEntity user = arangoDB.updateUser(username, new UserUpdateOptions().extra(extra));
-        assertThat(user.getExtra()).hasSize(2);
-        assertThat(user.getExtra()).containsKey("hund");
-        assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("hund")))).isTrue();
-        final UserEntity user2 = arangoDB.getUser(username);
-        assertThat(user2.getExtra()).hasSize(2);
-        assertThat(user2.getExtra()).containsKey("hund");
-        assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("hund")))).isTrue();
+        try {
+            extra.put("hund", true);
+            extra.put("mund", true);
+            final UserEntity user = arangoDB.updateUser(username, new UserUpdateOptions().extra(extra));
+            assertThat(user.getExtra()).hasSize(2);
+            assertThat(user.getExtra()).containsKey("hund");
+            assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("hund")))).isTrue();
+            final UserEntity user2 = arangoDB.getUser(username);
+            assertThat(user2.getExtra()).hasSize(2);
+            assertThat(user2.getExtra()).containsKey("hund");
+            assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("hund")))).isTrue();
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -325,16 +343,20 @@ class ArangoDBTest extends BaseJunit5 {
         final Map<String, Object> extra = new HashMap<>();
         extra.put("hund", false);
         arangoDB.createUser(username, PW, new UserCreateOptions().extra(extra));
-        extra.remove("hund");
-        extra.put("mund", true);
-        final UserEntity user = arangoDB.replaceUser(username, new UserUpdateOptions().extra(extra));
-        assertThat(user.getExtra()).hasSize(1);
-        assertThat(user.getExtra()).containsKey("mund");
-        assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("mund")))).isTrue();
-        final UserEntity user2 = arangoDB.getUser(username);
-        assertThat(user2.getExtra()).hasSize(1);
-        assertThat(user2.getExtra()).containsKey("mund");
-        assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("mund")))).isTrue();
+        try {
+            extra.remove("hund");
+            extra.put("mund", true);
+            final UserEntity user = arangoDB.replaceUser(username, new UserUpdateOptions().extra(extra));
+            assertThat(user.getExtra()).hasSize(1);
+            assertThat(user.getExtra()).containsKey("mund");
+            assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("mund")))).isTrue();
+            final UserEntity user2 = arangoDB.getUser(username);
+            assertThat(user2.getExtra()).hasSize(1);
+            assertThat(user2.getExtra()).containsKey("mund");
+            assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("mund")))).isTrue();
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -342,7 +364,11 @@ class ArangoDBTest extends BaseJunit5 {
     void updateUserDefaultDatabaseAccess(ArangoDB arangoDB) {
         String username = "user-" + UUID.randomUUID();
         arangoDB.createUser(username, PW);
-        arangoDB.grantDefaultDatabaseAccess(username, Permissions.RW);
+        try {
+            arangoDB.grantDefaultDatabaseAccess(username, Permissions.RW);
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -350,7 +376,11 @@ class ArangoDBTest extends BaseJunit5 {
     void updateUserDefaultCollectionAccess(ArangoDB arangoDB) {
         String username = "user-" + UUID.randomUUID();
         arangoDB.createUser(username, PW);
-        arangoDB.grantDefaultCollectionAccess(username, Permissions.RW);
+        try {
+            arangoDB.grantDefaultCollectionAccess(username, Permissions.RW);
+        } finally {
+            arangoDB.deleteUser(username);
+        }
     }
 
     @ParameterizedTest
@@ -614,6 +644,64 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("arangos")
+    void createAccessToken(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        doCreateAccessToken(arangoDB);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void getAccessTokens(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        AccessToken token = doCreateAccessToken(arangoDB);
+        AccessTokens tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens).isNotNull();
+        assertThat(tokens.getTokens()).anySatisfy(t -> {
+            assertThat(t.getId()).isEqualTo(token.getId());
+            assertThat(t.getName()).isEqualTo(token.getName());
+            assertThat(t.getValidUntil()).isEqualTo(token.getValidUntil());
+            assertThat(t.getActive()).isEqualTo(token.getActive());
+            assertThat(t.getCreatedAt()).isEqualTo(token.getCreatedAt());
+        });
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
+    void deleteAccessToken(ArangoDB arangoDB) {
+        assumeTrue(isAtLeastVersion(3, 12));
+        AccessToken token = doCreateAccessToken(arangoDB);
+        AccessTokens tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens.getTokens())
+                .map(AccessToken::getId)
+                .contains(token.getId());
+        arangoDB.deleteAccessToken("root", token.getId());
+        tokens = arangoDB.getAccessTokens("root");
+        assertThat(tokens.getTokens())
+                .map(AccessToken::getId)
+                .doesNotContain(token.getId());
+    }
+
+    private AccessToken doCreateAccessToken(ArangoDB arangoDB) {
+        String name = "foo-" + UUID.randomUUID();
+        long validUntil = LocalDateTime.now()
+                .plusDays(1)
+                .atZone(ZoneId.systemDefault())
+                .toEpochSecond();
+        AccessToken token = arangoDB.createAccessToken("root", new AccessTokenCreateOptions()
+                .name(name)
+                .validUntil(validUntil)
+        );
+        assertThat(token.getActive()).isTrue();
+        assertThat(token.getCreatedAt()).isGreaterThan(0);
+        assertThat(token.getFingerprint()).isNotNull();
+        assertThat(token.getId()).isNotNull();
+        assertThat(token.getName()).isEqualTo(name);
+        assertThat(token.getValidUntil()).isEqualTo(validUntil);
+        return token;
+    }
+
+    @ParameterizedTest
+    @MethodSource("arangos")
     void arangoDBException(ArangoDB arangoDB) {
         Throwable thrown = catchThrowable(() -> arangoDB.db("no").getInfo());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -624,44 +712,11 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("arangos")
-    void fallbackHost() {
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .loadProperties(config)
-                .host("not-accessible", 8529).host("172.28.0.1", 8529).build();
-        final ArangoDBVersion version = arangoDB.getVersion();
-        assertThat(version).isNotNull();
-    }
-
-    @ParameterizedTest
-    @MethodSource("arangos")
     void loadproperties() {
         Throwable thrown = catchThrowable(() -> new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig("arangodb-bad.properties"))
         );
         assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void loadPropertiesWithPrefix() {
-        ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig("arangodb-with-prefix.properties", "adb"))
-                .build();
-        adb.getVersion();
-        adb.shutdown();
-    }
-
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void loadConfigFromPropertiesWithPrefix() {
-        Properties props = new Properties();
-        props.setProperty("adb.hosts", "172.28.0.1:8529");
-        props.setProperty("adb.password", "test");
-        ArangoDB adb = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig(props, "adb"))
-                .build();
-        adb.getVersion();
-        adb.shutdown();
     }
 
     @ParameterizedTest

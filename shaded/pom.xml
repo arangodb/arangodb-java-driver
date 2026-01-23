@@ -5,10 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
-        <artifactId>release-parent</artifactId>
-        <version>7.20.0-SNAPSHOT</version>
+        <artifactId>arangodb-java-driver-parent</artifactId>
+        <version>7.25.0</version>
     </parent>
 
     <name>arangodb-java-driver-shaded</name>
@@ -17,7 +16,6 @@
 
     <properties>
         <moduleName>com.arangodb.driver</moduleName>
-        <maven.deploy.skip>false</maven.deploy.skip>
         <sonar.exclusions>src/main/java/graal/**/*</sonar.exclusions>
     </properties>
 
@@ -194,7 +192,7 @@
                                     <artifacts>
                                         <artifact>
                                             <file>
-                                                ${project.parent.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
+                                                ${project.parent.basedir}/driver/target/arangodb-java-driver-${project.version}-javadoc.jar
                                             </file>
                                             <type>jar</type>
                                             <classifier>javadoc</classifier>

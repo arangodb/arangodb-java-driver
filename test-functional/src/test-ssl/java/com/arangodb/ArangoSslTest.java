@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -45,8 +46,39 @@ class ArangoSslTest extends BaseTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .verifyHost(false)
+                .build();
+        final ArangoDBVersion version = arangoDB.getVersion();
+        assertThat(version).isNotNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connectWithCertConf(Protocol protocol) {
+        assumeTrue(protocol != Protocol.VST);
+
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .protocol(protocol)
+                .host("172.28.0.1", 8529)
+                .password("test")
+                .useSsl(true)
+                .sslCertValue("MIIDezCCAmOgAwIBAgIEeDCzXzANBgkqhkiG9w0BAQsFADBuMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYDVQQLEwdVbmtub3duMRIwEAYDVQQDEwlsb2NhbGhvc3QwHhcNMjAxMTAxMTg1MTE5WhcNMzAxMDMwMTg1MTE5WjBuMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYDVQQLEwdVbmtub3duMRIwEAYDVQQDEwlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC1WiDnd4+uCmMG539ZNZB8NwI0RZF3sUSQGPx3lkqaFTZVEzMZL76HYvdc9Qg7difyKyQ09RLSpMALX9euSseD7bZGnfQH52BnKcT09eQ3wh7aVQ5sN2omygdHLC7X9usntxAfv7NzmvdogNXoJQyY/hSZff7RIqWH8NnAUKkjqOe6Bf5LDbxHKESmrFBxOCOnhcpvZWetwpiRdJVPwUn5P82CAZzfiBfmBZnB7D0l+/6Cv4jMuH26uAIcixnVekBQzl1RgwczuiZf2MGO64vDMMJJWE9ClZF1uQuQrwXF6qwhuP1Hnkii6wNbTtPWlGSkqeutr004+Hzbf8KnRY4PAgMBAAGjITAfMB0GA1UdDgQWBBTBrv9Awynt3C5IbaCNyOW5v4DNkTANBgkqhkiG9w0BAQsFAAOCAQEAIm9rPvDkYpmzpSIhR3VXG9Y71gxRDrqkEeLsMoEyqGnw/zx1bDCNeGg2PncLlW6zTIipEBooixIE9U7KxHgZxBy0Et6EEWvIUmnr6F4F+dbTD050GHlcZ7eOeqYTPYeQC502G1Fo4tdNi4lDP9L9XZpf7Q1QimRH2qaLS03ZFZa2tY7ah/RQqZL8Dkxx8/zc25sgTHVpxoK853glBVBs/ENMiyGJWmAXQayewY3EPt/9wGwV4KmU3dPDleQeXSUGPUISeQxFjy+jCw21pYviWVJTNBA9l5ny3GhEmcnOT/gQHCvVRLyGLMbaMZ4JrPwb+aAtBgrgeiK4xeSMMvrbhw==")
+                .verifyHost(false)
+                .build();
+        final ArangoDBVersion version = arangoDB.getVersion();
+        assertThat(version).isNotNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connectWithFileProperties(Protocol protocol) {
+        assumeTrue(protocol != Protocol.VST);
+
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .loadProperties(ArangoConfigProperties.fromFile("arangodb-ssl.properties"))
+                .protocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();

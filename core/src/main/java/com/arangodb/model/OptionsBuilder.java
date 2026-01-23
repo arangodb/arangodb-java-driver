@@ -45,6 +45,10 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
+    public static VectorIndexOptions build(final VectorIndexOptions options, final Iterable<String> fields) {
+        return options.fields(fields);
+    }
+
     public static GeoIndexOptions build(final GeoIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }
@@ -71,21 +75,21 @@ public final class OptionsBuilder {
     }
 
     public static AqlQueryOptions build(final AqlQueryOptions options, final String query,
-                                        final Map<String, Object> bindVars) {
+                                        final Map<String, ?> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
     public static AqlQueryExplainOptions build(
             final AqlQueryExplainOptions options,
             final String query,
-            final Map<String, Object> bindVars) {
+            final Map<String, ?> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
     public static ExplainAqlQueryOptions build(
             final ExplainAqlQueryOptions options,
             final String query,
-            final Map<String, Object> bindVars) {
+            final Map<String, ?> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 

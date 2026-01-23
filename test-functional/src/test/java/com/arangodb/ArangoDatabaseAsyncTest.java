@@ -24,10 +24,7 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
-import com.arangodb.util.MapBuilder;
-import com.arangodb.util.RawBytes;
-import com.arangodb.util.RawJson;
-import com.arangodb.util.SlowTest;
+import com.arangodb.util.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -466,31 +463,47 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void grantAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null).get();
-        arangoDB.db(getTestDb()).grantAccess(user).get();
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void grantAccessRW(ArangoDBAsync arangoDB) {
+    void grantAccessRW(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW);
+        arangoDB.createUser(user, "1234", null).get();
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void grantAccessRO(ArangoDBAsync arangoDB) {
+    void grantAccessRO(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO);
+        arangoDB.createUser(user, "1234", null).get();
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void grantAccessNONE(ArangoDBAsync arangoDB) {
+    void grantAccessNONE(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE);
+        arangoDB.createUser(user, "1234", null).get();
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
@@ -503,10 +516,14 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void revokeAccess(ArangoDBAsync arangoDB) {
+    void revokeAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).revokeAccess(user);
+        arangoDB.createUser(user, "1234", null).get();
+        try {
+            arangoDB.db(getTestDb()).revokeAccess(user).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
@@ -519,10 +536,14 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void resetAccess(ArangoDBAsync arangoDB) {
+    void resetAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).resetAccess(user);
+        arangoDB.createUser(user, "1234", null).get();
+        try {
+            arangoDB.db(getTestDb()).resetAccess(user).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
@@ -535,10 +556,14 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncArangos")
-    void grantDefaultCollectionAccess(ArangoDBAsync arangoDB) {
+    void grantDefaultCollectionAccess(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
         String user = "user-" + rnd();
-        arangoDB.createUser(user, "1234");
-        arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW);
+        arangoDB.createUser(user, "1234").get();
+        try {
+            arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW).get();
+        } finally {
+            arangoDB.deleteUser(user).get();
+        }
     }
 
     @ParameterizedTest
@@ -887,7 +912,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithRawBindVars(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        final Map<String, Object> bindVars = new HashMap<>();
+        final Map<String, RawData> bindVars = new HashMap<>();
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 

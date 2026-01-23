@@ -101,7 +101,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param name Name of the database to create
      * @return true if the database was created successfully.
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#create-a-database">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#create-a-database">API
      * Documentation</a>
      */
     Boolean createDatabase(String name);
@@ -111,7 +111,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param options Creation options
      * @return true if the database was created successfully.
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#create-a-database">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#create-a-database">API
      * Documentation</a>
      * @since ArangoDB 3.6.0
      */
@@ -121,7 +121,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Retrieves a list of all existing databases
      *
      * @return a list of all existing databases
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#list-all-databases">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#list-all-databases">API
      * Documentation</a>
      */
     Collection<String> getDatabases();
@@ -131,7 +131,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return a list of all databases the current user can access
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/databases/#list-the-accessible-databases">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#list-the-accessible-databases">API
      * Documentation</a>
      */
     Collection<String> getAccessibleDatabases();
@@ -142,7 +142,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user The name of the user for which you want to query the databases
      * @return list of database names which are available for the specified user
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/users/#list-a-users-accessible-databases">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#list-a-users-accessible-databases">API
      * Documentation</a>
      */
     Collection<String> getAccessibleDatabasesFor(String user);
@@ -151,7 +151,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server name and version number.
      *
      * @return the server version, number
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/administration/#get-the-server-version">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#get-the-server-version">API
      * Documentation</a>
      */
     ArangoDBVersion getVersion();
@@ -161,7 +161,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return the storage engine name
      * @see <a
-     * href="https://docs.arangodb.com/stable/develop/http-api/administration/#get-the-storage-engine-type">API
+     * href="https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#get-the-storage-engine-type">API
      * Documentation</a>
      */
     ArangoDBEngine getEngine();
@@ -171,7 +171,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return the server role
      * @see <a
-     * href="https://docs.arangodb.com/stable/develop/http-api/cluster/#get-the-server-role">API
+     * href="https://docs.arango.ai/arangodb/stable/develop/http-api/cluster/#get-the-server-role">API
      * Documentation</a>
      */
     ServerRole getRole();
@@ -181,7 +181,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @return the server id
      * @see <a
-     * href="https://docs.arangodb.com/stable/develop/http-api/cluster/#get-the-server-id">API
+     * href="https://docs.arango.ai/arangodb/stable/develop/http-api/cluster/#get-the-server-id">API
      * Documentation</a>
      */
     String getServerId();
@@ -193,7 +193,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user   The name of the user
      * @param passwd The user password
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#create-a-user">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#create-a-user">API Documentation</a>
      */
     UserEntity createUser(String user, String passwd);
 
@@ -205,7 +205,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param passwd  The user password
      * @param options Additional options, can be null
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#create-a-user">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#create-a-user">API Documentation</a>
      */
     UserEntity createUser(String user, String passwd, UserCreateOptions options);
 
@@ -213,7 +213,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Removes an existing user, identified by user. You need access to the _system database.
      *
      * @param user The name of the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#remove-a-user">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#remove-a-user">API Documentation</a>
      */
     void deleteUser(String user);
 
@@ -223,7 +223,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#get-a-user">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#get-a-user">API Documentation</a>
      */
     UserEntity getUser(String user);
 
@@ -231,7 +231,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Fetches data about all users. You can only execute this call if you have access to the _system database.
      *
      * @return informations about all users
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#list-available-users">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#list-available-users">API
      * Documentation</a>
      */
     Collection<UserEntity> getUsers();
@@ -243,7 +243,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user    The name of the user
      * @param options Properties of the user to be changed
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#update-a-user">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#update-a-user">API Documentation</a>
      */
     UserEntity updateUser(String user, UserUpdateOptions options);
 
@@ -254,7 +254,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param user    The name of the user
      * @param options Additional properties of the user, can be null
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#replace-a-user">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#replace-a-user">API
      * Documentation</a>
      */
     UserEntity replaceUser(String user, UserUpdateOptions options);
@@ -265,7 +265,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-database-access-level">API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -277,7 +277,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-collection-access-level">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-collection-access-level">API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -288,9 +288,9 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * query parameters, headers and body payload.
      * This method can be used to call FOXX services, API endpoints not (yet) implemented in this driver or trigger
      * async jobs, see
-     * <a href="https://docs.arangodb.com/stable/develop/http-api/general-request-handling/#fire-and-forget">Fire and Forget</a>
+     * <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/general-request-handling/#fire-and-forget">Fire and Forget</a>
      * and
-     * <a href="https://docs.arangodb.com/stable/develop/http-api/general-request-handling/#async-execution-and-later-result-retrieval">Async Execution and later Result Retrieval</a>
+     * <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/general-request-handling/#async-execution-and-later-result-retrieval">Async Execution and later Result Retrieval</a>
      *
      * @param request request
      * @param type    Deserialization target type for the response body (POJO or {@link com.arangodb.util.RawData})
@@ -304,7 +304,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return the log messages
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-global-server-logs">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/monitoring/logs/#get-the-global-server-logs">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
@@ -314,7 +314,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
      * Documentation</a>
      * @since ArangoDB 3.1.0
      */
@@ -324,7 +324,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      * Returns the server's current loglevel settings.
      *
      * @return the server's current loglevel settings
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/monitoring/logs/#get-the-server-log-levels">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
@@ -335,7 +335,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
      * Documentation</a>
      * @since ArangoDB 3.1.0
      */
@@ -346,7 +346,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
      *
      * @param entity loglevel settings
      * @return the server's current loglevel settings
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/monitoring/logs/#set-the-server-log-levels">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
@@ -355,17 +355,57 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     /**
      * Reset the server log levels
      * Revert the server's log level settings to the values they had at startup, as determined by the startup options specified on the command-line, a configuration file, and the factory defaults.
+     *
      * @since ArangoDB 3.12
      */
     LogLevelEntity resetLogLevels(LogLevelOptions options);
 
     /**
      * @return the list of available rules and their respective flags
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-all-aql-optimizer-rules">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-all-aql-optimizer-rules">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
     Collection<QueryOptimizerRule> getQueryOptimizerRules();
+
+    /**
+     * Create a new access token for the given user.
+     * The response includes the actual access token string that you need to store in a secure manner. It is only shown
+     * once.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * create an access token for a different user. You can always create an access token for yourself, regardless of
+     * database access levels.
+     *
+     * @param user    The name of the user.
+     * @param options options
+     * @return the created token
+     * @since ArangoDB 3.12
+     */
+    AccessToken createAccessToken(String user, AccessTokenCreateOptions options);
+
+    /**
+     * List the access tokens for a given user.
+     * This only returns the access token metadata. The actual access token strings are only shown when creating tokens.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * list the access tokens for a different user. You can always list your own access tokens, regardless of database
+     * access levels.
+     *
+     * @return the tokens
+     * @since ArangoDB 3.12
+     */
+    AccessTokens getAccessTokens(String user);
+
+    /**
+     * Delete an access token with the specified identifier for the given user.
+     * The user account you authenticate with needs to have administrate access to the _system database if you want to
+     * delete an access token for a different user. You can always delete your own access tokens, regardless of
+     * database access levels.
+     *
+     * @param user    The name of the user.
+     * @param tokenId The identifier of the access token.
+     * @since ArangoDB 3.12
+     */
+    void deleteAccessToken(String user, Long tokenId);
 
     /**
      * Builder class to build an instance of {@link ArangoDB}.
@@ -484,6 +524,72 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
+         * Sets the SSL certificate value as Base64 encoded String
+         *
+         * @param sslCertValue the SSL certificate value as Base64 encoded String
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslCertValue(final String sslCertValue) {
+            config.setSslCertValue(sslCertValue);
+            return this;
+        }
+
+        /**
+         * Sets the SSL Trust manager algorithm
+         *
+         * @param sslAlgorithm the name of the SSL Trust manager algorithm
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslAlgorithm(final String sslAlgorithm) {
+            config.setSslAlgorithm(sslAlgorithm);
+            return this;
+        }
+
+        /**
+         * Sets the SSLContext protocol, default: {@code TLS}
+         *
+         * @param sslProtocol the name of the SSLContext protocol
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslProtocol(final String sslProtocol) {
+            config.setSslProtocol(sslProtocol);
+            return this;
+        }
+
+        /**
+         * Sets the file path to the SSL trust store.
+         *
+         * @param sslTrustStorePath The file path to the SSL trust store.
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStorePath(final String sslTrustStorePath) {
+            config.setSslTrustStorePath(sslTrustStorePath);
+            return this;
+        }
+
+        /**
+         * Sets the password for the SSL trust store.
+         *
+         * @param sslTrustStorePassword the password to access the SSL trust store
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStorePassword(final String sslTrustStorePassword) {
+            config.setSslTrustStorePassword(sslTrustStorePassword);
+            return this;
+        }
+
+        /**
+         * Sets the type of the SSL trust store to be used.
+         *
+         * @param sslTrustStoreType the type of the SSL trust store (e.g., "JKS", "PKCS12").
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder sslTrustStoreType(String sslTrustStoreType) {
+            config.setSslTrustStoreType(sslTrustStoreType);
+            return this;
+        }
+
+        /**
          * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
          *
          * @param sslContext SSL context to be used
@@ -526,6 +632,28 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder pipelining(final Boolean pipelining) {
             config.setPipelining(pipelining);
+            return this;
+        }
+
+        /**
+         * Sets the size of the connection window for HTTP/2.
+         *
+         * @param connectionWindowSize size in bytes
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder connectionWindowSize(final Integer connectionWindowSize) {
+            config.setConnectionWindowSize(connectionWindowSize);
+            return this;
+        }
+
+        /**
+         * Sets the initial window size for HTTP/2 streams.
+         *
+         * @param initialWindowSize size in bytes
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder initialWindowSize(final Integer initialWindowSize) {
+            config.setInitialWindowSize(initialWindowSize);
             return this;
         }
 
@@ -715,6 +843,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         /**
          * Configuration specific for {@link com.arangodb.internal.net.ProtocolProvider}.
+         *
          * @return {@link ArangoDB.Builder}
          */
         public Builder protocolConfig(ProtocolConfig protocolConfig) {

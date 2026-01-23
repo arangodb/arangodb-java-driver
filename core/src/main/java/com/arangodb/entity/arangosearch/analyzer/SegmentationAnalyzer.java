@@ -32,7 +32,7 @@ import java.util.Objects;
  * well as apply case conversion.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#segmentation">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#segmentation">API Documentation</a>
  * @since ArangoDB 3.9
  */
 public final class SegmentationAnalyzer extends SearchAnalyzer {

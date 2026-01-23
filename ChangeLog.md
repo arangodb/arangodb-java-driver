@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.25.0] - 2026-01-14
+ 
+- added SSL configuration from files (#623, DE-505)
+
+## [7.24.2] - 2026-01-05
+
+- removed maven build cache
+
+## [7.24.1] - 2026-01-02
+
+- fixed release connection in case of exceptions
+
+## [7.24.0] - 2025-12-15
+
+- added support to access tokens (#620, DE-1101)
+- added support to vector indexes (#619, DE-1032)
+- changed `ConsolidationPolicy` to support ArangoDB version `3.12.7`
+
+## [7.23.0] - 2025-11-04
+
+- increased default HTTP/2 window size (#616, DE-1080)
+- made HTTP/2 window size configurable (#616, DE-1080)
+
+## [7.22.1] - 2025-10-09
+
+- added Java 25 to test matrix (#614)
+- fixed native image in GraalVM 25 (#614)
+- update Vert.x to version 4.5.21 (#614)
+- updated Jackson to version `2.20.0` (#613)
+
+## [7.22.0] - 2025-08-06
+
+- wildcard generic AQL bind vars (#612, DE-991)
+
+## [7.21.0] - 2025-07-23
+
+- added SSL configuration properties (DE-1010, #611)
+- fixed support to Jackson `2.19`
+
+## [7.20.0] - 2025-06-17
+
+- added option `usePlanCache` to `AqlQueryOptions` (DE-973, #609)
+- updated Jackson version to `2.19` (DE-1012, #607)
+
 ## [7.19.0] - 2025-05-28
 
 - fixed connection pool load-balancing (DE-1016, #602), now the connection pool:
@@ -181,7 +225,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [7.0.0] - 2023-04-20
 
-Detailed changes documentation is available [here](https://github.com/arangodb/docs/blob/main/drivers/java-changes-v7.md).
+Detailed changes documentation is available [here](https://github.com/arangodb/docs-hugo/blob/main/site/content/ecosystem/drivers/java/reference-version-7/changes-in-version-7.md).
 
 ### Added
 
@@ -615,7 +659,7 @@ Any usage of the current Java driver API related to it is therefore discouraged.
 
 ### Added
 
-- added dirty read support ([reading from followers](https://docs.arangodb.com/stable/deploy/active-failover/administration/#reading-from-follower))
+- added dirty read support ([reading from followers](https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#read-from-followers))
 
   - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
   - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`

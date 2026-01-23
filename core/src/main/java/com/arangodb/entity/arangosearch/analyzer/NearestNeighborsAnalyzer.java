@@ -32,7 +32,7 @@ import java.util.Objects;
  * neighbors for each token within the input string.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#nearest_neighbors">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#nearest_neighbors">API Documentation</a>
  * @since ArangoDB 3.10
  */
 public final class NearestNeighborsAnalyzer extends SearchAnalyzer {

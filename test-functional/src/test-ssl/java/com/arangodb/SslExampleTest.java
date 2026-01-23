@@ -25,7 +25,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import utils.ProtocolSource;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +49,8 @@ class SslExampleTest extends BaseTest {
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .protocol(protocol)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
@@ -59,7 +64,8 @@ class SslExampleTest extends BaseTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .verifyHost(false)
                 .protocol(protocol)
                 .build();
@@ -74,7 +80,8 @@ class SslExampleTest extends BaseTest {
                 .host("172.28.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-                .sslContext(createSslContext())
+                .sslTrustStorePath(SSL_TRUSTSTORE_PATH)
+                .sslTrustStorePassword(SSL_TRUSTSTORE_PASSWORD)
                 .verifyHost(true)
                 .protocol(protocol)
                 .build();
@@ -86,5 +93,41 @@ class SslExampleTest extends BaseTest {
         exceptions.forEach(e -> assertThat(e).isInstanceOf(SSLHandshakeException.class));
     }
 
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void connectWithSslContext(Protocol protocol) {
+        assumeTrue(protocol != Protocol.VST);
+
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .protocol(protocol)
+                .host("172.28.0.1", 8529)
+                .password("test")
+                .useSsl(true)
+                .sslContext(createSslContext())
+                .verifyHost(false)
+                .build();
+        final ArangoDBVersion version = arangoDB.getVersion();
+        assertThat(version).isNotNull();
+    }
+
+    static SSLContext createSslContext() {
+        SSLContext sc;
+        try {
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(SslExampleTest.class.getResourceAsStream(SSL_TRUSTSTORE_RESOURCE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(ks, SSL_TRUSTSTORE_PASSWORD.toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(ks);
+
+            sc = SSLContext.getInstance("TLS");
+            sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return sc;
+    }
 
 }

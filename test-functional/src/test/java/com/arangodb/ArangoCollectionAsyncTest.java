@@ -1875,6 +1875,73 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
+    private void cleanCollection(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        collection.getIndexes().get().stream()
+                .filter(i -> !IndexType.primary.equals(i.getType()))
+                .map(IndexEntity::getName)
+                .forEach(id -> collection.deleteIndex(id).join());
+        collection.truncate().get();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void createAndGetVectorIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 12));
+        cleanCollection(collection);
+
+        String f1 = "vector_data";
+        int dimension = 128;
+
+        List<BaseDocument> seed = IntStream.range(0, 10).mapToObj(i -> {
+            BaseDocument d = new BaseDocument();
+            List<Double> vec = new ArrayList<>(dimension);
+            for (int k = 0; k < dimension; k++) {
+                vec.add((double) k);
+            }
+            d.addAttribute(f1, vec);
+            return d;
+        }).collect(Collectors.toList());
+        collection.insertDocuments(seed).get();
+
+        String name = "vectorIndex";
+        VectorIndexParams params = new VectorIndexParams()
+                .metric(VectorIndexParams.Metric.cosine)
+                .dimension(dimension)
+                .nLists(10)
+                .factory("IVF10_HNSW5,Flat")
+                .defaultNProbe(2)
+                .trainingIterations(10);
+        Collection<String> fields = Collections.singletonList(f1);
+        IndexEntity created = collection.ensureVectorIndex(fields, new VectorIndexOptions()
+                .name(name)
+                .parallelism(2)
+                .storedValues("v1", "v2")
+                .sparse(true)
+                .params(params)
+        ).get();
+        assertThat(created).isNotNull();
+        assertThat(created.getFields()).containsExactly(f1);
+        assertThat(created.getName()).isEqualTo(name);
+        assertThat(created.getStoredValues()).containsExactlyInAnyOrder("v1", "v2");
+        assertThat(created.getSparse()).isTrue();
+        assertThat(created.getParams()).isEqualTo(params);
+        assertThat(created.getId()).startsWith(COLLECTION_NAME);
+        assertThat(created.getIsNewlyCreated()).isTrue();
+        assertThat(created.getType()).isEqualTo(IndexType.vector);
+
+        IndexEntity gotIdx = collection.getIndex(created.getId()).get();
+        assertThat(gotIdx).isNotNull();
+        assertThat(gotIdx.getFields()).containsExactly(f1);
+        assertThat(gotIdx.getName()).isEqualTo(name);
+        assertThat(gotIdx.getStoredValues()).containsExactlyInAnyOrder("v1", "v2");
+        assertThat(gotIdx.getSparse()).isTrue();
+        assertThat(gotIdx.getParams()).isEqualTo(params);
+        assertThat(gotIdx.getId()).startsWith(COLLECTION_NAME);
+        assertThat(gotIdx.getType()).isEqualTo(IndexType.vector);
+
+        cleanCollection(collection);
+    }
+
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createZKDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
@@ -2950,7 +3017,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void deleteDocumentsEmpty(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<String> keys = new ArrayList<>();
         final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys).get();
         assertThat(deleteResult).isNotNull();
@@ -2962,7 +3029,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void deleteDocumentsByKeyNotExisting(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<String> keys = Arrays.asList(rnd(), rnd());
 
         final MultiDocumentEntity<?> deleteResult = collection.deleteDocuments(keys).get();
@@ -3063,7 +3130,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         {
             values.add(new BaseDocument("1"));
         }
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
@@ -3081,7 +3148,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final Collection<RawJson> values = new ArrayList<>();
         values.add(RawJson.of("{\"_key\":\"1\"}"));
         values.add(RawJson.of("{\"_key\":\"2\"}"));
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final Collection<RawJson> updatedValues = new ArrayList<>();
         updatedValues.add(RawJson.of("{\"_key\":\"1\", \"foo\":\"bar\"}"));
@@ -3156,7 +3223,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
             e.setKey("1");
             values.add(e);
         }
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
@@ -3214,7 +3281,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void replaceDocumentsRawData(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final RawData values = RawJson.of("[{\"_key\":\"1\"}, {\"_key\":\"2\"}]");
-        collection.insertDocuments(values);
+        collection.insertDocuments(values).get();
 
         final RawData updatedValues = RawJson.of("[{\"_key\":\"1\", \"foo\":\"bar\"}, {\"_key\":\"2\", " +
                 "\"foo\":\"bar\"}]");

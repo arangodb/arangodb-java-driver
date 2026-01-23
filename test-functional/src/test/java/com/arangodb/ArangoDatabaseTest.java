@@ -478,7 +478,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user);
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -486,7 +490,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessRW(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW);
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.RW);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -494,7 +502,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessRO(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO);
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.RO);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -502,7 +514,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantAccessNONE(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE);
+        try {
+            arangoDB.db(getTestDb()).grantAccess(user, Permissions.NONE);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -518,7 +534,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void revokeAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).revokeAccess(user);
+        try {
+            arangoDB.db(getTestDb()).revokeAccess(user);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -534,7 +554,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void resetAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234", null);
-        arangoDB.db(getTestDb()).resetAccess(user);
+        try {
+            arangoDB.db(getTestDb()).resetAccess(user);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -550,7 +574,11 @@ class ArangoDatabaseTest extends BaseJunit5 {
     void grantDefaultCollectionAccess(ArangoDB arangoDB) {
         String user = "user-" + rnd();
         arangoDB.createUser(user, "1234");
-        arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW);
+        try {
+            arangoDB.db(getTestDb()).grantDefaultCollectionAccess(user, Permissions.RW);
+        } finally {
+            arangoDB.deleteUser(user);
+        }
     }
 
     @ParameterizedTest
@@ -1005,7 +1033,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithRawBindVars(ArangoDatabase db) {
-        final Map<String, Object> bindVars = new HashMap<>();
+        final Map<String, RawData> bindVars = new HashMap<>();
         bindVars.put("foo", RawJson.of("\"fooValue\""));
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 

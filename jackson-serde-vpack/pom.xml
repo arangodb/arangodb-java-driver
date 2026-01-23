@@ -5,10 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <relativePath>../release-parent</relativePath>
         <groupId>com.arangodb</groupId>
-        <artifactId>release-parent</artifactId>
-        <version>7.20.0-SNAPSHOT</version>
+        <artifactId>arangodb-java-driver-parent</artifactId>
+        <version>7.25.0</version>
     </parent>
 
     <name>jackson-serde-vpack</name>
@@ -17,7 +16,6 @@
 
     <properties>
         <moduleName>com.arangodb.serde.jackson.vpack</moduleName>
-        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
     <dependencies>

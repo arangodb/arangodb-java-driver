@@ -30,9 +30,11 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public final class ArangoDefaults {
 
+    private static final int MB = 1024 * 1024;
     public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
     public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
     public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
@@ -44,9 +46,13 @@ public final class ArangoDefaults {
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Long DEFAULT_CONNECTION_TTL_HTTP = 30_000L;
     public static final Boolean DEFAULT_USE_SSL = false;
+    public static final String DEFAULT_SSL_PROTOCOL = "TLS";
+    public static final String DEFAULT_SSL_TRUST_STORE_TYPE = "PKCS12";
     public static final Boolean DEFAULT_VERIFY_HOST = true;
     public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_PIPELINING = false;
+    public static final Integer DEFAULT_CONNECTION_WINDOW_SIZE = 32 * MB;
+    public static final Integer DEFAULT_INITIAL_WINDOW_SIZE = 2 * MB;
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;

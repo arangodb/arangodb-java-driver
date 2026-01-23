@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+import com.arangodb.util.TestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -49,8 +50,13 @@ class ArangoViewAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void create(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         String name = rndName();
-        db.createView(name, ViewType.ARANGO_SEARCH).get();
-        assertThat(db.view(name).exists().get()).isTrue();
+        try {
+            db.createView(name, ViewType.ARANGO_SEARCH).get();
+            assertThat(db.view(name).exists().get()).isTrue();
+        } catch (Exception e) {
+            System.err.println("Got exception with name: " + TestUtils.unicodeEscape(name));
+            throw e;
+        }
     }
 
     @ParameterizedTest

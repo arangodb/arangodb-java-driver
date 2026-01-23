@@ -140,7 +140,7 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
                 Permissions.class);
     }
 
-    protected InternalRequest queryRequest(final String query, final Map<String, Object> bindVars,
+    protected InternalRequest queryRequest(final String query, final Map<String, ?> bindVars,
                                            final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         final InternalRequest request = request(name, RequestType.POST, PATH_API_CURSOR)
@@ -172,14 +172,14 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         return request;
     }
 
-    protected InternalRequest explainQueryRequest(final String query, final Map<String, Object> bindVars,
+    protected InternalRequest explainQueryRequest(final String query, final Map<String, ?> bindVars,
                                                   final AqlQueryExplainOptions options) {
         final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
         return request(name, RequestType.POST, PATH_API_EXPLAIN)
                 .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
     }
 
-    protected InternalRequest explainQueryRequest(final String query, final Map<String, Object> bindVars,
+    protected InternalRequest explainQueryRequest(final String query, final Map<String, ?> bindVars,
                                                   final ExplainAqlQueryOptions options) {
         final ExplainAqlQueryOptions opt = options != null ? options : new ExplainAqlQueryOptions();
         return request(name, RequestType.POST, PATH_API_EXPLAIN)

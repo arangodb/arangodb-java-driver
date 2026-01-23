@@ -349,6 +349,14 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
+    protected InternalRequest createVectorIndexRequest(final Iterable<String> fields, final VectorIndexOptions options) {
+        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
+        request.putQueryParam(COLLECTION, name);
+        request.setBody(getSerde().serialize(
+                OptionsBuilder.build(options != null ? options : new VectorIndexOptions(), fields)));
+        return request;
+    }
+
     protected InternalRequest createGeoIndexRequest(final Iterable<String> fields, final GeoIndexOptions options) {
         final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);

@@ -5,13 +5,13 @@
         "pattern": "\\Qarangodb.properties\\E"
       },
       {
+        "pattern": "\\Qarangodb-ssl.properties\\E"
+      },
+      {
         "pattern": "\\Qarangodb-bad.properties\\E"
       },
       {
         "pattern": "\\Qarangodb-bad2.properties\\E"
-      },
-      {
-        "pattern":"\\Qarangodb-with-prefix.properties\\E"
       },
       {
         "pattern": "\\Qlogback-test.xml\\E"

@@ -36,7 +36,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
 
     private Boolean allowDirtyRead;
     private Integer batchSize;
-    private Map<String, Object> bindVars;
+    private Map<String, ?> bindVars;
     private Boolean cache;
     private Boolean count;
     private Long memoryLimit;
@@ -61,8 +61,10 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      * ({@link AqlQueryOptions#streamTransactionId(String)}). The header set when creating the transaction decides
      * about dirty reads for the entire transaction, not the individual read operations.
      *
-     * @param allowDirtyRead Set to {@code true} allows reading from followers.
+     * @param allowDirtyRead Set to {@code true} to allow reading from follower shards in a cluster setup.
      * @return this
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/documents/#read-from-followers">API
+     * Documentation</a>
      */
     public AqlQueryOptions allowDirtyRead(final Boolean allowDirtyRead) {
         this.allowDirtyRead = allowDirtyRead;
@@ -85,7 +87,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     }
 
     @UserDataInside
-    public Map<String, Object> getBindVars() {
+    public Map<String, ?> getBindVars() {
         return bindVars;
     }
 
@@ -95,7 +97,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      *                 variable {@code @@coll}, use {@code @coll} as the attribute name.
      * @return this
      */
-    AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+    AqlQueryOptions bindVars(final Map<String, ?> bindVars) {
         this.bindVars = bindVars;
         return this;
     }
@@ -234,6 +236,7 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         private Long spillOverThresholdMemoryUsage;
         private Long spillOverThresholdNumRows;
         private Boolean stream;
+        private Boolean usePlanCache;
 
         @JsonInclude
         @JsonAnyGetter
@@ -352,6 +355,10 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
             return stream;
         }
 
+        public Boolean getUsePlanCache() {
+            return usePlanCache;
+        }
+
         public void setAllPlans(Boolean allPlans) {
             this.allPlans = allPlans;
         }
@@ -442,6 +449,10 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
 
         public void setStream(Boolean stream) {
             this.stream = stream;
+        }
+
+        public void setUsePlanCache(Boolean usePlanCache) {
+            this.usePlanCache = usePlanCache;
         }
 
         @Override
@@ -957,6 +968,11 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
         return getOptions().getStream();
     }
 
+    @JsonIgnore
+    public Boolean getUsePlanCache() {
+        return getOptions().getUsePlanCache();
+    }
+
     /**
      * @param stream Specify true and the query will be executed in a streaming fashion. The query result is not
      *               stored on
@@ -976,6 +992,20 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
      */
     public AqlQueryOptions stream(final Boolean stream) {
         getOptions().setStream(stream);
+        return this;
+    }
+
+    /**
+     * @param usePlanCache Set this option to true to utilize a cached query plan or add the execution plan of this
+     *                     query to the cache if it’s not in the cache yet. Otherwise, the plan cache is bypassed
+     *                     (introduced in v3.12.4).
+     *                     Query plan caching can reduce the total time for processing queries by avoiding to parse,
+     *                     plan, and optimize queries over and over again that effectively have the same execution plan
+     *                     with at most some changes to bind parameter values.
+     * @return this
+     */
+    public AqlQueryOptions usePlanCache(final Boolean usePlanCache) {
+        getOptions().setUsePlanCache(usePlanCache);
         return this;
     }
 

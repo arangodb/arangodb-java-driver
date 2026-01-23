@@ -629,7 +629,7 @@ class StreamTransactionTest extends BaseJunit5 {
         DocumentCreateEntity<BaseDocument> externalDoc = collection
                 .insertDocument(new BaseDocument(), null);
 
-        final Map<String, Object> bindVars = new HashMap<>();
+        final Map<String, String> bindVars = new HashMap<>();
         bindVars.put("@collection", COLLECTION_NAME);
         bindVars.put("key", externalDoc.getKey());
 

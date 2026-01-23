@@ -48,6 +48,7 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     private static final String PATH_API_SERVER_ID = "/_admin/server/id";
     private static final String PATH_API_USER = "/_api/user";
     private static final String PATH_API_QUERY_RULES = "/_api/query/rules";
+    private static final String PATH_API_TOKEN = "/_api/token";
 
     protected InternalArangoDB(final CommunicationProtocol protocol, final ArangoConfig config) {
         super(protocol, config);
@@ -210,6 +211,18 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
 
     protected InternalRequest getQueryOptimizerRulesRequest() {
         return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_QUERY_RULES);
+    }
+
+    protected InternalRequest createAccessTokenRequest(String user, AccessTokenCreateOptions options) {
+        return request(ArangoRequestParam.SYSTEM, RequestType.POST, PATH_API_TOKEN, user).setBody(getSerde().serialize(options));
+    }
+
+    protected InternalRequest getAccessTokensRequest(String user) {
+        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_TOKEN, user);
+    }
+
+    protected InternalRequest deleteAccessTokenRequest(String user, Long tokenId) {
+        return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_TOKEN, user, tokenId.toString());
     }
 
 }

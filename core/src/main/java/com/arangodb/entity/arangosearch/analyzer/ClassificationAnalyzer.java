@@ -30,7 +30,7 @@ import java.util.Objects;
  * embedding model to classify the input text. It is able to classify individual tokens as well as entire inputs.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#classification">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#classification">API Documentation</a>
  * @since ArangoDB 3.10
  */
 public final class ClassificationAnalyzer extends SearchAnalyzer {

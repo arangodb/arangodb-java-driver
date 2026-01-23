@@ -56,14 +56,14 @@ public enum IndexType {
 
     /**
      * Multi Dimensional Index
-     * @see <a href="https://docs.arangodb.com/stable/index-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/indexes-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
      * @since ArangoDB 3.12
      */
     mdi,
 
     /**
      * Multi Dimensional Prefixed Index
-     * @see <a href="https://docs.arangodb.com/stable/index-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/indexes-and-search/indexing/working-with-indexes/multi-dimensional-indexes">Ref Doc</a>
      * @since ArangoDB 3.12
      */
     @JsonProperty("mdi-prefixed")
@@ -72,5 +72,10 @@ public enum IndexType {
     /**
      * @since ArangoDB 3.10
      */
-    inverted
+    inverted,
+
+    /**
+     * @since ArangoDB 3.12
+     */
+    vector
 }

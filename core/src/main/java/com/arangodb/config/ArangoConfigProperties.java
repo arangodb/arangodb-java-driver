@@ -19,9 +19,17 @@ public interface ArangoConfigProperties {
     String KEY_JWT = "jwt";
     String KEY_TIMEOUT = "timeout";
     String KEY_USE_SSL = "useSsl";
+    String KEY_SSL_CERT_VALUE = "sslCertValue";
+    String KEY_SSL_ALGORITHM = "sslAlgorithm";
+    String KEY_SSL_PROTOCOL = "sslProtocol";
+    String KEY_SSL_TRUST_STORE_PATH = "sslTrustStorePath";
+    String KEY_SSL_TRUST_STORE_PASSWORD = "sslTrustStorePassword";
+    String KEY_SSL_TRUST_STORE_TYPE = "sslTrustStoreType";
     String KEY_VERIFY_HOST = "verifyHost";
     String KEY_CHUNK_SIZE = "chunkSize";
     String KEY_PIPELINING = "pipelining";
+    String KEY_CONNECTION_WINDOW_SIZE = "connectionWindowSize";
+    String KEY_INITIAL_WINDOW_SIZE = "initialWindowSize";
     String KEY_MAX_CONNECTIONS = "maxConnections";
     String KEY_CONNECTION_TTL = "connectionTtl";
     String KEY_KEEP_ALIVE_INTERVAL = "keepAliveInterval";
@@ -103,6 +111,30 @@ public interface ArangoConfigProperties {
         return Optional.empty();
     }
 
+    default Optional<String> getSslCertValue() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslAlgorithm() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslProtocol() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStorePath() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStorePassword() {
+        return Optional.empty();
+    }
+
+    default Optional<String> getSslTrustStoreType() {
+        return Optional.empty();
+    }
+
     default Optional<Boolean> getVerifyHost() {
         return Optional.empty();
     }
@@ -112,6 +144,14 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Boolean> getPipelining() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getConnectionWindowSize() {
+        return Optional.empty();
+    }
+
+    default Optional<Integer> getInitialWindowSize() {
         return Optional.empty();
     }
 

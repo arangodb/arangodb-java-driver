@@ -30,7 +30,7 @@ import java.util.Objects;
  * Unlike with the delimiter Analyzer, the multi_delimiter Analyzer does not support quoting fields.
  *
  * @author Michele Rastelli
- * @see <a href= "https://docs.arangodb.com/stable/index-and-search/analyzers/#multi_delimiter">API Documentation</a>
+ * @see <a href= "https://docs.arango.ai/arangodb/stable/indexes-and-search/analyzers/#multi_delimiter">API Documentation</a>
  * @since ArangoDB 3.12
  */
 public final class MultiDelimiterAnalyzer extends SearchAnalyzer {

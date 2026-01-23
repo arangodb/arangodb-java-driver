@@ -36,8 +36,8 @@ import java.util.Map;
  *
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/">Databases API Documentation</a>
- * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/">Query API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/">Databases API Documentation</a>
+ * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/">Query API Documentation</a>
  */
 @ThreadSafe
 public interface ArangoDatabase extends ArangoSerdeAccessor {
@@ -60,7 +60,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Returns the server name and version number.
      *
      * @return the server version, number
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/administration/#get-the-server-version">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#get-the-server-version">API
      * Documentation</a>
      */
     ArangoDBVersion getVersion();
@@ -69,7 +69,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Returns the name of the used storage engine.
      *
      * @return the storage engine name
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/administration/#get-the-storage-engine-type">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#get-the-storage-engine-type">API
      * Documentation</a>
      */
     ArangoDBEngine getEngine();
@@ -78,7 +78,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Checks whether the database exists
      *
      * @return true if the database exists, otherwise false
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#get-information-about-the-current-database">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#get-information-about-the-current-database">API
      * Documentation</a>
      */
     boolean exists();
@@ -88,7 +88,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return a list of all databases the current user can access
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/databases/#list-the-accessible-databases">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#list-the-accessible-databases">API
      * Documentation</a>
      */
     Collection<String> getAccessibleDatabases();
@@ -106,7 +106,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param name The name of the collection
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#create-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#create-a-collection">API
      * Documentation</a>
      */
     CollectionEntity createCollection(String name);
@@ -118,7 +118,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name    The name of the collection
      * @param options Additional options, can be null
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#create-a-collection">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#create-a-collection">API
      * Documentation</a>
      */
     CollectionEntity createCollection(String name, CollectionCreateOptions options);
@@ -127,7 +127,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Fetches all collections from the database and returns an list of collection descriptions.
      *
      * @return list of information about all collections
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#list-all-collections">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#list-all-collections">API
      * Documentation</a>
      */
     Collection<CollectionEntity> getCollections();
@@ -137,7 +137,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return list of information about all collections
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/collections/#list-all-collections">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#list-all-collections">API
      * Documentation</a>
      */
     Collection<CollectionEntity> getCollections(CollectionsReadOptions options);
@@ -147,7 +147,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#get-an-index">API Documentation</a>
      */
     IndexEntity getIndex(String id);
 
@@ -156,7 +156,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param id The index-handle
      * @return the id of the index
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/indexes/#delete-an-index">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/#delete-an-index">API Documentation</a>
      */
     String deleteIndex(String id);
 
@@ -164,7 +164,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Creates the database
      *
      * @return true if the database was created successfully.
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#create-a-database">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#create-a-database">API
      * Documentation</a>
      */
     Boolean create();
@@ -173,7 +173,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Deletes the database from the server.
      *
      * @return true if the database was dropped successfully
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/databases/#drop-a-database">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#drop-a-database">API
      * Documentation</a>
      */
     Boolean drop();
@@ -184,7 +184,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-database-access-level">
      * API Documentation</a>
      */
     void grantAccess(String user, Permissions permissions);
@@ -194,7 +194,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * execute this call.
      *
      * @param user The name of the user
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-database-access-level">
      * API Documentation</a>
      */
     void grantAccess(String user);
@@ -204,7 +204,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * to execute this call.
      *
      * @param user The name of the user
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-database-access-level">
      * API Documentation</a>
      */
     void revokeAccess(String user);
@@ -213,7 +213,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Clear the database access level, revert back to the default access level.
      *
      * @param user The name of the user
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#clear-a-users-database-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#clear-a-users-database-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -225,7 +225,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param user        The name of the user
      * @param permissions The permissions the user grant
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#set-a-users-database-access-level">
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#set-a-users-database-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -236,7 +236,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param user The name of the user
      * @return permissions of the user
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/users/#get-a-users-database-access-level"> API
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/users/#get-a-users-database-access-level"> API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -251,10 +251,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param bindVars key/value pairs defining the variables to bind the query to
      * @param options  Additional options that will be passed to the query API, can be null
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars, AqlQueryOptions options);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, ?> bindVars, AqlQueryOptions options);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
@@ -264,7 +264,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options that will be passed to the query API, can be null
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
     <T> ArangoCursor<T> query(String query, Class<T> type, AqlQueryOptions options);
@@ -277,10 +277,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param bindVars key/value pairs defining the variables to bind the query to
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
-    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, Object> bindVars);
+    <T> ArangoCursor<T> query(String query, Class<T> type, Map<String, ?> bindVars);
 
     /**
      * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
@@ -289,7 +289,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param query An AQL query string
      * @param type  The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#create-a-cursor">API
      * Documentation</a>
      */
     <T> ArangoCursor<T> query(String query, Class<T> type);
@@ -301,7 +301,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param type     The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @return cursor of the results
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API
      * Documentation</a>
      */
     <T> ArangoCursor<T> cursor(String cursorId, Class<T> type);
@@ -314,7 +314,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param options  options
      * @return cursor of the results
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API
      * Documentation</a>
      */
     <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, AqlQueryOptions options);
@@ -327,7 +327,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param nextBatchId The ID of the next cursor batch (set only if cursor allows retries, see
      *                    {@link AqlQueryOptions#allowRetry(Boolean)}
      * @return cursor of the results
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API Documentation</a>
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API Documentation</a>
      * @since ArangoDB 3.11
      */
     <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, String nextBatchId);
@@ -341,7 +341,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *                    {@link AqlQueryOptions#allowRetry(Boolean)}
      * @param options     options
      * @return cursor of the results
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API Documentation</a>
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#read-the-next-batch-from-a-cursor">API Documentation</a>
      * @since ArangoDB 3.11
      */
     <T> ArangoCursor<T> cursor(String cursorId, Class<T> type, String nextBatchId, AqlQueryOptions options);
@@ -353,13 +353,12 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param bindVars key/value pairs representing the bind parameters
      * @param options  Additional options, can be null
      * @return information about the query
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
-     *
      * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)} instead
      */
     @Deprecated
-    AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    AqlExecutionExplainEntity explainQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
     /**
      * Explain an AQL query and return information about it
@@ -368,13 +367,12 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param bindVars key/value pairs representing the bind parameters
      * @param options  Additional options, can be null
      * @return information about the query
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
-     *
      * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
      */
     @Deprecated
-    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options);
+    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
 
 
     /**
@@ -384,10 +382,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param bindVars key/value pairs representing the bind parameters
      * @param options  Additional options, can be null
      * @return information about the query
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
      */
-    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, Object> bindVars, ExplainAqlQueryOptions options);
+    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options);
 
     /**
      * Parse an AQL query and return information about it This method is for query validation only. To actually query
@@ -395,7 +393,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param query the query which you want parse
      * @return imformation about the query
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#parse-an-aql-query">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#parse-an-aql-query">API
      * Documentation</a>
      */
     AqlParseEntity parseQuery(String query);
@@ -404,7 +402,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Clears the AQL query cache
      *
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-query-results-cache/#clear-the-aql-query-results-cache">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-query-results-cache/#clear-the-aql-query-results-cache">API
      * Documentation</a>
      */
     void clearQueryCache();
@@ -414,7 +412,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return configuration for the AQL query cache
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-query-results-cache/#get-the-aql-query-results-cache-configuration">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-query-results-cache/#get-the-aql-query-results-cache-configuration">API
      * Documentation</a>
      */
     QueryCachePropertiesEntity getQueryCacheProperties();
@@ -426,7 +424,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param properties properties to be set
      * @return current set of properties
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-query-results-cache/#set-the-aql-query-results-cache-configuration">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-query-results-cache/#set-the-aql-query-results-cache-configuration">API
      * Documentation</a>
      */
     QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties);
@@ -436,7 +434,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return configuration for the AQL query tracking
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#get-the-aql-query-tracking-configuration">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#get-the-aql-query-tracking-configuration">API
      * Documentation</a>
      */
     QueryTrackingPropertiesEntity getQueryTrackingProperties();
@@ -447,7 +445,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param properties properties to be set
      * @return current set of properties
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#update-the-aql-query-tracking-configuration">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#update-the-aql-query-tracking-configuration">API
      * Documentation</a>
      */
     QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties);
@@ -457,7 +455,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return a list of currently running AQL queries
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-the-running-aql-queries">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-running-aql-queries">API
      * Documentation</a>
      */
     Collection<QueryEntity> getCurrentlyRunningQueries();
@@ -467,7 +465,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return a list of slow running AQL queries
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#list-the-slow-aql-queries">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-slow-aql-queries">API
      * Documentation</a>
      */
     Collection<QueryEntity> getSlowQueries();
@@ -476,7 +474,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Clears the list of slow AQL queries
      *
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#clear-the-list-of-slow-aql-queries">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#clear-the-list-of-slow-aql-queries">API
      * Documentation</a>
      */
     void clearSlowQueries();
@@ -485,7 +483,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Kills a running query. The query will be terminated at the next cancelation point.
      *
      * @param id The id of the query
-     * @see <a href= "https://docs.arangodb.com/stable/develop/http-api/queries/aql-queries/#kill-a-running-aql-query">API
+     * @see <a href= "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#kill-a-running-aql-query">API
      * Documentation</a>
      */
     void killQuery(String id);
@@ -496,7 +494,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name    A valid AQL function name, e.g.: `"myfuncs::accounting::calculate_vat"`
      * @param code    A String evaluating to a JavaScript function
      * @param options Additional options, can be null
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/queries/user-defined-aql-functions/#create-a-user-defined-aql-function">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#create-a-user-defined-aql-function">API
      * Documentation</a>
      */
     void createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
@@ -508,7 +506,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return number of deleted functions (since ArangoDB 3.4.0)
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/user-defined-aql-functions/#remove-a-user-defined-aql-function">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#remove-a-user-defined-aql-function">API
      * Documentation</a>
      */
     Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
@@ -519,7 +517,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @return all reqistered AQL user functions
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/queries/user-defined-aql-functions/#list-the-registered-user-defined-aql-functions">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#list-the-registered-user-defined-aql-functions">API
      * Documentation</a>
      */
     Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options);
@@ -539,7 +537,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name            Name of the graph
      * @param edgeDefinitions An array of definitions for the edge
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
      * Documentation</a>
      */
     GraphEntity createGraph(String name, Iterable<EdgeDefinition> edgeDefinitions);
@@ -552,7 +550,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param edgeDefinitions An array of definitions for the edge
      * @param options         Additional options, can be null
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#create-a-graph">API
      * Documentation</a>
      */
     GraphEntity createGraph(String name, Iterable<EdgeDefinition> edgeDefinitions, GraphCreateOptions options);
@@ -561,7 +559,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Lists all graphs known to the graph module
      *
      * @return graphs stored in this database
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/graphs/named-graphs/#list-all-graphs">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#list-all-graphs">API
      * Documentation</a>
      */
     Collection<GraphEntity> getGraphs();
@@ -573,7 +571,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
      * @param options Additional options, can be null
      * @return the result of the transaction if it succeeded
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/javascript-transactions/#execute-a-javascript-transaction">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/javascript-transactions/#execute-a-javascript-transaction">API
      * Documentation</a>
      */
     <T> T transaction(String action, Class<T> type, TransactionOptions options);
@@ -583,7 +581,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/stream-transactions/#begin-a-stream-transaction">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/stream-transactions/#begin-a-stream-transaction">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -593,7 +591,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Aborts a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/stream-transactions/#abort-a-stream-transaction">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/stream-transactions/#abort-a-stream-transaction">API
      * Documentation</a>
      */
     StreamTransactionEntity abortStreamTransaction(String id);
@@ -602,7 +600,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Gets information about a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/stream-transactions/#get-the-status-of-a-stream-transaction">
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/stream-transactions/#get-the-status-of-a-stream-transaction">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -612,7 +610,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Gets all the currently running Stream Transactions.
      *
      * @return all the currently running Stream Transactions
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/stream-transactions/#list-the-running-stream-transactions">
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/stream-transactions/#list-the-running-stream-transactions">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -622,7 +620,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Commits a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/transactions/stream-transactions/#commit-a-stream-transaction">
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/stream-transactions/#commit-a-stream-transaction">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -633,7 +631,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @return information about the current database
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/databases/#get-information-about-the-current-database">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/databases/#get-information-about-the-current-database">API
      * Documentation</a>
      */
     DatabaseEntity getInfo();
@@ -642,7 +640,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Reload the routing table.
      *
      * @see <a href=
-     * "https://docs.arangodb.com/stable/develop/http-api/administration/#reload-the-routing-table">API
+     * "https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#reload-the-routing-table">API
      * Documentation</a>
      */
     void reloadRouting();
@@ -651,7 +649,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Fetches all views from the database and returns a list of view descriptions.
      *
      * @return list of information about all views
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#list-all-views">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#list-all-views">API Documentation</a>
      * @since ArangoDB 3.4.0
      */
     Collection<ViewEntity> getViews();
@@ -699,7 +697,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name    The name of the view
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/arangosearch-views/#create-an-arangosearch-view">API
      * Documentation</a>
      * @since ArangoDB 3.4.0
      */
@@ -711,7 +709,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param name    The name of the view
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/views/search-alias-views/#create-a-search-alias-view">API
      * Documentation</a>
      * @since ArangoDB 3.10
      */
@@ -722,7 +720,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param analyzer SearchAnalyzer
      * @return the created Analyzer
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/analyzers/#create-an-analyzer">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/analyzers/#create-an-analyzer">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer);
@@ -732,7 +730,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param name of the Analyzer without database prefix
      * @return information about an Analyzer
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/analyzers/#get-an-analyzer-definition">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/analyzers/#get-an-analyzer-definition">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     SearchAnalyzer getSearchAnalyzer(String name);
@@ -741,7 +739,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Retrieves all analyzers definitions.
      *
      * @return collection of all analyzers definitions
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/analyzers/#list-all-analyzers">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/analyzers/#list-all-analyzers">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     Collection<SearchAnalyzer> getSearchAnalyzers();
@@ -750,7 +748,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Deletes an Analyzer
      *
      * @param name of the Analyzer without database prefix
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/analyzers/#remove-an-analyzer">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/analyzers/#remove-an-analyzer">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     void deleteSearchAnalyzer(String name);
@@ -760,7 +758,7 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      *
      * @param name    of the Analyzer without database prefix
      * @param options AnalyzerDeleteOptions
-     * @see <a href="https://docs.arangodb.com/stable/develop/http-api/analyzers/#remove-an-analyzer">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/analyzers/#remove-an-analyzer">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     void deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options);

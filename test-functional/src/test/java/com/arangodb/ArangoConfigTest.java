@@ -5,11 +5,15 @@ import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.config.ArangoConfig;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLContext;
+
+import java.security.NoSuchAlgorithmException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ArangoConfigTest {
     @Test
-    void ArangoConfigDefaultValues() {
+    void ArangoConfigDefaultValues() throws NoSuchAlgorithmException {
         ArangoConfig cfg = new ArangoConfig();
         assertThat(cfg.getHosts()).isEqualTo(ArangoDefaults.DEFAULT_HOSTS);
         assertThat(cfg.getProtocol()).isEqualTo(Protocol.HTTP2_JSON);
@@ -18,7 +22,7 @@ public class ArangoConfigTest {
         assertThat(cfg.getPassword()).isNull();
         assertThat(cfg.getJwt()).isNull();
         assertThat(cfg.getUseSsl()).isEqualTo(ArangoDefaults.DEFAULT_USE_SSL);
-        assertThat(cfg.getSslContext()).isNull();
+        assertThat(cfg.getSslContext()).isEqualTo(SSLContext.getDefault());
         assertThat(cfg.getVerifyHost()).isEqualTo(ArangoDefaults.DEFAULT_VERIFY_HOST);
         assertThat(cfg.getChunkSize()).isEqualTo(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         assertThat(cfg.getMaxConnections()).isEqualTo(ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT);

@@ -21,9 +21,17 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     private Optional<String> jwt;
     private Optional<Integer> timeout;
     private Optional<Boolean> useSsl;
+    private Optional<String> sslCertValue;
+    private Optional<String> sslAlgorithm;
+    private Optional<String> sslProtocol;
+    private Optional<String> sslTrustStorePath;
+    private Optional<String> sslTrustStorePassword;
+    private Optional<String> sslTrustStoreType;
     private Optional<Boolean> verifyHost;
     private Optional<Integer> chunkSize;
     private Optional<Boolean> pipelining;
+    private Optional<Integer> connectionWindowSize;
+    private Optional<Integer> initialWindowSize;
     private Optional<Integer> maxConnections;
     private Optional<Long> connectionTtl;
     private Optional<Integer> keepAliveInterval;
@@ -72,6 +80,36 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     }
 
     @Override
+    public Optional<String> getSslCertValue() {
+        return sslCertValue;
+    }
+
+    @Override
+    public Optional<String> getSslAlgorithm() {
+        return sslAlgorithm;
+    }
+
+    @Override
+    public Optional<String> getSslProtocol() {
+        return sslProtocol;
+    }
+
+    @Override
+    public Optional<String> getSslTrustStorePath() {
+        return sslTrustStorePath;
+    }
+
+    @Override
+    public Optional<String> getSslTrustStorePassword() {
+        return sslTrustStorePassword;
+    }
+
+    @Override
+    public Optional<String> getSslTrustStoreType() {
+        return sslTrustStoreType;
+    }
+
+    @Override
     public Optional<Boolean> getVerifyHost() {
         return verifyHost;
     }
@@ -84,6 +122,16 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
     @Override
     public Optional<Boolean> getPipelining() {
         return pipelining;
+    }
+
+    @Override
+    public Optional<Integer> getConnectionWindowSize() {
+        return connectionWindowSize;
+    }
+
+    @Override
+    public Optional<Integer> getInitialWindowSize() {
+        return initialWindowSize;
     }
 
     @Override
@@ -143,15 +191,14 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArangoConfigPropertiesMPImpl that = (ArangoConfigPropertiesMPImpl) o;
-        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(pipelining, that.pipelining) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
+        return Objects.equals(hosts, that.hosts) && Objects.equals(protocol, that.protocol) && Objects.equals(user, that.user) && Objects.equals(password, that.password) && Objects.equals(jwt, that.jwt) && Objects.equals(timeout, that.timeout) && Objects.equals(useSsl, that.useSsl) && Objects.equals(sslCertValue, that.sslCertValue) && Objects.equals(sslAlgorithm, that.sslAlgorithm) && Objects.equals(sslProtocol, that.sslProtocol) && Objects.equals(sslTrustStorePath, that.sslTrustStorePath) && Objects.equals(sslTrustStorePassword, that.sslTrustStorePassword) && Objects.equals(sslTrustStoreType, that.sslTrustStoreType) && Objects.equals(verifyHost, that.verifyHost) && Objects.equals(chunkSize, that.chunkSize) && Objects.equals(pipelining, that.pipelining) && Objects.equals(connectionWindowSize, that.connectionWindowSize) && Objects.equals(initialWindowSize, that.initialWindowSize) && Objects.equals(maxConnections, that.maxConnections) && Objects.equals(connectionTtl, that.connectionTtl) && Objects.equals(keepAliveInterval, that.keepAliveInterval) && Objects.equals(acquireHostList, that.acquireHostList) && Objects.equals(acquireHostListInterval, that.acquireHostListInterval) && Objects.equals(loadBalancingStrategy, that.loadBalancingStrategy) && Objects.equals(responseQueueTimeSamples, that.responseQueueTimeSamples) && Objects.equals(compression, that.compression) && Objects.equals(compressionThreshold, that.compressionThreshold) && Objects.equals(compressionLevel, that.compressionLevel) && Objects.equals(serdeProviderClass, that.serdeProviderClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, verifyHost, chunkSize, pipelining, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
+        return Objects.hash(hosts, protocol, user, password, jwt, timeout, useSsl, sslCertValue, sslAlgorithm, sslProtocol, sslTrustStorePath, sslTrustStorePassword, sslTrustStoreType, verifyHost, chunkSize, pipelining, connectionWindowSize, initialWindowSize, maxConnections, connectionTtl, keepAliveInterval, acquireHostList, acquireHostListInterval, loadBalancingStrategy, responseQueueTimeSamples, compression, compressionThreshold, compressionLevel, serdeProviderClass);
     }
 
     @Override
@@ -164,9 +211,17 @@ public final class ArangoConfigPropertiesMPImpl implements ArangoConfigPropertie
                 ", jwt=" + jwt +
                 ", timeout=" + timeout +
                 ", useSsl=" + useSsl +
+                ", sslCertValue=" + sslCertValue +
+                ", sslAlgorithm=" + sslAlgorithm +
+                ", sslProtocol=" + sslProtocol +
+                ", sslTrustStorePath=" + sslTrustStorePath +
+                ", sslTrustStorePassword=" + sslTrustStorePassword +
+                ", sslTrustStoreType=" + sslTrustStoreType +
                 ", verifyHost=" + verifyHost +
                 ", chunkSize=" + chunkSize +
                 ", pipelining=" + pipelining +
+                ", connectionWindowSize=" + connectionWindowSize +
+                ", initialWindowSize=" + initialWindowSize +
                 ", maxConnections=" + maxConnections +
                 ", connectionTtl=" + connectionTtl +
                 ", keepAliveInterval=" + keepAliveInterval +

@@ -107,4 +107,20 @@ public final class TestUtils {
         }
     }
 
+    public static String unicodeEscape(String s) {
+        StringBuilder sb = new StringBuilder();
+        s.codePoints().forEach(cp -> {
+            if (cp <= 0xFFFF) {
+                sb.append(String.format("\\u%04X", cp));
+            } else {
+                // Convert supplementary characters to surrogate pairs
+                char[] surrogates = Character.toChars(cp);
+                for (char c : surrogates) {
+                    sb.append(String.format("\\u%04X", (int) c));
+                }
+            }
+        });
+        return sb.toString();
+    }
+
 }

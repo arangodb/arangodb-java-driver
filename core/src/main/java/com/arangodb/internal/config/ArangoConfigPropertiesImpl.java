@@ -110,6 +110,36 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<String> getSslCertValue() {
+        return Optional.ofNullable(getProperty(KEY_SSL_CERT_VALUE));
+    }
+
+    @Override
+    public Optional<String> getSslAlgorithm() {
+        return Optional.ofNullable(getProperty(KEY_SSL_ALGORITHM));
+    }
+
+    @Override
+    public Optional<String> getSslProtocol() {
+        return Optional.ofNullable(getProperty(KEY_SSL_PROTOCOL));
+    }
+
+    @Override
+    public Optional<String> getSslTrustStorePath() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_PATH));
+    }
+
+    @Override
+    public Optional<String> getSslTrustStorePassword() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_PASSWORD));
+    }
+
+    @Override
+    public Optional<String> getSslTrustStoreType() {
+        return Optional.ofNullable(getProperty(KEY_SSL_TRUST_STORE_TYPE));
+    }
+
+    @Override
     public Optional<Boolean> getVerifyHost() {
         return Optional.ofNullable(getProperty(KEY_VERIFY_HOST)).map(Boolean::valueOf);
     }
@@ -122,6 +152,16 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     @Override
     public Optional<Boolean> getPipelining() {
         return Optional.ofNullable(getProperty(KEY_PIPELINING)).map(Boolean::valueOf);
+    }
+
+    @Override
+    public Optional<Integer> getConnectionWindowSize() {
+        return Optional.ofNullable(getProperty(KEY_CONNECTION_WINDOW_SIZE)).map(Integer::valueOf);
+    }
+
+    @Override
+    public Optional<Integer> getInitialWindowSize() {
+        return Optional.ofNullable(getProperty(KEY_INITIAL_WINDOW_SIZE)).map(Integer::valueOf);
     }
 
     @Override

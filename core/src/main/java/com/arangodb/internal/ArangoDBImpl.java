@@ -213,4 +213,19 @@ public class ArangoDBImpl extends InternalArangoDB implements ArangoDB {
         return executorSync().execute(getQueryOptimizerRulesRequest(), SerdeUtils.constructListType(QueryOptimizerRule.class));
     }
 
+    @Override
+    public AccessToken createAccessToken(String user, AccessTokenCreateOptions options) {
+        return executorSync().execute(createAccessTokenRequest(user, options), AccessToken.class);
+    }
+
+    @Override
+    public AccessTokens getAccessTokens(String user) {
+        return executorSync().execute(getAccessTokensRequest(user), AccessTokens.class);
+    }
+
+    @Override
+    public void deleteAccessToken(String user, Long tokenId) {
+        executorSync().execute(deleteAccessTokenRequest(user, tokenId), Void.class);
+    }
+
 }
