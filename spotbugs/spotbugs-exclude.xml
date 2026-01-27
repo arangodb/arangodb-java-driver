@@ -18,14 +18,6 @@
     </Match>
 
     <Match>
-        <Package name="~.*velocystream.*"/>
-    </Match>
-
-    <Match>
-        <Package name="~.*vst.*"/>
-    </Match>
-
-    <Match>
         <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
 

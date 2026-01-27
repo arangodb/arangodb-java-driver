@@ -24,7 +24,7 @@ import com.arangodb.entity.ArangoDBVersion;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import utils.TestUtils;
+import utils.ProtocolSource;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -35,7 +35,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -45,9 +44,8 @@ class SslExampleTest extends BaseTest {
 
     @Disabled("Only local execution, in CircleCI port 8529 exposed to localhost")
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void connect(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("localhost", 8529)
                 .password("test")
@@ -61,9 +59,8 @@ class SslExampleTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void noopHostnameVerifier(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || TestUtils.isLessThanVersion(version.getVersion(), 3, 12, 0));
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
                 .password("test")
@@ -78,9 +75,8 @@ class SslExampleTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void hostnameVerifierFailure(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST, "VST does not support hostname verification");
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .host("172.28.0.1", 8529)
                 .password("test")
@@ -101,8 +97,6 @@ class SslExampleTest extends BaseTest {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void connectWithSslContext(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)

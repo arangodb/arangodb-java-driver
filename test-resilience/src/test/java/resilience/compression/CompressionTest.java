@@ -7,8 +7,8 @@ import com.arangodb.Compression;
 import com.arangodb.Protocol;
 import io.netty.handler.codec.http2.Http2FrameLogger;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
+import resilience.utils.ProtocolSource;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,21 +27,18 @@ class CompressionTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void gzip(Protocol protocol) {
         doTest(protocol, Compression.GZIP);
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void deflate(Protocol protocol) {
         doTest(protocol, Compression.DEFLATE);
     }
 
     void doTest(Protocol protocol, Compression compression) {
-        assumeTrue(isAtLeastVersion(3, 12));
-        assumeTrue(protocol != Protocol.VST);
-
         assumeTrue(protocol != Protocol.HTTP_VPACK, "hex dumps logs"); // FIXME
         assumeTrue(protocol != Protocol.HTTP_JSON, "hex dumps logs");  // FIXME
 

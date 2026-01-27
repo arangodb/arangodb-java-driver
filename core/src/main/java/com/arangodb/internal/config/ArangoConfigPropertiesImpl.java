@@ -145,11 +145,6 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
-    public Optional<Integer> getChunkSize() {
-        return Optional.ofNullable(getProperty(KEY_CHUNK_SIZE)).map(Integer::valueOf);
-    }
-
-    @Override
     public Optional<Boolean> getPipelining() {
         return Optional.ofNullable(getProperty(KEY_PIPELINING)).map(Boolean::valueOf);
     }
@@ -172,11 +167,6 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     @Override
     public Optional<Long> getConnectionTtl() {
         return Optional.ofNullable(getProperty(KEY_CONNECTION_TTL)).map(Long::valueOf);
-    }
-
-    @Override
-    public Optional<Integer> getKeepAliveInterval() {
-        return Optional.ofNullable(getProperty(KEY_KEEP_ALIVE_INTERVAL)).map(Integer::valueOf);
     }
 
     @Override

@@ -26,13 +26,6 @@ package com.arangodb;
 public enum Protocol {
 
     /**
-     * VelocyStream
-     *
-     * @see <a href="https://github.com/arangodb/velocystream">VelocyStream specification</a>
-     */
-    VST,
-
-    /**
      * HTTP 1.1 with JSON body
      */
     HTTP_JSON,

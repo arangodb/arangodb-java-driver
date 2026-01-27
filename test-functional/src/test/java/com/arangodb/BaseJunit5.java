@@ -34,7 +34,6 @@ public class BaseJunit5 {
     private static final ServerRole role = adb.getRole();
 
     private static final List<Named<ArangoDB>> adbs = Arrays.stream(Protocol.values())
-            .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
             .map(p -> Named.of(p.toString(), new ArangoDB.Builder()
                     .loadProperties(config)
                     .protocol(p)
@@ -206,20 +205,12 @@ public class BaseJunit5 {
         return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
     }
 
-    public static boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(adb.getEngine().getName());
-    }
-
     public static boolean isSingleServer() {
         return role == ServerRole.SINGLE;
     }
 
     public static boolean isCluster() {
         return role == ServerRole.COORDINATOR;
-    }
-
-    public static boolean isEnterprise() {
-        return version.getLicense() == License.ENTERPRISE;
     }
 
 }

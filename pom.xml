@@ -15,7 +15,6 @@
         <module>jackson-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
-        <module>vst-protocol</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -300,11 +299,6 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>http-protocol</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>vst-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

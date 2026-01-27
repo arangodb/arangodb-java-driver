@@ -35,12 +35,6 @@ import java.util.List;
 public final class ArangoDefaults {
 
     private static final int MB = 1024 * 1024;
-
-    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-    public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-    public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
-    public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
-    public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
     public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
     public static final int MAX_CONNECTIONS_HTTP2_DEFAULT = 1;
 
@@ -54,7 +48,6 @@ public final class ArangoDefaults {
     public static final String DEFAULT_SSL_PROTOCOL = "TLS";
     public static final String DEFAULT_SSL_TRUST_STORE_TYPE = "PKCS12";
     public static final Boolean DEFAULT_VERIFY_HOST = true;
-    public static final Integer DEFAULT_CHUNK_SIZE = 30_000;
     public static final Boolean DEFAULT_PIPELINING = false;
     public static final Integer DEFAULT_CONNECTION_WINDOW_SIZE = 32 * MB;
     public static final Integer DEFAULT_INITIAL_WINDOW_SIZE = 2 * MB;

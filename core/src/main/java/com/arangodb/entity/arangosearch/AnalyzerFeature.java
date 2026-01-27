@@ -42,7 +42,7 @@ public enum AnalyzerFeature {
     position,
 
     /**
-     * enable search highlighting capabilities (Enterprise Edition only). If present, then the `position` and `frequency` features are also required.
+     * enable search highlighting capabilities. If present, then the `position` and `frequency` features are also required.
      * @since ArangoDB 3.10
      */
     offset

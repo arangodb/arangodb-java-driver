@@ -17,8 +17,8 @@
         <maven.build.cache.enabled>false</maven.build.cache.enabled>
         <adb.jackson.version>2.20.0</adb.jackson.version>
         <sonar.skip>true</sonar.skip>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <testSources>src/test/java</testSources>
         <shaded/>
     </properties>
@@ -171,11 +171,6 @@
                 <dependency>
                     <groupId>com.arangodb</groupId>
                     <artifactId>arangodb-java-driver</artifactId>
-                    <scope>compile</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.arangodb</groupId>
-                    <artifactId>vst-protocol</artifactId>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>

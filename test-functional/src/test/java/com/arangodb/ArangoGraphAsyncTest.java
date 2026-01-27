@@ -96,7 +96,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createWithReplicationAndWriteConcern(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
@@ -171,10 +170,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void addSatelliteVertexCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-        assumeTrue(isAtLeastVersion(3, 9));
-
         String v1Name = "vertex-" + rnd();
 
         ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
@@ -232,10 +227,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void addSatelliteEdgeDefinition(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-        assumeTrue(isAtLeastVersion(3, 9));
-
         String eName = "edge-" + rnd();
         String v1Name = "vertex-" + rnd();
         String v2Name = "vertex-" + rnd();
@@ -349,9 +340,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void smartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
 
@@ -368,10 +356,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void hybridSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-        assumeTrue((isAtLeastVersion(3, 9)));
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         String eName = "hybridSmartGraph-edge-" + rnd();
         String v1Name = "hybridSmartGraph-vertex-" + rnd();
@@ -396,10 +380,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void disjointSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-        assumeTrue((isAtLeastVersion(3, 7)));
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
 
@@ -417,10 +397,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void hybridDisjointSmartGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-        assumeTrue((isAtLeastVersion(3, 9)));
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         String eName = "hybridDisjointSmartGraph-edge-" + rnd();
         String v1Name = "hybridDisjointSmartGraph-vertex-" + rnd();
@@ -445,9 +421,6 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void enterpriseGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(isEnterprise());
-        assumeTrue(isCluster() || isAtLeastVersion(3, 10));
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection("enterpriseGraph-edge-" + rnd()).from("enterpriseGraph-vertex-" + rnd()).to("enterpriseGraph-vertex-" + rnd()));
 
@@ -457,11 +430,7 @@ class ArangoGraphAsyncTest extends BaseJunit5 {
         assertThat(g).isNotNull();
         assertThat(g.getSmartGraphAttribute()).isNull();
         assertThat(g.getNumberOfShards()).isEqualTo(2);
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(g.getIsSmart()).isTrue();
-        } else {
-            assertThat(g.getIsSmart()).isFalse();
-        }
+        assertThat(g.getIsSmart()).isTrue();
     }
 
     @ParameterizedTest

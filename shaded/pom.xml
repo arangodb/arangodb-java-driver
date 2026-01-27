@@ -32,11 +32,6 @@
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
-            <artifactId>vst-protocol</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.arangodb</groupId>
             <artifactId>jackson-dataformat-velocypack</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -111,14 +106,6 @@
                                     <artifact>com.arangodb:core</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>com.arangodb:vst-protocol</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                        <exclude>META-INF/services/**</exclude>
-                                        <exclude>META-INF/maven/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>

@@ -71,13 +71,9 @@ public abstract class ClusterTest extends TestUtils {
         return builder.password(PASSWORD);
     }
 
-    protected static Stream<Protocol> protocolProvider() {
-        return Stream.of(Protocol.values())
-                .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12));
-    }
-
     protected static Stream<ArangoDB.Builder> builderProvider() {
-        return protocolProvider().map(p -> dbBuilder().protocol(p));
+        return Stream.of(Protocol.values())
+                .map(p -> dbBuilder().protocol(p));
     }
 
     protected static Stream<ArangoDB> adbProvider() {

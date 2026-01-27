@@ -145,7 +145,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentWithTypeOverwriteModeReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(collection.getSerde().getUserSerde() instanceof JacksonSerde, "polymorphic deserialization support" +
                 " required");
 
@@ -180,8 +179,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeIgnore(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -199,8 +196,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeConflict(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -218,8 +213,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -239,8 +232,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<?> meta = collection.insertDocument(doc).get();
@@ -258,8 +249,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         Map<String, String> fieldA = Collections.singletonMap("a", "a");
         doc.addAttribute("foo", fieldA);
@@ -278,8 +267,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "bar");
         collection.insertDocument(doc).get();
@@ -296,8 +283,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateKeepNullFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "bar");
         collection.insertDocument(doc).get();
@@ -314,8 +299,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -333,8 +316,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -353,8 +334,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -382,8 +361,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -411,8 +388,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -430,8 +405,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -450,8 +423,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -479,8 +450,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -754,7 +723,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void getDocumentsDirtyRead(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isCluster()); // skip activefailover
+        assumeTrue(isCluster());
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
@@ -763,9 +732,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(Arrays.asList("1", "2", "3"),
                 BaseDocument.class, new DocumentReadOptions().allowDirtyRead(true)).get();
         assertThat(documents).isNotNull();
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(documents.isPotentialDirtyRead()).isTrue();
-        }
+        assertThat(documents.isPotentialDirtyRead()).isTrue();
         assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
             assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2",
@@ -902,8 +869,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -919,8 +884,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -936,8 +899,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -962,8 +923,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void updateDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1361,8 +1320,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -1378,8 +1335,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc).get();
@@ -1395,8 +1350,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsWithExternalVersioning(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1421,8 +1374,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void replaceDocumentsWithExternalVersioningFail(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1738,21 +1689,13 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isFalse();
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
+        assertThat(indexResult.getLegacyPolygons()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeoIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1767,22 +1710,14 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isFalse();
-        }
+        assertThat(indexResult.getLegacyPolygons()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeoIndexLegacyPolygons(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1798,15 +1733,9 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isTrue();
-        }
+        assertThat(indexResult.getLegacyPolygons()).isTrue();
     }
 
     @ParameterizedTest
@@ -1825,18 +1754,12 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
     }
 
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createGeo2IndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1854,11 +1777,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
@@ -1881,16 +1800,12 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getDeduplicate()).isTrue();
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getCacheEnabled()).isFalse();
-        }
+        assertThat(indexResult.getCacheEnabled()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexCacheEnabled(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
@@ -1913,8 +1828,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexStoredValues(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
@@ -1940,8 +1853,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createPersistentIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2034,7 +1945,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createZKDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate().get();
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
@@ -2056,7 +1966,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createZKDIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate().get();
 
         String name = "ZKDIndex-" + rnd();
@@ -2084,7 +1993,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createMDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate().get();
 
         String f1 = "field-" + rnd();
@@ -2106,7 +2014,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createMDIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate().get();
 
         String name = "MDIndex-" + rnd();
@@ -2140,7 +2047,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createMDPrefixedIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate().get();
 
         String name = "MDPrefixedIndex-" + rnd();
@@ -2176,7 +2082,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void indexEstimates(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
         String name = "persistentIndex-" + rnd();
@@ -2197,7 +2102,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void indexEstimatesFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
         String name = "persistentIndex-" + rnd();
@@ -2218,8 +2122,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void indexDeduplicate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2237,8 +2139,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void indexDeduplicateFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2272,8 +2172,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createFulltextIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "fulltextIndex-" + rnd();
         final FulltextIndexOptions options = new FulltextIndexOptions();
         options.name(name);
@@ -2295,7 +2193,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createTtlIndexWithoutOptions(ArangoCollectionAsync collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
 
@@ -2310,8 +2207,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createTtlIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
 
@@ -2458,8 +2353,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void insertDocumentsOverwriteModeUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc1 = new BaseDocument(UUID.randomUUID().toString());
         doc1.addAttribute("foo", "a");
         final DocumentCreateEntity<?> meta1 = collection.insertDocument(doc1).get();
@@ -3441,9 +3334,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     void changeProperties(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final CollectionPropertiesEntity properties = collection.getProperties().get();
         assertThat(properties.getWaitForSync()).isNotNull();
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(properties.getSchema()).isNull();
-        }
+        assertThat(properties.getSchema()).isNull();
 
         String schemaRule = ("{  " + "           \"properties\": {" + "               \"number\": {" + "             " +
                 "      \"type\": \"number\"" + "               }" + "           }" + "       }").replaceAll("\\s", "");
@@ -3455,20 +3346,15 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         final CollectionPropertiesEntity changedProperties = collection.changeProperties(updatedOptions).get();
         assertThat(changedProperties.getWaitForSync()).isNotNull();
         assertThat(changedProperties.getWaitForSync()).isEqualTo(!properties.getWaitForSync());
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(changedProperties.getSchema()).isNotNull();
-            assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
-            assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
-            assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
-        }
+        assertThat(changedProperties.getSchema()).isNotNull();
+        assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
+        assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
+        assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
 
         // revert changes
         CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions()
                 .waitForSync(properties.getWaitForSync()).schema(new CollectionSchema())).get();
-        if (isAtLeastVersion(3, 7)) {
-            assertThat(revertedProperties.getSchema()).isNull();
-        }
-
+        assertThat(revertedProperties.getSchema()).isNull();
     }
 
     @ParameterizedTest
@@ -3502,7 +3388,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void responsibleShard(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
-        assumeTrue(isAtLeastVersion(3, 5));
         ShardEntity shard = collection.getResponsibleShard(new BaseDocument("testKey")).get();
         assertThat(shard).isNotNull();
         assertThat(shard.getShardId()).isNotNull();
