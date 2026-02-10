@@ -1413,6 +1413,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGetDeleteAqlFunction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
         assertThat(aqlFunctionsInitial).isEmpty();
         try {
@@ -1437,6 +1438,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGetDeleteAqlFunctionWithNamespace(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
         assertThat(aqlFunctionsInitial).isEmpty();
         try {
@@ -1536,6 +1538,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionString(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params("test");
         final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options).get();
         assertThat(result.get()).isEqualTo("\"test\"");
@@ -1544,6 +1547,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionNumber(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params(5);
         final Integer result = db.transaction("function (params) {return params;}", Integer.class, options).get();
         assertThat(result).isEqualTo(5);
@@ -1552,6 +1556,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options).get();
         assertThat(result.isTextual()).isTrue();
@@ -1561,6 +1566,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonObject(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1572,6 +1578,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionJsonArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1582,6 +1589,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionMap(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1593,6 +1601,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final String[] params = new String[]{"hello", "world"};
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1603,6 +1612,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final Collection<String> params = new ArrayList<>();
         params.add("hello");
         params.add("world");
@@ -1615,6 +1625,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionInsertJson(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         String key = "key-" + rnd();
         final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
                 .writeCollections(CNAME1);
@@ -1629,6 +1640,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void transactionExclusiveWrite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
+        assumeTrue(supportsV8());
         String key = "key-" + rnd();
         final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
                 .exclusiveCollections(CNAME1);
@@ -1642,12 +1654,14 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionEmpty(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         db.transaction("function () {}", Void.class, null).get();
     }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionAllowImplicit(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final String action = "function (params) {" + "var db = require('internal').db;"
                 + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
                 + "}";
@@ -1664,6 +1678,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void transactionPojoReturn(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         final String action = "function() { return {'value':'hello world'}; }";
         final TransactionTestEntity res = db.transaction(action, TransactionTestEntity.class, new TransactionOptions()).get();
         assertThat(res).isNotNull();
@@ -1691,6 +1706,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void shouldIncludeExceptionMessage(ArangoDatabaseAsync db) {
         assumeTrue(isAtLeastVersion(3, 4));
+        assumeTrue(supportsV8());
 
         final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";

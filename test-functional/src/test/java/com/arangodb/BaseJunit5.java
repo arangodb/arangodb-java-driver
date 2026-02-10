@@ -8,6 +8,7 @@ import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
@@ -32,6 +33,7 @@ public class BaseJunit5 {
 
     private static final ArangoDBVersion version = adb.getVersion();
     private static final ServerRole role = adb.getRole();
+    private static final boolean supportsV8 = supportsV8(adb);
 
     private static final List<Named<ArangoDB>> adbs = Arrays.stream(Protocol.values())
             .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
@@ -220,6 +222,23 @@ public class BaseJunit5 {
 
     public static boolean isEnterprise() {
         return version.getLicense() == License.ENTERPRISE;
+    }
+
+    public static boolean supportsV8() {
+        return supportsV8;
+    }
+
+    private static boolean supportsV8(ArangoDB adb) {
+        JsonObject v = adb.execute(Request.builder()
+                        .method(Request.Method.GET)
+                        .path("/_api/version")
+                        .queryParam("details", "true")
+                        .build(),
+                JsonObject.class
+        ).getBody();
+        JsonObject details = v.getJsonObject("details");
+        if (!details.containsKey("v8-version")) return false;
+        return !details.get("v8-version").toString().equals("none");
     }
 
 }

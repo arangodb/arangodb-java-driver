@@ -1544,6 +1544,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createGetDeleteAqlFunction(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
         assertThat(aqlFunctionsInitial).isEmpty();
         try {
@@ -1568,6 +1569,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createGetDeleteAqlFunctionWithNamespace(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
         assertThat(aqlFunctionsInitial).isEmpty();
         try {
@@ -1667,6 +1669,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionString(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params("test");
         final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options);
         assertThat(result.get()).isEqualTo("\"test\"");
@@ -1675,6 +1678,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionNumber(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params(5);
         final Integer result = db.transaction("function (params) {return params;}", Integer.class, options);
         assertThat(result).isEqualTo(5);
@@ -1683,6 +1687,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonNode(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
         final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
         assertThat(result.isTextual()).isTrue();
@@ -1692,6 +1697,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonObject(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1703,6 +1709,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionJsonArray(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1713,6 +1720,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionMap(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1724,6 +1732,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionArray(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final String[] params = new String[]{"hello", "world"};
         final TransactionOptions options = new TransactionOptions().params(params);
         final RawJson result = db
@@ -1734,6 +1743,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionCollection(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final Collection<String> params = new ArrayList<>();
         params.add("hello");
         params.add("world");
@@ -1746,6 +1756,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionInsertJson(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         String key = "key-" + rnd();
         final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
                 .writeCollections(CNAME1);
@@ -1759,6 +1770,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionExclusiveWrite(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         assumeTrue(isAtLeastVersion(3, 4));
         String key = "key-" + rnd();
         final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
@@ -1773,12 +1785,14 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionEmpty(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         db.transaction("function () {}", Void.class, null);
     }
 
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionAllowImplicit(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final String action = "function (params) {" + "var db = require('internal').db;"
                 + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
                 + "}";
@@ -1795,6 +1809,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void transactionPojoReturn(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         final String action = "function() { return {'value':'hello world'}; }";
         final TransactionTestEntity res = db.transaction(action, TransactionTestEntity.class, new TransactionOptions());
         assertThat(res).isNotNull();
@@ -1822,6 +1837,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void shouldIncludeExceptionMessage(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
+        assumeTrue(supportsV8());
 
         final String exceptionMessage = "My error context";
         final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
@@ -1836,6 +1852,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void reloadRouting(ArangoDatabase db) {
+        assumeTrue(supportsV8());
         db.reloadRouting();
     }
 

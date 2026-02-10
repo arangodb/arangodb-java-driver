@@ -27,6 +27,7 @@ class UserAgentTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void userAgentHeader(Protocol protocol) {
+        assumeTrue(supportsV8());
         assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
 
         ArangoDB adb = new ArangoDB.Builder()

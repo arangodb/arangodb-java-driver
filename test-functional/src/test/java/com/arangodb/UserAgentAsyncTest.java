@@ -14,6 +14,7 @@ class UserAgentAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @EnumSource(Protocol.class)
     void userAgentHeader(Protocol protocol) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
 
         ArangoDBAsync adb = new ArangoDB.Builder()
