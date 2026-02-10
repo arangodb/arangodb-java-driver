@@ -238,7 +238,7 @@ public class BaseJunit5 {
         ).getBody();
         JsonObject details = v.getJsonObject("details");
         if (!details.containsKey("v8-version")) return false;
-        return !details.get("v8-version").toString().equals("none");
+        return !details.getString("v8-version").equals("none");
     }
 
 }
