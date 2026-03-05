@@ -28,6 +28,7 @@ import java.util.function.BooleanSupplier;
 
 import javax.crypto.NoSuchPaddingException;
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
@@ -47,6 +48,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultChannelPromise;
+import io.netty.channel.EventLoopTaskQueueFactory;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.compression.Brotli;
 import io.netty.handler.codec.compression.BrotliDecoder;
@@ -141,7 +143,7 @@ final class Target_io_netty_handler_ssl_OpenSsl {
 
     @Alias
     @RecomputeFieldValue(kind = Kind.FromAlias)
-    static Set<String> SUPPORTED_PROTOCOLS_SET = Collections.emptySet();
+    static Set<String> CLIENT_DEFAULT_PROTOCOLS = Collections.emptySet();
 
     @Substitute
     public static boolean isAvailable() {
@@ -164,20 +166,6 @@ final class Target_io_netty_handler_ssl_OpenSsl {
     }
 }
 
-@TargetClass(className = "io.netty.handler.ssl.JdkSslServerContext")
-final class Target_io_netty_handler_ssl_JdkSslServerContext {
-    @Alias
-    Target_io_netty_handler_ssl_JdkSslServerContext(Provider provider,
-                                                    X509Certificate[] trustCertCollection, TrustManagerFactory trustManagerFactory,
-                                                    X509Certificate[] keyCertChain, PrivateKey key, String keyPassword,
-                                                    KeyManagerFactory keyManagerFactory, Iterable<String> ciphers, CipherSuiteFilter cipherFilter,
-                                                    ApplicationProtocolConfig apn, long sessionCacheSize, long sessionTimeout,
-                                                    ClientAuth clientAuth, String[] protocols, boolean startTls,
-                                                    SecureRandom secureRandom, String keyStore, Target_io_netty_handler_ssl_ResumptionController resumptionController)
-            throws SSLException {
-    }
-}
-
 @TargetClass(className = "io.netty.handler.ssl.JdkSslClientContext")
 final class Target_io_netty_handler_ssl_JdkSslClientContext {
 
@@ -188,7 +176,7 @@ final class Target_io_netty_handler_ssl_JdkSslClientContext {
                                                     KeyManagerFactory keyManagerFactory, Iterable<String> ciphers, CipherSuiteFilter cipherFilter,
                                                     ApplicationProtocolConfig apn, String[] protocols, long sessionCacheSize, long sessionTimeout,
                                                     SecureRandom secureRandom, String keyStoreType, String endpointIdentificationAlgorithm,
-                                                    Target_io_netty_handler_ssl_ResumptionController resumptionController) throws SSLException {
+                                                    List<SNIServerName> serverNames, Target_io_netty_handler_ssl_ResumptionController resumptionController) throws SSLException {
     }
 }
 
@@ -237,22 +225,16 @@ final class Target_io_netty_handler_ssl_ResumptionController {
 final class Target_io_netty_handler_ssl_SslContext {
 
     @Substitute
-    static SslContext newServerContextInternal(SslProvider provider,
-                                               Provider sslContextProvider,
-                                               X509Certificate[] trustCertCollection, TrustManagerFactory trustManagerFactory,
-                                               X509Certificate[] keyCertChain, PrivateKey key, String keyPassword, KeyManagerFactory keyManagerFactory,
-                                               Iterable<String> ciphers, CipherSuiteFilter cipherFilter, ApplicationProtocolConfig apn,
-                                               long sessionCacheSize, long sessionTimeout, ClientAuth clientAuth, String[] protocols, boolean startTls,
-                                               boolean enableOcsp, SecureRandom secureRandom, String keyStoreType,
-                                               Map.Entry<SslContextOption<?>, Object>... ctxOptions) throws SSLException {
-        if (enableOcsp) {
-            throw new IllegalArgumentException("OCSP is not supported with this SslProvider: " + provider);
-        }
-        Target_io_netty_handler_ssl_ResumptionController resumptionController = new Target_io_netty_handler_ssl_ResumptionController();
-        return (SslContext) (Object) new Target_io_netty_handler_ssl_JdkSslServerContext(sslContextProvider,
-                trustCertCollection, trustManagerFactory, keyCertChain, key, keyPassword,
-                keyManagerFactory, ciphers, cipherFilter, apn, sessionCacheSize, sessionTimeout,
-                clientAuth, protocols, startTls, secureRandom, keyStoreType, resumptionController);
+    static SslContext newServerContextInternal(SslProvider provider, Provider sslContextProvider,
+                                               X509Certificate[] trustCert, TrustManagerFactory trustManagerFactory,
+                                               X509Certificate[] keyCertChain, PrivateKey key, String keyPassword,
+                                               KeyManagerFactory keyManagerFactory, Iterable<String> ciphers,
+                                               CipherSuiteFilter cipherFilter, ApplicationProtocolConfig apn,
+                                               long sessionCacheSize, long sessionTimeout, ClientAuth clientAuth,
+                                               String[] protocols, boolean startTls, boolean enableOcsp,
+                                               SecureRandom secureRandom, String keyStoreType,
+                                               Map.Entry<SslContextOption<?>, Object>... options) throws SSLException {
+        throw new SSLException("not supported");
     }
 
     @Substitute
@@ -263,6 +245,7 @@ final class Target_io_netty_handler_ssl_SslContext {
                                                Iterable<String> ciphers, CipherSuiteFilter cipherFilter, ApplicationProtocolConfig apn, String[] protocols,
                                                long sessionCacheSize, long sessionTimeout, boolean enableOcsp,
                                                SecureRandom secureRandom, String keyStoreType, String endpointIdentificationAlgorithm,
+                                               List<SNIServerName> serverNames,
                                                Map.Entry<SslContextOption<?>, Object>... options) throws SSLException {
         if (enableOcsp) {
             throw new IllegalArgumentException("OCSP is not supported with this SslProvider: " + provider);
@@ -272,7 +255,7 @@ final class Target_io_netty_handler_ssl_SslContext {
                 trustCert, trustManagerFactory, keyCertChain, key, keyPassword,
                 keyManagerFactory, ciphers, cipherFilter, apn, protocols, sessionCacheSize,
                 sessionTimeout, secureRandom, keyStoreType, endpointIdentificationAlgorithm,
-                resumptionController);
+                serverNames, resumptionController);
     }
 
 }
@@ -402,7 +385,7 @@ final class Target_io_netty_bootstrap_AbstractBootstrap {
 final class Target_io_netty_channel_nio_NioEventLoop {
 
     @Substitute
-    private static Queue<Runnable> newTaskQueue0(int maxPendingTasks) {
+    private static Queue<Runnable> newTaskQueue(EventLoopTaskQueueFactory queueFactory) {
         return new LinkedBlockingDeque<>();
     }
 }
@@ -456,11 +439,11 @@ final class Target_io_netty_util_internal_NativeLibraryLoader {
 final class Target_io_netty_buffer_EmptyByteBuf {
 
     @Alias
-    @RecomputeFieldValue(kind = RecomputeFieldValue.Kind.Reset)
+    @RecomputeFieldValue(kind = Kind.Reset)
     private static ByteBuffer EMPTY_BYTE_BUFFER;
 
     @Alias
-    @RecomputeFieldValue(kind = RecomputeFieldValue.Kind.Reset)
+    @RecomputeFieldValue(kind = Kind.Reset)
     private static long EMPTY_BYTE_BUFFER_ADDRESS;
 
     @Substitute
@@ -470,7 +453,7 @@ final class Target_io_netty_buffer_EmptyByteBuf {
 
     @Substitute
     public ByteBuffer[] nioBuffers() {
-        return new ByteBuffer[] { EmptyByteBufStub.emptyByteBuffer() };
+        return new ByteBuffer[]{EmptyByteBufStub.emptyByteBuffer()};
     }
 
     @Substitute
@@ -622,8 +605,17 @@ final class Target_SslContext {
 final class Target_io_netty_util_internal_shaded_org_jctools_util_UnsafeRefArrayAccess {
 
     @Alias
-    @RecomputeFieldValue(kind = RecomputeFieldValue.Kind.ArrayIndexShift, declClass = Object[].class)
+    @RecomputeFieldValue(kind = Kind.ArrayIndexShift, declClass = Object[].class)
     public static int LONG_ELEMENT_SHIFT;
+}
+
+@TargetClass(className = "io.netty.util.internal.CleanerJava25$CleanableDirectBufferImpl")
+final class Target_io_netty_util_internal_CleanerJava25_CleanableDirectBufferImpl {
+    @Substitute
+    public void clean() {
+        // No-op: bypasses Arena.ofShared().close() which is unsupported
+        // in GraalVM native image without -H:+SharedArenaSupport
+    }
 }
 
 class IsBouncyNotThere implements BooleanSupplier {

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.arangodb</groupId>
         <artifactId>arangodb-java-driver-parent</artifactId>
-        <version>7.25.0</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
 
     <name>http-protocol</name>
@@ -30,5 +30,17 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-stack-depchain</artifactId>
+                <version>5.0.8</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

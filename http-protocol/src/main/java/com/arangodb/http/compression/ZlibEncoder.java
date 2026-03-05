@@ -19,7 +19,9 @@ class ZlibEncoder implements Encoder {
     public Buffer encode(byte[] data) {
         JdkZlibEncoder encoder = new JdkZlibEncoder(wrapper, level);
         ByteBuf bb = encoder.encode(data);
-        Buffer out = Buffer.buffer(bb);
+        byte[] bytes = new byte[bb.readableBytes()];
+        bb.readBytes(bytes);
+        Buffer out = Buffer.buffer(bytes);
         encoder.close();
         return out;
     }

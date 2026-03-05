@@ -40,10 +40,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.Http2Settings;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpVersion;
+import io.vertx.core.http.*;
 import io.vertx.core.net.JdkSSLEngineOptions;
 import io.vertx.core.spi.tls.SslContextFactory;
 import io.vertx.ext.auth.authentication.TokenCredentials;
@@ -141,8 +138,6 @@ public class HttpConnection implements Connection {
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
 
         WebClientOptions webClientOptions = new WebClientOptions()
-                .setMaxPoolSize(1)
-                .setHttp2MaxPoolSize(1)
                 .setConnectTimeout(timeout)
                 .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
                 .setIdleTimeout(timeout)
@@ -167,7 +162,7 @@ public class HttpConnection implements Connection {
                 .setInitialSettings(new Http2Settings().setInitialWindowSize(config.getInitialWindowSize()));
 
         if (compression != Compression.NONE) {
-            webClientOptions.setTryUseCompression(true);
+            webClientOptions.setDecompressionSupported(true);
         }
 
         if (Boolean.TRUE.equals(config.getUseSsl())) {
@@ -177,7 +172,7 @@ public class HttpConnection implements Connection {
                     .setUseAlpn(true)
                     .setAlpnVersions(Collections.singletonList(httpVersion))
                     .setVerifyHost(config.getVerifyHost())
-                    .setJdkSslEngineOptions(new JdkSSLEngineOptions() {
+                    .setSslEngineOptions(new JdkSSLEngineOptions() {
                         @Override
                         public JdkSSLEngineOptions copy() {
                             return this;
@@ -204,7 +199,10 @@ public class HttpConnection implements Connection {
                     });
         }
 
-        client = WebClient.create(vertx, webClientOptions);
+        PoolOptions poolOptions = new PoolOptions()
+                .setHttp1MaxSize(1)
+                .setHttp2MaxSize(1);
+        client = WebClient.create(vertx, webClientOptions, poolOptions);
     }
 
     private static String buildUrl(final InternalRequest request) {
