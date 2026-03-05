@@ -22,12 +22,14 @@ class CompressionTest extends BaseJunit5 {
     @ParameterizedTest
     @ProtocolSource
     void gzip(Protocol protocol) {
+        assumeTrue(supportsV8());
         doTest(protocol, Compression.GZIP);
     }
 
     @ParameterizedTest
     @ProtocolSource
     void deflate(Protocol protocol) {
+        assumeTrue(supportsV8());
         doTest(protocol, Compression.DEFLATE);
     }
 

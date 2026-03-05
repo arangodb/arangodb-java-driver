@@ -7,11 +7,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class UserAgentAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @ProtocolSource
     void userAgentHeader(Protocol protocol) throws ExecutionException, InterruptedException {
+        assumeTrue(supportsV8());
         ArangoDBAsync adb = new ArangoDB.Builder()
                 .loadProperties(config)
                 .protocol(protocol)

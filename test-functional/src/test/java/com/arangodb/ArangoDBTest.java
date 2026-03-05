@@ -430,6 +430,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void executeJS(ArangoDB arangoDB) {
+        assumeTrue(supportsV8());
+        assumeTrue(isAtLeastVersion(3, 11));
         Request<?> request = Request.builder()
                 .db(ArangoRequestParam.SYSTEM)
                 .method(Request.Method.POST)
