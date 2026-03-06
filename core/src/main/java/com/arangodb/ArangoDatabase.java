@@ -496,7 +496,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @param options Additional options, can be null
      * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#create-a-user-defined-aql-function">API
      * Documentation</a>
+     *
+     * @deprecated Removed from ArangoDB 4.0 onwards.
      */
+    @Deprecated
     void createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
 
     /**
@@ -508,7 +511,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#remove-a-user-defined-aql-function">API
      * Documentation</a>
+     *
+     * @deprecated Removed from ArangoDB 4.0 onwards.
      */
+    @Deprecated
     Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
 
     /**
@@ -519,7 +525,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#list-the-registered-user-defined-aql-functions">API
      * Documentation</a>
+     *
+     * @deprecated Removed from ArangoDB 4.0 onwards.
      */
+    @Deprecated
     Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options);
 
     /**
@@ -573,7 +582,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return the result of the transaction if it succeeded
      * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/javascript-transactions/#execute-a-javascript-transaction">API
      * Documentation</a>
+     *
+     * @deprecated Removed from ArangoDB 4.0 onwards.
      */
+    @Deprecated
     <T> T transaction(String action, Class<T> type, TransactionOptions options);
 
     /**
@@ -642,7 +654,10 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#reload-the-routing-table">API
      * Documentation</a>
+     *
+     * @deprecated Removed from ArangoDB 4.0 onwards.
      */
+    @Deprecated
     void reloadRouting();
 
     /**
