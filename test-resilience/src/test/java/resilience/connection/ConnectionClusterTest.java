@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
+import resilience.utils.ProtocolSource;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class ConnectionClusterTest extends ClusterTest {
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFail(Protocol protocol) {
         // FIXME: make this test faster and re-enable
@@ -42,7 +43,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFailAsync(Protocol protocol) {
         // FIXME: make this test faster and re-enable
@@ -65,7 +66,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFailover(Protocol protocol) {
         // FIXME: make this test faster and re-enable
@@ -86,7 +87,7 @@ class ConnectionClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     @Disabled
     void nameResolutionFailoverAsync(Protocol protocol) throws ExecutionException, InterruptedException {
         // FIXME: make this test faster and re-enable

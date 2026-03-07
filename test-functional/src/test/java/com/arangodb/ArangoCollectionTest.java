@@ -148,7 +148,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentWithTypeOverwriteModeReplace(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(collection.getSerde().getUserSerde() instanceof JacksonSerde, "polymorphic deserialization support" +
                 " required");
 
@@ -183,8 +182,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeIgnore(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -202,8 +199,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeConflict(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -221,8 +216,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplace(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         String key = "key-" + UUID.randomUUID();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("foo", "a");
@@ -242,8 +235,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdate(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "a");
         final DocumentCreateEntity<?> meta = collection.insertDocument(doc);
@@ -261,8 +252,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateMergeObjectsFalse(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         Map<String, String> fieldA = Collections.singletonMap("a", "a");
         doc.addAttribute("foo", fieldA);
@@ -281,8 +270,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateKeepNullTrue(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "bar");
         collection.insertDocument(doc);
@@ -299,8 +286,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateKeepNullFalse(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("foo", "bar");
         collection.insertDocument(doc);
@@ -317,8 +302,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -336,8 +319,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -356,8 +337,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -385,8 +364,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdateWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -414,8 +391,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -433,8 +408,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentOverwriteModeReplaceUpdateWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -453,8 +426,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -482,8 +453,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeReplaceWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -606,9 +575,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsWithErrors(ArangoCollection collection) {
-        // BTS-615
-        assumeTrue(isAtLeastVersion(3, 11));
-
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> res =
                 collection.insertDocuments(Arrays.asList(
                                 new BaseDocument(),
@@ -807,7 +773,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getDocumentsDirtyRead(ArangoCollection collection) {
-        assumeTrue(isCluster()); // skip activefailover
+        assumeTrue(isCluster());
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
@@ -816,9 +782,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         final MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(Arrays.asList("1", "2", "3"),
                 BaseDocument.class, new DocumentReadOptions().allowDirtyRead(true));
         assertThat(documents).isNotNull();
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(documents.isPotentialDirtyRead()).isTrue();
-        }
+        assertThat(documents.isPotentialDirtyRead()).isTrue();
         assertThat(documents.getDocuments()).hasSize(3);
         for (final BaseDocument document : documents.getDocuments()) {
             assertThat(document.getId()).isIn(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2",
@@ -955,8 +919,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -972,8 +934,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -989,8 +949,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1015,8 +973,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void updateDocumentsWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1414,8 +1370,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -1431,8 +1385,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("_version", 1);
         collection.insertDocument(doc);
@@ -1448,8 +1400,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsWithExternalVersioning(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1474,8 +1424,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void replaceDocumentsWithExternalVersioningFail(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         BaseDocument d1 = new BaseDocument(UUID.randomUUID().toString());
         d1.addAttribute("_version", 1);
         BaseDocument d2 = new BaseDocument(UUID.randomUUID().toString());
@@ -1791,21 +1739,13 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isFalse();
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
+        assertThat(indexResult.getLegacyPolygons()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createGeoIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1820,22 +1760,14 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isFalse();
-        }
+        assertThat(indexResult.getLegacyPolygons()).isFalse();
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createGeoIndexLegacyPolygons(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1851,15 +1783,9 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo1);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(indexResult.getLegacyPolygons()).isTrue();
-        }
+        assertThat(indexResult.getLegacyPolygons()).isTrue();
     }
 
     @ParameterizedTest
@@ -1878,18 +1804,12 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createGeo2IndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "geoIndex-" + rnd();
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name(name);
@@ -1907,11 +1827,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getMinLength()).isNull();
         assertThat(indexResult.getSparse()).isTrue();
         assertThat(indexResult.getUnique()).isFalse();
-        if (isAtLeastVersion(3, 4)) {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
-        } else {
-            assertThat(indexResult.getType()).isEqualTo(IndexType.geo2);
-        }
+        assertThat(indexResult.getType()).isEqualTo(IndexType.geo);
         assertThat(indexResult.getName()).isEqualTo(name);
     }
 
@@ -1934,16 +1850,12 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getDeduplicate()).isTrue();
-        if (isAtLeastVersion(3, 10)) {
             assertThat(indexResult.getCacheEnabled()).isFalse();
-        }
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexCacheEnabled(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
@@ -1966,8 +1878,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexStoredValues(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
         final Collection<String> fields = Arrays.asList(f1, f2);
@@ -1993,8 +1903,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createPersistentIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2087,7 +1995,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createZKDIndex(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate();
         String f1 = "field-" + rnd();
         String f2 = "field-" + rnd();
@@ -2109,7 +2016,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createZKDIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 9));
         collection.truncate();
 
         String name = "ZKDIndex-" + rnd();
@@ -2137,7 +2043,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createMDIndex(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate();
 
         String f1 = "field-" + rnd();
@@ -2159,7 +2064,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createMDIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate();
 
         String name = "MDIndex-" + rnd();
@@ -2193,7 +2097,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createMDPrefixedIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 12));
         collection.truncate();
 
         String name = "MDPrefixedIndex-" + rnd();
@@ -2229,7 +2132,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void indexEstimates(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
         String name = "persistentIndex-" + rnd();
@@ -2250,7 +2152,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void indexEstimatesFalse(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 8));
         assumeTrue(isSingleServer());
 
         String name = "persistentIndex-" + rnd();
@@ -2271,8 +2172,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void indexDeduplicate(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2290,8 +2189,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void indexDeduplicateFalse(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         String name = "persistentIndex-" + rnd();
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name(name);
@@ -2325,8 +2222,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createFulltextIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "fulltextIndex-" + rnd();
         final FulltextIndexOptions options = new FulltextIndexOptions();
         options.name(name);
@@ -2348,7 +2243,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createTtlIndexWithoutOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
 
@@ -2363,8 +2257,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createTtlIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
 
@@ -2538,8 +2430,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void insertDocumentsOverwriteModeUpdate(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 7));
-
         final BaseDocument doc1 = new BaseDocument(UUID.randomUUID().toString());
         doc1.addAttribute("foo", "a");
         final DocumentCreateEntity<?> meta1 = collection.insertDocument(doc1);
@@ -3598,7 +3488,6 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void responsibleShard(ArangoCollection collection) {
         assumeTrue(isCluster());
-        assumeTrue(isAtLeastVersion(3, 5));
         ShardEntity shard = collection.getResponsibleShard(new BaseDocument("testKey"));
         assertThat(shard).isNotNull();
         assertThat(shard.getShardId()).isNotNull();

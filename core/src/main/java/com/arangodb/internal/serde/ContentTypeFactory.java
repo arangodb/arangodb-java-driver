@@ -12,7 +12,6 @@ public final class ContentTypeFactory {
             case HTTP_JSON:
             case HTTP2_JSON:
                 return ContentType.JSON;
-            case VST:
             case HTTP_VPACK:
             case HTTP2_VPACK:
                 return ContentType.VPACK;

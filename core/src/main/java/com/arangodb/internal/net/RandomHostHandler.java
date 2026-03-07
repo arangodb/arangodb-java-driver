@@ -44,7 +44,7 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
-    public Host get(final HostHandle hostHandle, AccessType accessType) {
+    public Host get(final HostHandle hostHandle) {
         if (current == null || current.isMarkforDeletion()) {
             hosts = resolver.getHosts();
             current = getRandomHost();
@@ -53,7 +53,7 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
-    public void checkNext(HostHandle hostHandle, AccessType accessType) {
+    public void checkNext(HostHandle hostHandle) {
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public void fail(Exception exception) {
         fallback.fail(exception);
-        current = fallback.get(null, null);
+        current = fallback.get(null);
     }
 
     @Override

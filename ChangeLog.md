@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- updated Vert.x to version 5.0
+
 ## [7.25.0] - 2026-01-14
  
 - added SSL configuration from files (#623, DE-505)

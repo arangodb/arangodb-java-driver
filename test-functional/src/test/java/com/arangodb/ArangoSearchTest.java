@@ -55,7 +55,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void exists(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
@@ -64,7 +63,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createAndExistsSearchAlias(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String viewName = rndName();
         db.createSearchAlias(viewName, new SearchAliasCreateOptions());
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
@@ -73,7 +71,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ViewEntity info = db.arangoSearch(viewName).getInfo();
@@ -86,7 +83,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void drop(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ArangoView view = db.arangoSearch(viewName);
@@ -98,7 +94,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final String name = viewName + "_new";
         db.createArangoSearch(name, new ArangoSearchCreateOptions());
@@ -110,7 +105,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchView(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final ViewEntity info = db.arangoSearch(viewName).create();
         assertThat(info).isNotNull();
@@ -123,7 +117,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasView(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String viewName = rndName();
         final ViewEntity info = db.searchAlias(viewName).create();
         assertThat(info).isNotNull();
@@ -136,7 +129,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithOptions(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         final ViewEntity info = db.arangoSearch(viewName).create(options);
@@ -150,7 +142,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithPrimarySort(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
         String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
 
@@ -171,30 +162,27 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
         assertThat(db.arangoSearch(viewName).exists()).isTrue();
 
-        if (isAtLeastVersion(3, 7)) {
-            final ArangoSearchPropertiesEntity properties = view.getProperties();
-            assertThat(properties.getPrimarySortCompression()).isEqualTo(ArangoSearchCompression.none);
-            Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
-            assertThat(retrievedStoredValues).isNotNull();
-            assertThat(retrievedStoredValues).hasSize(1);
-            StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
-            assertThat(retrievedStoredValue).isNotNull();
-            assertThat(retrievedStoredValue.getFields()).isEqualTo(storedValue.getFields());
-            assertThat(retrievedStoredValue.getCompression()).isEqualTo(storedValue.getCompression());
-            assertThat(properties.getPrimarySort())
-                    .hasSize(1)
-                    .allSatisfy(ps -> {
-                        assertThat(ps).isNotNull();
-                        assertThat(ps.getField()).isEqualTo(primarySort.getField());
-                        assertThat(ps.getAscending()).isEqualTo(primarySort.getAscending());
-                    });
-        }
+        final ArangoSearchPropertiesEntity properties = view.getProperties();
+        assertThat(properties.getPrimarySortCompression()).isEqualTo(ArangoSearchCompression.none);
+        Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
+        assertThat(retrievedStoredValues).isNotNull();
+        assertThat(retrievedStoredValues).hasSize(1);
+        StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
+        assertThat(retrievedStoredValue).isNotNull();
+        assertThat(retrievedStoredValue.getFields()).isEqualTo(storedValue.getFields());
+        assertThat(retrievedStoredValue.getCompression()).isEqualTo(storedValue.getCompression());
+        assertThat(properties.getPrimarySort())
+                .hasSize(1)
+                .allSatisfy(ps -> {
+                    assertThat(ps).isNotNull();
+                    assertThat(ps.getField()).isEqualTo(primarySort.getField());
+                    assertThat(ps.getAscending()).isEqualTo(primarySort.getAscending());
+                });
     }
 
     @ParameterizedTest
     @MethodSource("dbs")
     void createArangoSearchViewWithCommitIntervalMsec(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
         String viewName = rndName();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         options.commitIntervalMsec(666666L);
@@ -215,7 +203,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasViewWithOptions(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String viewName = rndName();
         final SearchAliasCreateOptions options = new SearchAliasCreateOptions();
         final ViewEntity info = db.searchAlias(viewName).create(options);
@@ -229,7 +216,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
         String idxName1 = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
@@ -268,7 +254,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void getArangoSearchViewProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
@@ -288,7 +273,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void updateArangoSearchViewProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
@@ -321,7 +305,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void updateSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
         String idxName = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
@@ -361,7 +344,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void replaceArangoSearchViewProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
@@ -380,7 +362,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void replaceSearchAliasViewWithIndexesAndGetProperties(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         ArangoCollection col = db.collection(COLL_1);
         String idxName = rndName();
         col.ensureInvertedIndex(new InvertedIndexOptions()
@@ -451,8 +432,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void identityAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -470,8 +449,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void delimiterAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -493,8 +470,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void multiDelimiterAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -516,8 +491,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void stemAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -539,8 +512,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void normAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -564,8 +535,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void ngramAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -590,8 +559,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void enhancedNgramAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 6));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -618,8 +585,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void textAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -645,8 +610,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void enhancedTextAnalyzerTyped(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 6));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -677,14 +640,11 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void arangoSearchOptions(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         String viewName = rndName();
         FieldLink field = FieldLink.on("f1")
                 .inBackground(true)
                 .cache(false);
-        if (isEnterprise()) {
-            field.nested(FieldLink.on("f2"));
-        }
+        field.nested(FieldLink.on("f2"));
         CollectionLink link = CollectionLink.on(COLL_1)
                 .analyzers("identity")
                 .fields(field)
@@ -694,9 +654,7 @@ class ArangoSearchTest extends BaseJunit5 {
                 .inBackground(true)
                 .cache(true);
 
-        if (isEnterprise()) {
-            link.nested(FieldLink.on("f3"));
-        }
+        link.nested(FieldLink.on("f3"));
         ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
                 .link(link)
                 .primarySortCache(true)
@@ -725,40 +683,26 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(createdLink.getTrackListPositions()).isFalse();
 
         FieldLink fieldLink = createdLink.getFields().iterator().next();
-        if (isEnterprise()) {
-            assertThat(createdLink.getCache()).isTrue();
-            assertThat(fieldLink.getCache()).isFalse();
-            assertThat(properties.getPrimaryKeyCache()).isTrue();
-            assertThat(properties.getPrimarySortCache()).isTrue();
-            assertThat(properties.getStoredValues())
-                    .isNotEmpty()
-                    .allSatisfy(it -> assertThat(it.getCache()).isTrue());
-        }
-
-        if (isEnterprise() && isAtLeastVersion(3, 10)) {
-            assertThat(createdLink.getNested()).isNotEmpty();
-            FieldLink nested = createdLink.getNested().iterator().next();
-            assertThat(nested.getName()).isEqualTo("f3");
-        }
-
+        assertThat(createdLink.getCache()).isTrue();
+        assertThat(fieldLink.getCache()).isFalse();
+        assertThat(properties.getPrimaryKeyCache()).isTrue();
+        assertThat(properties.getPrimarySortCache()).isTrue();
+        assertThat(properties.getStoredValues())
+                .isNotEmpty()
+                .allSatisfy(it -> assertThat(it.getCache()).isTrue());
+        assertThat(createdLink.getNested()).isNotEmpty();
+        FieldLink nested = createdLink.getNested().iterator().next();
+        assertThat(nested.getName()).isEqualTo("f3");
         assertThat(fieldLink.getName()).isEqualTo("f1");
-        if (isEnterprise() && isAtLeastVersion(3, 10)) {
-            assertThat(fieldLink.getNested()).isNotEmpty();
-            FieldLink nested = fieldLink.getNested().iterator().next();
-            assertThat(nested.getName()).isEqualTo("f2");
-        }
-
-        if (isEnterprise() && isAtLeastVersion(3, 12)) {
-            assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
-        }
-
+        assertThat(fieldLink.getNested()).isNotEmpty();
+        FieldLink nested2 = fieldLink.getNested().iterator().next();
+        assertThat(nested2.getName()).isEqualTo("f2");
+        assertThat(properties.getOptimizeTopK()).containsExactly(optimizeTopK);
     }
 
     @ParameterizedTest
     @MethodSource("dbs")
     void pipelineAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         // comma delimiter
         DelimiterAnalyzerProperties commaDelimiterProperties = new DelimiterAnalyzerProperties();
         commaDelimiterProperties.setDelimiter(",");
@@ -802,8 +746,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void stopwordsAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
         features.add(AnalyzerFeature.norm);
@@ -834,8 +776,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void aqlAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         AQLAnalyzerProperties properties = new AQLAnalyzerProperties();
         properties.setBatchSize(2);
         properties.setCollapsePositions(true);
@@ -860,8 +800,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void geoJsonAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
         options.setMaxLevel(10);
         options.setMaxCells(11);
@@ -889,9 +827,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void geoS2Analyzer(ArangoDatabase db) {
-        assumeTrue(isEnterprise());
-        assumeTrue(isAtLeastVersion(3, 10, 5));
-
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
         options.setMaxLevel(10);
         options.setMaxCells(11);
@@ -919,8 +854,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void geoPointAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 8));
-
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
         options.setMaxLevel(10);
         options.setMaxCells(11);
@@ -948,8 +881,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void segmentationAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 9));
-
         SegmentationAnalyzerProperties properties = new SegmentationAnalyzerProperties();
         properties.setBreakMode(SegmentationAnalyzerProperties.BreakMode.graphic);
         properties.setAnalyzerCase(SearchAnalyzerCase.upper);
@@ -970,8 +901,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void collationAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 9));
-
         CollationAnalyzerProperties properties = new CollationAnalyzerProperties();
         properties.setLocale("ru");
 
@@ -993,9 +922,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void classificationAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
         ClassificationAnalyzerProperties properties = new ClassificationAnalyzerProperties();
         properties.setModelLocation("/tmp/foo.bin");
         properties.setTopK(2);
@@ -1018,9 +944,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void nearestNeighborsAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
         NearestNeighborsAnalyzerProperties properties = new NearestNeighborsAnalyzerProperties();
         properties.setModelLocation("/tmp/foo.bin");
         properties.setTopK(2);
@@ -1041,9 +964,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void MinHashAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-        assumeTrue(isEnterprise());
-
         SegmentationAnalyzerProperties segProperties = new SegmentationAnalyzerProperties();
         segProperties.setBreakMode(SegmentationAnalyzerProperties.BreakMode.alpha);
         segProperties.setAnalyzerCase(SearchAnalyzerCase.lower);
@@ -1071,8 +991,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void WildcardAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 12));
-
         NormAnalyzerProperties properties = new NormAnalyzerProperties();
         properties.setLocale("ru");
         properties.setAnalyzerCase(SearchAnalyzerCase.lower);
@@ -1100,8 +1018,6 @@ class ArangoSearchTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void offsetFeature(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();

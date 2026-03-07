@@ -9,7 +9,6 @@ import com.arangodb.internal.RequestType;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.util.HostUtils;
-import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public abstract class Communication implements Closeable {
     }
 
     public CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle) {
-        return executeAsync(request, hostHandle, hostHandler.get(hostHandle, RequestUtils.determineAccessType(request)), 0);
+        return executeAsync(request, hostHandle, hostHandler.get(hostHandle), 0);
     }
 
     private CompletableFuture<InternalResponse> executeAsync(final InternalRequest request, final HostHandle hostHandle, final Host host, final int attemptCount) {
@@ -97,7 +96,7 @@ public abstract class Communication implements Closeable {
                                     final HostDescription redirectHost = HostUtils.createFromLocation(location);
                                     hostHandler.failIfNotMatch(redirectHost, errorEntityEx);
                                     mirror(
-                                            executeAsync(request, new HostHandle().setHost(redirectHost), hostHandler.get(hostHandle, RequestUtils.determineAccessType(request)), attemptCount + 1),
+                                            executeAsync(request, new HostHandle().setHost(redirectHost), hostHandler.get(hostHandle), attemptCount + 1),
                                             rfuture
                                     );
                                 }
@@ -124,9 +123,9 @@ public abstract class Communication implements Closeable {
         if (hostHandle != null && hostHandle.getHost() != null) {
             hostHandle.setHost(null);
         }
-        hostHandler.checkNext(hostHandle, RequestUtils.determineAccessType(request));
+        hostHandler.checkNext(hostHandle);
         if (isSafe) {
-            Host nextHost = hostHandler.get(hostHandle, RequestUtils.determineAccessType(request));
+            Host nextHost = hostHandler.get(hostHandle);
             LOGGER.warn("Could not connect to {} while executing request [id={}]",
                     host.getDescription(), reqId, ioEx);
             LOGGER.debug("Try connecting to {}", nextHost.getDescription());

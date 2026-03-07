@@ -111,9 +111,6 @@ commands:
           command: mvn -s .circleci/maven-release-settings.xml -Dmaven.test.skip deploy
 
 executors:
-  j17:
-    docker:
-      - image: 'cimg/openjdk:17.0'
   j21:
     docker:
       - image: 'cimg/openjdk:21.0'
@@ -418,7 +415,7 @@ jobs:
       - store_cache
 
   deploy:
-    executor: 'j17'
+    executor: 'j21'
     steps:
       - timeout:
           duration: '30m'
@@ -500,16 +497,13 @@ workflows:
           matrix:
             parameters:
               jdk:
-                - 'j17'
                 - 'j21'
                 - 'j25'
           filters:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - main
-                - next
+              ignore: /.*/
       - test:
           name: test-jackson-<<matrix.args>>
           matrix:
@@ -528,9 +522,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - main
-                - next
+              ignore: /.*/
       - test:
           name: test-native-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:
@@ -549,9 +541,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only:
-                - main
-                - next
+              ignore: /.*/
       - test-shaded:
           name: test-native-shaded-ssl=<<matrix.ssl>>-<<matrix.graalvm-version>>
           matrix:

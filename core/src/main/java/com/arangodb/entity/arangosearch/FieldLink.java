@@ -120,7 +120,7 @@ public final class FieldLink {
      *              and it is up to the operating system to load them from disk into memory and to evict them from
      *              memory.
      * @return link
-     * @since ArangoDB 3.9.5, Enterprise Edition only
+     * @since ArangoDB 3.9.5
      */
     public FieldLink cache(final Boolean cache) {
         this.cache = cache;

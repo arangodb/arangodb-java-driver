@@ -3,16 +3,15 @@ package com.arangodb;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.config.ConfigUtils;
 import com.arangodb.internal.ArangoRequestParam;
+import com.arangodb.util.ProtocolSource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -49,10 +48,8 @@ class JwtAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void notAuthenticated(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         ArangoDB arangoDB = getBuilder(protocol).acquireHostList(false).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -62,10 +59,8 @@ class JwtAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void authenticated(Protocol protocol) {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();
@@ -74,9 +69,8 @@ class JwtAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void updateJwt(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST, "DE-423");
         ArangoDB arangoDB = getBuilder(protocol)
                 .jwt(jwt)
                 .build();

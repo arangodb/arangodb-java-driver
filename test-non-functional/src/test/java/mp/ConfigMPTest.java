@@ -28,13 +28,11 @@ class ConfigMPTest {
     private final String sslTrustStorePassword = "sslTrustStorePassword";
     private final String sslTrustStoreType = "sslTrustStoreType";
     private final Boolean verifyHost = false;
-    private final Integer vstChunkSize = 1234;
     private final Boolean pipelining = true;
     private final Integer connectionWindowSize = 987;
     private final Integer initialWindowSize = 876;
     private final Integer maxConnections = 123;
     private final Long connectionTtl = 12345L;
-    private final Integer keepAliveInterval = 123456;
     private final Boolean acquireHostList = true;
     private final Integer acquireHostListInterval = 1234567;
     private final LoadBalancingStrategy loadBalancingStrategy = LoadBalancingStrategy.ROUND_ROBIN;
@@ -72,7 +70,6 @@ class ConfigMPTest {
         assertThat(config.getSslTrustStorePassword()).hasValue(sslTrustStorePassword);
         assertThat(config.getSslTrustStoreType()).hasValue(sslTrustStoreType);
         assertThat(config.getVerifyHost()).hasValue(verifyHost);
-        assertThat(config.getChunkSize()).hasValue(vstChunkSize);
         assertThat(config.getPipelining()).hasValue(pipelining);
         assertThat(config.getConnectionWindowSize()).hasValue(connectionWindowSize);
         assertThat(config.getInitialWindowSize()).hasValue(initialWindowSize);
@@ -82,9 +79,6 @@ class ConfigMPTest {
         assertThat(config.getConnectionTtl())
                 .isPresent()
                 .hasValue(connectionTtl);
-        assertThat(config.getKeepAliveInterval())
-                .isPresent()
-                .hasValue(keepAliveInterval);
         assertThat(config.getAcquireHostList()).hasValue(acquireHostList);
         assertThat(config.getAcquireHostListInterval()).hasValue(acquireHostListInterval);
         assertThat(config.getLoadBalancingStrategy()).hasValue(loadBalancingStrategy);

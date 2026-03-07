@@ -86,7 +86,7 @@ public final class CollectionPropertiesOptions {
      *                          different DB-Servers. The value 1 means that only one copy (no synchronous replication)
      *                          is kept. A value of k means that k-1 replicas are kept. For SatelliteCollections, it
      *                          needs to be the string "satellite", which matches the replication factor to the number
-     *                          of DB-Servers (Enterprise Edition only).
+     *                          of DB-Servers.
      *                          <p>
      *                          Any two copies reside on different DB-Servers. Replication between them is synchronous,
      *                          that is, every write operation to the “leader” copy will be replicated to all “follower”

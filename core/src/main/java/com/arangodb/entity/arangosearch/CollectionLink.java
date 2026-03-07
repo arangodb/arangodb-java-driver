@@ -143,7 +143,7 @@ public final class CollectionLink {
      *              and it is up to the operating system to load them from disk into memory and to evict them from
      *              memory.
      * @return link
-     * @since ArangoDB 3.9.5, Enterprise Edition only
+     * @since ArangoDB 3.9.5
      */
     public CollectionLink cache(final Boolean cache) {
         this.cache = cache;

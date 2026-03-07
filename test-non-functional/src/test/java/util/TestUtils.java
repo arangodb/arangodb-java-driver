@@ -46,7 +46,7 @@ public final class TestUtils {
 
     public static ArangoSerde createSerde(Protocol protocol) {
         return switch (protocol) {
-            case VST, HTTP_VPACK, HTTP2_VPACK -> JacksonSerde.of(ContentType.VPACK);
+            case HTTP_VPACK, HTTP2_VPACK -> JacksonSerde.of(ContentType.VPACK);
             case HTTP_JSON, HTTP2_JSON -> JacksonSerde.of(ContentType.JSON);
         };
     }

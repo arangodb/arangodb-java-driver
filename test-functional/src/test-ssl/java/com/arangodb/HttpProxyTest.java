@@ -26,13 +26,12 @@ import io.netty.handler.proxy.ProxyConnectException;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import utils.ProtocolSource;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 /**
@@ -41,10 +40,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class HttpProxyTest extends BaseTest {
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void httpProxy(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)
@@ -68,10 +65,8 @@ class HttpProxyTest extends BaseTest {
 
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void httpProxyWrongPassword(Protocol protocol) {
-        assumeTrue(protocol != Protocol.VST);
-
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .protocol(protocol)
                 .host("172.28.0.1", 8529)

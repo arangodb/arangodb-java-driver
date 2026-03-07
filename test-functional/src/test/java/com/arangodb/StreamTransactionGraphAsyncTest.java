@@ -83,8 +83,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void getVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabaseAsync db = vertexCollection1.graph().db();
         StreamTransactionEntity tx = db
@@ -107,8 +105,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void createVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabaseAsync db = vertexCollection1.graph().db();
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -137,8 +133,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void replaceVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -176,8 +170,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void updateVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseDocument doc = new BaseDocument(UUID.randomUUID().toString());
         doc.addAttribute("test", "foo");
@@ -215,8 +207,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncVertices")
     void deleteVertex(ArangoVertexCollectionAsync vertexCollection1) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         VertexEntity createdDoc = vertexCollection1.insertVertex(new BaseDocument(), null).get();
 
@@ -247,8 +237,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncEdges")
     void getEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabaseAsync db = edgeCollection.graph().db();
         StreamTransactionEntity tx = db
@@ -271,8 +259,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncEdges")
     void createEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         ArangoDatabaseAsync db = edgeCollection.graph().db();
         StreamTransactionEntity tx = db.beginStreamTransaction(
@@ -301,8 +287,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncEdges")
     void replaceEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseEdgeDocument doc = createEdgeValue(null, edgeCollection.graph());
         doc.addAttribute("test", "foo");
@@ -340,8 +324,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncEdges")
     void updateEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         BaseEdgeDocument doc = createEdgeValue(null, edgeCollection.graph());
         doc.addAttribute("test", "foo");
@@ -378,8 +360,6 @@ class StreamTransactionGraphAsyncTest extends BaseJunit5 {
     @MethodSource("asyncEdges")
     void deleteEdge(ArangoEdgeCollectionAsync edgeCollection) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         EdgeEntity createdDoc = edgeCollection.insertEdge(createEdgeValue(null, edgeCollection.graph()), null).get();
 

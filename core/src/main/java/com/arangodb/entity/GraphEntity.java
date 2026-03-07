@@ -86,8 +86,7 @@ public final class GraphEntity {
     }
 
     /**
-     * @return The replication factor used for every new collection in the graph. Can also be satellite for a SmartGraph
-     * (Enterprise Edition only).
+     * @return The replication factor used for every new collection in the graph. Can also be satellite for a SmartGraph.
      */
     public ReplicationFactor getReplicationFactor() {
         return replicationFactor;
@@ -104,28 +103,28 @@ public final class GraphEntity {
     }
 
     /**
-     * @return Whether the graph is a SmartGraph (Enterprise Edition only).
+     * @return Whether the graph is a SmartGraph.
      */
     public Boolean getIsSmart() {
         return isSmart;
     }
 
     /**
-     * @return Whether the graph is a Disjoint SmartGraph (Enterprise Edition only).
+     * @return Whether the graph is a Disjoint SmartGraph.
      */
     public Boolean getIsDisjoint() {
         return isDisjoint;
     }
 
     /**
-     * @return Name of the sharding attribute in the SmartGraph case (Enterprise Edition only).
+     * @return Name of the sharding attribute in the SmartGraph case.
      */
     public String getSmartGraphAttribute() {
         return smartGraphAttribute;
     }
 
     /**
-     * @return Flag if the graph is a SatelliteGraph (Enterprise Edition only) or not.
+     * @return Flag if the graph is a SatelliteGraph or not.
      */
     public Boolean getIsSatellite() {
         return isSatellite;

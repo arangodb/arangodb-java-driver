@@ -85,7 +85,6 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void getInfoSearchAlias(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String name = rndName();
         db.createView(name, ViewType.SEARCH_ALIAS);
         final ViewEntity info = db.view(name).getInfo();
@@ -98,7 +97,6 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void getViews(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String name1 = rndName();
         String name2 = rndName();
         db.createView(name1, ViewType.ARANGO_SEARCH);
