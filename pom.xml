@@ -12,6 +12,7 @@
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde-json</module>
+        <module>jackson3-serde-json</module>
         <module>jackson-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
@@ -227,20 +228,6 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.basedir}</directory>
-                                    <includes>
-                                        <include>**/dependency-reduced-pom.xml</include>
-                                    </includes>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </plugin>
-                    <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
                         <version>0.9.0</version>
@@ -314,6 +301,11 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
+                <artifactId>jackson3-serde-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
                 <artifactId>jackson-serde-vpack</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -368,6 +360,8 @@
                                     <excludes>
                                         <exclude>jakarta.json:jakarta.json-api</exclude>
                                         <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
+                                        <exclude>tools.jackson.core:jackson-core</exclude>
+                                        <exclude>tools.jackson.core:jackson-databind</exclude>
                                     </excludes>
                                 </enforceBytecodeVersion>
                                 <dependencyConvergence/>
@@ -432,6 +426,21 @@
                             </rule>
                         </rules>
                     </ruleSet>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}</directory>
+                            <includes>
+                                <include>**/dependency-reduced-pom.xml</include>
+                                <include>**/.flattened-pom.xml</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
         </plugins>

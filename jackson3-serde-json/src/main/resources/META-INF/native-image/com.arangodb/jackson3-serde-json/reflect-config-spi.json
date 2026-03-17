@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.arangodb.serde.jackson3.json.JacksonJsonSerdeProvider",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]
