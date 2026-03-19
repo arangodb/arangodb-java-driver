@@ -56,7 +56,8 @@ public class ShadedArchTest {
         noClasses().that()
                 .resideInAPackage("com.arangodb..").and()
                 .resideOutsideOfPackage("com.arangodb.jackson.dataformat.velocypack..").and()
-                .resideOutsideOfPackage("com.arangodb.serde.jackson..")
+                .resideOutsideOfPackage("com.arangodb.serde.jackson..").and()
+                .resideOutsideOfPackage("com.arangodb.serde.jackson3..")
                 .should().dependOnClassesThat()
                 .resideInAPackage("com.fasterxml.jackson..")
                 .check(importedClasses);
@@ -68,7 +69,9 @@ public class ShadedArchTest {
                 .resideInAPackage("com.arangodb..").and()
                 .resideOutsideOfPackages(
                         "com.arangodb.jackson.dataformat.velocypack..",
-                        "com.arangodb.serde.jackson..")
+                        "com.arangodb.serde.jackson..",
+                        "com.arangodb.serde.jackson3.."
+                )
                 .should().dependOnClassesThat()
                 .resideInAPackage("com.fasterxml.jackson..")
                 .check(importedClasses);

@@ -88,6 +88,9 @@
                         <groupId>com.google.code.maven-replacer-plugin</groupId>
                         <artifactId>replacer</artifactId>
                         <configuration>
+                            <filesToExclude>
+                                **/JacksonRequestContextTest.**
+                            </filesToExclude>
                             <replacements>
                                 <replacement>
                                     <token>com.fasterxml.jackson.databind.JsonNode</token>
