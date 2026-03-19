@@ -19,8 +19,12 @@
         <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
-
     <dependencies>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson3-serde-json</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jsonb-serde</artifactId>

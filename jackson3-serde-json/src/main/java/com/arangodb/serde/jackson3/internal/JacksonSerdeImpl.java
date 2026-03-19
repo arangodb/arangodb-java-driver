@@ -7,7 +7,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.cfg.ContextAttributes;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 
 /**
@@ -44,11 +43,5 @@ public final class JacksonSerdeImpl implements JacksonSerde {
         return mapper.readerFor(mapper.constructType(type))
                 .with(ContextAttributes.getEmpty().withPerCallAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
                 .readValue(content);
-    }
-
-    @Override
-    public JacksonSerde configure(Consumer<ObjectMapper> configureFunction) {
-        configureFunction.accept(mapper);
-        return this;
     }
 }
