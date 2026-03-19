@@ -33,4 +33,11 @@ public class SerdeArchTest {
             .should().dependOnClassesThat()
             .resideInAPackage("com.arangodb.serde.jackson..");
 
+    @ArchTest
+    public static final ArchRule noDependencyOnJackson3Serde = noClasses().that()
+            .resideInAPackage("com.arangodb..").and()
+            .resideOutsideOfPackage("com.arangodb.serde.jackson3..")
+            .should().dependOnClassesThat()
+            .resideInAPackage("com.arangodb.serde.jackson3..");
+
 }
