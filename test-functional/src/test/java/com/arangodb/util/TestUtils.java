@@ -22,10 +22,16 @@
 package com.arangodb.util;
 
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Michele Rastelli
@@ -93,6 +99,21 @@ public final class TestUtils {
         return list.toArray(new String[0]);
     }
 
+    private final static Path LOG_FILE_PATH = getLogFilePath();
+    private static Path getLogFilePath() {
+        try {
+            String codePath = TestUtils.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .toURI()
+                    .getPath();
+            return new File(codePath).getParentFile().toPath().resolve("unicode_names.txt");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static String generateRandomName(boolean extendedNames, int length) {
         if (extendedNames) {
             int max = allChars.length;
@@ -101,7 +122,22 @@ public final class TestUtils {
                 String allChar = allChars[r.nextInt(max)];
                 sb.append(allChar);
             }
-            return UnicodeUtils.normalize(sb.toString());
+            String out = UnicodeUtils.normalize(sb.toString());
+
+            try {
+                Files.write(
+                        LOG_FILE_PATH,
+                        Collections.singletonList(out.codePoints()
+                                .mapToObj(cp -> "\\u" + Integer.toHexString(cp).toUpperCase())
+                                .collect(Collectors.joining())),
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            return out;
         } else {
             return UUID.randomUUID().toString();
         }

@@ -18,9 +18,10 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package serde;
 
-import com.arangodb.config.ConfigUtils;
+import com.arangodb.*;
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.StreamTransactionEntity;
@@ -40,7 +41,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
-import static com.arangodb.util.TestUtils.TEST_DB;
+import static util.TestUtils.TEST_DB;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -64,7 +65,7 @@ class JacksonRequestContextTest {
                     mapper.registerModule(module);
                 });
         arangoDB = new ArangoDB.Builder()
-                .loadProperties(ConfigUtils.loadConfig())
+                .loadProperties(ArangoConfigProperties.fromFile())
                 .serde(serde).build();
 
         db = arangoDB.db(TEST_DB);

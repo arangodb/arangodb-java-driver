@@ -19,8 +19,12 @@
         <maven.compiler.release>21</maven.compiler.release>
     </properties>
 
-
     <dependencies>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>jackson3-serde-json</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jsonb-serde</artifactId>
@@ -84,6 +88,9 @@
                         <groupId>com.google.code.maven-replacer-plugin</groupId>
                         <artifactId>replacer</artifactId>
                         <configuration>
+                            <filesToExclude>
+                                **/JacksonRequestContextTest.**
+                            </filesToExclude>
                             <replacements>
                                 <replacement>
                                     <token>com.fasterxml.jackson.databind.JsonNode</token>
