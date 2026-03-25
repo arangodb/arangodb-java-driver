@@ -163,22 +163,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
     <T> CompletableFuture<ArangoCursorAsync<T>> cursor(String cursorId, Class<T> type, String nextBatchId, AqlQueryOptions options);
 
     /**
-     * Asynchronous version of {@link ArangoDatabase#explainQuery(String, Map, AqlQueryExplainOptions)}
-     *
-     * @deprecated for removal, use {@link ArangoDatabaseAsync#explainAqlQuery(String, Map, AqlQueryExplainOptions)} instead
-     */
-    @Deprecated
-    CompletableFuture<AqlExecutionExplainEntity> explainQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
-
-    /**
-     * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)}
-     *
-     * @deprecated for removal, use {@link ArangoDatabaseAsync#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
-     */
-    @Deprecated
-    CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
-
-    /**
      * Asynchronous version of {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)}
      */
     CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options);
@@ -234,24 +218,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
     CompletableFuture<Void> killQuery(String id);
 
     /**
-     * Asynchronous version of {@link ArangoDatabase#createAqlFunction(String, String, AqlFunctionCreateOptions)}
-     */
-    @Deprecated
-    CompletableFuture<Void> createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
-
-    /**
-     * Asynchronous version of {@link ArangoDatabase#deleteAqlFunction(String, AqlFunctionDeleteOptions)}
-     */
-    @Deprecated
-    CompletableFuture<Integer> deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
-
-    /**
-     * Asynchronous version of {@link ArangoDatabase#getAqlFunctions(AqlFunctionGetOptions)}
-     */
-    @Deprecated
-    CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctions(AqlFunctionGetOptions options);
-
-    /**
      * Returns a {@code ArangoGraphAsync} instance for the given graph name.
      *
      * @param name Name of the graph
@@ -273,12 +239,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoDatabase#getGraphs()}
      */
     CompletableFuture<Collection<GraphEntity>> getGraphs();
-
-    /**
-     * Asynchronous version of {@link ArangoDatabase#transaction(String, Class, TransactionOptions)}
-     */
-    @Deprecated
-    <T> CompletableFuture<T> transaction(String action, Class<T> type, TransactionOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#beginStreamTransaction(StreamTransactionOptions)}
@@ -309,12 +269,6 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
      * Asynchronous version of {@link ArangoDatabase#getInfo()}
      */
     CompletableFuture<DatabaseEntity> getInfo();
-
-    /**
-     * Asynchronous version of {@link ArangoDatabase#reloadRouting()}
-     */
-    @Deprecated
-    CompletableFuture<Void> reloadRouting();
 
     /**
      * Asynchronous version of {@link ArangoDatabase#getViews()}

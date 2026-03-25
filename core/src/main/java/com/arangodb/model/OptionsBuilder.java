@@ -53,16 +53,7 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
-    @Deprecated
-    public static FulltextIndexOptions build(final FulltextIndexOptions options, final Iterable<String> fields) {
-        return options.fields(fields);
-    }
-
     public static TtlIndexOptions build(final TtlIndexOptions options, final Iterable<String> fields) {
-        return options.fields(fields);
-    }
-
-    public static ZKDIndexOptions build(final ZKDIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }
 
@@ -76,13 +67,6 @@ public final class OptionsBuilder {
 
     public static AqlQueryOptions build(final AqlQueryOptions options, final String query,
                                         final Map<String, ?> bindVars) {
-        return options.query(query).bindVars(bindVars);
-    }
-
-    public static AqlQueryExplainOptions build(
-            final AqlQueryExplainOptions options,
-            final String query,
-            final Map<String, ?> bindVars) {
         return options.query(query).bindVars(bindVars);
     }
 
@@ -108,23 +92,12 @@ public final class OptionsBuilder {
         return options.name(name).edgeDefinitions(edCol);
     }
 
-    public static TransactionOptions build(final TransactionOptions options, final String action) {
-        return options.action(action);
-    }
-
     public static CollectionRenameOptions build(final CollectionRenameOptions options, final String name) {
         return options.name(name);
     }
 
     public static UserAccessOptions build(final UserAccessOptions options, final Permissions grant) {
         return options.grant(grant);
-    }
-
-    public static AqlFunctionCreateOptions build(
-            final AqlFunctionCreateOptions options,
-            final String name,
-            final String code) {
-        return options.name(name).code(code);
     }
 
     public static VertexCollectionCreateOptions build(

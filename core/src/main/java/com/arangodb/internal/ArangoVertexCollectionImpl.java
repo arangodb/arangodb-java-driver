@@ -46,18 +46,6 @@ public class ArangoVertexCollectionImpl extends InternalArangoVertexCollection i
         return graph;
     }
 
-    @Deprecated
-    @Override
-    public void drop() {
-        drop(new VertexCollectionDropOptions());
-    }
-
-    @Deprecated
-    @Override
-    public void drop(final VertexCollectionDropOptions options) {
-        executorSync().execute(dropRequest(options), Void.class);
-    }
-
     @Override
     public void remove() {
         remove(new VertexCollectionRemoveOptions());

@@ -1,6 +1,5 @@
 package com.arangodb.internal.serde;
 
-import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.MultiDocumentEntity;
@@ -25,7 +24,6 @@ class InternalModule {
 
         module.addDeserializer(RawJson.class, InternalDeserializers.RAW_JSON_DESERIALIZER);
         module.addDeserializer(RawBytes.class, InternalDeserializers.RAW_BYTES_DESERIALIZER);
-        module.addDeserializer(CollectionStatus.class, InternalDeserializers.COLLECTION_STATUS);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
         module.addDeserializer(InternalResponse.class, InternalDeserializers.RESPONSE);

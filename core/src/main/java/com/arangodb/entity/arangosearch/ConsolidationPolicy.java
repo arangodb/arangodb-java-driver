@@ -29,11 +29,7 @@ public final class ConsolidationPolicy {
 
     private ConsolidationType type;
     private Double threshold;
-    private Long segmentsMin;
-    private Long segmentsMax;
     private Long segmentsBytesMax;
-    private Long segmentsBytesFloor;
-    private Long minScore;
     private Double maxSkewThreshold;
     private Double minDeletionRatio;
 
@@ -63,38 +59,6 @@ public final class ConsolidationPolicy {
         return threshold;
     }
 
-    public Long getSegmentsMin() {
-        return segmentsMin;
-    }
-
-    /**
-     * @param segmentsMin The minimum number of segments that will be evaluated as candidates for consolidation.
-     *                    (default: 1)
-     * @return this
-     * @deprecated Removed from ArangoDB 3.12.7 onwards.
-     */
-    @Deprecated
-    public ConsolidationPolicy segmentsMin(final Long segmentsMin) {
-        this.segmentsMin = segmentsMin;
-        return this;
-    }
-
-    public Long getSegmentsMax() {
-        return segmentsMax;
-    }
-
-    /**
-     * @param segmentsMax The maximum number of segments that will be evaluated as candidates for consolidation.
-     *                    (default: 10)
-     * @return this
-     * @deprecated Removed from ArangoDB 3.12.7 onwards.
-     */
-    @Deprecated
-    public ConsolidationPolicy segmentsMax(final Long segmentsMax) {
-        this.segmentsMax = segmentsMax;
-        return this;
-    }
-
     public Long getSegmentsBytesMax() {
         return segmentsBytesMax;
     }
@@ -105,37 +69,6 @@ public final class ConsolidationPolicy {
      */
     public ConsolidationPolicy segmentsBytesMax(final Long segmentsBytesMax) {
         this.segmentsBytesMax = segmentsBytesMax;
-        return this;
-    }
-
-    public Long getSegmentsBytesFloor() {
-        return segmentsBytesFloor;
-    }
-
-    /**
-     * @param segmentsBytesFloor Defines the value (in bytes) to treat all smaller segments as equal for consolidation
-     *                           selection. (default: 2097152)
-     * @return this
-     * @deprecated Removed from ArangoDB 3.12.7 onwards.
-     */
-    @Deprecated
-    public ConsolidationPolicy segmentsBytesFloor(final Long segmentsBytesFloor) {
-        this.segmentsBytesFloor = segmentsBytesFloor;
-        return this;
-    }
-
-    public Long getMinScore() {
-        return minScore;
-    }
-
-    /**
-     * @param minScore Filter out consolidation candidates with a score less than this. (default: 0)
-     * @return this
-     * @deprecated Removed from ArangoDB 3.12.7 onwards.
-     */
-    @Deprecated
-    public ConsolidationPolicy minScore(final Long minScore) {
-        this.minScore = minScore;
         return this;
     }
 
@@ -174,12 +107,12 @@ public final class ConsolidationPolicy {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ConsolidationPolicy that = (ConsolidationPolicy) o;
-        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsMin, that.segmentsMin) && Objects.equals(segmentsMax, that.segmentsMax) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(segmentsBytesFloor, that.segmentsBytesFloor) && Objects.equals(minScore, that.minScore) && Objects.equals(maxSkewThreshold, that.maxSkewThreshold) && Objects.equals(minDeletionRatio, that.minDeletionRatio);
+        return type == that.type && Objects.equals(threshold, that.threshold) && Objects.equals(segmentsBytesMax, that.segmentsBytesMax) && Objects.equals(maxSkewThreshold, that.maxSkewThreshold) && Objects.equals(minDeletionRatio, that.minDeletionRatio);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, threshold, segmentsMin, segmentsMax, segmentsBytesMax, segmentsBytesFloor, minScore, maxSkewThreshold, minDeletionRatio);
+        return Objects.hash(type, threshold, segmentsBytesMax, maxSkewThreshold, minDeletionRatio);
     }
 
     @Override
@@ -187,11 +120,7 @@ public final class ConsolidationPolicy {
         return "ConsolidationPolicy{" +
                 "type=" + type +
                 ", threshold=" + threshold +
-                ", segmentsMin=" + segmentsMin +
-                ", segmentsMax=" + segmentsMax +
                 ", segmentsBytesMax=" + segmentsBytesMax +
-                ", segmentsBytesFloor=" + segmentsBytesFloor +
-                ", minScore=" + minScore +
                 ", maxSkewThreshold=" + maxSkewThreshold +
                 ", minDeletionRatio=" + minDeletionRatio +
                 '}';

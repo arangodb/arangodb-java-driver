@@ -762,20 +762,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the downstream async executor that will be used to consume the responses of the async API, that are returned
-         * as {@link java.util.concurrent.CompletableFuture}
-         *
-         * @param executor async downstream executor
-         * @return {@link ArangoDB.Builder}
-         * @deprecated for removal. To consume the responses in a custom executor use async CompletableFuture methods.
-         */
-        @Deprecated
-        public Builder asyncExecutor(final Executor executor) {
-            config.setAsyncExecutor(executor);
-            return this;
-        }
-
-        /**
          * Sets the {@code content-encoding} and {@code accept-encoding} to use for HTTP requests and the related
          * algorithm to encode and decode the transferred data. (default: {@link Compression#NONE})
          *

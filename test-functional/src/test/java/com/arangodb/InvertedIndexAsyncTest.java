@@ -111,21 +111,10 @@ public class InvertedIndexAsyncTest extends BaseJunit5 {
     }
 
     private ConsolidationPolicy createConsolidationPolicy() {
-        ConsolidationPolicy consolidationPolicy;
-        if (isAtLeastVersion(3, 12, 7)) {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+        return ConsolidationPolicy.of(ConsolidationType.TIER)
                     .segmentsBytesMax(55555L)
                     .maxSkewThreshold(0.3)
                     .minDeletionRatio(0.4);
-        } else {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
-                    .segmentsMin(3L)
-                    .segmentsMax(44L)
-                    .segmentsBytesMax(55555L)
-                    .segmentsBytesFloor(666L)
-                    .minScore(77L);
-        }
-        return consolidationPolicy;
     }
 
     private void assertCorrectIndexEntity(InvertedIndexEntity indexResult, InvertedIndexOptions options) {

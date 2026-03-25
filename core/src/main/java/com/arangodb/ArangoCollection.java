@@ -626,19 +626,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options);
 
     /**
-     * Creates a fulltext index for the collection, if it does not already exist.
-     *
-     * @param fields  A list of attribute paths
-     * @param options Additional options, can be null
-     * @return information about the index
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/fulltext/#create-a-full-text-index">API
-     * Documentation</a>
-     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
-     */
-    @Deprecated
-    IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options);
-
-    /**
      * Creates a ttl index for the collection, if it does not already exist.
      *
      * @param fields  A list of attribute paths
@@ -648,21 +635,6 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options);
-
-    /**
-     * Creates a ZKD multi-dimensional index for the collection, if it does not already exist.
-     * Note that zkd indexes are an experimental feature in ArangoDB 3.9.
-     *
-     * @param fields  A list of attribute paths
-     * @param options Additional options, can be null
-     * @return information about the index
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/multi-dimensional/#create-a-multi-dimensional-index">API Documentation</a>
-     * @since ArangoDB 3.9
-     * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} or
-     * {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
-     */
-    @Deprecated
-    IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
 
     /**
      * Creates a multi-dimensional index for the collection, if it does not already exist.

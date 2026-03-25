@@ -365,30 +365,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request;
     }
 
-    @Deprecated
-    protected InternalRequest createFulltextIndexRequest(final Iterable<String> fields, final FulltextIndexOptions options) {
-        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
-        request.putQueryParam(COLLECTION, name);
-        request.setBody(
-                getSerde().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(),
-                        fields)));
-        return request;
-    }
-
     protected InternalRequest createTtlIndexRequest(final Iterable<String> fields, final TtlIndexOptions options) {
         final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 getSerde().serialize(OptionsBuilder.build(options != null ? options : new TtlIndexOptions(), fields)));
-        return request;
-    }
-
-    protected InternalRequest createZKDIndexRequest(
-            final Iterable<String> fields, final ZKDIndexOptions options) {
-        final InternalRequest request = request(dbName, RequestType.POST, PATH_API_INDEX);
-        request.putQueryParam(COLLECTION, name);
-        request.setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options :
-                new ZKDIndexOptions().fieldValueTypes(ZKDIndexOptions.FieldValueTypes.DOUBLE), fields)));
         return request;
     }
 

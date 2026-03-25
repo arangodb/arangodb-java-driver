@@ -293,24 +293,9 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     CompletableFuture<IndexEntity> ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options);
 
     /**
-     * Asynchronous version of {@link ArangoCollection#ensureFulltextIndex(Iterable, FulltextIndexOptions)}
-     */
-    @Deprecated
-    CompletableFuture<IndexEntity> ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options);
-
-    /**
      * Asynchronous version of {@link ArangoCollection#ensureTtlIndex(Iterable, TtlIndexOptions)}
      */
     CompletableFuture<IndexEntity> ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options);
-
-    /**
-     * Asynchronous version of {@link ArangoCollection#ensureZKDIndex(Iterable, ZKDIndexOptions)}
-     *
-     * @deprecated since ArangoDB 3.12, use {@link #ensureMDIndex(Iterable, MDIndexOptions)} or
-     * {@link #ensureMDPrefixedIndex(Iterable, MDPrefixedIndexOptions)} instead.
-     */
-    @Deprecated
-    CompletableFuture<IndexEntity> ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options);
 
     /**
      * Asynchronous version of {@link ArangoCollection#ensureMDIndex(Iterable, MDIndexOptions)}

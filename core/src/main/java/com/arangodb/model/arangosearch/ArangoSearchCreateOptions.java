@@ -218,15 +218,6 @@ public final class ArangoSearchCreateOptions {
         return links;
     }
 
-    /**
-     * @deprecated for removal, use {@link #getPrimarySort()} instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public Collection<PrimarySort> getPrimarySorts() {
-        return getPrimarySort();
-    }
-
     public Collection<PrimarySort> getPrimarySort() {
         return primarySorts;
     }

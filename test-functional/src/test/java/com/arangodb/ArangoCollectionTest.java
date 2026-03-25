@@ -1992,53 +1992,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         cleanCollection(collection);
     }
 
-    @ParameterizedTest
-    @MethodSource("cols")
-    void createZKDIndex(ArangoCollection collection) {
-        collection.truncate();
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-        final Collection<String> fields = Arrays.asList(f1, f2);
 
-        final IndexEntity indexResult = collection.ensureZKDIndex(fields, null);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.zkd);
-        assertThat(indexResult.getUnique()).isFalse();
-        collection.deleteIndex(indexResult.getId());
-    }
-
-    @ParameterizedTest
-    @MethodSource("cols")
-    void createZKDIndexWithOptions(ArangoCollection collection) {
-        collection.truncate();
-
-        String name = "ZKDIndex-" + rnd();
-        final ZKDIndexOptions options =
-                new ZKDIndexOptions().name(name).fieldValueTypes(ZKDIndexOptions.FieldValueTypes.DOUBLE);
-
-        String f1 = "field-" + rnd();
-        String f2 = "field-" + rnd();
-
-        final Collection<String> fields = Arrays.asList(f1, f2);
-        final IndexEntity indexResult = collection.ensureZKDIndex(fields, options);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getFields()).contains(f2);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getMinLength()).isNull();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.zkd);
-        assertThat(indexResult.getUnique()).isFalse();
-        assertThat(indexResult.getName()).isEqualTo(name);
-        collection.deleteIndex(indexResult.getId());
-    }
 
     @ParameterizedTest
     @MethodSource("cols")
@@ -2203,42 +2157,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getDeduplicate()).isFalse();
     }
 
-    @ParameterizedTest
-    @MethodSource("cols")
-    void createFulltextIndex(ArangoCollection collection) {
-        String f1 = "field-" + rnd();
-        final Collection<String> fields = Collections.singletonList(f1);
-        final IndexEntity indexResult = collection.ensureFulltextIndex(fields, null);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f1);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getSparse()).isTrue();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.fulltext);
-        assertThat(indexResult.getUnique()).isFalse();
-    }
 
-    @ParameterizedTest
-    @MethodSource("cols")
-    void createFulltextIndexWithOptions(ArangoCollection collection) {
-        String name = "fulltextIndex-" + rnd();
-        final FulltextIndexOptions options = new FulltextIndexOptions();
-        options.name(name);
-
-        String f = "field-" + rnd();
-        final Collection<String> fields = Collections.singletonList(f);
-        final IndexEntity indexResult = collection.ensureFulltextIndex(fields, options);
-        assertThat(indexResult).isNotNull();
-        assertThat(indexResult.getConstraint()).isNull();
-        assertThat(indexResult.getFields()).contains(f);
-        assertThat(indexResult.getId()).startsWith(COLLECTION_NAME);
-        assertThat(indexResult.getIsNewlyCreated()).isTrue();
-        assertThat(indexResult.getSparse()).isTrue();
-        assertThat(indexResult.getType()).isEqualTo(IndexType.fulltext);
-        assertThat(indexResult.getUnique()).isFalse();
-        assertThat(indexResult.getName()).isEqualTo(name);
-    }
 
     @ParameterizedTest
     @MethodSource("cols")

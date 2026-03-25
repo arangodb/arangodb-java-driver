@@ -1089,88 +1089,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 "   RETURN {`character`, `actor`}";
     }
 
-    void checkExecutionPlan(AqlExecutionExplainEntity.ExecutionPlan plan) {
-        assertThat(plan).isNotNull();
-        assertThat(plan.getEstimatedNrItems())
-                .isNotNull()
-                .isNotNegative();
-        assertThat(plan.getNodes()).isNotEmpty();
 
-        AqlExecutionExplainEntity.ExecutionNode node = plan.getNodes().iterator().next();
-        assertThat(node.getEstimatedCost()).isNotNull();
 
-        assertThat(plan.getEstimatedCost()).isNotNull().isNotNegative();
-        assertThat(plan.getCollections()).isNotEmpty();
-
-        AqlExecutionExplainEntity.ExecutionCollection collection = plan.getCollections().iterator().next();
-        assertThat(collection.getName())
-                .isNotNull()
-                .isNotEmpty();
-
-        assertThat(plan.getRules()).isNotEmpty();
-        assertThat(plan.getVariables()).isNotEmpty();
-
-        AqlExecutionExplainEntity.ExecutionVariable variable = plan.getVariables().iterator().next();
-        assertThat(variable.getName())
-                .isNotNull()
-                .isNotEmpty();
-    }
-
-    @SuppressWarnings("deprecation")
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void explainQuery(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        AqlExecutionExplainEntity explain = db.explainQuery(
-                getExplainQuery(db),
-                Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions()).get();
-        assertThat(explain).isNotNull();
-
-        checkExecutionPlan(explain.getPlan());
-        assertThat(explain.getPlans()).isNull();
-        assertThat(explain.getWarnings()).isNotEmpty();
-
-        CursorWarning warning = explain.getWarnings().iterator().next();
-        assertThat(warning).isNotNull();
-        assertThat(warning.getCode()).isEqualTo(1562);
-        assertThat(warning.getMessage()).contains("division by zero");
-
-        assertThat(explain.getStats()).isNotNull();
-
-        assertThat(explain.getStats().getExecutionTime())
-                .isNotNull()
-                .isPositive();
-
-        assertThat(explain.getCacheable()).isFalse();
-    }
-
-    @SuppressWarnings("deprecation")
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void explainQueryAllPlans(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        AqlExecutionExplainEntity explain = db.explainQuery(
-                getExplainQuery(db),
-                Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions().allPlans(true)).get();
-        assertThat(explain).isNotNull();
-
-        assertThat(explain.getPlan()).isNull();
-        assertThat(explain.getPlans()).allSatisfy(this::checkExecutionPlan);
-        assertThat(explain.getWarnings()).isNotEmpty();
-
-        CursorWarning warning = explain.getWarnings().iterator().next();
-        assertThat(warning).isNotNull();
-        assertThat(warning.getCode()).isEqualTo(1562);
-        assertThat(warning.getMessage()).contains("division by zero");
-
-        assertThat(explain.getStats()).isNotNull();
-
-        assertThat(explain.getStats().getExecutionTime())
-                .isNotNull()
-                .isPositive();
-
-        assertThat(explain.getCacheable()).isNull();
-    }
 
     void checkUntypedExecutionPlan(AqlQueryExplainEntity.ExecutionPlan plan) {
         assertThat(plan).isNotNull();
@@ -1383,47 +1303,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         db.setQueryTrackingProperties(properties).get();
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void createGetDeleteAqlFunction(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
-        assertThat(aqlFunctionsInitial).isEmpty();
-        try {
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null).get();
 
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null).get();
-            assertThat(aqlFunctions).hasSizeGreaterThan(aqlFunctionsInitial.size());
-        } finally {
-            final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null).get();
-            // compatibility with ArangoDB < 3.4
-            assertThat(deleteCount).isEqualTo(1);
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null).get();
-            assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void createGetDeleteAqlFunctionWithNamespace(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null).get();
-        assertThat(aqlFunctionsInitial).isEmpty();
-        try {
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit1",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null).get();
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit2",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null).get();
-
-        } finally {
-            final Integer deleteCount = db
-                    .deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true)).get();
-            assertThat(deleteCount).isEqualTo(2);
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null).get();
-            assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
-        }
-    }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
@@ -1497,154 +1377,18 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionString(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params("test");
-        final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options).get();
-        assertThat(result.get()).isEqualTo("\"test\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionNumber(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params(5);
-        final Integer result = db.transaction("function (params) {return params;}", Integer.class, options).get();
-        assertThat(result).isEqualTo(5);
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionJsonNode(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
-        final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options).get();
-        assertThat(result.isTextual()).isTrue();
-        assertThat(result.asText()).isEqualTo("test");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionJsonObject(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
-                        options).get();
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionJsonArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options).get();
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionMap(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
-                        options).get();
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionArray(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final String[] params = new String[]{"hello", "world"};
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options).get();
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionCollection(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final Collection<String> params = new ArrayList<>();
-        params.add("hello");
-        params.add("world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options).get();
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionInsertJson(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        String key = "key-" + rnd();
-        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-                .writeCollections(CNAME1);
-        db.transaction("function (params) { "
-                + "var db = require('internal').db;"
-                + "db." + CNAME1 + ".save(JSON.parse(params));"
-                + "}", Void.class, options).get();
-        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionExclusiveWrite(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        String key = "key-" + rnd();
-        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-                .exclusiveCollections(CNAME1);
-        db.transaction("function (params) { "
-                + "var db = require('internal').db;"
-                + "db." + CNAME1 + ".save(JSON.parse(params));"
-                + "}", Void.class, options).get();
-        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class).get()).isNotNull();
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionEmpty(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        db.transaction("function () {}", Void.class, null).get();
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionAllowImplicit(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final String action = "function (params) {" + "var db = require('internal').db;"
-                + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
-                + "}";
-        final TransactionOptions options = new TransactionOptions().readCollections(CNAME1);
-        db.transaction(action, JsonNode.class, options).get();
-        options.allowImplicit(false);
-        Throwable thrown = catchThrowable(() -> db.transaction(action, JsonNode.class, options).get()).getCause();
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .extracting(it -> ((ArangoDBException) it).getResponseCode())
-                .isEqualTo(400);
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void transactionPojoReturn(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        assumeTrue(supportsV8());
-        final String action = "function() { return {'value':'hello world'}; }";
-        final TransactionTestEntity res = db.transaction(action, TransactionTestEntity.class, new TransactionOptions()).get();
-        assertThat(res).isNotNull();
-        assertThat(res.value).isEqualTo("hello world");
-    }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
@@ -1663,32 +1407,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void shouldIncludeExceptionMessage(ArangoDatabaseAsync db) {
-        assumeTrue(supportsV8());
-        final String exceptionMessage = "My error context";
-        final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
-        Throwable thrown = catchThrowable(() -> db.transaction(action, Void.class, null).get()).getCause();
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-        assertThat(((ArangoDBException) thrown).getErrorMessage()).isEqualTo(exceptionMessage);
-    }
 
-    @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void reloadRouting(ArangoDatabaseAsync db) {
-        db.reloadRouting();
-    }
 
-    public static class TransactionTestEntity {
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
 }

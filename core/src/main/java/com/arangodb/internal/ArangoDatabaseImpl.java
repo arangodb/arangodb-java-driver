@@ -239,17 +239,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     }
 
     @Override
-    public AqlExecutionExplainEntity explainQuery(
-            final String query, final Map<String, ?> bindVars, final AqlQueryExplainOptions options) {
-        return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-    }
-
-    @Override
-    public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options) {
-        return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
-    }
-
-    @Override
     public AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options) {
         return executorSync().execute(explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
@@ -307,22 +296,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     }
 
     @Override
-    public void createAqlFunction(
-            final String name, final String code, final AqlFunctionCreateOptions options) {
-        executorSync().execute(createAqlFunctionRequest(name, code, options), Void.class);
-    }
-
-    @Override
-    public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) {
-        return executorSync().execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
-    }
-
-    @Override
-    public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) {
-        return executorSync().execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
-    }
-
-    @Override
     public ArangoGraph graph(final String name) {
         return new ArangoGraphImpl(this, name);
     }
@@ -341,11 +314,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public Collection<GraphEntity> getGraphs() {
         return executorSync().execute(getGraphsRequest(), getGraphsResponseDeserializer());
-    }
-
-    @Override
-    public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options) {
-        return executorSync().execute(transactionRequest(action, options), transactionResponseDeserializer(type));
     }
 
     @Override
@@ -376,11 +344,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase implements Arango
     @Override
     public DatabaseEntity getInfo() {
         return executorSync().execute(getInfoRequest(), getInfoResponseDeserializer());
-    }
-
-    @Override
-    public void reloadRouting() {
-        executorSync().execute(reloadRoutingRequest(), Void.class);
     }
 
     @Override

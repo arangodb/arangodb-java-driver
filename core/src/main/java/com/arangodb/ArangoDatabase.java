@@ -355,35 +355,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * @return information about the query
      * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
      * Documentation</a>
-     * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, AqlQueryExplainOptions)} instead
-     */
-    @Deprecated
-    AqlExecutionExplainEntity explainQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
-
-    /**
-     * Explain an AQL query and return information about it
-     *
-     * @param query    the query which you want explained
-     * @param bindVars key/value pairs representing the bind parameters
-     * @param options  Additional options, can be null
-     * @return information about the query
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
-     * Documentation</a>
-     * @deprecated for removal, use {@link ArangoDatabase#explainAqlQuery(String, Map, ExplainAqlQueryOptions)} instead
-     */
-    @Deprecated
-    AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, AqlQueryExplainOptions options);
-
-
-    /**
-     * Explain an AQL query and return information about it
-     *
-     * @param query    the query which you want explained
-     * @param bindVars key/value pairs representing the bind parameters
-     * @param options  Additional options, can be null
-     * @return information about the query
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#explain-an-aql-query">API
-     * Documentation</a>
      */
     AqlQueryExplainEntity explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options);
 
@@ -489,49 +460,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
     void killQuery(String id);
 
     /**
-     * Create a new AQL user function
-     *
-     * @param name    A valid AQL function name, e.g.: `"myfuncs::accounting::calculate_vat"`
-     * @param code    A String evaluating to a JavaScript function
-     * @param options Additional options, can be null
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#create-a-user-defined-aql-function">API
-     * Documentation</a>
-     *
-     * @deprecated Removed from ArangoDB 4.0 onwards.
-     */
-    @Deprecated
-    void createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
-
-    /**
-     * Deletes the AQL user function with the given name from the database.
-     *
-     * @param name    The name of the user function to delete
-     * @param options Additional options, can be null
-     * @return number of deleted functions (since ArangoDB 3.4.0)
-     * @see <a href=
-     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#remove-a-user-defined-aql-function">API
-     * Documentation</a>
-     *
-     * @deprecated Removed from ArangoDB 4.0 onwards.
-     */
-    @Deprecated
-    Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
-
-    /**
-     * Gets all reqistered AQL user functions
-     *
-     * @param options Additional options, can be null
-     * @return all reqistered AQL user functions
-     * @see <a href=
-     * "https://docs.arango.ai/arangodb/stable/develop/http-api/queries/user-defined-aql-functions/#list-the-registered-user-defined-aql-functions">API
-     * Documentation</a>
-     *
-     * @deprecated Removed from ArangoDB 4.0 onwards.
-     */
-    @Deprecated
-    Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options);
-
-    /**
      * Returns a {@code ArangoGraph} instance for the given graph name.
      *
      * @param name Name of the graph
@@ -572,21 +500,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     Collection<GraphEntity> getGraphs();
-
-    /**
-     * Performs a server-side transaction and returns its return value.
-     *
-     * @param action  A String evaluating to a JavaScript function to be executed on the server.
-     * @param type    The type of the result (POJO or {@link com.arangodb.util.RawData})
-     * @param options Additional options, can be null
-     * @return the result of the transaction if it succeeded
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/transactions/javascript-transactions/#execute-a-javascript-transaction">API
-     * Documentation</a>
-     *
-     * @deprecated Removed from ArangoDB 4.0 onwards.
-     */
-    @Deprecated
-    <T> T transaction(String action, Class<T> type, TransactionOptions options);
 
     /**
      * Begins a Stream Transaction.
@@ -647,18 +560,6 @@ public interface ArangoDatabase extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     DatabaseEntity getInfo();
-
-    /**
-     * Reload the routing table.
-     *
-     * @see <a href=
-     * "https://docs.arango.ai/arangodb/stable/develop/http-api/administration/#reload-the-routing-table">API
-     * Documentation</a>
-     *
-     * @deprecated Removed from ArangoDB 4.0 onwards.
-     */
-    @Deprecated
-    void reloadRouting();
 
     /**
      * Fetches all views from the database and returns a list of view descriptions.

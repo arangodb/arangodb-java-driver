@@ -45,7 +45,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     private static final String PATH_API_CURSOR = "/_api/cursor";
     private static final String PATH_API_TRANSACTION = "/_api/transaction";
     private static final String PATH_API_BEGIN_STREAM_TRANSACTION = "/_api/transaction/begin";
-    private static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
     private static final String PATH_API_EXPLAIN = "/_api/explain";
     private static final String PATH_API_QUERY = "/_api/query";
     private static final String PATH_API_QUERY_CACHE = "/_api/query-cache";
@@ -53,7 +52,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     private static final String PATH_API_QUERY_PROPERTIES = "/_api/query/properties";
     private static final String PATH_API_QUERY_CURRENT = "/_api/query/current";
     private static final String PATH_API_QUERY_SLOW = "/_api/query/slow";
-    private static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
     private static final String PATH_API_USER = "/_api/user";
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
@@ -173,13 +171,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     }
 
     protected InternalRequest explainQueryRequest(final String query, final Map<String, ?> bindVars,
-                                                  final AqlQueryExplainOptions options) {
-        final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
-        return request(name, RequestType.POST, PATH_API_EXPLAIN)
-                .setBody(getSerde().serialize(OptionsBuilder.build(opt, query, bindVars)));
-    }
-
-    protected InternalRequest explainQueryRequest(final String query, final Map<String, ?> bindVars,
                                                   final ExplainAqlQueryOptions options) {
         final ExplainAqlQueryOptions opt = options != null ? options : new ExplainAqlQueryOptions();
         return request(name, RequestType.POST, PATH_API_EXPLAIN)
@@ -226,18 +217,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
         return request(name, RequestType.DELETE, PATH_API_QUERY, id);
     }
 
-    protected InternalRequest createAqlFunctionRequest(final String name, final String code,
-                                                       final AqlFunctionCreateOptions options) {
-        return request(this.name, RequestType.POST, PATH_API_AQLFUNCTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
-    }
-
-    protected InternalRequest deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
-        final InternalRequest request = request(this.name, RequestType.DELETE, PATH_API_AQLFUNCTION, name);
-        final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
-        request.putQueryParam("group", params.getGroup());
-        return request;
-    }
-
     public <T> ResponseDeserializer<CursorEntity<T>> cursorEntityDeserializer(final Class<T> type) {
         return (response) -> {
             CursorEntity<T> e = getSerde().deserialize(response.getBody(), constructParametricType(CursorEntity.class, type));
@@ -245,22 +224,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
             e.setPotentialDirtyRead(potentialDirtyRead);
             return e;
         };
-    }
-
-    protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
-        return (response) -> getSerde().deserialize(response.getBody(), "/deletedCount", Integer.class);
-    }
-
-    protected InternalRequest getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
-        final InternalRequest request = request(name, RequestType.GET, PATH_API_AQLFUNCTION);
-        final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
-        request.putQueryParam("namespace", params.getNamespace());
-        return request;
-    }
-
-    protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
-        return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                constructListType(AqlFunctionEntity.class));
     }
 
     protected InternalRequest createGraphRequest(final String name, final Iterable<EdgeDefinition> edgeDefinitions,
@@ -282,17 +245,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     protected ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
         return (response) -> getSerde().deserialize(response.getBody(), "/graphs",
                 constructListType(GraphEntity.class));
-    }
-
-    protected InternalRequest transactionRequest(final String action, final TransactionOptions options) {
-        return request(name, RequestType.POST, PATH_API_TRANSACTION).setBody(getSerde().serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
-    }
-
-    protected <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
-        return (response) -> {
-            byte[] userContent = getSerde().extract(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER);
-            return getSerde().deserializeUserData(userContent, type);
-        };
     }
 
     protected InternalRequest beginStreamTransactionRequest(final StreamTransactionOptions options) {
@@ -337,10 +289,6 @@ public abstract class InternalArangoDatabase extends ArangoExecuteable {
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
         return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
                 DatabaseEntity.class);
-    }
-
-    protected InternalRequest reloadRoutingRequest() {
-        return request(name, RequestType.POST, PATH_API_ADMIN_ROUTING_RELOAD);
     }
 
     protected InternalRequest getViewsRequest() {

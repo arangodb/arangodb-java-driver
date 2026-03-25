@@ -279,7 +279,7 @@ class ArangoSearchTest extends BaseJunit5 {
         final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
         options.cleanupIntervalStep(15L);
         options.consolidationIntervalMsec(65000L);
-        options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
+        options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.TIER));
         options.link(CollectionLink.on(COLL_2)
                 .fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
                         .storeValues(StoreValuesType.ID)));
@@ -289,8 +289,7 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(properties.getConsolidationIntervalMsec()).isEqualTo(65000L);
         final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
         assertThat(consolidate).isNotNull();
-        assertThat(consolidate.getType()).isEqualTo(ConsolidationType.BYTES_ACCUM);
-        assertThat(consolidate.getThreshold()).isEqualTo(1.);
+        assertThat(consolidate.getType()).isEqualTo(ConsolidationType.TIER);
         assertThat(properties.getLinks()).hasSize(1);
         final CollectionLink link = properties.getLinks().iterator().next();
         assertThat(link.getName()).isEqualTo(COLL_2);
@@ -1034,21 +1033,10 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
     private ConsolidationPolicy createConsolidationPolicy() {
-        ConsolidationPolicy consolidationPolicy;
-        if (isAtLeastVersion(3, 12, 7)) {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+        return ConsolidationPolicy.of(ConsolidationType.TIER)
                     .segmentsBytesMax(55555L)
                     .maxSkewThreshold(0.3)
                     .minDeletionRatio(0.4);
-        } else {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
-                    .segmentsMin(3L)
-                    .segmentsMax(44L)
-                    .segmentsBytesMax(55555L)
-                    .segmentsBytesFloor(666L)
-                    .minScore(77L);
-        }
-        return consolidationPolicy;
     }
 
 }

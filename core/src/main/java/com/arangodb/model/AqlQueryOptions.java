@@ -299,15 +299,6 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
             return maxNumberOfPlans;
         }
 
-        /**
-         * @deprecated for removal, use {@link Options#getMaxNumberOfPlans()} instead
-         */
-        @Deprecated
-        @JsonIgnore
-        public Integer getMaxPlans() {
-            return getMaxNumberOfPlans();
-        }
-
         public Double getMaxRuntime() {
             return maxRuntime;
         }
@@ -745,25 +736,6 @@ public final class AqlQueryOptions extends TransactionalOptions<AqlQueryOptions>
     public AqlQueryOptions maxNumberOfPlans(final Integer maxNumberOfPlans) {
         getOptions().setMaxNumberOfPlans(maxNumberOfPlans);
         return this;
-    }
-
-    /**
-     * @deprecated for removal, use {@link AqlQueryOptions#getMaxNumberOfPlans()} instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public Integer getMaxPlans() {
-        return getMaxNumberOfPlans();
-    }
-
-    /**
-     * @param maxPlans Limits the maximum number of plans that are created by the AQL query optimizer.
-     * @return this
-     * @deprecated for removal, use {@link AqlQueryOptions#maxNumberOfPlans(Integer)} instead
-     */
-    @Deprecated
-    public AqlQueryOptions maxPlans(final Integer maxPlans) {
-        return maxNumberOfPlans(maxPlans);
     }
 
     @JsonIgnore

@@ -1,6 +1,5 @@
 package com.arangodb.internal.serde;
 
-import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.ReplicationFactor;
@@ -48,13 +47,6 @@ public final class InternalDeserializers {
         @Override
         public RawBytes deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             return RawBytes.of(SerdeUtils.extractBytes(p));
-        }
-    };
-
-    static final JsonDeserializer<CollectionStatus> COLLECTION_STATUS = new JsonDeserializer<CollectionStatus>() {
-        @Override
-        public CollectionStatus deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-            return CollectionStatus.fromStatus(p.getIntValue());
         }
     };
 

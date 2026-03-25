@@ -46,18 +46,6 @@ public class ArangoEdgeCollectionImpl extends InternalArangoEdgeCollection imple
         return graph;
     }
 
-    @Deprecated
-    @Override
-    public void drop() {
-        drop(new EdgeCollectionDropOptions());
-    }
-
-    @Deprecated
-    @Override
-    public void drop(final EdgeCollectionDropOptions options) {
-        executorSync().execute(removeEdgeDefinitionRequest(options), Void.class);
-    }
-
     @Override
     public void remove() {
         remove(new EdgeCollectionRemoveOptions());

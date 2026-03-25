@@ -55,31 +55,6 @@ public interface ArangoEdgeCollection extends ArangoSerdeAccessor {
      * @see <a href=
      * "https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
      * Documentation</a>
-     *
-     * @deprecated use {@link #remove()} instead
-     */
-    @Deprecated
-    void drop();
-
-    /**
-     * Remove one edge definition from the graph.
-     *
-     * @param options options
-     * @see <a href=
-     * "https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
-     * Documentation</a>
-     *
-     * @deprecated use {@link #remove(EdgeCollectionRemoveOptions)} instead
-     */
-    @Deprecated
-    void drop(EdgeCollectionDropOptions options);
-
-    /**
-     * Remove one edge definition from the graph.
-     *
-     * @see <a href=
-     * "https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-an-edge-definition">API
-     * Documentation</a>
      */
     void remove();
 
