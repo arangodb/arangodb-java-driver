@@ -56,7 +56,7 @@ class AQLActorsAndMoviesExampleTest {
         ArangoConfigProperties config = ArangoConfigProperties.fromFile();
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
-                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP2_JSON)))
+                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP_2)))
                 .build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

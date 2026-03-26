@@ -75,7 +75,7 @@ class CustomSerdeAsyncTest {
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .serde(serde)
-                .protocol(Protocol.HTTP_JSON)
+                .protocol(Protocol.HTTP_1_1)
                 .build()
                 .async();
 

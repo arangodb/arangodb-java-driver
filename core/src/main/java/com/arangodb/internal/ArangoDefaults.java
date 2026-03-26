@@ -40,7 +40,7 @@ public final class ArangoDefaults {
 
     // default config properties
     public static final List<HostDescription> DEFAULT_HOSTS = Collections.emptyList();
-    public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP2_JSON;
+    public static final Protocol DEFAULT_PROTOCOL = Protocol.HTTP_2;
     public static final String DEFAULT_USER = "root";
     public static final Integer DEFAULT_TIMEOUT = 0;
     public static final Long DEFAULT_CONNECTION_TTL_HTTP = 30_000L;

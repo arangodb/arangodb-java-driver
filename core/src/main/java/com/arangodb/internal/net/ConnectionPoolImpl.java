@@ -54,7 +54,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
         this.factory = factory;
         connections = new CopyOnWriteArrayList<>();
         switch (config.getProtocol()) {
-            case HTTP_JSON:
+            case HTTP_1_1:
                 maxSlots = config.getPipelining() ? HTTP1_SLOTS_PIPELINING : HTTP1_SLOTS;
                 break;
             default:

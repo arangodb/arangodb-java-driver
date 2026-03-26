@@ -3,7 +3,6 @@ package serde;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
@@ -23,7 +22,7 @@ class JacksonSerdeTest {
     static Stream<Arguments> adbByContentType() {
         return Stream.of(new ArangoDB.Builder()
                         .loadProperties(ArangoConfigProperties.fromFile())
-                        .protocol(Protocol.HTTP2_JSON)
+                        .protocol(Protocol.HTTP_2)
                         .build())
                 .map(Arguments::of);
     }

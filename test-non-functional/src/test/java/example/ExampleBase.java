@@ -45,7 +45,7 @@ public class ExampleBase {
         ArangoConfigProperties config = ArangoConfigProperties.fromFile();
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
-                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP2_JSON)))
+                .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP_2)))
                 .build();
         String dbName = DB_NAME;
         if (arangoDB.db(dbName).exists())

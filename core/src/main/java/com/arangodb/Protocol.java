@@ -24,17 +24,6 @@ package com.arangodb;
  * @author Mark Vollmary
  */
 public enum Protocol {
-
-    /**
-     * HTTP 1.1 with JSON body
-     */
-    // FIXME: rename to HTTP_1_1
-    HTTP_JSON,
-
-    /**
-     * HTTP 2 with JSON body
-     */
-    // FIXME: rename to HTTP_2
-    HTTP2_JSON,
-
+    HTTP_1_1,
+    HTTP_2
 }

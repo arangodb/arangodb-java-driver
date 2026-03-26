@@ -74,7 +74,7 @@ class CustomSerdeTest {
                 });
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .protocol(Protocol.HTTP_JSON)
+                .protocol(Protocol.HTTP_1_1)
                 .serde(serde).build();
 
         db = arangoDB.db("custom-serde-test");

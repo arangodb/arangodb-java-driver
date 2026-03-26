@@ -16,7 +16,7 @@ public class ArangoConfigTest {
     void ArangoConfigDefaultValues() throws NoSuchAlgorithmException {
         ArangoConfig cfg = new ArangoConfig();
         assertThat(cfg.getHosts()).isEqualTo(ArangoDefaults.DEFAULT_HOSTS);
-        assertThat(cfg.getProtocol()).isEqualTo(Protocol.HTTP2_JSON);
+        assertThat(cfg.getProtocol()).isEqualTo(Protocol.HTTP_2);
         assertThat(cfg.getTimeout()).isEqualTo(ArangoDefaults.DEFAULT_TIMEOUT);
         assertThat(cfg.getUser()).isEqualTo(ArangoDefaults.DEFAULT_USER);
         assertThat(cfg.getPassword()).isNull();

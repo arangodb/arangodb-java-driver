@@ -39,7 +39,7 @@ class CompressionTest extends ClusterTest {
     }
 
     void doTest(Protocol protocol, Compression compression) {
-        assumeTrue(protocol != Protocol.HTTP_JSON, "hex dumps logs");  // FIXME
+        assumeTrue(protocol != Protocol.HTTP_1_1, "hex dumps logs");  // FIXME
 
         // FIXME:
         // When using HTTP_JSON, the logs are hex dumps.

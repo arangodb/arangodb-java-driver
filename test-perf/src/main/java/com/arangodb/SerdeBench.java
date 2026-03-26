@@ -49,7 +49,7 @@ public class SerdeBench {
     public static class MyCol extends ArangoCollectionImpl {
         static ArangoDB jsonAdb = new ArangoDB.Builder()
                 .host("127.0.0.1", 8529)
-                .protocol(Protocol.HTTP_JSON)
+                .protocol(Protocol.HTTP_1_1)
                 .build();
 
         private MyCol(ArangoDB adb) {

@@ -124,7 +124,7 @@ public class HttpConnection implements Connection {
                 .map(ttl -> Math.toIntExact(ttl / 1000))
                 .orElse(0);
 
-        HttpVersion httpVersion = protocol == Protocol.HTTP_JSON ?
+        HttpVersion httpVersion = protocol == Protocol.HTTP_1_1 ?
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
 
         WebClientOptions webClientOptions = new WebClientOptions()

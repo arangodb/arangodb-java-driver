@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ConfigMPTest {
     private final HostDescription hostA = new HostDescription("aaa", 1111);
     private final HostDescription hostB = new HostDescription("bbb", 2222);
-    private final Protocol protocol = Protocol.HTTP_JSON;
+    private final Protocol protocol = Protocol.HTTP_1_1;
     private final String user = "testUser";
     private final String password = "testPassword";
     private final String jwt = "testJwt";

@@ -23,10 +23,10 @@ public class ConnectionLoadBalanceTest {
 
     public static Stream<Arguments> configs() {
         return Stream.of(
-                new Config(Protocol.HTTP_JSON, 10),
-                new Config(Protocol.HTTP_JSON, 20),
-                new Config(Protocol.HTTP2_JSON, 1),
-                new Config(Protocol.HTTP2_JSON, 2)
+                new Config(Protocol.HTTP_1_1, 10),
+                new Config(Protocol.HTTP_1_1, 20),
+                new Config(Protocol.HTTP_2, 1),
+                new Config(Protocol.HTTP_2, 2)
         ).map(Arguments::of);
     }
 
@@ -100,9 +100,10 @@ public class ConnectionLoadBalanceTest {
             Protocol protocol,
             int maxConnections
     ) {
+        // FIXME
         int maxStreams() {
             return switch (protocol) {
-                case HTTP_JSON -> ConnectionPoolImpl.HTTP1_SLOTS;
+                case HTTP_1_1 -> ConnectionPoolImpl.HTTP1_SLOTS;
                 default -> ConnectionPoolImpl.HTTP2_SLOTS;
             };
         }
