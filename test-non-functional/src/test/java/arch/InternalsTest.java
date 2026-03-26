@@ -33,7 +33,6 @@ public class InternalsTest {
                     not(JavaClass.Predicates.resideInAnyPackage(
                             "..internal..",
                             "com.arangodb.jackson..",
-                            "com.arangodb.velocypack..",
                             "com.arangodb.shaded..")
                     )
             );

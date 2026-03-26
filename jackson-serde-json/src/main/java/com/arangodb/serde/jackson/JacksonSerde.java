@@ -1,6 +1,5 @@
 package com.arangodb.serde.jackson;
 
-import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
@@ -17,13 +16,12 @@ import static com.arangodb.serde.jackson.internal.JacksonSerdeImpl.SERDE_CONTEXT
 public interface JacksonSerde extends ArangoSerde {
 
     /**
-     * Creates a new JacksonSerde with default settings for the specified data type.
+     * Creates a new JacksonSerde with default settings.
      *
-     * @param contentType serialization target data type
      * @return the created JacksonSerde
      */
-    static JacksonSerde of(final ContentType contentType) {
-        return create(JacksonMapperProvider.of(contentType));
+    static JacksonSerde load() {
+        return create(JacksonMapperProvider.load());
     }
 
     /**

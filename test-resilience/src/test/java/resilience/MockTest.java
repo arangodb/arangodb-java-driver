@@ -25,7 +25,7 @@ public class MockTest extends SingleServerTest {
     void before() {
         mockServer = startClientAndServer(getEndpoint().getHost(), getEndpoint().getPort());
         arangoDB = new ArangoDB.Builder()
-                .protocol(Protocol.HTTP_JSON)
+                .protocol(Protocol.HTTP_1_1)
                 .password(PASSWORD)
                 .host("127.0.0.1", mockServer.getPort())
                 .build();

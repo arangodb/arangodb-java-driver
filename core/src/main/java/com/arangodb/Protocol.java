@@ -24,29 +24,6 @@ package com.arangodb;
  * @author Mark Vollmary
  */
 public enum Protocol {
-
-    /**
-     * HTTP 1.1 with JSON body
-     */
-    HTTP_JSON,
-
-    /**
-     * HTTP 1.1 with VelocyPack body
-     *
-     * @see <a href="https://github.com/arangodb/velocypack">VelocyPack specification</a>
-     */
-    HTTP_VPACK,
-
-    /**
-     * HTTP 2 with JSON body
-     */
-    HTTP2_JSON,
-
-    /**
-     * HTTP 2 with VelocyPack body
-     *
-     * @see <a href="https://github.com/arangodb/velocypack">VelocyPack specification</a>
-     */
-    HTTP2_VPACK,
-
+    HTTP_1_1,
+    HTTP_2
 }

@@ -44,8 +44,8 @@ public class ProtocolTest extends TestUtils {
 
     static Stream<Arguments> args() {
         return Stream.of(
-                Arguments.of(Protocol.HTTP_JSON, "LoggingHandler"),
-                Arguments.of(Protocol.HTTP2_JSON, "Http2FrameLogger")
+                Arguments.of(Protocol.HTTP_1_1, "LoggingHandler"),
+                Arguments.of(Protocol.HTTP_2, "Http2FrameLogger")
         );
     }
 

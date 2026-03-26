@@ -63,7 +63,7 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK)
+        JacksonSerde serde = JacksonSerde.load()
                 .configure((mapper) -> {
                     mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
                     mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
@@ -73,7 +73,7 @@ class CustomSerdeTest {
                 });
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .protocol(Protocol.HTTP_VPACK)
+                .protocol(Protocol.HTTP_1_1)
                 .serde(serde).build();
 
         db = arangoDB.db("custom-serde-test");

@@ -20,11 +20,9 @@
 
 package com.arangodb.mapping.annotations;
 
-import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.jackson.JacksonSerde;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
@@ -35,10 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ArangoAnnotationsTest {
 
-    @ParameterizedTest
-    @EnumSource(ContentType.class)
-    void documentFieldAnnotations(ContentType contentType) {
-        ArangoSerde mapper = JacksonSerde.of(contentType);
+    @Test
+    void documentFieldAnnotations() {
+        ArangoSerde mapper = JacksonSerde.load();
 
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");

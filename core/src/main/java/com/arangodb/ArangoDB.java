@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
 import java.util.*;
-import java.util.concurrent.Executor;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -612,7 +611,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_JSON} or {@link Protocol#HTTP_VPACK}).
+         * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_1_1}).
          *
          * @param pipelining {@code true} if enabled
          * @return {@link ArangoDB.Builder}
@@ -652,10 +651,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * </p>
          *
          * <pre>
-         * {@link Protocol#HTTP_JSON} == 20
-         * {@link Protocol#HTTP_VPACK} == 20
-         * {@link Protocol#HTTP2_JSON} == 1
-         * {@link Protocol#HTTP2_VPACK} == 1
+         * {@link Protocol#HTTP_1_1} == 20
+         * {@link Protocol#HTTP_2} == 1
          * </pre>
          *
          * @param maxConnections max number of connections

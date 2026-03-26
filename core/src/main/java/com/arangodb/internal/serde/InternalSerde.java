@@ -2,7 +2,6 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
-import com.arangodb.ContentType;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -32,9 +31,8 @@ public interface InternalSerde extends ArangoSerde {
 
     /**
      * Deserializes the content and binds it to the target data type.
-     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
-     * @param content byte array to deserialize
+     * @param content     UTF-8 byte encoded JSON string
      * @param type    target data type
      * @return deserialized object
      */
@@ -63,7 +61,7 @@ public interface InternalSerde extends ArangoSerde {
     /**
      * Parses the content at json pointer.
      *
-     * @param content     VPack or byte encoded JSON string
+     * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be parsed
      * @return root of the parsed tree
      */
@@ -71,9 +69,8 @@ public interface InternalSerde extends ArangoSerde {
 
     /**
      * Deserializes the content at json pointer and binds it to the target data type.
-     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
-     * @param content     byte array to deserialize
+     * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be deserialized
      * @param clazz       class of target data type
      * @return deserialized object
@@ -84,9 +81,8 @@ public interface InternalSerde extends ArangoSerde {
 
     /**
      * Deserializes the content at json pointer and binds it to the target data type.
-     * For data type {@link ContentType#JSON}, the byte array is the JSON string encoded using the UTF-8 charset.
      *
-     * @param content     byte array to deserialize
+     * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be deserialized
      * @param type        target data type
      * @return deserialized object

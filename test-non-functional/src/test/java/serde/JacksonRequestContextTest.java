@@ -58,7 +58,7 @@ class JacksonRequestContextTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(ContentType.JSON)
+        JacksonSerde serde = JacksonSerde.load()
                 .configure((mapper) -> {
                     SimpleModule module = new SimpleModule("PersonModule");
                     module.addDeserializer(Person.class, new PersonDeserializer());

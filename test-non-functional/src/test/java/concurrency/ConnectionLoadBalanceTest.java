@@ -3,6 +3,7 @@ package concurrency;
 import com.arangodb.*;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.net.ConnectionPoolImpl;
+import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,10 +24,10 @@ public class ConnectionLoadBalanceTest {
 
     public static Stream<Arguments> configs() {
         return Stream.of(
-                new Config(Protocol.HTTP_JSON, 10),
-                new Config(Protocol.HTTP_JSON, 20),
-                new Config(Protocol.HTTP2_JSON, 1),
-                new Config(Protocol.HTTP2_JSON, 2)
+                new Config(Protocol.HTTP_1_1, 10),
+                new Config(Protocol.HTTP_1_1, 20),
+                new Config(Protocol.HTTP_2, 1),
+                new Config(Protocol.HTTP_2, 2)
         ).map(Arguments::of);
     }
 
@@ -52,7 +53,7 @@ public class ConnectionLoadBalanceTest {
         ArangoDatabaseAsync db = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(cfg.protocol)
-                .serde(TestUtils.createSerde(cfg.protocol))
+                .serde(JacksonSerde.load())
                 .maxConnections(cfg.maxConnections)
                 .build().async().db();
 
@@ -102,8 +103,8 @@ public class ConnectionLoadBalanceTest {
     ) {
         int maxStreams() {
             return switch (protocol) {
-                case HTTP_JSON, HTTP_VPACK -> ConnectionPoolImpl.HTTP1_SLOTS;
-                default -> ConnectionPoolImpl.HTTP2_SLOTS;
+                case HTTP_1_1 -> ConnectionPoolImpl.HTTP1_SLOTS;
+                case HTTP_2 -> ConnectionPoolImpl.HTTP2_SLOTS;
             };
         }
     }

@@ -55,7 +55,6 @@ public class ShadedArchTest {
     public void jacksonRelocation() {
         noClasses().that()
                 .resideInAPackage("com.arangodb..").and()
-                .resideOutsideOfPackage("com.arangodb.jackson.dataformat.velocypack..").and()
                 .resideOutsideOfPackage("com.arangodb.serde.jackson..").and()
                 .resideOutsideOfPackage("com.arangodb.serde.jackson3..")
                 .should().dependOnClassesThat()
@@ -68,22 +67,11 @@ public class ShadedArchTest {
         noClasses().that()
                 .resideInAPackage("com.arangodb..").and()
                 .resideOutsideOfPackages(
-                        "com.arangodb.jackson.dataformat.velocypack..",
                         "com.arangodb.serde.jackson..",
                         "com.arangodb.serde.jackson3.."
                 )
                 .should().dependOnClassesThat()
                 .resideInAPackage("com.fasterxml.jackson..")
-                .check(importedClasses);
-    }
-
-    @Test
-    public void noJacksonDataformatVelocypackDependency() {
-        noClasses().that()
-                .resideInAPackage("com.arangodb..").and()
-                .resideOutsideOfPackage("com.arangodb.jackson.dataformat.velocypack..")
-                .should().dependOnClassesThat()
-                .resideInAPackage("com.arangodb.jackson.dataformat.velocypack..")
                 .check(importedClasses);
     }
 

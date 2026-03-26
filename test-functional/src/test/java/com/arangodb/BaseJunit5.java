@@ -28,7 +28,7 @@ public class BaseJunit5 {
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final ArangoDB adb = new ArangoDB.Builder()
             .loadProperties(config)
-            .protocol(Protocol.HTTP_JSON)
+            .protocol(Protocol.HTTP_1_1)
             .build();
 
     private static final ArangoDBVersion version = adb.getVersion();

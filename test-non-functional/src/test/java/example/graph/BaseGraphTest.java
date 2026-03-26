@@ -27,6 +27,7 @@ import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
+import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import util.TestUtils;
@@ -52,7 +53,7 @@ abstract class BaseGraphTest {
             ArangoConfigProperties config = ArangoConfigProperties.fromFile();
             arangoDB = new ArangoDB.Builder()
                     .loadProperties(config)
-                    .serde(TestUtils.createSerde(config.getProtocol().orElse(Protocol.HTTP2_JSON)))
+                    .serde(JacksonSerde.load())
                     .build();
         }
         if (arangoDB.db(TEST_DB).exists())
