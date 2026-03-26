@@ -8,7 +8,6 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
@@ -309,13 +308,13 @@ public class ArangoConfig {
                 throw new RuntimeException(e);
             }
         } else {
-            return ArangoSerdeProvider.of(ContentTypeFactory.of(getProtocol())).create();
+            return ArangoSerdeProvider.load().create();
         }
     }
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = new InternalSerdeProvider(ContentTypeFactory.of(getProtocol())).create(getUserDataSerde(), protocolModule);
+            internalSerde = new InternalSerdeProvider().create(getUserDataSerde(), protocolModule);
         }
         return internalSerde;
     }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+// TODO: since VPACK has been dropped, we can simplify this
 class RawUserDataValue implements SerializableString {
     private final byte[] data;
 

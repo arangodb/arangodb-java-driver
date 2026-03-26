@@ -1,6 +1,5 @@
 package com.arangodb.serde.jackson3.json;
 
-import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
 import com.arangodb.serde.jackson3.JacksonSerde;
@@ -12,8 +11,4 @@ public class JacksonJsonSerdeProvider implements ArangoSerdeProvider {
         return JacksonSerde.create(new JsonMapper());
     }
 
-    @Override
-    public ContentType getContentType() {
-        return ContentType.JSON;
-    }
 }

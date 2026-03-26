@@ -1,7 +1,6 @@
 package com.arangodb.serde.jackson;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.ContentType;
 import com.arangodb.internal.serde.JacksonUtils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,15 +17,7 @@ import java.util.ServiceLoader;
 public class JacksonMapperProvider {
     private static final Logger LOG = LoggerFactory.getLogger(JacksonMapperProvider.class);
 
-    // TODO: review, since VPACK has been removed
-    public static ObjectMapper of(final ContentType contentType) {
-        String formatName;
-        if (contentType == ContentType.JSON) {
-            formatName = "JSON";
-        } else {
-            throw new IllegalArgumentException("Unexpected value: " + contentType);
-        }
-
+    public static ObjectMapper load() {
         ServiceLoader<JsonFactory> sl = ServiceLoader.load(JsonFactory.class);
         Iterator<JsonFactory> iterator = sl.iterator();
         while (iterator.hasNext()) {
@@ -37,15 +28,13 @@ public class JacksonMapperProvider {
                 LOG.warn("ServiceLoader failed to load JsonFactory", e);
                 continue;
             }
-            if (formatName.equals(jf.getFormatName())) {
-                if (contentType == ContentType.JSON) {
-                    JacksonUtils.tryConfigureJsonFactory(jf);
-                }
+            if ("JSON".equals(jf.getFormatName())) {
+                JacksonUtils.tryConfigureJsonFactory(jf);
                 return new ObjectMapper(jf);
             }
-            LOG.debug("Required format ({}) not supported by JsonFactory: {}", formatName, jf.getClass().getName());
+            LOG.debug("JSON not supported by JsonFactory: {}", jf.getClass().getName());
         }
 
-        throw new ArangoDBException("No JsonFactory found for content type: " + contentType);
+        throw new ArangoDBException("No JsonFactory found for content type JSON");
     }
 }

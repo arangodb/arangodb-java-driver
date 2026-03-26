@@ -64,7 +64,7 @@ class CustomSerdeAsyncTest {
 
     @BeforeAll
     static void init() throws ExecutionException, InterruptedException {
-        JacksonSerde serde = JacksonSerde.of(ContentType.JSON)
+        JacksonSerde serde = JacksonSerde.load()
                 .configure((mapper) -> {
                     mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
                     mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);

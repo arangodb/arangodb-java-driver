@@ -1,20 +1,10 @@
 package com.arangodb.internal.serde;
 
-import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
 import com.fasterxml.jackson.databind.Module;
 
 public class InternalSerdeProvider implements ArangoSerdeProvider {
-
-    private final ContentType contentType;
-
-    /**
-     * @param contentType serialization target data type
-     */
-    public InternalSerdeProvider(final ContentType contentType) {
-        this.contentType = contentType;
-    }
 
     /**
      * Creates a new InternalSerde with default settings.
@@ -34,12 +24,7 @@ public class InternalSerdeProvider implements ArangoSerdeProvider {
      * @return the created InternalSerde
      */
     public InternalSerde create(ArangoSerde userSerde, Module protocolModule) {
-        return new InternalSerdeImpl(InternalMapperProvider.of(contentType), userSerde, protocolModule);
-    }
-
-    @Override
-    public ContentType getContentType() {
-        return contentType;
+        return new InternalSerdeImpl(InternalMapperProvider.load(), userSerde, protocolModule);
     }
 
 }

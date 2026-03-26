@@ -1,6 +1,5 @@
 package com.arangodb.serde.jsonb;
 
-import com.arangodb.ContentType;
 import com.arangodb.serde.ArangoSerdeProvider;
 import jakarta.json.bind.JsonbConfig;
 
@@ -24,11 +23,6 @@ public class JsonbSerdeProvider implements ArangoSerdeProvider {
      */
     static JsonbSerde create(final JsonbConfig config) {
         return new JsonbSerde(config);
-    }
-
-    @Override
-    public ContentType getContentType() {
-        return ContentType.JSON;
     }
 
 }

@@ -22,10 +22,6 @@
 package util;
 
 
-import com.arangodb.ContentType;
-import com.arangodb.Protocol;
-import com.arangodb.serde.ArangoSerde;
-import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.UnicodeUtils;
 
 import java.util.ArrayList;
@@ -42,13 +38,6 @@ public final class TestUtils {
     private static final Random r = new Random();
 
     private TestUtils() {
-    }
-
-    // TODO: review, since VPACK has been removed
-    public static ArangoSerde createSerde(Protocol protocol) {
-        return switch (protocol) {
-            case HTTP_1_1, HTTP_2 -> JacksonSerde.of(ContentType.JSON);
-        };
     }
 
     /**

@@ -133,7 +133,7 @@ public class SerdeBench {
 
     @Benchmark
     public void rawJsonDeser(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
+        InternalSerde serde = new InternalSerdeProvider().create();
         bh.consume(
                 serde.deserialize(data.json, RawJson.class)
         );
@@ -141,7 +141,7 @@ public class SerdeBench {
 
     @Benchmark
     public void rawJsonSer(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
+        InternalSerde serde = new InternalSerdeProvider().create();
         bh.consume(
                 serde.serialize(data.rawJson)
         );
@@ -149,7 +149,7 @@ public class SerdeBench {
 
     @Benchmark
     public void extractBytesJson(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
+        InternalSerde serde = new InternalSerdeProvider().create();
         bh.consume(
                 serde.extract(data.json, "/definitions/put_api_simple_remove_by_example_opts")
         );

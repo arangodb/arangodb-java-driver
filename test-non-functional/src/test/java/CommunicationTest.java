@@ -1,9 +1,9 @@
 import com.arangodb.*;
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import util.ProtocolSource;
-import util.TestUtils;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +21,7 @@ public class CommunicationTest {
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
-                .serde(TestUtils.createSerde(protocol))
+                .serde(JacksonSerde.load())
                 .build()
                 .async();
         arangoDB.getVersion().get();
@@ -45,7 +45,7 @@ public class CommunicationTest {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
-                .serde(TestUtils.createSerde(protocol))
+                .serde(JacksonSerde.load())
                 .build();
         arangoDB.getVersion();
 
