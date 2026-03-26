@@ -14,12 +14,11 @@ import java.util.ServiceLoader;
 class InternalMapperProvider {
     private static final Logger LOG = LoggerFactory.getLogger(InternalMapperProvider.class);
 
+    // FIXME: remove, not needed anymore since VPACK has been removed
     static ObjectMapper of(final ContentType contentType) {
         String formatName;
         if (contentType == ContentType.JSON) {
             formatName = "JSON";
-        } else if (contentType == ContentType.VPACK) {
-            formatName = "Velocypack";
         } else {
             throw new IllegalArgumentException("Unexpected value: " + contentType);
         }

@@ -247,11 +247,9 @@ public class ArangoConfig {
         int defaultMaxConnections;
         switch (getProtocol()) {
             case HTTP_JSON:
-            case HTTP_VPACK:
                 defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
                 break;
             case HTTP2_JSON:
-            case HTTP2_VPACK:
                 defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
                 break;
             default:

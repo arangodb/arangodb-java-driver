@@ -367,7 +367,6 @@ Maven coordinates: `com.arangodb:arangodb-java-driver-shaded`.
 
 It bundles and relocates the following packages:
 - `com.fasterxml.jackson`
-- `com.arangodb.jackson.dataformat.velocypack`
 - `io.vertx`
 - `io.netty`
 
@@ -391,7 +390,7 @@ in future releases without notice, thus breaking client applications relying on
 it to serialize or deserialize user-data. It is therefore recommended also in
 this case either:
 - using the default user-data serde `JacksonSerde`
-  (from packages `com.arangodb:jackson-serde-json` or `com.arangodb:jackson-serde-vpack`), or
+  (from package `com.arangodb:jackson-serde-json`), or
 - providing a custom user-data serde implementation via `ArangoDB.Builder.serde(ArangoSerde)`.
 
 ## Support for extended naming constraints

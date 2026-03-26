@@ -1,7 +1,6 @@
 package serde;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ContentType;
 import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.serde.jackson.JacksonSerde;
@@ -20,12 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JacksonSerdeTest {
 
+    // TODO: review, since VPACK has been removed
     static Stream<Arguments> adbByContentType() {
-        return Stream.of(ContentType.values())
-                .map(ct -> new ArangoDB.Builder()
+        return Stream.of(new ArangoDB.Builder()
                         .loadProperties(ArangoConfigProperties.fromFile())
-                        .protocol(ContentType.VPACK.equals(ct) ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON)
-                        .serde(JacksonSerde.of(ct))
+                        .protocol(Protocol.HTTP2_JSON)
                         .build())
                 .map(Arguments::of);
     }

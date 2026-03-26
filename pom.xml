@@ -13,7 +13,6 @@
         <module>shaded</module>
         <module>jackson-serde-json</module>
         <module>jackson3-serde-json</module>
-        <module>jackson-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
     </modules>
@@ -290,21 +289,6 @@
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson3-serde-json</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>jackson-serde-vpack</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.6.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>velocypack</artifactId>
-                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>

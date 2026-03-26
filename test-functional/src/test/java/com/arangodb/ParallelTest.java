@@ -22,7 +22,7 @@ class ParallelTest {
     void connectionParallelism(Protocol protocol) throws InterruptedException {
         // test that connections are internally async and can have multiple pending requests
         // BTS-1102: the server does not run pipelined HTTP/1.1 requests in parallel
-        assumeTrue(protocol != Protocol.HTTP_JSON && protocol != Protocol.HTTP_VPACK);
+        assumeTrue(protocol != Protocol.HTTP_JSON);
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .protocol(protocol)

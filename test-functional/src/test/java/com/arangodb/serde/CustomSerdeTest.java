@@ -61,9 +61,10 @@ class CustomSerdeTest {
     private static ArangoDatabase db;
     private static ArangoCollection collection;
 
+    // TODO: review, since VPACK has been removed
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.of(ContentType.VPACK)
+        JacksonSerde serde = JacksonSerde.of(ContentType.JSON)
                 .configure((mapper) -> {
                     mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
                     mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
@@ -73,7 +74,7 @@ class CustomSerdeTest {
                 });
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
-                .protocol(Protocol.HTTP_VPACK)
+                .protocol(Protocol.HTTP_JSON)
                 .serde(serde).build();
 
         db = arangoDB.db("custom-serde-test");

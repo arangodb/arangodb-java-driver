@@ -7,7 +7,6 @@ import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
-import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,21 +52,12 @@ public class SerdeBench {
                 .protocol(Protocol.HTTP_JSON)
                 .build();
 
-        static ArangoDB vpackAdb = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
-                .protocol(Protocol.HTTP_VPACK)
-                .build();
-
         private MyCol(ArangoDB adb) {
             super((ArangoDatabaseImpl) adb.db(), "foo");
         }
 
         public static MyCol ofJson() {
             return new MyCol(jsonAdb);
-        }
-
-        public static MyCol ofVpack() {
-            return new MyCol(vpackAdb);
         }
 
         @Override
@@ -78,33 +68,24 @@ public class SerdeBench {
 
     @State(Scope.Benchmark)
     public static class Data {
-        public final byte[] vpack;
         public final byte[] json;
         public final RawBytes rawJsonBytes;
-        public final RawBytes rawVPackBytes;
         public final RawJson rawJson;
         public final MyCol jsonCol = MyCol.ofJson();
-        public final MyCol vpackCol = MyCol.ofVpack();
         public final InternalResponse jsonResp = new InternalResponse();
-        public final InternalResponse vpackResp = new InternalResponse();
 
         public Data() {
             ObjectMapper jsonMapper = new ObjectMapper();
-            VPackMapper vpackMapper = new VPackMapper();
 
             try {
                 JsonNode jn = readFile("/api-docs.json", jsonMapper);
                 json = jsonMapper.writeValueAsBytes(jn);
-                vpack = vpackMapper.writeValueAsBytes(jn);
                 rawJsonBytes = RawBytes.of(json);
-                rawVPackBytes = RawBytes.of(vpack);
                 rawJson = RawJson.of(jsonMapper.writeValueAsString(jsonMapper.readTree(json)));
 
                 JsonNode docs = readFile("/multi-docs.json", jsonMapper);
                 jsonResp.setResponseCode(200);
                 jsonResp.setBody(jsonMapper.writeValueAsBytes(docs));
-                vpackResp.setResponseCode(200);
-                vpackResp.setBody(vpackMapper.writeValueAsBytes(docs));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -152,25 +133,17 @@ public class SerdeBench {
 
     @Benchmark
     public void rawJsonDeser(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
+        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
         bh.consume(
-                serde.deserialize(data.vpack, RawJson.class)
+                serde.deserialize(data.json, RawJson.class)
         );
     }
 
     @Benchmark
     public void rawJsonSer(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
+        InternalSerde serde = new InternalSerdeProvider(ContentType.JSON).create();
         bh.consume(
                 serde.serialize(data.rawJson)
-        );
-    }
-
-    @Benchmark
-    public void extractBytesVPack(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider(ContentType.VPACK).create();
-        bh.consume(
-                serde.extract(data.vpack, "/definitions/put_api_simple_remove_by_example_opts")
         );
     }
 
@@ -186,13 +159,6 @@ public class SerdeBench {
     public void deserializeDocsJson(Data data, Blackhole bh) {
         bh.consume(
                 data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp)
-        );
-    }
-
-    @Benchmark
-    public void deserializeDocsVPack(Data data, Blackhole bh) {
-        bh.consume(
-                data.vpackCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.vpackResp)
         );
     }
 

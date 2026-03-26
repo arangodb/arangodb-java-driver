@@ -63,7 +63,7 @@ public interface InternalSerde extends ArangoSerde {
     /**
      * Parses the content at json pointer.
      *
-     * @param content     VPack or byte encoded JSON string
+     * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be parsed
      * @return root of the parsed tree
      */

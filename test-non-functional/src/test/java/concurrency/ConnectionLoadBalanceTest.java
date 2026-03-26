@@ -102,7 +102,7 @@ public class ConnectionLoadBalanceTest {
     ) {
         int maxStreams() {
             return switch (protocol) {
-                case HTTP_JSON, HTTP_VPACK -> ConnectionPoolImpl.HTTP1_SLOTS;
+                case HTTP_JSON -> ConnectionPoolImpl.HTTP1_SLOTS;
                 default -> ConnectionPoolImpl.HTTP2_SLOTS;
             };
         }

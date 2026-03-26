@@ -19,6 +19,7 @@
  */
 package com.arangodb;
 
+// FIXME: remove, not needed anymore since VPACK has been removed
 public enum ContentType {
-    JSON, VPACK
+    JSON
 }

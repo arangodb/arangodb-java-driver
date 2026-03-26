@@ -15,9 +15,7 @@ public class HttpProtocolProvider implements ProtocolProvider {
 
     @Override
     public boolean supportsProtocol(Protocol protocol) {
-        return Protocol.HTTP_VPACK.equals(protocol) ||
-                Protocol.HTTP_JSON.equals(protocol) ||
-                Protocol.HTTP2_VPACK.equals(protocol) ||
+        return Protocol.HTTP_JSON.equals(protocol) ||
                 Protocol.HTTP2_JSON.equals(protocol);
     }
 

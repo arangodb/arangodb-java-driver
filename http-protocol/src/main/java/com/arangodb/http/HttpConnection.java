@@ -30,7 +30,6 @@ import com.arangodb.internal.RequestType;
 import com.arangodb.internal.config.ArangoConfig;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionPool;
-import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.util.EncodeUtils;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ClientAuth;
@@ -73,7 +72,6 @@ import static com.arangodb.internal.net.ConnectionPoolImpl.HTTP2_SLOTS;
 public class HttpConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
     private static final String CONTENT_TYPE_APPLICATION_JSON_UTF8 = "application/json; charset=utf-8";
-    private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
     private static final String USER_AGENT = getUserAgent();
     private static final AtomicInteger THREAD_COUNT = new AtomicInteger();
     private volatile String auth;
@@ -93,16 +91,8 @@ public class HttpConnection implements Connection {
     HttpConnection(final ArangoConfig config, final HttpProtocolConfig protocolConfig, final HostDescription host, final ConnectionPool pool) {
         this.pool = pool;
         Protocol protocol = config.getProtocol();
-        ContentType contentType = ContentTypeFactory.of(protocol);
-        if (contentType == ContentType.VPACK) {
-            commonHeaders.add(HttpHeaders.ACCEPT.toString(), CONTENT_TYPE_VPACK);
-            commonHeaders.add(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_VPACK);
-        } else if (contentType == ContentType.JSON) {
-            commonHeaders.add(HttpHeaders.ACCEPT.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
-            commonHeaders.add(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
-        } else {
-            throw new IllegalArgumentException("Unsupported protocol: " + protocol);
-        }
+        commonHeaders.add(HttpHeaders.ACCEPT.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
+        commonHeaders.add(HttpHeaders.CONTENT_TYPE.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8);
         compressionThreshold = config.getCompressionThreshold();
         Compression compression = config.getCompression();
         encoder = Encoder.of(compression, config.getCompressionLevel());
@@ -134,7 +124,7 @@ public class HttpConnection implements Connection {
                 .map(ttl -> Math.toIntExact(ttl / 1000))
                 .orElse(0);
 
-        HttpVersion httpVersion = protocol == Protocol.HTTP_JSON || protocol == Protocol.HTTP_VPACK ?
+        HttpVersion httpVersion = protocol == Protocol.HTTP_JSON ?
                 HttpVersion.HTTP_1_1 : HttpVersion.HTTP_2;
 
         WebClientOptions webClientOptions = new WebClientOptions()

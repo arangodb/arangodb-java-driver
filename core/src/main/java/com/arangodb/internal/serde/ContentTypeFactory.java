@@ -7,14 +7,12 @@ public final class ContentTypeFactory {
     private ContentTypeFactory() {
     }
 
+    // FIXME: remove, not needed anymore since VPACK has been removed
     public static ContentType of(Protocol protocol) {
         switch (protocol) {
             case HTTP_JSON:
             case HTTP2_JSON:
                 return ContentType.JSON;
-            case HTTP_VPACK:
-            case HTTP2_VPACK:
-                return ContentType.VPACK;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + protocol);
         }

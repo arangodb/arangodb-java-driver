@@ -18,12 +18,11 @@ import java.util.ServiceLoader;
 public class JacksonMapperProvider {
     private static final Logger LOG = LoggerFactory.getLogger(JacksonMapperProvider.class);
 
+    // TODO: review, since VPACK has been removed
     public static ObjectMapper of(final ContentType contentType) {
         String formatName;
         if (contentType == ContentType.JSON) {
             formatName = "JSON";
-        } else if (contentType == ContentType.VPACK) {
-            formatName = "Velocypack";
         } else {
             throw new IllegalArgumentException("Unexpected value: " + contentType);
         }

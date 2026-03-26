@@ -12,9 +12,7 @@ import java.util.Arrays;
  * <p>
  * No validation is performed, the user is responsible for providing a valid byte array for the used content type.
  * <p>
- * The raw value byte array can represent either:
- * - a valid VPack
- * - a valid JSON UTF-8 encoded string
+ * The raw value byte array is the UTF-8 encoded JSON string
  * <p>
  * The driver's {@link InternalSerde} supports serializing and deserializing to and from
  * {@code RawBytes}.

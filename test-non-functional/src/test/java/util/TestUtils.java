@@ -44,9 +44,9 @@ public final class TestUtils {
     private TestUtils() {
     }
 
+    // TODO: review, since VPACK has been removed
     public static ArangoSerde createSerde(Protocol protocol) {
         return switch (protocol) {
-            case HTTP_VPACK, HTTP2_VPACK -> JacksonSerde.of(ContentType.VPACK);
             case HTTP_JSON, HTTP2_JSON -> JacksonSerde.of(ContentType.JSON);
         };
     }
