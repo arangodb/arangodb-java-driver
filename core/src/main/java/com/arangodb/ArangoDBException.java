@@ -57,39 +57,6 @@ public class ArangoDBException extends RuntimeException {
         this.requestId = null;
     }
 
-    /**
-     * @deprecated use {@link com.arangodb.ArangoDBException#of(java.lang.Throwable)} instead
-     */
-    @Deprecated
-    public ArangoDBException(final Throwable cause) {
-        super(cause);
-        this.entity = null;
-        this.responseCode = null;
-        this.requestId = null;
-    }
-
-    /**
-     * @deprecated use {@link com.arangodb.ArangoDBException#of(String, Throwable)} instead
-     */
-    @Deprecated
-    public ArangoDBException(final String message, final Throwable cause) {
-        super(message, cause);
-        this.entity = null;
-        this.responseCode = null;
-        this.requestId = null;
-    }
-
-    /**
-     * @deprecated use {@link com.arangodb.ArangoDBException#of(Throwable, Long)} instead
-     */
-    @Deprecated
-    public ArangoDBException(Throwable cause, long requestId) {
-        super(cause);
-        this.entity = null;
-        this.responseCode = null;
-        this.requestId = requestId;
-    }
-
     private ArangoDBException(
             String message,
             Throwable cause,

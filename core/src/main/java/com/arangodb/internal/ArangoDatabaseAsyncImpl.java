@@ -218,18 +218,6 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     }
 
     @Override
-    public CompletableFuture<AqlExecutionExplainEntity> explainQuery(
-            final String query, final Map<String, ?> bindVars, final AqlQueryExplainOptions options) {
-        return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-    }
-
-    @Override
-    public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(
-            String query, Map<String, ?> bindVars, AqlQueryExplainOptions options) {
-        return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
-    }
-
-    @Override
     public CompletableFuture<AqlQueryExplainEntity> explainAqlQuery(String query, Map<String, ?> bindVars, ExplainAqlQueryOptions options) {
         return executorAsync().execute(() -> explainQueryRequest(query, bindVars, options), AqlQueryExplainEntity.class);
     }
@@ -287,22 +275,6 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     }
 
     @Override
-    public CompletableFuture<Void> createAqlFunction(
-            final String name, final String code, final AqlFunctionCreateOptions options) {
-        return executorAsync().execute(() -> createAqlFunctionRequest(name, code, options), Void.class);
-    }
-
-    @Override
-    public CompletableFuture<Integer> deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) {
-        return executorAsync().execute(() -> deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
-    }
-
-    @Override
-    public CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctions(final AqlFunctionGetOptions options) {
-        return executorAsync().execute(() -> getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
-    }
-
-    @Override
     public ArangoGraphAsync graph(final String name) {
         return new ArangoGraphAsyncImpl(this, name);
     }
@@ -321,11 +293,6 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     @Override
     public CompletableFuture<Collection<GraphEntity>> getGraphs() {
         return executorAsync().execute(this::getGraphsRequest, getGraphsResponseDeserializer());
-    }
-
-    @Override
-    public <T> CompletableFuture<T> transaction(final String action, final Class<T> type, final TransactionOptions options) {
-        return executorAsync().execute(() -> transactionRequest(action, options), transactionResponseDeserializer(type));
     }
 
     @Override
@@ -356,11 +323,6 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase implements A
     @Override
     public CompletableFuture<DatabaseEntity> getInfo() {
         return executorAsync().execute(this::getInfoRequest, getInfoResponseDeserializer());
-    }
-
-    @Override
-    public CompletableFuture<Void> reloadRouting() {
-        return executorAsync().execute(this::reloadRoutingRequest, Void.class);
     }
 
     @Override

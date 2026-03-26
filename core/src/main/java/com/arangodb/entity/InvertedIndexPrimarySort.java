@@ -52,7 +52,7 @@ public final class InvertedIndexPrimarySort {
      * @param cache If you enable this option, then the primary sort columns are always cached in memory. This can
      *              improve the performance of queries that utilize the primary sort order. Otherwise, these values are
      *              memory-mapped and it is up to the operating system to load them from disk into memory and to evict
-     *              them from memory (Enterprise Edition only).
+     *              them from memory.
      * @return this
      * @since ArangoDB 3.10.2
      */

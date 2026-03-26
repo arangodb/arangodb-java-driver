@@ -85,7 +85,7 @@ public final class GraphCreateOptions {
     }
 
     /**
-     * @param isSmart Define if the created graph should be smart. This only has effect in Enterprise version.
+     * @param isSmart Define if the created graph should be smart.
      * @return options
      */
     public GraphCreateOptions isSmart(final Boolean isSmart) {
@@ -190,7 +190,7 @@ public final class GraphCreateOptions {
 
     /**
      * @param satellites collection names that will be used to create SatelliteCollections
-     *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
+     *                   for a Hybrid (Disjoint) SmartGraph. Each array element
      *                   must be a valid collection name. The collection type cannot be modified later.
      * @return options
      * @since ArangoDB 3.9.0

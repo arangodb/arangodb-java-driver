@@ -376,20 +376,9 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
         return executorAsync().execute(() -> createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
-    @Deprecated
-    @Override
-    public CompletableFuture<IndexEntity> ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options) {
-        return executorAsync().execute(() -> createFulltextIndexRequest(fields, options), IndexEntity.class);
-    }
-
     @Override
     public CompletableFuture<IndexEntity> ensureTtlIndex(final Iterable<String> fields, final TtlIndexOptions options) {
         return executorAsync().execute(() -> createTtlIndexRequest(fields, options), IndexEntity.class);
-    }
-
-    @Override
-    public CompletableFuture<IndexEntity> ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options) {
-        return executorAsync().execute(() -> createZKDIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override

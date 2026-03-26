@@ -28,7 +28,7 @@ public class BaseJunit5 {
     protected static final ArangoConfigProperties config = ConfigUtils.loadConfig();
     private static final ArangoDB adb = new ArangoDB.Builder()
             .loadProperties(config)
-            .protocol(Protocol.HTTP_JSON)
+            .protocol(Protocol.HTTP_1_1)
             .build();
 
     private static final ArangoDBVersion version = adb.getVersion();
@@ -36,7 +36,6 @@ public class BaseJunit5 {
     private static final boolean supportsV8 = supportsV8(adb);
 
     private static final List<Named<ArangoDB>> adbs = Arrays.stream(Protocol.values())
-            .filter(p -> !p.equals(Protocol.VST) || isLessThanVersion(3, 12))
             .map(p -> Named.of(p.toString(), new ArangoDB.Builder()
                     .loadProperties(config)
                     .protocol(p)
@@ -206,10 +205,6 @@ public class BaseJunit5 {
 
     public static boolean isLessThanVersion(final int major, final int minor, final int patch) {
         return TestUtils.isLessThanVersion(version.getVersion(), major, minor, patch);
-    }
-
-    public static boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(adb.getEngine().getName());
     }
 
     public static boolean isSingleServer() {

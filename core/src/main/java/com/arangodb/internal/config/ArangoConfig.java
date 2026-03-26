@@ -8,7 +8,6 @@ import com.arangodb.config.HostDescription;
 import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.serde.ContentTypeFactory;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
@@ -46,13 +45,11 @@ public class ArangoConfig {
     private String sslTrustStoreType;
     private SSLContext sslContext;
     private Boolean verifyHost;
-    private Integer chunkSize;
     private Boolean pipelining;
     private Integer connectionWindowSize;
     private Integer initialWindowSize;
     private Integer maxConnections;
     private Long connectionTtl;
-    private Integer keepAliveInterval;
     private Boolean acquireHostList;
     private Integer acquireHostListInterval;
     private LoadBalancingStrategy loadBalancingStrategy;
@@ -92,16 +89,12 @@ public class ArangoConfig {
         sslTrustStorePassword = properties.getSslTrustStorePassword();
         sslTrustStoreType = properties.getSslTrustStoreType().orElse(ArangoDefaults.DEFAULT_SSL_TRUST_STORE_TYPE);
         verifyHost = properties.getVerifyHost().orElse(ArangoDefaults.DEFAULT_VERIFY_HOST);
-        chunkSize = properties.getChunkSize().orElse(ArangoDefaults.DEFAULT_CHUNK_SIZE);
         pipelining = properties.getPipelining().orElse(ArangoDefaults.DEFAULT_PIPELINING);
         connectionWindowSize = properties.getConnectionWindowSize().orElse(ArangoDefaults.DEFAULT_CONNECTION_WINDOW_SIZE);
         initialWindowSize = properties.getInitialWindowSize().orElse(ArangoDefaults.DEFAULT_INITIAL_WINDOW_SIZE);
         // FIXME: make maxConnections field Optional
         maxConnections = properties.getMaxConnections().orElse(null);
-        // FIXME: make connectionTtl field Optional
-        connectionTtl = properties.getConnectionTtl().orElse(null);
-        // FIXME: make keepAliveInterval field Optional
-        keepAliveInterval = properties.getKeepAliveInterval().orElse(null);
+        connectionTtl = properties.getConnectionTtl().orElse(ArangoDefaults.DEFAULT_CONNECTION_TTL_HTTP);
         acquireHostList = properties.getAcquireHostList().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);
         acquireHostListInterval = properties.getAcquireHostListInterval().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
         loadBalancingStrategy = properties.getLoadBalancingStrategy().orElse(ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY);
@@ -218,14 +211,6 @@ public class ArangoConfig {
         this.verifyHost = verifyHost;
     }
 
-    public Integer getChunkSize() {
-        return chunkSize;
-    }
-
-    public void setChunkSize(Integer chunkSize) {
-        this.chunkSize = chunkSize;
-    }
-
     public Boolean getPipelining() {
         return pipelining;
     }
@@ -260,15 +245,10 @@ public class ArangoConfig {
     private int getDefaultMaxConnections() {
         int defaultMaxConnections;
         switch (getProtocol()) {
-            case VST:
-                defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-                break;
-            case HTTP_JSON:
-            case HTTP_VPACK:
+            case HTTP_1_1:
                 defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
                 break;
-            case HTTP2_JSON:
-            case HTTP2_VPACK:
+            case HTTP_2:
                 defaultMaxConnections = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
                 break;
             default:
@@ -282,22 +262,11 @@ public class ArangoConfig {
     }
 
     public Long getConnectionTtl() {
-        if (connectionTtl == null && getProtocol() != Protocol.VST) {
-            connectionTtl = ArangoDefaults.DEFAULT_CONNECTION_TTL_HTTP;
-        }
         return connectionTtl;
     }
 
     public void setConnectionTtl(Long connectionTtl) {
         this.connectionTtl = connectionTtl;
-    }
-
-    public Integer getKeepAliveInterval() {
-        return keepAliveInterval;
-    }
-
-    public void setKeepAliveInterval(Integer keepAliveInterval) {
-        this.keepAliveInterval = keepAliveInterval;
     }
 
     public Boolean getAcquireHostList() {
@@ -339,13 +308,13 @@ public class ArangoConfig {
                 throw new RuntimeException(e);
             }
         } else {
-            return ArangoSerdeProvider.of(ContentTypeFactory.of(getProtocol())).create();
+            return ArangoSerdeProvider.load().create();
         }
     }
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = new InternalSerdeProvider(ContentTypeFactory.of(getProtocol())).create(getUserDataSerde(), protocolModule);
+            internalSerde = new InternalSerdeProvider().create(getUserDataSerde(), protocolModule);
         }
         return internalSerde;
     }

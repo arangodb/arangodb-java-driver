@@ -12,16 +12,8 @@ public interface ProtocolProvider {
 
     boolean supportsProtocol(Protocol protocol);
 
-    /**
-     * @deprecated use {@link #createConnectionFactory(ProtocolConfig)} instead
-     */
-    @Deprecated
-    default ConnectionFactory createConnectionFactory() {
-        throw new UnsupportedOperationException();
-    }
-
     default ConnectionFactory createConnectionFactory(ProtocolConfig config) {
-        return createConnectionFactory();
+        throw new UnsupportedOperationException();
     }
 
     CommunicationProtocol createProtocol(ArangoConfig config, HostHandler hostHandler);

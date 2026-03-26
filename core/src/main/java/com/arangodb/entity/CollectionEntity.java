@@ -35,7 +35,6 @@ public class CollectionEntity {
     private String name;
     private Boolean waitForSync;
     private Boolean isSystem;
-    private CollectionStatus status;
     private CollectionType type;
     private CollectionSchema schema;
     private List<ComputedValue> computedValues;
@@ -58,11 +57,6 @@ public class CollectionEntity {
 
     public Boolean getIsSystem() {
         return isSystem;
-    }
-
-    @Deprecated
-    public CollectionStatus getStatus() {
-        return status;
     }
 
     public CollectionType getType() {
@@ -89,11 +83,11 @@ public class CollectionEntity {
     public boolean equals(Object o) {
         if (!(o instanceof CollectionEntity)) return false;
         CollectionEntity that = (CollectionEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(waitForSync, that.waitForSync) && Objects.equals(isSystem, that.isSystem) && status == that.status && type == that.type && Objects.equals(schema, that.schema) && Objects.equals(computedValues, that.computedValues);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(waitForSync, that.waitForSync) && Objects.equals(isSystem, that.isSystem) && type == that.type && Objects.equals(schema, that.schema) && Objects.equals(computedValues, that.computedValues);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, waitForSync, isSystem, status, type, schema, computedValues);
+        return Objects.hash(id, name, waitForSync, isSystem, type, schema, computedValues);
     }
 }

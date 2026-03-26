@@ -54,29 +54,6 @@ public interface ArangoVertexCollection extends ArangoSerdeAccessor {
      *
      * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-a-node-collection">API
      * Documentation</a>
-     *
-     * @deprecated use {@link #remove()} instead
-     */
-    @Deprecated
-    void drop();
-
-    /**
-     * Remove a vertex collection form the graph.
-     *
-     * @param options options
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-a-node-collection">API
-     * Documentation</a>
-     *
-     * @deprecated use {@link #remove(VertexCollectionRemoveOptions)} instead
-     */
-    @Deprecated
-    void drop(VertexCollectionDropOptions options);
-
-    /**
-     * Remove a vertex collection form the graph.
-     *
-     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/graphs/named-graphs/#remove-a-node-collection">API
-     * Documentation</a>
      */
     void remove();
 

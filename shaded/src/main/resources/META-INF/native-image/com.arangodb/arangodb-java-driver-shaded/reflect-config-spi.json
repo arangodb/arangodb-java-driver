@@ -7,14 +7,5 @@
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "com.arangodb.shaded.jackson.dataformat.velocypack.VPackFactory",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
   }
 ]

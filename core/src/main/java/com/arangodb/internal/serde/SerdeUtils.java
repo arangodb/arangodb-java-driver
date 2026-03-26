@@ -95,7 +95,7 @@ public enum SerdeUtils {
     }
 
     /**
-     * Extract raw bytes for the current JSON (or VPACK) node
+     * Extract raw bytes for the current JSON node
      *
      * @param parser JsonParser with current token pointing to the node to extract
      * @return byte array

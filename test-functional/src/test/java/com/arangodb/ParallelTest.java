@@ -1,9 +1,9 @@
 package com.arangodb;
 
 import com.arangodb.config.ConfigUtils;
+import com.arangodb.util.ProtocolSource;
 import com.arangodb.util.SlowTest;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +18,11 @@ class ParallelTest {
 
     @SlowTest
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void connectionParallelism(Protocol protocol) throws InterruptedException {
-        assumeTrue(!protocol.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
-
         // test that connections are internally async and can have multiple pending requests
         // BTS-1102: the server does not run pipelined HTTP/1.1 requests in parallel
-        assumeTrue(protocol != Protocol.HTTP_JSON && protocol != Protocol.HTTP_VPACK);
+        assumeTrue(protocol != Protocol.HTTP_1_1);
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .protocol(protocol)

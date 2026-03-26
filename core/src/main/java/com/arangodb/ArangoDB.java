@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.net.ssl.SSLContext;
 import java.util.*;
-import java.util.concurrent.Executor;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -70,8 +69,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
     void shutdown();
 
     /**
-     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
-     * connections are authenticated during the initialization phase.
+     * Updates the JWT used for requests authorization.
      *
      * @param jwt token to use
      */
@@ -613,18 +611,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the chunk size when {@link Protocol#VST} is used.
-         *
-         * @param chunkSize size of a chunk in bytes
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder chunkSize(final Integer chunkSize) {
-            config.setChunkSize(chunkSize);
-            return this;
-        }
-
-        /**
-         * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_JSON} or {@link Protocol#HTTP_VPACK}).
+         * Set whether to use requests pipelining in HTTP/1.1 ({@link Protocol#HTTP_1_1}).
          *
          * @param pipelining {@code true} if enabled
          * @return {@link ArangoDB.Builder}
@@ -664,11 +651,8 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * </p>
          *
          * <pre>
-         * {@link Protocol#VST} == 1
-         * {@link Protocol#HTTP_JSON} == 20
-         * {@link Protocol#HTTP_VPACK} == 20
-         * {@link Protocol#HTTP2_JSON} == 1
-         * {@link Protocol#HTTP2_VPACK} == 1
+         * {@link Protocol#HTTP_1_1} == 20
+         * {@link Protocol#HTTP_2} == 1
          * </pre>
          *
          * @param maxConnections max number of connections
@@ -692,25 +676,10 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request
-         * every {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the
-         * external environment, eg. firewall, intermediate routers, operating system).
-         *
-         * @param keepAliveInterval interval in seconds
-         * @return {@link ArangoDB.Builder}
-         */
-        public Builder keepAliveInterval(final Integer keepAliveInterval) {
-            config.setKeepAliveInterval(keepAliveInterval);
-            return this;
-        }
-
-        /**
-         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
-         * server with active failover. In case of Active-Failover deployment set to {@code true} to enable automatic
-         * master discovery.
+         * Whether the driver should acquire a list of available coordinators in an ArangoDB cluster.
          *
          * <p>
-         * The host list will be used for failover and load balancing.
+         * The host list will be used for load balancing.
          * </p>
          *
          * @param acquireHostList whether automatically acquire a list of available hosts (default: false)
@@ -733,8 +702,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Sets the load balancing strategy to be used in an ArangoDB cluster setup. In case of Active-Failover
-         * deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that would be the default.
+         * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default:
          *                              {@link LoadBalancingStrategy#NONE}
@@ -787,20 +755,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          */
         public Builder serdeProviderClass(final Class<? extends ArangoSerdeProvider> serdeProviderClass) {
             config.setUserDataSerdeProvider(serdeProviderClass);
-            return this;
-        }
-
-        /**
-         * Sets the downstream async executor that will be used to consume the responses of the async API, that are returned
-         * as {@link java.util.concurrent.CompletableFuture}
-         *
-         * @param executor async downstream executor
-         * @return {@link ArangoDB.Builder}
-         * @deprecated for removal. To consume the responses in a custom executor use async CompletableFuture methods.
-         */
-        @Deprecated
-        public Builder asyncExecutor(final Executor executor) {
-            config.setAsyncExecutor(executor);
             return this;
         }
 
@@ -896,8 +850,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
 
             LOG.debug("HostHandler is {}", hostHandler.getClass().getSimpleName());
-
-            return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
+            return hostHandler;
         }
 
         @UnstableApi

@@ -49,18 +49,6 @@ public class ArangoEdgeCollectionAsyncImpl extends InternalArangoEdgeCollection 
         return graph;
     }
 
-    @Deprecated
-    @Override
-    public CompletableFuture<Void> drop() {
-        return drop(new EdgeCollectionDropOptions());
-    }
-
-    @Deprecated
-    @Override
-    public CompletableFuture<Void> drop(final EdgeCollectionDropOptions options) {
-        return executorAsync().execute(() -> removeEdgeDefinitionRequest(options), Void.class);
-    }
-
     @Override
     public CompletableFuture<Void> remove() {
         return remove(new EdgeCollectionRemoveOptions());

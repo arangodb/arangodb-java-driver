@@ -18,13 +18,6 @@ public class SerdeArchTest {
             .should().dependOnClassesThat()
             .resideInAPackage("com.arangodb.serde.jsonb..");
 
-    @ArchTest
-    public static final ArchRule noDependencyOnJacksonDataformatVelocypack = noClasses().that()
-            .resideInAPackage("com.arangodb..").and()
-            .resideOutsideOfPackage("com.arangodb.jackson.dataformat.velocypack..").and()
-            .resideOutsideOfPackage("com.arangodb.serde.jackson..")
-            .should().dependOnClassesThat()
-            .resideInAPackage("com.arangodb.jackson.dataformat.velocypack..");
 
     @ArchTest
     public static final ArchRule noDependencyOnJacksonSerde = noClasses().that()

@@ -47,8 +47,8 @@ public class InvertedIndexTest extends BaseJunit5 {
     }
 
     private InvertedIndexOptions createOptions(String analyzerName) {
-        Boolean cache = isEnterprise() ? true : null;
-        Boolean fieldCache = cache != null ? false : null;
+        Boolean cache = true;
+        Boolean fieldCache = false;
         InvertedIndexField field = new InvertedIndexField()
                 .name("foo")
                 .analyzer(AnalyzerType.identity.toString())
@@ -63,22 +63,20 @@ public class InvertedIndexTest extends BaseJunit5 {
                         AnalyzerFeature.offset
                 );
 
-        if (isEnterprise()) {
-            field.nested(
-                    new InvertedIndexField()
-                            .name("bar")
-                            .analyzer(analyzerName)
-                            .searchField(true)
-                            .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
-                            .nested(
-                                    new InvertedIndexField()
-                                            .name("baz")
-                                            .analyzer(AnalyzerType.identity.toString())
-                                            .searchField(false)
-                                            .features(AnalyzerFeature.frequency)
-                            )
-            );
-        }
+        field.nested(
+                new InvertedIndexField()
+                        .name("bar")
+                        .analyzer(analyzerName)
+                        .searchField(true)
+                        .features(AnalyzerFeature.position, AnalyzerFeature.frequency)
+                        .nested(
+                                new InvertedIndexField()
+                                        .name("baz")
+                                        .analyzer(AnalyzerType.identity.toString())
+                                        .searchField(false)
+                                        .features(AnalyzerFeature.frequency)
+                        )
+        );
 
         return new InvertedIndexOptions()
                 .name(rndName())
@@ -112,21 +110,10 @@ public class InvertedIndexTest extends BaseJunit5 {
     }
 
     private ConsolidationPolicy createConsolidationPolicy() {
-        ConsolidationPolicy consolidationPolicy;
-        if (isAtLeastVersion(3, 12, 7)) {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
+        return ConsolidationPolicy.of(ConsolidationType.TIER)
                     .segmentsBytesMax(55555L)
                     .maxSkewThreshold(0.3)
                     .minDeletionRatio(0.4);
-        } else {
-            consolidationPolicy = ConsolidationPolicy.of(ConsolidationType.TIER)
-                    .segmentsMin(3L)
-                    .segmentsMax(44L)
-                    .segmentsBytesMax(55555L)
-                    .segmentsBytesFloor(666L)
-                    .minScore(77L);
-        }
-        return consolidationPolicy;
     }
 
     private void assertCorrectIndexEntity(InvertedIndexEntity indexResult, InvertedIndexOptions options) {
@@ -157,16 +144,12 @@ public class InvertedIndexTest extends BaseJunit5 {
         assertThat(indexResult.getWritebufferSizeMax()).isEqualTo(options.getWritebufferSizeMax());
         assertThat(indexResult.getCache()).isEqualTo(options.getCache());
         assertThat(indexResult.getPrimaryKeyCache()).isEqualTo(options.getPrimaryKeyCache());
-
-        if (isEnterprise() && isAtLeastVersion(3, 12)) {
-            assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
-        }
+        assertThat(indexResult.getOptimizeTopK()).containsExactlyElementsOf(options.getOptimizeTopK());
     }
 
     @ParameterizedTest
     @MethodSource("cols")
     void createAndGetInvertedIndex(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String analyzerName = "delimiter-" + UUID.randomUUID();
         createAnalyzer(analyzerName, collection.db());
         InvertedIndexOptions options = createOptions(analyzerName);
@@ -179,8 +162,6 @@ public class InvertedIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getInvertedIndexesShouldNotReturnOtherIndexTypes(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 
@@ -199,8 +180,6 @@ public class InvertedIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void getIndexesShouldNotReturnInvertedIndexes(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 10));
-
         // create persistent index
         collection.ensurePersistentIndex(Collections.singletonList("foo"), new PersistentIndexOptions().name("persistentIndex"));
 

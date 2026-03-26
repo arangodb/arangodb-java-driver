@@ -1,20 +1,18 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.util.ProtocolSource;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JwtTest extends BaseJunit5 {
 
     private final String jwt = getJwt();
 
     @ParameterizedTest
-    @EnumSource(Protocol.class)
+    @ProtocolSource
     void getVersion(Protocol p) {
-        assumeTrue(!p.equals(Protocol.VST) || BaseJunit5.isLessThanVersion(3, 12));
         ArangoDB.Builder builder = new ArangoDB.Builder()
                 .protocol(p)
                 .jwt(jwt);

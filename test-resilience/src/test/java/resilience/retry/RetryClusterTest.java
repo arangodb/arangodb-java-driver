@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpClosedException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import resilience.ClusterTest;
+import resilience.utils.ProtocolSource;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -15,7 +16,6 @@ import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -124,9 +124,8 @@ class RetryClusterTest extends ClusterTest {
 
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void retryGetOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
                 .build();
@@ -150,9 +149,8 @@ class RetryClusterTest extends ClusterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void retryGetOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
-        assumeTrue(protocol != Protocol.VST);
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)
                 .build()
@@ -183,7 +181,7 @@ class RetryClusterTest extends ClusterTest {
      * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void notRetryPostOnClosedConnection(Protocol protocol) throws IOException, InterruptedException {
         ArangoDB arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -199,9 +197,7 @@ class RetryClusterTest extends ClusterTest {
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
-        if (protocol != Protocol.VST) {
-            assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
-        }
+        assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
 
         arangoDB.db().query("return null", Void.class);
 
@@ -216,7 +212,7 @@ class RetryClusterTest extends ClusterTest {
      * the subsequent requests should fail over to a different coordinator and be successful
      */
     @ParameterizedTest
-    @MethodSource("protocolProvider")
+    @ProtocolSource
     void notRetryPostOnClosedConnectionAsync(Protocol protocol) throws IOException, InterruptedException, ExecutionException {
         ArangoDBAsync arangoDB = dbBuilder()
                 .protocol(protocol)
@@ -233,9 +229,7 @@ class RetryClusterTest extends ClusterTest {
         Throwable thrown = catchThrowable(() -> arangoDB.db().query("return null", Void.class).get()).getCause();
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(thrown.getCause()).isInstanceOf(IOException.class);
-        if (protocol != Protocol.VST) {
-            assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
-        }
+        assertThat(thrown.getCause().getCause()).isInstanceOf(HttpClosedException.class);
 
         arangoDB.db().query("return null", Void.class).get();
 

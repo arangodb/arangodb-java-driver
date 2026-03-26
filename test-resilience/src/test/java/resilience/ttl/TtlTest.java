@@ -32,8 +32,8 @@ class TtlTest extends SingleServerTest {
 
     static Stream<Arguments> args() {
         return Stream.of(
-                Arguments.of(Protocol.HTTP_JSON, "UNREGISTERED"),
-                Arguments.of(Protocol.HTTP2_JSON, "OUTBOUND GO_AWAY")
+                Arguments.of(Protocol.HTTP_1_1, "UNREGISTERED"),
+                Arguments.of(Protocol.HTTP_2, "OUTBOUND GO_AWAY")
         );
     }
 

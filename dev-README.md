@@ -28,9 +28,7 @@ mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dmaven.test.skip verify
 Reports:
 - [core](core/target/site/jacoco/index.html)
 - [jackson-serde-json](jackson-serde-json/target/site/jacoco/index.html)
-- [jackson-serde-vpack](jackson-serde-vpack/target/site/jacoco/index.html)
 - [http-protocol](http-protocol/target/site/jacoco/index.html)
-- [vst-protocol](vst-protocol/target/site/jacoco/index.html)
 
 ## update native image reflection configuration
 To generate reflection configuration run [NativeImageHelper](./driver/src/test/java/helper/NativeImageHelper.java) and 

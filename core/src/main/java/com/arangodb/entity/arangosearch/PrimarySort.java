@@ -71,15 +71,6 @@ public final class PrimarySort {
         return ascending ? Direction.asc : Direction.desc;
     }
 
-    /**
-     * @deprecated for removal, use {@link #getField()} instead
-     */
-    @Deprecated
-    @JsonIgnore
-    public String getFieldName() {
-        return getField();
-    }
-
     public String getField() {
         return fieldName;
     }

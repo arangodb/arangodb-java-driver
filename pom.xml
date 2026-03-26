@@ -5,7 +5,7 @@
 
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver-parent</artifactId>
-    <version>7.25.0</version>
+    <version>8.0.0-SNAPSHOT</version>
     <inceptionYear>2016</inceptionYear>
     <modules>
         <module>core</module>
@@ -13,10 +13,8 @@
         <module>shaded</module>
         <module>jackson-serde-json</module>
         <module>jackson3-serde-json</module>
-        <module>jackson-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
-        <module>vst-protocol</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -253,13 +251,6 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-stack-depchain</artifactId>
-                <version>4.5.21</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
@@ -291,11 +282,6 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
-                <artifactId>vst-protocol</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
                 <artifactId>jackson-serde-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -303,21 +289,6 @@
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson3-serde-json</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>jackson-serde-vpack</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>jackson-dataformat-velocypack</artifactId>
-                <version>4.6.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>velocypack</artifactId>
-                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
@@ -356,13 +327,7 @@
                             <rules>
                                 <enforceBytecodeVersion>
                                     <scopes>compile</scopes>
-                                    <maxJdkVersion>1.8</maxJdkVersion>
-                                    <excludes>
-                                        <exclude>jakarta.json:jakarta.json-api</exclude>
-                                        <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
-                                        <exclude>tools.jackson.core:jackson-core</exclude>
-                                        <exclude>tools.jackson.core:jackson-databind</exclude>
-                                    </excludes>
+                                    <maxJdkVersion>21</maxJdkVersion>
                                 </enforceBytecodeVersion>
                                 <dependencyConvergence/>
                                 <requirePluginVersions/>
@@ -394,33 +359,6 @@
                                     <ignoreVersion>
                                         <type>regex</type>
                                         <version>(?i).*(alpha|beta|m|rc).*(\d+)?</version>
-                                    </ignoreVersion>
-                                </ignoreVersions>
-                            </rule>
-                            <rule>
-                                <groupId>io.vertx</groupId>
-                                <ignoreVersions>
-                                    <ignoreVersion>
-                                        <type>regex</type>
-                                        <version>5..*</version>
-                                    </ignoreVersion>
-                                </ignoreVersions>
-                            </rule>
-                            <rule>
-                                <groupId>io.netty</groupId>
-                                <ignoreVersions>
-                                    <ignoreVersion>
-                                        <type>regex</type>
-                                        <version>.*</version>
-                                    </ignoreVersion>
-                                </ignoreVersions>
-                            </rule>
-                            <rule>
-                                <groupId>org.junit.jupiter</groupId>
-                                <ignoreVersions>
-                                    <ignoreVersion>
-                                        <type>regex</type>
-                                        <version>6..*</version>
                                     </ignoreVersion>
                                 </ignoreVersions>
                             </rule>

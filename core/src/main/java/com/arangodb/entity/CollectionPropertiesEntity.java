@@ -38,7 +38,7 @@ public final class CollectionPropertiesEntity extends CollectionEntity {
     private Collection<String> shardKeys;
     private String shardingStrategy; // cluster option
     private String smartGraphAttribute;
-    private String smartJoinAttribute; // enterprise option
+    private String smartJoinAttribute;
     private Integer writeConcern;
     private Long count;
 

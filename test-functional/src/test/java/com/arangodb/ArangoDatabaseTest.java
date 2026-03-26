@@ -134,7 +134,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithWriteConcern(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -150,7 +149,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createSatelliteCollection(ArangoDatabase db) {
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -180,7 +178,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithShardingStrategys(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -196,8 +193,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithSmartJoinAttribute(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String fooName = rndName();
@@ -214,8 +209,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithSmartJoinAttributeWrong(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -260,7 +253,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithDistributeShardsLike(ArangoDatabase db) {
-        assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
         final Integer numberOfShards = 3;
@@ -295,7 +287,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypePadded(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.padded);
     }
 
@@ -308,14 +299,12 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithKeyTypeUuid(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
         createCollectionWithKeyType(db, KeyType.uuid);
     }
 
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithJsonSchema(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 7));
         String name = rndName();
         String rule = ("{  " +
                 "           \"properties\": {" +
@@ -363,7 +352,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createCollectionWithComputedFields(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         String cName = rndName();
         ComputedValue cv = new ComputedValue()
                 .name("foo")
@@ -715,10 +703,8 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.getStats().getCacheHits()).isNotNull();
         assertThat(cursor.getStats().getCacheMisses()).isNotNull();
         assertThat(cursor.getStats().getIntermediateCommits()).isNotNull();
-        if (isAtLeastVersion(3, 12)) {
-            assertThat(cursor.getStats().getDocumentLookups()).isNotNull();
-            assertThat(cursor.getStats().getSeeks()).isNotNull();
-        }
+        assertThat(cursor.getStats().getDocumentLookups()).isNotNull();
+        assertThat(cursor.getStats().getSeeks()).isNotNull();
     }
 
     @ParameterizedTest
@@ -910,7 +896,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithTimeout(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 6));
         Throwable thrown = catchThrowable(() -> db.query("RETURN SLEEP(1)", String.class,
                 new AqlQueryOptions().maxRuntime(0.1)).next());
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -966,7 +951,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryCursorRetry(ArangoDatabase db) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true));
         List<Integer> result = new ArrayList<>();
@@ -983,7 +967,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryCursorRetryInTx(ArangoDatabase db) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions());
         ArangoCursor<Integer> cursor = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true).streamTransactionId(tx.getId()));
@@ -1081,9 +1064,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void queryForceOneShardAttributeValue(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 10));
         assumeTrue(isCluster());
-        assumeTrue(isEnterprise());
 
         String cname = "forceOneShardAttr-" + UUID.randomUUID();
         db.createCollection(cname, new CollectionCreateOptions()
@@ -1163,16 +1144,13 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
                 BaseDocument.class, new MapBuilder().put("@col", CNAME1).put("test", null).get(),
                 new AqlQueryOptions().allowDirtyRead(true));
-        if (isAtLeastVersion(3, 10)) {
-            assertThat(cursor.isPotentialDirtyRead()).isTrue();
-        }
+        assertThat(cursor.isPotentialDirtyRead()).isTrue();
         cursor.close();
     }
 
     @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetry(ArangoDB arangoDB) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
         assertThat(cursor.asListRemaining()).containsExactly("1", "2");
@@ -1181,7 +1159,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryClose(ArangoDB arangoDB) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
         assertThat(cursor.hasNext()).isTrue();
@@ -1195,7 +1172,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryCloseBeforeLatestBatch(ArangoDB arangoDB) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
         assertThat(cursor.hasNext()).isTrue();
@@ -1207,7 +1183,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("arangos")
     void queryAllowRetryCloseSingleBatch(ArangoDB arangoDB) throws IOException {
-        assumeTrue(isAtLeastVersion(3, 11));
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true));
         assertThat(cursor.hasNext()).isTrue();
@@ -1217,6 +1192,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.hasNext()).isFalse();
         cursor.close();
     }
+
+
+
+
 
     private String getExplainQuery(ArangoDatabase db) {
         ArangoCollection character = db.collection("got_characters");
@@ -1234,89 +1213,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
                 "   FILTER `character`.`actor` == `actor`.`_id` " +
                 "   FILTER `character`.`value` != 1/0 " +
                 "   RETURN {`character`, `actor`}";
-    }
-
-    void checkExecutionPlan(AqlExecutionExplainEntity.ExecutionPlan plan) {
-        assertThat(plan).isNotNull();
-        assertThat(plan.getEstimatedNrItems())
-                .isNotNull()
-                .isNotNegative();
-        assertThat(plan.getNodes()).isNotEmpty();
-
-        AqlExecutionExplainEntity.ExecutionNode node = plan.getNodes().iterator().next();
-        assertThat(node.getEstimatedCost()).isNotNull();
-
-        assertThat(plan.getEstimatedCost()).isNotNull().isNotNegative();
-        assertThat(plan.getCollections()).isNotEmpty();
-
-        AqlExecutionExplainEntity.ExecutionCollection collection = plan.getCollections().iterator().next();
-        assertThat(collection.getName())
-                .isNotNull()
-                .isNotEmpty();
-
-        assertThat(plan.getRules()).isNotEmpty();
-        assertThat(plan.getVariables()).isNotEmpty();
-
-        AqlExecutionExplainEntity.ExecutionVariable variable = plan.getVariables().iterator().next();
-        assertThat(variable.getName())
-                .isNotNull()
-                .isNotEmpty();
-    }
-
-    @SuppressWarnings("deprecation")
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQuery(ArangoDatabase db) {
-        AqlExecutionExplainEntity explain = db.explainQuery(
-                getExplainQuery(db),
-                Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions());
-        assertThat(explain).isNotNull();
-
-        checkExecutionPlan(explain.getPlan());
-        assertThat(explain.getPlans()).isNull();
-        assertThat(explain.getWarnings()).isNotEmpty();
-
-        CursorWarning warning = explain.getWarnings().iterator().next();
-        assertThat(warning).isNotNull();
-        assertThat(warning.getCode()).isEqualTo(1562);
-        assertThat(warning.getMessage()).contains("division by zero");
-
-        assertThat(explain.getStats()).isNotNull();
-
-        assertThat(explain.getStats().getExecutionTime())
-                .isNotNull()
-                .isPositive();
-
-        assertThat(explain.getCacheable()).isFalse();
-    }
-
-    @SuppressWarnings("deprecation")
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void explainQueryAllPlans(ArangoDatabase db) {
-        AqlExecutionExplainEntity explain = db.explainQuery(
-                getExplainQuery(db),
-                Collections.singletonMap("myId", "123"),
-                new AqlQueryExplainOptions().allPlans(true));
-        assertThat(explain).isNotNull();
-
-        assertThat(explain.getPlan()).isNull();
-        assertThat(explain.getPlans()).allSatisfy(this::checkExecutionPlan);
-        assertThat(explain.getWarnings()).isNotEmpty();
-
-        CursorWarning warning = explain.getWarnings().iterator().next();
-        assertThat(warning).isNotNull();
-        assertThat(warning.getCode()).isEqualTo(1562);
-        assertThat(warning.getMessage()).contains("division by zero");
-
-        assertThat(explain.getStats()).isNotNull();
-
-        assertThat(explain.getStats().getExecutionTime())
-                .isNotNull()
-                .isPositive();
-
-        assertThat(explain.getCacheable()).isNull();
     }
 
     void checkUntypedExecutionPlan(AqlQueryExplainEntity.ExecutionPlan plan) {
@@ -1467,9 +1363,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if (isAtLeastVersion(3, 11)) {
-            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
-        }
+        assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
         assertThat(queryEntity.getStream()).isFalse();
         t.join();
@@ -1529,9 +1423,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(queryEntity.getBindVars()).isEmpty();
         assertThat(queryEntity.getStarted()).isInThePast();
         assertThat(queryEntity.getRunTime()).isPositive();
-        if (isAtLeastVersion(3, 11)) {
-            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
-        }
+        assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
         assertThat(queryEntity.getStream()).isFalse();
 
@@ -1541,56 +1433,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         db.setQueryTrackingProperties(properties);
     }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void createGetDeleteAqlFunction(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
-        assertThat(aqlFunctionsInitial).isEmpty();
-        try {
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null);
 
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
-            assertThat(aqlFunctions).hasSizeGreaterThan(aqlFunctionsInitial.size());
-        } finally {
-            final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
-            // compatibility with ArangoDB < 3.4
-            if (isAtLeastVersion(3, 4)) {
-                assertThat(deleteCount).isEqualTo(1);
-            } else {
-                assertThat(deleteCount).isNull();
-            }
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
-            assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void createGetDeleteAqlFunctionWithNamespace(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
-        assertThat(aqlFunctionsInitial).isEmpty();
-        try {
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit1",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null);
-            db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit2",
-                    "function (celsius) { return celsius * 1.8 + 32; }", null);
-
-        } finally {
-            final Integer deleteCount = db
-                    .deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
-            // compatibility with ArangoDB < 3.4
-            if (isAtLeastVersion(3, 4)) {
-                assertThat(deleteCount).isEqualTo(2);
-            } else {
-                assertThat(deleteCount).isNull();
-            }
-            final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
-            assertThat(aqlFunctions).hasSize(aqlFunctionsInitial.size());
-        }
-    }
 
     @ParameterizedTest
     @MethodSource("dbs")
@@ -1603,9 +1446,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void createGraphSatellite(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isCluster());
-        assumeTrue(isEnterprise());
 
         String name = "graph-" + rnd();
         final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().replicationFactor(ReplicationFactor.ofSatellite()));
@@ -1666,155 +1507,18 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(count).isEqualTo(1L);
     }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionString(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params("test");
-        final RawJson result = db.transaction("function (params) {return params;}", RawJson.class, options);
-        assertThat(result.get()).isEqualTo("\"test\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionNumber(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params(5);
-        final Integer result = db.transaction("function (params) {return params;}", Integer.class, options);
-        assertThat(result).isEqualTo(5);
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionJsonNode(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final TransactionOptions options = new TransactionOptions().params(JsonNodeFactory.instance.textNode("test"));
-        final JsonNode result = db.transaction("function (params) {return params;}", JsonNode.class, options);
-        assertThat(result.isTextual()).isTrue();
-        assertThat(result.asText()).isEqualTo("test");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionJsonObject(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        ObjectNode params = JsonNodeFactory.instance.objectNode().put("foo", "hello").put("bar", "world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
-                        options);
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionJsonArray(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        ArrayNode params = JsonNodeFactory.instance.arrayNode().add("hello").add("world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionMap(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params['foo'] + ' ' + params['bar'];}", RawJson.class,
-                        options);
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionArray(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final String[] params = new String[]{"hello", "world"};
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionCollection(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final Collection<String> params = new ArrayList<>();
-        params.add("hello");
-        params.add("world");
-        final TransactionOptions options = new TransactionOptions().params(params);
-        final RawJson result = db
-                .transaction("function (params) { return params[0] + ' ' + params[1];}", RawJson.class, options);
-        assertThat(result.get()).isEqualTo("\"hello world\"");
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionInsertJson(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        String key = "key-" + rnd();
-        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-                .writeCollections(CNAME1);
-        db.transaction("function (params) { "
-                + "var db = require('internal').db;"
-                + "db." + CNAME1 + ".save(JSON.parse(params));"
-                + "}", Void.class, options);
-        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionExclusiveWrite(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        assumeTrue(isAtLeastVersion(3, 4));
-        String key = "key-" + rnd();
-        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
-                .exclusiveCollections(CNAME1);
-        db.transaction("function (params) { "
-                + "var db = require('internal').db;"
-                + "db." + CNAME1 + ".save(JSON.parse(params));"
-                + "}", Void.class, options);
-        assertThat(db.collection(CNAME1).getDocument(key, RawJson.class)).isNotNull();
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionEmpty(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        db.transaction("function () {}", Void.class, null);
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionAllowImplicit(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final String action = "function (params) {" + "var db = require('internal').db;"
-                + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
-                + "}";
-        final TransactionOptions options = new TransactionOptions().readCollections(CNAME1);
-        db.transaction(action, JsonNode.class, options);
-        options.allowImplicit(false);
-        Throwable thrown = catchThrowable(() -> db.transaction(action, JsonNode.class, options));
-        assertThat(thrown)
-                .isInstanceOf(ArangoDBException.class)
-                .extracting(it -> ((ArangoDBException) it).getResponseCode())
-                .isEqualTo(400);
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void transactionPojoReturn(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        final String action = "function() { return {'value':'hello world'}; }";
-        final TransactionTestEntity res = db.transaction(action, TransactionTestEntity.class, new TransactionOptions());
-        assertThat(res).isNotNull();
-        assertThat(res.value).isEqualTo("hello world");
-    }
 
     @ParameterizedTest
     @MethodSource("dbs")
@@ -1826,45 +1530,13 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(info.getPath()).isNotNull();
         assertThat(info.getIsSystem()).isFalse();
 
-        if (isAtLeastVersion(3, 6) && isCluster()) {
+        if (isCluster()) {
             assertThat(info.getSharding()).isNotNull();
             assertThat(info.getWriteConcern()).isNotNull();
             assertThat(info.getReplicationFactor()).isNotNull();
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void shouldIncludeExceptionMessage(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 4));
-        assumeTrue(supportsV8());
 
-        final String exceptionMessage = "My error context";
-        final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
-        try {
-            db.transaction(action, Void.class, null);
-            fail();
-        } catch (final ArangoDBException e) {
-            assertThat(e.getErrorMessage()).isEqualTo(exceptionMessage);
-        }
-    }
 
-    @ParameterizedTest
-    @MethodSource("dbs")
-    void reloadRouting(ArangoDatabase db) {
-        assumeTrue(supportsV8());
-        db.reloadRouting();
-    }
-
-    public static class TransactionTestEntity {
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
 }

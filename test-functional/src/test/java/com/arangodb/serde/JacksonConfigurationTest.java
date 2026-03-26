@@ -1,11 +1,9 @@
 package com.arangodb.serde;
 
-import com.arangodb.ContentType;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.SlowTest;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
@@ -14,10 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JacksonConfigurationTest {
 
     @SlowTest
-    @ParameterizedTest
-    @EnumSource(ContentType.class)
-    void bigStringInternalSerde(ContentType type) {
-        ArangoSerde s = new InternalSerdeProvider(type).create();
+    @Test
+    void bigStringInternalSerde() {
+        ArangoSerde s = new InternalSerdeProvider().create();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {
@@ -30,10 +27,9 @@ public class JacksonConfigurationTest {
     }
 
     @SlowTest
-    @ParameterizedTest
-    @EnumSource(ContentType.class)
-    void bigStringUserSerde(ContentType type) {
-        ArangoSerde s = JacksonSerde.of(type);
+    @Test
+    void bigStringUserSerde() {
+        ArangoSerde s = JacksonSerde.load();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {

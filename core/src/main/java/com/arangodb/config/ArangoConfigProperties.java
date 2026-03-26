@@ -26,13 +26,11 @@ public interface ArangoConfigProperties {
     String KEY_SSL_TRUST_STORE_PASSWORD = "sslTrustStorePassword";
     String KEY_SSL_TRUST_STORE_TYPE = "sslTrustStoreType";
     String KEY_VERIFY_HOST = "verifyHost";
-    String KEY_CHUNK_SIZE = "chunkSize";
     String KEY_PIPELINING = "pipelining";
     String KEY_CONNECTION_WINDOW_SIZE = "connectionWindowSize";
     String KEY_INITIAL_WINDOW_SIZE = "initialWindowSize";
     String KEY_MAX_CONNECTIONS = "maxConnections";
     String KEY_CONNECTION_TTL = "connectionTtl";
-    String KEY_KEEP_ALIVE_INTERVAL = "keepAliveInterval";
     String KEY_ACQUIRE_HOST_LIST = "acquireHostList";
     String KEY_ACQUIRE_HOST_LIST_INTERVAL = "acquireHostListInterval";
     String KEY_LOAD_BALANCING_STRATEGY = "loadBalancingStrategy";
@@ -139,10 +137,6 @@ public interface ArangoConfigProperties {
         return Optional.empty();
     }
 
-    default Optional<Integer> getChunkSize() {
-        return Optional.empty();
-    }
-
     default Optional<Boolean> getPipelining() {
         return Optional.empty();
     }
@@ -160,10 +154,6 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<Long> getConnectionTtl() {
-        return Optional.empty();
-    }
-
-    default Optional<Integer> getKeepAliveInterval() {
         return Optional.empty();
     }
 

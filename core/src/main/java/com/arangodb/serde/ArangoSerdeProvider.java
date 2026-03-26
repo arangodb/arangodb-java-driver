@@ -1,7 +1,6 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.ContentType;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,7 @@ import java.util.ServiceLoader;
 
 public interface ArangoSerdeProvider {
 
-    static ArangoSerdeProvider of(ContentType contentType) {
+    static ArangoSerdeProvider load() {
         Logger LOG = LoggerFactory.getLogger(ArangoSerdeProvider.class);
 
         ServiceLoader<ArangoSerdeProvider> loader = ServiceLoader.load(ArangoSerdeProvider.class);
@@ -26,17 +25,15 @@ public interface ArangoSerdeProvider {
                 LOG.warn("ServiceLoader failed to load ArangoSerdeProvider", e);
                 continue;
             }
-            if (contentType.equals(p.getContentType())) {
-                if (serdeProvider != null) {
-                    throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
-                }
-                serdeProvider = p;
+            if (serdeProvider != null) {
+                throw new ArangoDBException("Found multiple serde providers! Please set explicitly the one to use.");
             }
+            serdeProvider = p;
         }
         if (serdeProvider == null) {
             LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
                     "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
-            serdeProvider = new InternalSerdeProvider(contentType);
+            serdeProvider = new InternalSerdeProvider();
         }
         return serdeProvider;
     }
@@ -46,8 +43,4 @@ public interface ArangoSerdeProvider {
      */
     ArangoSerde create();
 
-    /**
-     * @return the supported content type
-     */
-    ContentType getContentType();
 }

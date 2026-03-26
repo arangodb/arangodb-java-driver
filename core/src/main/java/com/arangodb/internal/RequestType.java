@@ -33,11 +33,7 @@ public enum RequestType {
     PUT(3),
     HEAD(4),
     PATCH(5),
-    OPTIONS(6),
-    VSTREAM_CRED(7),
-    VSTREAM_REGISTER(8),
-    VSTREAM_STATUS(9),
-    ILLEGAL(10);
+    OPTIONS(6);
 
     private final int type;
 

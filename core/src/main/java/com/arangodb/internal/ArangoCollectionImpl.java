@@ -367,20 +367,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
         return executorSync().execute(createGeoIndexRequest(fields, options), IndexEntity.class);
     }
 
-    @Deprecated
-    @Override
-    public IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options) {
-        return executorSync().execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
-    }
-
     @Override
     public IndexEntity ensureTtlIndex(final Iterable<String> fields, final TtlIndexOptions options) {
         return executorSync().execute(createTtlIndexRequest(fields, options), IndexEntity.class);
-    }
-
-    @Override
-    public IndexEntity ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options) {
-        return executorSync().execute(createZKDIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override
