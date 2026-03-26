@@ -2,6 +2,7 @@ package serde;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.serde.jackson.JacksonSerde;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
@@ -21,6 +22,7 @@ class JacksonSerdeTest {
     static void init() {
         adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
+                .serde(JacksonSerde.load())
                 .build();
     }
 
