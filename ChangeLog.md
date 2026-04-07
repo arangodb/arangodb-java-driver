@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.26.0] - 2026-04-07
+
+- updated Jackson to version `2.21`
+- created new user-data serde module based on Jackson 3 (`com.arangodb:jackson3-serde-json`) (DE-1073, #626)
+
+**Notes**: the default user-data serde remains `com.arangodb:jackson-serde-json`. To use Jackson 3 user-data serde:
+- exclude transitive dependency on `com.arangodb:jackson-serde-json`
+- add dependency on `com.arangodb:jackson3-serde-json`
+
 ## [7.25.0] - 2026-01-14
  
 - added SSL configuration from files (#623, DE-505)
