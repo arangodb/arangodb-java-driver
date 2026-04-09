@@ -1,5 +1,6 @@
 package com.arangodb.serde;
 
+import com.arangodb.serde.annotation.*;
 import com.arangodb.serde.jackson.*;
 import com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider;
 import com.fasterxml.jackson.databind.JsonNode;

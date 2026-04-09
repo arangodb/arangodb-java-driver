@@ -1,5 +1,6 @@
 package com.arangodb.serde.jackson3.internal;
 
+import com.arangodb.serde.annotation.*;
 import com.arangodb.serde.jackson3.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.databind.PropertyName;

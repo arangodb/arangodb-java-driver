@@ -20,7 +20,7 @@
 
 package example.graph;
 
-import com.arangodb.serde.jackson.*;
+import com.arangodb.serde.annotation.*;
 
 /**
  * @author a-brandt

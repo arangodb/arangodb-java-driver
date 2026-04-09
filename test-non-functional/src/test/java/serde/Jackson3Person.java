@@ -1,6 +1,6 @@
 package serde;
 
-import com.arangodb.serde.jackson3.Key;
+import com.arangodb.serde.annotation.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Jackson3Person(
