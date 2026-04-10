@@ -8,6 +8,7 @@ import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.Test;
 import resilience.MockTest;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 
 import java.nio.charset.StandardCharsets;
@@ -46,9 +47,8 @@ public class SerdeTest extends MockTest {
         Throwable[] suppressed = thrown.getCause().getSuppressed();
         assertThat(suppressed).hasSize(1);
         assertThat(suppressed[0])
-                .isInstanceOf(ArangoDBException.class)
-                .cause()
-                .isInstanceOf(IllegalAccessError.class);
+                .isInstanceOf(JacksonException.class)
+                .hasMessageContaining("Unrecognized token");
         assertThat(logs.getLogs())
                 .filteredOn(e -> e.getLevel().equals(Level.DEBUG))
                 .anySatisfy(e -> assertThat(e.getFormattedMessage())

@@ -51,11 +51,11 @@ class CompressionTest extends ClusterTest {
                 .compressionThreshold(0)
                 .build();
 
-        List<String> data = IntStream.range(0, 500)
+        String data = IntStream.range(0, 10_000)
                 .mapToObj(i -> UUID.randomUUID().toString())
-                .collect(Collectors.toList());
+                .collect(Collectors.joining());
 
-        adb.db().query("FOR i IN @data RETURN i", String.class,
+        adb.db().query("RETURN @data", String.class,
                 Collections.singletonMap("data", data)).asListRemaining();
 
         adb.shutdown();
