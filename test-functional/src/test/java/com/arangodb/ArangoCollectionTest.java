@@ -29,14 +29,13 @@ import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,7 +55,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     private static final String COLLECTION_NAME = "ArangoCollectionTest_collection";
     private static final String EDGE_COLLECTION_NAME = "ArangoCollectionTest_edge_collection";
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = new JsonMapper();
 
     private static Stream<Arguments> cols() {
         return dbsStream()
@@ -585,7 +584,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(res.getErrors()).hasSize(1);
         assertThat(res.getDocumentsAndErrors()).hasSize(3);
         assertThat(res.getDocumentsAndErrors().get(0)).isSameAs(res.getDocuments().get(0));
-        assertThat(res.getDocumentsAndErrors().get(1)).isSameAs(res.getErrors().get(0));
+        assertThat(res.getDocumentsAndErrors().get(1)).isSameAs(res.getErrors().getFirst());
         assertThat(res.getDocumentsAndErrors().get(2)).isSameAs(res.getDocuments().get(1));
     }
 
@@ -1623,7 +1622,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                 ), new DocumentDeleteOptions().ignoreRevs(false));
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).hasSize(1);
-        assertThat(info.getDocuments().get(0).getKey()).isEqualTo(a.getKey());
+        assertThat(info.getDocuments().getFirst().getKey()).isEqualTo(a.getKey());
         assertThat(info.getErrors()).hasSize(1);
     }
 
@@ -1848,7 +1847,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getDeduplicate()).isTrue();
-            assertThat(indexResult.getCacheEnabled()).isFalse();
+        assertThat(indexResult.getCacheEnabled()).isFalse();
     }
 
     @ParameterizedTest
@@ -1989,7 +1988,6 @@ class ArangoCollectionTest extends BaseJunit5 {
 
         cleanCollection(collection);
     }
-
 
 
     @ParameterizedTest
@@ -2154,7 +2152,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult).isNotNull();
         assertThat(indexResult.getDeduplicate()).isFalse();
     }
-
 
 
     @ParameterizedTest
@@ -2486,7 +2483,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDocuments()).hasSize(2);
         assertThat(docs.getErrors()).isNotNull();
         assertThat(docs.getErrors()).hasSize(1);
-        assertThat(docs.getErrors().iterator().next().getErrorNum()).isEqualTo(1210);
+        assertThat(docs.getErrors().getFirst().getErrorNum()).isEqualTo(1210);
     }
 
     @ParameterizedTest
@@ -2708,7 +2705,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJson(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJson(ArangoCollection collection) {
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
                 Collections.singletonMap("_key", rnd())));
 
@@ -2724,7 +2721,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDuplicateDefaultError(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDuplicateDefaultError(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2743,7 +2740,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDuplicateError(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDuplicateError(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2763,7 +2760,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDuplicateIgnore(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDuplicateIgnore(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2782,7 +2779,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDuplicateReplace(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDuplicateReplace(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2802,7 +2799,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDuplicateUpdate(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDuplicateUpdate(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2833,7 +2830,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonDetails(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonDetails(ArangoCollection collection) {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2854,7 +2851,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonOverwriteFalse(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonOverwriteFalse(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
         Long initialCount = collection.count().getCount();
 
@@ -2866,7 +2863,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("cols")
-    void importDocumentsJsonOverwriteTrue(ArangoCollection collection) throws JsonProcessingException {
+    void importDocumentsJsonOverwriteTrue(ArangoCollection collection) {
         collection.insertDocument(new BaseDocument());
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
@@ -2877,7 +2874,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("edges")
-    void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) throws JsonProcessingException {
+    void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) {
         String k1 = UUID.randomUUID().toString();
         String k2 = UUID.randomUUID().toString();
 
@@ -2939,7 +2936,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             assertThat(i.getKey()).isIn("1", "2");
             assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).get());
-            assertThat(jn.get("_key").asText()).isEqualTo(i.getKey());
+            assertThat(jn.get("_key").asString()).isEqualTo(i.getKey());
         }
         assertThat(deleteResult.getErrors()).isEmpty();
     }
@@ -3069,7 +3066,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @MethodSource("cols")
     void updateDocumentsWithDifferentReturnType(ArangoCollection collection) {
         List<String> keys =
-                IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).collect(Collectors.toList());
+                IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).toList();
         List<BaseDocument> docs =
                 keys.stream().map(BaseDocument::new).peek(it -> it.addAttribute("a", "test")).collect(Collectors.toList());
 
@@ -3186,7 +3183,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
-            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+            assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }
     }
 
@@ -3305,7 +3302,7 @@ class ArangoCollectionTest extends BaseJunit5 {
 
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
-            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+            assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }
     }
 
@@ -3355,7 +3352,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(changedProperties.getCacheEnabled()).isEqualTo(updatedOptions.getCacheEnabled());
         assertThat(changedProperties.getComputedValues())
                 .hasSize(1)
-                .contains(updatedOptions.getComputedValues().get(0));
+                .contains(updatedOptions.getComputedValues().getFirst());
         assertThat(changedProperties.getReplicationFactor().get()).isEqualTo(updatedOptions.getReplicationFactor().get());
         assertThat(changedProperties.getSchema().getLevel()).isEqualTo(CollectionSchema.Level.NEW);
         assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
@@ -3646,6 +3643,7 @@ class ArangoCollectionTest extends BaseJunit5 {
             this.key = key;
         }
 
+        @Key
         public String getKey() {
             return key;
         }

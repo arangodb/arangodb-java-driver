@@ -35,7 +35,7 @@ class ArangoAnnotationsTest {
 
     @Test
     void documentFieldAnnotations() {
-        ArangoSerde mapper = JacksonSerde.load();
+        ArangoSerde mapper = JacksonSerde.create();
 
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");
@@ -45,7 +45,7 @@ class ArangoAnnotationsTest {
         e.setTo("To");
 
         byte[] serialized = mapper.serialize(e);
-        Map<String, String> deserialized = mapper.deserialize(serialized, Map.class);
+        @SuppressWarnings("unchecked") Map<String, String> deserialized = mapper.deserialize(serialized, Map.class);
         assertThat(deserialized)
                 .containsEntry("_id", e.getId())
                 .containsEntry("_key", e.getKey())

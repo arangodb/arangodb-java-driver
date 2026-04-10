@@ -22,11 +22,6 @@
     <dependencies>
         <dependency>
             <groupId>com.arangodb</groupId>
-            <artifactId>jackson3-serde-json</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.arangodb</groupId>
             <artifactId>jsonb-serde</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -91,20 +86,6 @@
                             <filesToExclude>
                                 **/JacksonRequestContextTest.**
                             </filesToExclude>
-                            <replacements>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.databind.JsonNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
-                                </replacement>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
-                                </replacement>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.databind.node.JsonNodeFactory</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.node.JsonNodeFactory</value>
-                                </replacement>
-                            </replacements>
                         </configuration>
                     </plugin>
                 </plugins>

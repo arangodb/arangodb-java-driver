@@ -37,7 +37,7 @@ public enum ArangoSearchCompression {
      */
     none("none");
 
-    private final String value;
+    private  String value;
 
     ArangoSearchCompression(String value) {
         this.value = value;

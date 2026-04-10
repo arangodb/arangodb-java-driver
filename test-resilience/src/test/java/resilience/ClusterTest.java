@@ -5,10 +5,10 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBAsync;
 import com.arangodb.Protocol;
 import com.arangodb.Request;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.rekawek.toxiproxy.Proxy;
 import eu.rekawek.toxiproxy.ToxiproxyClient;
 import org.junit.jupiter.api.*;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -91,8 +91,7 @@ public abstract class ClusterTest extends TestUtils {
                         .build(), ObjectNode.class)
                 .getBody()
                 .get("serverInfo")
-                .get("serverId")
-                .textValue();
+                .get("serverId").stringValue();
     }
 
     protected static String serverIdGET(ArangoDBAsync adb) {
@@ -104,8 +103,7 @@ public abstract class ClusterTest extends TestUtils {
                     .get()
                     .getBody()
                     .get("serverInfo")
-                    .get("serverId")
-                    .textValue();
+                    .get("serverId").stringValue();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -118,8 +116,7 @@ public abstract class ClusterTest extends TestUtils {
                         .build(), ObjectNode.class)
                 .getBody()
                 .get("serverInfo")
-                .get("serverId")
-                .textValue();
+                .get("serverId").stringValue();
     }
 
     protected static String serverIdPOST(ArangoDBAsync adb) {
@@ -131,8 +128,7 @@ public abstract class ClusterTest extends TestUtils {
                     .get()
                     .getBody()
                     .get("serverInfo")
-                    .get("serverId")
-                    .textValue();
+                    .get("serverId").stringValue();
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {

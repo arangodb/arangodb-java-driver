@@ -28,16 +28,16 @@ import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
@@ -58,12 +58,10 @@ class JacksonRequestContextTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.load()
-                .configure((mapper) -> {
-                    SimpleModule module = new SimpleModule("PersonModule");
-                    module.addDeserializer(Person.class, new PersonDeserializer());
-                    mapper.registerModule(module);
-                });
+        JacksonSerde serde = JacksonSerde.create(JsonMapper.builder()
+                .addModule(new SimpleModule("PersonModule")
+                        .addDeserializer(Person.class, new PersonDeserializer()))
+                .build());
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .serde(serde).build();
@@ -88,12 +86,12 @@ class JacksonRequestContextTest {
         arangoDB.shutdown();
     }
 
-    static class PersonDeserializer extends JsonDeserializer<Person> {
+    static class PersonDeserializer extends ValueDeserializer<Person> {
         @Override
-        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
-            JsonNode rootNode = parser.getCodec().readTree(parser);
-            Person person = new Person(rootNode.get("name").asText());
-            person.txId = JacksonSerde.getRequestContext(ctx).getStreamTransactionId().get();
+        public Person deserialize(JsonParser parser, DeserializationContext ctx) {
+            JsonNode rootNode = ctx.readTree(parser);
+            Person person = new Person(rootNode.get("name").asString());
+            person.txId = JacksonSerde.getRequestContext(ctx).getStreamTransactionId().orElseThrow();
             return person;
         }
     }

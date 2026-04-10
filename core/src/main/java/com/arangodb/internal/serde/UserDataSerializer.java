@@ -1,13 +1,11 @@
 package com.arangodb.internal.serde;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
-
-class UserDataSerializer extends JsonSerializer<Object> {
+class UserDataSerializer extends ValueSerializer<Object> {
     private final InternalSerde serde;
 
     UserDataSerializer(InternalSerde serde) {
@@ -15,7 +13,7 @@ class UserDataSerializer extends JsonSerializer<Object> {
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(Object value, JsonGenerator gen, SerializationContext ctxt) {
         if (value != null && JsonNode.class.isAssignableFrom(value.getClass())) {
             gen.writeTree((JsonNode) value);
         } else {

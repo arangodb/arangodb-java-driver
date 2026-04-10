@@ -33,9 +33,9 @@ import java.util.Objects;
  */
 public final class StoredValue {
 
-    private final List<String> fields;
-    private final ArangoSearchCompression compression;
-    private final Boolean cache;
+    private  List<String> fields;
+    private  ArangoSearchCompression compression;
+    private  Boolean cache;
 
     /**
      * @param fields      A list of attribute paths. The . character denotes sub-attributes.

@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.TestUtils;
 
 import java.util.UUID;
 
@@ -57,7 +56,7 @@ class AQLActorsAndMoviesExampleTest {
         ArangoConfigProperties config = ArangoConfigProperties.fromFile();
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(config)
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();

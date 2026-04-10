@@ -27,7 +27,7 @@ public enum LogLevel {
 
     FATAL(0), ERROR(1), WARNING(2), INFO(3), DEBUG(4);
 
-    private final int level;
+    private  int level;
 
     LogLevel(final int level) {
         this.level = level;

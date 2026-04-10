@@ -21,7 +21,7 @@ public class CommunicationTest {
         ArangoDBAsync arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build()
                 .async();
         arangoDB.getVersion().get();
@@ -45,7 +45,7 @@ public class CommunicationTest {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(protocol)
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build();
         arangoDB.getVersion();
 

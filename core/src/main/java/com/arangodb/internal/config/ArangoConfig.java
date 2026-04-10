@@ -12,7 +12,6 @@ import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
-import com.fasterxml.jackson.databind.Module;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -57,7 +56,6 @@ public class ArangoConfig {
     private ArangoSerde userDataSerde;
     private Class<? extends ArangoSerdeProvider> serdeProviderClass;
     private Integer responseQueueTimeSamples;
-    private Module protocolModule;
     private Executor asyncExecutor;
     private Compression compression;
     private Integer compressionThreshold;
@@ -314,7 +312,7 @@ public class ArangoConfig {
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = new InternalSerdeProvider().create(getUserDataSerde(), protocolModule);
+            internalSerde = new InternalSerdeProvider().create(getUserDataSerde());
         }
         return internalSerde;
     }
@@ -333,10 +331,6 @@ public class ArangoConfig {
 
     public void setResponseQueueTimeSamples(Integer responseQueueTimeSamples) {
         this.responseQueueTimeSamples = responseQueueTimeSamples;
-    }
-
-    public void setProtocolModule(Module m) {
-        protocolModule = m;
     }
 
     public Executor getAsyncExecutor() {

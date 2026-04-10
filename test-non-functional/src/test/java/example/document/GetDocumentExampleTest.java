@@ -25,10 +25,10 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.RequestContextHolder;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.JsonNode;
 import example.ExampleBase;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Map;
 import java.util.UUID;
@@ -67,6 +67,7 @@ class GetDocumentExampleTest extends ExampleBase {
 
     @Test
     void getAsMap() {
+        @SuppressWarnings("unchecked")
         final Map<String, Object> doc = collection.getDocument(key, Map.class);
         assertThat(doc).isNotNull();
         assertThat(doc.get("foo")).isNotNull();
@@ -77,8 +78,8 @@ class GetDocumentExampleTest extends ExampleBase {
     void getAsJsonNode() {
         final JsonNode doc = collection.getDocument(key, JsonNode.class);
         assertThat(doc).isNotNull();
-        assertThat(doc.get("foo").isTextual()).isTrue();
-        assertThat(doc.get("foo").asText()).isEqualTo("bar");
+        assertThat(doc.get("foo").isString()).isTrue();
+        assertThat(doc.get("foo").asString()).isEqualTo("bar");
     }
 
     @Test
@@ -93,6 +94,7 @@ class GetDocumentExampleTest extends ExampleBase {
     void getAsBytes() {
         final RawBytes doc = collection.getDocument(key, RawBytes.class);
         assertThat(doc.get()).isNotNull();
+        @SuppressWarnings("unchecked")
         Map<String, Object> mapDoc = RequestContextHolder.INSTANCE.runWithCtx(RequestContext.EMPTY, () ->
                 collection.getSerde().deserializeUserData(doc.get(), Map.class));
         assertThat(mapDoc).containsEntry("foo", "bar");

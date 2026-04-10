@@ -22,11 +22,11 @@ package example.document;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.BaseDocument;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import example.ExampleBase;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Collections;
 import java.util.List;
@@ -65,9 +65,9 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final ObjectNode node = cursor.next();
-            assertThat(node.get("name").asText())
+            assertThat(node.get("name").asString())
                     .isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-            assertThat(node.get("gender").asText()).isEqualTo(Gender.FEMALE.name());
+            assertThat(node.get("gender").asString()).isEqualTo(Gender.FEMALE.name());
             assertThat(node.get("age").asInt()).isIn(21, 23, 25, 27, 29);
         }
     }
@@ -81,9 +81,9 @@ class AqlQueryWithSpecialReturnTypesExampleTest extends ExampleBase {
         assertThat((Object) cursor).isNotNull();
         while (cursor.hasNext()) {
             final ArrayNode arrNode = cursor.next();
-            assertThat(arrNode.get(0).asText())
+            assertThat(arrNode.get(0).asString())
                     .isIn("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19");
-            assertThat(arrNode.get(1).asText()).isEqualTo(Gender.FEMALE.name());
+            assertThat(arrNode.get(1).asString()).isEqualTo(Gender.FEMALE.name());
             assertThat(arrNode.get(2).asInt()).isIn(21, 23, 25, 27, 29);
         }
     }

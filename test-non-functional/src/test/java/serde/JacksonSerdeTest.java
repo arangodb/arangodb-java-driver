@@ -3,12 +3,12 @@ package serde;
 import com.arangodb.ArangoDB;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -22,7 +22,7 @@ class JacksonSerdeTest {
     static void init() {
         adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build();
     }
 
@@ -47,14 +47,14 @@ class JacksonSerdeTest {
     @Test
     void jsonNode() {
         // uses the user serde
-        com.fasterxml.jackson.databind.JsonNode doc = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance
+        JsonNode doc = JsonNodeFactory.instance
                 .objectNode()
                 .put("foo", "bar");
-        com.fasterxml.jackson.databind.JsonNode res = adb.db().query("return @d", com.fasterxml.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
+        JsonNode res = adb.db().query("return @d", JsonNode.class, Collections.singletonMap("d", doc)).next();
         assertThat(res.size()).isEqualTo(1);
-        assertThat(res.get("foo").asText()).isEqualTo("bar");
-        com.fasterxml.jackson.databind.JsonNode value = adb.db().query("return @d.foo", com.fasterxml.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
-        assertThat(value.textValue()).isEqualTo("bar");
+        assertThat(res.get("foo").asString()).isEqualTo("bar");
+        JsonNode value = adb.db().query("return @d.foo", JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(value.stringValue()).isEqualTo("bar");
     }
 
     @Test

@@ -29,7 +29,7 @@ public class JacksonConfigurationTest {
     @SlowTest
     @Test
     void bigStringUserSerde() {
-        ArangoSerde s = JacksonSerde.load();
+        ArangoSerde s = JacksonSerde.create();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {
@@ -40,7 +40,6 @@ public class JacksonConfigurationTest {
         String out = s.deserialize(bytes, String.class);
         assertThat(out).isEqualTo(in);
     }
-
 
 
 }

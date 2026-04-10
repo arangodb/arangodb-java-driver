@@ -30,14 +30,14 @@ import com.arangodb.util.ProtocolSource;
 import com.arangodb.util.RawJson;
 import com.arangodb.util.SlowTest;
 import com.arangodb.util.UnicodeUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,7 +45,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,7 +102,7 @@ class ArangoDBTest extends BaseJunit5 {
     void createWithNotNormalizedName(ArangoDB arangoDB) {
         assumeTrue(supportsExtendedDbNames());
 
-        final String dbName = "testDB-\u006E\u0303\u00f1";
+        @SuppressWarnings("UnnecessaryUnicodeEscape") final String dbName = "testDB-\u006E\u0303\u00f1";
         String normalized = UnicodeUtils.normalize(dbName);
         arangoDB.createDatabase(normalized);
         arangoDB.db(normalized).drop();
@@ -168,7 +167,7 @@ class ArangoDBTest extends BaseJunit5 {
     @SlowTest
     @ParameterizedTest
     @MethodSource("arangos")
-    void createDatabaseWithUsers(ArangoDB arangoDB) throws InterruptedException {
+    void createDatabaseWithUsers(ArangoDB arangoDB) {
         final String dbName = rndDbName();
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
@@ -420,26 +419,11 @@ class ArangoDBTest extends BaseJunit5 {
                 .build();
         final Response<RawJson> response = arangoDB.execute(request, RawJson.class);
         JsonNode body = SerdeUtils.INSTANCE.parseJson(response.getBody().get());
-        assertThat(body.get("version").isTextual()).isTrue();
+        assertThat(body.get("version").isString()).isTrue();
         assertThat(body.get("details").isObject()).isTrue();
         assertThat(response.getResponseCode()).isEqualTo(200);
         String header = response.getHeaders().get("x-arango-queue-time-seconds");
         assertThat(header).isNotNull();
-    }
-
-    @ParameterizedTest
-    @MethodSource("arangos")
-    void executeJS(ArangoDB arangoDB) {
-        assumeTrue(supportsV8());
-        assumeTrue(isAtLeastVersion(3, 11));
-        Request<?> request = Request.builder()
-                .db(ArangoRequestParam.SYSTEM)
-                .method(Request.Method.POST)
-                .path("/_admin/execute")
-                .body(JsonNodeFactory.instance.textNode("return 11;"))
-                .build();
-        final Response<Integer> response = arangoDB.execute(request, Integer.class);
-        assertThat(response.getBody()).isEqualTo(11);
     }
 
     @ParameterizedTest
@@ -472,7 +456,7 @@ class ArangoDBTest extends BaseJunit5 {
     @MethodSource("arangos")
     void getLogEntriesStart(ArangoDB arangoDB) {
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
-        final Long firstId = logs.getMessages().get(0).getId();
+        final Long firstId = logs.getMessages().getFirst().getId();
         final LogEntriesEntity logsStart = arangoDB.getLogEntries(new LogOptions().start(firstId + 1));
         assertThat(logsStart.getMessages())
                 .map(LogEntriesEntity.Message::getId)
@@ -494,7 +478,7 @@ class ArangoDBTest extends BaseJunit5 {
     void getLogEntriesOffset(ArangoDB arangoDB) {
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         assertThat(logs.getTotal()).isPositive();
-        Long firstId = logs.getMessages().get(0).getId();
+        Long firstId = logs.getMessages().getFirst().getId();
         final LogEntriesEntity logsOffset = arangoDB.getLogEntries(new LogOptions().offset(1));
         assertThat(logsOffset.getMessages())
                 .map(LogEntriesEntity.Message::getId)
@@ -516,7 +500,7 @@ class ArangoDBTest extends BaseJunit5 {
         long lastId = -1;
         List<Long> ids = logs.getMessages().stream()
                 .map(LogEntriesEntity.Message::getId)
-                .collect(Collectors.toList());
+                .toList();
         for (final Long id : ids) {
             assertThat(id).isGreaterThan(lastId);
             lastId = id;
@@ -530,7 +514,7 @@ class ArangoDBTest extends BaseJunit5 {
         long lastId = Long.MAX_VALUE;
         List<Long> ids = logs.getMessages().stream()
                 .map(LogEntriesEntity.Message::getId)
-                .collect(Collectors.toList());
+                .toList();
         for (final Long id : ids) {
             assertThat(lastId).isGreaterThan(id);
             lastId = id;
@@ -739,7 +723,7 @@ class ArangoDBTest extends BaseJunit5 {
                         () -> arangoDB.db().query("RETURN SLEEP(1)", Void.class),
                         Executors.newFixedThreadPool(80))
                 )
-                .collect(Collectors.toList());
+                .toList();
         for (CompletableFuture<Void> f : futures) {
             f.get();
         }

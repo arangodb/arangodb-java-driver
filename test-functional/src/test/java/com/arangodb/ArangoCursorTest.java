@@ -21,10 +21,10 @@
 package com.arangodb;
 
 import com.arangodb.model.AqlQueryOptions;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Optional;
 import java.util.Set;

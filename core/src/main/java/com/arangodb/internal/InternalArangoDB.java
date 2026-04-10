@@ -100,15 +100,7 @@ public abstract class InternalArangoDB extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
-        return (response) -> {
-            Iterator<String> names =
-                    getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).fieldNames();
-            final Collection<String> dbs = new ArrayList<>();
-            while (names.hasNext()) {
-                dbs.add(names.next());
-            }
-            return dbs;
-        };
+        return (response) -> getSerde().parse(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER).propertyNames();
     }
 
     protected InternalRequest createUserRequest(

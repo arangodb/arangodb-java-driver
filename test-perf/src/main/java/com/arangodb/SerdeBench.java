@@ -9,8 +9,6 @@ import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -27,6 +25,8 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class SerdeBench {
         public final InternalResponse jsonResp = new InternalResponse();
 
         public Data() {
-            ObjectMapper jsonMapper = new ObjectMapper();
+            JsonMapper jsonMapper = new JsonMapper();
 
             try {
                 JsonNode jn = readFile("/api-docs.json", jsonMapper);
@@ -91,19 +91,21 @@ public class SerdeBench {
             }
         }
 
-        private JsonNode readFile(String filename, ObjectMapper mapper) throws IOException {
+        private JsonNode readFile(String filename, JsonMapper mapper) {
             InputStream inputStream = SerdeBench.class.getResourceAsStream(filename);
             String str = readFromInputStream(inputStream);
             return mapper.readTree(str);
         }
 
-        private String readFromInputStream(InputStream inputStream) throws IOException {
+        private String readFromInputStream(InputStream inputStream) {
             StringBuilder resultStringBuilder = new StringBuilder();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     resultStringBuilder.append(line).append("\n");
                 }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             return resultStringBuilder.toString();
         }

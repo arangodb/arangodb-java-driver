@@ -3,12 +3,12 @@ package serde;
 import com.arangodb.ArangoDB;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.internal.serde.InternalSerdeProvider;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.Collections;
 import java.util.Map;

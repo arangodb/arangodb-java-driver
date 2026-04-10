@@ -12,7 +12,6 @@
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde-json</module>
-        <module>jackson3-serde-json</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
     </modules>
@@ -251,6 +250,13 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>3.1.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
@@ -288,11 +294,6 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-serde-json</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.arangodb</groupId>
-                <artifactId>jackson3-serde-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -5,8 +5,8 @@ import com.arangodb.internal.serde.InternalSerializers;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public final class FieldLink {
 
-    private final String name;
+    private  String name;
     private Collection<String> analyzers;
     private Boolean includeAllFields;
     private Boolean trackListPositions;

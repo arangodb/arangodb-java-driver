@@ -25,8 +25,8 @@ package com.arangodb.model;
 import com.arangodb.internal.serde.InternalDeserializers;
 import com.arangodb.internal.serde.InternalSerializers;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author Michele Rastelli

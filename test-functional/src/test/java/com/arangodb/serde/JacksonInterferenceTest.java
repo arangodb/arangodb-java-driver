@@ -3,14 +3,13 @@ package com.arangodb.serde;
 import com.arangodb.serde.annotation.*;
 import com.arangodb.serde.jackson.*;
 import com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class JacksonInterferenceTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = new JsonMapper();
     private final ArangoSerde serde = new JacksonJsonSerdeProvider().create();
 
     private FooField fooField;
@@ -159,7 +158,7 @@ class JacksonInterferenceTest {
     }
 
     @Test
-    void deserializeField() throws IOException {
+    void deserializeField() {
         // id
         testDeserialize("myId", FooField.class, foo -> foo.myId, this::jacksonDeserialize);
         testDeserialize("_id", FooField.class, foo -> foo.myId, this::serdeDeserialize);
@@ -178,7 +177,7 @@ class JacksonInterferenceTest {
     }
 
     @Test
-    void deserializeProp() throws IOException {
+    void deserializeProp() {
         // id
         testDeserialize("myId", FooProp.class, FooProp::getMyId, this::jacksonDeserialize);
         testDeserialize("_id", FooProp.class, FooProp::getMyId, this::serdeDeserialize);
@@ -203,7 +202,7 @@ class JacksonInterferenceTest {
     }
 
     <T> void testDeserialize(String fieldName, Class<T> clazz, Function<T, String> getter,
-                             BiFunction<byte[], Class<T>, T> deserializer) throws IOException {
+                             BiFunction<byte[], Class<T>, T> deserializer) {
         String fieldValue = UUID.randomUUID().toString();
         ObjectNode on = JsonNodeFactory.instance.objectNode().put(fieldName, fieldValue);
         byte[] bytes = mapper.writeValueAsBytes(on);
@@ -212,27 +211,15 @@ class JacksonInterferenceTest {
     }
 
     private JsonNode jacksonSerialize(Object data) {
-        try {
-            return mapper.readTree(mapper.writeValueAsBytes(data));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return mapper.readTree(mapper.writeValueAsBytes(data));
     }
 
     private JsonNode serdeSerialize(Object data) {
-        try {
-            return mapper.readTree(serde.serialize(data));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return mapper.readTree(serde.serialize(data));
     }
 
     private <T> T jacksonDeserialize(byte[] bytes, Class<T> clazz) {
-        try {
-            return mapper.readValue(bytes, clazz);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return mapper.readValue(bytes, clazz);
     }
 
     private <T> T serdeDeserialize(byte[] bytes, Class<T> clazz) {

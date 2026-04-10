@@ -1,6 +1,7 @@
 package com.arangodb.internal.serde;
 
-import com.fasterxml.jackson.core.SerializableString;
+
+import tools.jackson.core.SerializableString;
 
 import java.io.IOException;
 import java.io.OutputStream;

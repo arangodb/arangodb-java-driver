@@ -29,14 +29,13 @@ import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -57,7 +56,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     private static final String COLLECTION_NAME = "ArangoCollectionTest_collection";
     private static final String EDGE_COLLECTION_NAME = "ArangoCollectionTest_edge_collection";
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = new JsonMapper();
 
     private static Stream<Arguments> asyncCols() {
         return asyncDbsStream().map(mapNamedPayload(db -> db.collection(COLLECTION_NAME))).map(Arguments::of);
@@ -524,7 +523,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(createEntity.getKey()).isEqualTo(key);
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
-        Map<String, Object> newDoc = collection.getSerde().getUserSerde().deserialize(createEntity.getNew().get(), Map.class);
+        @SuppressWarnings("unchecked") Map<String, Object> newDoc = collection.getSerde().getUserSerde().deserialize(createEntity.getNew().get(), Map.class);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 
@@ -1091,7 +1090,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
         final Object aResult = readResult.getAttribute("a");
         assertThat(aResult).isInstanceOf(Map.class);
-        final Map<String, String> aMap = (Map<String, String>) aResult;
+        @SuppressWarnings("unchecked") final Map<String, String> aMap = (Map<String, String>) aResult;
         assertThat(aMap).containsKeys("a", "b");
     }
 
@@ -1118,7 +1117,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
         final Object aResult = readResult.getAttribute("a");
         assertThat(aResult).isInstanceOf(Map.class);
-        final Map<String, String> aMap = (Map<String, String>) aResult;
+        @SuppressWarnings("unchecked") final Map<String, String> aMap = (Map<String, String>) aResult;
         assertThat(aMap.keySet()).doesNotContain("a");
         assertThat(aMap).containsKey("b");
     }
@@ -1573,7 +1572,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
                 ), new DocumentDeleteOptions().ignoreRevs(false)).get();
         assertThat(info).isNotNull();
         assertThat(info.getDocuments()).hasSize(1);
-        assertThat(info.getDocuments().get(0).getKey()).isEqualTo(a.getKey());
+        assertThat(info.getDocuments().getFirst().getKey()).isEqualTo(a.getKey());
         assertThat(info.getErrors()).hasSize(1);
     }
 
@@ -1941,7 +1940,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     }
 
 
-
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createMDIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
@@ -2104,7 +2102,6 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(indexResult).isNotNull();
         assertThat(indexResult.getDeduplicate()).isFalse();
     }
-
 
 
     @ParameterizedTest
@@ -2408,7 +2405,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(docs.getDocuments()).hasSize(2);
         assertThat(docs.getErrors()).isNotNull();
         assertThat(docs.getErrors()).hasSize(1);
-        assertThat(docs.getErrors().iterator().next().getErrorNum()).isEqualTo(1210);
+        assertThat(docs.getErrors().getFirst().getErrorNum()).isEqualTo(1210);
     }
 
     @ParameterizedTest
@@ -2630,7 +2627,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJson(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJson(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
                 Collections.singletonMap("_key", rnd())));
 
@@ -2646,7 +2643,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDuplicateDefaultError(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDuplicateDefaultError(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2665,7 +2662,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDuplicateError(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDuplicateError(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2685,7 +2682,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDuplicateIgnore(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDuplicateIgnore(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2704,7 +2701,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDuplicateReplace(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDuplicateReplace(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2724,7 +2721,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDuplicateUpdate(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDuplicateUpdate(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2755,7 +2752,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonDetails(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonDetails(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         String k1 = rnd();
         String k2 = rnd();
 
@@ -2776,7 +2773,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonOverwriteFalse(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonOverwriteFalse(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
         Long initialCount = collection.count().get().getCount();
 
@@ -2788,7 +2785,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncCols")
-    void importDocumentsJsonOverwriteTrue(ArangoCollectionAsync collection) throws JsonProcessingException, ExecutionException, InterruptedException {
+    void importDocumentsJsonOverwriteTrue(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         collection.insertDocument(new BaseDocument()).get();
 
         final String values = mapper.writeValueAsString(Arrays.asList(Collections.singletonMap("_key", rnd()),
@@ -2799,7 +2796,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("edges")
-    void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) throws JsonProcessingException {
+    void importDocumentsJsonFromToPrefix(ArangoCollection edgeCollection) {
         String k1 = UUID.randomUUID().toString();
         String k2 = UUID.randomUUID().toString();
 
@@ -2861,7 +2858,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
             assertThat(i.getKey()).isIn("1", "2");
             assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).get());
-            assertThat(jn.get("_key").asText()).isEqualTo(i.getKey());
+            assertThat(jn.get("_key").asString()).isEqualTo(i.getKey());
         }
         assertThat(deleteResult.getErrors()).isEmpty();
     }
@@ -2991,7 +2988,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @MethodSource("asyncCols")
     void updateDocumentsWithDifferentReturnType(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
         List<String> keys =
-                IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).collect(Collectors.toList());
+                IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID()).toList();
         List<BaseDocument> docs =
                 keys.stream().map(BaseDocument::new).peek(it -> it.addAttribute("a", "test")).collect(Collectors.toList());
 
@@ -3108,7 +3105,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
-            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+            assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }
     }
 
@@ -3227,7 +3224,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
 
             JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
-            assertThat(jn.get("foo").textValue()).isEqualTo("bar");
+            assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }
     }
 
@@ -3546,6 +3543,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
             this.key = key;
         }
 
+        @Key
         public String getKey() {
             return key;
         }

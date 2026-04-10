@@ -2,8 +2,8 @@ package com.arangodb.internal.serde;
 
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 

@@ -6,10 +6,10 @@ import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 
@@ -58,8 +58,8 @@ class SerdeTest {
         doc.addAttribute("properties", Collections.singletonMap("foo", "bbb"));
         byte[] ser = s.serialize(doc);
         ObjectNode on = s.deserializeUserData(ser, ObjectNode.class);
-        assertThat(on.get("foo").textValue()).isEqualTo("aaa");
-        assertThat(on.get("properties").get("foo").textValue()).isEqualTo("bbb");
+        assertThat(on.get("foo").stringValue()).isEqualTo("aaa");
+        assertThat(on.get("properties").get("foo").stringValue()).isEqualTo("bbb");
     }
 
     @Test

@@ -27,7 +27,7 @@ import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.util.RawData;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -392,7 +392,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return (response) -> {
             Collection<IndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
-                if (!"inverted".equals(idx.get("type").textValue())) {
+                if (!"inverted".equals(idx.get("type").stringValue())) {
                     indexes.add(getSerde().deserialize(idx, IndexEntity.class));
                 }
             }
@@ -404,7 +404,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return (response) -> {
             Collection<InvertedIndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
-                if ("inverted".equals(idx.get("type").textValue())) {
+                if ("inverted".equals(idx.get("type").stringValue())) {
                     indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class));
                 }
             }

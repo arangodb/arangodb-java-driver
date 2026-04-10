@@ -28,13 +28,12 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import com.arangodb.serde.ArangoSerde;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -57,8 +56,9 @@ class RequestContextTest {
     @BeforeAll
     static void init() {
         ArangoSerde serde = new ArangoSerde() {
-            private ObjectMapper mapper = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            private final JsonMapper mapper = JsonMapper.builder()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .build();
 
             @Override
             public byte[] serialize(Object value) {
@@ -78,13 +78,9 @@ class RequestContextTest {
                     throw new UnsupportedOperationException();
                 }
 
-                try {
-                    Person res = mapper.readValue(content, Person.class);
-                    res.txId = ctx.getStreamTransactionId().get();
-                    return (T) res;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                Person res = mapper.readValue(content, Person.class);
+                res.txId = ctx.getStreamTransactionId().orElseThrow();
+                return (T) res;
             }
         };
 

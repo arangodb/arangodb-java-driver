@@ -7,7 +7,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Collections;
 import java.util.Map;

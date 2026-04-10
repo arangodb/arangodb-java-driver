@@ -1,11 +1,11 @@
 package com.arangodb.serde.jackson.internal;
 
 import com.arangodb.serde.annotation.*;
-import com.arangodb.serde.jackson.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.PropertyName;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import tools.jackson.databind.PropertyName;
+import tools.jackson.databind.cfg.MapperConfig;
+import tools.jackson.databind.introspect.Annotated;
+import tools.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -32,13 +32,13 @@ class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
     }
 
     @Override
-    public PropertyName findNameForSerialization(Annotated a) {
-        return Optional.ofNullable(findMapping(a)).orElseGet(() -> super.findNameForSerialization(a));
+    public PropertyName findNameForSerialization(MapperConfig<?> config, Annotated a) {
+        return Optional.ofNullable(findMapping(a)).orElseGet(() -> super.findNameForSerialization(config, a));
     }
 
     @Override
-    public PropertyName findNameForDeserialization(Annotated a) {
-        return Optional.ofNullable(findMapping(a)).orElseGet(() -> super.findNameForDeserialization(a));
+    public PropertyName findNameForDeserialization(MapperConfig<?> config, Annotated a) {
+        return Optional.ofNullable(findMapping(a)).orElseGet(() -> super.findNameForDeserialization(config, a));
     }
 
     private PropertyName findMapping(Annotated a) {
@@ -51,11 +51,11 @@ class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
     }
 
     @Override
-    public JsonInclude.Value findPropertyInclusion(Annotated a) {
+    public JsonInclude.Value findPropertyInclusion(MapperConfig<?> config, Annotated a) {
         if (_hasOneOf(a, ANNOTATIONS)) {
             return new JsonInclude.Value(JSON_INCLUDE_NON_NULL);
         } else {
-            return super.findPropertyInclusion(a);
+            return super.findPropertyInclusion(config, a);
         }
     }
 }

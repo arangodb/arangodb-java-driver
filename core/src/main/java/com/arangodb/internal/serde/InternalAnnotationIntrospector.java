@@ -1,11 +1,13 @@
 package com.arangodb.internal.serde;
 
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import tools.jackson.databind.cfg.MapperConfig;
+import tools.jackson.databind.introspect.Annotated;
+import tools.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 
 class InternalAnnotationIntrospector extends JacksonAnnotationIntrospector {
 
@@ -21,45 +23,47 @@ class InternalAnnotationIntrospector extends JacksonAnnotationIntrospector {
     }
 
     @Override
-    public Object findSerializer(Annotated a) {
+    public Object findSerializer(MapperConfig<?> config, Annotated a) {
         if (a.getAnnotation(UserData.class) != null) {
             return userDataSerializer;
         } else {
-            return super.findSerializer(a);
+            return super.findSerializer(config, a);
         }
     }
 
     @Override
-    public Object findContentSerializer(Annotated a) {
+    public Object findContentSerializer(MapperConfig<?> config, Annotated a) {
         if (a.getAnnotation(UserDataInside.class) != null) {
             return userDataSerializer;
         } else {
-            return super.findContentSerializer(a);
+            return super.findContentSerializer(config, a);
         }
     }
 
     @Override
-    public Object findDeserializer(Annotated a) {
+    public Object findDeserializer(MapperConfig<?> config, Annotated a) {
         if (a.getAnnotation(UserData.class) != null) {
             return userDataDeserializer;
         } else {
-            return super.findDeserializer(a);
+            return super.findDeserializer(config, a);
         }
     }
 
     @Override
-    public Object findContentDeserializer(Annotated a) {
+    public Object findContentDeserializer(MapperConfig<?> config, Annotated a) {
         if (a.getAnnotation(UserDataInside.class) != null) {
             return userDataDeserializer;
         } else {
-            return super.findContentDeserializer(a);
+            return super.findContentDeserializer(config, a);
         }
     }
 
+    @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {
         throw new IOException("Serialization not allowed");
     }
 
+    @Serial
     private void readObject(ObjectInputStream in) throws IOException {
         throw new IOException("Deserialization not allowed");
     }

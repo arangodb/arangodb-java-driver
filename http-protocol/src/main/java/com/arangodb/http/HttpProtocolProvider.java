@@ -8,7 +8,6 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.ProtocolProvider;
-import com.fasterxml.jackson.databind.Module;
 
 @UnstableApi
 public class HttpProtocolProvider implements ProtocolProvider {
@@ -29,11 +28,6 @@ public class HttpProtocolProvider implements ProtocolProvider {
     @UnstableApi
     public CommunicationProtocol createProtocol(@UnstableApi ArangoConfig config, @UnstableApi HostHandler hostHandler) {
         return new HttpProtocol(new HttpCommunication(config, hostHandler));
-    }
-
-    @Override
-    public Module protocolModule() {
-        return null;
     }
 
 }

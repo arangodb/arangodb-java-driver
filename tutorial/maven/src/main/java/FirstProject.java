@@ -1,8 +1,6 @@
 import com.arangodb.*;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import java.util.Collections;
 import java.util.Map;

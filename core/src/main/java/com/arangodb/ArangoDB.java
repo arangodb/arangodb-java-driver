@@ -426,8 +426,6 @@ public interface ArangoDB extends ArangoSerdeAccessor {
             }
 
             ProtocolProvider protocolProvider = protocolProvider(config.getProtocol());
-            config.setProtocolModule(protocolProvider.protocolModule());
-
             ConnectionFactory connectionFactory = protocolProvider.createConnectionFactory(config.getProtocolConfig());
             Collection<Host> hostList = createHostList(connectionFactory);
             HostResolver hostResolver = createHostResolver(hostList, connectionFactory);
@@ -732,7 +730,7 @@ public interface ArangoDB extends ArangoSerdeAccessor {
          * - body payload of requests and responses in {@link ArangoDB#execute(Request, Class)}
          * <p>
          * However, note that the following types will always be serialized and deserialized using the internal serde:
-         * - {@link com.fasterxml.jackson.databind.JsonNode}
+         * - {@link tools.jackson.databind.JsonNode}
          * - {@link com.arangodb.util.RawJson}
          * - {@link com.arangodb.util.RawBytes}
          * - {@link com.arangodb.entity.BaseDocument}
@@ -828,29 +826,11 @@ public interface ArangoDB extends ArangoSerdeAccessor {
 
         @UnstableApi
         protected HostHandler createHostHandler(@UnstableApi final HostResolver hostResolver) {
-
-            final HostHandler hostHandler;
-
-            LoadBalancingStrategy loadBalancingStrategy = config.getLoadBalancingStrategy();
-            if (loadBalancingStrategy != null) {
-                switch (loadBalancingStrategy) {
-                    case ONE_RANDOM:
-                        hostHandler = new RandomHostHandler(hostResolver, new FallbackHostHandler(hostResolver));
-                        break;
-                    case ROUND_ROBIN:
-                        hostHandler = new RoundRobinHostHandler(hostResolver);
-                        break;
-                    case NONE:
-                    default:
-                        hostHandler = new FallbackHostHandler(hostResolver);
-                        break;
-                }
-            } else {
-                hostHandler = new FallbackHostHandler(hostResolver);
-            }
-
-            LOG.debug("HostHandler is {}", hostHandler.getClass().getSimpleName());
-            return hostHandler;
+            return switch (config.getLoadBalancingStrategy()) {
+                case ONE_RANDOM -> new RandomHostHandler(hostResolver, new FallbackHostHandler(hostResolver));
+                case ROUND_ROBIN -> new RoundRobinHostHandler(hostResolver);
+                default -> new FallbackHostHandler(hostResolver);
+            };
         }
 
         @UnstableApi

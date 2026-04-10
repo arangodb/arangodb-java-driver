@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public final class SearchAliasPropertiesEntity extends ViewEntity {
 
-    private final Collection<SearchAliasIndex> indexes = new ArrayList<>();
+    private  Collection<SearchAliasIndex> indexes = new ArrayList<>();
 
     /**
      * @return A list of inverted indexes to add to the View.

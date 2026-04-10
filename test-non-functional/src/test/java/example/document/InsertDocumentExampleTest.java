@@ -23,10 +23,10 @@ package example.document;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import example.ExampleBase;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
     void insertJsonNode() {
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = new JsonMapper();
         ObjectNode node = mapper.createObjectNode();
         node.put("foo", "bar");
         final DocumentCreateEntity<?> doc = collection.insertDocument(node);

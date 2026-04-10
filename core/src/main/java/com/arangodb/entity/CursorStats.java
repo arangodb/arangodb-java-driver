@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class CursorStats {
-    private final Map<String, Object> properties = new HashMap<>();
+    private  Map<String, Object> properties = new HashMap<>();
     private Long writesExecuted;
     private Long writesIgnored;
     private Long scannedFull;

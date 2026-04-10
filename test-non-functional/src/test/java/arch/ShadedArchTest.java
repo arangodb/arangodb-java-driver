@@ -20,7 +20,7 @@ public class ShadedArchTest {
     private static boolean isShaded() {
         boolean shaded;
         try {
-            Class.forName("com.arangodb.shaded.fasterxml.jackson.databind.JsonNode");
+            Class.forName("com.arangodb.shaded.jackson.databind.JsonNode");
             shaded = true;
         } catch (ClassNotFoundException e) {
             shaded = false;
@@ -55,10 +55,9 @@ public class ShadedArchTest {
     public void jacksonRelocation() {
         noClasses().that()
                 .resideInAPackage("com.arangodb..").and()
-                .resideOutsideOfPackage("com.arangodb.serde.jackson..").and()
-                .resideOutsideOfPackage("com.arangodb.serde.jackson3..")
+                .resideOutsideOfPackage("com.arangodb.serde.jackson..")
                 .should().dependOnClassesThat()
-                .resideInAPackage("com.fasterxml.jackson..")
+                .resideInAPackage("tools.jackson..")
                 .check(importedClasses);
     }
 
@@ -66,12 +65,9 @@ public class ShadedArchTest {
     public void noJacksonDependency() {
         noClasses().that()
                 .resideInAPackage("com.arangodb..").and()
-                .resideOutsideOfPackages(
-                        "com.arangodb.serde.jackson..",
-                        "com.arangodb.serde.jackson3.."
-                )
+                .resideOutsideOfPackage("com.arangodb.serde.jackson..")
                 .should().dependOnClassesThat()
-                .resideInAPackage("com.fasterxml.jackson..")
+                .resideInAPackage("tools.jackson..")
                 .check(importedClasses);
     }
 

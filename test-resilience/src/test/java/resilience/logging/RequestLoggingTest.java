@@ -5,11 +5,10 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Communication;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import resilience.SingleServerTest;
 import resilience.utils.ProtocolSource;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RequestLoggingTest extends SingleServerTest {
-    private final static ObjectMapper mapper = new ObjectMapper();
+    private final static JsonMapper mapper = new JsonMapper();
 
     public RequestLoggingTest() {
         super(Collections.singletonMap(Communication.class, Level.DEBUG));
@@ -73,7 +72,7 @@ public class RequestLoggingTest extends SingleServerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> body(String log) throws JsonProcessingException {
+    private Map<String, Object> body(String log) {
         return mapper.readValue(log.substring(log.indexOf("} {") + 2), Map.class);
     }
 

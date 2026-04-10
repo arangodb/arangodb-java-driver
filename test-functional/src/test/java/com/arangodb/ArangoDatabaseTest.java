@@ -25,13 +25,10 @@ import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 import com.arangodb.util.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.*;
@@ -109,7 +106,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @MethodSource("dbs")
     void createCollectionWithNotNormalizedName(ArangoDatabase db) {
         assumeTrue(supportsExtendedNames());
-        final String colName = "testCol-\u006E\u0303\u00f1";
+        @SuppressWarnings("UnnecessaryUnicodeEscape") final String colName = "testCol-\u006E\u0303\u00f1";
 
         Throwable thrown = catchThrowable(() -> db.createCollection(colName));
         assertThat(thrown)
@@ -1039,7 +1036,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
         final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", JsonNode.class, bindVars).next();
 
-        assertThat(res.get("foo").textValue()).isEqualTo("fooValue");
+        assertThat(res.get("foo").stringValue()).isEqualTo("fooValue");
         assertThat(res.get("bar").intValue()).isEqualTo(11);
     }
 
@@ -1150,7 +1147,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("arangos")
-    void queryAllowRetry(ArangoDB arangoDB) throws IOException {
+    void queryAllowRetry(ArangoDB arangoDB) {
         final ArangoCursor<String> cursor = arangoDB.db()
                 .query("for i in 1..2 return i", String.class, new AqlQueryOptions().allowRetry(true).batchSize(1));
         assertThat(cursor.asListRemaining()).containsExactly("1", "2");
@@ -1192,9 +1189,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(cursor.hasNext()).isFalse();
         cursor.close();
     }
-
-
-
 
 
     private String getExplainQuery(ArangoDatabase db) {
@@ -1434,7 +1428,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
 
-
     @ParameterizedTest
     @MethodSource("dbs")
     void createGraph(ArangoDatabase db) {
@@ -1455,7 +1448,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         GraphEntity info = db.graph(name).getInfo();
         assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
-        GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().get();
+        GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().orElseThrow();
         assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
@@ -1508,18 +1501,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     @ParameterizedTest
     @MethodSource("dbs")
     void getInfo(ArangoDatabase db) {
@@ -1536,7 +1517,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(info.getReplicationFactor()).isNotNull();
         }
     }
-
 
 
 }

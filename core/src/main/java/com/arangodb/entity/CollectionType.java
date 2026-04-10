@@ -27,7 +27,7 @@ public enum CollectionType {
 
     DOCUMENT(2), EDGES(3);
 
-    private final int type;
+    private  int type;
 
     CollectionType(final int type) {
         this.type = type;

@@ -14,7 +14,7 @@ import java.util.Objects;
  * @since ArangoDB 3.10
  */
 public final class InvertedIndexPrimarySort {
-    private final List<Field> fields = new ArrayList<>();
+    private List<Field> fields = new ArrayList<>();
     private ArangoSearchCompression compression;
     private Boolean cache;
 
@@ -75,8 +75,8 @@ public final class InvertedIndexPrimarySort {
     }
 
     public static class Field {
-        private final String field;
-        private final Direction direction;
+        private  String field;
+        private  Direction direction;
 
         /**
          * @param field     An attribute path. The . character denotes sub-attributes.
