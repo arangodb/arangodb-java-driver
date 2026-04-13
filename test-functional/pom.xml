@@ -45,6 +45,24 @@
                                 **/HttpProxyTest.**,
                                 **/RequestContextTest.**
                             </filesToExclude>
+                            <replacements>
+                                <replacement>
+                                    <token>tools.jackson.databind.JsonNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.JsonNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson.databind.ObjectNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.ObjectNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson.databind.node</token>
+                                    <value>com.arangodb.shaded.jackson.databind.node</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson.databind.json.JsonMapper</token>
+                                    <value>com.arangodb.shaded.jackson.databind.json.JsonMapper</value>
+                                </replacement>
+                            </replacements>
                         </configuration>
                     </plugin>
                 </plugins>

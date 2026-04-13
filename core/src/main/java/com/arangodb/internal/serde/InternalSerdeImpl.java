@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.*;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.databind.json.JsonMapper;
@@ -33,8 +34,25 @@ final class InternalSerdeImpl implements InternalSerde {
     private final ArangoSerde userSerde;
     private final JsonMapper mapper;
 
-    InternalSerdeImpl(final JsonMapper mapper, final ArangoSerde userSerde) {
-        var builder = mapper.rebuild()
+    InternalSerdeImpl(final ArangoSerde userSerde) {
+        var jsonFactory = JsonFactory.builder()
+                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+                .disable(JsonWriteFeature.COMBINE_UNICODE_SURROGATES_IN_UTF8)
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .streamReadConstraints(StreamReadConstraints.builder()
+                        .maxNumberLength(Integer.MAX_VALUE)
+                        .maxStringLength(Integer.MAX_VALUE)
+                        .maxNestingDepth(Integer.MAX_VALUE)
+                        .maxNameLength(Integer.MAX_VALUE)
+                        .maxDocumentLength(Long.MAX_VALUE)
+                        .maxTokenCount(Integer.MAX_VALUE)
+                        .build())
+                .streamWriteConstraints(StreamWriteConstraints.builder()
+                        .maxNestingDepth(Integer.MAX_VALUE)
+                        .build())
+                .build();
+
+        var builder = JsonMapper.builder(jsonFactory)
                 .deactivateDefaultTyping()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .addModule(InternalModule.get(this))
@@ -44,7 +62,6 @@ final class InternalSerdeImpl implements InternalSerde {
                         new UserDataSerializer(this),
                         new UserDataDeserializer(this)
                 ));
-
 
         // JSON-P datatypes
         JSONPModule jsonPModule = null;
@@ -132,7 +149,7 @@ final class InternalSerdeImpl implements InternalSerde {
         Class<?> clazz = value.getClass();
         if (RawBytes.class.equals(clazz)) {
             return ((RawBytes) value).get();
-        } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.tokenStreamFactory().getFormatName())) {
+        } else if (RawJson.class.equals(clazz)) {
             return ((RawJson) value).get().getBytes(StandardCharsets.UTF_8);
         } else if (SerdeUtils.isManagedClass(clazz)) {
             return serialize(value);
@@ -222,7 +239,7 @@ final class InternalSerdeImpl implements InternalSerde {
         }
         if (RawBytes.class.equals(type)) {
             return (T) RawBytes.of(content);
-        } else if (RawJson.class.equals(type) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.tokenStreamFactory().getFormatName())) {
+        } else if (RawJson.class.equals(type)) {
             return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
         } else {
             return mapper.readerFor(mapper.constructType(type)).readValue(content);

@@ -18,11 +18,11 @@ public class InternalSerdeProvider implements ArangoSerdeProvider {
     /**
      * Creates a new InternalSerde with default settings.
      *
-     * @param userSerde      user serde
+     * @param userSerde user serde
      * @return the created InternalSerde
      */
     public InternalSerde create(ArangoSerde userSerde) {
-        return new InternalSerdeImpl(InternalMapperProvider.load(), userSerde);
+        return new InternalSerdeImpl(userSerde);
     }
 
 }

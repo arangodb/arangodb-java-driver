@@ -25,10 +25,8 @@ public enum SerdeUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SerdeUtils.class);
 
-    private final JsonMapper jsonMapper = new JsonMapper();
-
     public static Type constructListType(Class<?> clazz) {
-        return INSTANCE.jsonMapper.getTypeFactory().constructCollectionType(List.class, clazz);
+        return JsonMapper.shared().getTypeFactory().constructCollectionType(List.class, clazz);
     }
 
     public static Type constructParametricType(Class<?> rawType, Type... rawArgs) {
@@ -55,14 +53,10 @@ public enum SerdeUtils {
         ).forEach(version -> {
             int major = version.getMajorVersion();
             int minor = version.getMinorVersion();
-            if (major != 2 || minor < 10 || minor > 21) {
+            if (major != 3 || minor > 1) {
                 LOGGER.warn("Unsupported Jackson version: {}", version);
             }
         });
-    }
-
-    public JsonMapper getJsonMapper() {
-        return jsonMapper;
     }
 
     /**
@@ -72,7 +66,7 @@ public enum SerdeUtils {
      * @return root of the parsed tree
      */
     public JsonNode parseJson(final String json) {
-        return jsonMapper.readTree(json);
+        return JsonMapper.shared().readTree(json);
     }
 
     /**
@@ -80,7 +74,7 @@ public enum SerdeUtils {
      * @return JSON string
      */
     public String writeJson(final JsonNode data) {
-        return jsonMapper.writeValueAsString(data);
+        return JsonMapper.shared().writeValueAsString(data);
     }
 
     /**
