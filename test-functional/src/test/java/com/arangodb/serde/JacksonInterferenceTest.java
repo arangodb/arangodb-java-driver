@@ -1,8 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.serde.annotation.*;
-import com.arangodb.serde.jackson.*;
-import com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider;
+import com.arangodb.serde.jackson.JacksonSerdeProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JacksonInterferenceTest {
 
     private final JsonMapper mapper = new JsonMapper();
-    private final ArangoSerde serde = new JacksonJsonSerdeProvider().create();
+    private final ArangoSerde serde = new JacksonSerdeProvider().create();
 
     private FooField fooField;
     private FooProp fooProp;

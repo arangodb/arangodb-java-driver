@@ -1,7 +1,5 @@
 package serde;
 
-
-import com.arangodb.serde.InternalKey;
 import com.arangodb.serde.annotation.Key;
 
 public record InternalSerdePerson(
