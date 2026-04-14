@@ -19,7 +19,9 @@ public interface JacksonSerde extends ArangoSerde {
      * @return the created JacksonSerde
      */
     static JacksonSerde create() {
-        return create(new JsonMapper());
+        return create(JsonMapper.builder()
+                .annotationIntrospector(new ArangoAnnotationIntrospector())
+                .build());
     }
 
     /**

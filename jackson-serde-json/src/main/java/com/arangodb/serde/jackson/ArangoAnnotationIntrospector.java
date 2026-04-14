@@ -1,4 +1,4 @@
-package com.arangodb.serde.jackson.internal;
+package com.arangodb.serde.jackson;
 
 import com.arangodb.serde.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
-    private static final JsonInclude JSON_INCLUDE_NON_NULL = JsonIncludeNonNull.class.getAnnotation(JsonInclude.class);
+public final class ArangoAnnotationIntrospector extends JacksonAnnotationIntrospector {
     private static final Map<Class<? extends Annotation>, String> MAPPINGS;
     private static final Class<? extends Annotation>[] ANNOTATIONS;
 
@@ -26,10 +25,7 @@ class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
         MAPPINGS.put(To.class, "_to");
         @SuppressWarnings("unchecked")
         Class<? extends Annotation>[] annotations = MAPPINGS.keySet().toArray(new Class[0]);
-        ANNOTATIONS = annotations;    }
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class JsonIncludeNonNull {
+        ANNOTATIONS = annotations;
     }
 
     @Override
@@ -54,7 +50,7 @@ class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
     @Override
     public JsonInclude.Value findPropertyInclusion(MapperConfig<?> config, Annotated a) {
         if (_hasOneOf(a, ANNOTATIONS)) {
-            return new JsonInclude.Value(JSON_INCLUDE_NON_NULL);
+            return JsonInclude.Value.ALL_NON_NULL;
         } else {
             return super.findPropertyInclusion(config, a);
         }

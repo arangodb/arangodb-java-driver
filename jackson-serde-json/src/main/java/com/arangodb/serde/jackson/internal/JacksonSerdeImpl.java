@@ -15,9 +15,7 @@ public final class JacksonSerdeImpl implements JacksonSerde {
     private final JsonMapper mapper;
 
     public JacksonSerdeImpl(final JsonMapper mapper) {
-        this.mapper = mapper.rebuild()
-                .annotationIntrospector(new ArangoSerdeAnnotationIntrospector())
-                .build();
+        this.mapper = mapper;
     }
 
     @Override
