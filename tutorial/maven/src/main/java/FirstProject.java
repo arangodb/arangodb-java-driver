@@ -1,6 +1,8 @@
 import com.arangodb.*;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.RawJson;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -59,8 +61,8 @@ public class FirstProject {
         {
             System.out.println("Reading document as Jackson JsonNode...");
             JsonNode readJsonNode = collection.getDocument(keyJackson, JsonNode.class);
-            System.out.println("Key: " + readJsonNode.get("_key").textValue());
-            System.out.println("Attribute a: " + readJsonNode.get("a").textValue());
+            System.out.println("Key: " + readJsonNode.get("_key").stringValue());
+            System.out.println("Attribute a: " + readJsonNode.get("a").stringValue());
             System.out.println("Attribute b: " + readJsonNode.get("b").intValue());
         }
 
