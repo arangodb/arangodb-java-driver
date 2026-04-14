@@ -13,12 +13,6 @@
 
     <artifactId>test-non-functional</artifactId>
 
-    <properties>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.release>21</maven.compiler.release>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.arangodb</groupId>
@@ -86,6 +80,20 @@
                             <filesToExclude>
                                 **/JacksonRequestContextTest.**
                             </filesToExclude>
+                            <replacements>
+                                <replacement>
+                                    <token>tools.jackson.databind.JsonNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.JsonNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson.databind.ObjectNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.ObjectNode</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson.databind.node.JsonNodeFactory</token>
+                                    <value>com.arangodb.shaded.jackson.databind.node.JsonNodeFactory</value>
+                                </replacement>
+                            </replacements>
                         </configuration>
                     </plugin>
                 </plugins>
