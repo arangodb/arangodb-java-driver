@@ -59,7 +59,7 @@ public final class InternalSerializers {
     public static class CollectionSchemaRuleSerializer extends ValueSerializer<String> {
         @Override
         public void serialize(String value, JsonGenerator gen, SerializationContext ctxt) {
-            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value));
+            gen.writeTree(SerdeUtils.parseJson(value));
         }
     }
 

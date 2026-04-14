@@ -418,7 +418,7 @@ class ArangoDBTest extends BaseJunit5 {
                 .queryParam("details", "true")
                 .build();
         final Response<RawJson> response = arangoDB.execute(request, RawJson.class);
-        JsonNode body = SerdeUtils.INSTANCE.parseJson(response.getBody().get());
+        JsonNode body = SerdeUtils.parseJson(response.getBody().get());
         assertThat(body.get("version").isString()).isTrue();
         assertThat(body.get("details").isObject()).isTrue();
         assertThat(response.getResponseCode()).isEqualTo(200);

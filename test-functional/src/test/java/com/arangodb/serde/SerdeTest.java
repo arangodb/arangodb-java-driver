@@ -22,7 +22,7 @@ class SerdeTest {
     void rawJsonSerde() {
         InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
-        RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
+        RawJson raw = RawJson.of(SerdeUtils.writeJson(node));
         byte[] serialized = s.serialize(raw);
         RawJson deserialized = s.deserialize(serialized, RawJson.class);
         assertThat(deserialized).isEqualTo(raw);

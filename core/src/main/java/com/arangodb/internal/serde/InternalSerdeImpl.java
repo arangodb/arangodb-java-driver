@@ -92,7 +92,7 @@ final class InternalSerdeImpl implements InternalSerde {
             return "";
         }
         try {
-            return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
+            return SerdeUtils.writeJson(mapper.readTree(content));
         } catch (Exception e) {
             return "[Unparsable data]";
         }

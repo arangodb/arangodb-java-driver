@@ -122,7 +122,7 @@ public final class InternalDeserializers {
     public static class CollectionSchemaRuleDeserializer extends ValueDeserializer<String> {
         @Override
         public String deserialize(JsonParser p, DeserializationContext ctxt) {
-            return SerdeUtils.INSTANCE.writeJson(p.readValueAsTree());
+            return SerdeUtils.writeJson(p.readValueAsTree());
         }
     }
 

@@ -2414,7 +2414,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
+            JsonNode jn = SerdeUtils.parseJson(((RawJson) d).get());
             assertThat(jn.has("aaa")).isTrue();
             assertThat(jn.get("aaa").intValue()).isEqualTo(33);
         }
@@ -2935,7 +2935,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         for (final DocumentDeleteEntity<RawData> i : deleteResult.getDocuments()) {
             assertThat(i.getKey()).isIn("1", "2");
             assertThat(i.getOld()).isNotNull().isInstanceOf(RawJson.class);
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) i.getOld()).get());
+            JsonNode jn = SerdeUtils.parseJson(((RawJson) i.getOld()).get());
             assertThat(jn.get("_key").asString()).isEqualTo(i.getKey());
         }
         assertThat(deleteResult.getErrors()).isEmpty();
@@ -3181,7 +3181,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
+            JsonNode jn = SerdeUtils.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
             assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }
@@ -3300,7 +3300,7 @@ class ArangoCollectionTest extends BaseJunit5 {
                     .isNotNull()
                     .isInstanceOf(RawJson.class);
 
-            JsonNode jn = SerdeUtils.INSTANCE.parseJson(((RawJson) d).get());
+            JsonNode jn = SerdeUtils.parseJson(((RawJson) d).get());
             assertThat(jn.has("foo")).isTrue();
             assertThat(jn.get("foo").stringValue()).isEqualTo("bar");
         }

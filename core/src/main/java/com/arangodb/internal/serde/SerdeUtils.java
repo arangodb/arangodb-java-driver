@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO: make static methods instance methods
-public enum SerdeUtils {
-    INSTANCE;
+public final class SerdeUtils {
+
+    private SerdeUtils() {
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SerdeUtils.class);
 
@@ -65,7 +66,7 @@ public enum SerdeUtils {
      * @param json JSON string to parse
      * @return root of the parsed tree
      */
-    public JsonNode parseJson(final String json) {
+    public static JsonNode parseJson(final String json) {
         return JsonMapper.shared().readTree(json);
     }
 
@@ -73,7 +74,7 @@ public enum SerdeUtils {
      * @param data JsonNode
      * @return JSON string
      */
-    public String writeJson(final JsonNode data) {
+    public static String writeJson(final JsonNode data) {
         return JsonMapper.shared().writeValueAsString(data);
     }
 
