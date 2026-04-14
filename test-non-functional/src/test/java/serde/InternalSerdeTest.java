@@ -2,7 +2,7 @@ package serde;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.config.ArangoConfigProperties;
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import com.arangodb.util.RawJson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +23,7 @@ class InternalSerdeTest {
     static void init() {
         adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
-                .serde(new InternalSerdeProvider().create())
+                .serde(new InternalUserSerdeProvider().create())
                 .build();
     }
 

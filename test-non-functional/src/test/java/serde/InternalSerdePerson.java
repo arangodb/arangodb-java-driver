@@ -2,9 +2,10 @@ package serde;
 
 
 import com.arangodb.serde.InternalKey;
+import com.arangodb.serde.annotation.Key;
 
 public record InternalSerdePerson(
-        @InternalKey
+        @Key
         String key,
         String name,
         int age

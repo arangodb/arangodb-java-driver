@@ -6,7 +6,6 @@ import com.arangodb.internal.ArangoDatabaseImpl;
 import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.InternalResponse;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -135,7 +134,7 @@ public class SerdeBench {
 
     @Benchmark
     public void rawJsonDeser(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider().create();
+        InternalSerde serde = InternalSerde.create(null);
         bh.consume(
                 serde.deserialize(data.json, RawJson.class)
         );
@@ -143,7 +142,7 @@ public class SerdeBench {
 
     @Benchmark
     public void rawJsonSer(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider().create();
+        InternalSerde serde = InternalSerde.create(null);
         bh.consume(
                 serde.serialize(data.rawJson)
         );
@@ -151,7 +150,7 @@ public class SerdeBench {
 
     @Benchmark
     public void extractBytesJson(Data data, Blackhole bh) {
-        InternalSerde serde = new InternalSerdeProvider().create();
+        InternalSerde serde = InternalSerde.create(null);
         bh.consume(
                 serde.extract(data.json, "/definitions/put_api_simple_remove_by_example_opts")
         );

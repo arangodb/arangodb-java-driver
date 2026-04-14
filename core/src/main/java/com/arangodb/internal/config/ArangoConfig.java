@@ -9,7 +9,6 @@ import com.arangodb.config.ProtocolConfig;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.ArangoSerdeProvider;
 
@@ -312,7 +311,7 @@ public class ArangoConfig {
 
     public InternalSerde getInternalSerde() {
         if (internalSerde == null) {
-            internalSerde = new InternalSerdeProvider().create(getUserDataSerde());
+            internalSerde = InternalSerde.create(getUserDataSerde());
         }
         return internalSerde;
     }

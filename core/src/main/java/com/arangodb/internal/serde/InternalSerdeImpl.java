@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
-import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.*;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.databind.json.JsonMapper;
@@ -20,6 +19,7 @@ import tools.jackson.datatype.jsonp.JSONPModule;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
@@ -35,9 +35,8 @@ final class InternalSerdeImpl implements InternalSerde {
     private final JsonMapper mapper;
 
     InternalSerdeImpl(final ArangoSerde userSerde) {
+        Objects.requireNonNull(userSerde);
         var jsonFactory = JsonFactory.builder()
-                .disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
-                .disable(JsonWriteFeature.COMBINE_UNICODE_SURROGATES_IN_UTF8)
                 .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
                 .streamReadConstraints(StreamReadConstraints.builder()
                         .maxNumberLength(Integer.MAX_VALUE)
@@ -54,9 +53,7 @@ final class InternalSerdeImpl implements InternalSerde {
 
         var builder = JsonMapper.builder(jsonFactory)
                 .deactivateDefaultTyping()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .addModule(InternalModule.get(this))
-                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
                 .changeDefaultPropertyInclusion(i -> i.withValueInclusion(JsonInclude.Include.NON_NULL))
                 .annotationIntrospector(new InternalAnnotationIntrospector(
                         new UserDataSerializer(this),

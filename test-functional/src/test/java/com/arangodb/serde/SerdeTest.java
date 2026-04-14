@@ -2,7 +2,7 @@ package com.arangodb.serde;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -20,7 +20,7 @@ class SerdeTest {
 
     @Test
     void rawJsonSerde() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
         byte[] serialized = s.serialize(raw);
@@ -30,7 +30,7 @@ class SerdeTest {
 
     @Test
     void rawBytesSerde() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
         byte[] serialized = s.serializeUserData(raw);
@@ -40,7 +40,7 @@ class SerdeTest {
 
     @Test
     void deserializeBaseDocumentWithNestedProperties() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         RawJson json = RawJson.of("{\"foo\":\"aaa\",\"properties\":{\"foo\":\"bbb\"}}");
         BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class);
         assertThat(deserialized.getAttribute("foo")).isEqualTo("aaa");
@@ -52,7 +52,7 @@ class SerdeTest {
 
     @Test
     void serializeBaseDocumentWithNestedProperties() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         BaseDocument doc = new BaseDocument();
         doc.addAttribute("foo", "aaa");
         doc.addAttribute("properties", Collections.singletonMap("foo", "bbb"));
@@ -64,7 +64,7 @@ class SerdeTest {
 
     @Test
     void deserializeNull() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         Void deser = s.deserialize((byte[]) null, Void.class);
         assertThat(deser).isNull();
     }
@@ -78,7 +78,7 @@ class SerdeTest {
 
     @Test
     void deserializeEmpty() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         Void deser = s.deserialize(new byte[0], Void.class);
         assertThat(deser).isNull();
     }

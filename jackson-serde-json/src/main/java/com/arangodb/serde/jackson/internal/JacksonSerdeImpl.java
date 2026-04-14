@@ -2,7 +2,6 @@ package com.arangodb.serde.jackson.internal;
 
 import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.JacksonSerde;
-import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.ContextAttributes;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -17,7 +16,6 @@ public final class JacksonSerdeImpl implements JacksonSerde {
 
     public JacksonSerdeImpl(final JsonMapper mapper) {
         this.mapper = mapper.rebuild()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .annotationIntrospector(new ArangoSerdeAnnotationIntrospector())
                 .build();
     }

@@ -1,6 +1,6 @@
 package com.arangodb.serde;
 
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import com.arangodb.serde.jackson.JacksonSerde;
 import com.arangodb.util.SlowTest;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ public class JacksonConfigurationTest {
     @SlowTest
     @Test
     void bigStringInternalSerde() {
-        ArangoSerde s = new InternalSerdeProvider().create();
+        ArangoSerde s = new InternalUserSerdeProvider().create();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {

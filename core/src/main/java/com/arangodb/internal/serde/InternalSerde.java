@@ -8,7 +8,17 @@ import tools.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 
 @UsedInApi
-public interface InternalSerde extends ArangoSerde {
+public interface InternalSerde {
+
+    /**
+     * Creates a new InternalSerde with default settings.
+     *
+     * @param userSerde user serde
+     * @return the created InternalSerde
+     */
+    static InternalSerde create(ArangoSerde userSerde) {
+        return new InternalSerdeImpl(userSerde);
+    }
 
     /**
      * Used for logging and debugging.
@@ -32,7 +42,7 @@ public interface InternalSerde extends ArangoSerde {
     /**
      * Deserializes the content and binds it to the target data type.
      *
-     * @param content     UTF-8 byte encoded JSON string
+     * @param content UTF-8 byte encoded JSON string
      * @param type    target data type
      * @return deserialized object
      */
@@ -41,7 +51,7 @@ public interface InternalSerde extends ArangoSerde {
     /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
-     * @param node  parsed json node
+     * @param node  parsed JSON node
      * @param clazz class of target data type
      * @return deserialized object
      */
@@ -52,11 +62,20 @@ public interface InternalSerde extends ArangoSerde {
     /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
-     * @param node parsed json node
+     * @param node parsed JSON node
      * @param type target data type
      * @return deserialized object
      */
     <T> T deserialize(JsonNode node, Type type);
+
+    /**
+     * Deserializes the content and binds it to the target data type.
+     *
+     * @param content     UTF-8 byte encoded JSON string
+     * @param clazz   class of target data type
+     * @return deserialized object
+     */
+    <T> T deserialize(byte[] content, Class<T> clazz);
 
     /**
      * Parses the content at json pointer.
@@ -92,6 +111,14 @@ public interface InternalSerde extends ArangoSerde {
     }
 
     /**
+     * Serializes the object to UTF-8 byte encoded JSON string
+     *
+     * @param value object to serialize
+     * @return serialized byte array
+     */
+    byte[] serialize(Object value);
+
+    /**
      * Serializes the object into the target data type, using the user serde.
      *
      * @param value object to serialize
@@ -120,7 +147,7 @@ public interface InternalSerde extends ArangoSerde {
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
-     * @param clazz  class of target data type
+     * @param clazz   class of target data type
      * @return deserialized object
      */
     <T> T deserializeUserData(byte[] content, JavaType clazz);

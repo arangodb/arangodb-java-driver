@@ -1,4 +1,4 @@
-package com.arangodb.serde.jackson.internal;
+package com.arangodb.internal.serde;
 
 import com.arangodb.serde.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
+class InternalUserSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
     private static final JsonInclude JSON_INCLUDE_NON_NULL = JsonIncludeNonNull.class.getAnnotation(JsonInclude.class);
     private static final Map<Class<? extends Annotation>, String> MAPPINGS;
     private static final Class<? extends Annotation>[] ANNOTATIONS;
