@@ -40,11 +40,6 @@ final class InternalUserSerde implements ArangoSerde {
     }
 
     @Override
-    public <T> T deserialize(final byte[] content, final Class<T> type) {
-        throw new UnsupportedOperationException("FIXME");
-    }
-
-    @Override
     public <T> T deserialize(byte[] content, Class<T> type, RequestContext ctx) {
         if (content == null || content.length == 0) {
             return null;

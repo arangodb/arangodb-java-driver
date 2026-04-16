@@ -68,11 +68,6 @@ class RequestContextTest {
             }
 
             @Override
-            public <T> T deserialize(byte[] content, Class<T> clazz) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
             public <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
                 Objects.requireNonNull(ctx);
 
