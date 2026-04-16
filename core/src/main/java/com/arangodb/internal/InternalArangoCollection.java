@@ -109,10 +109,10 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(Class<T> userDataClass) {
-        return (response) -> {
+        return (response, ctx) -> {
             Type type = constructParametricType(MultiDocumentEntity.class,
                     constructParametricType(DocumentCreateEntity.class, userDataClass));
-            return getSerde().deserialize(response.getBody(), type);
+            return getSerde().deserialize(response.getBody(), type, ctx);
         };
     }
 
@@ -148,7 +148,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<T> getDocumentResponseDeserializer(final Class<T> type) {
-        return (response) -> getSerde().deserializeUserData(response.getBody(), type);
+        return (response, ctx) -> getSerde().deserializeUserData(response.getBody(), type, ctx);
     }
 
     protected InternalRequest getDocumentsRequest(final Iterable<String> keys, final DocumentReadOptions options) {
@@ -165,9 +165,9 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(final Class<T> type) {
-        return (response) -> {
+        return (response, ctx) -> {
             MultiDocumentEntity<T> multiDocument = getSerde().deserialize(response.getBody(),
-                    constructParametricType(MultiDocumentEntity.class, type));
+                    constructParametricType(MultiDocumentEntity.class, type), ctx);
             boolean potentialDirtyRead = Boolean.parseBoolean(response.getMeta("X-Arango-Potential-Dirty-Read"));
             multiDocument.setPotentialDirtyRead(potentialDirtyRead);
             return multiDocument;
@@ -210,10 +210,10 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
             final Class<T> returnType) {
-        return (response) -> {
+        return (response, ctx) -> {
             Type type = constructParametricType(MultiDocumentEntity.class,
                     constructParametricType(DocumentUpdateEntity.class, returnType));
-            return getSerde().deserialize(response.getBody(), type);
+            return getSerde().deserialize(response.getBody(), type, ctx);
         };
     }
 
@@ -254,10 +254,10 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
             final Class<T> returnType) {
-        return (response) -> {
+        return (response, ctx) -> {
             Type type = constructParametricType(MultiDocumentEntity.class,
                     constructParametricType(DocumentUpdateEntity.class, returnType));
-            return getSerde().deserialize(response.getBody(), type);
+            return getSerde().deserialize(response.getBody(), type, ctx);
         };
     }
 
@@ -292,10 +292,10 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
 
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
             final Class<T> userDataClass) {
-        return (response) -> {
+        return (response, ctx) -> {
             Type type = constructParametricType(MultiDocumentEntity.class,
                     constructParametricType(DocumentDeleteEntity.class, userDataClass));
-            return getSerde().deserialize(response.getBody(), type);
+            return getSerde().deserialize(response.getBody(), type, ctx);
         };
     }
 
@@ -318,7 +318,7 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
-        return (response) -> getSerde().deserialize(response.getBody(), "/id", String.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), "/id", String.class, ctx);
     }
 
     private String createIndexId(final String id) {
@@ -389,11 +389,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-        return (response) -> {
+        return (response, ctx) -> {
             Collection<IndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if (!"inverted".equals(idx.get("type").stringValue())) {
-                    indexes.add(getSerde().deserialize(idx, IndexEntity.class));
+                    indexes.add(getSerde().deserialize(idx, IndexEntity.class, ctx));
                 }
             }
             return indexes;
@@ -401,11 +401,11 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Collection<InvertedIndexEntity>> getInvertedIndexesResponseDeserializer() {
-        return (response) -> {
+        return (response, ctx) -> {
             Collection<InvertedIndexEntity> indexes = new ArrayList<>();
             for (JsonNode idx : getSerde().parse(response.getBody(), "/indexes")) {
                 if ("inverted".equals(idx.get("type").stringValue())) {
-                    indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class));
+                    indexes.add(getSerde().deserialize(idx, InvertedIndexEntity.class, ctx));
                 }
             }
             return indexes;
@@ -477,8 +477,8 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
-        return (response) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
-                Permissions.class);
+        return (response, ctx) -> getSerde().deserialize(response.getBody(), ArangoResponseField.RESULT_JSON_POINTER,
+                Permissions.class, ctx);
     }
 
 }

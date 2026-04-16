@@ -1,5 +1,5 @@
 package com.arangodb.internal.serde;
-
+import com.arangodb.RequestContext;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import tools.jackson.core.JsonParser;
@@ -41,17 +41,21 @@ public class MultiDocumentEntityDeserializer extends ValueDeserializer<MultiDocu
             throw MismatchedInputException.from(p, "Expected START_ARRAY but got " + p.currentToken());
         }
         p.nextToken();
+        RequestContext ctx = (RequestContext) ctxt.getAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME);
+        if (ctx == null) {
+            ctx = RequestContext.EMPTY;
+        }
         while (p.currentToken() != JsonToken.END_ARRAY) {
             if (p.currentToken() != JsonToken.START_OBJECT) {
                 throw MismatchedInputException.from(p, "Expected START_OBJECT but got " + p.currentToken());
             }
             byte[] element = SerdeUtils.extractBytes(p);
             if (serde.isDocument(element)) {
-                Object d = serde.deserializeUserData(element, containedType);
+                Object d = serde.deserializeUserData(element, containedType, ctx);
                 multiDocument.getDocuments().add(d);
                 multiDocument.getDocumentsAndErrors().add(d);
             } else {
-                ErrorEntity e = serde.deserialize(element, ErrorEntity.class);
+                ErrorEntity e = serde.deserialize(element, ErrorEntity.class, ctx);
                 multiDocument.getErrors().add(e);
                 multiDocument.getDocumentsAndErrors().add(e);
             }

@@ -22,7 +22,6 @@ package example.document;
 
 import com.arangodb.RequestContext;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.internal.RequestContextHolder;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import example.ExampleBase;
@@ -95,8 +94,7 @@ class GetDocumentExampleTest extends ExampleBase {
         final RawBytes doc = collection.getDocument(key, RawBytes.class);
         assertThat(doc.get()).isNotNull();
         @SuppressWarnings("unchecked")
-        Map<String, Object> mapDoc = RequestContextHolder.INSTANCE.runWithCtx(RequestContext.EMPTY, () ->
-                collection.getSerde().deserializeUserData(doc.get(), Map.class));
+        Map<String, Object> mapDoc = collection.getSerde().deserializeUserData(doc.get(), Map.class, RequestContext.EMPTY);
         assertThat(mapDoc).containsEntry("foo", "bar");
     }
 

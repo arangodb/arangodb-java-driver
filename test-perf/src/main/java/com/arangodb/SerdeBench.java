@@ -135,8 +135,7 @@ public class SerdeBench {
     @Benchmark
     public void rawJsonDeser(Data data, Blackhole bh) {
         InternalSerde serde = InternalSerde.create(null);
-        bh.consume(
-                serde.deserialize(data.json, RawJson.class)
+        bh.consume(serde.deserialize(data.json, RawJson.class, RequestContext.EMPTY)
         );
     }
 
@@ -159,7 +158,7 @@ public class SerdeBench {
     @Benchmark
     public void deserializeDocsJson(Data data, Blackhole bh) {
         bh.consume(
-                data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp)
+                data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp, RequestContext.EMPTY)
         );
     }
 

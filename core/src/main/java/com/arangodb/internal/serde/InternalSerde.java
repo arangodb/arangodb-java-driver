@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.RequestContext;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import tools.jackson.databind.JavaType;
@@ -44,19 +45,21 @@ public interface InternalSerde {
      *
      * @param content UTF-8 byte encoded JSON string
      * @param type    target data type
+     * @param ctx     request context
      * @return deserialized object
      */
-    <T> T deserialize(byte[] content, Type type);
+    <T> T deserialize(byte[] content, Type type, RequestContext ctx);
 
     /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
      * @param node  parsed JSON node
      * @param clazz class of target data type
+     * @param ctx   request context
      * @return deserialized object
      */
-    default <T> T deserialize(JsonNode node, Class<T> clazz) {
-        return deserialize(node, (Type) clazz);
+    default <T> T deserialize(JsonNode node, Class<T> clazz, RequestContext ctx) {
+        return deserialize(node, (Type) clazz, ctx);
     }
 
     /**
@@ -64,18 +67,20 @@ public interface InternalSerde {
      *
      * @param node parsed JSON node
      * @param type target data type
+     * @param ctx  request context
      * @return deserialized object
      */
-    <T> T deserialize(JsonNode node, Type type);
+    <T> T deserialize(JsonNode node, Type type, RequestContext ctx);
 
     /**
      * Deserializes the content and binds it to the target data type.
      *
-     * @param content     UTF-8 byte encoded JSON string
+     * @param content UTF-8 byte encoded JSON string
      * @param clazz   class of target data type
+     * @param ctx     request context
      * @return deserialized object
      */
-    <T> T deserialize(byte[] content, Class<T> clazz);
+    <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx);
 
     /**
      * Parses the content at json pointer.
@@ -92,10 +97,11 @@ public interface InternalSerde {
      * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be deserialized
      * @param clazz       class of target data type
+     * @param ctx         request context
      * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz) {
-        return deserialize(content, jsonPointer, (Type) clazz);
+    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz, RequestContext ctx) {
+        return deserialize(content, jsonPointer, (Type) clazz, ctx);
     }
 
     /**
@@ -104,10 +110,11 @@ public interface InternalSerde {
      * @param content     UTF-8 byte encoded JSON string
      * @param jsonPointer location of data to be deserialized
      * @param type        target data type
+     * @param ctx         request context
      * @return deserialized object
      */
-    default <T> T deserialize(byte[] content, String jsonPointer, Type type) {
-        return deserialize(extract(content, jsonPointer), type);
+    default <T> T deserialize(byte[] content, String jsonPointer, Type type, RequestContext ctx) {
+        return deserialize(extract(content, jsonPointer), type, ctx);
     }
 
     /**
@@ -139,18 +146,20 @@ public interface InternalSerde {
      *
      * @param content byte array to deserialize
      * @param clazz   class of target data type
+     * @param ctx     request context
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, Class<T> clazz);
+    <T> T deserializeUserData(byte[] content, Class<T> clazz, RequestContext ctx);
 
     /**
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
      * @param clazz   class of target data type
+     * @param ctx     request context
      * @return deserialized object
      */
-    <T> T deserializeUserData(byte[] content, JavaType clazz);
+    <T> T deserializeUserData(byte[] content, JavaType clazz, RequestContext ctx);
 
 
     /**

@@ -1,7 +1,7 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.RequestContextHolder;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -14,6 +14,7 @@ import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.*;
 import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.cfg.ContextAttributes;
 import tools.jackson.datatype.jsonp.JSONPModule;
 
 import java.io.ByteArrayOutputStream;
@@ -82,8 +83,8 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz) {
-        return deserialize(content, (Type) clazz);
+    public <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
+        return deserialize(content, (Type) clazz, ctx);
     }
 
     @Override
@@ -170,21 +171,21 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
+    public <T> T deserializeUserData(byte[] content, Class<T> clazz, RequestContext ctx) {
         if (SerdeUtils.isManagedClass(clazz)) {
-            return deserialize(content, clazz);
+            return deserialize(content, clazz, ctx);
         } else {
-            return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
+            return userSerde.deserialize(content, clazz, ctx);
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserializeUserData(byte[] content, JavaType clazz) {
+    public <T> T deserializeUserData(byte[] content, JavaType clazz, RequestContext ctx) {
         if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
             return mapper.readerFor(clazz).readValue(content);
         } else {
-            return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass());
+            return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass(), ctx);
         }
     }
 
@@ -224,13 +225,15 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserialize(final JsonNode node, final Type type) {
-        return mapper.readerFor(mapper.constructType(type)).readValue(node);
+    public <T> T deserialize(final JsonNode node, final Type type, RequestContext ctx) {
+        return mapper.readerFor(mapper.constructType(type))
+                .with(ContextAttributes.getEmpty().withPerCallAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
+                .readValue(node);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserialize(final byte[] content, final Type type) {
+    public <T> T deserialize(final byte[] content, final Type type, RequestContext ctx) {
         if (content == null || content.length == 0) {
             return null;
         }
@@ -239,7 +242,9 @@ final class InternalSerdeImpl implements InternalSerde {
         } else if (RawJson.class.equals(type)) {
             return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
         } else {
-            return mapper.readerFor(mapper.constructType(type)).readValue(content);
+            return mapper.readerFor(mapper.constructType(type))
+                    .with(ContextAttributes.getEmpty().withPerCallAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
+                    .readValue(content);
         }
     }
 

@@ -526,7 +526,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(createEntity.getKey()).isEqualTo(key);
         assertThat(createEntity.getRev()).isNotNull();
         assertThat(createEntity.getNew()).isNotNull().isInstanceOf(RawBytes.class);
-        Map<String, Object> newDoc = collection.getSerde().getUserSerde().deserialize(createEntity.getNew().get(), Map.class);
+        Map<String, Object> newDoc = collection.getSerde().getUserSerde().deserialize(createEntity.getNew().get(), Map.class, RequestContext.EMPTY);
         assertThat(newDoc).containsAllEntriesOf(doc);
     }
 

@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import com.arangodb.RequestContext;
 import com.arangodb.entity.*;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.internal.serde.InternalSerde;
@@ -683,7 +684,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
         RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).get()
                 .getResult().getFirst();
-        JsonNode data = serde.deserialize(res.get(), JsonNode.class);
+        JsonNode data = serde.deserialize(res.get(), JsonNode.class, RequestContext.EMPTY);
         assertThat(data.isObject()).isTrue();
         assertThat(data.get("value").isNumber()).isTrue();
         assertThat(data.get("value").numberValue()).isEqualTo(1);

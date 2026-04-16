@@ -30,6 +30,7 @@ public interface ArangoSerde {
      * @param clazz   class of target data type
      * @return deserialized object
      */
+    // TODO: remove
     <T> T deserialize(byte[] content, Class<T> clazz);
 
     /**

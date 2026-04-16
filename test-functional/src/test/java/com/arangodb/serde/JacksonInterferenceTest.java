@@ -1,5 +1,6 @@
 package com.arangodb.serde;
 
+import com.arangodb.RequestContext;
 import com.arangodb.serde.annotation.*;
 import com.arangodb.serde.jackson.JacksonSerdeProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -222,6 +223,6 @@ class JacksonInterferenceTest {
     }
 
     private <T> T serdeDeserialize(byte[] bytes, Class<T> clazz) {
-        return serde.deserialize(bytes, clazz);
+        return serde.deserialize(bytes, clazz, RequestContext.EMPTY);
     }
 }

@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.RequestContext;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
@@ -31,7 +32,11 @@ class UserDataDeserializer extends ValueDeserializer<Object> {
         if (SerdeUtils.isManagedClass(clazz)) {
             return p.readValueAs(clazz);
         } else {
-            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz);
+            RequestContext ctx = (RequestContext) ctxt.getAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME);
+            if (ctx == null) {
+                ctx = RequestContext.EMPTY;
+            }
+            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz, ctx);
         }
     }
 

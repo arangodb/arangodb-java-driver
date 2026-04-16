@@ -25,7 +25,7 @@ public final class JacksonSerdeImpl implements JacksonSerde {
 
     @Override
     public <T> T deserialize(final byte[] content, final Class<T> type) {
-        return deserialize(content, type, RequestContext.EMPTY);
+        throw new UnsupportedOperationException("FIXME");
     }
 
     @Override
