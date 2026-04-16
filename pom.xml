@@ -39,6 +39,7 @@
         <sonar.java.spotbugs.reportPaths>target/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <graalvm.version>25.0.0</graalvm.version>
+        <jsonb.version>3.0.0</jsonb.version>
         <moduleName/>
     </properties>
 
@@ -158,7 +159,9 @@
                                         com.arangodb.internal,
                                         com.arangodb.internal.*,
                                         com.arangodb.serde.jackson.internal,
-                                        javax.*
+                                        javax.*,
+                                        graal.*,
+                                        com.arangodb.arch.*
                                     </excludePackageNames>
                                     <doclint>none</doclint>
                                 </configuration>
@@ -274,7 +277,7 @@
             <dependency>
                 <groupId>jakarta.json.bind</groupId>
                 <artifactId>jakarta.json.bind-api</artifactId>
-                <version>3.0.0</version>
+                <version>${jsonb.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
