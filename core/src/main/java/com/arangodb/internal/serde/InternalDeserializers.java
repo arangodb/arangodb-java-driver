@@ -7,7 +7,6 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.arangodb.internal.InternalResponse;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.TreeNode;
 import tools.jackson.databind.DeserializationContext;
@@ -18,7 +17,6 @@ import tools.jackson.databind.node.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 public final class InternalDeserializers {
@@ -53,22 +51,6 @@ public final class InternalDeserializers {
             } else if (node instanceof StringNode && "satellite".equals(((StringNode) node).stringValue())) {
                 return ReplicationFactor.ofSatellite();
             } else throw new IllegalArgumentException();
-        }
-    };
-
-    @SuppressWarnings("unchecked")
-    static final ValueDeserializer<InternalResponse> RESPONSE = new ValueDeserializer<>() {
-        @Override
-        public InternalResponse deserialize(final JsonParser p, final DeserializationContext ctxt) {
-            final InternalResponse response = new InternalResponse();
-            Iterator<JsonNode> it = ((ArrayNode) p.readValueAsTree()).iterator();
-            response.setVersion(it.next().intValue());
-            response.setType(it.next().intValue());
-            response.setResponseCode(it.next().intValue());
-            if (it.hasNext()) {
-                response.putMetas(readTreeAsValue(p, ctxt, it.next(), Map.class));
-            }
-            return response;
         }
     };
 

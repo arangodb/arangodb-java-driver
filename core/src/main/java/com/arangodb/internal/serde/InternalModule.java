@@ -7,7 +7,6 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
-import com.arangodb.internal.InternalResponse;
 import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.module.SimpleModule;
 
@@ -26,7 +25,6 @@ class InternalModule {
         module.addDeserializer(RawBytes.class, InternalDeserializers.RAW_BYTES_DESERIALIZER);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
-        module.addDeserializer(InternalResponse.class, InternalDeserializers.RESPONSE);
         module.addDeserializer(InvertedIndexPrimarySort.Field.class, InternalDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
 
         return module;
