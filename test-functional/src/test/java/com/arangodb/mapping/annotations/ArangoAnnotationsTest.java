@@ -20,6 +20,7 @@
 
 package com.arangodb.mapping.annotations;
 
+import com.arangodb.RequestContext;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class ArangoAnnotationsTest {
 
     @Test
     void documentFieldAnnotations() {
-        ArangoSerde mapper = JacksonSerde.load();
+        ArangoSerde mapper = JacksonSerde.create();
 
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");
@@ -45,7 +46,7 @@ class ArangoAnnotationsTest {
         e.setTo("To");
 
         byte[] serialized = mapper.serialize(e);
-        Map<String, String> deserialized = mapper.deserialize(serialized, Map.class);
+        @SuppressWarnings("unchecked") Map<String, String> deserialized = mapper.deserialize(serialized, Map.class, RequestContext.EMPTY);
         assertThat(deserialized)
                 .containsEntry("_id", e.getId())
                 .containsEntry("_key", e.getKey())
@@ -54,7 +55,7 @@ class ArangoAnnotationsTest {
                 .containsEntry("_to", e.getTo())
                 .hasSize(5);
 
-        AnnotatedEntity deserializedEntity = mapper.deserialize(serialized, AnnotatedEntity.class);
+        AnnotatedEntity deserializedEntity = mapper.deserialize(serialized, AnnotatedEntity.class, RequestContext.EMPTY);
         assertThat(deserializedEntity).isEqualTo(e);
     }
 

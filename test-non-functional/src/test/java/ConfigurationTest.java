@@ -14,7 +14,7 @@ public class ConfigurationTest {
     void fallbackHost() {
         final ArangoDB arangoDB = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .host("not-accessible", 8529)
                 .host("172.28.0.1", 8529)
                 .build();
@@ -26,7 +26,7 @@ public class ConfigurationTest {
     void loadPropertiesWithPrefix() {
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile("arangodb-with-prefix.properties", "adb"))
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build();
         adb.getVersion();
         adb.shutdown();
@@ -39,7 +39,7 @@ public class ConfigurationTest {
         props.setProperty("adb.password", "test");
         ArangoDB adb = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromProperties(props, "adb"))
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .build();
         adb.getVersion();
         adb.shutdown();

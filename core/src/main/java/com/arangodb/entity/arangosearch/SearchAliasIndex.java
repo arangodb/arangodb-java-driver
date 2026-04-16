@@ -10,9 +10,9 @@ import java.util.Objects;
  * @since ArabgoDB 3.10
  */
 public final class SearchAliasIndex {
-    private final String collection;
-    private final String index;
-    private final OperationType operation;
+    private  String collection;
+    private  String index;
+    private  OperationType operation;
 
     /**
      * @param collection The name of a collection.

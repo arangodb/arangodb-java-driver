@@ -188,7 +188,7 @@ Attribute b: 53
 Some details you should know about the code:
 
 - The `getDocument()` method returns the stored document as instance of
-  `com.fasterxml.jackson.databind.JsonNode`.
+  `JsonNode`.
 
 ### Create a document from JSON String
 

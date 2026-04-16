@@ -46,7 +46,7 @@ public interface ReplicationFactor {
 
     final class NumericReplicationFactor implements ReplicationFactor {
 
-        private final Integer value;
+        private  Integer value;
 
         public NumericReplicationFactor(Integer value) {
             this.value = value;

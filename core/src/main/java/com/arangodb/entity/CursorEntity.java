@@ -39,7 +39,7 @@ public final class CursorEntity<T> {
     private List<T> result;
     private Boolean potentialDirtyRead;
     private String nextBatchId;
-    private final Extras extra = new Extras();
+    private  Extras extra = new Extras();
 
     public String getId() {
         return id;
@@ -124,7 +124,7 @@ public final class CursorEntity<T> {
     }
 
     public static final class Extras {
-        private final Collection<CursorWarning> warnings = Collections.emptyList();
+        private  Collection<CursorWarning> warnings = Collections.emptyList();
         private CursorStats stats;
 
         public CursorStats getStats() {

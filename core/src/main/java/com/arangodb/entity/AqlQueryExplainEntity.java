@@ -68,7 +68,7 @@ public final class AqlQueryExplainEntity {
     }
 
     public static final class ExecutionPlan {
-        private final Map<String, Object> properties = new HashMap<>();
+        private  Map<String, Object> properties = new HashMap<>();
         private Collection<ExecutionNode> nodes;
         private Double estimatedCost;
         private Collection<ExecutionCollection> collections;
@@ -118,7 +118,7 @@ public final class AqlQueryExplainEntity {
     }
 
     public static final class ExecutionNode {
-        private final Map<String, Object> properties = new HashMap<>();
+        private  Map<String, Object> properties = new HashMap<>();
 
         @JsonAnySetter
         public void add(String key, Object value) {
@@ -143,7 +143,7 @@ public final class AqlQueryExplainEntity {
     }
 
     public static final class ExecutionVariable {
-        private final Map<String, Object> properties = new HashMap<>();
+        private  Map<String, Object> properties = new HashMap<>();
 
         @JsonAnySetter
         public void add(String key, Object value) {
@@ -168,7 +168,7 @@ public final class AqlQueryExplainEntity {
     }
 
     public static final class ExecutionCollection {
-        private final Map<String, Object> properties = new HashMap<>();
+        private  Map<String, Object> properties = new HashMap<>();
 
         @JsonAnySetter
         public void add(String key, Object value) {
@@ -193,7 +193,7 @@ public final class AqlQueryExplainEntity {
     }
 
     public static final class ExecutionStats {
-        private final Map<String, Object> properties = new HashMap<>();
+        private  Map<String, Object> properties = new HashMap<>();
 
         @JsonAnySetter
         public void add(String key, Object value) {

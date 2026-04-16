@@ -82,7 +82,7 @@ public final class VectorIndexParams {
         return this;
     }
 
-    public Integer getnLists() {
+    public Integer getNLists() {
         return nLists;
     }
 

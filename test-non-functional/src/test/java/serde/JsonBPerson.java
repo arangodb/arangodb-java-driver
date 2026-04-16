@@ -1,7 +1,7 @@
 package serde;
 
 
-import com.arangodb.serde.jsonb.Key;
+import com.arangodb.serde.annotation.*;
 import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.util.Objects;

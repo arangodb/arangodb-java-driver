@@ -40,7 +40,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
     }
 
     public <T> T execute(final InternalRequest request, final Type type, final HostHandle hostHandle) {
-        return execute(request, (response) -> createResult(type, response), hostHandle);
+        return execute(request, (response, ctx) -> createResult(type, response, ctx), hostHandle);
     }
 
     public <T> T execute(final InternalRequest request, final ResponseDeserializer<T> responseDeserializer) {
@@ -54,8 +54,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
         final InternalResponse response = protocol.execute(interceptRequest(request), hostHandle);
         interceptResponse(response);
-        return RequestContextHolder.INSTANCE.runWithCtx(new RequestContextImpl(request), () ->
-                responseDeserializer.deserialize(response));
+        RequestContextImpl ctx = new RequestContextImpl(request);
+        return responseDeserializer.deserialize(response, ctx);
     }
 
 }

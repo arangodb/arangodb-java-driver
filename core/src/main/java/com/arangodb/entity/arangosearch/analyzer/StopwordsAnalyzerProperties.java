@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
  */
 public final class StopwordsAnalyzerProperties {
 
-    private final List<String> stopwords;
-    private final boolean hex;
+    private  List<String> stopwords;
+    private  boolean hex;
 
     public StopwordsAnalyzerProperties() {
         stopwords = new ArrayList<>();

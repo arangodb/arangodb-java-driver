@@ -1,16 +1,15 @@
 package helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -24,11 +23,11 @@ import java.util.stream.Stream;
  * @author Michele Rastelli
  */
 public class NativeImageHelper {
-    public static void main(String[] args) throws JsonProcessingException {
+    public static void main(String[] args) {
         generateReflectConfig();
     }
 
-    private static void generateReflectConfig() throws JsonProcessingException {
+    private static void generateReflectConfig() {
         System.out.println("---------------------------");
         System.out.println("--- reflect-config.json ---");
         System.out.println("---------------------------");
@@ -39,7 +38,7 @@ public class NativeImageHelper {
                 "com.arangodb.internal.cursor.entity"
         );
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = new JsonMapper();
         ArrayNode rootNode = mapper.createArrayNode();
 
         String internalSerdePackage = "com.arangodb.internal.serde";
@@ -48,10 +47,10 @@ public class NativeImageHelper {
                 .setScanners(new SubTypesScanner(false))
                 .setUrls(serdeUrls)
                 .filterInputsBy(new FilterBuilder().includePackage(internalSerdePackage)));
-        Stream<String> serializers = r.getSubTypesOf(JsonSerializer.class).stream()
+        Stream<String> serializers = r.getSubTypesOf(ValueSerializer.class).stream()
                 .filter(it -> !it.isAnonymousClass())
                 .map(Class::getName);
-        Stream<String> deserializers = r.getSubTypesOf(JsonDeserializer.class).stream()
+        Stream<String> deserializers = r.getSubTypesOf(ValueDeserializer.class).stream()
                 .filter(it -> !it.isAnonymousClass())
                 .map(Class::getName);
         Stream<String> serdeClasses = Stream.concat(serializers, deserializers)

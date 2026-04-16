@@ -32,7 +32,7 @@ public enum ShardingStrategy {
     ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge"),
     ENTERPRISE_HEX_SMART_VERTEX("enterprise-hex-smart-vertex");
 
-    private final String internalName;
+    private  String internalName;
 
     ShardingStrategy(String internalName) {
         this.internalName = internalName;

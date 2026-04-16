@@ -20,18 +20,16 @@
 
 package com.arangodb;
 
+import com.arangodb.RequestContext;
 import com.arangodb.entity.*;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.*;
 import com.arangodb.util.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.JsonNode;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -105,7 +103,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @MethodSource("asyncDbs")
     void createCollectionWithNotNormalizedName(ArangoDatabaseAsync db) {
         assumeTrue(supportsExtendedNames());
-        final String colName = "testCol-\u006E\u0303\u00f1";
+        @SuppressWarnings("UnnecessaryUnicodeEscape") final String colName = "testCol-\u006E\u0303\u00f1";
 
         Throwable thrown = catchThrowable(() -> db.createCollection(colName).get()).getCause();
         assertThat(thrown)
@@ -173,7 +171,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
-    void createCollectionWithShardingStrategys(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+    void createCollectionWithShardingStrategy(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
 
         String name = rndName();
@@ -685,8 +683,8 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         InternalSerde serde = db.getSerde();
         RawBytes doc = RawBytes.of(serde.serialize(Collections.singletonMap("value", 1)));
         RawBytes res = db.query("RETURN @doc", RawBytes.class, Collections.singletonMap("doc", doc)).get()
-                .getResult().get(0);
-        JsonNode data = serde.deserialize(res.get(), JsonNode.class);
+                .getResult().getFirst();
+        JsonNode data = serde.deserialize(res.get(), JsonNode.class, RequestContext.EMPTY);
         assertThat(data.isObject()).isTrue();
         assertThat(data.get("value").isNumber()).isTrue();
         assertThat(data.get("value").numberValue()).isEqualTo(1);
@@ -796,8 +794,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void queryCursor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1)).get();
-        List<Integer> result = new ArrayList<>();
-        result.addAll(c1.getResult());
+        List<Integer> result = new ArrayList<>(c1.getResult());
         ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
         result.addAll(c2.getResult());
         ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class).get();
@@ -814,8 +811,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions()).get();
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).streamTransactionId(tx.getId())).get();
-        List<Integer> result = new ArrayList<>();
-        result.addAll(c1.getResult());
+        List<Integer> result = new ArrayList<>(c1.getResult());
         ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
         result.addAll(c2.getResult());
         ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class,
@@ -833,8 +829,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     void queryCursorRetry(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true)).get();
-        List<Integer> result = new ArrayList<>();
-        result.addAll(c1.getResult());
+        List<Integer> result = new ArrayList<>(c1.getResult());
         ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
         result.addAll(c2.getResult());
         ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class, c2.getNextBatchId()).get();
@@ -852,8 +847,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions()).get();
         ArangoCursorAsync<Integer> c1 = db.query("for i in 1..4 return i", Integer.class,
                 new AqlQueryOptions().batchSize(1).allowRetry(true).streamTransactionId(tx.getId())).get();
-        List<Integer> result = new ArrayList<>();
-        result.addAll(c1.getResult());
+        List<Integer> result = new ArrayList<>(c1.getResult());
         ArangoCursorAsync<Integer> c2 = c1.nextBatch().get();
         result.addAll(c2.getResult());
         ArangoCursorAsync<Integer> c3 = db.cursor(c2.getId(), Integer.class, c2.getNextBatchId(),
@@ -917,9 +911,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         bindVars.put("bar", RawBytes.of(db.getSerde().serializeUserData(11)));
 
         final JsonNode res = db.query("RETURN {foo: @foo, bar: @bar}", JsonNode.class, bindVars).get()
-                .getResult().get(0);
+                .getResult().getFirst();
 
-        assertThat(res.get("foo").textValue()).isEqualTo("fooValue");
+        assertThat(res.get("foo").stringValue()).isEqualTo("fooValue");
         assertThat(res.get("bar").intValue()).isEqualTo(11);
     }
 
@@ -1088,8 +1082,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
                 "   FILTER `character`.`value` != 1/0 " +
                 "   RETURN {`character`, `actor`}";
     }
-
-
 
 
     void checkUntypedExecutionPlan(AqlQueryExplainEntity.ExecutionPlan plan) {
@@ -1304,7 +1296,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     }
 
 
-
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void createGraph(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
@@ -1325,13 +1316,13 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         GraphEntity info = db.graph(name).getInfo().get();
         assertThat(info.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
 
-        GraphEntity graph = db.getGraphs().get().stream().filter(g -> name.equals(g.getName())).findFirst().get();
+        GraphEntity graph = db.getGraphs().get().stream().filter(g -> name.equals(g.getName())).findFirst().orElseThrow();
         assertThat(graph.getReplicationFactor()).isEqualTo(ReplicationFactor.ofSatellite());
     }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
-    void createGraphReplicationFaktor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+    void createGraphReplicationFactor(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
         String name = "graph-" + rnd();
         final String edgeCollection = rndName();
@@ -1378,18 +1369,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getInfo(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
@@ -1406,7 +1385,6 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
             assertThat(info.getReplicationFactor()).isNotNull();
         }
     }
-
 
 
 }

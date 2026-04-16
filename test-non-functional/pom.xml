@@ -13,18 +13,7 @@
 
     <artifactId>test-non-functional</artifactId>
 
-    <properties>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.release>21</maven.compiler.release>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>com.arangodb</groupId>
-            <artifactId>jackson3-serde-json</artifactId>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jsonb-serde</artifactId>
@@ -93,16 +82,16 @@
                             </filesToExclude>
                             <replacements>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.JsonNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
+                                    <token>tools.jackson.databind.JsonNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.JsonNode</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
+                                    <token>tools.jackson.databind.ObjectNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.ObjectNode</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.node.JsonNodeFactory</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.node.JsonNodeFactory</value>
+                                    <token>tools.jackson.databind.node.JsonNodeFactory</token>
+                                    <value>com.arangodb.shaded.jackson.databind.node.JsonNodeFactory</value>
                                 </replacement>
                             </replacements>
                         </configuration>

@@ -1,12 +1,13 @@
 package com.arangodb.internal.serde;
 
-import com.fasterxml.jackson.core.SerializableString;
+
+import tools.jackson.core.SerializableString;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-// TODO: since VPACK has been dropped, we can simplify this
+// see https://github.com/FasterXML/jackson-core/issues/914
 class RawUserDataValue implements SerializableString {
     private final byte[] data;
 

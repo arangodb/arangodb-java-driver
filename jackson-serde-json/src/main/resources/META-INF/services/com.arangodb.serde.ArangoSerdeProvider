@@ -1,1 +1,1 @@
-com.arangodb.serde.jackson.json.JacksonJsonSerdeProvider
+com.arangodb.serde.jackson.JacksonSerdeProvider

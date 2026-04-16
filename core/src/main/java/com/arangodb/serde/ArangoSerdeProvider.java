@@ -1,7 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public interface ArangoSerdeProvider {
         if (serdeProvider == null) {
             LOG.warn("No ArangoSerdeProvider found, using InternalSerdeProvider. Please consider registering a custom " +
                     "ArangoSerdeProvider to avoid depending on internal classes which are not part of the public API.");
-            serdeProvider = new InternalSerdeProvider();
+            serdeProvider = new InternalUserSerdeProvider();
         }
         return serdeProvider;
     }

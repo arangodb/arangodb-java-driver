@@ -5,33 +5,29 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.json.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum SerdeUtils {
-    INSTANCE;
+public final class SerdeUtils {
+
+    private SerdeUtils() {
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SerdeUtils.class);
 
-    private final ObjectMapper jsonMapper = new ObjectMapper();
-
     public static Type constructListType(Class<?> clazz) {
-        return TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
+        return JsonMapper.shared().getTypeFactory().constructCollectionType(List.class, clazz);
     }
 
     public static Type constructParametricType(Class<?> rawType, Type... rawArgs) {
@@ -53,19 +49,15 @@ public enum SerdeUtils {
 
     static void checkSupportedJacksonVersion() {
         Arrays.asList(
-                com.fasterxml.jackson.databind.cfg.PackageVersion.VERSION,
-                com.fasterxml.jackson.core.json.PackageVersion.VERSION
+                tools.jackson.databind.cfg.PackageVersion.VERSION,
+                tools.jackson.core.json.PackageVersion.VERSION
         ).forEach(version -> {
             int major = version.getMajorVersion();
             int minor = version.getMinorVersion();
-            if (major != 2 || minor < 10 || minor > 21) {
+            if (major != 3 || minor > 1) {
                 LOGGER.warn("Unsupported Jackson version: {}", version);
             }
         });
-    }
-
-    public ObjectMapper getJsonMapper() {
-        return jsonMapper;
     }
 
     /**
@@ -74,41 +66,31 @@ public enum SerdeUtils {
      * @param json JSON string to parse
      * @return root of the parsed tree
      */
-    public JsonNode parseJson(final String json) {
-        try {
-            return jsonMapper.readTree(json);
-        } catch (JsonProcessingException e) {
-            throw ArangoDBException.of(e);
-        }
+    public static JsonNode parseJson(final String json) {
+        return JsonMapper.shared().readTree(json);
     }
 
     /**
      * @param data JsonNode
      * @return JSON string
      */
-    public String writeJson(final JsonNode data) {
-        try {
-            return jsonMapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            throw ArangoDBException.of(e);
-        }
+    public static String writeJson(final JsonNode data) {
+        return JsonMapper.shared().writeValueAsString(data);
     }
 
     /**
      * Extract raw bytes for the current JSON node
      *
-     * @param parser JsonParser with current token pointing to the node to extract
+     * @param parser JsonParser with the current token pointing to the node to extract
      * @return byte array
      */
-    @SuppressWarnings("deprecation")
-    public static byte[] extractBytes(JsonParser parser) throws IOException {
+    public static byte[] extractBytes(JsonParser parser) {
         JsonToken t = parser.currentToken();
-        if (t.isStructEnd() || t == JsonToken.FIELD_NAME) {
+        if (t.isStructEnd() || t == JsonToken.PROPERTY_NAME) {
             throw new ArangoDBException("Unexpected token: " + t);
         }
-        byte[] data = (byte[]) parser.getTokenLocation().getSourceRef();
-        int start = (int) parser.getTokenLocation().getByteOffset();
-        int end = (int) parser.getCurrentLocation().getByteOffset();
+        byte[] data = (byte[]) parser.currentTokenLocation().contentReference().getRawContent();
+        int start = (int) parser.currentTokenLocation().getByteOffset();
         if (t.isStructStart()) {
             int open = 1;
             while (open > 0) {
@@ -121,9 +103,7 @@ public enum SerdeUtils {
             }
         }
         parser.finishToken();
-        if (JsonFactory.FORMAT_NAME_JSON.equals(parser.getCodec().getFactory().getFormatName())) {
-            end = (int) parser.getCurrentLocation().getByteOffset();
-        }
+        int end = (int) parser.currentLocation().getByteOffset();
         return Arrays.copyOfRange(data, start, end);
     }
 

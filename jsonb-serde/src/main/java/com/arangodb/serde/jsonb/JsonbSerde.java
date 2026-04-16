@@ -1,5 +1,6 @@
 package com.arangodb.serde.jsonb;
 
+import com.arangodb.RequestContext;
 import com.arangodb.serde.ArangoSerde;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
@@ -28,7 +29,7 @@ public class JsonbSerde implements ArangoSerde {
     }
 
     @Override
-    public <T> T deserialize(byte[] content, Class<T> type) {
+    public <T> T deserialize(byte[] content, Class<T> type, RequestContext ctx) {
         return jsonb.fromJson(new String(content, StandardCharsets.UTF_8), type);
     }
 

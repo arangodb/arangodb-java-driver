@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.TestUtils;
 
 import java.time.Duration;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class ConnectionLoadBalanceTest {
         ArangoDatabaseAsync db = new ArangoDB.Builder()
                 .loadProperties(ArangoConfigProperties.fromFile())
                 .protocol(cfg.protocol)
-                .serde(JacksonSerde.load())
+                .serde(JacksonSerde.create())
                 .maxConnections(cfg.maxConnections)
                 .build().async().db();
 

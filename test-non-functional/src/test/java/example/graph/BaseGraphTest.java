@@ -23,14 +23,12 @@ package example.graph;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.serde.jackson.JacksonSerde;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +51,7 @@ abstract class BaseGraphTest {
             ArangoConfigProperties config = ArangoConfigProperties.fromFile();
             arangoDB = new ArangoDB.Builder()
                     .loadProperties(config)
-                    .serde(JacksonSerde.load())
+                    .serde(JacksonSerde.create())
                     .build();
         }
         if (arangoDB.db(TEST_DB).exists())

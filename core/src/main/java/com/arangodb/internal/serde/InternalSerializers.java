@@ -6,13 +6,10 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.RawJson;
 import com.arangodb.internal.InternalRequest;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,22 +18,15 @@ import java.util.Optional;
 
 public final class InternalSerializers {
 
-    static final JsonSerializer<RawJson> RAW_JSON_SERIALIZER = new JsonSerializer<RawJson>() {
+    static final ValueSerializer<RawJson> RAW_JSON_SERIALIZER = new ValueSerializer<>() {
         @Override
-        public void serialize(RawJson value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            if (JsonFactory.FORMAT_NAME_JSON.equals(gen.getCodec().getFactory().getFormatName())) {
-                gen.writeRawValue(new RawUserDataValue(value.get().getBytes(StandardCharsets.UTF_8)));
-            } else {
-                try (JsonParser parser = SerdeUtils.INSTANCE.getJsonMapper().getFactory().createParser(value.get())) {
-                    parser.nextToken();
-                    gen.copyCurrentStructure(parser);
-                }
-            }
+        public void serialize(RawJson value, JsonGenerator gen, SerializationContext ctxt) {
+            gen.writeRawValue(new RawUserDataValue(value.get().getBytes(StandardCharsets.UTF_8)));
         }
     };
-    static final JsonSerializer<InternalRequest> REQUEST = new JsonSerializer<InternalRequest>() {
+    static final ValueSerializer<InternalRequest> REQUEST = new ValueSerializer<>() {
         @Override
-        public void serialize(InternalRequest value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(InternalRequest value, JsonGenerator gen, SerializationContext ctxt) {
             gen.writeStartArray();
             gen.writeNumber(value.getVersion());
             gen.writeNumber(value.getType());
@@ -45,20 +35,20 @@ public final class InternalSerializers {
             gen.writeString(value.getPath());
             gen.writeStartObject();
             for (final Map.Entry<String, String> entry : value.getQueryParam().entrySet()) {
-                gen.writeStringField(entry.getKey(), entry.getValue());
+                gen.writeStringProperty(entry.getKey(), entry.getValue());
             }
             gen.writeEndObject();
             gen.writeStartObject();
             for (final Map.Entry<String, String> entry : value.getHeaderParam().entrySet()) {
-                gen.writeStringField(entry.getKey(), entry.getValue());
+                gen.writeStringProperty(entry.getKey(), entry.getValue());
             }
             gen.writeEndObject();
             gen.writeEndArray();
         }
     };
-    static final JsonSerializer<CollectionType> COLLECTION_TYPE = new JsonSerializer<CollectionType>() {
+    static final ValueSerializer<CollectionType> COLLECTION_TYPE = new ValueSerializer<>() {
         @Override
-        public void serialize(CollectionType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(CollectionType value, JsonGenerator gen, SerializationContext ctxt) {
             gen.writeNumber(value.getType());
         }
     };
@@ -66,32 +56,32 @@ public final class InternalSerializers {
     private InternalSerializers() {
     }
 
-    public static class CollectionSchemaRuleSerializer extends JsonSerializer<String> {
+    public static class CollectionSchemaRuleSerializer extends ValueSerializer<String> {
         @Override
-        public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeTree(SerdeUtils.INSTANCE.parseJson(value));
+        public void serialize(String value, JsonGenerator gen, SerializationContext ctxt) {
+            gen.writeTree(SerdeUtils.parseJson(value));
         }
     }
 
-    public static class FieldLinksSerializer extends JsonSerializer<Collection<FieldLink>> {
+    public static class FieldLinksSerializer extends ValueSerializer<Collection<FieldLink>> {
         @Override
-        public void serialize(Collection<FieldLink> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(Collection<FieldLink> value, JsonGenerator gen, SerializationContext ctxt) {
             Map<String, FieldLink> mapLikeValue = new HashMap<>();
             for (FieldLink fl : value) {
                 mapLikeValue.put(fl.getName(), fl);
             }
-            gen.writeObject(mapLikeValue);
+            ctxt.writeValue(gen, mapLikeValue);
         }
     }
 
-    public static class CollectionLinksSerializer extends JsonSerializer<Collection<CollectionLink>> {
+    public static class CollectionLinksSerializer extends ValueSerializer<Collection<CollectionLink>> {
         @Override
-        public void serialize(Collection<CollectionLink> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(Collection<CollectionLink> value, JsonGenerator gen, SerializationContext ctxt) {
             Map<String, CollectionLink> mapLikeValue = new HashMap<>();
             for (CollectionLink cl : value) {
                 mapLikeValue.put(cl.getName(), cl);
             }
-            gen.writeObject(mapLikeValue);
+            ctxt.writeValue(gen, mapLikeValue);
         }
     }
 

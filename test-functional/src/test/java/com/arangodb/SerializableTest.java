@@ -4,10 +4,10 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.io.*;
 import java.util.Collections;
@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SerializableTest {
 
     @Test
-    void serializeArangoDBException() throws IOException, ClassNotFoundException {
-        ObjectMapper mapper = new ObjectMapper();
+    void serializeArangoDBException() {
+        JsonMapper mapper = new JsonMapper();
         JsonNode jn = JsonNodeFactory.instance.objectNode()
                 .put("errorMessage", "boomError")
                 .put("exception", "boomException")
@@ -36,7 +36,7 @@ class SerializableTest {
     }
 
     @Test
-    void serializeArangoDBRedirectException() throws IOException, ClassNotFoundException {
+    void serializeArangoDBRedirectException() {
         ArangoDBRedirectException e = new ArangoDBRedirectException("foo", "bar");
         ArangoDBRedirectException e2 = roundTrip(e);
         assertThat(e2.getMessage()).isEqualTo(e.getMessage());
@@ -44,16 +44,16 @@ class SerializableTest {
     }
 
     @Test
-    void serializeArangoDBMultipleException() throws IOException, ClassNotFoundException {
+    void serializeArangoDBMultipleException() {
         List<Throwable> exceptions = Collections.singletonList(new RuntimeException("foo"));
         ArangoDBMultipleException e = new ArangoDBMultipleException(exceptions);
         ArangoDBMultipleException e2 = roundTrip(e);
         assertThat(e2.getExceptions()).hasSize(1);
-        assertThat(e2.getExceptions().iterator().next().getMessage()).isEqualTo("foo");
+        assertThat(e2.getExceptions().getFirst().getMessage()).isEqualTo("foo");
     }
 
     @Test
-    void serializeBaseDocument() throws IOException, ClassNotFoundException {
+    void serializeBaseDocument() {
         BaseDocument doc = new BaseDocument();
         doc.setKey("test");
         doc.setId("id");
@@ -64,7 +64,7 @@ class SerializableTest {
     }
 
     @Test
-    void serializeBaseEdgeDocument() throws IOException, ClassNotFoundException {
+    void serializeBaseEdgeDocument() {
         BaseEdgeDocument doc = new BaseEdgeDocument();
         doc.setKey("test");
         doc.setId("id");
@@ -76,16 +76,20 @@ class SerializableTest {
         assertThat(doc2).isEqualTo(doc);
     }
 
-    private <T> T roundTrip(T input) throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(os);
-        objectOutputStream.writeObject(input);
+    private <T> T roundTrip(T input) {
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(os);
+            objectOutputStream.writeObject(input);
 
-        InputStream is = new ByteArrayInputStream(os.toByteArray());
-        ObjectInputStream objectInputStream = new ObjectInputStream(is);
-        T output = (T) objectInputStream.readObject();
-        objectInputStream.close();
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+            ObjectInputStream objectInputStream = new ObjectInputStream(is);
+            @SuppressWarnings("unchecked") T output = (T) objectInputStream.readObject();
+            objectInputStream.close();
 
-        return output;
+            return output;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

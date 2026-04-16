@@ -80,8 +80,12 @@
                             </artifactSet>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.fasterxml.jackson</pattern>
-                                    <shadedPattern>com.arangodb.shaded.fasterxml.jackson</shadedPattern>
+                                    <pattern>com.fasterxml.jackson.annotation</pattern>
+                                    <shadedPattern>com.arangodb.shaded.fasterxml.jackson.annotation</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>tools.jackson</pattern>
+                                    <shadedPattern>com.arangodb.shaded.jackson</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.netty</pattern>
@@ -108,7 +112,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>com.fasterxml.jackson.core:*</artifact>
+                                    <artifact>tools.jackson.core:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
                                         <exclude>module-info.class</exclude>
@@ -129,7 +133,7 @@
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>com.fasterxml.jackson.datatype:jackson-datatype-jakarta-jsonp</artifact>
+                                    <artifact>tools.jackson.datatype:jackson-datatype-jakarta-jsonp</artifact>
                                     <excludes>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>

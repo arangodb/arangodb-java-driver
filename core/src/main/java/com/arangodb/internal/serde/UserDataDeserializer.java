@@ -1,19 +1,18 @@
 package com.arangodb.internal.serde;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.arangodb.RequestContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 
 import static com.arangodb.internal.serde.SerdeUtils.convertToType;
 
-class UserDataDeserializer extends JsonDeserializer<Object> implements ContextualDeserializer {
+class UserDataDeserializer extends ValueDeserializer<Object> {
     private final Type targetType;
     private final InternalSerde serde;
 
@@ -28,22 +27,26 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public Object deserialize(JsonParser p, DeserializationContext ctxt) {
         Class<?> clazz = (Class<?>) targetType;
         if (SerdeUtils.isManagedClass(clazz)) {
             return p.readValueAs(clazz);
         } else {
-            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz);
+            RequestContext ctx = (RequestContext) ctxt.getAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME);
+            if (ctx == null) {
+                ctx = RequestContext.EMPTY;
+            }
+            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz, ctx);
         }
     }
 
     @Override
-    public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws IOException {
+    public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) {
         return deserialize(p, ctxt);
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
+    public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
         return new UserDataDeserializer(ctxt.getContextualType(), serde);
     }
 

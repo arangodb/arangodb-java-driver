@@ -24,17 +24,17 @@ import com.arangodb.config.ConfigUtils;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.StreamTransactionEntity;
+import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import com.arangodb.serde.ArangoSerde;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -51,22 +51,19 @@ class RequestContextTest {
 
     private static ArangoDB arangoDB;
     private static ArangoDatabase db;
+    private static ArangoDatabaseAsync dbAsync;
     private static ArangoCollection collection;
     private static ArangoCollectionAsync collectionAsync;
 
     @BeforeAll
     static void init() {
         ArangoSerde serde = new ArangoSerde() {
-            private ObjectMapper mapper = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            private final JsonMapper mapper = JsonMapper.builder()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .build();
 
             @Override
             public byte[] serialize(Object value) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public <T> T deserialize(byte[] content, Class<T> clazz) {
                 throw new UnsupportedOperationException();
             }
 
@@ -78,13 +75,9 @@ class RequestContextTest {
                     throw new UnsupportedOperationException();
                 }
 
-                try {
-                    Person res = mapper.readValue(content, Person.class);
-                    res.txId = ctx.getStreamTransactionId().get();
-                    return (T) res;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                Person res = mapper.readValue(content, Person.class);
+                res.txId = ctx.getStreamTransactionId().orElseThrow();
+                return (T) res;
             }
         };
 
@@ -98,7 +91,8 @@ class RequestContextTest {
         }
 
         collection = db.collection(COLLECTION_NAME);
-        collectionAsync = arangoDB.async().db(TEST_DB).collection(COLLECTION_NAME);
+        dbAsync = arangoDB.async().db(TEST_DB);
+        collectionAsync = dbAsync.collection(COLLECTION_NAME);
         if (!collection.exists()) {
             collection.create();
         }
@@ -152,6 +146,32 @@ class RequestContextTest {
 
         assertThat(read.name).isEqualTo("foo");
         assertThat(read.txId).isEqualTo(tx.getId());
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
+    @Test
+    void queryWithinTx() {
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions());
+        Person res = db.query("""
+                RETURN {"name":"foo"}
+                """, Person.class, new AqlQueryOptions().streamTransactionId(tx.getId())).next();
+
+        assertThat(res.name).isEqualTo("foo");
+        assertThat(res.txId).isEqualTo(tx.getId());
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
+    @Test
+    void asyncQueryWithinTx() throws ExecutionException, InterruptedException {
+        StreamTransactionEntity tx = db.beginStreamTransaction(new StreamTransactionOptions());
+        Person res = dbAsync.query("""
+                RETURN {"name":"foo"}
+                """, Person.class, new AqlQueryOptions().streamTransactionId(tx.getId())).get().getResult().getFirst();
+
+        assertThat(res.name).isEqualTo("foo");
+        assertThat(res.txId).isEqualTo(tx.getId());
 
         db.abortStreamTransaction(tx.getId());
     }

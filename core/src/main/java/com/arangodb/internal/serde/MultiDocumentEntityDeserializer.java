@@ -1,19 +1,17 @@
 package com.arangodb.internal.serde;
-
+import com.arangodb.RequestContext;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.entity.MultiDocumentEntity;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.exc.MismatchedInputException;
 
-import java.io.IOException;
 
-public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocumentEntity<?>> implements ContextualDeserializer {
+public class MultiDocumentEntityDeserializer extends ValueDeserializer<MultiDocumentEntity<?>> {
     private final JavaType containedType;
     private final InternalSerde serde;
 
@@ -27,7 +25,7 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
     }
 
     @Override
-    public MultiDocumentEntity<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public MultiDocumentEntity<?> deserialize(JsonParser p, DeserializationContext ctxt) {
         MultiDocumentEntity<Object> multiDocument = new MultiDocumentEntity<>();
 
         // silent=true returns an empty object
@@ -35,25 +33,29 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
             if (p.nextToken() == JsonToken.END_OBJECT) {
                 return multiDocument;
             } else {
-                throw new JsonMappingException(p, "Unexpected token sequence: START_OBJECT, " + p.currentToken());
+                throw MismatchedInputException.from(p, "Unexpected token sequence: START_OBJECT, " + p.currentToken());
             }
         }
 
         if (p.currentToken() != JsonToken.START_ARRAY) {
-            throw new JsonMappingException(p, "Expected START_ARRAY but got " + p.currentToken());
+            throw MismatchedInputException.from(p, "Expected START_ARRAY but got " + p.currentToken());
         }
         p.nextToken();
+        RequestContext ctx = (RequestContext) ctxt.getAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME);
+        if (ctx == null) {
+            ctx = RequestContext.EMPTY;
+        }
         while (p.currentToken() != JsonToken.END_ARRAY) {
             if (p.currentToken() != JsonToken.START_OBJECT) {
-                throw new JsonMappingException(p, "Expected START_OBJECT but got " + p.currentToken());
+                throw MismatchedInputException.from(p, "Expected START_OBJECT but got " + p.currentToken());
             }
             byte[] element = SerdeUtils.extractBytes(p);
             if (serde.isDocument(element)) {
-                Object d = serde.deserializeUserData(element, containedType);
+                Object d = serde.deserializeUserData(element, containedType, ctx);
                 multiDocument.getDocuments().add(d);
                 multiDocument.getDocumentsAndErrors().add(d);
             } else {
-                ErrorEntity e = serde.deserialize(element, ErrorEntity.class);
+                ErrorEntity e = serde.deserialize(element, ErrorEntity.class, ctx);
                 multiDocument.getErrors().add(e);
                 multiDocument.getDocumentsAndErrors().add(e);
             }
@@ -63,7 +65,7 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
+    public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
         return new MultiDocumentEntityDeserializer(serde, ctxt.getContextualType().containedType(0));
     }
 }

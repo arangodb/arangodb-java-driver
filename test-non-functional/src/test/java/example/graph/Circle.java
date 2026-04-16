@@ -20,9 +20,7 @@
 
 package example.graph;
 
-import com.arangodb.serde.jackson.Id;
-import com.arangodb.serde.jackson.Key;
-import com.arangodb.serde.jackson.Rev;
+import com.arangodb.serde.annotation.*;
 
 /**
  * @author a-brandt

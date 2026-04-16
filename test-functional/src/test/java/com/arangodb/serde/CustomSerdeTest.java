@@ -23,28 +23,25 @@ package com.arangodb.serde;
 
 import com.arangodb.*;
 import com.arangodb.config.ConfigUtils;
-import com.arangodb.internal.RequestContextHolder;
 import com.arangodb.internal.serde.InternalSerde;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.*;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
-import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -63,14 +60,12 @@ class CustomSerdeTest {
 
     @BeforeAll
     static void init() {
-        JacksonSerde serde = JacksonSerde.load()
-                .configure((mapper) -> {
-                    mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
-                    mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
-                    SimpleModule module = new SimpleModule("PersonModule");
-                    module.addDeserializer(Person.class, new PersonDeserializer());
-                    mapper.registerModule(module);
-                });
+        JacksonSerde serde = JacksonSerde.create(JsonMapper.builder()
+                .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true)
+                .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+                .addModule(new SimpleModule("PersonModule").addDeserializer(Person.class, new PersonDeserializer()))
+                .build());
+
         arangoDB = new ArangoDB.Builder()
                 .loadProperties(ConfigUtils.loadConfig())
                 .protocol(Protocol.HTTP_1_1)
@@ -110,8 +105,7 @@ class CustomSerdeTest {
         person.name = "Joe";
         InternalSerde serialization = arangoDB.getSerde();
         byte[] serialized = serialization.serializeUserData(person);
-        Person deserializedPerson = RequestContextHolder.INSTANCE.runWithCtx(RequestContext.EMPTY, () ->
-                serialization.deserializeUserData(serialized, Person.class));
+        Person deserializedPerson = serialization.deserializeUserData(serialized, Person.class, RequestContext.EMPTY);
         assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
@@ -128,6 +122,7 @@ class CustomSerdeTest {
         params.put("doc", doc);
         params.put("@collection", COLLECTION_NAME);
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> result = db.query(
                 "INSERT @doc INTO @@collection RETURN NEW",
                 Map.class,
@@ -151,7 +146,7 @@ class CustomSerdeTest {
 
         collection.insertDocument(doc);
 
-        final Map<String, Object> result = db.query(
+        @SuppressWarnings("unchecked") final Map<String, Object> result = db.query(
                 "RETURN DOCUMENT(@docId)",
                 Map.class,
                 Collections.singletonMap("docId", COLLECTION_NAME + "/" + key)
@@ -194,7 +189,7 @@ class CustomSerdeTest {
 
         collection.insertDocument(doc);
 
-        final Map<String, Object> result = db.collection(COLLECTION_NAME).getDocument(
+        @SuppressWarnings("unchecked") final Map<String, Object> result = db.collection(COLLECTION_NAME).getDocument(
                 key,
                 Map.class,
                 null);
@@ -207,29 +202,28 @@ class CustomSerdeTest {
 
     @Test
     void parseNullString() {
-        final String json = RequestContextHolder.INSTANCE.runWithCtx(RequestContext.EMPTY, () ->
-                arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null), String.class));
+        final String json = arangoDB.getSerde().deserializeUserData(arangoDB.getSerde().serializeUserData(null), String.class, RequestContext.EMPTY);
         assertThat(json).isNull();
     }
 
-    static class PersonSerializer extends JsonSerializer<Person> {
+    static class PersonSerializer extends ValueSerializer<Person> {
         @Override
-        public void serialize(Person value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(Person value, JsonGenerator gen, SerializationContext ctxt) {
             gen.writeStartObject();
-            gen.writeFieldName("name");
+            gen.writeName("name");
             gen.writeString(PERSON_SERIALIZER_ADDED_PREFIX + value.name);
             gen.writeEndObject();
         }
     }
 
-    static class PersonDeserializer extends JsonDeserializer<Person> {
+    static class PersonDeserializer extends ValueDeserializer<Person> {
         @Override
-        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
+        public Person deserialize(JsonParser parser, DeserializationContext ctxt) {
             Person person = new Person();
-            JsonNode rootNode = parser.getCodec().readTree(parser);
+            JsonNode rootNode = ctxt.readTree(parser);
             JsonNode nameNode = rootNode.get("name");
-            if (nameNode != null && nameNode.isTextual()) {
-                person.name = PERSON_DESERIALIZER_ADDED_PREFIX + nameNode.asText();
+            if (nameNode != null && nameNode.isString()) {
+                person.name = PERSON_DESERIALIZER_ADDED_PREFIX + nameNode.asString();
             }
             return person;
         }

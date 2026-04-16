@@ -45,7 +45,7 @@ abstract class AbstractBaseDocument implements Serializable {
             DocumentFields.KEY,
             DocumentFields.REV
     };
-    private final HashMap<String, Object> properties;
+    private  HashMap<String, Object> properties;
 
     AbstractBaseDocument() {
         properties = new HashMap<>();

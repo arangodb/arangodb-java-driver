@@ -47,24 +47,20 @@
                             </filesToExclude>
                             <replacements>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.JsonNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
+                                    <token>tools.jackson.databind.JsonNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.JsonNode</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectNode</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectNode</value>
+                                    <token>tools.jackson.databind.ObjectNode</token>
+                                    <value>com.arangodb.shaded.jackson.databind.ObjectNode</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.node</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.node</value>
+                                    <token>tools.jackson.databind.node</token>
+                                    <value>com.arangodb.shaded.jackson.databind.node</value>
                                 </replacement>
                                 <replacement>
-                                    <token>com.fasterxml.jackson.databind.ObjectMapper</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.ObjectMapper</value>
-                                </replacement>
-                                <replacement>
-                                    <token>com.fasterxml.jackson.core.JsonProcessingException</token>
-                                    <value>com.arangodb.shaded.fasterxml.jackson.core.JsonProcessingException</value>
+                                    <token>tools.jackson.databind.json.JsonMapper</token>
+                                    <value>com.arangodb.shaded.jackson.databind.json.JsonMapper</value>
                                 </replacement>
                             </replacements>
                         </configuration>

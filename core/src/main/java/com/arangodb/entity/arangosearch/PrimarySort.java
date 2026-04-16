@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 public final class PrimarySort {
 
-    private final String fieldName;
+    private  String fieldName;
     private Boolean ascending;
 
     public PrimarySort(

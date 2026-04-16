@@ -21,6 +21,7 @@
 package com.arangodb.internal.util;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.RequestContext;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.InternalResponse;
@@ -69,7 +70,7 @@ public final class ResponseUtils {
 
         ErrorEntity errorEntity;
         try {
-            errorEntity = serde.deserialize(body, ErrorEntity.class);
+            errorEntity = serde.deserialize(body, ErrorEntity.class, RequestContext.EMPTY);
         } catch (Exception e) {
             ArangoDBException adbEx = new ArangoDBException("Response Code: " + responseCode
                     + " [Unparsable data] Response: " + response, responseCode);

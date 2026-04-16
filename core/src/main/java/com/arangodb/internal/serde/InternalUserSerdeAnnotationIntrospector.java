@@ -1,6 +1,6 @@
-package com.arangodb.serde.jackson3.internal;
+package com.arangodb.internal.serde;
 
-import com.arangodb.serde.jackson3.*;
+import com.arangodb.serde.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.databind.PropertyName;
 import tools.jackson.databind.cfg.MapperConfig;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
+class InternalUserSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
     private static final JsonInclude JSON_INCLUDE_NON_NULL = JsonIncludeNonNull.class.getAnnotation(JsonInclude.class);
     private static final Map<Class<? extends Annotation>, String> MAPPINGS;
     private static final Class<? extends Annotation>[] ANNOTATIONS;
@@ -24,8 +24,9 @@ class ArangoSerdeAnnotationIntrospector extends JacksonAnnotationIntrospector {
         MAPPINGS.put(Rev.class, "_rev");
         MAPPINGS.put(From.class, "_from");
         MAPPINGS.put(To.class, "_to");
-        ANNOTATIONS = MAPPINGS.keySet().toArray(new Class[0]);
-    }
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation>[] annotations = MAPPINGS.keySet().toArray(new Class[0]);
+        ANNOTATIONS = annotations;    }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private static class JsonIncludeNonNull {

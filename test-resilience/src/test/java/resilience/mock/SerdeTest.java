@@ -6,10 +6,10 @@ import com.arangodb.Request;
 import com.arangodb.Response;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 import resilience.MockTest;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -47,9 +47,8 @@ public class SerdeTest extends MockTest {
         Throwable[] suppressed = thrown.getCause().getSuppressed();
         assertThat(suppressed).hasSize(1);
         assertThat(suppressed[0])
-                .isInstanceOf(ArangoDBException.class)
-                .cause()
-                .isInstanceOf(JsonParseException.class);
+                .isInstanceOf(JacksonException.class)
+                .hasMessageContaining("Unrecognized token");
         assertThat(logs.getLogs())
                 .filteredOn(e -> e.getLevel().equals(Level.DEBUG))
                 .anySatisfy(e -> assertThat(e.getFormattedMessage())
@@ -132,16 +131,17 @@ public class SerdeTest extends MockTest {
         MultiDocumentEntity<JsonNode> res = arangoDB.db().collection("col").getDocuments(keys, JsonNode.class);
         assertThat(res.getErrors()).isEmpty();
         assertThat(res.getDocuments()).hasSize(3)
-                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("1"))
-                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("2"))
-                .anySatisfy(d -> assertThat(d.get("_key").textValue()).isEqualTo("3"));
+                .anySatisfy(d -> assertThat(d.get("_key").stringValue()).isEqualTo("1"))
+                .anySatisfy(d -> assertThat(d.get("_key").stringValue()).isEqualTo("2"))
+                .anySatisfy(d -> assertThat(d.get("_key").stringValue()).isEqualTo("3"));
     }
 
     @Test
     void getXArangoDumpJsonLines() {
-        String resp = "{\"a\":1}\n" +
-                "{\"b\":2}\n" +
-                "{\"c\":3}";
+        String resp = """
+                {"a":1}
+                {"b":2}
+                {"c":3}""";
 
         mockServer
                 .when(

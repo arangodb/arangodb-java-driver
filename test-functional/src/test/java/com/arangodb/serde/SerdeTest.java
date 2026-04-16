@@ -1,15 +1,16 @@
 package com.arangodb.serde;
 
+import com.arangodb.RequestContext;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.serde.InternalSerde;
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import com.arangodb.internal.serde.SerdeUtils;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 
@@ -20,29 +21,29 @@ class SerdeTest {
 
     @Test
     void rawJsonSerde() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
-        RawJson raw = RawJson.of(SerdeUtils.INSTANCE.writeJson(node));
+        RawJson raw = RawJson.of(SerdeUtils.writeJson(node));
         byte[] serialized = s.serialize(raw);
-        RawJson deserialized = s.deserialize(serialized, RawJson.class);
+        RawJson deserialized = s.deserialize(serialized, RawJson.class, RequestContext.EMPTY);
         assertThat(deserialized).isEqualTo(raw);
     }
 
     @Test
     void rawBytesSerde() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         ObjectNode node = JsonNodeFactory.instance.objectNode().put("foo", "bar");
         RawBytes raw = RawBytes.of(s.serialize(node));
         byte[] serialized = s.serializeUserData(raw);
-        RawBytes deserialized = s.deserializeUserData(serialized, RawBytes.class);
+        RawBytes deserialized = s.deserializeUserData(serialized, RawBytes.class, RequestContext.EMPTY);
         assertThat(deserialized).isEqualTo(raw);
     }
 
     @Test
     void deserializeBaseDocumentWithNestedProperties() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         RawJson json = RawJson.of("{\"foo\":\"aaa\",\"properties\":{\"foo\":\"bbb\"}}");
-        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class);
+        BaseDocument deserialized = s.deserialize(s.serialize(json), BaseDocument.class, RequestContext.EMPTY);
         assertThat(deserialized.getAttribute("foo")).isEqualTo("aaa");
         assertThat(deserialized.getAttribute("properties"))
                 .isInstanceOf(Map.class)
@@ -52,41 +53,41 @@ class SerdeTest {
 
     @Test
     void serializeBaseDocumentWithNestedProperties() {
-        InternalSerde s = new InternalSerdeProvider().create();
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
         BaseDocument doc = new BaseDocument();
         doc.addAttribute("foo", "aaa");
         doc.addAttribute("properties", Collections.singletonMap("foo", "bbb"));
         byte[] ser = s.serialize(doc);
-        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class);
-        assertThat(on.get("foo").textValue()).isEqualTo("aaa");
-        assertThat(on.get("properties").get("foo").textValue()).isEqualTo("bbb");
+        ObjectNode on = s.deserializeUserData(ser, ObjectNode.class, RequestContext.EMPTY);
+        assertThat(on.get("foo").stringValue()).isEqualTo("aaa");
+        assertThat(on.get("properties").get("foo").stringValue()).isEqualTo("bbb");
     }
 
     @Test
     void deserializeNull() {
-        InternalSerde s = new InternalSerdeProvider().create();
-        Void deser = s.deserialize((byte[]) null, Void.class);
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
+        Void deser = s.deserialize((byte[]) null, Void.class, RequestContext.EMPTY);
         assertThat(deser).isNull();
     }
 
     @Test
     void deserializeNullUserSerde() {
         ArangoSerde s = ArangoSerdeProvider.load().create();
-        Void deser = s.deserialize(null, Void.class);
+        Void deser = s.deserialize(null, Void.class, RequestContext.EMPTY);
         assertThat(deser).isNull();
     }
 
     @Test
     void deserializeEmpty() {
-        InternalSerde s = new InternalSerdeProvider().create();
-        Void deser = s.deserialize(new byte[0], Void.class);
+        InternalSerde s = InternalSerde.create(new InternalUserSerdeProvider().create());
+        Void deser = s.deserialize(new byte[0], Void.class, RequestContext.EMPTY);
         assertThat(deser).isNull();
     }
 
     @Test
     void deserializeEmptyUserSerde() {
         ArangoSerde s = ArangoSerdeProvider.load().create();
-        Void deser = s.deserialize(new byte[0], Void.class);
+        Void deser = s.deserialize(new byte[0], Void.class, RequestContext.EMPTY);
         assertThat(deser).isNull();
     }
 }

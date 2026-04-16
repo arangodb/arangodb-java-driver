@@ -1,8 +1,8 @@
 package com.arangodb.serde;
 
-import com.arangodb.internal.serde.InternalSerdeProvider;
+import com.arangodb.RequestContext;
+import com.arangodb.internal.serde.InternalUserSerdeProvider;
 import com.arangodb.serde.jackson.JacksonSerde;
-import com.arangodb.util.SlowTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -11,10 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonConfigurationTest {
 
-    @SlowTest
     @Test
     void bigStringInternalSerde() {
-        ArangoSerde s = new InternalSerdeProvider().create();
+        ArangoSerde s = new InternalUserSerdeProvider().create();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {
@@ -22,14 +21,13 @@ public class JacksonConfigurationTest {
         }
         String in = sb.toString();
         byte[] bytes = s.serialize(in);
-        String out = s.deserialize(bytes, String.class);
+        String out = s.deserialize(bytes, String.class, RequestContext.EMPTY);
         assertThat(out).isEqualTo(in);
     }
 
-    @SlowTest
     @Test
     void bigStringUserSerde() {
-        ArangoSerde s = JacksonSerde.load();
+        ArangoSerde s = JacksonSerde.create();
 
         StringBuilder sb = new StringBuilder();
         while (sb.length() < 40_000_000) {
@@ -37,10 +35,9 @@ public class JacksonConfigurationTest {
         }
         String in = sb.toString();
         byte[] bytes = s.serialize(in);
-        String out = s.deserialize(bytes, String.class);
+        String out = s.deserialize(bytes, String.class, RequestContext.EMPTY);
         assertThat(out).isEqualTo(in);
     }
-
 
 
 }

@@ -1,31 +1,26 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.RequestContextHolder;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsonp.JSONPModule;
 import jakarta.json.JsonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.*;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.*;
+import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.datatype.jsonp.JSONPModule;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
@@ -38,44 +33,58 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     private final ArangoSerde userSerde;
-    private final ObjectMapper mapper;
+    private final JsonMapper mapper;
 
-    InternalSerdeImpl(final ObjectMapper mapper, final ArangoSerde userSerde, final Module protocolModule) {
-        this.mapper = mapper;
-        this.userSerde = userSerde;
-        mapper.deactivateDefaultTyping();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.enable(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION);
-        mapper.registerModule(InternalModule.get(this));
-        if (protocolModule != null) {
-            mapper.registerModule(protocolModule);
-        }
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.setAnnotationIntrospector(new InternalAnnotationIntrospector(
-                new UserDataSerializer(this),
-                new UserDataDeserializer(this)
-        ));
+    InternalSerdeImpl(final ArangoSerde userSerde) {
+        Objects.requireNonNull(userSerde);
+        var jsonFactory = JsonFactory.builder()
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .streamReadConstraints(StreamReadConstraints.builder()
+                        .maxNumberLength(Integer.MAX_VALUE)
+                        .maxStringLength(Integer.MAX_VALUE)
+                        .maxNestingDepth(Integer.MAX_VALUE)
+                        .maxNameLength(Integer.MAX_VALUE)
+                        .maxDocumentLength(Long.MAX_VALUE)
+                        .maxTokenCount(Integer.MAX_VALUE)
+                        .build())
+                .streamWriteConstraints(StreamWriteConstraints.builder()
+                        .maxNestingDepth(Integer.MAX_VALUE)
+                        .build())
+                .build();
+
+        var builder = JsonMapper.builder(jsonFactory)
+                .deactivateDefaultTyping()
+                .addModule(InternalModule.get(this))
+                .changeDefaultPropertyInclusion(i -> i.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .annotationIntrospector(new InternalAnnotationIntrospector(
+                        new UserDataSerializer(this),
+                        new UserDataDeserializer(this)
+                ));
 
         // JSON-P datatypes
+        JSONPModule jsonPModule = null;
         try {
-            mapper.registerModule(new JSONPModule());
+            jsonPModule = new JSONPModule();
         } catch (JsonException e) {
             LOG.debug("Jakarta JSON-P provider not found, handling of JSON-P datatypes is disabled", e);
         }
+
+        if (jsonPModule != null) {
+            builder.addModule(jsonPModule);
+        }
+
+        this.userSerde = userSerde;
+        this.mapper = builder.build();
     }
 
     @Override
     public byte[] serialize(final Object value) {
-        try {
-            return mapper.writeValueAsBytes(value);
-        } catch (JsonProcessingException e) {
-            throw ArangoDBException.of(e);
-        }
+        return mapper.writeValueAsBytes(value);
     }
 
     @Override
-    public <T> T deserialize(byte[] content, Class<T> clazz) {
-        return deserialize(content, (Type) clazz);
+    public <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
+        return deserialize(content, (Type) clazz, ctx);
     }
 
     @Override
@@ -84,7 +93,7 @@ final class InternalSerdeImpl implements InternalSerde {
             return "";
         }
         try {
-            return SerdeUtils.INSTANCE.writeJson(mapper.readTree(content));
+            return SerdeUtils.writeJson(mapper.readTree(content));
         } catch (Exception e) {
             return "[Unparsable data]";
         }
@@ -96,7 +105,7 @@ final class InternalSerdeImpl implements InternalSerde {
             throw new ArangoDBException("Unsupported JSON pointer: " + jsonPointer);
         }
         String[] parts = jsonPointer.substring(1).split("/");
-        try (JsonParser parser = mapper.getFactory().createParser(content)) {
+        try (JsonParser parser = mapper.tokenStreamFactory().createParser(content)) {
             int match = 0;
             int level = 0;
             JsonToken token = parser.nextToken();
@@ -114,7 +123,7 @@ final class InternalSerdeImpl implements InternalSerde {
                 if (token == null || level < match) {
                     throw new ArangoDBException("Unable to parse JSON pointer: " + jsonPointer);
                 }
-                if (token == JsonToken.FIELD_NAME && match == level && parts[match].equals(parser.getText())) {
+                if (token == JsonToken.PROPERTY_NAME && match == level && parts[match].equals(parser.getString())) {
                     match++;
                     if (match == parts.length) {
                         parser.nextToken();
@@ -122,18 +131,12 @@ final class InternalSerdeImpl implements InternalSerde {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
         }
     }
 
     @Override
     public JsonNode parse(byte[] content, String jsonPointer) {
-        try {
-            return mapper.readTree(content).at(jsonPointer);
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
-        }
+        return mapper.readTree(content).at(jsonPointer);
     }
 
     @Override
@@ -144,7 +147,7 @@ final class InternalSerdeImpl implements InternalSerde {
         Class<?> clazz = value.getClass();
         if (RawBytes.class.equals(clazz)) {
             return ((RawBytes) value).get();
-        } else if (RawJson.class.equals(clazz) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
+        } else if (RawJson.class.equals(clazz)) {
             return ((RawJson) value).get().getBytes(StandardCharsets.UTF_8);
         } else if (SerdeUtils.isManagedClass(clazz)) {
             return serialize(value);
@@ -156,45 +159,39 @@ final class InternalSerdeImpl implements InternalSerde {
     @Override
     public byte[] serializeCollectionUserData(Iterable<?> value) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try (JsonGenerator gen = mapper.getFactory().createGenerator(os)) {
+        try (JsonGenerator gen = mapper.tokenStreamFactory().createGenerator(os)) {
             gen.writeStartArray();
             for (Object o : value) {
                 gen.writeRawValue(new RawUserDataValue(serializeUserData(o)));
             }
             gen.writeEndArray();
             gen.flush();
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
         }
         return os.toByteArray();
     }
 
     @Override
-    public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
+    public <T> T deserializeUserData(byte[] content, Class<T> clazz, RequestContext ctx) {
         if (SerdeUtils.isManagedClass(clazz)) {
-            return deserialize(content, clazz);
+            return deserialize(content, clazz, ctx);
         } else {
-            return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
+            return userSerde.deserialize(content, clazz, ctx);
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserializeUserData(byte[] content, JavaType clazz) {
-        try {
-            if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
-                return mapper.readerFor(clazz).readValue(content);
-            } else {
-                return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass());
-            }
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
+    public <T> T deserializeUserData(byte[] content, JavaType clazz, RequestContext ctx) {
+        if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
+            return mapper.readerFor(clazz).readValue(content);
+        } else {
+            return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass(), ctx);
         }
     }
 
     @Override
     public boolean isDocument(byte[] content) {
-        try (JsonParser p = mapper.getFactory().createParser(content)) {
+        try (JsonParser p = mapper.tokenStreamFactory().createParser(content)) {
             if (p.nextToken() != JsonToken.START_OBJECT) {
                 return false;
             }
@@ -202,8 +199,8 @@ final class InternalSerdeImpl implements InternalSerde {
             int level = 1;
             while (level >= 1) {
                 JsonToken t = p.nextToken();
-                if (level == 1 && t == JsonToken.FIELD_NAME) {
-                    String fieldName = p.getText();
+                if (level == 1 && t == JsonToken.PROPERTY_NAME) {
+                    String fieldName = p.getString();
                     if (fieldName.equals("_id") || fieldName.equals("_key") || fieldName.equals("_rev")) {
                         return true;
                     }
@@ -216,10 +213,8 @@ final class InternalSerdeImpl implements InternalSerde {
             }
 
             if (p.currentToken() != JsonToken.END_OBJECT) {
-                throw new JsonMappingException(p, "Expected END_OBJECT but got " + p.currentToken());
+                throw MismatchedInputException.from(p, "Expected END_OBJECT but got " + p.currentToken());
             }
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
         }
         return false;
     }
@@ -230,30 +225,26 @@ final class InternalSerdeImpl implements InternalSerde {
     }
 
     @Override
-    public <T> T deserialize(final JsonNode node, final Type type) {
-        try {
-            return mapper.readerFor(mapper.constructType(type)).readValue(node);
-        } catch (IOException e) {
-            throw ArangoDBException.of(e);
-        }
+    public <T> T deserialize(final JsonNode node, final Type type, RequestContext ctx) {
+        return mapper.readerFor(mapper.constructType(type))
+                .with(ContextAttributes.getEmpty().withPerCallAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
+                .readValue(node);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserialize(final byte[] content, final Type type) {
+    public <T> T deserialize(final byte[] content, final Type type, RequestContext ctx) {
         if (content == null || content.length == 0) {
             return null;
         }
         if (RawBytes.class.equals(type)) {
             return (T) RawBytes.of(content);
-        } else if (RawJson.class.equals(type) && JsonFactory.FORMAT_NAME_JSON.equals(mapper.getFactory().getFormatName())) {
+        } else if (RawJson.class.equals(type)) {
             return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
         } else {
-            try {
-                return mapper.readerFor(mapper.constructType(type)).readValue(content);
-            } catch (IOException e) {
-                throw ArangoDBException.of(e);
-            }
+            return mapper.readerFor(mapper.constructType(type))
+                    .with(ContextAttributes.getEmpty().withPerCallAttribute(InternalUserSerde.SERDE_CONTEXT_ATTRIBUTE_NAME, ctx))
+                    .readValue(content);
         }
     }
 

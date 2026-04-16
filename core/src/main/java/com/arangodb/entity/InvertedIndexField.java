@@ -15,7 +15,7 @@ public final class InvertedIndexField {
     private Boolean searchField;
     private Boolean trackListPositions;
     private Boolean cache;
-    private final Set<AnalyzerFeature> features = new HashSet<>();
+    private Set<AnalyzerFeature> features = new HashSet<>();
     private Collection<InvertedIndexField> nested;
 
     public String getName() {

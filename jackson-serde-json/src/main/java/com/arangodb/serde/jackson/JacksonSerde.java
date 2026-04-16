@@ -3,10 +3,8 @@ package com.arangodb.serde.jackson;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.RequestContext;
 import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.function.Consumer;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.json.JsonMapper;
 
 import static com.arangodb.serde.jackson.internal.JacksonSerdeImpl.SERDE_CONTEXT_ATTRIBUTE_NAME;
 
@@ -16,21 +14,23 @@ import static com.arangodb.serde.jackson.internal.JacksonSerdeImpl.SERDE_CONTEXT
 public interface JacksonSerde extends ArangoSerde {
 
     /**
-     * Creates a new JacksonSerde with default settings.
+     * Creates a new JacksonSerde.
      *
      * @return the created JacksonSerde
      */
-    static JacksonSerde load() {
-        return create(JacksonMapperProvider.load());
+    static JacksonSerde create() {
+        return create(JsonMapper.builder()
+                .annotationIntrospector(new ArangoAnnotationIntrospector())
+                .build());
     }
 
     /**
-     * Creates a new JacksonSerde using the provided ObjectMapper.
+     * Creates a new JacksonSerde using the provided JsonMapper.
      *
-     * @param mapper Jackson ObjectMapper to use
+     * @param mapper Jackson JsonMapper to use
      * @return the created JacksonSerde
      */
-    static JacksonSerde create(final ObjectMapper mapper) {
+    static JacksonSerde create(final JsonMapper mapper) {
         return new JacksonSerdeImpl(mapper);
     }
 
@@ -43,12 +43,5 @@ public interface JacksonSerde extends ArangoSerde {
     static RequestContext getRequestContext(DeserializationContext ctx) {
         return (RequestContext) ctx.getAttribute(SERDE_CONTEXT_ATTRIBUTE_NAME);
     }
-
-    /**
-     * Allows configuring the underlying Jackson ObjectMapper
-     *
-     * @param configureFunction function to configure the Jackson ObjectMapper
-     */
-    JacksonSerde configure(final Consumer<ObjectMapper> configureFunction);
 
 }

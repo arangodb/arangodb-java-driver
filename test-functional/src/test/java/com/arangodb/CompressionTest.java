@@ -2,14 +2,13 @@ package com.arangodb;
 
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.util.ProtocolSource;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.params.ParameterizedTest;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Non-exhaustive tests of content encoding, executed during integration and native tests.
@@ -22,14 +21,12 @@ class CompressionTest extends BaseJunit5 {
     @ParameterizedTest
     @ProtocolSource
     void gzip(Protocol protocol) {
-        assumeTrue(supportsV8());
         doTest(protocol, Compression.GZIP);
     }
 
     @ParameterizedTest
     @ProtocolSource
     void deflate(Protocol protocol) {
-        assumeTrue(supportsV8());
         doTest(protocol, Compression.DEFLATE);
     }
 
@@ -49,7 +46,7 @@ class CompressionTest extends BaseJunit5 {
                 .build(), JsonNode.class);
 
         String encoding = compression.toString().toLowerCase(Locale.ROOT);
-        String reqAcceptEncoding = resp.getBody().get("headers").get("accept-encoding").textValue();
+        String reqAcceptEncoding = resp.getBody().get("headers").get("accept-encoding").stringValue();
         assertThat(reqAcceptEncoding).contains(encoding);
 
         adb.shutdown();

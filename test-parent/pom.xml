@@ -15,10 +15,8 @@
 
     <properties>
         <maven.build.cache.enabled>false</maven.build.cache.enabled>
-        <adb.jackson.version>2.21.1</adb.jackson.version>
+        <adb.jackson.version>3.1.2</adb.jackson.version>
         <sonar.skip>true</sonar.skip>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
         <testSources>src/test/java</testSources>
         <shaded/>
     </properties>
@@ -64,7 +62,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
+                <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${adb.jackson.version}</version>
                 <scope>import</scope>
@@ -216,8 +214,12 @@
                             <outputDir>replacer</outputDir>
                             <replacements>
                                 <replacement>
-                                    <token>com.fasterxml</token>
-                                    <value>com.arangodb.shaded.fasterxml</value>
+                                    <token>com.fasterxml.jackson.annotation</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.annotation</value>
+                                </replacement>
+                                <replacement>
+                                    <token>tools.jackson</token>
+                                    <value>com.arangodb.shaded.jackson</value>
                                 </replacement>
                                 <replacement>
                                     <token>io.vertx</token>
