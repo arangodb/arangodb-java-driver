@@ -2309,6 +2309,8 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createFulltextIndex(ArangoCollection collection) {
+        assumeTrue(isLessThanVersion(4, 0));
+
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         final IndexEntity indexResult = collection.ensureFulltextIndex(fields, null);
@@ -2325,7 +2327,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("cols")
     void createFulltextIndexWithOptions(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isLessThanVersion(4, 0));
 
         String name = "fulltextIndex-" + rnd();
         final FulltextIndexOptions options = new FulltextIndexOptions();

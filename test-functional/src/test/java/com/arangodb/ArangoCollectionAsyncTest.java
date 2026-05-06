@@ -2256,6 +2256,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createFulltextIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isLessThanVersion(4, 0));
+
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);
         final IndexEntity indexResult = collection.ensureFulltextIndex(fields, null).get();
@@ -2272,7 +2274,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createFulltextIndexWithOptions(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isLessThanVersion(4, 0));
 
         String name = "fulltextIndex-" + rnd();
         final FulltextIndexOptions options = new FulltextIndexOptions();
