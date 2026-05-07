@@ -55,7 +55,9 @@ public final class DatabaseEntity {
 
     /**
      * @return the filesystem path of the database
+     * @deprecated for removal, removed from ArangoDB 4.0
      */
+    @Deprecated
     public String getPath() {
         return path;
     }

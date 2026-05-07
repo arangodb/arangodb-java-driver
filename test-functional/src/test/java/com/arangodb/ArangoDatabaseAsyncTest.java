@@ -1692,7 +1692,9 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         assertThat(info).isNotNull();
         assertThat(info.getId()).isNotNull();
         assertThat(info.getName()).isEqualTo(getTestDb());
-        assertThat(info.getPath()).isNotNull();
+        if (isLessThanVersion(4, 0)) {
+            assertThat(info.getPath()).isNotNull();
+        }
         assertThat(info.getIsSystem()).isFalse();
 
         if (isAtLeastVersion(3, 6) && isCluster()) {
