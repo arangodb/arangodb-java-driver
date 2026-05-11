@@ -434,22 +434,14 @@ workflows:
       not: <<pipeline.parameters.docker-img>>
     jobs:
       - test:
-          name: test-single-<<matrix.docker-img>>
+          name: test-<<matrix.topology>>-<<matrix.docker-img>>
           matrix:
             parameters:
               docker-img:
                 - 'docker.io/arangodb/enterprise:3.12'
+                - 'docker.io/arangodb/enterprise-preview:4.0-nightly'
               topology:
                 - 'single'
-              args:
-                - '-DenableSlowTests=true'
-      - test:
-          name: test-cluster-<<matrix.docker-img>>
-          matrix:
-            parameters:
-              docker-img:
-                - 'docker.io/arangodb/enterprise:3.12'
-              topology:
                 - 'cluster'
               args:
                 - '-DenableSlowTests=true'
