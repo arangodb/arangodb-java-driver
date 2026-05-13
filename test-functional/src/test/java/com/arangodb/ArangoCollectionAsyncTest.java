@@ -3438,6 +3438,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
+    // waits before changing collection properties, see https://arangodb.atlassian.net/browse/BTS-2307
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncCols")
     void changeProperties(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
@@ -3463,6 +3465,8 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
             assertThat(changedProperties.getSchema().getMessage()).isEqualTo(schemaMessage);
             assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
         }
+
+        Thread.sleep(1_000);
 
         // revert changes
         CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions()

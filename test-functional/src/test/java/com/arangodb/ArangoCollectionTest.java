@@ -3519,9 +3519,11 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
+    // waits before changing collection properties, see https://arangodb.atlassian.net/browse/BTS-2307
+    @SlowTest
     @ParameterizedTest
     @MethodSource("cols")
-    void changeProperties(ArangoCollection collection) {
+    void changeProperties(ArangoCollection collection) throws InterruptedException {
         assumeTrue(isCluster());
         final CollectionPropertiesEntity properties = collection.getProperties();
         assertThat(properties.getWaitForSync()).isNotNull();
@@ -3557,6 +3559,8 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(changedProperties.getSchema().getRule()).isEqualTo(schemaRule);
         assertThat(changedProperties.getWaitForSync()).isEqualTo(updatedOptions.getWaitForSync());
         assertThat(changedProperties.getWriteConcern()).isEqualTo(updatedOptions.getWriteConcern());
+
+        Thread.sleep(1_000);
 
         // revert changes
         CollectionPropertiesOptions revertOptions = new CollectionPropertiesOptions()
