@@ -13,6 +13,7 @@
         <module>shaded</module>
         <module>jackson-serde-json</module>
         <module>jackson3-serde-json</module>
+        <module>jackson3-serde-vpack</module>
         <module>jackson-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
@@ -302,6 +303,11 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson3-serde-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>jackson3-serde-vpack</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
