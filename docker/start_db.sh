@@ -3,7 +3,7 @@
 # Configuration environment variables:
 #   STARTER_MODE:             (single|cluster|activefailover), default single
 #   DOCKER_IMAGE:             ArangoDB docker image, default docker.io/arangodb/enterprise:latest
-#   STARTER_DOCKER_IMAGE:     ArangoDB Starter docker image, default docker.io/arangodb/arangodb-starter:latest
+#   STARTER_DOCKER_IMAGE:     ArangoDB Starter docker image
 #   SSL:                      (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
 
@@ -12,7 +12,14 @@
 
 STARTER_MODE=${STARTER_MODE:=single}
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/enterprise:latest}
-STARTER_DOCKER_IMAGE=${STARTER_DOCKER_IMAGE:=docker.io/arangodb/arangodb-starter:latest}
+STARTER_VERSION=$(docker run --rm -e ARANGO_NO_AUTH=1 --entrypoint arangodb ${DOCKER_IMAGE} --version | { read -r first rest; echo "${rest%%,*}"; })
+ARANGO_VERSION=$(docker run --rm --entrypoint arangod ${DOCKER_IMAGE} --version | awk '/^server-version:/ {print $2}')
+ARANGO_MINOR_VERSION=$(echo "$ARANGO_VERSION" | cut -d'.' -f1,2)
+echo "arangod version: $ARANGO_VERSION"
+echo "arangod minor version: $ARANGO_MINOR_VERSION"
+STARTER_DOCKER_IMAGE=${STARTER_DOCKER_IMAGE:=docker.io/arangodb/arangodb-starter:$STARTER_VERSION}
+
+echo "starter docker image: $STARTER_DOCKER_IMAGE"
 SSL=${SSL:=false}
 COMPRESSION=${COMPRESSION:=false}
 
@@ -47,6 +54,10 @@ if [ "$COMPRESSION" == "true" ]; then
     STARTER_ARGS="${STARTER_ARGS} --all.http.compress-response-threshold=1"
 fi
 
+if [ "$ARANGO_MINOR_VERSION" == "3.12" ]; then
+    STARTER_ARGS="${STARTER_ARGS} --all.experimental-vector-index=true"
+fi
+
 # data volume
 docker create -v /data --name arangodb-data alpine:3 /bin/true
 docker cp "$LOCATION"/jwtSecret arangodb-data:/data
@@ -67,8 +78,7 @@ docker run -d \
     --starter.address="${GW}" \
     --docker.image="${DOCKER_IMAGE}" \
     --starter.local --starter.mode=${STARTER_MODE} --all.log.level=debug --all.log.output=+ --log.verbose \
-    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true --all.server.maximal-threads=128 \
-    --all.experimental-vector-index=true
+    --all.server.descriptors-minimum=1024 --all.javascript.allow-admin-execute=true --all.server.maximal-threads=128
 
 
 wait_server() {
