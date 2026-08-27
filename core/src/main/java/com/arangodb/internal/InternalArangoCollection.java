@@ -402,8 +402,16 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
     }
 
     protected InternalRequest getIndexesRequest() {
+        return getIndexesRequest(null);
+    }
+
+    protected InternalRequest getIndexesRequest(final IndexListOptions options) {
         final InternalRequest request = request(dbName, RequestType.GET, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
+        if (options != null) {
+            request.putQueryParam("withHidden", options.getWithHidden());
+            request.putQueryParam("withStats", options.getWithStats());
+        }
         return request;
     }
 

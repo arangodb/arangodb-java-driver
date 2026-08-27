@@ -404,7 +404,12 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
 
     @Override
     public CompletableFuture<Collection<IndexEntity>> getIndexes() {
-        return executorAsync().execute(this::getIndexesRequest, getIndexesResponseDeserializer());
+        return getIndexes(null);
+    }
+
+    @Override
+    public CompletableFuture<Collection<IndexEntity>> getIndexes(final IndexListOptions options) {
+        return executorAsync().execute(() -> getIndexesRequest(options), getIndexesResponseDeserializer());
     }
 
     @Override

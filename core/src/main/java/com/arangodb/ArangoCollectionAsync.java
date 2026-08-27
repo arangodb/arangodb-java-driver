@@ -337,6 +337,9 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
      */
     CompletableFuture<Collection<IndexEntity>> getIndexes();
 
+    /** Asynchronous version of {@link ArangoCollection#getIndexes(IndexListOptions)}. */
+    CompletableFuture<Collection<IndexEntity>> getIndexes(IndexListOptions options);
+
     /**
      * Asynchronous version of {@link ArangoCollection#getInvertedIndexes()}
      */

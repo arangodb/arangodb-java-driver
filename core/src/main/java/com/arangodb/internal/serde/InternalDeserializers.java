@@ -3,6 +3,7 @@ package com.arangodb.internal.serde;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.InvertedIndexPrimarySort;
+import com.arangodb.entity.NLists;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
@@ -74,6 +75,19 @@ public final class InternalDeserializers {
             } else if (node instanceof TextNode && "satellite".equals(((TextNode) node).textValue())) {
                 return ReplicationFactor.ofSatellite();
             } else throw new IllegalArgumentException();
+        }
+    };
+
+    static final JsonDeserializer<NLists> N_LISTS = new JsonDeserializer<NLists>() {
+        @Override
+        public NLists deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+            TreeNode node = p.readValueAsTree();
+            if (node instanceof NumericNode) {
+                return NLists.fixed(((NumericNode) node).intValue());
+            } else if (node instanceof ObjectNode) {
+                return readTreeAsValue(p, ctxt, (JsonNode) node, NLists.ObjectNLists.class);
+            }
+            throw new IllegalArgumentException();
         }
     };
 

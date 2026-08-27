@@ -23,6 +23,7 @@ package com.arangodb.entity;
 import com.arangodb.model.MDIFieldValueTypes;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -51,6 +52,9 @@ public final class IndexEntity {
     private MDIFieldValueTypes fieldValueTypes;
     private Collection<String> prefixFields;
     private VectorIndexParams params;
+    private VectorIndexTrainingState trainingState;
+    private String errorMessage;
+    private Map<String, VectorIndexShardStatus> shards;
 
     public IndexEntity() {
         super();
@@ -140,15 +144,27 @@ public final class IndexEntity {
         return params;
     }
 
+    public VectorIndexTrainingState getTrainingState() {
+        return trainingState;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public Map<String, VectorIndexShardStatus> getShards() {
+        return shards;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof IndexEntity)) return false;
         IndexEntity that = (IndexEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type && Objects.equals(fields, that.fields) && Objects.equals(selectivityEstimate, that.selectivityEstimate) && Objects.equals(unique, that.unique) && Objects.equals(sparse, that.sparse) && Objects.equals(minLength, that.minLength) && Objects.equals(isNewlyCreated, that.isNewlyCreated) && Objects.equals(geoJson, that.geoJson) && Objects.equals(constraint, that.constraint) && Objects.equals(deduplicate, that.deduplicate) && Objects.equals(expireAfter, that.expireAfter) && Objects.equals(inBackground, that.inBackground) && Objects.equals(estimates, that.estimates) && Objects.equals(cacheEnabled, that.cacheEnabled) && Objects.equals(storedValues, that.storedValues) && Objects.equals(legacyPolygons, that.legacyPolygons) && fieldValueTypes == that.fieldValueTypes && Objects.equals(prefixFields, that.prefixFields) && Objects.equals(params, that.params);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && type == that.type && Objects.equals(fields, that.fields) && Objects.equals(selectivityEstimate, that.selectivityEstimate) && Objects.equals(unique, that.unique) && Objects.equals(sparse, that.sparse) && Objects.equals(minLength, that.minLength) && Objects.equals(isNewlyCreated, that.isNewlyCreated) && Objects.equals(geoJson, that.geoJson) && Objects.equals(constraint, that.constraint) && Objects.equals(deduplicate, that.deduplicate) && Objects.equals(expireAfter, that.expireAfter) && Objects.equals(inBackground, that.inBackground) && Objects.equals(estimates, that.estimates) && Objects.equals(cacheEnabled, that.cacheEnabled) && Objects.equals(storedValues, that.storedValues) && Objects.equals(legacyPolygons, that.legacyPolygons) && fieldValueTypes == that.fieldValueTypes && Objects.equals(prefixFields, that.prefixFields) && Objects.equals(params, that.params) && trainingState == that.trainingState && Objects.equals(errorMessage, that.errorMessage) && Objects.equals(shards, that.shards);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type, fields, selectivityEstimate, unique, sparse, minLength, isNewlyCreated, geoJson, constraint, deduplicate, expireAfter, inBackground, estimates, cacheEnabled, storedValues, legacyPolygons, fieldValueTypes, prefixFields, params);
+        return Objects.hash(id, name, type, fields, selectivityEstimate, unique, sparse, minLength, isNewlyCreated, geoJson, constraint, deduplicate, expireAfter, inBackground, estimates, cacheEnabled, storedValues, legacyPolygons, fieldValueTypes, prefixFields, params, trainingState, errorMessage, shards);
     }
 }

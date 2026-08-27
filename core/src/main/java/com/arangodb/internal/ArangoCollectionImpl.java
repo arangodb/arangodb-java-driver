@@ -395,7 +395,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
 
     @Override
     public Collection<IndexEntity> getIndexes() {
-        return executorSync().execute(getIndexesRequest(), getIndexesResponseDeserializer());
+        return getIndexes(null);
+    }
+
+    @Override
+    public Collection<IndexEntity> getIndexes(final IndexListOptions options) {
+        return executorSync().execute(getIndexesRequest(options), getIndexesResponseDeserializer());
     }
 
     @Override

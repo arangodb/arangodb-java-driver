@@ -4,6 +4,7 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.InvertedIndexPrimarySort;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.entity.NLists;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -28,6 +29,7 @@ class InternalModule {
         module.addDeserializer(CollectionStatus.class, InternalDeserializers.COLLECTION_STATUS);
         module.addDeserializer(CollectionType.class, InternalDeserializers.COLLECTION_TYPE);
         module.addDeserializer(ReplicationFactor.class, InternalDeserializers.REPLICATION_FACTOR);
+        module.addDeserializer(NLists.class, InternalDeserializers.N_LISTS);
         module.addDeserializer(InternalResponse.class, InternalDeserializers.RESPONSE);
         module.addDeserializer(InvertedIndexPrimarySort.Field.class, InternalDeserializers.INVERTED_INDEX_PRIMARY_SORT_FIELD);
 
