@@ -438,7 +438,7 @@ workflows:
             parameters:
               docker-img:
                 - 'docker.io/arangodb/enterprise:3.12'
-                - 'docker.io/arangodb/enterprise-preview:4.0-nightly'
+                - 'docker.io/arangodb/core-preview:4-nightly'
               topology:
                 - 'single'
                 - 'cluster'

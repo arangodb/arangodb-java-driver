@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Configuration environment variables:
-#   STARTER_MODE:             (single|cluster|activefailover), default single
+#   STARTER_MODE:             (single|cluster), default single
 #   DOCKER_IMAGE:             ArangoDB docker image, default docker.io/arangodb/enterprise:latest
+#   TOOLS_DOCKER_IMAGE:       ArangoDB client-tools docker image, default docker.io/arangodb/client-tools-preview:4-nightly
 #   STARTER_DOCKER_IMAGE:     ArangoDB Starter docker image
 #   SSL:                      (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
@@ -14,12 +15,20 @@ STARTER_MODE=${STARTER_MODE:=single}
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/enterprise:latest}
 STARTER_VERSION=$(docker run --rm -e ARANGO_NO_AUTH=1 --entrypoint arangodb ${DOCKER_IMAGE} --version | { read -r first rest; echo "${rest%%,*}"; })
 ARANGO_VERSION=$(docker run --rm --entrypoint arangod ${DOCKER_IMAGE} --version | awk '/^server-version:/ {print $2}')
+ARANGO_MAJOR_VERSION=$(echo "$ARANGO_VERSION" | cut -d'.' -f1)
 ARANGO_MINOR_VERSION=$(echo "$ARANGO_VERSION" | cut -d'.' -f1,2)
 echo "arangod version: $ARANGO_VERSION"
+echo "arangod major version: $ARANGO_MAJOR_VERSION"
 echo "arangod minor version: $ARANGO_MINOR_VERSION"
 STARTER_DOCKER_IMAGE=${STARTER_DOCKER_IMAGE:=docker.io/arangodb/arangodb-starter:$STARTER_VERSION}
+TOOLS_DOCKER_IMAGE=${TOOLS_DOCKER_IMAGE:=docker.io/arangodb/client-tools-preview:4-nightly}
+
+if [ "$ARANGO_MAJOR_VERSION" == "3" ]; then
+  TOOLS_DOCKER_IMAGE=$DOCKER_IMAGE
+fi
 
 echo "starter docker image: $STARTER_DOCKER_IMAGE"
+echo "tools docker image: $TOOLS_DOCKER_IMAGE"
 SSL=${SSL:=false}
 COMPRESSION=${COMPRESSION:=false}
 
@@ -31,6 +40,7 @@ set -e
 
 docker pull $STARTER_DOCKER_IMAGE
 docker pull $DOCKER_IMAGE
+docker pull $TOOLS_DOCKER_IMAGE
 
 LOCATION=$(pwd)/$(dirname "$0")
 AUTHORIZATION_HEADER=$(cat "$LOCATION"/jwtHeader)
@@ -99,7 +109,7 @@ set +e
 for a in ${COORDINATORS[*]} ; do
     echo ""
     echo "Setting username and password..."
-    docker run --rm ${DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
+    docker run --rm ${TOOLS_DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
 done
 set -e
 
@@ -123,9 +133,3 @@ for a in ${COORDINATORS[*]} ; do
     echo "$SCHEME://$a"
     echo ""
 done
-
-if [ "$STARTER_MODE" == "activefailover" ]; then
-  LEADER=$("$LOCATION"/find_active_endpoint.sh)
-  echo "Leader: $SCHEME://$LEADER"
-  echo ""
-fi
