@@ -45,7 +45,7 @@ class VectorIndexTest extends BaseJunit5 {
 
     @BeforeAll
     static void init() {
-        assumeTrue(isAtLeastVersion(3, 12, 10));
+        assumeTrue(isAtLeastVersion(3, 12, 9));
         initCollections(COLLECTION_NAME);
     }
 
@@ -61,6 +61,7 @@ class VectorIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("collectionsAndMetrics")
     void fixedModeEveryMetric(ArangoCollection collection, VectorIndexParams.Metric metric) {
+        assumeTrue (isAtLeastVersion(3, 12, 10));
         VectorIndexTestSupport.fixedModeEveryMetric(new SyncOperations(collection), metric);
     }
 
@@ -73,6 +74,7 @@ class VectorIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("collections")
     void explicitScalingModeAndShardDetails(ArangoCollection collection) {
+        assumeTrue (isAtLeastVersion(3, 12, 10));
         VectorIndexTestSupport.explicitScalingModeAndShardDetails(new SyncOperations(collection));
     }
 
@@ -85,6 +87,7 @@ class VectorIndexTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("collections")
     void foregroundAndBackgroundUnusableResponses(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 12, 10));
         VectorIndexTestSupport.foregroundAndBackgroundUnusableResponses(new SyncOperations(collection));
     }
 

@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.arangodb.BaseJunit5.isAtLeastVersion;
+import static com.arangodb.BaseJunit5.isLessThanVersion;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
@@ -74,8 +76,10 @@ final class VectorIndexTestSupport {
                 .nLists(NLists.fixed(2))
                 .factory("IVF2,Flat")
                 .defaultNProbe(2)
-                .trainingIterations(2)
-                .numberOfDocsPerCentroid(4);
+                .trainingIterations(2);
+        if (isAtLeastVersion(3, 12, 10)) {
+            params.numberOfDocsPerCentroid(4);
+        }
         VectorIndexOptions options = new VectorIndexOptions()
                 .name("vector_" + metric)
                 .parallelism(2)
@@ -116,18 +120,27 @@ final class VectorIndexTestSupport {
         VectorIndexParams requested = new VectorIndexParams()
                 .metric(VectorIndexParams.Metric.cosine)
                 .dimension(DIMENSION);
+        if (isLessThanVersion(3, 12, 10)) {
+            requested.nLists(2);
+        }
         IndexEntity created = waitUntilReady(ops, ops.ensure(Collections.singletonList(field),
                 new VectorIndexOptions().params(requested)));
 
         VectorIndexParams actual = created.getParams();
         assertThat(actual.getMetric()).isEqualTo(VectorIndexParams.Metric.cosine);
         assertThat(actual.getDimension()).isEqualTo(DIMENSION);
+        if (isLessThanVersion(3, 12, 10)) {
+            assertThat(actual.getnLists()).isEqualTo(2);
+        } else {
+            assertThat(actual.getnLists()).isNull();
+            assertDefaultScaling((NLists.ObjectNLists) actual.getNLists());
+        }
         assertThat(actual.getDefaultNProbe()).isEqualTo(1);
         assertThat(actual.getTrainingIterations()).isEqualTo(25);
-        assertThat(actual.getNumberOfDocsPerCentroid()).isEqualTo(100);
+        if (isAtLeastVersion(3, 12, 10)) {
+            assertThat(actual.getNumberOfDocsPerCentroid()).isEqualTo(100);
+        }
         assertThat(actual.getFactory()).isNull();
-        assertThat(actual.getnLists()).isNull();
-        assertDefaultScaling((NLists.ObjectNLists) actual.getNLists());
         assertThat(created.getSparse()).isFalse();
         assertThat(created.getTrainingState()).isEqualTo(VectorIndexTrainingState.ready);
     }
@@ -150,9 +163,10 @@ final class VectorIndexTestSupport {
                 .nLists(scaling)
                 .factory("IVF{},Flat")
                 .defaultNProbe(3)
-                .trainingIterations(2)
-                .numberOfDocsPerCentroid(4);
-
+                .trainingIterations(2);
+        if (isAtLeastVersion(3, 12, 10)) {
+            params.numberOfDocsPerCentroid(4);
+        }
         IndexEntity created = waitUntilReady(ops, ops.ensure(Collections.singletonList(field),
                 new VectorIndexOptions().name("scaling_index").sparse(true).params(params)));
         assertVectorIndex(created, field, params);
@@ -172,8 +186,10 @@ final class VectorIndexTestSupport {
                 .metric(VectorIndexParams.Metric.innerProduct)
                 .dimension(DIMENSION)
                 .nLists(NLists.fixed(2))
-                .trainingIterations(2)
-                .numberOfDocsPerCentroid(4);
+                .trainingIterations(2);
+        if (isAtLeastVersion(3, 12, 10)) {
+            params.numberOfDocsPerCentroid(4);
+        }
         IndexEntity created = ops.ensure(Collections.singletonList(field), new VectorIndexOptions()
                 .name("late_index")
                 .inBackground(true)
@@ -251,9 +267,11 @@ final class VectorIndexTestSupport {
         assertInvalidScaling(ops, validScaling().tiers(new NLists.ObjectNLists.Tier(0, 1)));
         assertInvalidScaling(ops, validScaling().tiers(new NLists.ObjectNLists.Tier(1, 0)));
 
-        VectorIndexParams invalidSample = fixedParams().numberOfDocsPerCentroid(0);
-        assertResponseCode(catchThrowable(() -> ops.ensure(Collections.singletonList("v"),
-                new VectorIndexOptions().params(invalidSample))), 400);
+        if (isAtLeastVersion(3, 12, 10)) {
+            VectorIndexParams invalidSample = fixedParams().numberOfDocsPerCentroid(0);
+            assertResponseCode(catchThrowable(() -> ops.ensure(Collections.singletonList("v"),
+                    new VectorIndexOptions().params(invalidSample))), 400);
+        }
 
         String[] storedValues = new String[33];
         for (int i = 0; i < storedValues.length; i++) {
