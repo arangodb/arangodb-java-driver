@@ -700,7 +700,8 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Creates a vector index for the collection, if it does not already exist.
      *
      * @param fields  A list with exactly one attribute path to specify where the vector embedding is stored in each
-     *                document. The vector data needs to be populated before creating the index.
+     *                document. Since ArangoDB 3.12.9, the vector data can be inserted after the index is created;
+     *                the server trains the index when enough data is available.
      *                If you want to index another vector embedding attribute, you need to create a separate vector
      *                index.
      * @param options index creation options
@@ -721,6 +722,15 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * Documentation</a>
      */
     Collection<IndexEntity> getIndexes();
+
+    /**
+     * Fetches indexes with optional hidden-index and statistics information.
+     *
+     * @param options list options, or {@code null} for the server defaults
+     * @return information about the indexes
+     * @since ArangoDB 3.12.10
+     */
+    Collection<IndexEntity> getIndexes(IndexListOptions options);
 
     /**
      * Fetches a list of all inverted indexes on this collection.
