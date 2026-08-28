@@ -36,8 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.arangodb.BaseJunit5.isAtLeastVersion;
-import static com.arangodb.BaseJunit5.isLessThanVersion;
+import static com.arangodb.BaseJunit5.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
@@ -98,6 +97,9 @@ final class VectorIndexTestSupport {
         IndexEntity existing = ops.ensure(Collections.singletonList(field), options);
         assertThat(existing.getIsNewlyCreated()).isFalse();
         IndexEntity byHandle = ops.get(created.getId());
+        if (isCluster()) {
+            byHandle = getIndexWithTrainingMetadata(ops, byHandle.getId());
+        }
         assertVectorIndex(byHandle, field, params);
         assertThat(byHandle.getName()).isEqualTo(created.getName());
         String key = created.getId().substring(created.getId().indexOf('/') + 1);
@@ -195,6 +197,9 @@ final class VectorIndexTestSupport {
                 .inBackground(true)
                 .sparse(true)
                 .params(params));
+        if (isCluster()) {
+            created = getIndexWithTrainingMetadata(ops, created.getId());
+        }
         assertThat(created.getTrainingState()).isEqualTo(VectorIndexTrainingState.unusable);
         assertThat(created.getErrorMessage()).isNotBlank();
 
@@ -202,12 +207,20 @@ final class VectorIndexTestSupport {
         BaseDocument nullVector = new BaseDocument();
         nullVector.addAttribute(field, null);
         ops.insert(Arrays.asList(missing, nullVector));
-        assertThat(ops.get(created.getId()).getTrainingState()).isEqualTo(VectorIndexTrainingState.unusable);
+        created = ops.get(created.getId());
+        if (isCluster()) {
+            created = getIndexWithTrainingMetadata(ops, created.getId());
+        }
+        assertThat(created.getTrainingState()).isEqualTo(VectorIndexTrainingState.unusable);
 
         ops.insert(vectorDocuments(field, 8));
-        IndexEntity ready = waitUntilReady(ops, created);
-        assertThat(ready.getTrainingState()).isEqualTo(VectorIndexTrainingState.ready);
-        assertThat(ready.getErrorMessage()).isNullOrEmpty();
+        waitUntilReady(ops, created);
+        created = ops.get(created.getId());
+        if (isCluster()) {
+            created = getIndexWithTrainingMetadata(ops, created.getId());
+        }
+        assertThat(created.getTrainingState()).isEqualTo(VectorIndexTrainingState.ready);
+        assertThat(created.getErrorMessage()).isNullOrEmpty();
     }
 
     static void foregroundAndBackgroundUnusableResponses(final Operations ops) {
@@ -225,6 +238,8 @@ final class VectorIndexTestSupport {
                 .params(params));
 
         assertUnusable(foreground);
+        foreground = waitUntilUnusableMetadata(ops, foreground);
+        background = waitUntilUnusableMetadata(ops, background);
         assertUnusable(background);
         Collection<IndexEntity> listed = ops.indexes(new IndexListOptions().withHidden(true));
         for (IndexEntity index : Arrays.asList(findById(listed, foreground.getId()),
@@ -326,6 +341,9 @@ final class VectorIndexTestSupport {
     private static IndexEntity waitUntilReady(final Operations ops, final IndexEntity created) {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
         IndexEntity current = created;
+        if (isCluster()) {
+            current = getIndexWithTrainingMetadata(ops, current.getId());
+        }
         while (current.getTrainingState() != VectorIndexTrainingState.ready && System.nanoTime() < deadline) {
             try {
                 Thread.sleep(50);
@@ -334,11 +352,45 @@ final class VectorIndexTestSupport {
                 throw new AssertionError("interrupted while waiting for vector-index training", e);
             }
             current = ops.get(created.getId());
+            if (isCluster()) {
+                current = getIndexWithTrainingMetadata(ops, current.getId());
+            }
         }
         assertThat(current.getTrainingState())
                 .withFailMessage("vector index did not become ready: %s", current.getErrorMessage())
                 .isEqualTo(VectorIndexTrainingState.ready);
         return current;
+    }
+
+    private static IndexEntity waitUntilUnusableMetadata(final Operations ops, final IndexEntity created) {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
+        IndexEntity current = getIndexWithTrainingMetadata(ops, created.getId());
+        while (!hasUnusableMetadata(current) && System.nanoTime() < deadline) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new AssertionError("interrupted while waiting for vector-index training metadata", e);
+            }
+            current = getIndexWithTrainingMetadata(ops, created.getId());
+        }
+        assertThat(hasUnusableMetadata(current))
+                .withFailMessage("vector index did not report unusable training metadata: %s", current.getErrorMessage())
+                .isTrue();
+        return current;
+    }
+
+    private static boolean hasUnusableMetadata(final IndexEntity index) {
+        return index.getTrainingState() == VectorIndexTrainingState.unusable
+                && index.getErrorMessage() != null
+                && !index.getErrorMessage().trim().isEmpty()
+                && index.getShards() != null
+                && !index.getShards().isEmpty()
+                && index.getShards().values().stream().allMatch(shard ->
+                shard.getTrainingState() == VectorIndexTrainingState.unusable
+                        && shard.getError() != null
+                        && !shard.getError().trim().isEmpty()
+                        && Integer.valueOf(0).equals(shard.getResolvedNLists()));
     }
 
     private static void assertVectorIndex(final IndexEntity index, final String field,
@@ -375,6 +427,10 @@ final class VectorIndexTestSupport {
     private static void assertUnusable(final IndexEntity index) {
         assertThat(index.getTrainingState()).isEqualTo(VectorIndexTrainingState.unusable);
         assertThat(index.getErrorMessage()).isNotBlank();
+    }
+
+    private static IndexEntity getIndexWithTrainingMetadata(final Operations ops, final String id) {
+        return findById(ops.indexes(new IndexListOptions().withHidden(true)), id);
     }
 
     private static IndexEntity findById(final Collection<IndexEntity> indexes, final String id) {

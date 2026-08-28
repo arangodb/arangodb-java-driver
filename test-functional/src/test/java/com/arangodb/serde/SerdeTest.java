@@ -178,16 +178,26 @@ class SerdeTest {
     void vectorIndexTrainingMetadataSerde(ContentType type) {
         InternalSerde s = new InternalSerdeProvider(type).create();
         for (VectorIndexTrainingState state : VectorIndexTrainingState.values()) {
-            String json = "{\"type\":\"vector\",\"trainingState\":\"" + state.name()
-                    + "\",\"errorMessage\":\"training detail\",\"shards\":{\"s1\":{"
+            String json = "{\"id\":\"coll/68\",\"name\":\"vector_l2\",\"type\":\"vector\","
+                    + "\"params\":{\"metric\":\"l2\",\"dimension\":8,\"nLists\":{"
+                    + "\"strategy\":\"autoSqrt\",\"multiplier\":4,\"minNLists\":2}},"
+                    + "\"trainingState\":\"" + state.name()
+                    + "\",\"errorMessage\":\"training detail\",\"shards\":{\"s10042\":{"
                     + "\"trainingState\":\"" + state.name()
                     + "\",\"error\":\"shard detail\",\"resolvedNLists\":17}}}";
 
             IndexEntity index = s.deserialize(s.serialize(RawJson.of(json)), IndexEntity.class);
+            assertThat(index.getParams()).isEqualTo(new VectorIndexParams()
+                    .metric(VectorIndexParams.Metric.l2)
+                    .dimension(8)
+                    .nLists(NLists.scaling()
+                            .strategy(NLists.ObjectNLists.Strategy.autoSqrt)
+                            .multiplier(4)
+                            .minNLists(2)));
             assertThat(index.getTrainingState()).isEqualTo(state);
             assertThat(index.getErrorMessage()).isEqualTo("training detail");
-            assertThat(index.getShards()).containsOnlyKeys("s1");
-            VectorIndexShardStatus shard = index.getShards().get("s1");
+            assertThat(index.getShards()).containsOnlyKeys("s10042");
+            VectorIndexShardStatus shard = index.getShards().get("s10042");
             assertThat(shard.getTrainingState()).isEqualTo(state);
             assertThat(shard.getError()).isEqualTo("shard detail");
             assertThat(shard.getResolvedNLists()).isEqualTo(17);
