@@ -2052,8 +2052,10 @@ class ArangoCollectionTest extends BaseJunit5 {
                 .nLists(10)
                 .factory("IVF10_HNSW5,Flat")
                 .defaultNProbe(2)
-                .numberOfDocsPerCentroid(100)
                 .trainingIterations(10);
+        if (isAtLeastVersion(3, 12, 10)) {
+            params.numberOfDocsPerCentroid(100);
+        }
         Collection<String> fields = Collections.singletonList(f1);
         IndexEntity created = collection.ensureVectorIndex(fields, new VectorIndexOptions()
                 .name(name)
