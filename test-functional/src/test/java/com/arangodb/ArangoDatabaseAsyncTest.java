@@ -887,6 +887,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void changeQueryTrackingProperties(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
+        final QueryTrackingPropertiesEntity initial = db.getQueryTrackingProperties().get();
         try {
             QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties().get();
             assertThat(properties).isNotNull();
@@ -895,16 +896,22 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
             assertThat(properties.getMaxQueryStringLength()).isPositive();
             assertThat(properties.getMaxSlowQueries()).isPositive();
             assertThat(properties.getSlowQueryThreshold()).isPositive();
+            assertThat(properties.getSlowStreamingQueryThreshold()).isPositive();
+            properties.setSlowStreamingQueryThreshold(30L);
+            properties = db.setQueryTrackingProperties(properties).get();
+            assertThat(properties.getSlowStreamingQueryThreshold()).isEqualTo(30L);
             properties.setEnabled(false);
             properties = db.setQueryTrackingProperties(properties).get();
             assertThat(properties).isNotNull();
             assertThat(properties.getEnabled()).isFalse();
             properties = db.getQueryTrackingProperties().get();
             assertThat(properties.getEnabled()).isFalse();
-        } finally {
-            final QueryTrackingPropertiesEntity properties = new QueryTrackingPropertiesEntity();
             properties.setEnabled(true);
-            db.setQueryTrackingProperties(properties).get();
+            properties = db.setQueryTrackingProperties(properties).get();
+            assertThat(properties.getEnabled()).isTrue();
+        } finally {
+            db.setQueryTrackingProperties(initial).get();
+            db.clearSlowQueries().get();
         }
     }
 
@@ -1347,7 +1354,28 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
         }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
         assertThat(queryEntity.getStream()).isFalse();
+        assertThat(queryEntity.getModificationQuery()).isFalse();
+        assertThat(queryEntity.getWarnings()).isZero();
         q.get();
+    }
+
+    @SlowTest
+    @ParameterizedTest
+    @MethodSource("asyncDbs")
+    void getCurrentlyRunningModificationQuery(ArangoDatabaseAsync db) throws InterruptedException, ExecutionException {
+        String query = "INSERT { value: sleep(1) } INTO " + CNAME1;
+        CompletableFuture<ArangoCursorAsync<Void>> q = db.query(query, Void.class);
+        try {
+            Thread.sleep(300);
+            final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries().get();
+            assertThat(currentlyRunningQueries).hasSize(1);
+            final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+            assertThat(queryEntity.getQuery()).isEqualTo(query);
+            assertThat(queryEntity.getModificationQuery()).isTrue();
+            assertThat(queryEntity.getWarnings()).isZero();
+        } finally {
+            q.get();
+        }
     }
 
     @SlowTest
@@ -1379,35 +1407,62 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void getAndClearSlowQueries(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        db.clearSlowQueries().get();
+        final QueryTrackingPropertiesEntity initial = db.getQueryTrackingProperties().get();
+        try {
+            db.clearSlowQueries().get();
 
-        final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties().get();
-        final Long slowQueryThreshold = properties.getSlowQueryThreshold();
-        properties.setSlowQueryThreshold(1L);
-        db.setQueryTrackingProperties(properties).get();
+            final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties().get();
+            properties.setSlowQueryThreshold(1L);
+            db.setQueryTrackingProperties(properties).get();
 
-        String query = "return sleep(1.1)";
-        db.query(query, Void.class).get();
-        final Collection<QueryEntity> slowQueries = db.getSlowQueries().get();
-        assertThat(slowQueries).hasSize(1);
-        final QueryEntity queryEntity = slowQueries.iterator().next();
-        assertThat(queryEntity.getId()).isNotNull();
-        assertThat(queryEntity.getDatabase()).isEqualTo(db.name());
-        assertThat(queryEntity.getUser()).isEqualTo("root");
-        assertThat(queryEntity.getQuery()).isEqualTo(query);
-        assertThat(queryEntity.getBindVars()).isEmpty();
-        assertThat(queryEntity.getStarted()).isInThePast();
-        assertThat(queryEntity.getRunTime()).isPositive();
-        if (isAtLeastVersion(3, 11)) {
-            assertThat(queryEntity.getPeakMemoryUsage()).isNotNull();
+            String readQuery = "RETURN sleep(1.1)";
+            db.query(readQuery, Void.class).get();
+            Collection<QueryEntity> slowQueries = db.getSlowQueries().get();
+            assertThat(slowQueries).hasSize(1);
+            QueryEntity readQueryEntity = slowQueries.iterator().next();
+            assertThat(readQueryEntity.getId()).isNotNull();
+            assertThat(readQueryEntity.getDatabase()).isEqualTo(db.name());
+            assertThat(readQueryEntity.getUser()).isEqualTo("root");
+            assertThat(readQueryEntity.getQuery()).isEqualTo(readQuery);
+            assertThat(readQueryEntity.getBindVars()).isEmpty();
+            assertThat(readQueryEntity.getStarted()).isInThePast();
+            assertThat(readQueryEntity.getRunTime()).isPositive();
+            assertThat(readQueryEntity.getPeakMemoryUsage()).isNotNull();
+            assertThat(readQueryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
+            assertThat(readQueryEntity.getStream()).isFalse();
+            assertThat(readQueryEntity.getModificationQuery()).isFalse();
+            assertThat(readQueryEntity.getWarnings()).isZero();
+            assertThat(readQueryEntity.getExitCode()).isZero();
+
+            db.clearSlowQueries().get();
+            String writeQuery = "INSERT { value: sleep(1.1) } INTO " + CNAME1;
+            db.query(writeQuery, Void.class).get();
+            slowQueries = db.getSlowQueries().get();
+            assertThat(slowQueries).hasSize(1);
+            QueryEntity writeQueryEntity = slowQueries.iterator().next();
+            assertThat(writeQueryEntity.getQuery()).isEqualTo(writeQuery);
+            assertThat(writeQueryEntity.getModificationQuery()).isTrue();
+            assertThat(writeQueryEntity.getWarnings()).isZero();
+            assertThat(writeQueryEntity.getExitCode()).isZero();
+
+            db.clearSlowQueries().get();
+            properties.setSlowQueryThreshold(0L);
+            db.setQueryTrackingProperties(properties).get();
+            String failedQuery = "RETURN 1 / 0";
+            Throwable thrown = catchThrowable(() -> db.query(failedQuery, Void.class,
+                    new AqlQueryOptions().failOnWarning(true)).get()).getCause();
+            assertThat(thrown).isInstanceOf(ArangoDBException.class);
+            slowQueries = db.getSlowQueries().get();
+            assertThat(slowQueries).hasSize(1);
+            QueryEntity failedQueryEntity = slowQueries.iterator().next();
+            assertThat(failedQueryEntity.getQuery()).isEqualTo(failedQuery);
+            assertThat(failedQueryEntity.getModificationQuery()).isFalse();
+            assertThat(failedQueryEntity.getWarnings()).isZero();
+            assertThat(failedQueryEntity.getExitCode()).isEqualTo(1562);
+        } finally {
+            db.clearSlowQueries().get();
+            db.setQueryTrackingProperties(initial).get();
         }
-        assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
-        assertThat(queryEntity.getStream()).isFalse();
-
-        db.clearSlowQueries().get();
-        assertThat(db.getSlowQueries().get()).isEmpty();
-        properties.setSlowQueryThreshold(slowQueryThreshold);
-        db.setQueryTrackingProperties(properties).get();
     }
 
     @ParameterizedTest

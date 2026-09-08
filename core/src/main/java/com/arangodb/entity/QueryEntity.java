@@ -39,6 +39,9 @@ public final class QueryEntity {
     private Long peakMemoryUsage;
     private QueryExecutionState state;
     private Boolean stream;
+    private Boolean modificationQuery;
+    private Long warnings;
+    private Integer exitCode;
 
     /**
      * @return the query's id
@@ -110,15 +113,60 @@ public final class QueryEntity {
         return stream;
     }
 
+    /**
+     * For running queries: Whether the query writes data ({@code true}) or only reads ({@code false}).
+     * <p>
+     * For slow queries: Whether the query wrote data ({@code true}) or only read ({@code false}).
+     *
+     * @return whether the query modifies data, or {@code null} if not reported by the server
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-running-aql-queries">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-slow-aql-queries">API Documentation</a>
+     */
+    public Boolean getModificationQuery() {
+        return modificationQuery;
+    }
+
+    /**
+     * The number of query warnings that occurred.
+     * <p>
+     * For running queries:
+     * Values other than {@code 0} may not be observable because this information
+     * typically becomes available when the query finishes, at which point
+     * it is no longer listed as a running query. However, other values can be
+     * observed when enabling {@code stream} and there is more than one batch of
+     * results.
+     *
+     * @return the number of query warnings, or {@code null} if not reported by the server
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-running-aql-queries">API Documentation</a>
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-slow-aql-queries">API Documentation</a>
+     */
+    public Long getWarnings() {
+        return warnings;
+    }
+
+    /**
+     * An error code ({@code errorNum}) that indicates why the query
+     * failed, or {@code 0} on success. See
+     * <a href="https://docs.arango.ai/arangodb/stable/develop/error-codes/">The error codes of ArangoDB and their meanings</a>.
+     * <p>
+     * This attribute is reported for slow queries, not for currently running queries.
+     *
+     * @return the query exit code, or {@code null} if not reported by the server
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#list-the-slow-aql-queries">API Documentation</a>
+     */
+    public Integer getExitCode() {
+        return exitCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof QueryEntity)) return false;
         QueryEntity that = (QueryEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(database, that.database) && Objects.equals(user, that.user) && Objects.equals(query, that.query) && Objects.equals(bindVars, that.bindVars) && Objects.equals(started, that.started) && Objects.equals(runTime, that.runTime) && Objects.equals(peakMemoryUsage, that.peakMemoryUsage) && state == that.state && Objects.equals(stream, that.stream);
+        return Objects.equals(id, that.id) && Objects.equals(database, that.database) && Objects.equals(user, that.user) && Objects.equals(query, that.query) && Objects.equals(bindVars, that.bindVars) && Objects.equals(started, that.started) && Objects.equals(runTime, that.runTime) && Objects.equals(peakMemoryUsage, that.peakMemoryUsage) && state == that.state && Objects.equals(stream, that.stream) && Objects.equals(modificationQuery, that.modificationQuery) && Objects.equals(warnings, that.warnings) && Objects.equals(exitCode, that.exitCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, database, user, query, bindVars, started, runTime, peakMemoryUsage, state, stream);
+        return Objects.hash(id, database, user, query, bindVars, started, runTime, peakMemoryUsage, state, stream, modificationQuery, warnings, exitCode);
     }
 }

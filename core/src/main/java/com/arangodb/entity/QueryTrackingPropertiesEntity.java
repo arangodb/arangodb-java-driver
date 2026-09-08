@@ -31,6 +31,7 @@ public final class QueryTrackingPropertiesEntity {
     private Boolean trackSlowQueries;
     private Long maxSlowQueries;
     private Long slowQueryThreshold;
+    private Long slowStreamingQueryThreshold;
     private Long maxQueryStringLength;
 
     public QueryTrackingPropertiesEntity() {
@@ -92,23 +93,44 @@ public final class QueryTrackingPropertiesEntity {
     }
 
     /**
-     * @return The threshold value for treating a query as slow. A query with a runtime greater or equal to this
-     * threshold value will be put into the list of slow queries when slow query tracking is enabled. The value
-     * for slowQueryThreshold is specified in seconds.
+     * @return If the runtime of a regular query (in seconds) is greater or equal to this value, it is added to the list of
+     * slow queries if slow query tracking is enabled.
+     * @see #getSlowStreamingQueryThreshold()
      */
     public Long getSlowQueryThreshold() {
         return slowQueryThreshold;
     }
 
     /**
-     * @param slowQueryThreshold The threshold value for treating a query as slow. A query with a runtime greater or
-     *                           equal to this
-     *                           threshold value will be put into the list of slow queries when slow query tracking
-     *                           is enabled. The
-     *                           value for slowQueryThreshold is specified in seconds.
+     * @param slowQueryThreshold If the runtime of a regular query (in seconds) is greater or equal to this value, it is
+     *                           added to the list of slow queries if slow query tracking is enabled.
+     * @see #setSlowStreamingQueryThreshold(Long)
      */
     public void setSlowQueryThreshold(final Long slowQueryThreshold) {
         this.slowQueryThreshold = slowQueryThreshold;
+    }
+
+    /**
+     * @return If the runtime of a streaming query ({@code stream} set to {@code true}; in seconds) is greater or equal
+     * to this value, it is added to the list of slow queries if slow query tracking is enabled.
+     * @see #getSlowQueryThreshold()
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#get-the-aql-query-tracking-configuration">API Documentation</a>
+     */
+    public Long getSlowStreamingQueryThreshold() {
+        return slowStreamingQueryThreshold;
+    }
+
+    /**
+     * @param slowStreamingQueryThreshold The threshold value for treating a streaming query as slow (in seconds).
+     *                                    A query with "stream" set to {@code true} and a runtime greater or equal to this
+     *                                    threshold value is put into the list of slow queries if slow query tracking
+     *                                    is enabled.
+     *                                    Default: Controlled by the {@code --query.slow-streaming-threshold} startup option.
+     * @see #setSlowQueryThreshold(Long)
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/queries/aql-queries/#update-the-aql-query-tracking-configuration">API Documentation</a>
+     */
+    public void setSlowStreamingQueryThreshold(final Long slowStreamingQueryThreshold) {
+        this.slowStreamingQueryThreshold = slowStreamingQueryThreshold;
     }
 
     /**
@@ -135,11 +157,11 @@ public final class QueryTrackingPropertiesEntity {
     public boolean equals(Object o) {
         if (!(o instanceof QueryTrackingPropertiesEntity)) return false;
         QueryTrackingPropertiesEntity that = (QueryTrackingPropertiesEntity) o;
-        return Objects.equals(enabled, that.enabled) && Objects.equals(trackSlowQueries, that.trackSlowQueries) && Objects.equals(maxSlowQueries, that.maxSlowQueries) && Objects.equals(slowQueryThreshold, that.slowQueryThreshold) && Objects.equals(maxQueryStringLength, that.maxQueryStringLength);
+        return Objects.equals(enabled, that.enabled) && Objects.equals(trackSlowQueries, that.trackSlowQueries) && Objects.equals(maxSlowQueries, that.maxSlowQueries) && Objects.equals(slowQueryThreshold, that.slowQueryThreshold) && Objects.equals(slowStreamingQueryThreshold, that.slowStreamingQueryThreshold) && Objects.equals(maxQueryStringLength, that.maxQueryStringLength);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, trackSlowQueries, maxSlowQueries, slowQueryThreshold, maxQueryStringLength);
+        return Objects.hash(enabled, trackSlowQueries, maxSlowQueries, slowQueryThreshold, slowStreamingQueryThreshold, maxQueryStringLength);
     }
 }
