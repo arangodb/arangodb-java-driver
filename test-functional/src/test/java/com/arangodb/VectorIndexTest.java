@@ -27,6 +27,7 @@ import com.arangodb.entity.VectorIndexParams;
 import com.arangodb.model.IndexListOptions;
 import com.arangodb.model.VectorIndexOptions;
 import com.arangodb.util.RawJson;
+import com.arangodb.util.SlowTest;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@SlowTest
 class VectorIndexTest extends BaseJunit5 {
 
     private static final String COLLECTION_NAME = "VectorIndexTest_collection";

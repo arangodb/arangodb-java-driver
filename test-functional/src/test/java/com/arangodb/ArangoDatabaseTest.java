@@ -830,37 +830,39 @@ class ArangoDatabaseTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @MethodSource("dbs")
-    void changeQueryCache(ArangoDatabase db) {
-        QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
+    @MethodSource("arangos")
+    void changeQueryCache(ArangoDB adb) {
+        final ArangoDatabase systemDb = adb.db();
+        QueryCachePropertiesEntity properties = systemDb.getQueryCacheProperties();
         assertThat(properties).isNotNull();
         assertThat(properties.getMode()).isEqualTo(CacheMode.off);
         assertThat(properties.getMaxResults()).isPositive();
 
         properties.setMode(CacheMode.on);
-        properties = db.setQueryCacheProperties(properties);
+        properties = systemDb.setQueryCacheProperties(properties);
         assertThat(properties).isNotNull();
         assertThat(properties.getMode()).isEqualTo(CacheMode.on);
 
-        properties = db.getQueryCacheProperties();
+        properties = systemDb.getQueryCacheProperties();
         assertThat(properties.getMode()).isEqualTo(CacheMode.on);
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
         properties2.setMode(CacheMode.off);
-        db.setQueryCacheProperties(properties2);
+        systemDb.setQueryCacheProperties(properties2);
     }
 
     @ParameterizedTest
     @MethodSource("dbs")
     void queryWithCache(ArangoDatabase db) {
         assumeTrue(isSingleServer());
+        final ArangoDatabase systemDb = db.arango().db();
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null);
         }
 
         final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
         properties.setMode(CacheMode.on);
-        db.setQueryCacheProperties(properties);
+        systemDb.setQueryCacheProperties(properties);
 
         final ArangoCursor<String> cursor = db
                 .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
@@ -878,7 +880,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
         properties2.setMode(CacheMode.off);
-        db.setQueryCacheProperties(properties2);
+        systemDb.setQueryCacheProperties(properties2);
     }
 
     @ParameterizedTest

@@ -2025,6 +2025,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         collection.truncate();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("cols")
     void createAndGetVectorIndex(ArangoCollection collection) {
