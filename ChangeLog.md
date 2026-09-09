@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.27.0] - 2026-09-09
+
+- added query tracking properties (#632)
+- improved support to vector indexes for ArangoDB 3.12.10 (#631)
 - deprecated API removed in ArangoDB 4.0 (DE-1169)
 
 ## [7.26.0] - 2026-04-07
