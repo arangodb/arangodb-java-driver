@@ -633,7 +633,7 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
      * @return information about the index
      * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/indexes/fulltext/#create-a-full-text-index">API
      * Documentation</a>
-     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
+     * @deprecated Removed in ArangoDB 4.0. Use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options);

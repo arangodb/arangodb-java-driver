@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
+ * @deprecated Removed in ArangoDB 4.0.
  */
 @Deprecated
 public enum CollectionStatus {
@@ -43,6 +44,10 @@ public enum CollectionStatus {
         return null;
     }
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0.
+     */
+    @Deprecated
     public int getStatus() {
         return status;
     }

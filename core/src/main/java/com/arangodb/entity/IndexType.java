@@ -30,20 +30,36 @@ public enum IndexType {
 
     primary,
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0. Use {@link #persistent} instead.
+     */
+    @Deprecated
     hash,
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0. Use {@link #persistent} instead.
+     */
+    @Deprecated
     skiplist,
 
     persistent,
 
     geo,
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0. Use {@link #geo} instead.
+     */
+    @Deprecated
     geo1,
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0. Use {@link #geo} instead.
+     */
+    @Deprecated
     geo2,
 
     /**
-     * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
+     * @deprecated Removed in ArangoDB 4.0. Use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     fulltext,

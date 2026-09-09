@@ -235,18 +235,24 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoDatabase#createAqlFunction(String, String, AqlFunctionCreateOptions)}
+     *
+     * @deprecated Removed in ArangoDB 4.0.
      */
     @Deprecated
     CompletableFuture<Void> createAqlFunction(String name, String code, AqlFunctionCreateOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#deleteAqlFunction(String, AqlFunctionDeleteOptions)}
+     *
+     * @deprecated Removed in ArangoDB 4.0.
      */
     @Deprecated
     CompletableFuture<Integer> deleteAqlFunction(String name, AqlFunctionDeleteOptions options);
 
     /**
      * Asynchronous version of {@link ArangoDatabase#getAqlFunctions(AqlFunctionGetOptions)}
+     *
+     * @deprecated Removed in ArangoDB 4.0.
      */
     @Deprecated
     CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctions(AqlFunctionGetOptions options);
@@ -276,6 +282,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoDatabase#transaction(String, Class, TransactionOptions)}
+     *
+     * @deprecated Removed in ArangoDB 4.0.
      */
     @Deprecated
     <T> CompletableFuture<T> transaction(String action, Class<T> type, TransactionOptions options);
@@ -312,6 +320,8 @@ public interface ArangoDatabaseAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoDatabase#reloadRouting()}
+     *
+     * @deprecated Removed in ArangoDB 4.0.
      */
     @Deprecated
     CompletableFuture<Void> reloadRouting();

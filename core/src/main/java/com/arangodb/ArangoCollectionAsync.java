@@ -294,6 +294,8 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
 
     /**
      * Asynchronous version of {@link ArangoCollection#ensureFulltextIndex(Iterable, FulltextIndexOptions)}
+     *
+     * @deprecated Removed in ArangoDB 4.0. Use ArangoSearch or Inverted indexes instead.
      */
     @Deprecated
     CompletableFuture<IndexEntity> ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options);

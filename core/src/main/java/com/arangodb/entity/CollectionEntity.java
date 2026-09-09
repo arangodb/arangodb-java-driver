@@ -60,6 +60,9 @@ public class CollectionEntity {
         return isSystem;
     }
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0.
+     */
     @Deprecated
     public CollectionStatus getStatus() {
         return status;

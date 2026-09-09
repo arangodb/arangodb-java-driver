@@ -24,7 +24,7 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- * @deprecated since ArangoDB 3.10, use ArangoSearch or Inverted indexes instead.
+ * @deprecated Removed in ArangoDB 4.0. Use ArangoSearch or Inverted indexes instead.
  */
 @Deprecated
 public final class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {

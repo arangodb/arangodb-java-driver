@@ -53,6 +53,9 @@ public final class OptionsBuilder {
         return options.fields(fields);
     }
 
+    /**
+     * @deprecated Removed in ArangoDB 4.0. Use Inverted indexes or ArangoSearch instead.
+     */
     @Deprecated
     public static FulltextIndexOptions build(final FulltextIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);

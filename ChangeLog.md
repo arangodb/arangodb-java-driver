@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- deprecated API removed in ArangoDB 4.0 (DE-1169)
+
 ## [7.26.0] - 2026-04-07
 
 - updated Jackson to version `2.21`
@@ -1676,4 +1678,3 @@ Added support for sparse indexes
 [1.4.0]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.2...1.4.0
 [1.2.2]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/arangodb/arangodb-java-driver/compare/1.2.0...1.2.1
-
