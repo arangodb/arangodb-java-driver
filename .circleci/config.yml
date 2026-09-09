@@ -319,7 +319,8 @@ jobs:
     resource_class: 'large'
     steps:
       - timeout
-      - checkout
+      - checkout:
+          method: full
       - setup_remote_docker
       - start-db
       - load_cache
