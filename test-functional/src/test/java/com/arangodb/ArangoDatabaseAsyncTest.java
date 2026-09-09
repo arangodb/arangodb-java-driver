@@ -899,6 +899,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
             assertThat(properties.getSlowStreamingQueryThreshold()).isPositive();
             properties.setSlowStreamingQueryThreshold(30L);
             properties = db.setQueryTrackingProperties(properties).get();
+            properties = db.getQueryTrackingProperties().get();
             assertThat(properties.getSlowStreamingQueryThreshold()).isEqualTo(30L);
             properties.setEnabled(false);
             properties = db.setQueryTrackingProperties(properties).get();
@@ -1459,6 +1460,18 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
             assertThat(failedQueryEntity.getModificationQuery()).isFalse();
             assertThat(failedQueryEntity.getWarnings()).isZero();
             assertThat(failedQueryEntity.getExitCode()).isEqualTo(1562);
+
+            db.clearSlowQueries().get();
+            // Division by zero deterministically produces one AQL warning when warnings are not fatal.
+            String warningQuery = "RETURN 1 / 0";
+            db.query(warningQuery, Void.class, new AqlQueryOptions().failOnWarning(false)).get();
+            slowQueries = db.getSlowQueries().get();
+            assertThat(slowQueries).hasSize(1);
+            QueryEntity warningQueryEntity = slowQueries.iterator().next();
+            assertThat(warningQueryEntity.getQuery()).isEqualTo(warningQuery);
+            assertThat(warningQueryEntity.getModificationQuery()).isFalse();
+            assertThat(warningQueryEntity.getWarnings()).isEqualTo(1L);
+            assertThat(warningQueryEntity.getExitCode()).isZero();
         } finally {
             db.clearSlowQueries().get();
             db.setQueryTrackingProperties(initial).get();
