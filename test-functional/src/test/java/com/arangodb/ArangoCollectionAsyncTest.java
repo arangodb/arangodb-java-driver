@@ -1972,6 +1972,7 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         collection.truncate().get();
     }
 
+    @SlowTest
     @ParameterizedTest
     @MethodSource("asyncCols")
     void createAndGetVectorIndex(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
