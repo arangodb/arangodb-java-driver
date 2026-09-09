@@ -707,37 +707,39 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
     }
 
     @ParameterizedTest
-    @MethodSource("asyncDbs")
-    void changeQueryCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
-        QueryCachePropertiesEntity properties = db.getQueryCacheProperties().get();
+    @MethodSource("asyncArangos")
+    void changeQueryCache(ArangoDBAsync adb) throws ExecutionException, InterruptedException {
+        final ArangoDatabaseAsync systemDb = adb.db();
+        QueryCachePropertiesEntity properties = systemDb.getQueryCacheProperties().get();
         assertThat(properties).isNotNull();
         assertThat(properties.getMode()).isEqualTo(CacheMode.off);
         assertThat(properties.getMaxResults()).isPositive();
 
         properties.setMode(CacheMode.on);
-        properties = db.setQueryCacheProperties(properties).get();
+        properties = systemDb.setQueryCacheProperties(properties).get();
         assertThat(properties).isNotNull();
         assertThat(properties.getMode()).isEqualTo(CacheMode.on);
 
-        properties = db.getQueryCacheProperties().get();
+        properties = systemDb.getQueryCacheProperties().get();
         assertThat(properties.getMode()).isEqualTo(CacheMode.on);
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
         properties2.setMode(CacheMode.off);
-        db.setQueryCacheProperties(properties2).get();
+        systemDb.setQueryCacheProperties(properties2).get();
     }
 
     @ParameterizedTest
     @MethodSource("asyncDbs")
     void queryWithCache(ArangoDatabaseAsync db) throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
+        final ArangoDatabaseAsync systemDb = db.arango().db();
         for (int i = 0; i < 10; i++) {
             db.collection(CNAME1).insertDocument(new BaseDocument(), null).get();
         }
 
         final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
         properties.setMode(CacheMode.on);
-        db.setQueryCacheProperties(properties).get();
+        systemDb.setQueryCacheProperties(properties).get();
 
         final ArangoCursorAsync<String> cursor = db
                 .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", String.class,
@@ -755,7 +757,7 @@ class ArangoDatabaseAsyncTest extends BaseJunit5 {
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
         properties2.setMode(CacheMode.off);
-        db.setQueryCacheProperties(properties2).get();
+        systemDb.setQueryCacheProperties(properties2).get();
     }
 
     @ParameterizedTest
