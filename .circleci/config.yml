@@ -112,8 +112,7 @@ commands:
           name: Trigger Javadoc update
           command: |
             version="${CIRCLE_TAG#deploy-}"
-            curl --fail --location --silent --show-error --output /dev/null \
-              "https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/${version}"
+            curl -v --fail "https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/${version}"
 
 executors:
   j17:
