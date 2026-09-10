@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [7.28.0] - 2026-09-10
+
+- updated dependencies (#634)
+
 ## [7.27.0] - 2026-09-09
 
 - added query tracking properties (#632)
