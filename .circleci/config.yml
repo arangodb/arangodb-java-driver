@@ -112,8 +112,7 @@ commands:
           name: Trigger Javadoc update
           command: |
             version="${CIRCLE_TAG#deploy-}"
-            curl --fail --location --silent --show-error --output /dev/null \
-              "https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/${version}"
+            curl -v --fail "https://www.javadoc.io/doc/com.arangodb/arangodb-java-driver/${version}"
 
 executors:
   j17:
@@ -514,7 +513,8 @@ workflows:
           matrix:
             parameters:
               args:
-                - '-Dadb.jackson.version=2.21.1'
+                - '-Dadb.jackson.version=2.22.2'
+                - '-Dadb.jackson.version=2.21.6'
                 - '-Dadb.jackson.version=2.20.2'
                 - '-Dadb.jackson.version=2.19.4'
                 - '-Dadb.jackson.version=2.18.6'
