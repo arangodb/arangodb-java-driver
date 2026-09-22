@@ -7,11 +7,20 @@
 #   STARTER_DOCKER_IMAGE:     ArangoDB Starter docker image
 #   SSL:                      (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
-
+#   RBAC:                     (true|false), default false; demo uses a local RBAC server
 # EXAMPLE:
 # STARTER_MODE=cluster SSL=true ./start_db.sh
-
+set -e
 STARTER_MODE=${STARTER_MODE:=single}
+RBAC=${RBAC:-false}
+case "$RBAC" in true|false) ;; *) echo "RBAC must be true or false" >&2; exit 1 ;; esac
+LOCATION=$(cd -- "$(dirname -- "$0")" && pwd)
+if [ "$RBAC" == true ]; then
+    [ "$STARTER_MODE" = single ] || { echo "RBAC demo requires single mode" >&2; exit 1; }
+    source "$LOCATION/rbac_common.sh"
+    rbac_configure_host
+    rbac_require_running || { echo "Local RBAC server is not ready. Run docker/start_rbac.sh." >&2; exit 1; }
+fi
 DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/enterprise:latest}
 STARTER_VERSION=$(docker run --rm -e ARANGO_NO_AUTH=1 --entrypoint arangodb ${DOCKER_IMAGE} --version | { read -r first rest; echo "${rest%%,*}"; })
 ARANGO_VERSION=$(docker run --rm --entrypoint arangod ${DOCKER_IMAGE} --version | awk '/^server-version:/ {print $2}')
@@ -33,7 +42,9 @@ SSL=${SSL:=false}
 COMPRESSION=${COMPRESSION:=false}
 
 GW=172.28.0.1
-docker network create arangodb --subnet 172.28.0.0/16
+if ! docker network inspect arangodb >/dev/null 2>&1; then
+    docker network create arangodb --subnet 172.28.0.0/16 --gateway "$GW"
+fi
 
 # exit when any command fails
 set -e
@@ -42,9 +53,12 @@ docker pull $STARTER_DOCKER_IMAGE
 docker pull $DOCKER_IMAGE
 docker pull $TOOLS_DOCKER_IMAGE
 
-LOCATION=$(pwd)/$(dirname "$0")
 AUTHORIZATION_HEADER=$(cat "$LOCATION"/jwtHeader)
 
+RBAC_ARGS=()
+if [ "$RBAC" == true ]; then
+    RBAC_ARGS+=("--all.server.external-rbac-service=$RBAC_URL")
+fi
 STARTER_ARGS=
 SCHEME=http
 ARANGOSH_SCHEME=http+tcp
@@ -82,6 +96,7 @@ docker run -d \
     -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" \
     $STARTER_DOCKER_IMAGE \
     $STARTER_ARGS \
+    "${RBAC_ARGS[@]}" \
     --docker.net-mode=default \
     --docker.container=adb \
     --auth.jwt-secret=/data/jwtSecret \
@@ -93,8 +108,13 @@ docker run -d \
 
 
 wait_server() {
-    # shellcheck disable=SC2091
-    until $(curl --output /dev/null --insecure --fail --silent -i -H "$AUTHORIZATION_HEADER" "$SCHEME://$1/_api/version"); do
+    local deadline=$((SECONDS + 180))
+    until curl --output /dev/null --insecure --fail --silent --max-time 3 \
+        -H "$AUTHORIZATION_HEADER" "$SCHEME://$1/_api/version"; do
+        if (( SECONDS >= deadline )); then
+            echo "Database readiness timed out for $1. Inspect docker logs adb and the RBAC service logs." >&2
+            return 1
+        fi
         printf '.'
         sleep 1
     done
@@ -106,19 +126,27 @@ for a in ${COORDINATORS[*]} ; do
     wait_server "$a"
 done
 
-set +e
-for a in ${COORDINATORS[*]} ; do
-    echo ""
-    echo "Setting username and password..."
-    docker run --rm ${TOOLS_DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
-done
-set -e
+if [ "$RBAC" == true ]; then
+    # Set the root password with the bootstrap JWT. The demo signs in afterward.
+    curl --silent --show-error --insecure --fail --max-time 15 \
+        -H "$AUTHORIZATION_HEADER" -H 'Content-Type: application/json' \
+        -X PATCH -d '{"passwd":"test"}' \
+        "$SCHEME://${COORDINATORS[0]}/_db/_system/_api/user/root" >/dev/null
+else
+    set +e
+    for a in ${COORDINATORS[*]} ; do
+        echo ""
+        echo "Setting username and password..."
+        docker run --rm ${TOOLS_DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
+    done
+    set -e
 
-for a in ${COORDINATORS[*]} ; do
-    echo ""
-    echo "Requesting endpoint version..."
-    curl -u root:test --insecure --fail "$SCHEME://$a/_api/version"
-done
+    for a in ${COORDINATORS[*]} ; do
+        echo ""
+        echo "Requesting endpoint version..."
+        curl -u root:test --insecure --fail "$SCHEME://$a/_api/version"
+    done
+fi
 
 echo ""
 echo ""
