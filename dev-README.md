@@ -1,5 +1,11 @@
 # dev-README
 
+## Working on the driver
+
+- [Agent instructions and development skill](AGENTS.md)
+- [Architecture and ownership](.agents/skills/java-driver-development/references/architecture.md)
+- [Build and test guide](.agents/skills/java-driver-development/references/testing.md)
+
 ## Start DB
 Single:
 ```
@@ -20,17 +26,9 @@ mvn versions:display-plugin-updates
 ```
 
 ## Code Analysis
-Analyze (Spotbugs and JaCoCo):
-```
-mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -am -pl test-functional verify
-mvn -Dgpg.skip=true -Dmaven.javadoc.skip=true -Dmaven.test.skip verify
-```
-Reports:
-- [core](core/target/site/jacoco/index.html)
-- [jackson-serde-json](jackson-serde-json/target/site/jacoco/index.html)
-- [jackson-serde-vpack](jackson-serde-vpack/target/site/jacoco/index.html)
-- [http-protocol](http-protocol/target/site/jacoco/index.html)
-- [vst-protocol](vst-protocol/target/site/jacoco/index.html)
+
+See [CI parameters](.agents/skills/java-driver-development/references/testing.md#ci-parameters)
+for the local SpotBugs/JaCoCo commands and report locations.
 
 ## update native image reflection configuration
 To generate reflection configuration run [NativeImageHelper](./driver/src/test/java/helper/NativeImageHelper.java) and 

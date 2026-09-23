@@ -1,0 +1,4 @@
+interface:
+  display_name: "ArangoDB Java Driver Development"
+  short_description: "Maintain and extend the ArangoDB Java driver"
+  default_prompt: "Use $java-driver-development to implement and validate a change in this repository."
