@@ -25,6 +25,7 @@ import com.arangodb.internal.serde.UserDataInside;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -126,9 +127,22 @@ public final class CursorEntity<T> {
     public static final class Extras {
         private final Collection<CursorWarning> warnings = Collections.emptyList();
         private CursorStats stats;
+        private Map<String, Double> profile;
 
         public CursorStats getStats() {
             return stats;
+        }
+
+        /**
+         * Returns the query profiling information, if profiling was enabled and the result was not served from
+         * the query cache. For streaming queries, this information is only included in the last batch.
+         *
+         * @return execution time in seconds for each query phase, keyed by the phase names returned by the server,
+         * or {@code null} if profiling information is not available
+         * @see com.arangodb.model.AqlQueryOptions#profile(Boolean)
+         */
+        public Map<String, Double> getProfile() {
+            return profile;
         }
 
         public Collection<CursorWarning> getWarnings() {
@@ -139,12 +153,12 @@ public final class CursorEntity<T> {
         public boolean equals(Object o) {
             if (!(o instanceof Extras)) return false;
             Extras extras = (Extras) o;
-            return Objects.equals(warnings, extras.warnings) && Objects.equals(stats, extras.stats);
+            return Objects.equals(warnings, extras.warnings) && Objects.equals(stats, extras.stats) && Objects.equals(profile, extras.profile);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(warnings, stats);
+            return Objects.hash(warnings, stats, profile);
         }
     }
 

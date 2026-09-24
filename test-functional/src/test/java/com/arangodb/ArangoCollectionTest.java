@@ -3564,6 +3564,10 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(changedProperties.getWaitForSync()).isEqualTo(updatedOptions.getWaitForSync());
         assertThat(changedProperties.getWriteConcern()).isEqualTo(updatedOptions.getWriteConcern());
 
+        final CollectionPropertiesEntity persistedProperties = collection.getProperties();
+        assertThat(persistedProperties.getReplicationFactor().get()).isEqualTo(3);
+        assertThat(persistedProperties.getWriteConcern()).isEqualTo(2);
+
         Thread.sleep(1_000);
 
         // revert changes

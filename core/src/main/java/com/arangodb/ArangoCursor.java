@@ -29,6 +29,7 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -58,6 +59,17 @@ public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, C
      * ignoreErrors query option is specified)
      */
     CursorStats getStats();
+
+    /**
+     * Returns the query profiling information, if profiling was enabled with
+     * {@link AqlQueryOptions#profile(Boolean)} and the result was not served from the query cache.
+     * For streaming queries, profiling information is only available after the last batch has been fetched.
+     * This method does not fetch any additional batches.
+     *
+     * @return execution time in seconds for each query phase, keyed by the phase names returned by the server,
+     * or {@code null} if profiling information is not available
+     */
+    Map<String, Double> getProfile();
 
     /**
      * @return warnings which the query could have been produced
