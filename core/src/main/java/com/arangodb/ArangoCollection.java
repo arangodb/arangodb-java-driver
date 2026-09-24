@@ -856,6 +856,26 @@ public interface ArangoCollection extends ArangoSerdeAccessor {
     CollectionPropertiesEntity getProperties();
 
     /**
+     * Returns the collection properties, document count and statistics without extended storage-engine details.
+     *
+     * @return information about the collection, including its document count and figures
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-collection-statistics">API
+     * Documentation</a>
+     */
+    CollectionPropertiesEntity getFigures();
+
+    /**
+     * Returns the collection properties, document count and statistics.
+     * Requesting extended storage-engine details may add load to the server. Their format is subject to change.
+     *
+     * @param options additional options, can be null
+     * @return information about the collection, including its document count and figures
+     * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/collections/#get-the-collection-statistics">API
+     * Documentation</a>
+     */
+    CollectionPropertiesEntity getFigures(CollectionFiguresOptions options);
+
+    /**
      * Changes the properties of the collection
      *
      * @param options Additional options, can be null

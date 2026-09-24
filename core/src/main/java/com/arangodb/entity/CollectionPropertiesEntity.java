@@ -41,6 +41,7 @@ public final class CollectionPropertiesEntity extends CollectionEntity {
     private String smartJoinAttribute; // enterprise option
     private Integer writeConcern;
     private Long count;
+    private CollectionFiguresEntity figures;
 
     public CollectionPropertiesEntity() {
         super();
@@ -150,16 +151,28 @@ public final class CollectionPropertiesEntity extends CollectionEntity {
         this.count = count;
     }
 
+    /**
+     * @return collection statistics when retrieved with {@link com.arangodb.ArangoCollection#getFigures()},
+     * or null when not reported by the server
+     */
+    public CollectionFiguresEntity getFigures() {
+        return figures;
+    }
+
+    public void setFigures(CollectionFiguresEntity figures) {
+        this.figures = figures;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof CollectionPropertiesEntity)) return false;
         if (!super.equals(o)) return false;
         CollectionPropertiesEntity that = (CollectionPropertiesEntity) o;
-        return Objects.equals(cacheEnabled, that.cacheEnabled) && Objects.equals(distributeShardsLike, that.distributeShardsLike) && Objects.equals(isDisjoint, that.isDisjoint) && Objects.equals(isSmart, that.isSmart) && Objects.equals(keyOptions, that.keyOptions) && Objects.equals(numberOfShards, that.numberOfShards) && Objects.equals(replicationFactor, that.replicationFactor) && Objects.equals(shardKeys, that.shardKeys) && Objects.equals(shardingStrategy, that.shardingStrategy) && Objects.equals(smartGraphAttribute, that.smartGraphAttribute) && Objects.equals(smartJoinAttribute, that.smartJoinAttribute) && Objects.equals(writeConcern, that.writeConcern) && Objects.equals(count, that.count);
+        return Objects.equals(cacheEnabled, that.cacheEnabled) && Objects.equals(distributeShardsLike, that.distributeShardsLike) && Objects.equals(isDisjoint, that.isDisjoint) && Objects.equals(isSmart, that.isSmart) && Objects.equals(keyOptions, that.keyOptions) && Objects.equals(numberOfShards, that.numberOfShards) && Objects.equals(replicationFactor, that.replicationFactor) && Objects.equals(shardKeys, that.shardKeys) && Objects.equals(shardingStrategy, that.shardingStrategy) && Objects.equals(smartGraphAttribute, that.smartGraphAttribute) && Objects.equals(smartJoinAttribute, that.smartJoinAttribute) && Objects.equals(writeConcern, that.writeConcern) && Objects.equals(count, that.count) && Objects.equals(figures, that.figures);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), cacheEnabled, distributeShardsLike, isDisjoint, isSmart, keyOptions, numberOfShards, replicationFactor, shardKeys, shardingStrategy, smartGraphAttribute, smartJoinAttribute, writeConcern, count);
+        return Objects.hash(super.hashCode(), cacheEnabled, distributeShardsLike, isDisjoint, isSmart, keyOptions, numberOfShards, replicationFactor, shardKeys, shardingStrategy, smartGraphAttribute, smartJoinAttribute, writeConcern, count, figures);
     }
 }

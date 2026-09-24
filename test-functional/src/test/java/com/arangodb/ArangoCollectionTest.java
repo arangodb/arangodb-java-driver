@@ -3523,6 +3523,55 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
+    @ParameterizedTest
+    @MethodSource("cols")
+    void getFigures(ArangoCollection collection) {
+        final CollectionPropertiesEntity result = collection.getFigures();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getType()).isEqualTo(CollectionType.DOCUMENT);
+        assertThat(result.getCount()).isEqualTo(collection.count().getCount());
+        assertThat(result.getWaitForSync()).isNotNull();
+        assertThat(result.getKeyOptions()).isNotNull();
+        assertThat(result.getFigures()).isNotNull();
+        assertThat(result.getFigures().getIndexes().getCount()).isPositive();
+        assertThat(result.getFigures().getIndexes().getSize()).isNotNegative();
+        assertThat(result.getFigures().getEngine()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void getFiguresWithDetails(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final CollectionPropertiesEntity result = collection.getFigures(new CollectionFiguresOptions().details(true));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getCount()).isEqualTo(collection.count().getCount());
+        assertThat(result.getFigures().getIndexes().getCount()).isPositive();
+        // Engine-specific details may differ between single servers and clusters.
+        if (!isCluster()) {
+            assertThat(result.getFigures().getEngine()).containsKeys("documents", "indexes");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void getFiguresWithoutDetails(ArangoCollection collection) {
+        final CollectionPropertiesEntity result = collection.getFigures(new CollectionFiguresOptions().details(false));
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getFigures()).isNotNull();
+        assertThat(result.getFigures().getEngine()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("cols")
+    void getFiguresMissingCollection(ArangoCollection collection) {
+        Throwable failure = catchThrowable(() -> collection.db()
+                .collection("missing_" + UUID.randomUUID()).getFigures());
+        assertThat(failure).isInstanceOf(ArangoDBException.class);
+        assertThat(((ArangoDBException) failure).getResponseCode()).isEqualTo(404);
+        assertThat(((ArangoDBException) failure).getErrorNum()).isEqualTo(1203);
+    }
+
     // waits before changing collection properties, see https://arangodb.atlassian.net/browse/BTS-2307
     @SlowTest
     @ParameterizedTest

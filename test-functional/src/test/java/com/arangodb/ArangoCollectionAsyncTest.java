@@ -3442,6 +3442,57 @@ class ArangoCollectionAsyncTest extends BaseJunit5 {
         assertThat(result.getCount()).isNull();
     }
 
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void getFigures(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        final CollectionPropertiesEntity result = collection.getFigures().get();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getType()).isEqualTo(CollectionType.DOCUMENT);
+        assertThat(result.getCount()).isEqualTo(collection.count().get().getCount());
+        assertThat(result.getWaitForSync()).isNotNull();
+        assertThat(result.getKeyOptions()).isNotNull();
+        assertThat(result.getFigures()).isNotNull();
+        assertThat(result.getFigures().getIndexes().getCount()).isPositive();
+        assertThat(result.getFigures().getIndexes().getSize()).isNotNegative();
+        assertThat(result.getFigures().getEngine()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void getFiguresWithDetails(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final CollectionPropertiesEntity result = collection.getFigures(new CollectionFiguresOptions().details(true)).get();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getCount()).isEqualTo(collection.count().get().getCount());
+        assertThat(result.getFigures().getIndexes().getCount()).isPositive();
+        // Engine-specific details may differ between single servers and clusters.
+        if (!isCluster()) {
+            assertThat(result.getFigures().getEngine()).containsKeys("documents", "indexes");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void getFiguresWithoutDetails(ArangoCollectionAsync collection) throws ExecutionException, InterruptedException {
+        final CollectionPropertiesEntity result = collection.getFigures(new CollectionFiguresOptions().details(false)).get();
+        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
+        assertThat(result.getFigures()).isNotNull();
+        assertThat(result.getFigures().getEngine()).isNull();
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncCols")
+    void getFiguresMissingCollection(ArangoCollectionAsync collection) {
+        Throwable failure = catchThrowable(() -> collection.db()
+                .collection("missing_" + UUID.randomUUID()).getFigures().get());
+        assertThat(failure).isInstanceOf(ExecutionException.class);
+        failure = failure.getCause();
+        assertThat(failure).isInstanceOf(ArangoDBException.class);
+        assertThat(((ArangoDBException) failure).getResponseCode()).isEqualTo(404);
+        assertThat(((ArangoDBException) failure).getErrorNum()).isEqualTo(1203);
+    }
+
     // waits before changing collection properties, see https://arangodb.atlassian.net/browse/BTS-2307
     @SlowTest
     @ParameterizedTest

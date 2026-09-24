@@ -403,6 +403,16 @@ public interface ArangoCollectionAsync extends ArangoSerdeAccessor {
     CompletableFuture<CollectionPropertiesEntity> getProperties();
 
     /**
+     * Asynchronous version of {@link ArangoCollection#getFigures()}
+     */
+    CompletableFuture<CollectionPropertiesEntity> getFigures();
+
+    /**
+     * Asynchronous version of {@link ArangoCollection#getFigures(CollectionFiguresOptions)}
+     */
+    CompletableFuture<CollectionPropertiesEntity> getFigures(CollectionFiguresOptions options);
+
+    /**
      * Asynchronous version of {@link ArangoCollection#changeProperties(CollectionPropertiesOptions)}
      */
     CompletableFuture<CollectionPropertiesEntity> changeProperties(CollectionPropertiesOptions options);

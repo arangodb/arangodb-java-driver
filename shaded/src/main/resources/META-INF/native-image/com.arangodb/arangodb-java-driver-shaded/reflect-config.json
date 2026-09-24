@@ -150,6 +150,18 @@
     "allDeclaredConstructors": true
   },
   {
+    "name": "com.arangodb.entity.CollectionFiguresEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.entity.CollectionFiguresEntity$Indexes",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
     "name": "com.arangodb.entity.CollectionPropertiesEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
@@ -1051,6 +1063,12 @@
   },
   {
     "name": "com.arangodb.model.CollectionCreateOptions",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.model.CollectionFiguresOptions",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredConstructors": true
