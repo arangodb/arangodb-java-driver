@@ -93,6 +93,26 @@
                             </filesToExclude>
                             <replacements>
                                 <replacement>
+                                    <token>com.fasterxml.jackson.core.JsonParser</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.core.JsonParser</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.DeserializationContext</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.DeserializationContext</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.JsonDeserializer</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonDeserializer</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.module.SimpleModule</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.module.SimpleModule</value>
+                                </replacement>
+                                <replacement>
+                                    <token>com.fasterxml.jackson.databind.type.TypeFactory</token>
+                                    <value>com.arangodb.shaded.fasterxml.jackson.databind.type.TypeFactory</value>
+                                </replacement>
+                                <replacement>
                                     <token>com.fasterxml.jackson.databind.JsonNode</token>
                                     <value>com.arangodb.shaded.fasterxml.jackson.databind.JsonNode</value>
                                 </replacement>

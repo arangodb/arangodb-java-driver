@@ -10,6 +10,7 @@ import com.arangodb.internal.serde.InternalSerdeProvider;
 import com.arangodb.jackson.dataformat.velocypack.VPackMapper;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
+import com.arangodb.RequestContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -185,14 +186,14 @@ public class SerdeBench {
     @Benchmark
     public void deserializeDocsJson(Data data, Blackhole bh) {
         bh.consume(
-                data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp)
+                data.jsonCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.jsonResp, RequestContext.EMPTY)
         );
     }
 
     @Benchmark
     public void deserializeDocsVPack(Data data, Blackhole bh) {
         bh.consume(
-                data.vpackCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.vpackResp)
+                data.vpackCol.getDocumentsResponseDeserializer(RawBytes.class).deserialize(data.vpackResp, RequestContext.EMPTY)
         );
     }
 

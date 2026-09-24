@@ -1,7 +1,7 @@
 package com.arangodb.internal.serde;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.RequestContextHolder;
+import com.arangodb.RequestContext;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.RawBytes;
 import com.arangodb.util.RawJson;
@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static com.arangodb.internal.serde.SerdeUtils.checkSupportedJacksonVersion;
 import static com.arangodb.internal.serde.SerdeUtils.extractBytes;
@@ -76,6 +77,11 @@ final class InternalSerdeImpl implements InternalSerde {
     @Override
     public <T> T deserialize(byte[] content, Class<T> clazz) {
         return deserialize(content, (Type) clazz);
+    }
+
+    @Override
+    public <T> T deserialize(byte[] content, Class<T> clazz, RequestContext ctx) {
+        return deserialize(content, (Type) clazz, ctx);
     }
 
     @Override
@@ -171,21 +177,33 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public <T> T deserializeUserData(byte[] content, Class<T> clazz) {
+        return deserializeUserData(content, clazz, RequestContext.EMPTY);
+    }
+
+    @Override
+    public <T> T deserializeUserData(byte[] content, Class<T> clazz, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
         if (SerdeUtils.isManagedClass(clazz)) {
-            return deserialize(content, clazz);
+            return deserialize(content, clazz, ctx);
         } else {
-            return userSerde.deserialize(content, clazz, RequestContextHolder.INSTANCE.getCtx());
+            return userSerde.deserialize(content, clazz, ctx);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T deserializeUserData(byte[] content, JavaType clazz) {
+        return deserializeUserData(content, clazz, RequestContext.EMPTY);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T deserializeUserData(byte[] content, JavaType clazz, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
         try {
             if (SerdeUtils.isManagedClass(clazz.getRawClass())) {
-                return mapper.readerFor(clazz).readValue(content);
+                return mapper.readerFor(clazz).withAttribute(RequestContext.class, ctx).readValue(content);
             } else {
-                return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass());
+                return deserializeUserData(content, (Class<? extends T>) clazz.getRawClass(), ctx);
             }
         } catch (IOException e) {
             throw ArangoDBException.of(e);
@@ -231,16 +249,28 @@ final class InternalSerdeImpl implements InternalSerde {
 
     @Override
     public <T> T deserialize(final JsonNode node, final Type type) {
+        return deserialize(node, type, RequestContext.EMPTY);
+    }
+
+    @Override
+    public <T> T deserialize(final JsonNode node, final Type type, final RequestContext ctx) {
+        Objects.requireNonNull(ctx);
         try {
-            return mapper.readerFor(mapper.constructType(type)).readValue(node);
+            return mapper.readerFor(mapper.constructType(type)).withAttribute(RequestContext.class, ctx).readValue(node);
         } catch (IOException e) {
             throw ArangoDBException.of(e);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T deserialize(final byte[] content, final Type type) {
+        return deserialize(content, type, RequestContext.EMPTY);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T deserialize(final byte[] content, final Type type, final RequestContext ctx) {
+        Objects.requireNonNull(ctx);
         if (content == null || content.length == 0) {
             return null;
         }
@@ -250,7 +280,7 @@ final class InternalSerdeImpl implements InternalSerde {
             return (T) RawJson.of(new String(content, StandardCharsets.UTF_8));
         } else {
             try {
-                return mapper.readerFor(mapper.constructType(type)).readValue(content);
+                return mapper.readerFor(mapper.constructType(type)).withAttribute(RequestContext.class, ctx).readValue(content);
             } catch (IOException e) {
                 throw ArangoDBException.of(e);
             }
