@@ -40,6 +40,7 @@ public class BaseJunit5 {
             .map(p -> Named.of(p.toString(), new ArangoDB.Builder()
                     .loadProperties(config)
                     .protocol(p)
+                    .queueTimeMetrics(false)
                     .build()))
             .collect(Collectors.toList());
 

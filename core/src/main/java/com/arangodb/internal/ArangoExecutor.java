@@ -36,12 +36,14 @@ public abstract class ArangoExecutor {
 
     protected final CommunicationProtocol protocol;
     private final QueueTimeMetricsImpl qtMetrics;
+    private final boolean queueTimeMetrics;
     private final InternalSerde serde;
     private final String timeoutS;
 
     protected ArangoExecutor(final CommunicationProtocol protocol, final ArangoConfig config ) {
         this.protocol = protocol;
         qtMetrics = new QueueTimeMetricsImpl(config.getResponseQueueTimeSamples());
+        queueTimeMetrics = config.getQueueTimeMetrics();
         serde = config.getInternalSerde();
         timeoutS = config.getTimeout() >= 1000 ? Integer.toString(config.getTimeout() / 1000) : null;
     }
@@ -63,6 +65,9 @@ public abstract class ArangoExecutor {
     }
 
     protected final void interceptResponse(InternalResponse response) {
+        if (!queueTimeMetrics) {
+            return;
+        }
         String queueTime = response.getMeta("X-Arango-Queue-Time-Seconds");
         if (queueTime != null) {
             qtMetrics.add(Double.parseDouble(queueTime));

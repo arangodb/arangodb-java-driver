@@ -746,7 +746,21 @@ public interface ArangoDB extends ArangoSerdeAccessor {
         }
 
         /**
-         * Setting the amount of samples kept for queue time metrics
+         * Enables or disables collection of queue time metrics from response headers. Collection is enabled by default.
+         * When disabled, {@link QueueTimeMetrics#getValues()} returns an empty array and
+         * {@link QueueTimeMetrics#getAvg()} returns {@code 0.0}. This does not affect the queue time limit sent to the
+         * server based on {@link #timeout(Integer)}.
+         *
+         * @param queueTimeMetrics whether to collect queue time metrics (default: true)
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder queueTimeMetrics(final Boolean queueTimeMetrics) {
+            config.setQueueTimeMetrics(queueTimeMetrics);
+            return this;
+        }
+
+        /**
+         * Setting the amount of samples kept for queue time metrics when collection is enabled.
          *
          * @param responseQueueTimeSamples amount of samples to keep
          * @return {@link ArangoDB.Builder}

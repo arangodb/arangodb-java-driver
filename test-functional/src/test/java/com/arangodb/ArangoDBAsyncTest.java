@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -737,10 +738,14 @@ class ArangoDBAsyncTest extends BaseJunit5 {
         assertThat(version2).isNotNull();
     }
 
-    @ParameterizedTest
-    @MethodSource("asyncArangos")
+    @Test
     @Disabled("Manual execution only")
-    void queueTime(ArangoDBAsync arangoDB) throws InterruptedException, ExecutionException {
+    void queueTime() throws InterruptedException, ExecutionException {
+        ArangoDBAsync arangoDB = new ArangoDB.Builder()
+                .loadProperties(config)
+                .responseQueueTimeSamples(20)
+                .build().async();
+
         List<CompletableFuture<?>> futures = IntStream.range(0, 80)
                 .mapToObj(i -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))
                 .collect(Collectors.toList());
@@ -773,5 +778,16 @@ class ArangoDBAsyncTest extends BaseJunit5 {
             assertThat(values).isEmpty();
         }
 
+    }
+
+    @ParameterizedTest
+    @MethodSource("asyncArangos")
+    void queueTimeDisabled(ArangoDBAsync arangoDB) throws ExecutionException, InterruptedException {
+        arangoDB.db().query("RETURN true", Void.class).get();
+        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
+        double avg = qt.getAvg();
+        QueueTimeSample[] values = qt.getValues();
+        assertThat(avg).isEqualTo(0.0);
+        assertThat(values).isEmpty();
     }
 }

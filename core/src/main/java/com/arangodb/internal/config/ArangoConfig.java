@@ -59,6 +59,7 @@ public class ArangoConfig {
     private InternalSerde internalSerde;
     private ArangoSerde userDataSerde;
     private Class<? extends ArangoSerdeProvider> serdeProviderClass;
+    private Boolean queueTimeMetrics;
     private Integer responseQueueTimeSamples;
     private Module protocolModule;
     private Executor asyncExecutor;
@@ -105,6 +106,7 @@ public class ArangoConfig {
         acquireHostList = properties.getAcquireHostList().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);
         acquireHostListInterval = properties.getAcquireHostListInterval().orElse(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
         loadBalancingStrategy = properties.getLoadBalancingStrategy().orElse(ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY);
+        queueTimeMetrics = properties.getQueueTimeMetrics().orElse(ArangoDefaults.DEFAULT_QUEUE_TIME_METRICS);
         responseQueueTimeSamples = properties.getResponseQueueTimeSamples().orElse(ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
         compression = properties.getCompression().orElse(ArangoDefaults.DEFAULT_COMPRESSION);
         compressionThreshold = properties.getCompressionThreshold().orElse(ArangoDefaults.DEFAULT_COMPRESSION_THRESHOLD);
@@ -356,6 +358,14 @@ public class ArangoConfig {
 
     public void setUserDataSerdeProvider(Class<? extends ArangoSerdeProvider> serdeProviderClass) {
         this.serdeProviderClass = serdeProviderClass;
+    }
+
+    public Boolean getQueueTimeMetrics() {
+        return queueTimeMetrics;
+    }
+
+    public void setQueueTimeMetrics(Boolean queueTimeMetrics) {
+        this.queueTimeMetrics = queueTimeMetrics;
     }
 
     public Integer getResponseQueueTimeSamples() {

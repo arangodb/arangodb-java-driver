@@ -195,6 +195,11 @@ public final class ArangoConfigPropertiesImpl implements ArangoConfigProperties 
     }
 
     @Override
+    public Optional<Boolean> getQueueTimeMetrics() {
+        return Optional.ofNullable(getProperty(KEY_QUEUE_TIME_METRICS)).map(Boolean::valueOf);
+    }
+
+    @Override
     public Optional<Integer> getResponseQueueTimeSamples() {
         return Optional.ofNullable(getProperty(KEY_RESPONSE_QUEUE_TIME_SAMPLES)).map(Integer::valueOf);
     }
