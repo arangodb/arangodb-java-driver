@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added access to AQL query profile
+
 ## [7.28.0] - 2026-09-10
 
 - updated dependencies (#634)

@@ -29,6 +29,7 @@ import com.arangodb.internal.ArangoCursorExecute;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -85,6 +86,12 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
     public CursorStats getStats() {
         final CursorEntity.Extras extra = iterator.result.getExtra();
         return extra != null ? extra.getStats() : null;
+    }
+
+    @Override
+    public Map<String, Double> getProfile() {
+        final CursorEntity.Extras extra = iterator.result.getExtra();
+        return extra != null ? extra.getProfile() : null;
     }
 
     @Override
