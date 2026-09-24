@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.RequestContext;
 import com.arangodb.arch.UsedInApi;
 import com.arangodb.serde.ArangoSerde;
 import com.arangodb.ContentType;
@@ -7,7 +8,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
+/**
+ * Driver-owned serialization. Deserialization without an explicit context uses
+ * {@link RequestContext#EMPTY} in the built-in implementation.
+ */
 @UsedInApi
 public interface InternalSerde extends ArangoSerde {
 
@@ -41,6 +47,21 @@ public interface InternalSerde extends ArangoSerde {
     <T> T deserialize(byte[] content, Type type);
 
     /**
+     * Deserializes the content with an explicit request context.
+     *
+     * @param content byte array to deserialize
+     * @param type    target data type
+     * @param ctx     request context, cannot be null
+     * @return deserialized object
+     * @implSpec The default implementation delegates to the context-free overload
+     * for compatibility with existing implementations.
+     */
+    default <T> T deserialize(byte[] content, Type type, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
+        return deserialize(content, type);
+    }
+
+    /**
      * Deserializes the parsed json node and binds it to the target data type.
      *
      * @param node  parsed json node
@@ -59,6 +80,33 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     <T> T deserialize(JsonNode node, Type type);
+
+    /**
+     * Deserializes the parsed json node with an explicit request context.
+     *
+     * @param node  parsed json node
+     * @param clazz class of target data type
+     * @param ctx   request context, cannot be null
+     * @return deserialized object
+     */
+    default <T> T deserialize(JsonNode node, Class<T> clazz, RequestContext ctx) {
+        return deserialize(node, (Type) clazz, ctx);
+    }
+
+    /**
+     * Deserializes the parsed json node with an explicit request context.
+     *
+     * @param node parsed json node
+     * @param type target data type
+     * @param ctx  request context, cannot be null
+     * @return deserialized object
+     * @implSpec The default implementation delegates to the context-free overload
+     * for compatibility with existing implementations.
+     */
+    default <T> T deserialize(JsonNode node, Type type, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
+        return deserialize(node, type);
+    }
 
     /**
      * Parses the content at json pointer.
@@ -96,6 +144,32 @@ public interface InternalSerde extends ArangoSerde {
     }
 
     /**
+     * Deserializes the content at the json pointer with an explicit request context.
+     *
+     * @param content     byte array to deserialize
+     * @param jsonPointer location of data to be deserialized
+     * @param clazz       class of target data type
+     * @param ctx         request context, cannot be null
+     * @return deserialized object
+     */
+    default <T> T deserialize(byte[] content, String jsonPointer, Class<T> clazz, RequestContext ctx) {
+        return deserialize(content, jsonPointer, (Type) clazz, ctx);
+    }
+
+    /**
+     * Deserializes the content at the json pointer with an explicit request context.
+     *
+     * @param content     byte array to deserialize
+     * @param jsonPointer location of data to be deserialized
+     * @param type        target data type
+     * @param ctx         request context, cannot be null
+     * @return deserialized object
+     */
+    default <T> T deserialize(byte[] content, String jsonPointer, Type type, RequestContext ctx) {
+        return deserialize(extract(content, jsonPointer), type, ctx);
+    }
+
+    /**
      * Serializes the object into the target data type, using the user serde.
      *
      * @param value object to serialize
@@ -121,6 +195,21 @@ public interface InternalSerde extends ArangoSerde {
     <T> T deserializeUserData(byte[] content, Class<T> clazz);
 
     /**
+     * Deserializes user data with an explicit request context.
+     *
+     * @param content byte array to deserialize
+     * @param clazz   class of target data type
+     * @param ctx     request context, cannot be null
+     * @return deserialized object
+     * @implSpec The default implementation delegates to the context-free overload
+     * for compatibility with existing implementations.
+     */
+    default <T> T deserializeUserData(byte[] content, Class<T> clazz, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
+        return deserializeUserData(content, clazz);
+    }
+
+    /**
      * Deserializes the content and binds it to the target data type, using the user serde.
      *
      * @param content byte array to deserialize
@@ -128,6 +217,21 @@ public interface InternalSerde extends ArangoSerde {
      * @return deserialized object
      */
     <T> T deserializeUserData(byte[] content, JavaType clazz);
+
+    /**
+     * Deserializes user data with an explicit request context.
+     *
+     * @param content byte array to deserialize
+     * @param clazz   target data type
+     * @param ctx     request context, cannot be null
+     * @return deserialized object
+     * @implSpec The default implementation delegates to the context-free overload
+     * for compatibility with existing implementations.
+     */
+    default <T> T deserializeUserData(byte[] content, JavaType clazz, RequestContext ctx) {
+        Objects.requireNonNull(ctx);
+        return deserializeUserData(content, clazz);
+    }
 
 
     /**

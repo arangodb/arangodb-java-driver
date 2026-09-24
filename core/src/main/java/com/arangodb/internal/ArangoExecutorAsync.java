@@ -49,7 +49,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final Type type, final HostHandle hostHandle) {
-        return execute(requestSupplier, (response) -> createResult(type, response), hostHandle);
+        return execute(requestSupplier, (response, ctx) -> createResult(type, response, ctx), hostHandle);
     }
 
     public <T> CompletableFuture<T> execute(final Supplier<InternalRequest> requestSupplier, final ResponseDeserializer<T> responseDeserializer) {
@@ -72,8 +72,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
                         throw ArangoDBException.of(e);
                     } else {
                         interceptResponse(r.response);
-                        return RequestContextHolder.INSTANCE.runWithCtx(r.context, () ->
-                                responseDeserializer.deserialize(r.response));
+                        return responseDeserializer.deserialize(r.response, r.context);
                     }
                 });
 

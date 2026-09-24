@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.RequestContext;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.fasterxml.jackson.core.JsonParser;
@@ -29,6 +30,7 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
     @Override
     public MultiDocumentEntity<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         MultiDocumentEntity<Object> multiDocument = new MultiDocumentEntity<>();
+        RequestContext ctx = (RequestContext) ctxt.getAttribute(RequestContext.class);
 
         // silent=true returns an empty object
         if (p.currentToken() == JsonToken.START_OBJECT) {
@@ -49,11 +51,11 @@ public class MultiDocumentEntityDeserializer extends JsonDeserializer<MultiDocum
             }
             byte[] element = SerdeUtils.extractBytes(p);
             if (serde.isDocument(element)) {
-                Object d = serde.deserializeUserData(element, containedType);
+                Object d = serde.deserializeUserData(element, containedType, ctx);
                 multiDocument.getDocuments().add(d);
                 multiDocument.getDocumentsAndErrors().add(d);
             } else {
-                ErrorEntity e = serde.deserialize(element, ErrorEntity.class);
+                ErrorEntity e = serde.deserialize(element, ErrorEntity.class, ctx);
                 multiDocument.getErrors().add(e);
                 multiDocument.getDocumentsAndErrors().add(e);
             }

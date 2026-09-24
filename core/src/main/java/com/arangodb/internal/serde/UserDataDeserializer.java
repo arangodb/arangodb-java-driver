@@ -1,5 +1,6 @@
 package com.arangodb.internal.serde;
 
+import com.arangodb.RequestContext;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,9 +32,10 @@ class UserDataDeserializer extends JsonDeserializer<Object> implements Contextua
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         Class<?> clazz = (Class<?>) targetType;
         if (SerdeUtils.isManagedClass(clazz)) {
-            return p.readValueAs(clazz);
+            return ctxt.readValue(p, clazz);
         } else {
-            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz);
+            return serde.deserializeUserData(SerdeUtils.extractBytes(p), clazz,
+                    (RequestContext) ctxt.getAttribute(RequestContext.class));
         }
     }
 
