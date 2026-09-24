@@ -36,6 +36,7 @@ public interface ArangoConfigProperties {
     String KEY_ACQUIRE_HOST_LIST = "acquireHostList";
     String KEY_ACQUIRE_HOST_LIST_INTERVAL = "acquireHostListInterval";
     String KEY_LOAD_BALANCING_STRATEGY = "loadBalancingStrategy";
+    String KEY_QUEUE_TIME_METRICS = "queueTimeMetrics";
     String KEY_RESPONSE_QUEUE_TIME_SAMPLES = "responseQueueTimeSamples";
     String KEY_COMPRESSION = "compression";
     String KEY_COMPRESSION_THRESHOLD = "compressionThreshold";
@@ -176,6 +177,13 @@ public interface ArangoConfigProperties {
     }
 
     default Optional<LoadBalancingStrategy> getLoadBalancingStrategy() {
+        return Optional.empty();
+    }
+
+    /**
+     * @return whether to collect queue time metrics, or empty to use the default ({@code true})
+     */
+    default Optional<Boolean> getQueueTimeMetrics() {
         return Optional.empty();
     }
 

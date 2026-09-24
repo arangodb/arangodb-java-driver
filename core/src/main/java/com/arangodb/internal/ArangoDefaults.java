@@ -61,6 +61,7 @@ public final class ArangoDefaults {
     public static final Boolean DEFAULT_ACQUIRE_HOST_LIST = false;
     public static final Integer DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
     public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
+    public static final Boolean DEFAULT_QUEUE_TIME_METRICS = true;
     public static final Integer DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES = 10;
 
     // region compression

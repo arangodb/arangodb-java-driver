@@ -28,6 +28,9 @@ import javax.annotation.concurrent.ThreadSafe;
  * Interface for accessing queue time latency metrics, reported by the "X-Arango-Queue-Time-Seconds" response header.
  * This header contains the most recent request (de)queuing time (in seconds) as tracked by the server’s scheduler.
  *
+ * Collection is enabled by default and can be disabled using
+ * {@link ArangoDB.Builder#queueTimeMetrics(Boolean)}.
+ *
  * @author Michele Rastelli
  * @see <a href="https://docs.arango.ai/arangodb/stable/develop/http-api/general-request-handling/#overload-control">API Documentation</a>
  * @since ArangoDB 3.9
@@ -36,13 +39,13 @@ import javax.annotation.concurrent.ThreadSafe;
 public interface QueueTimeMetrics {
 
     /**
-     * @return all the n values observed
+     * @return all the n values observed, or an empty array if collection is disabled
      */
     QueueTimeSample[] getValues();
 
     /**
      * @return the average of the last n values observed, 0.0 if no value has been observed (i.e. in ArangoDB versions
-     * prior to 3.9).
+     * prior to 3.9 or when collection is disabled).
      */
     double getAvg();
 }

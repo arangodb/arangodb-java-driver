@@ -1,13 +1,19 @@
 package com.arangodb;
 
+import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.http.HttpProtocolConfig;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.config.ArangoConfig;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.net.ssl.SSLContext;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +37,7 @@ public class ArangoConfigTest {
         assertThat(cfg.getAcquireHostList()).isEqualTo(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST);
         assertThat(cfg.getAcquireHostListInterval()).isEqualTo(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
         assertThat(cfg.getLoadBalancingStrategy()).isEqualTo(ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY);
+        assertThat(cfg.getQueueTimeMetrics()).isTrue();
         assertThat(cfg.getResponseQueueTimeSamples()).isEqualTo(ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES);
         assertThat(cfg.getAsyncExecutor()).isNull();
         assertThat(cfg.getCompression()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION);
@@ -38,6 +45,47 @@ public class ArangoConfigTest {
         assertThat(cfg.getCompressionLevel()).isEqualTo(ArangoDefaults.DEFAULT_COMPRESSION_LEVEL);
         assertThat(cfg.getProtocolConfig()).isNull();
         assertThat(cfg.getSerdeProviderClass()).isNull();
+    }
+
+    @Test
+    void queueTimeMetricsPropertyDefaults() {
+        ArangoConfigProperties customProperties = new ArangoConfigProperties() {};
+        ArangoConfigProperties emptyProperties = ArangoConfigProperties.fromProperties(new Properties());
+        assertThat(customProperties.getQueueTimeMetrics()).isEmpty();
+        assertThat(emptyProperties.getQueueTimeMetrics()).isEmpty();
+
+        ArangoConfig cfg = new ArangoConfig();
+        cfg.loadProperties(customProperties);
+        assertThat(cfg.getQueueTimeMetrics()).isTrue();
+        cfg.loadProperties(emptyProperties);
+        assertThat(cfg.getQueueTimeMetrics()).isTrue();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"arangodb,true", "arangodb,false", "adb,true", "adb,false", ",true", ",false"})
+    void queueTimeMetricsProperty(String prefix, boolean enabled) {
+        Properties properties = new Properties();
+        String key = (prefix == null ? "" : prefix + ".") + ArangoConfigProperties.KEY_QUEUE_TIME_METRICS;
+        properties.setProperty(key, Boolean.toString(enabled));
+        ArangoConfigProperties configProperties = ArangoConfigProperties.fromProperties(properties, prefix);
+        assertThat(configProperties.getQueueTimeMetrics()).hasValue(enabled);
+
+        ArangoConfig cfg = new ArangoConfig();
+        cfg.loadProperties(configProperties);
+        assertThat(cfg.getQueueTimeMetrics()).isEqualTo(enabled);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void queueTimeMetricsCustomProperties(boolean enabled) {
+        ArangoConfig cfg = new ArangoConfig();
+        cfg.loadProperties(new ArangoConfigProperties() {
+            @Override
+            public Optional<Boolean> getQueueTimeMetrics() {
+                return Optional.of(enabled);
+            }
+        });
+        assertThat(cfg.getQueueTimeMetrics()).isEqualTo(enabled);
     }
 
     @Test
