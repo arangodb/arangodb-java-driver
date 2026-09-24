@@ -472,6 +472,16 @@ public class ArangoCollectionImpl extends InternalArangoCollection implements Ar
     }
 
     @Override
+    public CollectionPropertiesEntity getFigures() {
+        return getFigures(null);
+    }
+
+    @Override
+    public CollectionPropertiesEntity getFigures(final CollectionFiguresOptions options) {
+        return executorSync().execute(getFiguresRequest(options), CollectionPropertiesEntity.class);
+    }
+
+    @Override
     public CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options) {
         return executorSync().execute(changePropertiesRequest(options), CollectionPropertiesEntity.class);
     }

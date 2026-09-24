@@ -484,6 +484,16 @@ public class ArangoCollectionAsyncImpl extends InternalArangoCollection implemen
     }
 
     @Override
+    public CompletableFuture<CollectionPropertiesEntity> getFigures() {
+        return getFigures(null);
+    }
+
+    @Override
+    public CompletableFuture<CollectionPropertiesEntity> getFigures(final CollectionFiguresOptions options) {
+        return executorAsync().execute(() -> getFiguresRequest(options), CollectionPropertiesEntity.class);
+    }
+
+    @Override
     public CompletableFuture<CollectionPropertiesEntity> changeProperties(final CollectionPropertiesOptions options) {
         return executorAsync().execute(() -> changePropertiesRequest(options), CollectionPropertiesEntity.class);
     }

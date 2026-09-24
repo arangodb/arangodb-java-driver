@@ -465,6 +465,12 @@ public abstract class InternalArangoCollection extends ArangoExecuteable {
         return request(dbName, RequestType.GET, PATH_API_COLLECTION, name, "properties");
     }
 
+    protected InternalRequest getFiguresRequest(final CollectionFiguresOptions options) {
+        final CollectionFiguresOptions params = options != null ? options : new CollectionFiguresOptions();
+        return request(dbName, RequestType.GET, PATH_API_COLLECTION, name, "figures")
+                .putQueryParam("details", params.getDetails());
+    }
+
     protected InternalRequest changePropertiesRequest(final CollectionPropertiesOptions options) {
         final InternalRequest request = request(dbName, RequestType.PUT, PATH_API_COLLECTION, name, "properties");
         request.setBody(getSerde().serialize(options != null ? options : new CollectionPropertiesOptions()));
