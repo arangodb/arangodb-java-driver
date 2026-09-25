@@ -1,0 +1,11 @@
+[
+  {
+    "name": "com.arangodb.serde.jackson3.vpack.JacksonVPackSerdeProvider",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  }
+]
