@@ -1482,8 +1482,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
         }
         assertThat(queryEntity.getState()).isEqualTo(QueryExecutionState.EXECUTING);
         assertThat(queryEntity.getStream()).isFalse();
-        assertThat(queryEntity.getModificationQuery()).isFalse();
-        assertThat(queryEntity.getWarnings()).isZero();
+        if (isAtLeastVersion(3, 12)) {
+            assertThat(queryEntity.getModificationQuery()).isFalse();
+            assertThat(queryEntity.getWarnings()).isZero();
+        }
         t.join();
     }
 
@@ -1491,7 +1493,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     @ParameterizedTest
     @MethodSource("dbs")
     void getCurrentlyRunningModificationQuery(ArangoDatabase db) throws InterruptedException {
-        assumeTrue(isAtLeastVersion(3, 12, 2));
         String query = "INSERT { value: sleep(1) } INTO " + CNAME1;
         Thread t = new Thread(() -> db.query(query, Void.class));
         t.start();
@@ -1501,8 +1502,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(currentlyRunningQueries).hasSize(1);
             final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
             assertThat(queryEntity.getQuery()).isEqualTo(query);
-            assertThat(queryEntity.getModificationQuery()).isTrue();
-            assertThat(queryEntity.getWarnings()).isZero();
+            if (isAtLeastVersion(3, 12)) {
+                assertThat(queryEntity.getModificationQuery()).isTrue();
+                assertThat(queryEntity.getWarnings()).isZero();
+            }
         } finally {
             t.join();
         }
@@ -1566,8 +1569,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(readQueryEntity.getPeakMemoryUsage()).isNotNull();
             assertThat(readQueryEntity.getState()).isEqualTo(QueryExecutionState.FINISHED);
             assertThat(readQueryEntity.getStream()).isFalse();
-            assertThat(readQueryEntity.getModificationQuery()).isFalse();
-            assertThat(readQueryEntity.getWarnings()).isZero();
+            if (isAtLeastVersion(3, 12)) {
+                assertThat(readQueryEntity.getModificationQuery()).isFalse();
+                assertThat(readQueryEntity.getWarnings()).isZero();
+            }
             assertThat(readQueryEntity.getExitCode()).isZero();
 
             db.clearSlowQueries();
@@ -1577,14 +1582,16 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(slowQueries).hasSize(1);
             QueryEntity writeQueryEntity = slowQueries.iterator().next();
             assertThat(writeQueryEntity.getQuery()).isEqualTo(writeQuery);
-            assertThat(writeQueryEntity.getModificationQuery()).isTrue();
-            assertThat(writeQueryEntity.getWarnings()).isZero();
+            if (isAtLeastVersion(3, 12)) {
+                assertThat(writeQueryEntity.getModificationQuery()).isTrue();
+                assertThat(writeQueryEntity.getWarnings()).isZero();
+            }
             assertThat(writeQueryEntity.getExitCode()).isZero();
 
             db.clearSlowQueries();
             properties.setSlowQueryThreshold(0L);
             db.setQueryTrackingProperties(properties);
-            String failedQuery = "RETURN 1 / 0";
+            String failedQuery = "RETURN sleep(.01) / 0";
             Throwable thrown = catchThrowable(() -> db.query(failedQuery, Void.class,
                     new AqlQueryOptions().failOnWarning(true)));
             assertThat(thrown).isInstanceOf(ArangoDBException.class);
@@ -1592,8 +1599,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(slowQueries).hasSize(1);
             QueryEntity failedQueryEntity = slowQueries.iterator().next();
             assertThat(failedQueryEntity.getQuery()).isEqualTo(failedQuery);
-            assertThat(failedQueryEntity.getModificationQuery()).isFalse();
-            assertThat(failedQueryEntity.getWarnings()).isZero();
+            if (isAtLeastVersion(3, 12)) {
+                assertThat(failedQueryEntity.getModificationQuery()).isFalse();
+                assertThat(failedQueryEntity.getWarnings()).isZero();
+            }
             assertThat(failedQueryEntity.getExitCode()).isEqualTo(1562);
 
             db.clearSlowQueries();
@@ -1604,8 +1613,10 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(slowQueries).hasSize(1);
             QueryEntity warningQueryEntity = slowQueries.iterator().next();
             assertThat(warningQueryEntity.getQuery()).isEqualTo(warningQuery);
-            assertThat(warningQueryEntity.getModificationQuery()).isFalse();
-            assertThat(warningQueryEntity.getWarnings()).isEqualTo(1L);
+            if (isAtLeastVersion(3, 12)) {
+                assertThat(warningQueryEntity.getModificationQuery()).isFalse();
+                assertThat(warningQueryEntity.getWarnings()).isEqualTo(1L);
+            }
             assertThat(warningQueryEntity.getExitCode()).isZero();
         } finally {
             db.clearSlowQueries();
