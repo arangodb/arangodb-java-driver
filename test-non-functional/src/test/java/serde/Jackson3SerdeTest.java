@@ -3,6 +3,7 @@ package serde;
 import com.arangodb.ArangoDB;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.serde.jackson3.json.JacksonJsonSerdeProvider;
+import com.arangodb.serde.jackson3.vpack.JacksonVPackSerdeProvider;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -19,9 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Jackson3SerdeTest {
 
     static Stream<Arguments> adbByContentType() {
-        return Stream.of(new ArangoDB.Builder()
+        return Stream.of(JacksonJsonSerdeProvider.class, JacksonVPackSerdeProvider.class)
+                .map(it -> new ArangoDB.Builder()
                         .loadProperties(ArangoConfigProperties.fromFile())
-                        .serdeProviderClass(JacksonJsonSerdeProvider.class)
+                        .serdeProviderClass(it)
                         .build())
                 .map(Arguments::of);
     }
@@ -42,7 +44,7 @@ class Jackson3SerdeTest {
 
     @ParameterizedTest
     @MethodSource("adbByContentType")
-    void jsonNode(ArangoDB adb) {
+    void jackson2JsonNode(ArangoDB adb) {
         // uses the user serde
         JsonNode doc = JsonNodeFactory.instance
                 .objectNode()
@@ -51,6 +53,20 @@ class Jackson3SerdeTest {
         assertThat(res.size()).isEqualTo(1);
         assertThat(res.get("foo").asText()).isEqualTo("bar");
         JsonNode value = adb.db().query("return @d.foo", JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(value.textValue()).isEqualTo("bar");
+    }
+
+    @ParameterizedTest
+    @MethodSource("adbByContentType")
+    void jackson3JsonNode(ArangoDB adb) {
+        // uses the user serde
+        tools.jackson.databind.JsonNode doc = tools.jackson.databind.node.JsonNodeFactory.instance
+                .objectNode()
+                .put("foo", "bar");
+        tools.jackson.databind.JsonNode res = adb.db().query("return @d", tools.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
+        assertThat(res.size()).isEqualTo(1);
+        assertThat(res.get("foo").asText()).isEqualTo("bar");
+        tools.jackson.databind.JsonNode value = adb.db().query("return @d.foo", tools.jackson.databind.JsonNode.class, Collections.singletonMap("d", doc)).next();
         assertThat(value.textValue()).isEqualTo("bar");
     }
 

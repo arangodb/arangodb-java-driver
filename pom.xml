@@ -12,8 +12,9 @@
         <module>driver</module>
         <module>shaded</module>
         <module>jackson-serde-json</module>
-        <module>jackson3-serde-json</module>
         <module>jackson-serde-vpack</module>
+        <module>jackson3-serde-json</module>
+        <module>jackson3-serde-vpack</module>
         <module>jsonb-serde</module>
         <module>http-protocol</module>
         <module>vst-protocol</module>
@@ -301,18 +302,28 @@
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
+                <artifactId>jackson-serde-vpack</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
                 <artifactId>jackson3-serde-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
-                <artifactId>jackson-serde-vpack</artifactId>
+                <artifactId>jackson3-serde-vpack</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>jackson-dataformat-velocypack</artifactId>
                 <version>4.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.arangodb</groupId>
+                <artifactId>jackson3-dataformat-velocypack</artifactId>
+                <version>5.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.arangodb</groupId>
@@ -362,6 +373,7 @@
                                         <exclude>jakarta.json.bind:jakarta.json.bind-api</exclude>
                                         <exclude>tools.jackson.core:jackson-core</exclude>
                                         <exclude>tools.jackson.core:jackson-databind</exclude>
+                                        <exclude>com.arangodb:jackson3-dataformat-velocypack</exclude>
                                     </excludes>
                                 </enforceBytecodeVersion>
                                 <dependencyConvergence/>

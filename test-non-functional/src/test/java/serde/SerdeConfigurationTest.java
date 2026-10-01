@@ -79,10 +79,21 @@ public class SerdeConfigurationTest {
     }
 
     @Test
-    void jackson3SerdeProvider() {
+    void jackson3JsonSerdeProvider() {
         ArangoDB adb = new ArangoDB.Builder()
                 .host("foo", 1111)
                 .serdeProviderClass(com.arangodb.serde.jackson3.json.JacksonJsonSerdeProvider.class)
+                .build();
+
+        ArangoSerde serde = adb.getSerde().getUserSerde();
+        assertThat(serde).isInstanceOf(com.arangodb.serde.jackson3.internal.JacksonSerdeImpl.class);
+    }
+
+    @Test
+    void jackson3VPackSerdeProvider() {
+        ArangoDB adb = new ArangoDB.Builder()
+                .host("foo", 1111)
+                .serdeProviderClass(com.arangodb.serde.jackson3.vpack.JacksonVPackSerdeProvider.class)
                 .build();
 
         ArangoSerde serde = adb.getSerde().getUserSerde();
