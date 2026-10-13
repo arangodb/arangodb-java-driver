@@ -1,8 +1,11 @@
 package serde;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ContentType;
+import com.arangodb.Protocol;
 import com.arangodb.config.ArangoConfigProperties;
 import com.arangodb.serde.jackson3.json.JacksonJsonSerdeProvider;
+import com.arangodb.serde.jackson3.vpack.JacksonVPackSerdeProvider;
 import com.arangodb.util.RawJson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -19,9 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Jackson3SerdeTest {
 
     static Stream<Arguments> adbByContentType() {
-        return Stream.of(new ArangoDB.Builder()
+        return Stream.of(ContentType.values())
+                .map(ct -> new ArangoDB.Builder()
                         .loadProperties(ArangoConfigProperties.fromFile())
-                        .serdeProviderClass(JacksonJsonSerdeProvider.class)
+                        .protocol(ContentType.VPACK.equals(ct) ? Protocol.HTTP2_VPACK : Protocol.HTTP2_JSON)
+                        .serdeProviderClass(ContentType.VPACK.equals(ct) ? JacksonVPackSerdeProvider.class : JacksonJsonSerdeProvider.class)
                         .build())
                 .map(Arguments::of);
     }
